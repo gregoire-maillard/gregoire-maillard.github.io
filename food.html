@@ -21,6 +21,26 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+    <style>
+      /* Make the sidebar scrollable instead of clipping content */
+      header {
+        overflow-y: auto !important;
+        max-height: 100vh !important;
+      }
+
+      /* ── Sidebar nav ── */
+      .city-nav { margin-top: 4px; font-size: 0.82em; line-height: 1.9; }
+      .city-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .city-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .city-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+    </style>
   </head>
   <body>
 
@@ -31,15 +51,28 @@
         
 
         <p><i>Me, drinking tea.</i> <br><hr/> For each city I visited, here is one restaurant I loved. </p>
-        
-		
-        
+        <hr/>
+        <nav class="city-nav" id="toc">
+          <a href="#istanbul">Istanbul</a>
+          <a href="#hongkong">Hong Kong</a>
+          <a href="#mexicocity">Mexico City</a>
+          <a href="#mumbai">Mumbai</a>
+          <a href="#newyork">New York</a>
+          <a href="#osaka">Osaka</a>
+          <a href="#paris">Paris</a>
+          <a href="#seoul">Seoul</a>
+          <a href="#shanghai">Shanghai</a>
+          <a href="#singapore">Singapore</a>
+          <a href="#taipei">Taipei</a>
+          <a href="#telaviv">Tel-Aviv</a>
+          <a href="#tokyo">Tokyo</a>
+        </nav>
 
         <p></p>
       </header>
       <section>
 
-        <h2>Istanbul</h2>  
+        <h2 id="istanbul">Istanbul</h2>  
         <h3>Irregular Moda</h3> 
     
         <p>
@@ -49,11 +82,11 @@
           <img src="/assets/img/foodist2.png" alt="foodist2" />
           I love the cozy vibe that the place gives, as well as being in the kitchen and seeing your plate in the making while you enjoy an iced latte (or a variety of juices, you can just open the fridge and pick what you like!).<br /> 
           <img src="/assets/img/foodist3.png" alt="foodist3" />
-          Last time I went, I had this mushroom tapenade eggplant which was an explosion of flavours in the mouth (couldn’t get tired of it) and a pumpkin puree ribeye. <br /> 
+          Last time I went, I had this mushroom tapenade eggplant which was an explosion of flavours in the mouth (couldn't get tired of it) and a pumpkin puree ribeye. <br /> 
           <img src="/assets/img/foodist4.png" alt="foodist4" />
           All the ingredients were well thought and well cooked and I felt more than happy when leaving the restaurant.  <br /> 
           <img src="/assets/img/foodist5.png" alt="foodist5" />
-          Also it’s never too crowded which makes the experience always pretty unique.  <br /> 
+          Also it's never too crowded which makes the experience always pretty unique.  <br /> 
          
 
 <br /> <br> 
@@ -62,7 +95,7 @@
           <i>Location:  <a href=https://maps.app.goo.gl/uFwU4c9iXZXk9qL19> Caferağa, Ağabey Sk. No:44 in İstanbul.</a></i></p>
           <p><hr/> </p>
 
-        <h2>Hong Kong</h2>  
+        <h2 id="hongkong">Hong Kong</h2>  
         <h3>蓮香樓 (Lin Heung Lau) </h3> 
     
         <p>
@@ -70,15 +103,15 @@
           <img src="/assets/img/foodhkg1.png" alt="foodhkg1" />
           From early in the morning to later in the evening, this establishment is a HK institution and will make you feel an authentic dim sum experience.<br />
           <img src="/assets/img/foodhkg2.png" alt="foodhkg2" />
-          Here is what’s on the program for you if ever chose this place to experiment. First, you walk up the long stairs and end up in this huge cantina, full of people, some families gathering for the weekend, some old couple sitting in silence, younger people alone watching two screens at the same time, and a big disco ball on the ceiling.<br /> 
+          Here is what's on the program for you if ever chose this place to experiment. First, you walk up the long stairs and end up in this huge cantina, full of people, some families gathering for the weekend, some old couple sitting in silence, younger people alone watching two screens at the same time, and a big disco ball on the ceiling.<br /> 
           <img src="/assets/img/foodhkg3.png" alt="foodhkg3" />
-          You’re then getting a seat at a table with other people. Once settled, you can walk up to the center of the room and look at all the available dishes that exist. <br /> 
+          You're then getting a seat at a table with other people. Once settled, you can walk up to the center of the room and look at all the available dishes that exist. <br /> 
           <img src="/assets/img/foodhkg4.png" alt="foodhkg4" />
           Among a humongous diversity of meals, you might want to try a bit of everything, the fluffy baos with delicious meat inside, the soup dumplings served with a special sauce, and why not the weird black sesame sticks for the sake of trying and the churros style dessert because it smells too good. <br /> 
           <img src="/assets/img/foodhkg5.png" alt="foodhkg5" />
           While savouring all these meals you brought to your table, some walking waiters come with their trolleys and might suggest you some congee bowls or other specialities!  <br /> 
           <img src="/assets/img/foodhkg6.png" alt="foodhkg6" />
-          After an hour there, and seeing or tasting stuff you would have not imagine, your tummy is now full and you’re already looking forward for the next occasion you will have to come to Lin Heung Lay. <br /> 
+          After an hour there, and seeing or tasting stuff you would have not imagine, your tummy is now full and you're already looking forward for the next occasion you will have to come to Lin Heung Lay. <br /> 
         
 
 <br /> <br> 
@@ -87,22 +120,15 @@
           <i>Location:  <a href=https://maps.app.goo.gl/fKR74y2vRNHNgEfGA> 160號 Wellington St in Hong Kong.</a></i></p>
           <p><hr/> </p>
 
-
-
-
-
-
-
-        
-        <h2>Mexico City</h2> 
+        <h2 id="mexicocity">Mexico City</h2> 
         <h3>Tacos La Chula</h3> 
     
         <p>
           I discovered this 24/7 taqueria completely randomly in the middle of night while looking for food after a long flight. I ended up loving it so much that I came back to it every night during my stay!<br />
           <img src="/assets/img/foodmex1.png" alt="foodmex1" />
-          La Chula has everything you might need during a Mexico trip (maybe even more!). Especially, their tacos are delicious. The tortillas are freshly made, and all the different kind of meats are great in taste and quality (my favorite is the campacheno). It’s also super cheap. It also comes with a set of sauces which would elevate the taste of anything at the cost of burning your mouth.<br />
+          La Chula has everything you might need during a Mexico trip (maybe even more!). Especially, their tacos are delicious. The tortillas are freshly made, and all the different kind of meats are great in taste and quality (my favorite is the campacheno). It's also super cheap. It also comes with a set of sauces which would elevate the taste of anything at the cost of burning your mouth.<br />
           <img src="/assets/img/foodmex2.png" alt="foodmex2" />
-          There are also different Mexican meals that you can experiment. I tried for the first time the frijoles charros which, even though it isn’t my favorite, was fun to experiment. The guacamole was super fresh, and I never say no to a large glass of horchata to extinguish the fire in my mouth.<br /> 
+          There are also different Mexican meals that you can experiment. I tried for the first time the frijoles charros which, even though it isn't my favorite, was fun to experiment. The guacamole was super fresh, and I never say no to a large glass of horchata to extinguish the fire in my mouth.<br /> 
           <img src="/assets/img/foodmex3.png" alt="foodmex3" />
           Overall, if I could eat the same food everyday during a Mexican stay, La Chula would definitely be my choice.<br /> 
 
@@ -113,10 +139,7 @@
           <i>Location:  <a href=https://maps.app.goo.gl/SwuRjUcMWFRPcfUw8> Liverpool 102, Juárez in Mexico City</a></i></p>
           <p><hr/> </p>
 
-
-
-
-        <h2>Mumbai</h2> 
+        <h2 id="mumbai">Mumbai</h2> 
         <h3>जय श्री कृष्ण डेयरी फार्म (Jai Shri Krishna Dairy Farm)</h3> 
     
         <p>
@@ -137,21 +160,17 @@
           <i>Location:  <a href=https://maps.app.goo.gl/Te7Z4ujWhYpVTtri7> 4, Ranade Rd, Dadar West in Mumbai</a></i></p>
           <p><hr/> </p>
 
-
-
-          
-
-        <h2>New-York</h2> 
+        <h2 id="newyork">New-York</h2> 
         <h3>Rosemary's</h3> 
     
         <p>
-          It’s a trendy (and my favorite) Italian place in the middle of Greenwich village.<br />
+          It's a trendy (and my favorite) Italian place in the middle of Greenwich village.<br />
           <img src="/assets/img/foodnyc1.png" alt="foodnyc1" />
           I had both of the carbonara and bolognese pasta, both are delicious in their own ways. <br />
           <img src="/assets/img/foodnyc3.png" alt="foodnyc3" />
           The bacon of the carbonara is perfectly cooked in some Martini Rossi, while the bolognese sauce is carefully prepared and delicious.<br /> 
           <img src="/assets/img/foodnyc4.png" alt="foodnyc4" />
-          The place is very nice, I love the cutleries, there is a boozy brunch I’d like to try one day, and the staff was very kind! <br /> 
+          The place is very nice, I love the cutleries, there is a boozy brunch I'd like to try one day, and the staff was very kind! <br /> 
 
 
 <br /> <br> 
@@ -160,14 +179,13 @@
           <i>Location:  <a href=https://maps.app.goo.gl/M8sFE7xNggc5bh1f8> 18 Greenwich Ave in New York.</a></i></p>
           <p><hr/> </p>
 
-
-        <h2>Osaka</h2> 
+        <h2 id="osaka">Osaka</h2> 
         <h3>さかえすし 玉屋町店 (Sakae Sushi)</h3> 
     
         <p>
-          If you are ever lost at night in Osaka’s streets, Sakae Sushi is here for you. It’s a discreet and calm sushi place open until very late which offer a wide selection of sushis/nigiris/makis made in front of you by an intimidating (although pretty sweet) sushi chef.<br />
+          If you are ever lost at night in Osaka's streets, Sakae Sushi is here for you. It's a discreet and calm sushi place open until very late which offer a wide selection of sushis/nigiris/makis made in front of you by an intimidating (although pretty sweet) sushi chef.<br />
           <img src="/assets/img/foodkix1.png" alt="foodkix1" />
-          I liked the bar aspect of it, it’s perfect for a small set of people. The quality of the food was amazing. The equilibrium between the rice, the fish, and the wasabi was very well executed, I feel like I could eat this again and again.<br />
+          I liked the bar aspect of it, it's perfect for a small set of people. The quality of the food was amazing. The equilibrium between the rice, the fish, and the wasabi was very well executed, I feel like I could eat this again and again.<br />
           <img src="/assets/img/foodkix2.png" alt="foodkix2" />
           The super fatty tuna is impressively tasty and melts in no-time when you eat it. It was my favorite. You cannot go wrong by taking the most common one and experimenting any kind of fish that might appeal to you.<br /> 
           <img src="/assets/img/foodkix3.png" alt="foodkix3" />
@@ -181,8 +199,7 @@
           <i>Location:  <a href=https://maps.app.goo.gl/7ZyeXrTdaeJ9yxqx6> 2-27 Souemoncho, Chuo Ward, in Osaka.</a></i></p>
           <p><hr/> </p>
           
-          
-        <h2>Paris</h2> 
+        <h2 id="paris">Paris</h2> 
         <h3>Les Papilles</h3> 
     
         <p>
@@ -206,16 +223,16 @@
           <i>Location:  <a href=https://maps.app.goo.gl/5FcgnFPpStr8iuDs7> 30 Rue Gay-Lussac in Paris.</a></i></p>
           <p><hr/> </p>
 
-    <h2>Seoul</h2> 
+    <h2 id="seoul">Seoul</h2> 
     <h3>한일각 </h3> 
 
     <p>
       <img src="/assets/img/foodicn1.png" alt="foodicn1" />
-      It’s my hidden student gem in Korea. It’s located in a small apartment on the first floor of a random building in Itaewon, usually empty of people, with a desk full of papers and messy folders that have been there for years at the entrance, and a big TV continuously playing Korean news which makes you feel like you are at your grand-parents. <br />
+      It's my hidden student gem in Korea. It's located in a small apartment on the first floor of a random building in Itaewon, usually empty of people, with a desk full of papers and messy folders that have been there for years at the entrance, and a big TV continuously playing Korean news which makes you feel like you are at your grand-parents. <br />
       <img src="/assets/img/foodicn2.png" alt="foodicn2" />
-      The only meal I ever tried there (and probably will ever try) is their ridiculously delicious jajangmyeon (you can use the following Korean characters if it’s more useful to you: 자장면).<br /> 
+      The only meal I ever tried there (and probably will ever try) is their ridiculously delicious jajangmyeon (you can use the following Korean characters if it's more useful to you: 자장면).<br /> 
       <img src="/assets/img/foodicn3.png" alt="foodicn3" />
-      This is basically some noodles covered with a huge batch of brown sauce (not the American one) with some pieces of pork and onion, it tastes delicious, and cherry on the top it’s only 4$.<br /> 
+      This is basically some noodles covered with a huge batch of brown sauce (not the American one) with some pieces of pork and onion, it tastes delicious, and cherry on the top it's only 4$.<br /> 
       <img src="/assets/img/foodicn4.png" alt="foodicn4" />
       I strongly recommend it as it is a Korean classic cheat meal, and the place is more than authentic!
           
@@ -226,15 +243,15 @@
  
     <p><hr/> </p>
 
-		<h2>Shanghai</h2> 
+		<h2 id="shanghai">Shanghai</h2> 
     <h3>佳家湯包 (Jia Jia Tang Bao）</h3> 
 
 		<p>
       <img src="/assets/img/foodpvg1.png" alt="foodpvg1" />
       
-      It’s a cute restaurant offering many crab dishes,located at the north of People’s Parc and surrounded by many other food places.<br />
+      It's a cute restaurant offering many crab dishes,located at the north of People's Parc and surrounded by many other food places.<br />
       <img src="/assets/img/foodpvg2.png" alt="foodpvg2" />
-      In a nutshell, the food was delicious and if you like crab you can’t be disappointed. As represented on the following pictures, you can see meals that might appear familiar, but they are flawless!<br /> 
+      In a nutshell, the food was delicious and if you like crab you can't be disappointed. As represented on the following pictures, you can see meals that might appear familiar, but they are flawless!<br /> 
       <img src="/assets/img/foodpvg3.png" alt="foodpvg3" />
       The dumplings were filled with a yummy crab filling and some soup (which destroyed my pant, beware).<br /> 
       <img src="/assets/img/foodpvg4.png" alt="foodpvg4" />
@@ -249,14 +266,12 @@
  
       <p><hr/> </p>
 
-
-
-		<h2>Singapore</h2> 
+		<h2 id="singapore">Singapore</h2> 
     <h3>Ya Kun Kaya Toast</h3> 
 
 		<p>
       <img src="/assets/img/foodsin1.png" alt="foodsin1" />
-      It’s a classic Singaporean breakfast branch which you can find all over town. It is also very popular so you might want to get there early if you do not want to be stuck in a line for hours. <br /> 
+      It's a classic Singaporean breakfast branch which you can find all over town. It is also very popular so you might want to get there early if you do not want to be stuck in a line for hours. <br /> 
       <img src="/assets/img/foodsin2.png" alt="foodsin2" />
       Overall, it is silly how simple it is. A classic order would be the Kaya toast with butter set. It consists of pieces of bread, sandwiching a piece of butter and some kaya jam (derivative of coconut jam). It is very tasty and sweet, and you can dip in a bowl of soft-boiled eggs on the side which you can salt with some soy sauce. <br />
       <img src="/assets/img/foodsin3.png" alt="foodsin3" />
@@ -270,12 +285,12 @@
  
       <p><hr/> </p>
 
-      <h2>Taipei</h2> 
+      <h2 id="taipei">Taipei</h2> 
       <h3>菲登早午餐</h3> 
   
       <p>
         <img src="/assets/img/foodtpe1.png" alt="foodtpe1" />
-        It’s a Chinese breakfast place as you’d find many walking across Taipei streets. <br />
+        It's a Chinese breakfast place as you'd find many walking across Taipei streets. <br />
         <img src="/assets/img/foodtpe2.png" alt="foodtpe2" />
         Everything is written in Chinese so you either need a Chinese friend or must accept your fate.<br /> 
         <img src="/assets/img/foodtpe3.png" alt="foodtpe3" />
@@ -287,7 +302,7 @@
         <i>Location:  <a href=https://maps.app.goo.gl/678Q5EeoCWhBoHbN9> 5號, Lane 9, Section 1, Luosifu Rd, Zhongzheng District in Taipei.</a></i></p>
         <p><hr/> </p>
 
-        <h2>Tel-Aviv</h2> 
+        <h2 id="telaviv">Tel-Aviv</h2> 
         <h3>ויקטור דגים (Victor Dagim)</h3> 
     
         <p>
@@ -303,12 +318,12 @@
           <i>Location:  <a href=https://maps.app.goo.gl/GvhdGyajoe6YAYy4A> Levinski St 36 in Tel Aviv-Yafo.</a></i></p>
           <p><hr/> </p>
 
-          <h2>Tokyo</h2> 
+          <h2 id="tokyo">Tokyo</h2> 
           <h3>松栄 渋谷スクランブルスクエア店 (Matsue）</h3> 
       
           <p>
             <img src="/assets/img/foodnrt1.png" alt="foodnrt1" />
-            It’s a fancy sushi place located near Shibuya crossing, and probably the best one I ever went too! <br />
+            It's a fancy sushi place located near Shibuya crossing, and probably the best one I ever went too! <br />
             <img src="/assets/img/foodnrt2.png" alt="foodnrt2" />
             Two setups exist; either at the counter facing the chefs and seeing your different meals being prepared, or some private rooms for large groups.<br /> 
             <img src="/assets/img/foodnrt3.png" alt="foodnrt3" />
@@ -324,13 +339,28 @@
             <i>Location:  <a href=https://maps.app.goo.gl/sf22RafPUqWkDk7bA> Shibuya, 2 Chome−24−12 スクランブルスクエア in Tokyo.</a></i></p>
              
 
-
-
       </section>
       <footer>
         <p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
+    <script>
+      // ── Active sidebar on scroll ──
+      const cities = document.querySelectorAll('h2[id]');
+      const navLinks = document.querySelectorAll('#toc a');
+
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px' });
+
+      cities.forEach(c => obs.observe(c));
+    </script>
   </body>
 </html>
