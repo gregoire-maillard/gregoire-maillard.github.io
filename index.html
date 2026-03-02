@@ -1,91 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Grégoire Maillard</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f7f7f5; color: #111; }
-    .accent-bar { height: 4px; background: #2563eb; width: 100%; }
-    .container { max-width: 760px; margin: 0 auto; padding: 64px 32px 80px; }
+<!doctype html>
+<html>
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-    .hero { margin-bottom: 64px; }
-    .hero h1 { font-size: 3.2rem; font-weight: 800; letter-spacing: -2px; line-height: 1; color: #0f0f0f; }
-    .hero .tagline { font-size: 1rem; color: #888; margin-top: 12px; font-weight: 400; }
-    .hero .links { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
-    .hero .links a { background: #fff; border: 1px solid #e0e0e0; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; text-decoration: none; color: #333; transition: border-color 0.2s, color 0.2s; }
-    .hero .links a:hover { border-color: #2563eb; color: #2563eb; }
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Grégoire's Page</title>
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px 64px; margin-bottom: 56px; }
-    @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } .hero h1 { font-size: 2.2rem; } }
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-    .block h2 { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 2.5px; color: #2563eb; margin-bottom: 18px; font-weight: 600; }
-    .about-text { font-size: 0.95rem; line-height: 1.75; color: #555; }
+  </head>
+  <body>
 
-    .entry { padding: 10px 0; border-bottom: 1px solid #e8e8e8; }
-    .entry:last-child { border-bottom: none; }
-    .entry-title { font-size: 0.88rem; font-weight: 600; color: #111; }
-    .entry-sub { font-size: 0.8rem; color: #999; margin-top: 2px; }
+    <div class="wrapper">
+      <header>
+        <h1>Grégoire Maillard</h1>
+		<img src="/assets/img/profile.png" alt="Logo" />
+        
 
-    .projects { margin-bottom: 0; }
-    .projects h2 { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 2.5px; color: #2563eb; margin-bottom: 18px; font-weight: 600; }
-    .proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 560px) { .proj-grid { grid-template-columns: 1fr; } }
+        <p><i>Me, in front of a plane.</i> <br> <br> <a href="https://www.linkedin.com/in/gregoire-maillard" target="_blank"><img src="/assets/img/linkedin_logo.png" alt="Linkedin" style="width:14px;height:14px;"> LinkedIn</a> <br> <a href="/assets/docs/resume.pdf" >📄 Resume</a> <hr/>  <a href="https://www.goodreads.com/user/show/185240636-gr-goire-maillard" target="_blank"><img src="/assets/img/goodreads2.png" alt="Goodreads" style="width:14px;height:14px;"> What I read - Goodreads</a> <br> <a href="https://letterboxd.com/gregoire_/" target="_blank"><img src="/assets/img/letterboxd.png" alt="Letterboxd" style="width:14px;height:14px;"> What I watch - Letterboxd</a></p>
+        
+		
+        
 
-    .proj-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 8px; padding: 18px 20px; text-decoration: none; color: inherit; display: block; transition: border-color 0.2s, box-shadow 0.2s; }
-    .proj-card:hover { border-color: #2563eb; box-shadow: 0 2px 12px rgba(37,99,235,0.08); }
-    .proj-card .num { font-size: 0.7rem; color: #ccc; font-weight: 700; margin-bottom: 8px; }
-    .proj-card .title { font-size: 0.9rem; font-weight: 600; color: #111; line-height: 1.3; }
-    .proj-card .desc { font-size: 0.78rem; color: #aaa; margin-top: 6px; line-height: 1.4; }
+        <p></p>
+      </header>
+      <section>
+  <!--[if lt IE 9]>       
+        <h1>Welcome to my page!</h1>
+ <![endif]-->
 
-    footer { border-top: 1px solid #e0e0e0; padding-top: 24px; font-size: 0.75rem; color: #bbb; }
-  </style>
-</head>
-<body>
-  <div class="accent-bar"></div>
-  <div class="container">
+		<h2>About Me</h2>
 
-    <div class="hero">
-      <h1>Grégoire<br>Maillard</h1>
-      <p class="tagline">French economist · Revenue Management · Montréal, Canada</p>
-      <div class="links">
-        <a href="https://linkedin.com/in/gregoire-maillard">LinkedIn</a>
-        <a href="/assets/docs/resume.pdf">Resume</a>
-        <a href="https://goodreads.com/user/show/185240636-gr-goire-maillard">Goodreads</a>
-        <a href="https://letterboxd.com/gregoire_/">Letterboxd</a>
-      </div>
-    </div>
+		<p>French economist working in Revenue Management in Montreal, Canada.<br>
+        I love learning about the airline industry, reading graphic novels, and drinking iced lattes.<br>
+		</p>
 
-    <div class="grid">
-      <div class="block">
-        <h2>About</h2>
-        <p class="about-text">French economist working in Revenue Management. I love the airline industry, graphic novels, and iced lattes.</p>
-      </div>
-      <div class="block">
-        <h2>Experience</h2>
-        <div class="entry"><div class="entry-title">Revenue Management Science Manager</div><div class="entry-sub">Air Canada · 2022–present</div></div>
-        <div class="entry"><div class="entry-title">Socio-Economic Planning Officer</div><div class="entry-sub">Quebec Ministry of Finance · 2021–2022</div></div>
-      </div>
-      <div class="block">
+
+		<h2>Experiences</h2>
+
+		<p>
+      Revenue Management Science Manager, <i>Air Canada</i> (2022-current)<br>
+      Socio-Economic Planning Officer, <i>Quebec Ministry of Finance</i> (2021-2022)<br>
+ 
         <h2>Education</h2>
-        <div class="entry"><div class="entry-title">Master in Economics</div><div class="entry-sub">McGill University · 2020–2022</div></div>
-        <div class="entry"><div class="entry-title">Bachelor in Business Administration</div><div class="entry-sub">HEC Montréal · 2016–2020</div></div>
-      </div>
-    </div>
 
-    <div class="projects">
-      <h2>Personal Projects</h2>
-      <div class="proj-grid">
-        <a class="proj-card" href="/food.html"><div class="num">01</div><div class="title">Discover new restaurants</div><div class="desc">Reviews and culinary experiments around the world</div></a>
-        <a class="proj-card" href="/book.html"><div class="num">02</div><div class="title">Expand my literary world</div><div class="desc">Read a Nobel Prize author bibliography every year</div></a>
-        <a class="proj-card" href="/movie.html"><div class="num">03</div><div class="title">Turkish skills with movies</div><div class="desc">Writing about films in a new language</div></a>
-        <a class="proj-card" href="/architecture.html"><div class="num">04</div><div class="title">Eye for architecture</div><div class="desc">Favorite buildings from cities I visit</div></a>
-      </div>
-    </div>
+		<p>Master in Economics, <i>McGill University</i> (2020-2022)<br>
+       Bachelor in Business Administration, <i>HEC Montréal</i> (2016-2020)</p>
+		
+		<h2>Personal Projects</h2>
 
-    <br><br>
-    <footer>gregoiremaillard.com</footer>
-  </div>
-</body>
+    <p><a href="/food.html">Discover new restaurants </a><br />Reviews, and culinary experiments around the world.</p>
+
+    <p><a href="/book.html">Expand my literary world </a><br />Read a Nobel Prize author bibliography every year.</p>
+
+    <p><a href="/movie.html">Develop my Turkish skills with movies </a><br />Write about newly seen films in a new language.</p>
+
+
+		<p><a href="/architecture.html">Cultivate my eye for everyday architecture </a><br />My favorite buildings and statues for each city I visit.</p>
+		
+    <!--  
+    <p><a href="/learnturkish.html">Learn a new language: Turkish </a><br />Compilation of ressources, grammar rules, and other good stuff.</p>
+		-->
+
+		<p>More to come!<br>
+        </p>
+
+
+      </section>
+      <footer>
+        <p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+  </body>
 </html>
