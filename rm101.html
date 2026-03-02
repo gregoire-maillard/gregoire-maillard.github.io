@@ -1,924 +1,664 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="viewport" content="width=device-width">
-  <title>Airline Revenue Management 101</title>
-  <style>
-    /* ── Reset & base ── */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 15px;
-      line-height: 1.75;
-      color: #333;
-      background: #fff;
-    }
-
-    /* ── GitHub Pages "minimal" layout ── */
-    .wrapper {
-      display: flex;
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    /* ── Sidebar ── */
-    header {
-      width: 230px;
-      flex-shrink: 0;
-      padding: 40px 0 40px 0;
-      padding-right: 24px;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-    }
-
-    header h1 {
-      font-size: 1.1rem;
-      font-weight: normal;
-      margin-bottom: 4px;
-    }
-
-    header h1 a {
-      color: #333;
-      text-decoration: none;
-    }
-
-    header h1 a:hover { text-decoration: underline; }
-
-    header .tagline {
-      font-size: 0.78rem;
-      color: #999;
-      font-style: italic;
-      margin-bottom: 20px;
-      line-height: 1.4;
-    }
-
-    header hr {
-      border: none;
-      border-top: 1px solid #ddd;
-      margin: 16px 0;
-    }
-
-    header nav { margin-top: 8px; }
-
-    header nav .nav-label {
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #bbb;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-weight: 600;
-      margin-bottom: 8px;
-      display: block;
-    }
-
-    header nav a {
-      display: block;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.78rem;
-      color: #666;
-      text-decoration: none;
-      padding: 4px 0 4px 10px;
-      border-left: 2px solid transparent;
-      line-height: 1.4;
-      transition: all 0.15s;
-    }
-
-    header nav a:hover {
-      color: #267CB9;
-      border-left-color: #267CB9;
-    }
-
-    header nav a.active {
-      color: #267CB9;
-      border-left-color: #267CB9;
-      font-weight: 600;
-    }
-
-    header nav .ch-num {
-      color: #ccc;
-      font-size: 0.68rem;
-      margin-right: 4px;
-    }
-
-    /* ── Main content ── */
-    section {
-      flex: 1;
-      min-width: 0;
-      padding: 40px 0 80px 30px;
-      border-left: 1px solid #ddd;
-    }
-
-    /* ── Hero ── */
-    .hero {
-      margin-bottom: 56px;
-      padding-bottom: 40px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .hero .kicker {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #267CB9;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .hero h1 {
-      font-size: 2.4rem;
-      font-weight: normal;
-      letter-spacing: -0.5px;
-      line-height: 1.15;
-      color: #111;
-      margin-bottom: 14px;
-    }
-
-    .hero .subtitle {
-      font-size: 1rem;
-      color: #777;
-      font-style: italic;
-      max-width: 520px;
-      margin-bottom: 16px;
-    }
-
-    .hero .byline {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.78rem;
-      color: #bbb;
-    }
-
-    /* ── Chapters ── */
-    .chapter {
-      margin-bottom: 72px;
-      scroll-margin-top: 24px;
-    }
-
-    .chapter-label {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #267CB9;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .chapter h2 {
-      font-size: 1.55rem;
-      font-weight: normal;
-      letter-spacing: -0.3px;
-      color: #111;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .chapter p {
-      margin-bottom: 16px;
-      color: #333;
-    }
-
-    .chapter h3 {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.88rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #444;
-      margin: 28px 0 10px;
-    }
-
-    .chapter ul {
-      margin: 0 0 16px 20px;
-    }
-
-    .chapter ul li {
-      margin-bottom: 6px;
-      color: #333;
-    }
-
-    /* ── Callout ── */
-    .callout {
-      background: #f4f8fd;
-      border-left: 3px solid #267CB9;
-      padding: 14px 18px;
-      margin: 24px 0;
-      border-radius: 0 4px 4px 0;
-    }
-
-    .callout-label {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #267CB9;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .callout p {
-      font-size: 0.92rem;
-      color: #2a3a4a;
-      margin-bottom: 0;
-    }
-
-    /* ── Example box ── */
-    .example {
-      background: #fafafa;
-      border: 1px solid #e8e8e8;
-      border-radius: 6px;
-      padding: 16px 20px;
-      margin: 20px 0;
-    }
-
-    .example-label {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #999;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .example p {
-      font-size: 0.91rem;
-      color: #444;
-      margin-bottom: 8px;
-    }
-
-    .example p:last-child { margin-bottom: 0; }
-
-    /* ── Table ── */
-    .rm-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.82rem;
-      margin: 20px 0;
-    }
-
-    .rm-table th {
-      background: #f5f5f5;
-      border-bottom: 2px solid #ddd;
-      padding: 9px 12px;
-      text-align: left;
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #888;
-      font-weight: 600;
-    }
-
-    .rm-table td {
-      padding: 9px 12px;
-      border-bottom: 1px solid #f0f0f0;
-      color: #333;
-      vertical-align: top;
-    }
-
-    .rm-table tr:last-child td { border-bottom: none; }
-    .rm-table tr:hover td { background: #fafafa; }
-
-    .tag {
-      display: inline-block;
-      padding: 2px 7px;
-      border-radius: 10px;
-      font-size: 0.68rem;
-      font-weight: 600;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-    }
-
-    .tag-high { background: #e6f4ea; color: #1e7e34; }
-    .tag-mid  { background: #fff8e1; color: #8a6200; }
-    .tag-low  { background: #fdecea; color: #b71c1c; }
-
-    /* ── Divider ── */
-    .divider {
-      border: none;
-      border-top: 1px solid #eee;
-      margin: 56px 0;
-    }
-
-    /* ── Quiz ── */
-    .quiz {
-      background: #fff;
-      border: 1px solid #d0dff0;
-      border-radius: 8px;
-      padding: 22px 24px 18px;
-      margin-top: 32px;
-    }
-
-    .quiz-label {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #267CB9;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .quiz-q {
-      font-size: 0.95rem;
-      color: #222;
-      margin-bottom: 14px;
-      font-style: italic;
-    }
-
-    .quiz-opts { display: flex; flex-direction: column; gap: 7px; }
-
-    .quiz-btn {
-      background: #f7f7f5;
-      border: 1px solid #e0e0e0;
-      border-radius: 5px;
-      padding: 9px 14px;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.84rem;
-      cursor: pointer;
-      text-align: left;
-      color: #333;
-      transition: all 0.15s;
-      line-height: 1.4;
-    }
-
-    .quiz-btn:hover:not(:disabled) {
-      border-color: #267CB9;
-      background: #f0f6fc;
-      color: #267CB9;
-    }
-
-    .quiz-btn.correct {
-      background: #e6f4ea;
-      border-color: #2e7d32;
-      color: #1b5e20;
-    }
-
-    .quiz-btn.wrong {
-      background: #fdecea;
-      border-color: #c62828;
-      color: #b71c1c;
-    }
-
-    .quiz-btn:disabled { cursor: default; opacity: 0.55; }
-    .quiz-btn.correct:disabled,
-    .quiz-btn.wrong:disabled { opacity: 1; }
-
-    .quiz-feedback {
-      margin-top: 12px;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.84rem;
-      padding: 10px 14px;
-      border-radius: 5px;
-      display: none;
-      line-height: 1.5;
-    }
-
-    .quiz-feedback.show { display: block; }
-    .quiz-feedback.ok  { background: #e6f4ea; color: #1b5e20; }
-    .quiz-feedback.bad { background: #fff8e1; color: #7a4f00; }
-
-    .quiz-reset {
-      margin-top: 10px;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 0.76rem;
-      color: #aaa;
-      background: none;
-      border: none;
-      cursor: pointer;
-      text-decoration: underline;
-      padding: 0;
-      display: none;
-    }
-
-    .quiz-reset.show { display: inline; }
-
-    /* ── Footer ── */
-    footer {
-      padding: 24px 0 0;
-      border-top: 1px solid #ddd;
-      font-size: 0.78rem;
-      color: #bbb;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-    }
-
-    footer a { color: #bbb; }
-    footer a:hover { color: #267CB9; }
-
-    /* ── Responsive ── */
-    @media (max-width: 680px) {
-      .wrapper { flex-direction: column; }
-      header {
-        width: 100%;
-        position: static;
-        height: auto;
-        padding: 24px 0 0;
-        border-bottom: 1px solid #ddd;
-        margin-bottom: 24px;
-      }
-      header nav { display: none; }
-      section { padding: 24px 0 60px; border-left: none; }
-      .hero h1 { font-size: 1.8rem; }
-    }
-  </style>
-</head>
-<body>
-<div class="wrapper">
-
-  <!-- ── Sidebar ── -->
-  <header>
-    <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
-    <p class="tagline">Airline Revenue Management 101</p>
-    <hr>
-    <nav id="toc">
-      <span class="nav-label">Chapters</span>
-      <a href="#ch00"><span class="ch-num">00</span> Why RM?</a>
-      <a href="#ch01"><span class="ch-num">01</span> Fare Classes</a>
-      <a href="#ch02"><span class="ch-num">02</span> Class-Based Forecasting</a>
-      <a href="#ch03"><span class="ch-num">03</span> Leg Inventory & EMSR</a>
-      <a href="#ch04"><span class="ch-num">04</span> Class-Free Forecasting</a>
-      <a href="#ch05"><span class="ch-num">05</span> Network Optimization</a>
-      <a href="#ch06"><span class="ch-num">06</span> Dynamic Pricing</a>
-      <a href="#ch07"><span class="ch-num">07</span> Offer & Order</a>
-      <a href="#ch08"><span class="ch-num">08</span> What's Next</a>
-    </nav>
-  </header>
-
-  <!-- ── Main ── -->
-  <section>
-
-    <!-- Hero -->
-    <div class="hero">
-      <div class="kicker">Airline Revenue Management</div>
-      <h1>RM 101</h1>
-      <p class="subtitle">How airlines decide who pays what for every seat on every flight — the intuitions behind the math.</p>
-      <p class="byline">By Grégoire Maillard &nbsp;·&nbsp; Revenue Management Science Manager, Air Canada</p>
-    </div>
-
-    <!-- ── CH 00 ── -->
-    <div class="chapter" id="ch00">
-      <div class="chapter-label">Chapter 00</div>
-      <h2>Why Revenue Management?</h2>
-
-      <p>Picture a flight from Montréal to Paris departing in 90 days. The plane has 300 seats. The moment the wheels leave the ground, every empty seat becomes permanently worthless — it can never be sold again. That single fact is the entire reason Revenue Management exists.</p>
-
-      <p>Revenue Management (RM) is the discipline of selling the right product, to the right customer, at the right price, at the right time. It was born in the airline industry in the late 1970s, after US deregulation forced carriers to compete on price for the first time. Airlines quickly realized that pricing intelligently — not just cheaply — was a matter of survival.</p>
-
-      <h3>Three properties that make airlines special</h3>
-
-      <p>Most industries don't need RM. Airlines do, because of three compounding properties:</p>
-
-      <ul>
-        <li><strong>Perishability.</strong> A seat that doesn't sell by departure generates zero revenue, forever. Unlike a hotel that can discount a room day-of, an airline can't re-sell a departed seat.</li>
-        <li><strong>Fixed capacity.</strong> You can't add seats when demand spikes — the plane is the plane. Every seat decision is a trade-off against every other seat.</li>
-        <li><strong>Demand segmentation.</strong> The leisure traveler booking six months out and the consultant booking the morning of the flight have radically different willingness to pay for the exact same seat. The RM system's job is to serve both without letting one "steal" the other's price point.</li>
-      </ul>
-
-      <div class="callout">
-        <div class="callout-label">The core tension</div>
-        <p>Sell too cheap too early and you fill the plane with low-fare passengers — leaving no room for the business traveler who'd have paid 4× more. Hold too aggressively for high fares and you depart with empty seats. Every RM decision navigates this tension, flight by flight, day by day.</p>
-      </div>
-
-      <p>Effective RM has been estimated to add 4–8% to airline revenues compared to naive pricing. For a major carrier, that's hundreds of millions of dollars per year — generated not by flying more planes, but by pricing the existing ones better.</p>
-    </div>
-
-    <hr class="divider">
-
-    <!-- ── CH 01 ── -->
-    <div class="chapter" id="ch01">
-      <div class="chapter-label">Chapter 01</div>
-      <h2>Fare Classes & the Bucket System</h2>
-
-      <p>Before forecasting or optimization can happen, airlines need a structure to work within. That structure is the <strong>fare class</strong> — and understanding it is the key to understanding everything that follows.</p>
-
-      <h3>What is a fare class?</h3>
-
-      <p>A fare class (also called a booking class) is a letter — Y, K, Q, V, and so on — that represents not just a price, but a bundle of rules. Refundability, changeability, advance purchase requirements, minimum stay conditions. These rules exist for a single purpose: to force customers to self-select into the segment that matches their actual price sensitivity.</p>
-
-      <table class="rm-table">
-        <thead>
-          <tr>
-            <th>Class</th>
-            <th>Typical Rules</th>
-            <th>Target Customer</th>
-            <th>Yield</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Y / J</strong></td>
-            <td>Fully refundable, no advance purchase</td>
-            <td>Business, corporate</td>
-            <td><span class="tag tag-high">High</span></td>
-          </tr>
-          <tr>
-            <td><strong>K / M</strong></td>
-            <td>Change fee, partial refund</td>
-            <td>Semi-flexible traveler</td>
-            <td><span class="tag tag-mid">Mid</span></td>
-          </tr>
-          <tr>
-            <td><strong>Q / V / L</strong></td>
-            <td>Non-refundable, 14-day advance purchase</td>
-            <td>Leisure, price-sensitive</td>
-            <td><span class="tag tag-low">Low</span></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3>The bucket metaphor</h3>
-
-      <p>Imagine each flight's inventory as a stack of buckets, from cheapest at the bottom to most expensive at the top. Each bucket holds a certain number of seats available at that fare class. The RM system's job is to decide, at any point in time, how many buckets to open — and crucially, which ones to close.</p>
-
-      <p>When demand is weak and departure is far away, you open the cheap buckets to stimulate bookings. As departure approaches and the plane fills up, you close the cheap buckets and let only higher-fare passengers in. The scarcest seats go to the customers who value them most — and who pay accordingly.</p>
-
-      <div class="callout">
-        <div class="callout-label">Price discrimination — the economist's view</div>
-        <p>What airlines do with fare classes is textbook third-degree price discrimination: charging different prices to different customer segments for the same product. The restrictions aren't punitive — they're a segmentation mechanism. A business traveler <em>could</em> buy the non-refundable advance-purchase fare, but they won't, because it doesn't work for how they travel. The system works because customers sort themselves.</p>
-      </div>
-
-      <h3>Booking class vs. cabin class</h3>
-
-      <p>One important clarification: booking class (the letter) and cabin class (Economy, Business) are different things. Many booking classes can exist within a single cabin. Two passengers sitting next to each other in Economy may hold Q and Y fares — and have paid very different prices with very different conditions. The letter is invisible to the passenger but central to the RM system.</p>
-
-      <div class="example">
-        <div class="example-label">The Saturday night stay rule</div>
-        <p>For decades, discount fares required a Saturday night stay. Why? Because business travelers almost never want to spend a weekend away from home. This single restriction cleanly separated business from leisure travelers without any airline employee having to judge each booking. Elegant, automatic segmentation.</p>
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <!-- ── CH 02 ── -->
-    <div class="chapter" id="ch02">
-      <div class="chapter-label">Chapter 02</div>
-      <h2>Class-Based Forecasting</h2>
-
-      <p>Inventory control is only as good as the forecast feeding it. Before an RM system can decide which buckets to open, it needs to predict what demand looks like for each fare class, for each flight, at each point in the booking window. This is class-based forecasting — the backbone of traditional RM.</p>
-
-      <h3>What we're actually forecasting</h3>
-
-      <p>The naive answer is "how many passengers will fly." The real answer is far more granular: how many passengers will book, <em>in each fare class</em>, <em>on each day</em> between now and departure. A complete forecast is essentially a matrix — fare class by days-to-departure — that tells the system where demand will come from and when.</p>
-
-      <h3>Booking curves</h3>
-
-      <p>The most foundational concept in class-based forecasting is the <strong>booking curve</strong> — the shape of how reservations accumulate over time before departure. Every market has a characteristic curve. Long-haul leisure routes see a burst of early bookings, then a lull, then a spike close-in. Short-haul business routes are flatter, with most bookings arriving in the final two weeks.</p>
-
-      <p>The RM system continuously compares actual bookings against the expected historical curve. If you're tracking ahead of pace 60 days out, demand is strong — time to close cheap fare classes. If you're behind, you may need to open cheaper fares to stimulate demand. The booking curve is the system's real-time pulse check.</p>
-
-      <div class="example">
-        <div class="example-label">The snowball metaphor</div>
-        <p>Think of bookings as a snowball rolling downhill toward departure. You know roughly how big it should be at each point in the hill. If it's larger than expected halfway down, close cheap fares — it will be plenty big on its own. If it's smaller than expected, open cheaper fares to give it a push. The curve tells you whether you're on track.</p>
-      </div>
-
-      <h3>The unconstraining problem</h3>
-
-      <p>Here is a subtle but important methodological challenge: if a fare class was closed 45 days before departure, you never observed the demand that existed at that price. Your historical data is <em>censored</em> — it shows you only the demand you accepted, not the demand that was there. Feed this biased data back into a forecasting model and you systematically underestimate true demand at low fares.</p>
-
-      <p>Unconstraining is the statistical process of inferring what true demand would have been, had the bucket been open. Common approaches include the EM algorithm (Expectation-Maximization) and Kaplan-Meier survival estimation. It's not glamorous, but getting unconstraining wrong can silently distort every downstream RM decision.</p>
-
-      <h3>Pickup forecasting</h3>
-
-      <p>A common practical approach is <strong>pickup forecasting</strong>: rather than modeling total demand from scratch, you look at how many bookings typically arrive in a specific future time window (say, the next 14 days), given the current booking position. If a flight today has 80 bookings with 30 days to go, and historically flights in that position pick up 40 more bookings in the final 30 days, you forecast 120 total. Simple, robust, and widely used — though it struggles in markets with unusual demand patterns.</p>
-
-      <div class="quiz" id="qz02">
-        <div class="quiz-label">Quick check</div>
-        <div class="quiz-q">A flight is tracking well ahead of its historical booking curve 50 days before departure. What should the RM system most likely do?</div>
-        <div class="quiz-opts">
-          <button class="quiz-btn" data-correct="false" data-qz="qz02">Open additional low-fare seats to capture the strong demand</button>
-          <button class="quiz-btn" data-correct="true"  data-qz="qz02">Close low-fare classes and protect capacity for higher-paying passengers</button>
-          <button class="quiz-btn" data-correct="false" data-qz="qz02">Do nothing — the booking curve is just a rough benchmark</button>
-        </div>
-        <div class="quiz-feedback" id="qz02-fb"></div>
-        <button class="quiz-reset" id="qz02-rs" onclick="resetQuiz('qz02')">Try again</button>
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <!-- ── CH 03 ── -->
-    <div class="chapter" id="ch03">
-      <div class="chapter-label">Chapter 03</div>
-      <h2>Leg Inventory Control & EMSR-b</h2>
-
-      <p>With a forecast in hand, the RM system must now act on it: how many seats should be protected for each fare class? This is the inventory control problem, and it sits at the heart of classical RM. The dominant algorithm for solving it on a single flight leg is <strong>EMSR-b</strong> — Expected Marginal Seat Revenue, version b.</p>
-
-      <h3>The fundamental question</h3>
-
-      <p>Every seat decision reduces to a single question: is the expected value of holding this seat for a future higher-paying passenger greater than the certain value of selling it right now to a lower-paying one? If yes, protect it. If no, sell it.</p>
-
-      <p>This is an opportunity cost calculation. The "cost" of selling a seat cheaply isn't just the low fare — it's also the revenue you give up by not having that seat available for a high-fare passenger later. A seat isn't just worth what someone offers today; it's worth what it could generate across all future possibilities.</p>
-
-      <h3>Protection levels and bid prices</h3>
-
-      <p>EMSR-b translates this logic into two practical levers. A <strong>protection level</strong> is the number of seats reserved for a given fare class and above — seats that won't be sold to lower classes even if they remain physically available. A <strong>bid price</strong> is the minimum revenue a booking must generate to be accepted at any given moment. Any fare request below the bid price is declined, regardless of physical availability.</p>
-
-      <div class="callout">
-        <div class="callout-label">The EMSR-b intuition</div>
-        <p>For each additional seat you protect for high-fare passengers, the expected marginal revenue of that protection decreases — you've already protected the most likely high-fare bookings first. EMSR-b keeps protecting seats until the expected marginal revenue of the next protected seat equals the fare of the class being displaced. That crossing point is the optimal protection level. No more, no less.</p>
-      </div>
-
-      <h3>Why "b"?</h3>
-
-      <p>EMSR-a, the original version, computes protection levels for each higher fare class independently and sums them. EMSR-b improves on this by aggregating all higher classes into a single weighted distribution before computing protection levels. When fares are close together, this aggregation produces meaningfully better results. In practice, EMSR-b is the industry standard for single-leg optimization.</p>
-
-      <h3>Nested vs. partitioned availability</h3>
-
-      <p>One implementation detail with large practical consequences: in a <strong>nested</strong> system, booking classes are hierarchical — opening a high class implicitly keeps lower classes available too, but the reverse is not true. A high-fare passenger can always book as long as any seat exists; a low-fare passenger can only book if seats are explicitly available to them. This prevents the system from ever turning away a high-yield passenger due to a technicality, which is critical given the asymmetry of losses involved.</p>
-
-      <div class="example">
-        <div class="example-label">Working through the logic</div>
-        <p>You have one seat left. A discount passenger wants it for $180. Your forecast says there's a 55% chance a full-fare passenger will book before departure at $480. Expected value of holding: 0.55 × $480 = $264 &gt; $180. Hold the seat.</p>
-        <p>Two hours later, same seat, same discount passenger. But the flight is now 4 hours from departure and the full-fare probability has dropped to 25%. Expected value of holding: 0.25 × $480 = $120 &lt; $180. Sell to the discount passenger. The bid price just fell below the offered fare.</p>
-      </div>
-
-      <div class="quiz" id="qz03">
-        <div class="quiz-label">Quick check</div>
-        <div class="quiz-q">What does a seat's bid price represent in EMSR-based inventory control?</div>
-        <div class="quiz-opts">
-          <button class="quiz-btn" data-correct="false" data-qz="qz03">The highest price ever paid for that seat historically</button>
-          <button class="quiz-btn" data-correct="true"  data-qz="qz03">The minimum fare a booking must offer to justify taking the seat, given expected future demand</button>
-          <button class="quiz-btn" data-correct="false" data-qz="qz03">The average fare across all bookings currently held on the flight</button>
-        </div>
-        <div class="quiz-feedback" id="qz03-fb"></div>
-        <button class="quiz-reset" id="qz03-rs" onclick="resetQuiz('qz03')">Try again</button>
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <!-- ── CH 04 ── -->
-    <div class="chapter" id="ch04">
-      <div class="chapter-label">Chapter 04</div>
-      <h2>Class-Free Forecasting</h2>
-
-      <p>Class-based forecasting works, but it carries a hidden assumption: that demand naturally organizes itself into discrete fare buckets. In reality, customer willingness to pay is a continuous spectrum. The bucket structure is an administrative convenience — not an economic truth. Class-free forecasting abandons that assumption and models demand the way it actually exists.</p>
-
-      <h3>The problem with buckets</h3>
-
-      <p>When you forecast by fare class, you're asking: "How many passengers will want the Q fare?" But Q is a price point you set — it's not a natural category of human desire. The real question is: "What is the distribution of willingness to pay across the entire customer population?" From that distribution, you can derive optimal prices, without being constrained by a pre-defined ladder of buckets.</p>
-
-      <p>Class-based systems also suffer from <strong>spill</strong> and <strong>recapture</strong> distortions. Spill is demand that wanted to book but couldn't because the desired class was closed. Recapture is how much of that demand eventually booked at a higher fare anyway. These dynamics are invisible in class-based data and extremely hard to model correctly — but they matter enormously for revenue.</p>
-
-      <h3>Willingness-to-pay distributions</h3>
-
-      <p>Class-free approaches model the underlying WTP distribution directly — often as a parametric distribution (Gaussian, log-normal, or a mixture model) estimated from historical transaction data. Given this distribution, the RM system can compute the expected revenue of any price point, not just the pre-defined fare levels. This makes it possible to ask: "What is the true revenue-maximizing price for this specific seat, right now?"</p>
-
-      <div class="callout">
-        <div class="callout-label">A richer picture of demand</div>
-        <p>Think of class-based forecasting as taking demand's photograph in black and white — useful, but you lose information. Class-free forecasting takes it in color. Instead of knowing "40 passengers want the Q fare," you know "there are 40 passengers with WTP between $180 and $240, 25 with WTP between $240 and $320, and a long tail up to $800." That richer picture supports far more precise pricing decisions.</p>
-      </div>
-
-      <h3>Choice modeling and buy-down</h3>
-
-      <p>A natural extension is <strong>choice modeling</strong>: rather than treating demand as fixed per class, you model how customers choose between available fare options. If you open a $150 fare alongside a $250 fare, some passengers who would have paid $250 will "buy down" to $150. Class-based systems are largely blind to this effect. Choice models — particularly multinomial logit models — explicitly account for buy-down, cross-price elasticities, and the impact of competitive fares on booking probabilities.</p>
-
-      <h3>The data challenge</h3>
-
-      <p>Class-free forecasting is theoretically superior, but it demands much more from data. You need not just booked fares but search data, rejected offers, and ideally, information about what alternatives were available when a customer chose. The gap between what was booked and what was considered — but declined — is where most of the signal lives, and it's notoriously hard to capture cleanly.</p>
-
-      <div class="quiz" id="qz04">
-        <div class="quiz-label">Quick check</div>
-        <div class="quiz-q">What is "buy-down" in the context of airline demand modeling?</div>
-        <div class="quiz-opts">
-          <button class="quiz-btn" data-correct="false" data-qz="qz04">When an airline lowers all fares due to weak demand</button>
-          <button class="quiz-btn" data-correct="true"  data-qz="qz04">When passengers who would have paid a higher fare instead book a cheaper one that's available</button>
-          <button class="quiz-btn" data-correct="false" data-qz="qz04">When a passenger upgrades from Economy to Business at the gate</button>
-        </div>
-        <div class="quiz-feedback" id="qz04-fb"></div>
-        <button class="quiz-reset" id="qz04-rs" onclick="resetQuiz('qz04')">Try again</button>
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <!-- ── CH 05 ── -->
-    <div class="chapter" id="ch05">
-      <div class="chapter-label">Chapter 05</div>
-      <h2>Network Optimization</h2>
-
-      <p>Everything so far treats each flight leg as an independent problem. But airlines operate networks — hubs, spokes, long-haul connecting itineraries. A passenger flying Montréal → Frankfurt → Istanbul uses two legs. Optimizing each leg in isolation ignores the relationships between them, and leaves serious revenue on the table.</p>
-
-      <h3>Why leg-based RM fails on networks</h3>
-
-      <p>Consider a Montréal → Frankfurt leg with one seat remaining. Two requests arrive simultaneously: a local passenger paying $420 for YUL–FRA only, and a connecting passenger paying $850 total for YUL–FRA–IST (with $360 attributed to the YUL–FRA leg). A leg-based system sees $420 vs. $360 and accepts the local passenger. The network just lost $430.</p>
-
-      <p>This isn't an edge case — it's a systematic bias. Leg-based RM always undervalues connecting passengers because it can't see beyond the leg it's optimizing.</p>
-
-      <div class="callout">
-        <div class="callout-label">The key insight: displacement cost</div>
-        <p>The value of accepting a booking isn't its fare — it's its fare minus the opportunity cost of all the capacity it consumes across the network. A connecting itinerary consuming two congested legs has a high displacement cost. One on two lightly loaded legs has a low one. Network RM makes this calculation explicit, which leg-based RM cannot.</p>
-      </div>
-
-      <h3>Origin-Destination (O&D) control</h3>
-
-      <p>The solution is to evaluate bookings at the <strong>itinerary level</strong> rather than the leg level. O&D control computes a network bid price for each leg — the shadow price of one unit of capacity on that leg — by solving a network linear program across all flights simultaneously. An itinerary is accepted only if its total revenue exceeds the sum of bid prices across all legs it uses. This single criterion captures both the itinerary's value and the capacity it consumes.</p>
-
-      <h3>Virtual nesting</h3>
-
-      <p>Solving a full network LP in real time for every booking request is computationally heavy. A practical approximation is <strong>virtual nesting</strong>: map each itinerary to a virtual booking class based on its computed network value (total fare minus displacement costs). High-network-value itineraries get mapped to high virtual classes; low-value ones get low classes. The existing leg-based inventory system then controls availability using these virtual classes — approximating network control without fully re-solving the network problem for each request.</p>
-
-      <h3>The hub advantage</h3>
-
-      <p>Network RM is one of the structural reasons hub-and-spoke carriers can outperform point-to-point carriers on revenue per seat. A hub carrier can fill a lightly-demanded spoke with connecting passengers whose total itinerary value is high — even when no viable local demand exists for that segment. The spoke essentially becomes a feeder, and its revenue contribution is properly captured only through a network lens.</p>
-
-      <div class="example">
-        <div class="example-label">Displacement cost in practice</div>
-        <p>Imagine your Frankfurt hub is congested on summer Saturdays — every flight is near-full, bid prices are high. A Montréal–Frankfurt–Mumbai itinerary priced at $1,100 sounds attractive in isolation. But if the FRA–BOM leg has a bid price of $600 and the YUL–FRA leg $380, the displacement cost is $980. The itinerary contributes only $120 to the network — and might rationally be declined in favor of higher-value local bookings on either leg.</p>
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <!-- ── CH 06 ── -->
-    <div class="chapter" id="ch06">
-      <div class="chapter-label">Chapter 06</div>
-      <h2>Dynamic Pricing</h2>
-
-      <p>Classical RM — with its fare classes, buckets, and EMSR-b — is fundamentally a system of <em>availability control</em>. The prices are set by pricing teams and filed in advance; RM decides which pre-set prices to show. Dynamic pricing breaks that assumption. Instead of choosing from a fixed menu, the system continuously computes an optimal price based on current conditions.</p>
-
-      <h3>From binary to continuous</h3>
-
-      <p>In classical RM, a fare class is either open or closed — a binary decision. Dynamic pricing replaces this with a continuous price function. The optimal price at any moment is a function of remaining capacity, time to departure, current booking pace, competitive prices, and demand signals. As any input changes, the price adjusts. In practice, this means prices can update many times per day — sometimes many times per hour.</p>
-
-      <div class="callout">
-        <div class="callout-label">Why now?</div>
-        <p>Dynamic pricing isn't new as a concept — it's as old as supply and demand. What's new is the ability to execute it at scale, in real time, across thousands of flights simultaneously. Cloud computing, NDC distribution infrastructure, and ML-based demand estimation have collectively made continuous pricing operationally feasible in the 2010s and 2020s in ways it simply wasn't before.</p>
-      </div>
-
-      <h3>Continuous demand functions</h3>
-
-      <p>Dynamic pricing requires a real-time estimate of the demand curve — how many passengers would book at each possible price right now. This is where class-free forecasting (Chapter 04) becomes essential. With a WTP distribution in hand, you can compute the revenue-maximizing price directly: set price where marginal revenue equals marginal cost (which for a near-full flight is the bid price of the last seat). The optimal price moves continuously as capacity depletes and departure approaches.</p>
-
-      <h3>Competitive dynamics</h3>
-
-      <p>Airlines don't price in a vacuum. Competitor fares are visible in real time via GDS and metasearch data, and they affect demand immediately. A dynamic pricing system that ignores competition will systematically misprice in markets where passengers compare fares across carriers. Sophisticated systems incorporate competitor price monitoring and adjust their own prices in response — within the constraints of the carrier's overall strategy.</p>
-
-      <h3>The anchoring problem</h3>
-
-      <p>One underappreciated challenge in dynamic pricing is customer psychology. If a fare was $300 yesterday and is $480 today, some customers feel deceived — even if both prices are rational. Research in behavioral economics shows that price anchoring and perceived fairness materially affect purchase decisions. Airlines have to balance revenue optimization with the risk of alienating customers who see prices they feel are arbitrary or exploitative. This tension is real, and it's one reason fully continuous pricing hasn't fully replaced the more legible fare class structure even where it's technically possible.</p>
-
-      <div class="quiz" id="qz06">
-        <div class="quiz-label">Quick check</div>
-        <div class="quiz-q">What is the fundamental difference between classical inventory control and dynamic pricing?</div>
-        <div class="quiz-opts">
-          <button class="quiz-btn" data-correct="false" data-qz="qz06">Dynamic pricing only applies to last-minute bookings; classical RM covers the full booking window</button>
-          <button class="quiz-btn" data-correct="false" data-qz="qz06">Classical RM uses algorithms; dynamic pricing uses human judgment</button>
-          <button class="quiz-btn" data-correct="true"  data-qz="qz06">Classical RM controls availability across fixed pre-set prices; dynamic pricing continuously recomputes the optimal price itself</button>
-        </div>
-        <div class="quiz-feedback" id="qz06-fb"></div>
-        <button class="quiz-reset" id="qz06-rs" onclick="resetQuiz('qz06')">Try again</button>
-      </div>
-    </div>
-
-    <hr class="divider">
-
-    <!-- ── CH 07 ── -->
-    <div class="chapter" id="ch07">
-      <div class="chapter-label">Chapter 07</div>
-      <h2>Offer & Order</h2>
-
-      <p>Revenue Management has traditionally optimized one thing: the seat. But a seat is not the only thing an airline sells. Bags, seat selection, lounge access, meals, Wi-Fi, partner products — ancillary revenue now represents 15–50% of total revenue for many carriers. The next frontier of RM is optimizing not a seat price, but an entire <strong>offer</strong>.</p>
-
-      <h3>From PNR to Order</h3>
-
-      <p>The airline industry's distribution infrastructure was built in the 1960s around the <strong>Passenger Name Record (PNR)</strong> — a record that links a passenger to a flight. The PNR is remarkably rigid: it was designed for a world where airlines sold exactly one product (a seat) through a handful of channels (travel agents, own reservation systems). IATA's <strong>New Distribution Capability (NDC)</strong> standard, now being widely adopted, is designed to replace this legacy with a flexible API-based architecture capable of representing any product, any bundle, any personalized offer.</p>
-
-      <div class="callout">
-        <div class="callout-label">What NDC actually enables</div>
-        <p>NDC allows airlines to construct offers dynamically rather than pulling from a pre-filed fare catalog. Instead of "here is the Q fare with these rules," an airline can respond to a search with "here is a personalized bundle — seat, bag, lounge, and fare — priced specifically for this customer in this context." The offer is assembled in real time; the price reflects the customer's full value, not just the seat component.</p>
-      </div>
-
-      <h3>Attribute-based selling</h3>
-
-      <p>Traditionally, customers buy a seat in a cabin class. Attribute-based selling (ABS) deconstructs the product into its components — window seat, extra legroom, priority boarding, in-flight meal, flexibility — and prices each attribute separately. Rather than choosing "Economy" or "Business," a customer assembles their own product from a menu of attributes. RM's role shifts from seat inventory control to pricing a combinatorial space of product bundles.</p>
-
-      <h3>Total revenue optimization</h3>
-
-      <p>Once the offer includes ancillaries, the optimization objective changes. It's no longer "maximize seat revenue" — it's "maximize total passenger revenue," where the seat is just one component. This changes the calculus meaningfully: a passenger who pays a low seat fare but generates high ancillary revenue (seat upgrades, bags, partner revenue) may be more valuable than a higher-fare passenger with no ancillary spend. RM systems need to model and optimize the full revenue stack, not just the fare.</p>
-
-      <h3>Personalization and loyalty</h3>
-
-      <p>Loyalty programs give airlines something most industries don't have: rich longitudinal data on individual customers. A carrier that knows you always buy extra legroom, occasionally upgrade at the gate, and fly 8 times a year can construct an offer tuned to your specific behavior and willingness to pay. This is the commercial promise of personalized RM — and it's still mostly unrealized, because connecting loyalty data, booking systems, and real-time offer engines remains technically and organizationally hard.</p>
-    </div>
-
-    <hr class="divider">
-
-    <!-- ── CH 08 ── -->
-    <div class="chapter" id="ch08">
-      <div class="chapter-label">Chapter 08</div>
-      <h2>What's Next</h2>
-
-      <p>Revenue Management has come a long way from EMSR-b running overnight batch jobs in the 1980s. The pace of change is accelerating — driven by new algorithms, new distribution infrastructure, and fundamentally new data. Here are the developments most likely to reshape the field in the coming decade.</p>
-
-      <h3>Reinforcement learning</h3>
-
-      <p>Classical RM is model-driven: it assumes demand follows a statistical distribution and optimizes within that model. Reinforcement learning (RL) takes a different approach — it learns pricing policies directly from interaction with the market, without assuming a parametric demand model. An RL agent sets prices, observes outcomes, and updates its policy to improve over time. Early results in airline RM are promising, particularly in volatile or seasonal markets where historical demand patterns break down and classical models struggle.</p>
-
-      <p>The deeper appeal of RL is that it naturally handles the sequential nature of RM decisions — prices today affect what demand you see tomorrow, which affects prices the day after. Classical methods treat these decisions largely as independent. RL doesn't.</p>
-
-      <h3>Real-time everything</h3>
-
-      <p>Classical RM systems run on batch cycles — forecasts and optimizations computed overnight, controls updated a few times a day. The direction of travel is clear: continuous, real-time optimization responding to bookings, competitor moves, and external signals as they happen. This requires a fundamentally different technical architecture — stream processing, low-latency inference, and pricing engines that can respond in milliseconds rather than hours.</p>
-
-      <h3>Search and willingness-to-pay signals</h3>
-
-      <p>Booked fares tell you what passengers paid. Search data tells you what they considered. The gap between a search and a booking — who searched, what they were shown, what they chose and what they abandoned — is an extraordinarily rich signal for WTP estimation that classical RM largely ignores. As airlines gain more control over their distribution through NDC and direct channels, this data becomes available and the forecasting models that use it become dramatically more precise.</p>
-
-      <h3>RM beyond aviation</h3>
-
-      <p>The methods developed in airline RM have already spread to hotels, car rentals, cruises, and rail. The next wave is likely to reach industries with historically static pricing: restaurants (peak-hour surge pricing), parking, sports and entertainment, energy, and healthcare. The core intuitions — perishability, fixed capacity, demand segmentation, opportunity cost — are universal. The algorithms are increasingly accessible. What changes is the domain.</p>
-
-      <div class="callout">
-        <div class="callout-label">A personal note</div>
-        <p>What makes RM genuinely fascinating as a field is that it never stands still. The core economic intuitions — perishability, segmentation, opportunity cost — are timeless. But the methods, the data, the infrastructure, and the commercial context keep evolving. The version of RM practiced in 2035 will likely look as different from today's as today's looks from the EMSR-b batch systems of 1990. That's what makes it worth studying — and worth building.</p>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-      <a href="https://gregoiremaillard.com">← gregoiremaillard.com</a>
-    </footer>
-
-  </section>
-</div>
-
+<!doctype html>
+<html>
+  <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
 <script>
-  // ── Quiz logic ──
-  const feedback = {
-    qz02: {
-      ok:  "Correct. Strong early demand means you can afford to be selective — close cheap classes and protect capacity for higher-paying passengers who book later.",
-      bad: "Not quite. Strong demand ahead of pace means the flight will fill well — no need to discount. The system should protect seats for higher-paying late bookers."
-    },
-    qz03: {
-      ok:  "Exactly. The bid price is an opportunity cost — it reflects the expected value of holding the seat for future demand, not just what someone is offering now.",
-      bad: "Not quite. The bid price is forward-looking — it represents what that seat is worth in expectation, given the remaining booking window and forecasted demand."
-    },
-    qz04: {
-      ok:  "Right. Buy-down is a key reason opening cheap fares is risky — some passengers who'd have paid more will take the cheaper option if it's available.",
-      bad: "Not quite. Buy-down refers to passenger behavior: customers who would have paid a higher fare choosing a cheaper one that's been made available."
-    },
-    qz06: {
-      ok:  "Exactly. Classical RM is availability control over a fixed price menu. Dynamic pricing makes the price itself the decision variable, updated continuously.",
-      bad: "Not quite. The core distinction is what the system controls: availability across fixed prices (classical) vs. the price itself in real time (dynamic)."
-    }
-  };
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Airline Revenue Management 101</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
 
-  document.querySelectorAll('.quiz-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const qzId = this.dataset.qz;
-      const isCorrect = this.dataset.correct === 'true';
-      const quiz = document.getElementById(qzId);
-      const fb = document.getElementById(qzId + '-fb');
-      const rs = document.getElementById(qzId + '-rs');
+    <!-- MathJax for formulas -->
+    <script>
+      MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+        svg: { fontCache: 'global' }
+      };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
 
-      quiz.querySelectorAll('.quiz-btn').forEach(b => {
-        b.disabled = true;
-        if (b.dataset.correct === 'true') b.classList.add('correct');
+    <style>
+      /* ── Quiz ── */
+      .quiz {
+        background: #f8f8f8;
+        border: 1px solid #ddd;
+        border-left: 3px solid #267CB9;
+        border-radius: 3px;
+        padding: 16px 20px 14px;
+        margin: 24px 0 8px;
+      }
+      .quiz-label {
+        font-size: 0.7em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+      .quiz-q {
+        font-style: italic;
+        margin-bottom: 12px;
+        font-size: 0.95em;
+        color: #333;
+      }
+      .quiz-opts { display: flex; flex-direction: column; gap: 6px; margin-bottom: 2px; }
+      .quiz-btn {
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        padding: 8px 12px;
+        font-size: 0.88em;
+        cursor: pointer;
+        text-align: left;
+        color: #333;
+        transition: border-color 0.15s, background 0.15s;
+        font-family: Georgia, serif;
+        line-height: 1.5;
+      }
+      .quiz-btn:hover:not(:disabled) { border-color: #267CB9; background: #f0f6fc; color: #267CB9; }
+      .quiz-btn.correct { background: #eaf5ea; border-color: #3a7a3a; color: #1a4d1a; }
+      .quiz-btn.wrong   { background: #fdf0f0; border-color: #c0392b; color: #7a1a1a; }
+      .quiz-btn:disabled { cursor: default; opacity: 0.6; }
+      .quiz-btn.correct:disabled, .quiz-btn.wrong:disabled { opacity: 1; }
+      .quiz-feedback {
+        display: none;
+        margin-top: 10px;
+        padding: 8px 12px;
+        border-radius: 3px;
+        font-size: 0.86em;
+        line-height: 1.5;
+        font-family: Georgia, serif;
+      }
+      .quiz-feedback.show { display: block; }
+      .quiz-feedback.ok  { background: #eaf5ea; color: #1a4d1a; }
+      .quiz-feedback.bad { background: #fef9ec; color: #7a4f00; }
+      .quiz-reset {
+        display: none;
+        margin-top: 8px;
+        font-size: 0.78em;
+        color: #999;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 0;
+        font-family: Georgia, serif;
+      }
+      .quiz-reset.show { display: inline; }
+
+      /* ── Sidebar nav ── */
+      .chapter-nav { margin-top: 4px; font-size: 0.82em; line-height: 1.9; }
+      .chapter-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
+
+      /* ── Callout ── */
+      .callout {
+        background: #f4f8fd;
+        border-left: 3px solid #267CB9;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #2a3a4a;
+        line-height: 1.7;
+      }
+      .callout-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Example ── */
+      .example {
+        background: #fafafa;
+        border: 1px solid #e4e4e4;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #444;
+        line-height: 1.7;
+      }
+      .example-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #888;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Math block ── */
+      .math-block {
+        background: #fdfdf8;
+        border: 1px solid #e8e4d0;
+        border-left: 3px solid #b8a830;
+        padding: 14px 18px;
+        margin: 18px 0;
+        font-size: 0.93em;
+        line-height: 1.9;
+        color: #333;
+        overflow-x: auto;
+      }
+      .math-block-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #9a8820;
+        font-weight: bold;
+        margin-bottom: 6px;
+      }
+
+      /* ── Fare table ── */
+      .rm-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86em;
+        margin: 16px 0;
+      }
+      .rm-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: left;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .rm-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        vertical-align: top;
+      }
+      .rm-table tr:last-child td { border-bottom: none; }
+      .tag {
+        display: inline-block;
+        padding: 1px 6px;
+        border-radius: 8px;
+        font-size: 0.78em;
+        font-weight: bold;
+      }
+      .tag-h { background: #e4f3e4; color: #2a662a; }
+      .tag-m { background: #fef6d6; color: #7a5500; }
+      .tag-l { background: #fdeaea; color: #8a1a1a; }
+
+      section h3 { margin-top: 22px; }
+      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; font-style: italic; }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+
+      <!-- ── Sidebar ── -->
+      <header>
+        <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+        <img src="/assets/img/rm_main.png" alt="Airline RM" />
+        <p><i>Me, thinking about bid prices.</i> <br><hr/>
+        A guide to airline Revenue Management — the intuitions, and a bit of the math, behind how airlines fill every seat.</p>
+        <hr/>
+        <nav class="chapter-nav" id="toc">
+          <a href="#ch00"><span class="ch-n">00</span> Why RM?</a>
+          <a href="#ch01"><span class="ch-n">01</span> Fare Classes</a>
+          <a href="#ch02"><span class="ch-n">02</span> Class-Based Forecasting</a>
+          <a href="#ch03"><span class="ch-n">03</span> Leg Inventory & EMSR</a>
+          <a href="#ch04"><span class="ch-n">04</span> Class-Free Forecasting</a>
+          <a href="#ch05"><span class="ch-n">05</span> Network Optimization</a>
+          <a href="#ch06"><span class="ch-n">06</span> Dynamic Pricing</a>
+          <a href="#ch07"><span class="ch-n">07</span> Offer & Order</a>
+          <a href="#ch08"><span class="ch-n">08</span> What's Next</a>
+        </nav>
+      </header>
+
+      <!-- ── Content ── -->
+      <section>
+
+        <h2>Airline Revenue Management 101</h2>
+
+        <p>I work in Revenue Management at Air Canada, and I get asked fairly often what that actually means. The honest answer is that it's a mix of economics, statistics, and a bit of psychology — all applied to the problem of filling an airplane as profitably as possible. This page is my attempt to explain the key ideas, from the intuitions to some of the actual math, without making it feel like a textbook. The field has a beautiful internal logic to it once you see how each piece builds on the last.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 00 ── -->
+        <h3 id="ch00">Chapter 00 — Why Revenue Management?</h3>
+
+        <p>The whole thing starts with one uncomfortable fact: when a plane takes off with an empty seat, that seat is gone forever. You can't put it back on the shelf. You can't sell it the next day. It just evaporates. And since the plane was going to fly anyway — the fuel is burned, the crew is paid — that empty seat is pure lost revenue with essentially zero cost saving attached to it.</p>
+
+        <p>That's what makes airlines special. Most businesses can adjust their supply when demand changes. Airlines mostly can't, at least not in the short run. The plane has a fixed number of seats, and every pricing decision on one seat is implicitly a decision about every other seat on the same flight.</p>
+
+        <p>Add to that the fact that not all passengers are equal. The person booking six months out for a beach holiday and the consultant booking the morning of their client meeting are buying the exact same seat — but their willingness to pay can differ by a factor of four or five. Revenue Management exists to serve both without letting one steal the other's price point.</p>
+
+        <div class="callout">
+          <div class="callout-label">The core tension</div>
+          Sell too cheap too early and you fill the plane with low-fare passengers, leaving no room for the business traveler who'd have paid 4× more. Hold prices too high for too long and you depart with empty rows. Every RM decision navigates that tension, flight by flight, day by day.
+        </div>
+
+        <p>Academic studies generally estimate that good RM adds somewhere between 4 and 8% to airline revenues compared to naive pricing. For a major carrier, that's hundreds of millions of dollars a year — not from flying more planes, but from pricing the existing ones better.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 01 ── -->
+        <h3 id="ch01">Chapter 01 — Fare Classes & the Bucket System</h3>
+
+        <p>Before any forecasting or optimization can happen, airlines need a structure to work within. That structure is the fare class — a letter (Y, K, Q, V, and so on) that bundles a price with a set of rules: refundability, changeability, advance purchase requirements. These restrictions exist for one purpose: to make passengers sort themselves into the segment that actually matches their price sensitivity.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Class</th><th>Typical rules</th><th>Who buys it</th><th>Yield</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Y / J</strong></td><td>Fully refundable, no advance purchase</td><td>Business, corporate</td><td><span class="tag tag-h">High</span></td></tr>
+            <tr><td><strong>K / M</strong></td><td>Change fee, partial refund</td><td>Semi-flexible traveler</td><td><span class="tag tag-m">Mid</span></td></tr>
+            <tr><td><strong>Q / V / L</strong></td><td>Non-refundable, advance purchase required</td><td>Leisure, price-sensitive</td><td><span class="tag tag-l">Low</span></td></tr>
+          </tbody>
+        </table>
+
+        <p>The idea is that a business traveler <em>could</em> technically buy the non-refundable advance-purchase fare — but they won't, because it doesn't work for how they travel. The restrictions act as a self-selection mechanism. One classic example: for decades, discount fares required a Saturday night stay. Business travelers almost never want to spend a weekend away from home, so that single rule cleanly separated two segments without any airline employee making a judgment call on each booking.</p>
+
+        <p>One thing worth clarifying: booking class (the letter) and cabin class (Economy, Business) are different things. Two passengers sitting next to each other in Economy can hold Q and Y fares and have paid very different prices under very different conditions. The letter is invisible to the passenger but central to everything the RM system does.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 02 ── -->
+        <h3 id="ch02">Chapter 02 — Class-Based Forecasting</h3>
+
+        <p>Inventory control is only as good as the forecast feeding it. Before the system can decide which fare classes to open or close, it needs to predict what demand looks like — for each fare class, on each flight, at each point in the booking window. This is class-based forecasting, and it's the backbone of traditional RM.</p>
+
+        <h4>Booking curves</h4>
+
+        <p>The most fundamental concept here is the booking curve — a picture of how reservations accumulate over time before departure. Every route has its own characteristic shape. Long-haul leisure routes see a burst of early bookings, a lull, then a spike close to departure. Short-haul business routes are flatter, with most bookings arriving in the last two weeks. The RM system continuously compares actual bookings against the historical curve: ahead of pace means demand is strong; behind means you may need to open cheaper fares. It's the system's real-time pulse check on each flight.</p>
+
+        <h4>The unconstraining problem</h4>
+
+        <p>Here's a subtle but important challenge. If a cheap fare class was closed 45 days before departure, you never observed the demand that existed at that price. Your historical data only shows what you actually sold — not what was there. Feed that biased data back into a forecasting model and you'll systematically underestimate true demand at low fares. Unconstraining is the statistical process of inferring what demand would have been, had the bucket been open. It's not the most glamorous part of RM, but getting it wrong can quietly distort every downstream decision.</p>
+
+        <h4>Pickup forecasting</h4>
+
+        <p>A common practical approach is pickup forecasting: rather than modelling demand from scratch, you look at how many bookings historically arrive in a given future time window given today's booking position. If a flight currently has 80 bookings with 30 days to go, and historically those flights pick up 40 more in the final 30 days, you forecast 120 total. Simple, interpretable, and widely used — though it struggles when demand patterns shift significantly from historical norms, which happens more often than you'd like.</p>
+
+        <div class="callout">
+          <div class="callout-label">The limit of buckets</div>
+          Class-based forecasting assumes demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum. The bucket structure is an administrative convenience — not an economic truth. That tension is exactly what Chapter 04 addresses.
+        </div>
+
+        <div class="quiz" id="qz02">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">A flight is tracking well ahead of its historical booking curve 50 days before departure. What should the RM system most likely do?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz02">Open additional low-fare seats to capture the strong demand</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz02">Close low-fare classes and protect capacity for higher-paying passengers</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz02">Do nothing — the booking curve is just a rough benchmark</button>
+          </div>
+          <div class="quiz-feedback" id="qz02-fb"></div>
+          <button class="quiz-reset" id="qz02-rs" onclick="resetQuiz('qz02')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 03 ── -->
+        <h3 id="ch03">Chapter 03 — Leg Inventory Control: Littlewood, EMSR-a & EMSR-b</h3>
+
+        <p>With a forecast in hand, the system needs to act on it. How many seats should be protected for each fare class? This is the inventory control problem, and it has a beautiful mathematical lineage that starts in 1972 with a surprisingly simple idea.</p>
+
+        <h4>Littlewood's rule — the two-class foundation</h4>
+
+        <p>Ken Littlewood was the first to formally solve the airline seat allocation problem, for the simple case of two fare classes. His insight: you should accept a low-fare booking request if and only if its fare exceeds the expected revenue from keeping that seat available for a future high-fare passenger. Formally, denote the low fare as $f_1$ and the high fare as $f_2$, with $f_1 < f_2$. Let $D_2$ be the (random) future demand for the high fare class, and $C$ the remaining capacity. Littlewood's rule says: accept the low-fare request if and only if:</p>
+
+        <div class="math-block">
+          <div class="math-block-label">Littlewood's Rule (1972)</div>
+          $$f_1 \geq f_2 \cdot P(D_2 \geq C)$$
+          <br>
+          where $P(D_2 \geq C)$ is the probability that future high-fare demand will meet or exceed remaining capacity $C$.
+        </div>
+
+        <p>The right-hand side is the expected marginal revenue of keeping the seat: the high fare, discounted by the probability that a high-fare passenger actually materializes to fill it. If the low fare exceeds this, take it. If not, wait. Elegant, and it works — but only for two fare classes. Real flights have many more.</p>
+
+        <h4>EMSR-a — extending to multiple classes</h4>
+
+        <p>Belobaba (1987) generalized Littlewood's rule to $n$ fare classes through the Expected Marginal Seat Revenue algorithm. In EMSR-a, you compute protection levels for each fare class independently by applying Littlewood's two-class logic pairwise. For each lower class $j$ being considered, you protect seats for each higher class $i > j$ separately and sum those protections:</p>
+
+        <div class="math-block">
+          <div class="math-block-label">EMSR-a protection level for class $j$</div>
+          $$S_j^a = \sum_{i > j} y_i^*$$
+          <br>
+          where each $y_i^*$ solves $f_j = f_i \cdot P(D_i \geq y_i^*)$, i.e. the Littlewood threshold applied to each higher class $i$ against the current lower fare $f_j$.
+        </div>
+
+        <p>EMSR-a is intuitive and easy to implement, but it has a known flaw: treating each higher class independently tends to over-protect when fares are close together, because the same capacity ends up being "claimed" by multiple higher classes.</p>
+
+        <h4>EMSR-b — the industry standard</h4>
+
+        <p>EMSR-b, also from Belobaba (1992), fixes this by aggregating all higher classes into a single composite class before applying Littlewood's rule. You compute a weighted average fare $\bar{f}$ across all higher classes and a combined demand distribution $\bar{D}$, then find the protection level $S_j^b$ that satisfies:</p>
+
+        <div class="math-block">
+          <div class="math-block-label">EMSR-b protection level for class $j$</div>
+          $$f_j = \bar{f} \cdot P(\bar{D} \geq S_j^b)$$
+          <br>
+          where $\bar{f} = \dfrac{\sum_{i > j} f_i \cdot E[D_i]}{\sum_{i > j} E[D_i]}$ is the demand-weighted average fare of all higher classes, and $\bar{D} = \sum_{i > j} D_i$ is their aggregated demand.
+        </div>
+
+        <p>The key difference from EMSR-a: you're asking "how many seats should I protect for <em>all</em> higher classes combined, given the aggregated demand and average fare?" rather than class by class. This avoids double-counting and produces better protection levels when fares are close together — which in practice they often are. EMSR-b is the dominant approach in commercial RM systems today.</p>
+
+        <div class="example">
+          <div class="example-label">Working through the logic numerically</div>
+          You have one seat left. A discount passenger offers $180. Your forecast says there's a 55% chance a high-fare passenger books before departure at $480. Expected marginal revenue of holding: $480 × 0.55 = $264 > $180. Hold the seat — the bid price is $264.<br><br>
+          Two hours later — same seat, same offer. Departure is 4 hours away and the high-fare probability has dropped to 25%. Expected marginal revenue: $480 × 0.25 = $120 < $180. The bid price just fell below the offered fare. Sell.
+        </div>
+
+        <div class="quiz" id="qz03">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">According to Littlewood's rule, you should accept a low-fare booking when:</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz03">The flight is more than 30 days from departure</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz03">The low fare exceeds the high fare multiplied by the probability of future high-fare demand filling that seat</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz03">The low fare is at least 50% of the high fare</button>
+          </div>
+          <div class="quiz-feedback" id="qz03-fb"></div>
+          <button class="quiz-reset" id="qz03-rs" onclick="resetQuiz('qz03')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 04 ── -->
+        <h3 id="ch04">Chapter 04 — Class-Free Forecasting & Willingness to Pay</h3>
+
+        <p>Class-based forecasting works, but it carries a hidden assumption baked in from the start: that demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum — every passenger has their own threshold, and none of them know or care about your fare class ladder. Class-free forecasting lets go of that assumption entirely.</p>
+
+        <h4>What willingness to pay actually is</h4>
+
+        <p>Willingness to pay (WTP) is the maximum price a given customer would accept before choosing not to buy. It's not a fixed property of a person — it varies with context, urgency, alternatives, and even mood. A passenger booking a spontaneous weekend trip has a different WTP than the same passenger booking the same route for a funeral. WTP is better thought of as a distribution than a number.</p>
+
+        <p>Formally, if we denote a passenger's WTP as the random variable $W$, then the probability that a passenger buys at price $p$ is simply:</p>
+
+        <div class="math-block">
+          <div class="math-block-label">Purchase probability at price $p$</div>
+          $$P(\text{buy} \mid p) = P(W \geq p) = 1 - F_W(p)$$
+          <br>
+          where $F_W(p)$ is the CDF of the WTP distribution — the fraction of the population with WTP below $p$. The higher the price, the fewer passengers buy.
+        </div>
+
+        <p>This is the demand curve, expressed in terms of individual WTP. And the revenue-maximizing price is the one that balances the gain from charging more per ticket against the loss from fewer passengers buying. This trade-off is captured in the expected revenue function:</p>
+
+        <div class="math-block">
+          <div class="math-block-label">Expected revenue at price $p$ (single unit)</div>
+          $$R(p) = p \cdot P(W \geq p) = p \cdot [1 - F_W(p)]$$
+          <br>
+          The optimal price $p^*$ maximizes $R(p)$. Taking the derivative and setting it to zero gives: $1 - F_W(p^*) - p^* \cdot f_W(p^*) = 0$, where $f_W$ is the PDF of the WTP distribution.
+        </div>
+
+        <h4>Why the shape of the WTP distribution matters enormously</h4>
+
+        <p>Different WTP distributions lead to very different optimal pricing strategies, and this is something I find genuinely interesting to think about. If the WTP distribution is concentrated — most passengers have similar valuations — you want a fairly uniform price, because price discrimination doesn't add much value. If it's dispersed, with a long tail of high-WTP passengers, price discrimination (i.e. fare classes, or dynamic pricing) becomes extremely valuable. The wider the distribution, the more money is left on the table by a single price.</p>
+
+        <div class="example">
+          <div class="example-label">A simple illustration</div>
+          Suppose your flight has 3 passengers with WTP of $100, $200, and $500. If you charge a single price of $200, you earn $400 (two passengers buy). If you charge $100, you earn $300. But if you can price-discriminate perfectly — charging each passenger exactly their WTP — you earn $800. The gap between $400 and $800 is the value of perfect segmentation. Real fare class systems try to capture some of that gap without having to read each passenger's mind.
+        </div>
+
+        <h4>Estimating WTP in practice</h4>
+
+        <p>The key challenge is that you never directly observe WTP — you only observe whether a passenger booked at a given price. Someone who books at $250 has WTP ≥ $250, but you don't know how much more they'd have paid. This is a classic censored observation problem. Parametric approaches fit a distribution (log-normal and Weibull are common choices, as they enforce positivity and produce a plausible right tail) to the observed booking data. The log-normal is particularly convenient: it assumes $\ln(W) \sim \mathcal{N}(\mu, \sigma^2)$, which gives:</p>
+
+        <div class="math-block">
+          <div class="math-block-label">Log-normal WTP model</div>
+          $$F_W(p) = \Phi\!\left(\frac{\ln p - \mu}{\sigma}\right)$$
+          <br>
+          where $\Phi$ is the standard normal CDF, $\mu$ is the mean of log-WTP, and $\sigma$ its standard deviation. The parameters $\mu$ and $\sigma$ are estimated from historical booking data using maximum likelihood.
+        </div>
+
+        <p>The problem with a single parametric distribution is that real markets have multiple customer segments — leisure travelers with low, concentrated WTP and business travelers with high, dispersed WTP. A single log-normal misses this. Mixture models address it by summing two or more distributions with mixing weights:</p>
+
+        <div class="math-block">
+          <div class="math-block-label">Mixture WTP model (two segments)</div>
+          $$F_W(p) = \lambda \cdot F_{W_1}(p) + (1 - \lambda) \cdot F_{W_2}(p)$$
+          <br>
+          where $\lambda \in (0,1)$ is the proportion of leisure passengers, and $F_{W_1}$, $F_{W_2}$ are the WTP CDFs for leisure and business segments respectively. The parameters are typically estimated via EM (Expectation-Maximization).
+        </div>
+
+        <h4>From WTP distributions to pricing</h4>
+
+        <p>Once you have a WTP distribution, the EMSR logic generalizes naturally. The bid price at any point in the booking window is simply the price $p$ such that the expected marginal revenue of the next seat equals the cost of giving it up — and that calculation now uses the continuous WTP distribution instead of discrete fare class probabilities. This is conceptually what class-free systems do: they replace the ladder of buckets with a continuous demand curve, and the protection levels with a continuously-updated bid price derived from it.</p>
+
+        <h4>The buy-down problem</h4>
+
+        <p>Class-based systems also have a hard time with buy-down — when passengers who would have paid a higher fare instead book a cheaper one that's been left open. A class-free model that estimates the full WTP distribution handles this naturally: it knows that opening a $150 fare will pull some demand away from the $280 fare, and it prices that cannibalization into the optimization. Class-based forecasting, by contrast, records a booking at $150 and has no way of knowing it displaced a $280 booking that never materialized.</p>
+
+        <div class="quiz" id="qz04">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">A passenger books a $150 fare. In a class-free WTP model, this observation tells you:</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz04">Their exact WTP is $150</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz04">Their WTP is at least $150, but could be much higher — it's a censored observation</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz04">They would not have bought at any price above $150</button>
+          </div>
+          <div class="quiz-feedback" id="qz04-fb"></div>
+          <button class="quiz-reset" id="qz04-rs" onclick="resetQuiz('qz04')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 05 ── -->
+        <h3 id="ch05">Chapter 05 — Network Optimization</h3>
+
+        <p>Everything so far treats each flight leg as an independent problem. But airlines operate networks — a passenger flying Montréal to Frankfurt to Istanbul uses two legs, and optimizing each one in isolation ignores the relationship between them. Network optimization is where classical RM gets genuinely hard, and also genuinely interesting.</p>
+
+        <h4>Why leg-based RM fails on networks</h4>
+
+        <p>A simple example. Your Montréal–Frankfurt leg has one seat left. Two requests arrive simultaneously: a local passenger paying $420 for that leg only, and a connecting passenger paying $850 total for Montréal–Frankfurt–Istanbul, with $360 attributed to the first leg. A leg-based system sees $420 vs. $360 and accepts the local passenger. The network just left $430 on the table. This isn't an edge case — it's a systematic bias. Leg-based RM always undervalues connecting passengers because it can't see beyond its own leg.</p>
+
+        <h4>Network bid prices and the LP formulation</h4>
+
+        <p>The solution is to compute bid prices at the network level. The standard approach formulates a linear program over all flights and all itineraries simultaneously. Let $x_{ij}$ be the number of passengers accepted on itinerary $j$ using leg $i$, $f_j$ the fare for itinerary $j$, and $C_i$ the capacity of leg $i$. The network LP maximizes total revenue subject to capacity constraints on every leg:</p>
+
+        <div class="math-block">
+          <div class="math-block-label">Network Revenue Management LP</div>
+          $$\max \sum_j f_j \cdot x_j$$
+          $$\text{subject to: } \sum_{j \ni i} x_j \leq C_i \quad \forall \text{ legs } i$$
+          $$x_j \leq E[D_j] \quad \forall \text{ itineraries } j, \quad x_j \geq 0$$
+          <br>
+          The dual variables $\pi_i$ on the capacity constraints are the <strong>network bid prices</strong> — the shadow price of one unit of capacity on leg $i$.
+        </div>
+
+        <p>An itinerary $j$ should be accepted if and only if its fare exceeds the sum of bid prices across all legs it uses:</p>
+
+        <div class="math-block">
+          <div class="math-block-label">Network acceptance criterion</div>
+          $$f_j \geq \sum_{i \in j} \pi_i$$
+        </div>
+
+        <div class="callout">
+          <div class="callout-label">Displacement cost</div>
+          The sum $\sum_{i \in j} \pi_i$ is the displacement cost of itinerary $j$ — the opportunity cost of the capacity it consumes across the network. A connecting itinerary using two congested legs has a high displacement cost. One on two lightly-loaded legs has a low one. This single criterion captures both the value of the itinerary and the true cost of accepting it.
+        </div>
+
+        <h4>Virtual nesting</h4>
+
+        <p>Solving this LP in real time for every incoming request is computationally intensive. Virtual nesting is a practical approximation: compute the network bid price offline, use it to calculate each itinerary's net contribution (fare minus displacement cost), rank itineraries by that contribution, and map them to virtual booking classes. The leg-based system then controls availability using these virtual classes — approximating network-optimal decisions without re-solving the full LP each time.</p>
+
+        <div class="example">
+          <div class="example-label">When displacement cost really bites</div>
+          Imagine Frankfurt is congested on a summer Saturday — every flight near-full, bid prices high. A Montréal–Frankfurt–Mumbai itinerary priced at $1,100 sounds attractive. But if the FRA–BOM leg carries a bid price of $600 and YUL–FRA carries $380, the displacement cost is $980. Net contribution: $120. It might rationally get declined in favor of two local bookings each generating more net value.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 06 ── -->
+        <h3 id="ch06">Chapter 06 — Dynamic Pricing</h3>
+
+        <p>Classical RM — with its fare classes, buckets, and EMSR-b — is fundamentally a system of availability control. Prices are set by pricing teams and filed in advance; RM decides which pre-set prices to show. Dynamic pricing breaks that assumption. Instead of choosing from a fixed menu, the system continuously computes an optimal price based on current conditions. The price itself becomes the decision variable.</p>
+
+        <h4>The continuous pricing problem</h4>
+
+        <p>In classical RM, a fare class is either open or closed — binary. Dynamic pricing replaces this with a continuous price function. At any moment, with $c$ seats remaining and $t$ time until departure, the optimal price $p^*(c, t)$ solves:</p>
+
+        <div class="math-block">
+          <div class="math-block-label">Dynamic pricing optimality condition</div>
+          $$p^*(c,t) = \text{argmax}_p \; \left[ p \cdot \lambda(p) \cdot \Delta t + V(c, t) \right]$$
+          <br>
+          where $\lambda(p)$ is the demand rate at price $p$ (bookings per unit time), $\Delta t$ is a small time interval, and $V(c, t)$ is the value function — the expected total revenue from $c$ remaining seats and $t$ time to departure. This is a stochastic dynamic programming formulation. The key insight: the optimal price equates the marginal revenue of selling now against the change in value from having one fewer seat.
+        </div>
+
+        <p>In practice, this is typically solved via approximate dynamic programming or simulation, since the exact DP is computationally intractable for full airline networks. But the intuition is clean: price high when $c$ is low (scarcity) or when $t$ is small (late demand tends to be inelastic), price lower when you have plenty of capacity and plenty of time.</p>
+
+        <h4>Why now?</h4>
+
+        <p>Dynamic pricing as a concept is as old as supply and demand. What changed is the ability to execute it at scale — cloud infrastructure, NDC distribution, and ML-based demand estimation have made continuous pricing operationally feasible in the 2020s in ways it simply wasn't a decade ago.</p>
+
+        <h4>The anchoring problem</h4>
+
+        <p>One underappreciated challenge is customer psychology. If a fare was $300 yesterday and is $480 today, some passengers feel deceived — even if both prices are rational. Research in behavioral economics shows that price anchoring and perceived fairness materially affect purchase decisions. Airlines have to balance revenue optimization against the risk of alienating customers who find the pricing arbitrary. It's a real tension, and one reason continuous dynamic pricing hasn't fully replaced the more legible fare class structure even where it's technically possible.</p>
+
+        <div class="quiz" id="qz06">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">In a dynamic pricing model, the optimal price tends to be higher when:</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz06">Remaining capacity is high and departure is far away</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz06">Remaining capacity is low or departure is imminent — scarcity and time pressure both push prices up</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz06">Competitor prices are low</button>
+          </div>
+          <div class="quiz-feedback" id="qz06-fb"></div>
+          <button class="quiz-reset" id="qz06-rs" onclick="resetQuiz('qz06')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 07 ── -->
+        <h3 id="ch07">Chapter 07 — Offer & Order</h3>
+
+        <p>Traditional RM optimizes one thing: the seat. But a seat is not the only thing an airline sells. Bags, seat selection, lounge access, meals, Wi-Fi, partner products — ancillary revenue now represents anywhere from 15% to over 50% of total revenue depending on the carrier. The next frontier of RM is optimizing not just a seat price, but an entire offer.</p>
+
+        <h4>The legacy distribution problem</h4>
+
+        <p>The airline industry's distribution infrastructure was built in the 1960s around the Passenger Name Record — a rigid structure designed for a world where airlines sold exactly one product through a small number of channels. IATA's New Distribution Capability (NDC) standard replaces this with a flexible API-based architecture capable of representing any product, any bundle, any personalized offer constructed dynamically rather than pulled from a pre-filed fare catalog.</p>
+
+        <div class="callout">
+          <div class="callout-label">What NDC actually enables</div>
+          Instead of "here is the Q fare with these rules," an airline using NDC can respond to a search with a fully assembled, personalized offer: seat + bag + priority boarding + fare, priced for this customer in this context in real time. The offer is built on the fly; the price reflects the customer's full value, not just the seat component.
+        </div>
+
+        <h4>Attribute-based selling and bundle optimization</h4>
+
+        <p>Attribute-based selling deconstructs the product into its components — window seat, extra legroom, flexibility, meal — and prices each separately. RM's role shifts from seat inventory control to optimizing a combinatorial space of bundles. The optimization objective changes accordingly: it's no longer "maximize seat revenue" but "maximize total passenger revenue," and a passenger paying a low seat fare with high ancillary spend might be more valuable than a high-fare passenger who buys nothing else. Connecting loyalty data, booking systems, and real-time offer engines to actually compute this is still mostly a work in progress at most carriers.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 08 ── -->
+        <h3 id="ch08">Chapter 08 — What's Next</h3>
+
+        <p>Revenue Management has come a long way from EMSR-b running overnight batch jobs in the 1980s. The pace of change is accelerating, and the version of RM practiced in 2035 will probably look as different from today's as today's looks from where it started. Here are the directions I find most interesting.</p>
+
+        <h4>Reinforcement learning</h4>
+
+        <p>Classical RM is model-driven: it assumes demand follows a statistical distribution and optimizes within that model. Reinforcement learning takes a different approach — learn a pricing policy directly from interacting with the market, without assuming any particular demand structure. An RL agent sets prices, observes outcomes, and updates its policy to improve over time. What I find genuinely appealing about RL is that it naturally handles the sequential nature of RM decisions — the prices you set today affect the demand you observe tomorrow, which affects your prices the day after. Classical methods treat these decisions largely as independent. RL doesn't, and in volatile markets that distinction matters a lot.</p>
+
+        <h4>Real-time everything</h4>
+
+        <p>Classical RM systems run on batch cycles — forecasts and optimizations computed overnight, controls updated a few times a day. The direction of travel is continuous, real-time optimization responding to bookings, competitor moves, and external signals as they happen. Most legacy airline systems weren't built for this, and the transition is happening, but slowly. Airline IT tends to move at its own pace.</p>
+
+        <h4>Search data and richer demand signals</h4>
+
+        <p>Booked fares tell you what passengers paid. Search data tells you what they considered. The gap between a search and a booking — who searched, what they were shown, what they chose, what they abandoned — is an extraordinarily rich signal for WTP estimation that classical RM largely ignores. As airlines gain more control over their distribution through NDC and direct channels, this data becomes available, and the forecasting models that can use it become dramatically more precise. The ideal, long-term, is a WTP distribution estimated from individual-level behavioral signals in near-real-time. We're not there yet, but it's not science fiction either.</p>
+
+        <h4>RM beyond aviation</h4>
+
+        <p>The methods developed in airline RM have already spread to hotels, car rentals, cruises, and rail. The next wave is likely to reach industries with historically static pricing: restaurants, parking, sports venues, healthcare. The core intuitions — perishability, fixed capacity, demand segmentation, opportunity cost — are universal. What changes is the domain.</p>
+
+        <p>Anyway, that's the overview. I tried to keep it honest about where the math lives and where the intuition is doing most of the work. If something here was unclear or you want to go deeper on any chapter, feel free to reach out — I find this stuff genuinely fascinating to think and talk about.</p>
+
+      </section>
+
+      <footer>
+        <p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+      // ── Quiz logic ──
+      const fb = {
+        qz02: {
+          ok:  "Correct. Strong demand ahead of pace means the flight will fill itself — protect capacity for higher-paying late bookers.",
+          bad: "Not quite. Ahead of the booking curve means demand is strong. The right response is to close cheap fares, not open more."
+        },
+        qz03: {
+          ok:  "Exactly. That's Littlewood's rule in a sentence — accept the low fare when it exceeds the expected marginal value of holding the seat.",
+          bad: "Not quite. Littlewood's rule has nothing to do with days to departure directly — it's about comparing the low fare to the probability-weighted high fare."
+        },
+        qz04: {
+          ok:  "Right. Booking at $150 only tells you WTP ≥ $150. You don't know the upper bound — that's exactly what makes WTP estimation a censored observation problem.",
+          bad: "Not quite. A booking at $150 is a censored observation — it tells you WTP is at least $150, but the passenger may have been willing to pay much more."
+        },
+        qz06: {
+          ok:  "Exactly. Scarcity (few seats left) and urgency (close to departure) both reduce the opportunity to sell later, which pushes the optimal price up.",
+          bad: "Not quite. In dynamic pricing, the value function increases with remaining capacity and time — so prices are highest when capacity is tight or departure is close."
+        }
+      };
+
+      document.querySelectorAll('.quiz-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const qzId = this.dataset.qz;
+          const isCorrect = this.dataset.correct === 'true';
+          const quiz = document.getElementById(qzId);
+          const feedback = document.getElementById(qzId + '-fb');
+          const reset = document.getElementById(qzId + '-rs');
+
+          quiz.querySelectorAll('.quiz-btn').forEach(b => {
+            b.disabled = true;
+            if (b.dataset.correct === 'true') b.classList.add('correct');
+          });
+          if (!isCorrect) this.classList.add('wrong');
+
+          feedback.textContent = isCorrect ? '✓ ' + fb[qzId].ok : '✗ ' + fb[qzId].bad;
+          feedback.className = 'quiz-feedback show ' + (isCorrect ? 'ok' : 'bad');
+          reset.classList.add('show');
+        });
       });
 
-      if (!isCorrect) this.classList.add('wrong');
-
-      fb.textContent = isCorrect ? '✓ ' + feedback[qzId].ok : '✗ ' + feedback[qzId].bad;
-      fb.className = 'quiz-feedback show ' + (isCorrect ? 'ok' : 'bad');
-      rs.classList.add('show');
-    });
-  });
-
-  function resetQuiz(qzId) {
-    const quiz = document.getElementById(qzId);
-    quiz.querySelectorAll('.quiz-btn').forEach(b => {
-      b.disabled = false;
-      b.classList.remove('correct', 'wrong');
-    });
-    const fb = document.getElementById(qzId + '-fb');
-    fb.className = 'quiz-feedback';
-    fb.textContent = '';
-    document.getElementById(qzId + '-rs').classList.remove('show');
-  }
-
-  // ── Active sidebar on scroll ──
-  const chapters = document.querySelectorAll('.chapter');
-  const navLinks = document.querySelectorAll('#toc a');
-
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        navLinks.forEach(l => l.classList.remove('active'));
-        const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
-        if (link) link.classList.add('active');
+      function resetQuiz(qzId) {
+        const quiz = document.getElementById(qzId);
+        quiz.querySelectorAll('.quiz-btn').forEach(b => {
+          b.disabled = false;
+          b.classList.remove('correct', 'wrong');
+        });
+        const feedback = document.getElementById(qzId + '-fb');
+        feedback.className = 'quiz-feedback';
+        feedback.textContent = '';
+        document.getElementById(qzId + '-rs').classList.remove('show');
       }
-    });
-  }, { rootMargin: '-20% 0px -70% 0px' });
 
-  chapters.forEach(ch => obs.observe(ch));
-</script>
-</body>
+      // ── Active sidebar on scroll ──
+      const chapters = document.querySelectorAll('h3[id]');
+      const navLinks = document.querySelectorAll('#toc a');
+
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px' });
+
+      chapters.forEach(ch => obs.observe(ch));
+    </script>
+  </body>
 </html>
