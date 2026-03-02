@@ -6,29 +6,30 @@
   <title>Grégoire Maillard</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Georgia, serif; background: #fff; color: #111; }
+    body { font-family: Georgia, serif; background: #141414; color: #e8e8e8; }
     .container { max-width: 680px; margin: 0 auto; padding: 80px 24px; }
-    .header { display: flex; align-items: center; gap: 28px; margin-bottom: 56px; padding-bottom: 40px; border-bottom: 1px solid #eee; }
-    .header img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; }
-    .header h1 { font-size: 1.8rem; font-weight: normal; }
-    .header p { color: #888; font-style: italic; margin-top: 4px; }
+    .header { display: flex; align-items: center; gap: 28px; margin-bottom: 56px; padding-bottom: 40px; border-bottom: 1px solid #2a2a2a; }
+    .header img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; filter: grayscale(20%); }
+    .header h1 { font-size: 1.8rem; font-weight: normal; color: #f0f0f0; }
+    .header p { color: #666; font-style: italic; margin-top: 4px; font-size: 0.95rem; }
     .links { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
-    .links a { color: #111; font-family: sans-serif; font-size: 0.82rem; text-decoration: none; border-bottom: 1px solid #ccc; }
-    .links a:hover { border-color: #111; }
+    .links a { color: #c8a96e; font-family: sans-serif; font-size: 0.82rem; text-decoration: none; border-bottom: 1px solid #3a3020; }
+    .links a:hover { border-color: #c8a96e; }
     section { margin-bottom: 48px; }
-    h2 { font-family: sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: #aaa; margin-bottom: 16px; font-weight: normal; }
-    .about p { font-size: 1rem; line-height: 1.8; color: #444; }
-    .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0; gap: 12px; }
+    h2 { font-family: sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: #444; margin-bottom: 16px; font-weight: normal; }
+    .about p { font-size: 1rem; line-height: 1.8; color: #aaa; }
+    .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #1e1e1e; gap: 12px; }
     .row:last-child { border-bottom: none; }
-    .row-main { font-size: 0.95rem; }
-    .row-sub { font-size: 0.83rem; color: #999; font-style: italic; margin-top: 2px; }
-    .row-date { font-family: sans-serif; font-size: 0.78rem; color: #bbb; white-space: nowrap; }
-    .proj { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #f0f0f0; text-decoration: none; color: inherit; }
+    .row-main { font-size: 0.95rem; color: #ddd; }
+    .row-sub { font-size: 0.83rem; color: #555; font-style: italic; margin-top: 2px; }
+    .row-date { font-family: sans-serif; font-size: 0.78rem; color: #444; white-space: nowrap; }
+    .proj { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #1e1e1e; text-decoration: none; color: inherit; }
     .proj:last-child { border-bottom: none; }
-    .proj:hover .proj-title { text-decoration: underline; }
-    .proj-title { font-size: 0.95rem; }
-    .proj-desc { font-family: sans-serif; font-size: 0.8rem; color: #aaa; margin-top: 3px; }
-    footer { border-top: 1px solid #eee; padding-top: 28px; font-family: sans-serif; font-size: 0.78rem; color: #ccc; }
+    .proj:hover .proj-title { color: #c8a96e; }
+    .proj-title { font-size: 0.95rem; color: #ddd; transition: color 0.2s; }
+    .proj-desc { font-family: sans-serif; font-size: 0.8rem; color: #555; margin-top: 3px; }
+    .proj-arrow { color: #333; font-size: 0.9rem; }
+    footer { border-top: 1px solid #1e1e1e; padding-top: 28px; font-family: sans-serif; font-size: 0.78rem; color: #333; }
   </style>
 </head>
 <body>
@@ -66,10 +67,10 @@
 
   <section>
     <h2>Personal Projects</h2>
-    <a class="proj" href="/food.html"><div><div class="proj-title">Discover new restaurants</div><div class="proj-desc">Reviews and culinary experiments around the world</div></div><span>→</span></a>
-    <a class="proj" href="/book.html"><div><div class="proj-title">Expand my literary world</div><div class="proj-desc">Read a Nobel Prize author bibliography every year</div></div><span>→</span></a>
-    <a class="proj" href="/movie.html"><div><div class="proj-title">Develop my Turkish skills with movies</div><div class="proj-desc">Writing about films in a new language</div></div><span>→</span></a>
-    <a class="proj" href="/architecture.html"><div><div class="proj-title">Cultivate my eye for architecture</div><div class="proj-desc">Favorite buildings and statues from cities I visit</div></div><span>→</span></a>
+    <a class="proj" href="/food.html"><div><div class="proj-title">Discover new restaurants</div><div class="proj-desc">Reviews and culinary experiments around the world</div></div><span class="proj-arrow">→</span></a>
+    <a class="proj" href="/book.html"><div><div class="proj-title">Expand my literary world</div><div class="proj-desc">Read a Nobel Prize author bibliography every year</div></div><span class="proj-arrow">→</span></a>
+    <a class="proj" href="/movie.html"><div><div class="proj-title">Develop my Turkish skills with movies</div><div class="proj-desc">Writing about films in a new language</div></div><span class="proj-arrow">→</span></a>
+    <a class="proj" href="/architecture.html"><div><div class="proj-title">Cultivate my eye for architecture</div><div class="proj-desc">Favorite buildings and statues from cities I visit</div></div><span class="proj-arrow">→</span></a>
   </section>
 
   <footer>gregoiremaillard.com</footer>
