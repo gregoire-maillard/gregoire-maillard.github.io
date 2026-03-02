@@ -10,20 +10,10 @@
 </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Airline Revenue Management 101</title>
+    <title>Turkish From Zero — A Complete Grammar Guide</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
-
-    <!-- MathJax for formulas -->
-    <script>
-      MathJax = {
-        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-        svg: { fontCache: 'global' }
-      };
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
-
     <style>
       /* ── Quiz ── */
       .quiz {
@@ -94,7 +84,7 @@
       .quiz-reset.show { display: inline; }
 
       /* ── Sidebar nav ── */
-      .chapter-nav { margin-top: 4px; font-size: 0.82em; line-height: 1.9; }
+      .chapter-nav { margin-top: 4px; font-size: 0.78em; line-height: 1.85; }
       .chapter-nav a {
         display: block;
         color: #555;
@@ -105,7 +95,7 @@
       }
       .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
       .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
-      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.82em; margin-right: 3px; }
 
       /* ── Callout ── */
       .callout {
@@ -145,35 +135,36 @@
         margin-bottom: 5px;
       }
 
-      /* ── Math block ── */
-      .math-block {
+      /* ── Grammar rule block ── */
+      .rule {
         background: #fdfdf8;
         border: 1px solid #e8e4d0;
         border-left: 3px solid #b8a830;
-        padding: 14px 18px;
+        padding: 12px 16px;
         margin: 18px 0;
-        font-size: 0.93em;
-        line-height: 1.9;
+        font-size: 0.92em;
+        line-height: 1.85;
         color: #333;
-        overflow-x: auto;
+        font-family: 'Courier New', monospace;
       }
-      .math-block-label {
+      .rule-label {
         font-size: 0.68em;
         text-transform: uppercase;
         letter-spacing: 1.5px;
         color: #9a8820;
         font-weight: bold;
         margin-bottom: 6px;
+        font-family: Georgia, serif;
       }
 
-      /* ── Fare table ── */
-      .rm-table {
+      /* ── Tables ── */
+      .t {
         width: 100%;
         border-collapse: collapse;
         font-size: 0.86em;
-        margin: 16px 0;
+        margin: 14px 0;
       }
-      .rm-table th {
+      .t th {
         background: #f2f2f2;
         border-bottom: 2px solid #ddd;
         padding: 7px 10px;
@@ -183,26 +174,27 @@
         letter-spacing: 0.8px;
         color: #888;
       }
-      .rm-table td {
-        padding: 8px 10px;
+      .t td {
+        padding: 7px 10px;
         border-bottom: 1px solid #f0f0f0;
         color: #333;
         vertical-align: top;
       }
-      .rm-table tr:last-child td { border-bottom: none; }
-      .tag {
-        display: inline-block;
-        padding: 1px 6px;
-        border-radius: 8px;
-        font-size: 0.78em;
-        font-weight: bold;
-      }
-      .tag-h { background: #e4f3e4; color: #2a662a; }
-      .tag-m { background: #fef6d6; color: #7a5500; }
-      .tag-l { background: #fdeaea; color: #8a1a1a; }
+      .t tr:last-child td { border-bottom: none; }
+      .t tr:hover td { background: #fafafa; }
+      .t td.tr { color: #267CB9; font-style: italic; }
+      .t td.en { color: #888; font-size: 0.92em; }
+
+      /* ── Vowel harmony color coding ── */
+      .back  { color: #c0392b; font-weight: bold; }
+      .front { color: #2980b9; font-weight: bold; }
+      .suf   { color: #27ae60; font-weight: bold; }
+      .stem  { color: #8e44ad; }
 
       section h3 { margin-top: 22px; }
       section h4 { font-size: 0.95em; margin-top: 18px; color: #444; font-style: italic; }
+      section ul { margin: 8px 0 14px 20px; }
+      section ul li { margin-bottom: 5px; color: #333; font-size: 0.95em; }
     </style>
   </head>
   <body>
@@ -211,101 +203,197 @@
       <!-- ── Sidebar ── -->
       <header>
         <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
-        <img src="/assets/img/rm_main.png" alt="Airline RM" />
-        <p><i>Me, thinking about bid prices.</i> <br><hr/>
-        A guide to airline Revenue Management — the intuitions, and a bit of the math, behind how airlines fill every seat.</p>
+        <img src="/assets/img/ataturk.png" alt="Atatürk" />
+        <p><i>Not me, but Atatürk.</i><br><hr/>
+        A complete Turkish grammar guide — from the alphabet to fluency, with every suffix you need.</p>
         <hr/>
         <nav class="chapter-nav" id="toc">
-          <a href="#ch00"><span class="ch-n">00</span> Why RM?</a>
-          <a href="#ch01"><span class="ch-n">01</span> Fare Classes</a>
-          <a href="#ch02"><span class="ch-n">02</span> Class-Based Forecasting</a>
-          <a href="#ch03"><span class="ch-n">03</span> Leg Inventory & EMSR</a>
-          <a href="#ch04"><span class="ch-n">04</span> Class-Free Forecasting</a>
-          <a href="#ch05"><span class="ch-n">05</span> Network Optimization</a>
-          <a href="#ch06"><span class="ch-n">06</span> Dynamic Pricing</a>
-          <a href="#ch07"><span class="ch-n">07</span> Offer & Order</a>
-          <a href="#ch08"><span class="ch-n">08</span> What's Next</a>
+          <a href="#ch00"><span class="ch-n">00</span> Why Turkish is Different</a>
+          <a href="#ch01"><span class="ch-n">01</span> Alphabet & Pronunciation</a>
+          <a href="#ch02"><span class="ch-n">02</span> Vowel Harmony</a>
+          <a href="#ch03"><span class="ch-n">03</span> Nouns, Plurals & Articles</a>
+          <a href="#ch04"><span class="ch-n">04</span> Pronouns & To Be</a>
+          <a href="#ch05"><span class="ch-n">05</span> The Six Cases</a>
+          <a href="#ch06"><span class="ch-n">06</span> Numbers, Dates & Time</a>
+          <a href="#ch07"><span class="ch-n">07</span> Adjectives & Word Order</a>
+          <a href="#ch08"><span class="ch-n">08</span> Ability: -ebilmek</a>
+          <a href="#ch09"><span class="ch-n">09</span> Present Continuous: -iyor</a>
+          <a href="#ch10"><span class="ch-n">10</span> Aorist: -ir / -er</a>
+          <a href="#ch11"><span class="ch-n">11</span> Past Witnessed: -di</a>
+          <a href="#ch12"><span class="ch-n">12</span> Past Reported: -miş</a>
+          <a href="#ch13"><span class="ch-n">13</span> Future: -ecek</a>
+          <a href="#ch14"><span class="ch-n">14</span> Necessity: -meli</a>
+          <a href="#ch15"><span class="ch-n">15</span> Negation & Questions</a>
+          <a href="#ch16"><span class="ch-n">16</span> Postpositions</a>
+          <a href="#ch17"><span class="ch-n">17</span> Compound Verbs</a>
+          <a href="#ch18"><span class="ch-n">18</span> Conditionals</a>
+          <a href="#ch19"><span class="ch-n">19</span> Imperatives & Requests</a>
+          <a href="#ch20"><span class="ch-n">20</span> Relative Clauses & Verbal Nouns</a>
+          <a href="#ch21"><span class="ch-n">21</span> Causative, Passive, Reciprocal</a>
+          <a href="#ch22"><span class="ch-n">22</span> Discourse Markers</a>
+          <a href="#ch23"><span class="ch-n">23</span> Diminutives & Expressive Suffixes</a>
+          <a href="#ch24"><span class="ch-n">24</span> Reading a Real Text</a>
+          <a href="#ch25"><span class="ch-n">25</span> Pitfalls for French/English Speakers</a>
+          <a href="#ch26"><span class="ch-n">26</span> Survival Vocabulary</a>
         </nav>
       </header>
 
       <!-- ── Content ── -->
       <section>
 
-        <h2>Airline Revenue Management 101</h2>
-
-        <p>I work in Revenue Management at Air Canada, and I get asked fairly often what that actually means. The honest answer is that it's a mix of economics, statistics, and a bit of psychology — all applied to the problem of filling an airplane as profitably as possible. This page is my attempt to explain the key ideas, from the intuitions to some of the actual math, without making it feel like a textbook. The field has a beautiful internal logic to it once you see how each piece builds on the last.</p>
+        <h2>Turkish From Zero — A Complete Grammar Guide</h2>
+        <p>I started learning Turkish in November 2022, and it's been one of the most rewarding and humbling experiences I've had with a language. Turkish is genuinely different from anything a French or English speaker has encountered. Not harder exactly — just built on completely different principles. Once those principles click, the language becomes surprisingly logical, even beautiful in its regularity. This page is my attempt to lay everything out clearly, from the very first sounds to the suffixes that mark fluency.</p>
 
         <p><hr/></p>
 
-        <!-- ── CH 00 ── -->
-        <h3 id="ch00">Chapter 00 — Why Revenue Management?</h3>
+        <!-- ══════════════════════════════════════════════ CH 00 -->
+        <h3 id="ch00">Chapter 00 — Why Turkish is Different</h3>
 
-        <p>The whole thing starts with one uncomfortable fact: when a plane takes off with an empty seat, that seat is gone forever. You can't put it back on the shelf. You can't sell it the next day. It just evaporates. And since the plane was going to fly anyway — the fuel is burned, the crew is paid — that empty seat is pure lost revenue with essentially zero cost saving attached to it.</p>
+        <p>Before you learn a single word, it helps to understand the architecture of the language you're entering. Turkish belongs to the Turkic language family, completely unrelated to Indo-European languages like French, English, or even Persian. It's an <strong>agglutinative</strong> language — meaning it builds words by stacking suffixes onto a root, one after another, each suffix adding a precise grammatical meaning.</p>
 
-        <p>That's what makes airlines special. Most businesses can adjust their supply when demand changes. Airlines mostly can't, at least not in the short run. The plane has a fixed number of seats, and every pricing decision on one seat is implicitly a decision about every other seat on the same flight.</p>
-
-        <p>Add to that the fact that not all passengers are equal. The person booking six months out for a beach holiday and the consultant booking the morning of their client meeting are buying the exact same seat — but their willingness to pay can differ by a factor of four or five. Revenue Management exists to serve both without letting one steal the other's price point.</p>
+        <p>In French you might say <em>je ne pourrai pas y aller</em> — six words. In Turkish: <em>gidemeyeceğim</em> — one word. Every piece of that word is a suffix with its own rule. That's the game.</p>
 
         <div class="callout">
-          <div class="callout-label">The core tension</div>
-          Sell too cheap too early and you fill the plane with low-fare passengers, leaving no room for the business traveler who'd have paid 4× more. Hold prices too high for too long and you depart with empty rows. Every RM decision navigates that tension, flight by flight, day by day.
+          <div class="callout-label">Three principles that govern everything</div>
+          <strong>1. Agglutination:</strong> suffixes stack onto roots in a fixed order.<br>
+          <strong>2. Vowel harmony:</strong> every suffix adjusts its vowels to match the root.<br>
+          <strong>3. SOV word order:</strong> Subject → Object → Verb. The verb always comes last.
         </div>
 
-        <p>Academic studies generally estimate that good RM adds somewhere between 4 and 8% to airline revenues compared to naive pricing. For a major carrier, that's hundreds of millions of dollars a year — not from flying more planes, but from pricing the existing ones better.</p>
+        <p>Turkish also has no grammatical gender — no masculine/feminine distinction anywhere. There is no equivalent of <em>le/la, un/une, der/die/das</em>. There are no articles at all. And the verb <em>to be</em> is a suffix, not a standalone word. None of this is hard once you accept that you're learning a different system entirely, not a variation of what you already know.</p>
 
         <p><hr/></p>
 
-        <!-- ── CH 01 ── -->
-        <h3 id="ch01">Chapter 01 — Fare Classes & the Bucket System</h3>
+        <!-- ══════════════════════════════════════════════ CH 01 -->
+        <h3 id="ch01">Chapter 01 — Alphabet & Pronunciation</h3>
 
-        <p>Before any forecasting or optimization can happen, airlines need a structure to work within. That structure is the fare class — a letter (Y, K, Q, V, and so on) that bundles a price with a set of rules: refundability, changeability, advance purchase requirements. These restrictions exist for one purpose: to make passengers sort themselves into the segment that actually matches their price sensitivity.</p>
+        <p>Turkish uses a Latin alphabet introduced by Atatürk in 1928, replacing the Ottoman Arabic script. It has 29 letters. The key principle: Turkish spelling is almost perfectly phonetic. Every letter has exactly one sound. If you can read it, you can pronounce it correctly — which is a luxury you don't have in French or English.</p>
 
-        <table class="rm-table">
-          <thead>
-            <tr><th>Class</th><th>Typical rules</th><th>Who buys it</th><th>Yield</th></tr>
-          </thead>
+        <table class="t">
+          <thead><tr><th>Letter</th><th>Pronunciation</th><th>Example</th><th>Like in...</th></tr></thead>
           <tbody>
-            <tr><td><strong>Y / J</strong></td><td>Fully refundable, no advance purchase</td><td>Business, corporate</td><td><span class="tag tag-h">High</span></td></tr>
-            <tr><td><strong>K / M</strong></td><td>Change fee, partial refund</td><td>Semi-flexible traveler</td><td><span class="tag tag-m">Mid</span></td></tr>
-            <tr><td><strong>Q / V / L</strong></td><td>Non-refundable, advance purchase required</td><td>Leisure, price-sensitive</td><td><span class="tag tag-l">Low</span></td></tr>
+            <tr><td><strong>A a</strong></td><td>ah</td><td>araba (car)</td><td class="en">f<em>a</em>ther</td></tr>
+            <tr><td><strong>B b</strong></td><td>b</td><td>ben (I)</td><td class="en">normal</td></tr>
+            <tr><td><strong>C c</strong></td><td>dj</td><td>cam (glass)</td><td class="en"><em>j</em>am</td></tr>
+            <tr><td><strong>Ç ç</strong></td><td>ch</td><td>çay (tea)</td><td class="en"><em>ch</em>air</td></tr>
+            <tr><td><strong>D d</strong></td><td>d</td><td>dil (tongue)</td><td class="en">normal</td></tr>
+            <tr><td><strong>E e</strong></td><td>eh</td><td>ev (house)</td><td class="en">b<em>e</em>d</td></tr>
+            <tr><td><strong>F f</strong></td><td>f</td><td>fare (mouse)</td><td class="en">normal</td></tr>
+            <tr><td><strong>G g</strong></td><td>g (hard)</td><td>gün (day)</td><td class="en"><em>g</em>et</td></tr>
+            <tr><td><strong>Ğ ğ</strong></td><td>silent / lengthens vowel</td><td>dağ (mountain)</td><td class="en">no equivalent — never pronounce it</td></tr>
+            <tr><td><strong>H h</strong></td><td>h (always pronounced)</td><td>hava (air)</td><td class="en"><em>h</em>at</td></tr>
+            <tr><td><strong>I ı</strong></td><td>uh (back, unrounded)</td><td>kız (girl)</td><td class="en">the <em>a</em> in <em>about</em> — but further back</td></tr>
+            <tr><td><strong>İ i</strong></td><td>ee</td><td>iyi (good)</td><td class="en">m<em>ee</em>t</td></tr>
+            <tr><td><strong>J j</strong></td><td>zh</td><td>jandarma</td><td class="en">plea<em>s</em>ure (French <em>j</em>)</td></tr>
+            <tr><td><strong>K k</strong></td><td>k</td><td>kedi (cat)</td><td class="en">normal</td></tr>
+            <tr><td><strong>L l</strong></td><td>l</td><td>lamba (lamp)</td><td class="en">normal</td></tr>
+            <tr><td><strong>M m</strong></td><td>m</td><td>masa (table)</td><td class="en">normal</td></tr>
+            <tr><td><strong>N n</strong></td><td>n</td><td>ne (what)</td><td class="en">normal</td></tr>
+            <tr><td><strong>O o</strong></td><td>oh (rounded)</td><td>on (ten)</td><td class="en">n<em>o</em>te</td></tr>
+            <tr><td><strong>Ö ö</strong></td><td>like French eu</td><td>söz (word)</td><td class="en">French <em>peu</em></td></tr>
+            <tr><td><strong>P p</strong></td><td>p</td><td>para (money)</td><td class="en">normal</td></tr>
+            <tr><td><strong>R r</strong></td><td>rolled r (slight)</td><td>renk (color)</td><td class="en">slightly rolled</td></tr>
+            <tr><td><strong>S s</strong></td><td>s (always unvoiced)</td><td>su (water)</td><td class="en"><em>s</em>un, never <em>z</em></td></tr>
+            <tr><td><strong>Ş ş</strong></td><td>sh</td><td>şehir (city)</td><td class="en"><em>sh</em>ow</td></tr>
+            <tr><td><strong>T t</strong></td><td>t</td><td>taş (stone)</td><td class="en">normal</td></tr>
+            <tr><td><strong>U u</strong></td><td>oo (short)</td><td>un (flour)</td><td class="en">b<em>oo</em>k</td></tr>
+            <tr><td><strong>Ü ü</strong></td><td>like French u</td><td>üç (three)</td><td class="en">French <em>tu</em></td></tr>
+            <tr><td><strong>V v</strong></td><td>v (softer than English)</td><td>var (there is)</td><td class="en">between v and w</td></tr>
+            <tr><td><strong>Y y</strong></td><td>y (always consonant)</td><td>yok (there isn't)</td><td class="en"><em>y</em>es</td></tr>
+            <tr><td><strong>Z z</strong></td><td>z</td><td>zaman (time)</td><td class="en">normal</td></tr>
           </tbody>
         </table>
 
-        <p>The idea is that a business traveler <em>could</em> technically buy the non-refundable advance-purchase fare — but they won't, because it doesn't work for how they travel. The restrictions act as a self-selection mechanism. One classic example: for decades, discount fares required a Saturday night stay. Business travelers almost never want to spend a weekend away from home, so that single rule cleanly separated two segments without any airline employee making a judgment call on each booking.</p>
+        <div class="callout">
+          <div class="callout-label">The two letters that will trip you up</div>
+          <strong>I ı (dotless i)</strong> — a sound that doesn't exist in French or English. The back of your tongue goes up and back, lips are unrounded. Think of the sound you make when hesitating: "uh". It's not "ee". Confusing ı and i changes word meanings completely.<br><br>
+          <strong>Ğ ğ (soft g)</strong> — never pronounced as a consonant. Between two vowels it slightly lengthens the preceding vowel. At the end of a word, almost silent. <em>Dağ</em> sounds like "daa", <em>öğrenci</em> like "öö-ren-ci".
+        </div>
 
-        <p>One thing worth clarifying: booking class (the letter) and cabin class (Economy, Business) are different things. Two passengers sitting next to each other in Economy can hold Q and Y fares and have paid very different prices under very different conditions. The letter is invisible to the passenger but central to everything the RM system does.</p>
+        <h4>Consonant mutation — voiced and voiceless</h4>
+        <p>Turkish has a systematic rule: certain final consonants change when a vowel-initial suffix is added. The voiceless consonants <strong>ç, k, p, t</strong> soften to <strong>c, ğ, b, d</strong> when followed by a vowel. This is called <em>consonant mutation</em> and you will see it constantly.</p>
+
+        <div class="rule">
+          <div class="rule-label">Consonant mutation rule</div>
+          ç → c &nbsp;|&nbsp; k → ğ &nbsp;|&nbsp; p → b &nbsp;|&nbsp; t → d<br><br>
+          ağaç (tree) → ağac<span class="suf">ı</span> (the tree / accusative)<br>
+          kitap (book) → kitab<span class="suf">ı</span> (the book / accusative)<br>
+          sebep (reason) → sebeb<span class="suf">i</span><br>
+          renk (color) → reng<span class="suf">i</span>
+        </div>
+
+        <div class="quiz" id="qz01">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">How is the letter "C c" pronounced in Turkish?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz01">Like "s" in English (soft c)</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz01">Like "k" (hard c)</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz01">Like "j" in jam — a dj sound</button>
+          </div>
+          <div class="quiz-feedback" id="qz01-fb"></div>
+          <button class="quiz-reset" id="qz01-rs" onclick="resetQuiz('qz01')">Try again</button>
+        </div>
 
         <p><hr/></p>
 
-        <!-- ── CH 02 ── -->
-        <h3 id="ch02">Chapter 02 — Class-Based Forecasting</h3>
+        <!-- ══════════════════════════════════════════════ CH 02 -->
+        <h3 id="ch02">Chapter 02 — Vowel Harmony</h3>
 
-        <p>Inventory control is only as good as the forecast feeding it. Before the system can decide which fare classes to open or close, it needs to predict what demand looks like — for each fare class, on each flight, at each point in the booking window. This is class-based forecasting, and it's the backbone of traditional RM.</p>
+        <p>Vowel harmony is the single most important rule in Turkish. Everything else builds on it. The principle is simple: <strong>the vowels in a word must come from the same family</strong>. And when you add a suffix, the vowel in that suffix must match the last vowel of the root.</p>
 
-        <h4>Booking curves</h4>
+        <p>Turkish has 8 vowels, split into two groups based on where in the mouth they're produced:</p>
 
-        <p>The most fundamental concept here is the booking curve — a picture of how reservations accumulate over time before departure. Every route has its own characteristic shape. Long-haul leisure routes see a burst of early bookings, a lull, then a spike close to departure. Short-haul business routes are flatter, with most bookings arriving in the last two weeks. The RM system continuously compares actual bookings against the historical curve: ahead of pace means demand is strong; behind means you may need to open cheaper fares. It's the system's real-time pulse check on each flight.</p>
+        <table class="t">
+          <thead><tr><th>Group</th><th>Vowels</th><th>Position</th></tr></thead>
+          <tbody>
+            <tr><td><span class="back">Back vowels</span></td><td><span class="back">a, ı, o, u</span></td><td>Produced at the back of the mouth</td></tr>
+            <tr><td><span class="front">Front vowels</span></td><td><span class="front">e, i, ö, ü</span></td><td>Produced at the front of the mouth</td></tr>
+          </tbody>
+        </table>
 
-        <h4>The unconstraining problem</h4>
+        <p>If a word's last vowel is a back vowel, all suffixes use back vowels. If it's a front vowel, all suffixes use front vowels. This applies to <em>every</em> suffix, stacked one after another throughout a long word.</p>
 
-        <p>Here's a subtle but important challenge. If a cheap fare class was closed 45 days before departure, you never observed the demand that existed at that price. Your historical data only shows what you actually sold — not what was there. Feed that biased data back into a forecasting model and you'll systematically underestimate true demand at low fares. Unconstraining is the statistical process of inferring what demand would have been, had the bucket been open. It's not the most glamorous part of RM, but getting it wrong can quietly distort every downstream decision.</p>
+        <h4>The 2-way harmony (e/a)</h4>
+        <p>Some suffixes only vary between e and a. The rule: after a front vowel → <strong>e</strong>, after a back vowel → <strong>a</strong>.</p>
 
-        <h4>Pickup forecasting</h4>
+        <div class="rule">
+          <div class="rule-label">2-way harmony: suffix vowel = e or a</div>
+          Front vowels (e, i, ö, ü) → suffix uses <span class="front">e</span><br>
+          Back vowels (a, ı, o, u)  → suffix uses <span class="back">a</span><br><br>
+          ev (house) → ev<span class="front">de</span> (at home — locative)<br>
+          araba (car) → araba<span class="back">da</span> (in the car — locative)<br>
+          gelmek (to come) → gel<span class="front">mek</span><br>
+          gitmek (to go) → git<span class="back">mek</span>
+        </div>
 
-        <p>A common practical approach is pickup forecasting: rather than modelling demand from scratch, you look at how many bookings historically arrive in a given future time window given today's booking position. If a flight currently has 80 bookings with 30 days to go, and historically those flights pick up 40 more in the final 30 days, you forecast 120 total. Simple, interpretable, and widely used — though it struggles when demand patterns shift significantly from historical norms, which happens more often than you'd like.</p>
+        <h4>The 4-way harmony (i/ı/ü/u)</h4>
+        <p>Other suffixes vary among four vowels. The rule depends on both frontness and roundedness:</p>
+
+        <table class="t">
+          <thead><tr><th>Last vowel of root</th><th>Suffix vowel</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>a, ı</td><td><span class="back">ı</span></td><td>kız → kız<span class="back">ı</span> (the girl)</td></tr>
+            <tr><td>e, i</td><td><span class="front">i</span></td><td>ev → ev<span class="front">i</span> (the house)</td></tr>
+            <tr><td>o, u</td><td><span class="back">u</span></td><td>top → top<span class="back">u</span> (the ball)</td></tr>
+            <tr><td>ö, ü</td><td><span class="front">ü</span></td><td>göz → göz<span class="front">ü</span> (the eye)</td></tr>
+          </tbody>
+        </table>
 
         <div class="callout">
-          <div class="callout-label">The limit of buckets</div>
-          Class-based forecasting assumes demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum. The bucket structure is an administrative convenience — not an economic truth. That tension is exactly what Chapter 04 addresses.
+          <div class="callout-label">The harmony mnemonic</div>
+          Think of it as a mouth position: your tongue stays in roughly the same place throughout a word. If the root pulls your tongue back (a, ı, o, u), the suffix vowels stay back. If the root pulls it forward (e, i, ö, ü), the suffixes follow forward. Vowel harmony is phonological muscle memory — your mouth is being consistent.
         </div>
+
+        <h4>Exceptions — loanwords</h4>
+        <p>Loanwords from Arabic, Persian, French, or English often violate vowel harmony within the root itself (e.g. <em>kitap</em> — ki is front, a is back). In these cases, <strong>the suffix follows the last vowel</strong> only, ignoring internal disharmony. So <em>kitap</em> → <em>kitabı</em> (back, because last vowel is a).</p>
 
         <div class="quiz" id="qz02">
           <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">A flight is tracking well ahead of its historical booking curve 50 days before departure. What should the RM system most likely do?</div>
+          <div class="quiz-q">The word "gün" (day) ends in ü — a front vowel. Which locative suffix does it take?</div>
           <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz02">Open additional low-fare seats to capture the strong demand</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz02">Close low-fare classes and protect capacity for higher-paying passengers</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz02">Do nothing — the booking curve is just a rough benchmark</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz02">günda</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz02">günde</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz02">gündu</button>
           </div>
           <div class="quiz-feedback" id="qz02-fb"></div>
           <button class="quiz-reset" id="qz02-rs" onclick="resetQuiz('qz02')">Try again</button>
@@ -313,63 +401,56 @@
 
         <p><hr/></p>
 
-        <!-- ── CH 03 ── -->
-        <h3 id="ch03">Chapter 03 — Leg Inventory Control: Littlewood, EMSR-a & EMSR-b</h3>
+        <!-- ══════════════════════════════════════════════ CH 03 -->
+        <h3 id="ch03">Chapter 03 — Nouns, Plurals & the Absence of Articles</h3>
 
-        <p>With a forecast in hand, the system needs to act on it. How many seats should be protected for each fare class? This is the inventory control problem, and it has a beautiful mathematical lineage that starts in 1972 with a surprisingly simple idea.</p>
+        <p>Turkish has no articles. There is no word for <em>a</em>, <em>an</em>, <em>the</em>, <em>un</em>, <em>une</em>, <em>le</em>, or <em>la</em>. The noun stands alone. <em>Ev</em> can mean "a house", "the house", or just "house" depending on context. You'll miss articles for about two weeks and then wonder why you ever needed them.</p>
 
-        <h4>Littlewood's rule — the two-class foundation</h4>
+        <h4>Plurals — ler / lar</h4>
+        <p>The plural suffix follows 2-way vowel harmony: <strong>-ler</strong> after front vowels, <strong>-lar</strong> after back vowels.</p>
 
-        <p>Ken Littlewood was the first to formally solve the airline seat allocation problem, for the simple case of two fare classes. His insight: you should accept a low-fare booking request if and only if its fare exceeds the expected revenue from keeping that seat available for a future high-fare passenger. Formally, denote the low fare as $f_1$ and the high fare as $f_2$, with $f_1 < f_2$. Let $D_2$ be the (random) future demand for the high fare class, and $C$ the remaining capacity. Littlewood's rule says: accept the low-fare request if and only if:</p>
-
-        <div class="math-block">
-          <div class="math-block-label">Littlewood's Rule (1972)</div>
-          $$f_1 \geq f_2 \cdot P(D_2 \geq C)$$
-          <br>
-          where $P(D_2 \geq C)$ is the probability that future high-fare demand will meet or exceed remaining capacity $C$.
+        <div class="rule">
+          <div class="rule-label">Plural suffix</div>
+          Front vowel root → root + <span class="front">ler</span><br>
+          Back vowel root  → root + <span class="back">lar</span><br><br>
+          ev → ev<span class="front">ler</span> (houses)<br>
+          araba → araba<span class="back">lar</span> (cars)<br>
+          kitap → kitap<span class="back">lar</span> (books)<br>
+          gün → gün<span class="front">ler</span> (days)
         </div>
 
-        <p>The right-hand side is the expected marginal revenue of keeping the seat: the high fare, discounted by the probability that a high-fare passenger actually materializes to fill it. If the low fare exceeds this, take it. If not, wait. Elegant, and it works — but only for two fare classes. Real flights have many more.</p>
-
-        <h4>EMSR-a — extending to multiple classes</h4>
-
-        <p>Belobaba (1987) generalized Littlewood's rule to $n$ fare classes through the Expected Marginal Seat Revenue algorithm. In EMSR-a, you compute protection levels for each fare class independently by applying Littlewood's two-class logic pairwise. For each lower class $j$ being considered, you protect seats for each higher class $i > j$ separately and sum those protections:</p>
-
-        <div class="math-block">
-          <div class="math-block-label">EMSR-a protection level for class $j$</div>
-          $$S_j^a = \sum_{i > j} y_i^*$$
-          <br>
-          where each $y_i^*$ solves $f_j = f_i \cdot P(D_i \geq y_i^*)$, i.e. the Littlewood threshold applied to each higher class $i$ against the current lower fare $f_j$.
+        <div class="callout">
+          <div class="callout-label">No plural after numbers</div>
+          In Turkish, nouns after numbers stay singular. <em>Üç araba</em> = "three car" (not "three cars"). The number already tells you it's plural — adding -lar would be redundant. This trips up learners constantly.
         </div>
 
-        <p>EMSR-a is intuitive and easy to implement, but it has a known flaw: treating each higher class independently tends to over-protect when fares are close together, because the same capacity ends up being "claimed" by multiple higher classes.</p>
+        <h4>Indefiniteness: the numeral bir</h4>
+        <p>The closest thing to the article "a/an" is <em>bir</em> (one), placed before the noun. <em>Bir araba</em> = a car. But you'll often omit it entirely in natural speech when the context makes indefiniteness clear.</p>
 
-        <h4>EMSR-b — the industry standard</h4>
+        <h4>Possession suffixes (iyelik ekleri)</h4>
+        <p>Possession is expressed by a suffix on the noun, not a separate word. These follow 4-way vowel harmony:</p>
 
-        <p>EMSR-b, also from Belobaba (1992), fixes this by aggregating all higher classes into a single composite class before applying Littlewood's rule. You compute a weighted average fare $\bar{f}$ across all higher classes and a combined demand distribution $\bar{D}$, then find the protection level $S_j^b$ that satisfies:</p>
+        <table class="t">
+          <thead><tr><th>Person</th><th>Suffix (after consonant)</th><th>Example (ev = house)</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>1st sg.</td><td class="tr">-im / -ım / -um / -üm</td><td>ev<span class="suf">im</span></td><td>my house</td></tr>
+            <tr><td>2nd sg.</td><td class="tr">-in / -ın / -un / -ün</td><td>ev<span class="suf">in</span></td><td>your house</td></tr>
+            <tr><td>3rd sg.</td><td class="tr">-i / -ı / -u / -ü</td><td>ev<span class="suf">i</span></td><td>his/her/its house</td></tr>
+            <tr><td>1st pl.</td><td class="tr">-imiz / -ımız / -umuz / -ümüz</td><td>ev<span class="suf">imiz</span></td><td>our house</td></tr>
+            <tr><td>2nd pl.</td><td class="tr">-iniz / -ınız / -unuz / -ünüz</td><td>ev<span class="suf">iniz</span></td><td>your (pl.) house</td></tr>
+            <tr><td>3rd pl.</td><td class="tr">-leri / -ları</td><td>ev<span class="suf">leri</span></td><td>their house</td></tr>
+          </tbody>
+        </table>
 
-        <div class="math-block">
-          <div class="math-block-label">EMSR-b protection level for class $j$</div>
-          $$f_j = \bar{f} \cdot P(\bar{D} \geq S_j^b)$$
-          <br>
-          where $\bar{f} = \dfrac{\sum_{i > j} f_i \cdot E[D_i]}{\sum_{i > j} E[D_i]}$ is the demand-weighted average fare of all higher classes, and $\bar{D} = \sum_{i > j} D_i$ is their aggregated demand.
-        </div>
-
-        <p>The key difference from EMSR-a: you're asking "how many seats should I protect for <em>all</em> higher classes combined, given the aggregated demand and average fare?" rather than class by class. This avoids double-counting and produces better protection levels when fares are close together — which in practice they often are. EMSR-b is the dominant approach in commercial RM systems today.</p>
-
-        <div class="example">
-          <div class="example-label">Working through the logic numerically</div>
-          You have one seat left. A discount passenger offers $180. Your forecast says there's a 55% chance a high-fare passenger books before departure at $480. Expected marginal revenue of holding: $480 × 0.55 = $264 > $180. Hold the seat — the bid price is $264.<br><br>
-          Two hours later — same seat, same offer. Departure is 4 hours away and the high-fare probability has dropped to 25%. Expected marginal revenue: $480 × 0.25 = $120 < $180. The bid price just fell below the offered fare. Sell.
-        </div>
+        <p>When the noun ends in a vowel, a buffer consonant <strong>s</strong> is inserted before the 3rd person suffix: <em>araba</em> → <em>araba<strong>s</strong>ı</em> (its car). For 1st and 2nd person after a vowel, the suffix loses its first vowel: <em>araba</em> → <em>arabam</em> (my car).</p>
 
         <div class="quiz" id="qz03">
           <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">According to Littlewood's rule, you should accept a low-fare booking when:</div>
+          <div class="quiz-q">How do you say "our books" in Turkish? (kitap = book)</div>
           <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz03">The flight is more than 30 days from departure</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz03">The low fare exceeds the high fare multiplied by the probability of future high-fare demand filling that seat</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz03">The low fare is at least 50% of the high fare</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz03">kitapımız</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz03">kitaplarımız</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz03">kitaplarmız</button>
           </div>
           <div class="quiz-feedback" id="qz03-fb"></div>
           <button class="quiz-reset" id="qz03-rs" onclick="resetQuiz('qz03')">Try again</button>
@@ -377,77 +458,50 @@
 
         <p><hr/></p>
 
-        <!-- ── CH 04 ── -->
-        <h3 id="ch04">Chapter 04 — Class-Free Forecasting & Willingness to Pay</h3>
+        <!-- ══════════════════════════════════════════════ CH 04 -->
+        <h3 id="ch04">Chapter 04 — Personal Pronouns & the Verb To Be</h3>
 
-        <p>Class-based forecasting works, but it carries a hidden assumption baked in from the start: that demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum — every passenger has their own threshold, and none of them know or care about your fare class ladder. Class-free forecasting lets go of that assumption entirely.</p>
+        <h4>Personal pronouns</h4>
+        <table class="t">
+          <thead><tr><th>Turkish</th><th>English</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Ben</strong></td><td>I</td><td></td></tr>
+            <tr><td><strong>Sen</strong></td><td>You (singular, informal)</td><td></td></tr>
+            <tr><td><strong>O</strong></td><td>He / She / It</td><td>No gender distinction</td></tr>
+            <tr><td><strong>Biz</strong></td><td>We</td><td></td></tr>
+            <tr><td><strong>Siz</strong></td><td>You (plural or formal singular)</td><td>Use for strangers, elders</td></tr>
+            <tr><td><strong>Onlar</strong></td><td>They</td><td></td></tr>
+          </tbody>
+        </table>
 
-        <h4>What willingness to pay actually is</h4>
+        <h4>The verb to be — a suffix, not a word</h4>
+        <p>In the present tense, "to be" doesn't exist as a separate verb. It's a suffix added directly to a noun or adjective. The suffix follows 4-way vowel harmony and changes based on person:</p>
 
-        <p>Willingness to pay (WTP) is the maximum price a given customer would accept before choosing not to buy. It's not a fixed property of a person — it varies with context, urgency, alternatives, and even mood. A passenger booking a spontaneous weekend trip has a different WTP than the same passenger booking the same route for a funeral. WTP is better thought of as a distribution than a number.</p>
-
-        <p>Formally, if we denote a passenger's WTP as the random variable $W$, then the probability that a passenger buys at price $p$ is simply:</p>
-
-        <div class="math-block">
-          <div class="math-block-label">Purchase probability at price $p$</div>
-          $$P(\text{buy} \mid p) = P(W \geq p) = 1 - F_W(p)$$
-          <br>
-          where $F_W(p)$ is the CDF of the WTP distribution — the fraction of the population with WTP below $p$. The higher the price, the fewer passengers buy.
+        <div class="rule">
+          <div class="rule-label">Present "to be" suffixes (-(y)im, -sin, ∅, -iz, -siniz, -ler)</div>
+          Ben öğrenci<span class="suf">yim</span>  — I am a student<br>
+          Sen öğrenci<span class="suf">sin</span>  — You are a student<br>
+          O öğrenci<span class="suf">(dir)</span> — He/She is a student (dir often omitted)<br>
+          Biz öğrenci<span class="suf">yiz</span>  — We are students<br>
+          Siz öğrenci<span class="suf">siniz</span> — You (pl.) are students<br>
+          Onlar öğrenci<span class="suf">ler</span> — They are students
         </div>
 
-        <p>This is the demand curve, expressed in terms of individual WTP. And the revenue-maximizing price is the one that balances the gain from charging more per ticket against the loss from fewer passengers buying. This trade-off is captured in the expected revenue function:</p>
+        <p>After a consonant-final noun, you add the suffix directly. After a vowel-final noun, a buffer <strong>y</strong> is inserted: <em>araba</em> → <em>arabayım</em> (I am a car — not very useful, but grammatically correct).</p>
 
-        <div class="math-block">
-          <div class="math-block-label">Expected revenue at price $p$ (single unit)</div>
-          $$R(p) = p \cdot P(W \geq p) = p \cdot [1 - F_W(p)]$$
-          <br>
-          The optimal price $p^*$ maximizes $R(p)$. Taking the derivative and setting it to zero gives: $1 - F_W(p^*) - p^* \cdot f_W(p^*) = 0$, where $f_W$ is the PDF of the WTP distribution.
-        </div>
+        <h4>Negative to be — değil</h4>
+        <p><em>Değil</em> means "not" and is placed before the to-be suffix: <em>öğrenci değilim</em> (I am not a student). <em>Değil</em> itself takes the to-be suffixes.</p>
 
-        <h4>Why the shape of the WTP distribution matters enormously</h4>
-
-        <p>Different WTP distributions lead to very different optimal pricing strategies, and this is something I find genuinely interesting to think about. If the WTP distribution is concentrated — most passengers have similar valuations — you want a fairly uniform price, because price discrimination doesn't add much value. If it's dispersed, with a long tail of high-WTP passengers, price discrimination (i.e. fare classes, or dynamic pricing) becomes extremely valuable. The wider the distribution, the more money is left on the table by a single price.</p>
-
-        <div class="example">
-          <div class="example-label">A simple illustration</div>
-          Suppose your flight has 3 passengers with WTP of $100, $200, and $500. If you charge a single price of $200, you earn $400 (two passengers buy). If you charge $100, you earn $300. But if you can price-discriminate perfectly — charging each passenger exactly their WTP — you earn $800. The gap between $400 and $800 is the value of perfect segmentation. Real fare class systems try to capture some of that gap without having to read each passenger's mind.
-        </div>
-
-        <h4>Estimating WTP in practice</h4>
-
-        <p>The key challenge is that you never directly observe WTP — you only observe whether a passenger booked at a given price. Someone who books at $250 has WTP ≥ $250, but you don't know how much more they'd have paid. This is a classic censored observation problem. Parametric approaches fit a distribution (log-normal and Weibull are common choices, as they enforce positivity and produce a plausible right tail) to the observed booking data. The log-normal is particularly convenient: it assumes $\ln(W) \sim \mathcal{N}(\mu, \sigma^2)$, which gives:</p>
-
-        <div class="math-block">
-          <div class="math-block-label">Log-normal WTP model</div>
-          $$F_W(p) = \Phi\!\left(\frac{\ln p - \mu}{\sigma}\right)$$
-          <br>
-          where $\Phi$ is the standard normal CDF, $\mu$ is the mean of log-WTP, and $\sigma$ its standard deviation. The parameters $\mu$ and $\sigma$ are estimated from historical booking data using maximum likelihood.
-        </div>
-
-        <p>The problem with a single parametric distribution is that real markets have multiple customer segments — leisure travelers with low, concentrated WTP and business travelers with high, dispersed WTP. A single log-normal misses this. Mixture models address it by summing two or more distributions with mixing weights:</p>
-
-        <div class="math-block">
-          <div class="math-block-label">Mixture WTP model (two segments)</div>
-          $$F_W(p) = \lambda \cdot F_{W_1}(p) + (1 - \lambda) \cdot F_{W_2}(p)$$
-          <br>
-          where $\lambda \in (0,1)$ is the proportion of leisure passengers, and $F_{W_1}$, $F_{W_2}$ are the WTP CDFs for leisure and business segments respectively. The parameters are typically estimated via EM (Expectation-Maximization).
-        </div>
-
-        <h4>From WTP distributions to pricing</h4>
-
-        <p>Once you have a WTP distribution, the EMSR logic generalizes naturally. The bid price at any point in the booking window is simply the price $p$ such that the expected marginal revenue of the next seat equals the cost of giving it up — and that calculation now uses the continuous WTP distribution instead of discrete fare class probabilities. This is conceptually what class-free systems do: they replace the ladder of buckets with a continuous demand curve, and the protection levels with a continuously-updated bid price derived from it.</p>
-
-        <h4>The buy-down problem</h4>
-
-        <p>Class-based systems also have a hard time with buy-down — when passengers who would have paid a higher fare instead book a cheaper one that's been left open. A class-free model that estimates the full WTP distribution handles this naturally: it knows that opening a $150 fare will pull some demand away from the $280 fare, and it prices that cannibalization into the optimization. Class-based forecasting, by contrast, records a booking at $150 and has no way of knowing it displaced a $280 booking that never materialized.</p>
+        <h4>Past to be — -di/-ti suffix on noun</h4>
+        <p>The past of "to be" adds <em>-di</em> after the noun with the appropriate personal ending: <em>öğrenciydim</em> (I was a student), <em>öğrenciydin</em> (you were a student), <em>öğrenciydi</em> (he/she was).</p>
 
         <div class="quiz" id="qz04">
           <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">A passenger books a $150 fare. In a class-free WTP model, this observation tells you:</div>
+          <div class="quiz-q">How do you say "We are tired" in Turkish? (yorgun = tired)</div>
           <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz04">Their exact WTP is $150</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz04">Their WTP is at least $150, but could be much higher — it's a censored observation</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz04">They would not have bought at any price above $150</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz04">Biz yorgunim</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz04">Biz yorgunuz</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz04">Biz yorgunsin</button>
           </div>
           <div class="quiz-feedback" id="qz04-fb"></div>
           <button class="quiz-reset" id="qz04-rs" onclick="resetQuiz('qz04')">Try again</button>
@@ -455,84 +509,127 @@
 
         <p><hr/></p>
 
-        <!-- ── CH 05 ── -->
-        <h3 id="ch05">Chapter 05 — Network Optimization</h3>
+        <!-- ══════════════════════════════════════════════ CH 05 -->
+        <h3 id="ch05">Chapter 05 — The Six Noun Cases</h3>
 
-        <p>Everything so far treats each flight leg as an independent problem. But airlines operate networks — a passenger flying Montréal to Frankfurt to Istanbul uses two legs, and optimizing each one in isolation ignores the relationship between them. Network optimization is where classical RM gets genuinely hard, and also genuinely interesting.</p>
+        <p>Turkish marks the grammatical role of nouns with case suffixes. There are six cases. Once you have these, you can build almost any sentence structure. Think of them as answering specific questions about a noun's role.</p>
 
-        <h4>Why leg-based RM fails on networks</h4>
-
-        <p>A simple example. Your Montréal–Frankfurt leg has one seat left. Two requests arrive simultaneously: a local passenger paying $420 for that leg only, and a connecting passenger paying $850 total for Montréal–Frankfurt–Istanbul, with $360 attributed to the first leg. A leg-based system sees $420 vs. $360 and accepts the local passenger. The network just left $430 on the table. This isn't an edge case — it's a systematic bias. Leg-based RM always undervalues connecting passengers because it can't see beyond its own leg.</p>
-
-        <h4>Network bid prices and the LP formulation</h4>
-
-        <p>The solution is to compute bid prices at the network level. The standard approach formulates a linear program over all flights and all itineraries simultaneously. Let $x_{ij}$ be the number of passengers accepted on itinerary $j$ using leg $i$, $f_j$ the fare for itinerary $j$, and $C_i$ the capacity of leg $i$. The network LP maximizes total revenue subject to capacity constraints on every leg:</p>
-
-        <div class="math-block">
-          <div class="math-block-label">Network Revenue Management LP</div>
-          $$\max \sum_j f_j \cdot x_j$$
-          $$\text{subject to: } \sum_{j \ni i} x_j \leq C_i \quad \forall \text{ legs } i$$
-          $$x_j \leq E[D_j] \quad \forall \text{ itineraries } j, \quad x_j \geq 0$$
-          <br>
-          The dual variables $\pi_i$ on the capacity constraints are the <strong>network bid prices</strong> — the shadow price of one unit of capacity on leg $i$.
-        </div>
-
-        <p>An itinerary $j$ should be accepted if and only if its fare exceeds the sum of bid prices across all legs it uses:</p>
-
-        <div class="math-block">
-          <div class="math-block-label">Network acceptance criterion</div>
-          $$f_j \geq \sum_{i \in j} \pi_i$$
-        </div>
+        <table class="t">
+          <thead><tr><th>Case</th><th>Suffix</th><th>Answers</th><th>Example</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Nominative</strong></td><td class="tr">—</td><td>Who/What (subject)</td><td>Adam geldi</td><td>The man came</td></tr>
+            <tr><td><strong>Accusative</strong></td><td class="tr">-(y)i/ı/u/ü</td><td>Who/What (definite object)</td><td>Adamı gördüm</td><td>I saw the man</td></tr>
+            <tr><td><strong>Dative</strong></td><td class="tr">-(y)e/a</td><td>To where / To whom</td><td>Eve gidiyorum</td><td>I'm going home</td></tr>
+            <tr><td><strong>Locative</strong></td><td class="tr">-de/da/te/ta</td><td>Where (static)</td><td>Evde oturuyorum</td><td>I'm sitting at home</td></tr>
+            <tr><td><strong>Ablative</strong></td><td class="tr">-den/dan/ten/tan</td><td>From where / From whom</td><td>Evden geliyorum</td><td>I'm coming from home</td></tr>
+            <tr><td><strong>Genitive</strong></td><td class="tr">-(n)in/ın/un/ün</td><td>Whose / Of what</td><td>Evin kapısı</td><td>The door of the house</td></tr>
+          </tbody>
+        </table>
 
         <div class="callout">
-          <div class="callout-label">Displacement cost</div>
-          The sum $\sum_{i \in j} \pi_i$ is the displacement cost of itinerary $j$ — the opportunity cost of the capacity it consumes across the network. A connecting itinerary using two congested legs has a high displacement cost. One on two lightly-loaded legs has a low one. This single criterion captures both the value of the itinerary and the true cost of accepting it.
+          <div class="callout-label">Accusative — only for definite objects</div>
+          This is a subtlety that surprises many learners. The accusative suffix only marks a <em>specific, definite</em> direct object. If the object is indefinite ("I ate a sandwich"), no accusative. If it's definite ("I ate the sandwich"), accusative is required.<br><br>
+          <em>Sandviç yedim</em> — I ate a sandwich (indefinite — no suffix)<br>
+          <em>Sandviçi yedim</em> — I ate the sandwich (definite — accusative suffix)
         </div>
 
-        <h4>Virtual nesting</h4>
+        <h4>Locative vs. ablative after voiceless consonants</h4>
+        <p>When the noun ends in a voiceless consonant (ç, f, h, k, p, s, ş, t), the locative becomes <strong>-te/ta</strong> and the ablative becomes <strong>-ten/tan</strong> instead of -de/da and -den/dan. This is consonant assimilation — the d hardens to match the voiceless environment.</p>
 
-        <p>Solving this LP in real time for every incoming request is computationally intensive. Virtual nesting is a practical approximation: compute the network bid price offline, use it to calculate each itinerary's net contribution (fare minus displacement cost), rank itineraries by that contribution, and map them to virtual booking classes. The leg-based system then controls availability using these virtual classes — approximating network-optimal decisions without re-solving the full LP each time.</p>
+        <div class="rule">
+          <div class="rule-label">Case suffix full conjugation — ev (house, front vowel)</div>
+          Nominative: ev<br>
+          Accusative: ev<span class="suf">i</span><br>
+          Dative:     ev<span class="suf">e</span><br>
+          Locative:   ev<span class="suf">de</span><br>
+          Ablative:   ev<span class="suf">den</span><br>
+          Genitive:   ev<span class="suf">in</span>
+        </div>
 
-        <div class="example">
-          <div class="example-label">When displacement cost really bites</div>
-          Imagine Frankfurt is congested on a summer Saturday — every flight near-full, bid prices high. A Montréal–Frankfurt–Mumbai itinerary priced at $1,100 sounds attractive. But if the FRA–BOM leg carries a bid price of $600 and YUL–FRA carries $380, the displacement cost is $980. Net contribution: $120. It might rationally get declined in favor of two local bookings each generating more net value.
+        <div class="rule">
+          <div class="rule-label">Case suffix full conjugation — araba (car, back vowel, ends in vowel)</div>
+          Nominative: araba<br>
+          Accusative: araba<span class="suf">yı</span> (buffer y)<br>
+          Dative:     araba<span class="suf">ya</span> (buffer y)<br>
+          Locative:   araba<span class="suf">da</span><br>
+          Ablative:   araba<span class="suf">dan</span><br>
+          Genitive:   araba<span class="suf">nın</span> (buffer n)
+        </div>
+
+        <h4>Genitive + possession = the Turkish noun phrase</h4>
+        <p>Turkish expresses possession differently from English. The possessor takes the genitive suffix; the possessed takes the possession suffix. Together they form a noun phrase: <em>Ahmet'<span class="suf">in</span> araba<span class="suf">sı</span></em> = Ahmet's car (lit. "of Ahmet, his car").</p>
+
+        <div class="quiz" id="qz05">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">You want to say "I'm going to Istanbul" (İstanbul'a gidiyorum). Which case is on İstanbul?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz05">Locative (-da)</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz05">Dative (-a) — direction toward a place</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz05">Ablative (-dan)</button>
+          </div>
+          <div class="quiz-feedback" id="qz05-fb"></div>
+          <button class="quiz-reset" id="qz05-rs" onclick="resetQuiz('qz05')">Try again</button>
         </div>
 
         <p><hr/></p>
 
-        <!-- ── CH 06 ── -->
-        <h3 id="ch06">Chapter 06 — Dynamic Pricing</h3>
+        <!-- ══════════════════════════════════════════════ CH 06 -->
+        <h3 id="ch06">Chapter 06 — Numbers, Dates & Time</h3>
 
-        <p>Classical RM — with its fare classes, buckets, and EMSR-b — is fundamentally a system of availability control. Prices are set by pricing teams and filed in advance; RM decides which pre-set prices to show. Dynamic pricing breaks that assumption. Instead of choosing from a fixed menu, the system continuously computes an optimal price based on current conditions. The price itself becomes the decision variable.</p>
+        <h4>Cardinal numbers</h4>
+        <table class="t">
+          <thead><tr><th>Number</th><th>Turkish</th><th>Number</th><th>Turkish</th></tr></thead>
+          <tbody>
+            <tr><td>0</td><td>sıfır</td><td>11</td><td>on bir</td></tr>
+            <tr><td>1</td><td>bir</td><td>20</td><td>yirmi</td></tr>
+            <tr><td>2</td><td>iki</td><td>30</td><td>otuz</td></tr>
+            <tr><td>3</td><td>üç</td><td>40</td><td>kırk</td></tr>
+            <tr><td>4</td><td>dört</td><td>50</td><td>elli</td></tr>
+            <tr><td>5</td><td>beş</td><td>60</td><td>altmış</td></tr>
+            <tr><td>6</td><td>altı</td><td>70</td><td>yetmiş</td></tr>
+            <tr><td>7</td><td>yedi</td><td>80</td><td>seksen</td></tr>
+            <tr><td>8</td><td>sekiz</td><td>90</td><td>doksan</td></tr>
+            <tr><td>9</td><td>dokuz</td><td>100</td><td>yüz</td></tr>
+            <tr><td>10</td><td>on</td><td>1000</td><td>bin</td></tr>
+          </tbody>
+        </table>
 
-        <h4>The continuous pricing problem</h4>
+        <p>Compound numbers are simply juxtaposed: <em>yirmi üç</em> (23), <em>iki yüz kırk beş</em> (245). Remember: the noun after a number stays singular — <em>beş kitap</em> (five book, not five books).</p>
 
-        <p>In classical RM, a fare class is either open or closed — binary. Dynamic pricing replaces this with a continuous price function. At any moment, with $c$ seats remaining and $t$ time until departure, the optimal price $p^*(c, t)$ solves:</p>
+        <h4>Ordinal numbers — -(i)nci</h4>
+        <p>Add <strong>-(i)nci / -(ı)ncı / -(u)ncu / -(ü)ncü</strong> to make ordinals: <em>birinci</em> (first), <em>ikinci</em> (second), <em>üçüncü</em> (third), <em>dördüncü</em> (fourth).</p>
 
-        <div class="math-block">
-          <div class="math-block-label">Dynamic pricing optimality condition</div>
-          $$p^*(c,t) = \text{argmax}_p \; \left[ p \cdot \lambda(p) \cdot \Delta t + V(c, t) \right]$$
-          <br>
-          where $\lambda(p)$ is the demand rate at price $p$ (bookings per unit time), $\Delta t$ is a small time interval, and $V(c, t)$ is the value function — the expected total revenue from $c$ remaining seats and $t$ time to departure. This is a stochastic dynamic programming formulation. The key insight: the optimal price equates the marginal revenue of selling now against the change in value from having one fewer seat.
-        </div>
+        <h4>Days of the week</h4>
+        <table class="t">
+          <thead><tr><th>Turkish</th><th>English</th><th>Turkish</th><th>English</th></tr></thead>
+          <tbody>
+            <tr><td>Pazartesi</td><td>Monday</td><td>Cuma</td><td>Friday</td></tr>
+            <tr><td>Salı</td><td>Tuesday</td><td>Cumartesi</td><td>Saturday</td></tr>
+            <tr><td>Çarşamba</td><td>Wednesday</td><td>Pazar</td><td>Sunday</td></tr>
+            <tr><td>Perşembe</td><td>Thursday</td><td></td><td></td></tr>
+          </tbody>
+        </table>
 
-        <p>In practice, this is typically solved via approximate dynamic programming or simulation, since the exact DP is computationally intractable for full airline networks. But the intuition is clean: price high when $c$ is low (scarcity) or when $t$ is small (late demand tends to be inelastic), price lower when you have plenty of capacity and plenty of time.</p>
+        <h4>Months</h4>
+        <p>Ocak, Şubat, Mart, Nisan, Mayıs, Haziran, Temmuz, Ağustos, Eylül, Ekim, Kasım, Aralık.</p>
 
-        <h4>Why now?</h4>
-
-        <p>Dynamic pricing as a concept is as old as supply and demand. What changed is the ability to execute it at scale — cloud infrastructure, NDC distribution, and ML-based demand estimation have made continuous pricing operationally feasible in the 2020s in ways it simply wasn't a decade ago.</p>
-
-        <h4>The anchoring problem</h4>
-
-        <p>One underappreciated challenge is customer psychology. If a fare was $300 yesterday and is $480 today, some passengers feel deceived — even if both prices are rational. Research in behavioral economics shows that price anchoring and perceived fairness materially affect purchase decisions. Airlines have to balance revenue optimization against the risk of alienating customers who find the pricing arbitrary. It's a real tension, and one reason continuous dynamic pricing hasn't fully replaced the more legible fare class structure even where it's technically possible.</p>
+        <h4>Telling time</h4>
+        <p>Turkish time is a bit quirky. The hours go on the locative (at) or accusative (to), and "past" vs "to" use different constructions:</p>
+        <ul>
+          <li><em>Saat kaç?</em> — What time is it?</li>
+          <li><em>Saat üç</em> — It's 3 o'clock</li>
+          <li><em>Saat üçü on geçiyor</em> — It's 10 past 3 (lit. "it passes 3 by ten")</li>
+          <li><em>Saat dörde on var</em> — It's 10 to 4 (lit. "ten exists to four")</li>
+          <li><em>Saat üçbuçuk</em> — It's half past 3 (buçuk = half)</li>
+        </ul>
 
         <div class="quiz" id="qz06">
           <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">In a dynamic pricing model, the optimal price tends to be higher when:</div>
+          <div class="quiz-q">How do you say "three books" in Turkish?</div>
           <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz06">Remaining capacity is high and departure is far away</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz06">Remaining capacity is low or departure is imminent — scarcity and time pressure both push prices up</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz06">Competitor prices are low</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz06">üç kitaplar</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz06">üç kitap</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz06">üçler kitap</button>
           </div>
           <div class="quiz-feedback" id="qz06-fb"></div>
           <button class="quiz-reset" id="qz06-rs" onclick="resetQuiz('qz06')">Try again</button>
@@ -540,48 +637,981 @@
 
         <p><hr/></p>
 
-        <!-- ── CH 07 ── -->
-        <h3 id="ch07">Chapter 07 — Offer & Order</h3>
+        <!-- ══════════════════════════════════════════════ CH 07 -->
+        <h3 id="ch07">Chapter 07 — Adjectives & Word Order</h3>
 
-        <p>Traditional RM optimizes one thing: the seat. But a seat is not the only thing an airline sells. Bags, seat selection, lounge access, meals, Wi-Fi, partner products — ancillary revenue now represents anywhere from 15% to over 50% of total revenue depending on the carrier. The next frontier of RM is optimizing not just a seat price, but an entire offer.</p>
+        <h4>Adjectives never change</h4>
+        <p>Unlike in French or German, Turkish adjectives have no agreement with the noun they modify. <em>Güzel</em> (beautiful) stays <em>güzel</em> regardless of number, case, or anything else. This is a genuine relief. Adjectives always precede the noun they modify: <em>güzel ev</em> (beautiful house), <em>büyük arabalar</em> (big cars).</p>
 
-        <h4>The legacy distribution problem</h4>
+        <h4>Predicative adjectives</h4>
+        <p>When the adjective is the predicate ("the house is beautiful"), it takes the to-be suffixes just like nouns: <em>Ev güzel</em> or more emphatically <em>Ev güzeldir</em>. In first/second person: <em>Ben mutluyum</em> (I am happy — mutlu + yum).</p>
 
-        <p>The airline industry's distribution infrastructure was built in the 1960s around the Passenger Name Record — a rigid structure designed for a world where airlines sold exactly one product through a small number of channels. IATA's New Distribution Capability (NDC) standard replaces this with a flexible API-based architecture capable of representing any product, any bundle, any personalized offer constructed dynamically rather than pulled from a pre-filed fare catalog.</p>
+        <h4>Comparison</h4>
+        <ul>
+          <li>Comparative: <em>daha</em> + adjective — <em>daha büyük</em> (bigger)</li>
+          <li>Superlative: <em>en</em> + adjective — <em>en büyük</em> (biggest)</li>
+          <li>"Than" uses the ablative case: <em>ondan daha büyük</em> (bigger than him)</li>
+        </ul>
 
-        <div class="callout">
-          <div class="callout-label">What NDC actually enables</div>
-          Instead of "here is the Q fare with these rules," an airline using NDC can respond to a search with a fully assembled, personalized offer: seat + bag + priority boarding + fare, priced for this customer in this context in real time. The offer is built on the fly; the price reflects the customer's full value, not just the seat component.
+        <h4>Word order — SOV and the principle of left-branching</h4>
+        <p>Turkish is strictly SOV: Subject → Object → Verb. The verb always comes at the end of the clause. But the deeper principle is <strong>left-branching</strong>: everything that modifies something else comes <em>before</em> what it modifies. Relative clauses come before the noun they modify. Adjectives come before nouns. Postpositions come after nouns. Time expressions typically come before place expressions.</p>
+
+        <div class="example">
+          <div class="example-label">Word order comparison</div>
+          English: I bought a red bag at the market yesterday.<br>
+          Turkish: Ben dün pazarda kırmızı bir çanta satın aldım.<br>
+          (I yesterday market-at red a bag bought.)<br><br>
+          Notice: time (dün) → place (pazarda) → adjective (kırmızı) → object (çanta) → verb (last).
         </div>
 
-        <h4>Attribute-based selling and bundle optimization</h4>
-
-        <p>Attribute-based selling deconstructs the product into its components — window seat, extra legroom, flexibility, meal — and prices each separately. RM's role shifts from seat inventory control to optimizing a combinatorial space of bundles. The optimization objective changes accordingly: it's no longer "maximize seat revenue" but "maximize total passenger revenue," and a passenger paying a low seat fare with high ancillary spend might be more valuable than a high-fare passenger who buys nothing else. Connecting loyalty data, booking systems, and real-time offer engines to actually compute this is still mostly a work in progress at most carriers.</p>
+        <div class="quiz" id="qz07">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">Which sentence has correct Turkish word order for "The student reads a good book"?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz07">Öğrenci okuyor iyi bir kitap</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz07">Öğrenci iyi bir kitap okuyor</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz07">İyi bir kitap öğrenci okuyor</button>
+          </div>
+          <div class="quiz-feedback" id="qz07-fb"></div>
+          <button class="quiz-reset" id="qz07-rs" onclick="resetQuiz('qz07')">Try again</button>
+        </div>
 
         <p><hr/></p>
 
-        <!-- ── CH 08 ── -->
-        <h3 id="ch08">Chapter 08 — What's Next</h3>
+        <!-- ══════════════════════════════════════════════ CH 08 -->
+        <h3 id="ch08">Chapter 08 — Ability & Possibility: -ebilmek</h3>
 
-        <p>Revenue Management has come a long way from EMSR-b running overnight batch jobs in the 1980s. The pace of change is accelerating, and the version of RM practiced in 2035 will probably look as different from today's as today's looks from where it started. Here are the directions I find most interesting.</p>
+        <p>The ability suffix <strong>-ebil- / -abil-</strong> inserts between the verb stem and the tense suffix. It expresses both "can" (ability) and "might" (possibility) depending on context and tense. It's extremely high-frequency — you'll need it almost immediately.</p>
 
-        <h4>Reinforcement learning</h4>
+        <div class="rule">
+          <div class="rule-label">Ability suffix formation</div>
+          Verb stem ending in consonant: stem + <span class="suf">ebil / abil</span> + tense + person<br>
+          Verb stem ending in vowel: stem + <span class="suf">bil</span> + tense + person<br><br>
+          gel- (come) → gel<span class="suf">ebil</span>iyor (is able to come / can come)<br>
+          git- (go) → git<span class="suf">ebil</span>irim (I can go)<br>
+          yap- (do) → yap<span class="suf">abil</span>irim (I can do it)<br>
+          ye- (eat) → ye<span class="suf">bil</span>irim (I can eat)
+        </div>
 
-        <p>Classical RM is model-driven: it assumes demand follows a statistical distribution and optimizes within that model. Reinforcement learning takes a different approach — learn a pricing policy directly from interacting with the market, without assuming any particular demand structure. An RL agent sets prices, observes outcomes, and updates its policy to improve over time. What I find genuinely appealing about RL is that it naturally handles the sequential nature of RM decisions — the prices you set today affect the demand you observe tomorrow, which affects your prices the day after. Classical methods treat these decisions largely as independent. RL doesn't, and in volatile markets that distinction matters a lot.</p>
+        <h4>Inability — -eme- / -ama-</h4>
+        <p>The negative of ability is formed with <strong>-eme- / -ama-</strong> (the bil drops completely in the negative):</p>
 
-        <h4>Real-time everything</h4>
+        <div class="rule">
+          <div class="rule-label">Inability formation</div>
+          gel- → gel<span class="suf">eme</span>yorum (I cannot come — present)<br>
+          git- → git<span class="suf">eme</span>m (I can't go — aorist negative)<br>
+          yap- → yap<span class="suf">ama</span>m (I can't do it)<br>
+          gel- → gel<span class="suf">eme</span>dim (I couldn't come — past)
+        </div>
 
-        <p>Classical RM systems run on batch cycles — forecasts and optimizations computed overnight, controls updated a few times a day. The direction of travel is continuous, real-time optimization responding to bookings, competitor moves, and external signals as they happen. Most legacy airline systems weren't built for this, and the transition is happening, but slowly. Airline IT tends to move at its own pace.</p>
+        <h4>Possibility vs. ability</h4>
+        <p>The same suffix covers both. <em>Yağmur yağabilir</em> = "It might rain" (possibility). <em>Türkçe konuşabiliyorum</em> = "I can speak Turkish" (ability). Context distinguishes them, usually cleanly.</p>
 
-        <h4>Search data and richer demand signals</h4>
+        <div class="quiz" id="qz08">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">How do you say "I couldn't sleep" in Turkish? (uyu- = to sleep, -di past tense)</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz08">uyuyamıyorum</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz08">uyuyamadım</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz08">uyuyabilmedim</button>
+          </div>
+          <div class="quiz-feedback" id="qz08-fb"></div>
+          <button class="quiz-reset" id="qz08-rs" onclick="resetQuiz('qz08')">Try again</button>
+        </div>
 
-        <p>Booked fares tell you what passengers paid. Search data tells you what they considered. The gap between a search and a booking — who searched, what they were shown, what they chose, what they abandoned — is an extraordinarily rich signal for WTP estimation that classical RM largely ignores. As airlines gain more control over their distribution through NDC and direct channels, this data becomes available, and the forecasting models that can use it become dramatically more precise. The ideal, long-term, is a WTP distribution estimated from individual-level behavioral signals in near-real-time. We're not there yet, but it's not science fiction either.</p>
+        <p><hr/></p>
 
-        <h4>RM beyond aviation</h4>
+        <!-- ══════════════════════════════════════════════ CH 09 -->
+        <h3 id="ch09">Chapter 09 — Present Continuous: -iyor</h3>
 
-        <p>The methods developed in airline RM have already spread to hotels, car rentals, cruises, and rail. The next wave is likely to reach industries with historically static pricing: restaurants, parking, sports venues, healthcare. The core intuitions — perishability, fixed capacity, demand segmentation, opportunity cost — are universal. What changes is the domain.</p>
+        <p>The present continuous is the first tense most learners acquire, and for good reason — it's regular, predictable, and covers a huge amount of everyday speech. It describes actions happening right now or actions in progress over a period.</p>
 
-        <p>Anyway, that's the overview. I tried to keep it honest about where the math lives and where the intuition is doing most of the work. If something here was unclear or you want to go deeper on any chapter, feel free to reach out — I find this stuff genuinely fascinating to think and talk about.</p>
+        <div class="rule">
+          <div class="rule-label">Present continuous formation</div>
+          Verb stem + <span class="suf">iyor/ıyor/uyor/üyor</span> + personal suffix<br><br>
+          The -iyor part does NOT harmonize in the usual 4-way pattern — it always uses the rounded vowel that matches the last vowel of the stem:<br>
+          After e, i → <span class="front">iyor</span><br>
+          After a, ı → <span class="back">ıyor</span><br>
+          After o, u → <span class="back">uyor</span><br>
+          After ö, ü → <span class="front">üyor</span>
+        </div>
+
+        <h4>Stem changes before -iyor</h4>
+        <p>If the verb stem ends in a vowel, that vowel is dropped before -iyor: <em>ye-</em> (eat) → <em>yiyor</em> (not ye-iyor). <em>de-</em> (say) → <em>diyor</em>. This is a notable irregularity.</p>
+
+        <table class="t">
+          <thead><tr><th>Person</th><th>gelmek (to come)</th><th>gitmek (to go)</th><th>yemek (to eat)</th></tr></thead>
+          <tbody>
+            <tr><td>Ben</td><td>gel<span class="suf">iyorum</span></td><td>git<span class="suf">iyorum</span></td><td>y<span class="suf">iyorum</span></td></tr>
+            <tr><td>Sen</td><td>gel<span class="suf">iyorsun</span></td><td>git<span class="suf">iyorsun</span></td><td>y<span class="suf">iyorsun</span></td></tr>
+            <tr><td>O</td><td>gel<span class="suf">iyor</span></td><td>git<span class="suf">iyor</span></td><td>y<span class="suf">iyor</span></td></tr>
+            <tr><td>Biz</td><td>gel<span class="suf">iyoruz</span></td><td>git<span class="suf">iyoruz</span></td><td>y<span class="suf">iyoruz</span></td></tr>
+            <tr><td>Siz</td><td>gel<span class="suf">iyorsunuz</span></td><td>git<span class="suf">iyorsunuz</span></td><td>y<span class="suf">iyorsunuz</span></td></tr>
+            <tr><td>Onlar</td><td>gel<span class="suf">iyorlar</span></td><td>git<span class="suf">iyorlar</span></td><td>y<span class="suf">iyorlar</span></td></tr>
+          </tbody>
+        </table>
+
+        <h4>Negative present continuous</h4>
+        <p>Insert <strong>-mi-/-mı-/-mu-/-mü-</strong> between the stem and -iyor: <em>gelmiyorum</em> (I'm not coming), <em>gitmiyorum</em> (I'm not going).</p>
+
+        <div class="quiz" id="qz09">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">Conjugate "oku-" (to read) in present continuous, 3rd person singular.</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz09">okuyiyor</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz09">okuyor</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz09">okıyor</button>
+          </div>
+          <div class="quiz-feedback" id="qz09-fb"></div>
+          <button class="quiz-reset" id="qz09-rs" onclick="resetQuiz('qz09')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 10 -->
+        <h3 id="ch10">Chapter 10 — The Aorist: -ir / -er / -ar / -ur</h3>
+
+        <p>The aorist (geniş zaman — "wide time") is one of Turkish's trickiest tenses for learners because its suffix is irregular for many verbs. It expresses habitual actions, general truths, and permanent states — roughly the English simple present ("I read books every day", "water boils at 100°C").</p>
+
+        <h4>Regular aorist formation</h4>
+        <p>For verbs with stems of <strong>two or more syllables</strong>: add <strong>-ir/-ır/-ur/-ür</strong> (4-way harmony). For verbs with <strong>one-syllable stems</strong> ending in a vowel: add <strong>-r</strong> directly.</p>
+
+        <div class="rule">
+          <div class="rule-label">Aorist suffix — multisyllabic stems</div>
+          gel- (come) → gel<span class="suf">ir</span> (he/she comes habitually)<br>
+          git- (go) → git<span class="suf">er</span> — !! irregular (one of 13 exceptions)<br>
+          bekle- (wait) → bekle<span class="suf">r</span> (vowel-final → just r)<br>
+          oku- (read) → oku<span class="suf">r</span>
+        </div>
+
+        <h4>The 13 irregular aorist verbs</h4>
+        <p>Thirteen common one-syllable verbs take <strong>-er/-ar</strong> instead of -ir/-ır. These must be memorized: <em>almak, bilmek, bulmak, durmak, gelmek, görmek, kalmak, olmak, sanmak, ölmek, vermek, varmak, vurmak</em>.</p>
+
+        <table class="t">
+          <thead><tr><th>Person</th><th>gelmek (come)</th><th>Personal suffix</th></tr></thead>
+          <tbody>
+            <tr><td>Ben</td><td>gel<span class="suf">irim</span></td><td>-im</td></tr>
+            <tr><td>Sen</td><td>gel<span class="suf">irsin</span></td><td>-sin</td></tr>
+            <tr><td>O</td><td>gel<span class="suf">ir</span></td><td>∅</td></tr>
+            <tr><td>Biz</td><td>gel<span class="suf">iriz</span></td><td>-iz</td></tr>
+            <tr><td>Siz</td><td>gel<span class="suf">irsiniz</span></td><td>-siniz</td></tr>
+            <tr><td>Onlar</td><td>gel<span class="suf">irler</span></td><td>-ler</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Negative aorist — a complete irregularity</h4>
+        <p>The negative aorist is entirely different: <strong>stem + -mez/-maz</strong> (not -mir/-mır). <em>Gelmez</em> (he/she doesn't come habitually). First person singular is even more irregular: <em>gelmem</em> (I don't come — not *gelmezim).</p>
+
+        <div class="quiz" id="qz10">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">Which form correctly expresses "She usually drinks tea" (çay iç- = drink tea)?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz10">Çay içiyor</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz10">Çay içer</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz10">Çay içecek</button>
+          </div>
+          <div class="quiz-feedback" id="qz10-fb"></div>
+          <button class="quiz-reset" id="qz10-rs" onclick="resetQuiz('qz10')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 11 -->
+        <h3 id="ch11">Chapter 11 — Past Witnessed: -di</h3>
+
+        <p>Turkish has two distinct past tenses, and the distinction between them is one of the most fascinating features of the language. The <em>-di past</em> (geçmiş zaman) is used when you <strong>personally witnessed or directly experienced</strong> the event. It's the default past tense for things you saw, did, or were present for.</p>
+
+        <div class="rule">
+          <div class="rule-label">-di past formation (4-way harmony + consonant assimilation)</div>
+          After voiced sounds: stem + <span class="suf">di/dı/du/dü</span> + personal suffix<br>
+          After voiceless sounds (ç,f,h,k,p,s,ş,t): stem + <span class="suf">ti/tı/tu/tü</span><br><br>
+          gel- → gel<span class="suf">di</span>m (I came — witnessed)<br>
+          git- → git<span class="suf">ti</span>m (I went — voiceless t)<br>
+          oku- → oku<span class="suf">du</span>m (I read)<br>
+          iç- → iç<span class="suf">ti</span>m (I drank — voiceless ç)
+        </div>
+
+        <table class="t">
+          <thead><tr><th>Person</th><th>gelmek — -di past</th><th>gitmek — -di past</th></tr></thead>
+          <tbody>
+            <tr><td>Ben</td><td>gel<span class="suf">dim</span></td><td>git<span class="suf">tim</span></td></tr>
+            <tr><td>Sen</td><td>gel<span class="suf">din</span></td><td>git<span class="suf">tin</span></td></tr>
+            <tr><td>O</td><td>gel<span class="suf">di</span></td><td>git<span class="suf">ti</span></td></tr>
+            <tr><td>Biz</td><td>gel<span class="suf">dik</span></td><td>git<span class="suf">tik</span></td></tr>
+            <tr><td>Siz</td><td>gel<span class="suf">diniz</span></td><td>git<span class="suf">tiniz</span></td></tr>
+            <tr><td>Onlar</td><td>gel<span class="suf">diler</span></td><td>git<span class="suf">tiler</span></td></tr>
+          </tbody>
+        </table>
+
+        <h4>Negative -di past</h4>
+        <p>Insert <strong>-me-/-ma-</strong> between stem and -di: <em>gelmedim</em> (I didn't come), <em>gitmedim</em> (I didn't go).</p>
+
+        <div class="quiz" id="qz11">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">You personally saw it rain this morning. Which past tense do you use?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="true"  data-qz="qz11">-di past — because you witnessed it directly</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz11">-miş past — because it's in the past</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz11">Either — the choice is stylistic</button>
+          </div>
+          <div class="quiz-feedback" id="qz11-fb"></div>
+          <button class="quiz-reset" id="qz11-rs" onclick="resetQuiz('qz11')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 12 -->
+        <h3 id="ch12">Chapter 12 — Past Reported: -miş & Evidentiality</h3>
+
+        <p>The <em>-miş past</em> is what makes Turkish genuinely special. It marks events that you did <strong>not</strong> personally witness — things you heard about, read about, inferred, or discovered after the fact. Linguists call this <strong>evidentiality</strong>: grammatically encoding <em>how you know</em> what you're claiming. Very few languages outside of Turkish and its relatives grammaticalize this distinction so cleanly.</p>
+
+        <div class="rule">
+          <div class="rule-label">-miş past formation (4-way harmony)</div>
+          stem + <span class="suf">miş/mış/muş/müş</span> + personal suffix<br><br>
+          gel- → gel<span class="suf">miş</span>im (I apparently came / I've come — reported)<br>
+          git- → git<span class="suf">miş</span> (he apparently went)<br>
+          uyu- → uyu<span class="suf">muş</span> (she apparently slept)<br>
+          düş- → düş<span class="suf">müş</span> (it apparently fell)
+        </div>
+
+        <table class="t">
+          <thead><tr><th>Person</th><th>gelmek — -miş past</th></tr></thead>
+          <tbody>
+            <tr><td>Ben</td><td>gel<span class="suf">mişim</span></td></tr>
+            <tr><td>Sen</td><td>gel<span class="suf">mişsin</span></td></tr>
+            <tr><td>O</td><td>gel<span class="suf">miş</span></td></tr>
+            <tr><td>Biz</td><td>gel<span class="suf">mişiz</span></td></tr>
+            <tr><td>Siz</td><td>gel<span class="suf">mişsiniz</span></td></tr>
+            <tr><td>Onlar</td><td>gel<span class="suf">mişler</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">The three registers of -miş</div>
+          <strong>1. Reported speech:</strong> <em>Ahmet gelmiş</em> — "Ahmet came (apparently / I heard)"<br>
+          <strong>2. Discovery:</strong> <em>Anahtarımı kaybetmişim!</em> — "I've lost my keys!" (just discovered)<br>
+          <strong>3. Sarcasm / storytelling:</strong> Used in fairy tales (<em>bir varmış bir yokmuş</em> = "once upon a time") and for ironic distance from what someone just said.
+        </div>
+
+        <h4>The evidential distinction in practice</h4>
+        <p>Consider: your friend tells you they went to Paris. You tell someone else. In Turkish you <em>must</em> use -miş: <em>Paris'e gitmiş</em>. If you say <em>Paris'e gitti</em> (-di past), you're claiming you were there and witnessed it. Getting this wrong doesn't just sound odd — it communicates something false about your epistemic position. It matters.</p>
+
+        <div class="quiz" id="qz12">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">You wake up and notice your keys are gone. You say to yourself "I lost my keys!" — which past tense?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz12">-di past: anahtarımı kaybettim</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz12">-miş past: anahtarımı kaybetmişim (discovery)</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz12">Either is fine here</button>
+          </div>
+          <div class="quiz-feedback" id="qz12-fb"></div>
+          <button class="quiz-reset" id="qz12-rs" onclick="resetQuiz('qz12')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 13 -->
+        <h3 id="ch13">Chapter 13 — Future Tense: -ecek / -acak</h3>
+
+        <p>The future tense is refreshingly regular. The suffix <strong>-ecek/-acak</strong> follows 2-way vowel harmony and attaches after the verb stem.</p>
+
+        <div class="rule">
+          <div class="rule-label">Future tense formation</div>
+          Stem ending in consonant + <span class="suf">ecek/acak</span> + personal suffix<br>
+          Stem ending in vowel: drop the vowel, add <span class="suf">yecek/yacak</span><br><br>
+          gel- → gel<span class="suf">ecek</span>im (I will come)<br>
+          git- → git<span class="suf">eceğ</span>im (I will go — k→ğ mutation before vowel suffix)<br>
+          oku- → oku<span class="suf">yacak</span> (he will read)<br>
+          ye- → ye<span class="suf">yeceğ</span>im (I will eat)
+        </div>
+
+        <table class="t">
+          <thead><tr><th>Person</th><th>gelmek — future</th><th>gitmek — future</th></tr></thead>
+          <tbody>
+            <tr><td>Ben</td><td>gel<span class="suf">eceğim</span></td><td>git<span class="suf">eceğim</span></td></tr>
+            <tr><td>Sen</td><td>gel<span class="suf">eceksin</span></td><td>git<span class="suf">eceksin</span></td></tr>
+            <tr><td>O</td><td>gel<span class="suf">ecek</span></td><td>git<span class="suf">ecek</span></td></tr>
+            <tr><td>Biz</td><td>gel<span class="suf">eceğiz</span></td><td>git<span class="suf">eceğiz</span></td></tr>
+            <tr><td>Siz</td><td>gel<span class="suf">eceksiniz</span></td><td>git<span class="suf">eceksiniz</span></td></tr>
+            <tr><td>Onlar</td><td>gel<span class="suf">ecekler</span></td><td>git<span class="suf">ecekler</span></td></tr>
+          </tbody>
+        </table>
+
+        <p>Note the k→ğ mutation in 1st person (eceğim, eceğiz) — the -k of -ecek softens before a vowel-initial personal suffix.</p>
+
+        <h4>Negative future</h4>
+        <p>Insert -me-/-ma- before the future suffix: <em>gelmeyeceğim</em> (I will not come), <em>gitmeyeceğim</em> (I will not go).</p>
+
+        <div class="quiz" id="qz13">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">How do you say "They will not come tomorrow" in Turkish? (yarın = tomorrow, gel- = come)</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz13">Yarın gelmeyecek</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz13">Yarın gelmeyecekler</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz13">Yarın gelmiyorlar</button>
+          </div>
+          <div class="quiz-feedback" id="qz13-fb"></div>
+          <button class="quiz-reset" id="qz13-rs" onclick="resetQuiz('qz13')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 14 -->
+        <h3 id="ch14">Chapter 14 — Necessity & Obligation: -meli / -malı</h3>
+
+        <p>The necessity suffix <strong>-meli/-malı</strong> expresses obligation ("must", "should", "have to"). It follows 2-way harmony and is straightforward to form.</p>
+
+        <div class="rule">
+          <div class="rule-label">Necessity suffix — -meli/-malı</div>
+          Front vowel stem → stem + <span class="suf">meli</span> + personal suffix<br>
+          Back vowel stem  → stem + <span class="suf">malı</span> + personal suffix<br><br>
+          gel- → gel<span class="suf">meli</span>yim (I must come)<br>
+          git- → git<span class="suf">meli</span>yim (I must go)<br>
+          yap- → yap<span class="suf">malı</span>yım (I must do it)<br>
+          uyu- → uyu<span class="suf">malı</span>yım (I must sleep)
+        </div>
+
+        <table class="t">
+          <thead><tr><th>Person</th><th>gelmek — necessity</th></tr></thead>
+          <tbody>
+            <tr><td>Ben</td><td>gel<span class="suf">meliyim</span></td></tr>
+            <tr><td>Sen</td><td>gel<span class="suf">melisin</span></td></tr>
+            <tr><td>O</td><td>gel<span class="suf">meli</span></td></tr>
+            <tr><td>Biz</td><td>gel<span class="suf">meliyiz</span></td></tr>
+            <tr><td>Siz</td><td>gel<span class="suf">melisiniz</span></td></tr>
+            <tr><td>Onlar</td><td>gel<span class="suf">meliler</span></td></tr>
+          </tbody>
+        </table>
+
+        <h4>Past necessity and reported necessity</h4>
+        <p>Stack the to-be suffixes: <em>gelmeliydim</em> (I should have come / I had to come), <em>gelmeliymiş</em> (apparently he had to come).</p>
+
+        <h4>Negative necessity</h4>
+        <p><em>Gelmemelisin</em> = "You must not come" (prohibition). <em>Gelmene gerek yok</em> = "You don't need to come" (lack of necessity — different meaning). The distinction between "must not" and "don't need to" matters and Turkish makes it clearly.</p>
+
+        <div class="quiz" id="qz14">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">How do you say "We must study" in Turkish? (çalış- = to study/work)</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz14">Çalışmalıyorum</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz14">Çalışmalıyız</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz14">Çalışmeliyiz</button>
+          </div>
+          <div class="quiz-feedback" id="qz14-fb"></div>
+          <button class="quiz-reset" id="qz14-rs" onclick="resetQuiz('qz14')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 15 -->
+        <h3 id="ch15">Chapter 15 — Negation & Questions</h3>
+
+        <h4>Verbal negation — -me / -ma</h4>
+        <p>The negation suffix <strong>-me/-ma</strong> is inserted between the verb stem and the tense suffix. It follows 2-way harmony. The key thing to remember: the position of -me is always the same, but some tenses produce contractions when combined with it.</p>
+
+        <div class="rule">
+          <div class="rule-label">Negation position</div>
+          Verb stem + <span class="suf">me/ma</span> + tense suffix + personal suffix<br><br>
+          gel- + me + iyor → gel<span class="suf">mi</span>yor (not coming) — vowel contracts<br>
+          git- + me + ecek → git<span class="suf">me</span>yecek (won't go)<br>
+          yap- + ma + dı  → yap<span class="suf">ma</span>dı (didn't do)<br>
+          gel- + me + r   → gel<span class="suf">mez</span> (doesn't come — aorist special)
+        </div>
+
+        <div class="callout">
+          <div class="callout-label">The -miyor contraction</div>
+          In the present continuous negative, -me + iyor contracts: the e of -me merges with the i of -iyor, giving -miyor. So <em>gelmiyor</em> not *"gelme-iyor". This contraction is predictable once you've seen it a few times.
+        </div>
+
+        <h4>Question particle — mi / mı / mu / mü</h4>
+        <p>Questions are formed with the particle <strong>mi/mı/mu/mü</strong>, which follows 4-way vowel harmony and is always written as a separate word. It inserts after the verb but before the personal suffix in most tenses, or at the very end in some constructions.</p>
+
+        <div class="rule">
+          <div class="rule-label">Question formation</div>
+          Statement: Geliyor<span class="suf">sun</span> — You are coming<br>
+          Question:  Geliyor <span class="suf">mu</span>sun? — Are you coming?<br><br>
+          Statement: Türkçe konuşuyor — He speaks Turkish<br>
+          Question:  Türkçe konuşuyor <span class="suf">mu</span>? — Does he speak Turkish?<br><br>
+          Statement: İstanbul'a gideceksin — You will go to Istanbul<br>
+          Question:  İstanbul'a gidecek <span class="suf">mi</span>sin? — Will you go to Istanbul?
+        </div>
+
+        <h4>Question words</h4>
+        <table class="t">
+          <thead><tr><th>Turkish</th><th>English</th><th>Turkish</th><th>English</th></tr></thead>
+          <tbody>
+            <tr><td>ne</td><td>what</td><td>nasıl</td><td>how</td></tr>
+            <tr><td>kim</td><td>who</td><td>neden / niçin</td><td>why</td></tr>
+            <tr><td>nerede</td><td>where</td><td>kaç</td><td>how many</td></tr>
+            <tr><td>ne zaman</td><td>when</td><td>hangi</td><td>which</td></tr>
+            <tr><td>nereye</td><td>where to</td><td>ne kadar</td><td>how much</td></tr>
+          </tbody>
+        </table>
+
+        <div class="quiz" id="qz15">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">How do you form "Are you tired?" from "Sen yorgunsun" (You are tired)?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz15">Sen yorgunmusun?</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz15">Sen yorgun musun?</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz15">Sen musun yorgun?</button>
+          </div>
+          <div class="quiz-feedback" id="qz15-fb"></div>
+          <button class="quiz-reset" id="qz15-rs" onclick="resetQuiz('qz15')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 16 -->
+        <h3 id="ch16">Chapter 16 — Postpositions</h3>
+
+        <p>Where French and English use prepositions (before the noun: <em>sur la table</em>, <em>on the table</em>), Turkish uses postpositions — they come <em>after</em> the noun. And they require specific cases on the noun that precedes them. Once you memorize which case each postposition governs, they're quite systematic.</p>
+
+        <table class="t">
+          <thead><tr><th>Postposition</th><th>Meaning</th><th>Case required</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>için</td><td>for, because of</td><td>Bare nominative</td><td>sen için — for you</td></tr>
+            <tr><td>ile / -le/-la</td><td>with, by means of</td><td>Bare nominative</td><td>arabayıla / arabayla — by car</td></tr>
+            <tr><td>gibi</td><td>like, as</td><td>Bare nominative</td><td>su gibi — like water</td></tr>
+            <tr><td>kadar</td><td>until, as far as, as much as</td><td>Bare nominative / dative</td><td>eve kadar — as far as home</td></tr>
+            <tr><td>karşı</td><td>against, opposite</td><td>Dative</td><td>bana karşı — against me</td></tr>
+            <tr><td>göre</td><td>according to</td><td>Dative</td><td>bana göre — in my opinion</td></tr>
+            <tr><td>rağmen</td><td>despite</td><td>Dative</td><td>yağmura rağmen — despite the rain</td></tr>
+            <tr><td>önce</td><td>before</td><td>Ablative</td><td>yemekten önce — before the meal</td></tr>
+            <tr><td>sonra</td><td>after</td><td>Ablative</td><td>yemekten sonra — after the meal</td></tr>
+            <tr><td>beri</td><td>since</td><td>Ablative</td><td>sabahtan beri — since morning</td></tr>
+            <tr><td>dolayı</td><td>because of, due to</td><td>Ablative</td><td>hastalıktan dolayı — due to illness</td></tr>
+          </tbody>
+        </table>
+
+        <h4>The -le/-la instrumental</h4>
+        <p><em>İle</em> (with) can be contracted into a suffix: after a consonant → <strong>-le/-la</strong>; after a vowel → <strong>-yle/-yla</strong>. <em>Kalemle</em> (with a pen), <em>arabayla</em> (by car / with the car). This is extremely common in speech.</p>
+
+        <div class="quiz" id="qz16">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">Which postposition + case expresses "before the meeting" (toplantı = meeting)?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz16">toplantıya önce (dative + önce)</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz16">toplantıdan önce (ablative + önce)</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz16">toplantı için (nominative + için)</button>
+          </div>
+          <div class="quiz-feedback" id="qz16-fb"></div>
+          <button class="quiz-reset" id="qz16-rs" onclick="resetQuiz('qz16')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 17 -->
+        <h3 id="ch17">Chapter 17 — Compound Verbs with etmek, olmak & yapmak</h3>
+
+        <p>A huge proportion of Turkish vocabulary consists of compound verbs: a noun or adjective borrowed from Arabic, Persian, or French, paired with one of three light verbs. These light verbs — <em>etmek</em> (to do/make), <em>olmak</em> (to be/become), <em>yapmak</em> (to do/make) — carry the grammatical load while the nominal root carries the meaning.</p>
+
+        <h4>etmek — the most common light verb</h4>
+        <p><em>Etmek</em> is used with Arabic- and Persian-derived nouns. The noun stays unchanged; <em>etmek</em> conjugates normally. Key point: in spoken Turkish the stem of <em>etmek</em> irregularly uses <em>ed-</em> in some forms.</p>
+
+        <div class="example">
+          <div class="example-label">Common etmek compounds</div>
+          telefon etmek — to phone<br>
+          yardım etmek — to help<br>
+          kabul etmek — to accept<br>
+          devam etmek — to continue<br>
+          tercih etmek — to prefer<br>
+          özür dilemek (not etmek) — to apologize
+        </div>
+
+        <h4>olmak — to be / to become</h4>
+        <p><em>Olmak</em> is both a standalone verb ("to become", "to happen", "to be okay") and a light verb. As a light verb it expresses a state being reached: <em>mutlu olmak</em> (to be/become happy), <em>hazır olmak</em> (to be ready).</p>
+
+        <div class="callout">
+          <div class="callout-label">Var and yok — existence, not olmak</div>
+          "There is" and "there isn't" in Turkish use <em>var</em> and <em>yok</em>, not <em>olmak</em>. <em>Para var</em> = there is money. <em>Süt yok</em> = there is no milk. These are standalone words, not verbs, and they're extremely high-frequency.
+        </div>
+
+        <h4>yapmak — to do / make</h4>
+        <p><em>Yapmak</em> tends to combine with action nouns, especially in colloquial speech: <em>alışveriş yapmak</em> (to go shopping), <em>spor yapmak</em> (to do sport), <em>hata yapmak</em> (to make a mistake).</p>
+
+        <div class="quiz" id="qz17">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">How would you say "I will call you" using the compound verb for "to phone"?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz17">Seni telefon edecek</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz17">Seni arayacağım / Telefon edeceğim</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz17">Sana telefon olmak</button>
+          </div>
+          <div class="quiz-feedback" id="qz17-fb"></div>
+          <button class="quiz-reset" id="qz17-rs" onclick="resetQuiz('qz17')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 18 -->
+        <h3 id="ch18">Chapter 18 — Conditionals</h3>
+
+        <p>Turkish has two main conditional structures: the <em>-se/-sa</em> conditional (if/when clauses) and the past conditional for hypotheticals.</p>
+
+        <h4>The -se/-sa conditional</h4>
+        <div class="rule">
+          <div class="rule-label">Conditional -se/-sa (2-way harmony)</div>
+          Verb stem + <span class="suf">se/sa</span> + personal suffix<br><br>
+          gel- → gel<span class="suf">se</span>m (if I come)<br>
+          git- → git<span class="suf">se</span>n (if you go)<br>
+          yap- → yap<span class="suf">sa</span>k (if we do)<br>
+          Negative: gel<span class="suf">me</span>sem (if I don't come)
+        </div>
+
+        <table class="t">
+          <thead><tr><th>Person</th><th>gelmek — conditional</th></tr></thead>
+          <tbody>
+            <tr><td>Ben</td><td>gel<span class="suf">sem</span></td></tr>
+            <tr><td>Sen</td><td>gel<span class="suf">sen</span></td></tr>
+            <tr><td>O</td><td>gel<span class="suf">se</span></td></tr>
+            <tr><td>Biz</td><td>gel<span class="suf">sek</span></td></tr>
+            <tr><td>Siz</td><td>gel<span class="suf">seniz</span></td></tr>
+            <tr><td>Onlar</td><td>gel<span class="suf">seler</span></td></tr>
+          </tbody>
+        </table>
+
+        <h4>Past conditional — hypotheticals and regrets</h4>
+        <p>Stack -se onto the -di past: <em>gelseydi</em> (if he had come), <em>gitseydim</em> (if I had gone). This is used for counterfactuals — things that didn't happen.</p>
+
+        <div class="example">
+          <div class="example-label">Full conditional sentences</div>
+          Yağmur yağarsa, evde kalırım. — If it rains, I'll stay home.<br>
+          Para olsaydı, seyahat ederdim. — If I had money, I would travel.<br>
+          Erken gelseydin, görüşürdük. — If you had come earlier, we would have met.
+        </div>
+
+        <div class="quiz" id="qz18">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">Which sentence correctly expresses "If she studies, she will pass" (çalış- = study, geç- = pass)?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz18">Çalışırsa geçecekmiş</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz18">Çalışırsa geçecek</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz18">Çalışsaydı geçecek</button>
+          </div>
+          <div class="quiz-feedback" id="qz18-fb"></div>
+          <button class="quiz-reset" id="qz18-rs" onclick="resetQuiz('qz18')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 19 -->
+        <h3 id="ch19">Chapter 19 — Imperatives & Requests</h3>
+
+        <h4>The imperative</h4>
+        <p>The Turkish imperative is the bare verb stem for informal singular commands. For formal or plural, add <strong>-(y)in/-(y)ın/-(y)un/-(y)ün</strong>. For very formal/official, add <strong>-(y)iniz</strong>.</p>
+
+        <div class="rule">
+          <div class="rule-label">Imperative forms</div>
+          Informal singular: bare stem — <span class="suf">Gel!</span> (Come!), <span class="suf">Git!</span> (Go!)<br>
+          Formal / plural:   stem + <span class="suf">in/ın/un/ün</span> — Gelin! Gidin!<br>
+          Very formal:       stem + <span class="suf">iniz/ınız/unuz/ünüz</span> — Geliniz! Gidiniz!<br>
+          Negative:          stem + <span class="suf">me/ma</span> + imperative — Gelme! (Don't come!)
+        </div>
+
+        <h4>Softening requests — -e bilir misin? and -er misin?</h4>
+        <p>A bare imperative is direct and can sound rude. For polite requests Turkish typically uses the question form of the aorist or future: <em>Bana yardım eder misin?</em> (Can/will you help me?), <em>Gelebilir misin?</em> (Can you come?).</p>
+
+        <h4>The let's form — -elim/-alım</h4>
+        <p>To say "let's do something", add <strong>-elim/-alım</strong> to the stem: <em>Gidelim</em> (Let's go), <em>Yiyelim</em> (Let's eat), <em>Çalışalım</em> (Let's work).</p>
+
+        <div class="quiz" id="qz19">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">How do you politely ask "Can you open the window?" (pen- / aç- = open, pencere = window)?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz19">Pencereyi aç!</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz19">Pencereyi açar mısın?</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz19">Pencereyi açalım</button>
+          </div>
+          <div class="quiz-feedback" id="qz19-fb"></div>
+          <button class="quiz-reset" id="qz19-rs" onclick="resetQuiz('qz19')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 20 -->
+        <h3 id="ch20">Chapter 20 — Relative Clauses & Verbal Nouns</h3>
+
+        <p>This is where Turkish becomes genuinely complex for Indo-European speakers. Because Turkish is left-branching, relative clauses come <em>before</em> the noun they modify — the opposite of English and French. And they're formed by converting the verb into a participial form.</p>
+
+        <h4>Verbal nouns (mastar and -me/-ma)</h4>
+        <p>The infinitive suffix <strong>-mek/-mak</strong> forms verbal nouns (like English "to go", "going"). More commonly in subordinate clauses, the verbal noun suffix <strong>-me/-ma</strong> is used with possession suffixes to make gerund-like constructions:</p>
+
+        <div class="rule">
+          <div class="rule-label">Verbal noun with possession</div>
+          gel<span class="suf">me</span>m — my coming<br>
+          git<span class="suf">me</span>n — your going<br>
+          oku<span class="suf">ma</span>sı — his/her reading<br><br>
+          Benim gel<span class="suf">mem</span>i istedi — He wanted me to come<br>
+          (lit. "He wanted my coming")
+        </div>
+
+        <h4>Relative clauses — -(y)en/-(y)an and -(d)ik</h4>
+        <p>Turkish has two main participial suffixes used in relative clauses. <strong>-(y)en/-(y)an</strong> is used when the modified noun is the <em>subject</em> of the relative clause. <strong>-(d)ik</strong> (with possession suffix) is used when the modified noun is the <em>object or other role</em>:</p>
+
+        <div class="rule">
+          <div class="rule-label">Participial relative clauses</div>
+          The man who comes: <span class="suf">gelen</span> adam (gel + en + adam)<br>
+          The woman who went: <span class="suf">giden</span> kadın (git + en → giden)<br><br>
+          The book that I read: benim oku<span class="suf">duğum</span> kitap (oku + duk + um + kitap)<br>
+          The city that she lives in: onun otur<span class="suf">duğu</span> şehir
+        </div>
+
+        <div class="callout">
+          <div class="callout-label">Why this feels backward</div>
+          In English: "the book [that I read]" — noun first, clause follows.<br>
+          In Turkish: "[benim okuduğum] kitap" — clause first, noun at the end.<br>
+          The entire relative clause folds into what feels like an adjective placed before the noun. This is consistent with Turkish's left-branching principle but takes real adjustment to produce naturally.
+        </div>
+
+        <div class="quiz" id="qz20">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">How do you express "the woman who is coming" in Turkish? (kadın = woman, gel- = come)</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz20">kadın gelen</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz20">gelen kadın</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz20">kadın geliyor</button>
+          </div>
+          <div class="quiz-feedback" id="qz20-fb"></div>
+          <button class="quiz-reset" id="qz20-rs" onclick="resetQuiz('qz20')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 21 -->
+        <h3 id="ch21">Chapter 21 — Causative, Passive & Reciprocal</h3>
+
+        <p>Turkish can modify the basic meaning of a verb by inserting derivational suffixes between the stem and the tense suffix. These are productive — they work on almost any verb.</p>
+
+        <h4>Causative — -dir / -tir / -ir / -t / -it</h4>
+        <p>The causative suffix means "to make/cause someone to do something" or "to have something done". The form varies depending on the stem:</p>
+
+        <div class="rule">
+          <div class="rule-label">Causative suffix</div>
+          After most consonants: stem + <span class="suf">dir/dır/dur/dür</span><br>
+          After voiceless consonants / some verbs: + <span class="suf">tir/tır/tur/tür</span><br>
+          Short stems (1 syllable ending in vowel): + <span class="suf">t</span><br><br>
+          yap- (do) → yap<span class="suf">tır</span>mak (to have done / to make do)<br>
+          giy- (wear) → giy<span class="suf">dir</span>mek (to dress someone)<br>
+          ye- (eat) → ye<span class="suf">dir</span>mek (to feed someone)<br>
+          iç- (drink) → iç<span class="suf">ir</span>mek (to make drink)
+        </div>
+
+        <h4>Passive — -il / -ıl / -ul / -ül or -in / -n</h4>
+        <p>The passive suffix converts an active verb to passive ("it was done", "it is seen"):</p>
+
+        <div class="rule">
+          <div class="rule-label">Passive suffix</div>
+          After consonant: stem + <span class="suf">il/ıl/ul/ül</span><br>
+          After vowel:     stem + <span class="suf">n</span><br><br>
+          yap- → yap<span class="suf">ıl</span>mak (to be done)<br>
+          gör- → gör<span class="suf">ül</span>mek (to be seen)<br>
+          iç- → iç<span class="suf">il</span>mek (to be drunk)<br>
+          ara- → ara<span class="suf">n</span>mak (to be searched)
+        </div>
+
+        <h4>Reciprocal — -iş / -ış / -uş / -üş</h4>
+        <p>The reciprocal suffix expresses mutual action ("to do to each other"):</p>
+        <div class="rule">
+          <div class="rule-label">Reciprocal suffix</div>
+          gör- → gör<span class="suf">üş</span>mek (to meet / see each other)<br>
+          sev- → sev<span class="suf">iş</span>mek (to love each other)<br>
+          konuş- → konuş is already reciprocal (to talk = talking with each other)
+        </div>
+
+        <div class="quiz" id="qz21">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">What does "yaptırıldı" most likely mean? (yap- = do, -tır = causative, -ıl = passive, -dı = past)</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz21">He did it himself</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz21">It was had done / It was caused to be done (double suffix: causative + passive)</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz21">They did it to each other</button>
+          </div>
+          <div class="quiz-feedback" id="qz21-fb"></div>
+          <button class="quiz-reset" id="qz21-rs" onclick="resetQuiz('qz21')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 22 -->
+        <h3 id="ch22">Chapter 22 — Discourse Markers & Connectors</h3>
+
+        <p>Knowing grammar is one thing; stitching sentences together into natural speech is another. These connectors are the glue of real Turkish conversation and writing.</p>
+
+        <h4>Coordinating conjunctions</h4>
+        <table class="t">
+          <thead><tr><th>Turkish</th><th>English</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>ve</td><td>and</td><td>Çay ve kahve — tea and coffee</td></tr>
+            <tr><td>ama / fakat</td><td>but</td><td>Güzel ama pahalı — beautiful but expensive</td></tr>
+            <tr><td>veya / ya da</td><td>or</td><td>Çay veya kahve — tea or coffee</td></tr>
+            <tr><td>hem... hem (de)</td><td>both... and</td><td>Hem yorgun hem açım — I'm both tired and hungry</td></tr>
+            <tr><td>ya... ya (da)</td><td>either... or</td><td>Ya gel ya gitme — either come or don't go</td></tr>
+            <tr><td>ne... ne (de)</td><td>neither... nor</td><td>Ne çay ne kahve — neither tea nor coffee</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Subordinating and causal connectors</h4>
+        <table class="t">
+          <thead><tr><th>Turkish</th><th>English</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>çünkü</td><td>because</td><td>Comes after the clause it introduces</td></tr>
+            <tr><td>o yüzden / bu yüzden</td><td>therefore / that's why</td><td>Common in speech</td></tr>
+            <tr><td>ama</td><td>but / however</td><td>Most neutral contrast marker</td></tr>
+            <tr><td>oysa / oysaki</td><td>whereas / yet</td><td>More formal contrast</td></tr>
+            <tr><td>ayrıca</td><td>furthermore / also</td><td></td></tr>
+            <tr><td>yani</td><td>that is / I mean</td><td>Very common filler in speech</td></tr>
+            <tr><td>mesela / örneğin</td><td>for example</td><td></td></tr>
+            <tr><td>belki</td><td>maybe / perhaps</td><td></td></tr>
+            <tr><td>tabii / tabii ki</td><td>of course</td><td></td></tr>
+            <tr><td>zaten</td><td>anyway / already / as expected</td><td>Very high-frequency filler</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">Zaten — the word you'll say every day</div>
+          <em>Zaten</em> is one of those words that doesn't translate cleanly. It expresses that something was already expected, already the case, or "as you might expect." <em>Zaten geliyordum</em> = "I was already coming anyway." <em>Zaten biliyorum</em> = "I already know." Learning to use <em>zaten</em> naturally is a real marker of Turkish fluency.
+        </div>
+
+        <div class="quiz" id="qz22">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">Which connector expresses "neither tea nor coffee"?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz22">Hem çay hem kahve</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz22">Ya çay ya kahve</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz22">Ne çay ne kahve</button>
+          </div>
+          <div class="quiz-feedback" id="qz22-fb"></div>
+          <button class="quiz-reset" id="qz22-rs" onclick="resetQuiz('qz22')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 23 -->
+        <h3 id="ch23">Chapter 23 — Diminutives & Expressive Suffixes</h3>
+
+        <p>Turkish has a rich system of expressive suffixes that add emotional color, affection, or nuance to words. You'll hear them constantly in spoken Turkish, especially in informal registers.</p>
+
+        <h4>The diminutive — -cik / -cığ / -çık</h4>
+        <p>The suffix <strong>-cik/-cığ/-çık/-cük</strong> (4-way harmony, with consonant assimilation) adds smallness, cuteness, or affection. It's used with nouns, adjectives, and even adverbs:</p>
+
+        <div class="rule">
+          <div class="rule-label">Diminutive suffix -cik / -çık</div>
+          küçük (small) → küçü<span class="suf">cük</span> (tiny, sweet-small)<br>
+          az (little) → az<span class="suf">cık</span> (a tiny bit)<br>
+          ev (house) → ev<span class="suf">cik</span> (little house, cozy house)<br>
+          kız (girl) → kız<span class="suf">cağız</span> (poor little girl — with compassion)<br>
+          bir (one) → bir<span class="suf">cik</span> (just one / only one)
+        </div>
+
+        <h4>The -cağız / -ceğiz suffix — sympathy and pity</h4>
+        <p>This suffix conveys compassion or pity toward the noun: <em>adamcağız</em> (poor man), <em>çocukcağız</em> (poor little child). It's warm and humanizing, not condescending.</p>
+
+        <h4>The -ca / -ce suffix — languages and "in the manner of"</h4>
+        <p>Used to form language names and adjectives meaning "in the manner of": <em>Türk</em> → <em>Türkçe</em> (Turkish language), <em>Fransız</em> → <em>Fransızca</em> (French), <em>çocuk</em> → <em>çocukça</em> (childish / in a childish manner).</p>
+
+        <h4>Reduplication for emphasis</h4>
+        <p>Turkish uses reduplication (repeating words) for intensification, especially with adjectives and adverbs: <em>yavaş yavaş</em> (slowly, very slowly), <em>ağır ağır</em> (heavily, slowly), <em>çabuk çabuk</em> (quickly, hurriedly). It has a rhythmic, conversational feel.</p>
+
+        <div class="quiz" id="qz23">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">What does "biraz" mean, and what suffix pattern is it related to?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz23">Very much — an intensifying suffix</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz23">A little — from "bir" + "az" (one + little), common diminutive combination</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz23">Immediately — a time adverb suffix</button>
+          </div>
+          <div class="quiz-feedback" id="qz23-fb"></div>
+          <button class="quiz-reset" id="qz23-rs" onclick="resetQuiz('qz23')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 24 -->
+        <h3 id="ch24">Chapter 24 — Reading a Real Text</h3>
+
+        <p>All grammar becomes real when you read authentic Turkish. Here is a sentence from Orhan Pamuk's <em>Kar</em> (Snow), broken down word by word. I picked it because it's challenging but not impossible, and because it contains several of the structures we've covered.</p>
+
+        <div class="example">
+          <div class="example-label">Original sentence</div>
+          <strong>Kar yağmaya başladığında, Ka trenden iniyordu.</strong><br>
+          <em>"When it began to snow, Ka was getting off the train."</em>
+        </div>
+
+        <table class="t">
+          <thead><tr><th>Word</th><th>Analysis</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Kar</strong></td><td>Bare noun, nominative</td><td>snow</td></tr>
+            <tr><td><strong>yağ-</strong></td><td>Verb stem</td><td>to fall (of rain/snow)</td></tr>
+            <tr><td><strong>-ma-</strong></td><td>Verbal noun suffix</td><td>nominalization: the falling</td></tr>
+            <tr><td><strong>-ya</strong></td><td>Dative case on verbal noun</td><td>to the falling → "to snow"</td></tr>
+            <tr><td><strong>başla-</strong></td><td>Verb stem</td><td>to start</td></tr>
+            <tr><td><strong>-dık-</strong></td><td>Participial suffix (-dik)</td><td>the fact of starting</td></tr>
+            <tr><td><strong>-ında</strong></td><td>Locative + 3rd person possession</td><td>at its starting = when it started</td></tr>
+            <tr><td><strong>Ka</strong></td><td>Proper noun, subject</td><td>character name</td></tr>
+            <tr><td><strong>tren-</strong></td><td>Noun (loanword)</td><td>train</td></tr>
+            <tr><td><strong>-den</strong></td><td>Ablative case</td><td>from the train</td></tr>
+            <tr><td><strong>in-</strong></td><td>Verb stem</td><td>to descend / get off</td></tr>
+            <tr><td><strong>-iyor-</strong></td><td>Present continuous tense</td><td>was (in the process of)</td></tr>
+            <tr><td><strong>-du</strong></td><td>Past tense on -iyor → past continuous</td><td>was getting off</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">The past continuous — stacking tenses</div>
+          <em>İniyordu</em> is a double tense: present continuous (-iyor) + past (-du). Turkish can stack tense suffixes this way to create temporal nuance. The -iyor marks ongoing action, the -du marks that this ongoing action was situated in the past. The result is exactly the English past continuous: "was getting off."
+        </div>
+
+        <div class="quiz" id="qz24">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">In "başladığında", the suffix -dığında is a combination of which elements?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz24">Past tense -dı + question particle + locative</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz24">Participial -dık + 3rd person possession -ı + locative -nda: "at the time of its happening"</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz24">Conditional -sa + locative</button>
+          </div>
+          <div class="quiz-feedback" id="qz24-fb"></div>
+          <button class="quiz-reset" id="qz24-rs" onclick="resetQuiz('qz24')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 25 -->
+        <h3 id="ch25">Chapter 25 — Pitfalls for French & English Speakers</h3>
+
+        <p>After a few years of learning Turkish, I've collected a list of the mistakes I make reliably. Most come from instincts built by French and English that don't transfer.</p>
+
+        <h4>1. Forgetting vowel harmony under pressure</h4>
+        <p>When you're thinking fast, the wrong suffix vowel comes out. The most common error: using -de when you need -da, or -im when you need -ım. The fix is to build the habit of mentally checking the last vowel of the root before every suffix. It becomes automatic eventually.</p>
+
+        <h4>2. Putting the verb in the wrong place</h4>
+        <p>French and English speakers instinctively place verbs in the middle of sentences. In Turkish the verb is always last. When sentences get long and complex, the urge to place the verb earlier gets stronger. Resist it. Even a ten-clause sentence ends with the verb.</p>
+
+        <h4>3. Confusing -di and -miş</h4>
+        <p>This is genuinely hard because the distinction doesn't exist in French or English. The rule of thumb: if you were there and saw it, use -di. If you read it, heard it, inferred it, or discovered it after the fact, use -miş. When in doubt about your own actions, use -di (you were presumably present for your own life).</p>
+
+        <h4>4. Adding plural after numbers</h4>
+        <p><em>Üç kitaplar</em> is wrong. Always <em>üç kitap</em>. This error is so deeply ingrained from European languages that it takes months to eliminate.</p>
+
+        <h4>5. Using the accusative on indefinite objects</h4>
+        <p><em>Bir kitabı okudum</em> sounds strange — the accusative implies definiteness, but <em>bir kitap</em> is indefinite. Say <em>bir kitap okudum</em>. The accusative is only for specific, identifiable objects.</p>
+
+        <h4>6. Translating prepositions directly</h4>
+        <p>French <em>sur</em>, <em>sous</em>, <em>dans</em>, <em>avant</em> don't map one-to-one to Turkish postpositions. Turkish often uses case suffixes where French would use a preposition: "in Istanbul" = <em>İstanbul'da</em> (locative case — no postposition needed). The urge to find the Turkish equivalent of every French preposition leads to using postpositions where a bare case suffix is correct.</p>
+
+        <h4>7. Expecting grammatical gender everywhere</h4>
+        <p>There is none. <em>O</em> is he, she, and it. <em>Onun</em> is his, her, and its. You never need to specify gender unless you want to for clarity. This should be a relief, but French speakers keep looking for a gender system that isn't there.</p>
+
+        <div class="quiz" id="qz25">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">Which sentence is correct?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz25">İki kitapları aldım</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz25">İki kitap aldım</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz25">İki bir kitap aldım</button>
+          </div>
+          <div class="quiz-feedback" id="qz25-fb"></div>
+          <button class="quiz-reset" id="qz25-rs" onclick="resetQuiz('qz25')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ══════════════════════════════════════════════ CH 26 -->
+        <h3 id="ch26">Chapter 26 — Survival Vocabulary</h3>
+
+        <p>Grammar is the skeleton; vocabulary is the flesh. Here are the most high-frequency words and phrases organized by situation.</p>
+
+        <h4>Greetings & Basics</h4>
+        <table class="t">
+          <thead><tr><th>Turkish</th><th>English</th></tr></thead>
+          <tbody>
+            <tr><td>Merhaba</td><td>Hello</td></tr>
+            <tr><td>Günaydın</td><td>Good morning</td></tr>
+            <tr><td>İyi akşamlar</td><td>Good evening</td></tr>
+            <tr><td>İyi geceler</td><td>Good night</td></tr>
+            <tr><td>Nasılsınız? / Nasılsın?</td><td>How are you? (formal/informal)</td></tr>
+            <tr><td>İyiyim, teşekkürler</td><td>I'm fine, thanks</td></tr>
+            <tr><td>Hoş geldiniz</td><td>Welcome (said to guest)</td></tr>
+            <tr><td>Hoş bulduk</td><td>Thank you (response to welcome)</td></tr>
+            <tr><td>Görüşürüz</td><td>See you (lit. we'll see each other)</td></tr>
+            <tr><td>Hoşça kalın</td><td>Goodbye (formal)</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Polite phrases</h4>
+        <table class="t">
+          <thead><tr><th>Turkish</th><th>English</th></tr></thead>
+          <tbody>
+            <tr><td>Teşekkür ederim / Sağ ol</td><td>Thank you (formal/informal)</td></tr>
+            <tr><td>Rica ederim</td><td>You're welcome</td></tr>
+            <tr><td>Lütfen</td><td>Please</td></tr>
+            <tr><td>Özür dilerim / Pardon</td><td>I'm sorry / Excuse me</td></tr>
+            <tr><td>Bir şey değil</td><td>It's nothing / No problem</td></tr>
+            <tr><td>Afiyet olsun</td><td>Enjoy your meal (bon appétit)</td></tr>
+            <tr><td>Geçmiş olsun</td><td>Get well soon / I'm sorry for your trouble</td></tr>
+            <tr><td>Kolay gelsin</td><td>May it come easy (said to someone working)</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Essential verbs — 50 you need immediately</h4>
+        <table class="t">
+          <thead><tr><th>Turkish</th><th>English</th><th>Turkish</th><th>English</th></tr></thead>
+          <tbody>
+            <tr><td>olmak</td><td>to be / become</td><td>gitmek</td><td>to go</td></tr>
+            <tr><td>gelmek</td><td>to come</td><td>almak</td><td>to take / buy</td></tr>
+            <tr><td>yapmak</td><td>to do / make</td><td>vermek</td><td>to give</td></tr>
+            <tr><td>demek</td><td>to say</td><td>görmek</td><td>to see</td></tr>
+            <tr><td>bilmek</td><td>to know</td><td>bulmak</td><td>to find</td></tr>
+            <tr><td>istemek</td><td>to want</td><td>bakmak</td><td>to look</td></tr>
+            <tr><td>yemek</td><td>to eat</td><td>içmek</td><td>to drink</td></tr>
+            <tr><td>sevmek</td><td>to love / like</td><td>düşünmek</td><td>to think</td></tr>
+            <tr><td>anlamak</td><td>to understand</td><td>konuşmak</td><td>to talk</td></tr>
+            <tr><td>okumak</td><td>to read</td><td>yazmak</td><td>to write</td></tr>
+            <tr><td>çalışmak</td><td>to work / study</td><td>uyumak</td><td>to sleep</td></tr>
+            <tr><td>oturmak</td><td>to sit / live</td><td>kalkmak</td><td>to get up / leave</td></tr>
+            <tr><td>beklemek</td><td>to wait</td><td>sormak</td><td>to ask</td></tr>
+            <tr><td>cevap vermek</td><td>to answer</td><td>başlamak</td><td>to start</td></tr>
+            <tr><td>bitmek</td><td>to end / finish</td><td>dönmek</td><td>to return</td></tr>
+            <tr><td>açmak</td><td>to open</td><td>kapatmak</td><td>to close</td></tr>
+            <tr><td>girmek</td><td>to enter</td><td>çıkmak</td><td>to exit / go out</td></tr>
+            <tr><td>taşımak</td><td>to carry</td><td>koşmak</td><td>to run</td></tr>
+            <tr><td>uçmak</td><td>to fly</td><td>binmek</td><td>to board / ride</td></tr>
+            <tr><td>inmek</td><td>to descend / get off</td><td>aramak</td><td>to call / search</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Adjectives you'll use daily</h4>
+        <table class="t">
+          <thead><tr><th>Turkish</th><th>English</th><th>Turkish</th><th>English</th></tr></thead>
+          <tbody>
+            <tr><td>iyi</td><td>good</td><td>kötü</td><td>bad</td></tr>
+            <tr><td>büyük</td><td>big</td><td>küçük</td><td>small</td></tr>
+            <tr><td>güzel</td><td>beautiful / nice</td><td>çirkin</td><td>ugly</td></tr>
+            <tr><td>yeni</td><td>new</td><td>eski</td><td>old</td></tr>
+            <tr><td>uzun</td><td>long / tall</td><td>kısa</td><td>short</td></tr>
+            <tr><td>sıcak</td><td>hot / warm</td><td>soğuk</td><td>cold</td></tr>
+            <tr><td>hızlı</td><td>fast</td><td>yavaş</td><td>slow</td></tr>
+            <tr><td>kolay</td><td>easy</td><td>zor</td><td>difficult</td></tr>
+            <tr><td>ucuz</td><td>cheap</td><td>pahalı</td><td>expensive</td></tr>
+            <tr><td>mutlu</td><td>happy</td><td>üzgün</td><td>sad</td></tr>
+          </tbody>
+        </table>
+
+        <div class="quiz" id="qz26">
+          <div class="quiz-label">Quick check</div>
+          <div class="quiz-q">What is the appropriate response when someone says "Afiyet olsun" to you?</div>
+          <div class="quiz-opts">
+            <button class="quiz-btn" data-correct="false" data-qz="qz26">Teşekkür ederim (Thank you)</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz26">Elinize sağlık (Health to your hands — said to the cook) or Sağ olun</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz26">Rica ederim (You're welcome)</button>
+          </div>
+          <div class="quiz-feedback" id="qz26-fb"></div>
+          <button class="quiz-reset" id="qz26-rs" onclick="resetQuiz('qz26')">Try again</button>
+        </div>
+
+        <p><hr/></p>
+
+        <p>That's the whole language, or at least the architecture of it. Turkish rewards patience — there's a period early on where it feels impossibly foreign, and then something clicks and you realize all the rules you've been memorizing are actually one rule (vowel harmony) applied consistently everywhere. The day you form a sentence with a causative inside a relative clause without thinking about it is a good day. Kolay gelsin.</p>
 
       </section>
 
@@ -592,24 +1622,34 @@
 
     <script src="javascripts/scale.fix.js"></script>
     <script>
-      // ── Quiz logic ──
+      // ── Quiz data ──
       const fb = {
-        qz02: {
-          ok:  "Correct. Strong demand ahead of pace means the flight will fill itself — protect capacity for higher-paying late bookers.",
-          bad: "Not quite. Ahead of the booking curve means demand is strong. The right response is to close cheap fares, not open more."
-        },
-        qz03: {
-          ok:  "Exactly. That's Littlewood's rule in a sentence — accept the low fare when it exceeds the expected marginal value of holding the seat.",
-          bad: "Not quite. Littlewood's rule has nothing to do with days to departure directly — it's about comparing the low fare to the probability-weighted high fare."
-        },
-        qz04: {
-          ok:  "Right. Booking at $150 only tells you WTP ≥ $150. You don't know the upper bound — that's exactly what makes WTP estimation a censored observation problem.",
-          bad: "Not quite. A booking at $150 is a censored observation — it tells you WTP is at least $150, but the passenger may have been willing to pay much more."
-        },
-        qz06: {
-          ok:  "Exactly. Scarcity (few seats left) and urgency (close to departure) both reduce the opportunity to sell later, which pushes the optimal price up.",
-          bad: "Not quite. In dynamic pricing, the value function increases with remaining capacity and time — so prices are highest when capacity is tight or departure is close."
-        }
+        qz01: { ok: "Correct — C is always a dj sound in Turkish, like the j in 'jam'. Never an s or k sound.", bad: "Not quite — C in Turkish is always pronounced as dj, like the j in jam. This surprises most French and English speakers." },
+        qz02: { ok: "Exactly. Gün ends in ü (front vowel), so the locative takes the front-vowel form -de.", bad: "Not quite. Gün ends in ü which is a front vowel — so the suffix uses e, not a." },
+        qz03: { ok: "Right. You need the plural (-lar) and the 1st person plural possession (-ımız) stacked together: kitap + lar + ımız.", bad: "Not quite. 'Our books' requires both the plural suffix (-lar) and the 1st person plural possessive (-ımız): kitaplarımız." },
+        qz04: { ok: "Exactly. The 1st person plural to-be suffix after a back vowel (o in yorgun) is -uz, giving yorgunuz.", bad: "Not quite. Yorgun ends in a back vowel, and biz (we) takes the -uz suffix: yorgunuz." },
+        qz05: { ok: "Correct. Going to a place uses the dative case (-a/-e), expressing direction. İstanbul'a = to Istanbul.", bad: "Not quite. Direction toward a place uses the dative case (-a). İstanbul'a gidiyorum = I'm going to Istanbul." },
+        qz06: { ok: "Correct — nouns after numbers always stay singular in Turkish. Üç kitap, not üç kitaplar.", bad: "Not quite. After numbers in Turkish, the noun stays singular. Always üç kitap, never üç kitaplar." },
+        qz07: { ok: "Exactly right. In Turkish, adjectives precede the noun and the verb comes last: subject → adjective → object → verb.", bad: "Not quite. Turkish word order is SOV with adjectives before the noun: Öğrenci iyi bir kitap okuyor." },
+        qz08: { ok: "Right. The -di past of inability: stem + ama + dı + personal suffix = uyuyamadım.", bad: "Not quite. 'Couldn't sleep' uses the -di past of inability: uyuyamadım (uyu + ama + dı + m)." },
+        qz09: { ok: "Exactly. Oku- ends in a vowel, so the vowel drops before -iyor: oku + yor = okuyor.", bad: "Not quite. When the stem ends in a vowel, that vowel drops before -iyor: oku- → okuyor (not okuyiyor)." },
+        qz10: { ok: "Correct. The aorist expresses habitual/repeated actions. İçer is the aorist form of iç- (3rd person).", bad: "Not quite. Habitual actions use the aorist tense (-er/-ir), not the present continuous or future." },
+        qz11: { ok: "Exactly. You witnessed the rain yourself, so the -di past is correct. Yağdı.", bad: "Not quite. First-hand witnessed events always use the -di past in Turkish." },
+        qz12: { ok: "Right. Discovering something after the fact — like finding your keys are gone — triggers the -miş past. Kaybetmişim.", bad: "Not quite. Discovering something you weren't consciously aware of as it happened uses -miş (discovery register)." },
+        qz13: { ok: "Exactly. 'They will not come' = gelmeyecekler (gel + me + yecek + ler).", bad: "Not quite. 'They' is onlar, which takes -ler on the verb. Gelmeyecekler." },
+        qz14: { ok: "Correct. Çalış- has a back vowel (ı), so the necessity suffix is -malı, and biz takes -yız: çalışmalıyız.", bad: "Not quite. Çalış- contains ı (back vowel), so necessity takes -malı. For biz: çalışmalıyız." },
+        qz15: { ok: "Exactly. The question particle mi/mı/mu/mü is always written as a separate word: yorgun musun?", bad: "Not quite. The question particle is always a separate word in Turkish: yorgun musun? (not yorgunmusun)." },
+        qz16: { ok: "Correct. Önce (before) governs the ablative case: toplantıdan önce.", bad: "Not quite. Önce requires the ablative (-den/-dan): toplantıdan önce (before the meeting)." },
+        qz17: { ok: "Right. 'To call' is typically aramak in Turkish. Telefon etmek also works but aramak is more natural for phone calls.", bad: "Not quite. For phone calls, Turkish uses aramak (to call/search). Seni arayacağım = I will call you." },
+        qz18: { ok: "Correct. A real conditional using -se with a future result: çalışırsa geçecek (aorist conditional + future).", bad: "Not quite. The correct real conditional is: çalışırsa (if she studies) geçecek (she will pass)." },
+        qz19: { ok: "Exactly. Polite requests use the aorist question form: açar mısın? (will/can you open?)", bad: "Not quite. Polite requests in Turkish use the question form of the aorist: açar mısın?" },
+        qz20: { ok: "Correct. Left-branching means the relative clause (or participle) comes before the noun: gelen kadın.", bad: "Not quite. Turkish is left-branching — modifiers come before what they modify: gelen kadın (the coming woman)." },
+        qz21: { ok: "Right. Yap + tır (causative) + ıl (passive) + dı (past) = it was caused to be done. Double suffixation is very possible in Turkish.", bad: "Not quite. Yaptırıldı contains two voice suffixes: causative -tır and passive -ıl, meaning it was had done / caused to be done." },
+        qz22: { ok: "Correct. Ne... ne (de) = neither... nor. Both elements are negated.", bad: "Not quite. Hem...hem = both...and, ya...ya = either...or. Neither...nor is ne...ne." },
+        qz23: { ok: "Right. Biraz = a little, from bir (one) + az (little). The -cık diminutive pattern is related in spirit but biraz is its own compound.", bad: "Not quite. Biraz means 'a little', formed from bir + az. It's a very high-frequency word for expressing small quantities." },
+        qz24: { ok: "Exactly. -dık is the participial suffix, -ı the 3rd person possession, -nda the locative: 'at the time of its having started'.", bad: "Not quite. -dığında = participial -dık + 3rd person possession -ı + locative -nda. It creates a subordinate 'when' clause." },
+        qz25: { ok: "Correct. No plural after numbers. İki kitap aldım = I bought two books.", bad: "Not quite. Numbers are always followed by a singular noun in Turkish: iki kitap, not iki kitapları." },
+        qz26: { ok: "Right. The traditional response to Afiyet olsun (said to you as the one eating) is Elinize sağlık (to the cook) or simply Sağ ol/Sağ olun.", bad: "Not quite. When someone says Afiyet olsun, the appropriate response is Elinize sağlık (health to your hands — to the cook) or Sağ olun." }
       };
 
       document.querySelectorAll('.quiz-btn').forEach(btn => {
@@ -647,7 +1687,6 @@
       // ── Active sidebar on scroll ──
       const chapters = document.querySelectorAll('h3[id]');
       const navLinks = document.querySelectorAll('#toc a');
-
       const obs = new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (e.isIntersecting) {
@@ -657,7 +1696,6 @@
           }
         });
       }, { rootMargin: '-15% 0px -75% 0px' });
-
       chapters.forEach(ch => obs.observe(ch));
     </script>
   </body>
