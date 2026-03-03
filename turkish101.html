@@ -15,6 +15,12 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <style>
+      /* ── Scrollable sidebar ── */
+      header {
+        overflow-y: auto !important;
+        max-height: 100vh !important;
+      }
+
       /* ── Quiz ── */
       .quiz {
         background: #f8f8f8;
@@ -200,7 +206,6 @@
   <body>
     <div class="wrapper">
 
-      <!-- ── Sidebar ── -->
       <header>
         <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
         <img src="/assets/img/ataturk.png" alt="Atatürk" />
@@ -238,7 +243,6 @@
         </nav>
       </header>
 
-      <!-- ── Content ── -->
       <section>
 
         <h2>Turkish From Zero — A Complete Grammar Guide</h2>
@@ -246,7 +250,7 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 00 -->
+        <!-- ══ CH 00 ══ -->
         <h3 id="ch00">Chapter 00 — Why Turkish is Different</h3>
 
         <p>Before you learn a single word, it helps to understand the architecture of the language you're entering. Turkish belongs to the Turkic language family, completely unrelated to Indo-European languages like French, English, or even Persian. It's an <strong>agglutinative</strong> language — meaning it builds words by stacking suffixes onto a root, one after another, each suffix adding a precise grammatical meaning.</p>
@@ -264,7 +268,7 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 01 -->
+        <!-- ══ CH 01 ══ -->
         <h3 id="ch01">Chapter 01 — Alphabet & Pronunciation</h3>
 
         <p>Turkish uses a Latin alphabet introduced by Atatürk in 1928, replacing the Ottoman Arabic script. It has 29 letters. The key principle: Turkish spelling is almost perfectly phonetic. Every letter has exactly one sound. If you can read it, you can pronounce it correctly — which is a luxury you don't have in French or English.</p>
@@ -311,7 +315,7 @@
         </div>
 
         <h4>Consonant mutation — voiced and voiceless</h4>
-        <p>Turkish has a systematic rule: certain final consonants change when a vowel-initial suffix is added. The voiceless consonants <strong>ç, k, p, t</strong> soften to <strong>c, ğ, b, d</strong> when followed by a vowel. This is called <em>consonant mutation</em> and you will see it constantly.</p>
+        <p>Turkish has a systematic rule: certain final consonants change when a vowel-initial suffix is added. The voiceless consonants <strong>ç, k, p, t</strong> soften to <strong>c, ğ, b, d</strong> when followed by a vowel.</p>
 
         <div class="rule">
           <div class="rule-label">Consonant mutation rule</div>
@@ -336,12 +340,10 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 02 -->
+        <!-- ══ CH 02 ══ -->
         <h3 id="ch02">Chapter 02 — Vowel Harmony</h3>
 
         <p>Vowel harmony is the single most important rule in Turkish. Everything else builds on it. The principle is simple: <strong>the vowels in a word must come from the same family</strong>. And when you add a suffix, the vowel in that suffix must match the last vowel of the root.</p>
-
-        <p>Turkish has 8 vowels, split into two groups based on where in the mouth they're produced:</p>
 
         <table class="t">
           <thead><tr><th>Group</th><th>Vowels</th><th>Position</th></tr></thead>
@@ -351,24 +353,16 @@
           </tbody>
         </table>
 
-        <p>If a word's last vowel is a back vowel, all suffixes use back vowels. If it's a front vowel, all suffixes use front vowels. This applies to <em>every</em> suffix, stacked one after another throughout a long word.</p>
-
         <h4>The 2-way harmony (e/a)</h4>
-        <p>Some suffixes only vary between e and a. The rule: after a front vowel → <strong>e</strong>, after a back vowel → <strong>a</strong>.</p>
-
         <div class="rule">
           <div class="rule-label">2-way harmony: suffix vowel = e or a</div>
           Front vowels (e, i, ö, ü) → suffix uses <span class="front">e</span><br>
           Back vowels (a, ı, o, u)  → suffix uses <span class="back">a</span><br><br>
-          ev (house) → ev<span class="front">de</span> (at home — locative)<br>
-          araba (car) → araba<span class="back">da</span> (in the car — locative)<br>
-          gelmek (to come) → gel<span class="front">mek</span><br>
-          gitmek (to go) → git<span class="back">mek</span>
+          ev (house) → ev<span class="front">de</span> (at home)<br>
+          araba (car) → araba<span class="back">da</span> (in the car)
         </div>
 
         <h4>The 4-way harmony (i/ı/ü/u)</h4>
-        <p>Other suffixes vary among four vowels. The rule depends on both frontness and roundedness:</p>
-
         <table class="t">
           <thead><tr><th>Last vowel of root</th><th>Suffix vowel</th><th>Example</th></tr></thead>
           <tbody>
@@ -381,11 +375,11 @@
 
         <div class="callout">
           <div class="callout-label">The harmony mnemonic</div>
-          Think of it as a mouth position: your tongue stays in roughly the same place throughout a word. If the root pulls your tongue back (a, ı, o, u), the suffix vowels stay back. If the root pulls it forward (e, i, ö, ü), the suffixes follow forward. Vowel harmony is phonological muscle memory — your mouth is being consistent.
+          Think of it as a mouth position: your tongue stays in roughly the same place throughout a word. If the root pulls your tongue back (a, ı, o, u), the suffix vowels stay back. If the root pulls it forward (e, i, ö, ü), the suffixes follow forward.
         </div>
 
         <h4>Exceptions — loanwords</h4>
-        <p>Loanwords from Arabic, Persian, French, or English often violate vowel harmony within the root itself (e.g. <em>kitap</em> — ki is front, a is back). In these cases, <strong>the suffix follows the last vowel</strong> only, ignoring internal disharmony. So <em>kitap</em> → <em>kitabı</em> (back, because last vowel is a).</p>
+        <p>Loanwords from Arabic, Persian, French, or English often violate vowel harmony within the root itself. In these cases, <strong>the suffix follows the last vowel only</strong>. So <em>kitap</em> → <em>kitabı</em> (back, because last vowel is a).</p>
 
         <div class="quiz" id="qz02">
           <div class="quiz-label">Quick check</div>
@@ -401,14 +395,12 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 03 -->
+        <!-- ══ CH 03 ══ -->
         <h3 id="ch03">Chapter 03 — Nouns, Plurals & the Absence of Articles</h3>
 
-        <p>Turkish has no articles. There is no word for <em>a</em>, <em>an</em>, <em>the</em>, <em>un</em>, <em>une</em>, <em>le</em>, or <em>la</em>. The noun stands alone. <em>Ev</em> can mean "a house", "the house", or just "house" depending on context. You'll miss articles for about two weeks and then wonder why you ever needed them.</p>
+        <p>Turkish has no articles. There is no word for <em>a</em>, <em>an</em>, <em>the</em>, <em>un</em>, <em>une</em>, <em>le</em>, or <em>la</em>. The noun stands alone. <em>Ev</em> can mean "a house", "the house", or just "house" depending on context.</p>
 
         <h4>Plurals — ler / lar</h4>
-        <p>The plural suffix follows 2-way vowel harmony: <strong>-ler</strong> after front vowels, <strong>-lar</strong> after back vowels.</p>
-
         <div class="rule">
           <div class="rule-label">Plural suffix</div>
           Front vowel root → root + <span class="front">ler</span><br>
@@ -421,15 +413,10 @@
 
         <div class="callout">
           <div class="callout-label">No plural after numbers</div>
-          In Turkish, nouns after numbers stay singular. <em>Üç araba</em> = "three car" (not "three cars"). The number already tells you it's plural — adding -lar would be redundant. This trips up learners constantly.
+          In Turkish, nouns after numbers stay singular. <em>Üç araba</em> = "three car" (not "three cars"). The number already tells you it's plural — adding -lar would be redundant.
         </div>
 
-        <h4>Indefiniteness: the numeral bir</h4>
-        <p>The closest thing to the article "a/an" is <em>bir</em> (one), placed before the noun. <em>Bir araba</em> = a car. But you'll often omit it entirely in natural speech when the context makes indefiniteness clear.</p>
-
         <h4>Possession suffixes (iyelik ekleri)</h4>
-        <p>Possession is expressed by a suffix on the noun, not a separate word. These follow 4-way vowel harmony:</p>
-
         <table class="t">
           <thead><tr><th>Person</th><th>Suffix (after consonant)</th><th>Example (ev = house)</th><th>Meaning</th></tr></thead>
           <tbody>
@@ -441,8 +428,6 @@
             <tr><td>3rd pl.</td><td class="tr">-leri / -ları</td><td>ev<span class="suf">leri</span></td><td>their house</td></tr>
           </tbody>
         </table>
-
-        <p>When the noun ends in a vowel, a buffer consonant <strong>s</strong> is inserted before the 3rd person suffix: <em>araba</em> → <em>araba<strong>s</strong>ı</em> (its car). For 1st and 2nd person after a vowel, the suffix loses its first vowel: <em>araba</em> → <em>arabam</em> (my car).</p>
 
         <div class="quiz" id="qz03">
           <div class="quiz-label">Quick check</div>
@@ -458,7 +443,7 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 04 -->
+        <!-- ══ CH 04 ══ -->
         <h3 id="ch04">Chapter 04 — Personal Pronouns & the Verb To Be</h3>
 
         <h4>Personal pronouns</h4>
@@ -475,10 +460,8 @@
         </table>
 
         <h4>The verb to be — a suffix, not a word</h4>
-        <p>In the present tense, "to be" doesn't exist as a separate verb. It's a suffix added directly to a noun or adjective. The suffix follows 4-way vowel harmony and changes based on person:</p>
-
         <div class="rule">
-          <div class="rule-label">Present "to be" suffixes (-(y)im, -sin, ∅, -iz, -siniz, -ler)</div>
+          <div class="rule-label">Present "to be" suffixes</div>
           Ben öğrenci<span class="suf">yim</span>  — I am a student<br>
           Sen öğrenci<span class="suf">sin</span>  — You are a student<br>
           O öğrenci<span class="suf">(dir)</span> — He/She is a student (dir often omitted)<br>
@@ -487,13 +470,11 @@
           Onlar öğrenci<span class="suf">ler</span> — They are students
         </div>
 
-        <p>After a consonant-final noun, you add the suffix directly. After a vowel-final noun, a buffer <strong>y</strong> is inserted: <em>araba</em> → <em>arabayım</em> (I am a car — not very useful, but grammatically correct).</p>
-
         <h4>Negative to be — değil</h4>
-        <p><em>Değil</em> means "not" and is placed before the to-be suffix: <em>öğrenci değilim</em> (I am not a student). <em>Değil</em> itself takes the to-be suffixes.</p>
+        <p><em>Değil</em> means "not" and is placed before the to-be suffix: <em>öğrenci değilim</em> (I am not a student).</p>
 
-        <h4>Past to be — -di/-ti suffix on noun</h4>
-        <p>The past of "to be" adds <em>-di</em> after the noun with the appropriate personal ending: <em>öğrenciydim</em> (I was a student), <em>öğrenciydin</em> (you were a student), <em>öğrenciydi</em> (he/she was).</p>
+        <h4>Past to be</h4>
+        <p>The past of "to be" adds <em>-di</em> after the noun: <em>öğrenciydim</em> (I was a student), <em>öğrenciydin</em> (you were), <em>öğrenciydi</em> (he/she was).</p>
 
         <div class="quiz" id="qz04">
           <div class="quiz-label">Quick check</div>
@@ -509,10 +490,8 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 05 -->
+        <!-- ══ CH 05 ══ -->
         <h3 id="ch05">Chapter 05 — The Six Noun Cases</h3>
-
-        <p>Turkish marks the grammatical role of nouns with case suffixes. There are six cases. Once you have these, you can build almost any sentence structure. Think of them as answering specific questions about a noun's role.</p>
 
         <table class="t">
           <thead><tr><th>Case</th><th>Suffix</th><th>Answers</th><th>Example</th><th>Meaning</th></tr></thead>
@@ -528,13 +507,10 @@
 
         <div class="callout">
           <div class="callout-label">Accusative — only for definite objects</div>
-          This is a subtlety that surprises many learners. The accusative suffix only marks a <em>specific, definite</em> direct object. If the object is indefinite ("I ate a sandwich"), no accusative. If it's definite ("I ate the sandwich"), accusative is required.<br><br>
+          The accusative suffix only marks a <em>specific, definite</em> direct object. If the object is indefinite, no accusative.<br><br>
           <em>Sandviç yedim</em> — I ate a sandwich (indefinite — no suffix)<br>
-          <em>Sandviçi yedim</em> — I ate the sandwich (definite — accusative suffix)
+          <em>Sandviçi yedim</em> — I ate the sandwich (definite — accusative)
         </div>
-
-        <h4>Locative vs. ablative after voiceless consonants</h4>
-        <p>When the noun ends in a voiceless consonant (ç, f, h, k, p, s, ş, t), the locative becomes <strong>-te/ta</strong> and the ablative becomes <strong>-ten/tan</strong> instead of -de/da and -den/dan. This is consonant assimilation — the d hardens to match the voiceless environment.</p>
 
         <div class="rule">
           <div class="rule-label">Case suffix full conjugation — ev (house, front vowel)</div>
@@ -556,9 +532,6 @@
           Genitive:   araba<span class="suf">nın</span> (buffer n)
         </div>
 
-        <h4>Genitive + possession = the Turkish noun phrase</h4>
-        <p>Turkish expresses possession differently from English. The possessor takes the genitive suffix; the possessed takes the possession suffix. Together they form a noun phrase: <em>Ahmet'<span class="suf">in</span> araba<span class="suf">sı</span></em> = Ahmet's car (lit. "of Ahmet, his car").</p>
-
         <div class="quiz" id="qz05">
           <div class="quiz-label">Quick check</div>
           <div class="quiz-q">You want to say "I'm going to Istanbul" (İstanbul'a gidiyorum). Which case is on İstanbul?</div>
@@ -573,7 +546,7 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 06 -->
+        <!-- ══ CH 06 ══ -->
         <h3 id="ch06">Chapter 06 — Numbers, Dates & Time</h3>
 
         <h4>Cardinal numbers</h4>
@@ -594,8 +567,6 @@
           </tbody>
         </table>
 
-        <p>Compound numbers are simply juxtaposed: <em>yirmi üç</em> (23), <em>iki yüz kırk beş</em> (245). Remember: the noun after a number stays singular — <em>beş kitap</em> (five book, not five books).</p>
-
         <h4>Ordinal numbers — -(i)nci</h4>
         <p>Add <strong>-(i)nci / -(ı)ncı / -(u)ncu / -(ü)ncü</strong> to make ordinals: <em>birinci</em> (first), <em>ikinci</em> (second), <em>üçüncü</em> (third), <em>dördüncü</em> (fourth).</p>
 
@@ -614,13 +585,12 @@
         <p>Ocak, Şubat, Mart, Nisan, Mayıs, Haziran, Temmuz, Ağustos, Eylül, Ekim, Kasım, Aralık.</p>
 
         <h4>Telling time</h4>
-        <p>Turkish time is a bit quirky. The hours go on the locative (at) or accusative (to), and "past" vs "to" use different constructions:</p>
         <ul>
           <li><em>Saat kaç?</em> — What time is it?</li>
           <li><em>Saat üç</em> — It's 3 o'clock</li>
-          <li><em>Saat üçü on geçiyor</em> — It's 10 past 3 (lit. "it passes 3 by ten")</li>
-          <li><em>Saat dörde on var</em> — It's 10 to 4 (lit. "ten exists to four")</li>
-          <li><em>Saat üçbuçuk</em> — It's half past 3 (buçuk = half)</li>
+          <li><em>Saat üçü on geçiyor</em> — It's 10 past 3</li>
+          <li><em>Saat dörde on var</em> — It's 10 to 4</li>
+          <li><em>Saat üçbuçuk</em> — It's half past 3</li>
         </ul>
 
         <div class="quiz" id="qz06">
@@ -637,31 +607,26 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 07 -->
+        <!-- ══ CH 07 ══ -->
         <h3 id="ch07">Chapter 07 — Adjectives & Word Order</h3>
 
         <h4>Adjectives never change</h4>
-        <p>Unlike in French or German, Turkish adjectives have no agreement with the noun they modify. <em>Güzel</em> (beautiful) stays <em>güzel</em> regardless of number, case, or anything else. This is a genuine relief. Adjectives always precede the noun they modify: <em>güzel ev</em> (beautiful house), <em>büyük arabalar</em> (big cars).</p>
-
-        <h4>Predicative adjectives</h4>
-        <p>When the adjective is the predicate ("the house is beautiful"), it takes the to-be suffixes just like nouns: <em>Ev güzel</em> or more emphatically <em>Ev güzeldir</em>. In first/second person: <em>Ben mutluyum</em> (I am happy — mutlu + yum).</p>
+        <p>Turkish adjectives have no agreement with the noun they modify. <em>Güzel</em> (beautiful) stays <em>güzel</em> regardless of number, case, or anything else. Adjectives always precede the noun: <em>güzel ev</em> (beautiful house), <em>büyük arabalar</em> (big cars).</p>
 
         <h4>Comparison</h4>
         <ul>
           <li>Comparative: <em>daha</em> + adjective — <em>daha büyük</em> (bigger)</li>
           <li>Superlative: <em>en</em> + adjective — <em>en büyük</em> (biggest)</li>
-          <li>"Than" uses the ablative case: <em>ondan daha büyük</em> (bigger than him)</li>
+          <li>"Than" uses the ablative: <em>ondan daha büyük</em> (bigger than him)</li>
         </ul>
 
-        <h4>Word order — SOV and the principle of left-branching</h4>
-        <p>Turkish is strictly SOV: Subject → Object → Verb. The verb always comes at the end of the clause. But the deeper principle is <strong>left-branching</strong>: everything that modifies something else comes <em>before</em> what it modifies. Relative clauses come before the noun they modify. Adjectives come before nouns. Postpositions come after nouns. Time expressions typically come before place expressions.</p>
-
+        <h4>Word order — SOV and left-branching</h4>
         <div class="example">
           <div class="example-label">Word order comparison</div>
           English: I bought a red bag at the market yesterday.<br>
           Turkish: Ben dün pazarda kırmızı bir çanta satın aldım.<br>
           (I yesterday market-at red a bag bought.)<br><br>
-          Notice: time (dün) → place (pazarda) → adjective (kırmızı) → object (çanta) → verb (last).
+          Time (dün) → place (pazarda) → adjective (kırmızı) → object (çanta) → verb (last).
         </div>
 
         <div class="quiz" id="qz07">
@@ -678,34 +643,27 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 08 -->
+        <!-- ══ CH 08 ══ -->
         <h3 id="ch08">Chapter 08 — Ability & Possibility: -ebilmek</h3>
-
-        <p>The ability suffix <strong>-ebil- / -abil-</strong> inserts between the verb stem and the tense suffix. It expresses both "can" (ability) and "might" (possibility) depending on context and tense. It's extremely high-frequency — you'll need it almost immediately.</p>
 
         <div class="rule">
           <div class="rule-label">Ability suffix formation</div>
           Verb stem ending in consonant: stem + <span class="suf">ebil / abil</span> + tense + person<br>
           Verb stem ending in vowel: stem + <span class="suf">bil</span> + tense + person<br><br>
-          gel- (come) → gel<span class="suf">ebil</span>iyor (is able to come / can come)<br>
+          gel- (come) → gel<span class="suf">ebil</span>iyor (can come)<br>
           git- (go) → git<span class="suf">ebil</span>irim (I can go)<br>
           yap- (do) → yap<span class="suf">abil</span>irim (I can do it)<br>
           ye- (eat) → ye<span class="suf">bil</span>irim (I can eat)
         </div>
 
         <h4>Inability — -eme- / -ama-</h4>
-        <p>The negative of ability is formed with <strong>-eme- / -ama-</strong> (the bil drops completely in the negative):</p>
-
         <div class="rule">
           <div class="rule-label">Inability formation</div>
-          gel- → gel<span class="suf">eme</span>yorum (I cannot come — present)<br>
-          git- → git<span class="suf">eme</span>m (I can't go — aorist negative)<br>
+          gel- → gel<span class="suf">eme</span>yorum (I cannot come)<br>
+          git- → git<span class="suf">eme</span>m (I can't go)<br>
           yap- → yap<span class="suf">ama</span>m (I can't do it)<br>
           gel- → gel<span class="suf">eme</span>dim (I couldn't come — past)
         </div>
-
-        <h4>Possibility vs. ability</h4>
-        <p>The same suffix covers both. <em>Yağmur yağabilir</em> = "It might rain" (possibility). <em>Türkçe konuşabiliyorum</em> = "I can speak Turkish" (ability). Context distinguishes them, usually cleanly.</p>
 
         <div class="quiz" id="qz08">
           <div class="quiz-label">Quick check</div>
@@ -721,23 +679,18 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 09 -->
+        <!-- ══ CH 09 ══ -->
         <h3 id="ch09">Chapter 09 — Present Continuous: -iyor</h3>
-
-        <p>The present continuous is the first tense most learners acquire, and for good reason — it's regular, predictable, and covers a huge amount of everyday speech. It describes actions happening right now or actions in progress over a period.</p>
 
         <div class="rule">
           <div class="rule-label">Present continuous formation</div>
-          Verb stem + <span class="suf">iyor/ıyor/uyor/üyor</span> + personal suffix<br><br>
-          The -iyor part does NOT harmonize in the usual 4-way pattern — it always uses the rounded vowel that matches the last vowel of the stem:<br>
           After e, i → <span class="front">iyor</span><br>
           After a, ı → <span class="back">ıyor</span><br>
           After o, u → <span class="back">uyor</span><br>
           After ö, ü → <span class="front">üyor</span>
         </div>
 
-        <h4>Stem changes before -iyor</h4>
-        <p>If the verb stem ends in a vowel, that vowel is dropped before -iyor: <em>ye-</em> (eat) → <em>yiyor</em> (not ye-iyor). <em>de-</em> (say) → <em>diyor</em>. This is a notable irregularity.</p>
+        <p>If the verb stem ends in a vowel, that vowel is dropped before -iyor: <em>ye-</em> (eat) → <em>yiyor</em>. <em>de-</em> (say) → <em>diyor</em>.</p>
 
         <table class="t">
           <thead><tr><th>Person</th><th>gelmek (to come)</th><th>gitmek (to go)</th><th>yemek (to eat)</th></tr></thead>
@@ -752,7 +705,7 @@
         </table>
 
         <h4>Negative present continuous</h4>
-        <p>Insert <strong>-mi-/-mı-/-mu-/-mü-</strong> between the stem and -iyor: <em>gelmiyorum</em> (I'm not coming), <em>gitmiyorum</em> (I'm not going).</p>
+        <p>Insert <strong>-mi-/-mı-/-mu-/-mü-</strong> between stem and -iyor: <em>gelmiyorum</em> (I'm not coming).</p>
 
         <div class="quiz" id="qz09">
           <div class="quiz-label">Quick check</div>
@@ -768,21 +721,10 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 10 -->
+        <!-- ══ CH 10 ══ -->
         <h3 id="ch10">Chapter 10 — The Aorist: -ir / -er / -ar / -ur</h3>
 
-        <p>The aorist (geniş zaman — "wide time") is one of Turkish's trickiest tenses for learners because its suffix is irregular for many verbs. It expresses habitual actions, general truths, and permanent states — roughly the English simple present ("I read books every day", "water boils at 100°C").</p>
-
-        <h4>Regular aorist formation</h4>
-        <p>For verbs with stems of <strong>two or more syllables</strong>: add <strong>-ir/-ır/-ur/-ür</strong> (4-way harmony). For verbs with <strong>one-syllable stems</strong> ending in a vowel: add <strong>-r</strong> directly.</p>
-
-        <div class="rule">
-          <div class="rule-label">Aorist suffix — multisyllabic stems</div>
-          gel- (come) → gel<span class="suf">ir</span> (he/she comes habitually)<br>
-          git- (go) → git<span class="suf">er</span> — !! irregular (one of 13 exceptions)<br>
-          bekle- (wait) → bekle<span class="suf">r</span> (vowel-final → just r)<br>
-          oku- (read) → oku<span class="suf">r</span>
-        </div>
+        <p>The aorist (geniş zaman) expresses habitual actions, general truths, and permanent states — roughly the English simple present. For verbs with stems of two or more syllables: add <strong>-ir/-ır/-ur/-ür</strong>. For one-syllable stems ending in a vowel: add <strong>-r</strong> directly.</p>
 
         <h4>The 13 irregular aorist verbs</h4>
         <p>Thirteen common one-syllable verbs take <strong>-er/-ar</strong> instead of -ir/-ır. These must be memorized: <em>almak, bilmek, bulmak, durmak, gelmek, görmek, kalmak, olmak, sanmak, ölmek, vermek, varmak, vurmak</em>.</p>
@@ -799,8 +741,8 @@
           </tbody>
         </table>
 
-        <h4>Negative aorist — a complete irregularity</h4>
-        <p>The negative aorist is entirely different: <strong>stem + -mez/-maz</strong> (not -mir/-mır). <em>Gelmez</em> (he/she doesn't come habitually). First person singular is even more irregular: <em>gelmem</em> (I don't come — not *gelmezim).</p>
+        <h4>Negative aorist</h4>
+        <p>The negative aorist uses <strong>stem + -mez/-maz</strong>. First person singular is irregular: <em>gelmem</em> (I don't come).</p>
 
         <div class="quiz" id="qz10">
           <div class="quiz-label">Quick check</div>
@@ -816,19 +758,19 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 11 -->
+        <!-- ══ CH 11 ══ -->
         <h3 id="ch11">Chapter 11 — Past Witnessed: -di</h3>
 
-        <p>Turkish has two distinct past tenses, and the distinction between them is one of the most fascinating features of the language. The <em>-di past</em> (geçmiş zaman) is used when you <strong>personally witnessed or directly experienced</strong> the event. It's the default past tense for things you saw, did, or were present for.</p>
+        <p>The <em>-di past</em> is used when you <strong>personally witnessed or directly experienced</strong> the event.</p>
 
         <div class="rule">
-          <div class="rule-label">-di past formation (4-way harmony + consonant assimilation)</div>
+          <div class="rule-label">-di past formation</div>
           After voiced sounds: stem + <span class="suf">di/dı/du/dü</span> + personal suffix<br>
           After voiceless sounds (ç,f,h,k,p,s,ş,t): stem + <span class="suf">ti/tı/tu/tü</span><br><br>
-          gel- → gel<span class="suf">di</span>m (I came — witnessed)<br>
-          git- → git<span class="suf">ti</span>m (I went — voiceless t)<br>
+          gel- → gel<span class="suf">di</span>m (I came)<br>
+          git- → git<span class="suf">ti</span>m (I went)<br>
           oku- → oku<span class="suf">du</span>m (I read)<br>
-          iç- → iç<span class="suf">ti</span>m (I drank — voiceless ç)
+          iç- → iç<span class="suf">ti</span>m (I drank)
         </div>
 
         <table class="t">
@@ -842,9 +784,6 @@
             <tr><td>Onlar</td><td>gel<span class="suf">diler</span></td><td>git<span class="suf">tiler</span></td></tr>
           </tbody>
         </table>
-
-        <h4>Negative -di past</h4>
-        <p>Insert <strong>-me-/-ma-</strong> between stem and -di: <em>gelmedim</em> (I didn't come), <em>gitmedim</em> (I didn't go).</p>
 
         <div class="quiz" id="qz11">
           <div class="quiz-label">Quick check</div>
@@ -860,41 +799,26 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 12 -->
+        <!-- ══ CH 12 ══ -->
         <h3 id="ch12">Chapter 12 — Past Reported: -miş & Evidentiality</h3>
 
-        <p>The <em>-miş past</em> is what makes Turkish genuinely special. It marks events that you did <strong>not</strong> personally witness — things you heard about, read about, inferred, or discovered after the fact. Linguists call this <strong>evidentiality</strong>: grammatically encoding <em>how you know</em> what you're claiming. Very few languages outside of Turkish and its relatives grammaticalize this distinction so cleanly.</p>
+        <p>The <em>-miş past</em> marks events you did <strong>not</strong> personally witness — things you heard about, read about, inferred, or discovered after the fact. Linguists call this <strong>evidentiality</strong>.</p>
 
         <div class="rule">
           <div class="rule-label">-miş past formation (4-way harmony)</div>
           stem + <span class="suf">miş/mış/muş/müş</span> + personal suffix<br><br>
-          gel- → gel<span class="suf">miş</span>im (I apparently came / I've come — reported)<br>
+          gel- → gel<span class="suf">miş</span>im (I apparently came)<br>
           git- → git<span class="suf">miş</span> (he apparently went)<br>
           uyu- → uyu<span class="suf">muş</span> (she apparently slept)<br>
           düş- → düş<span class="suf">müş</span> (it apparently fell)
         </div>
 
-        <table class="t">
-          <thead><tr><th>Person</th><th>gelmek — -miş past</th></tr></thead>
-          <tbody>
-            <tr><td>Ben</td><td>gel<span class="suf">mişim</span></td></tr>
-            <tr><td>Sen</td><td>gel<span class="suf">mişsin</span></td></tr>
-            <tr><td>O</td><td>gel<span class="suf">miş</span></td></tr>
-            <tr><td>Biz</td><td>gel<span class="suf">mişiz</span></td></tr>
-            <tr><td>Siz</td><td>gel<span class="suf">mişsiniz</span></td></tr>
-            <tr><td>Onlar</td><td>gel<span class="suf">mişler</span></td></tr>
-          </tbody>
-        </table>
-
         <div class="callout">
           <div class="callout-label">The three registers of -miş</div>
-          <strong>1. Reported speech:</strong> <em>Ahmet gelmiş</em> — "Ahmet came (apparently / I heard)"<br>
-          <strong>2. Discovery:</strong> <em>Anahtarımı kaybetmişim!</em> — "I've lost my keys!" (just discovered)<br>
-          <strong>3. Sarcasm / storytelling:</strong> Used in fairy tales (<em>bir varmış bir yokmuş</em> = "once upon a time") and for ironic distance from what someone just said.
+          <strong>1. Reported speech:</strong> <em>Ahmet gelmiş</em> — "Ahmet came (I heard)"<br>
+          <strong>2. Discovery:</strong> <em>Anahtarımı kaybetmişim!</em> — "I've lost my keys!" (just noticed)<br>
+          <strong>3. Fairy tales / sarcasm:</strong> <em>bir varmış bir yokmuş</em> = "once upon a time"
         </div>
-
-        <h4>The evidential distinction in practice</h4>
-        <p>Consider: your friend tells you they went to Paris. You tell someone else. In Turkish you <em>must</em> use -miş: <em>Paris'e gitmiş</em>. If you say <em>Paris'e gitti</em> (-di past), you're claiming you were there and witnessed it. Getting this wrong doesn't just sound odd — it communicates something false about your epistemic position. It matters.</p>
 
         <div class="quiz" id="qz12">
           <div class="quiz-label">Quick check</div>
@@ -910,17 +834,15 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 13 -->
+        <!-- ══ CH 13 ══ -->
         <h3 id="ch13">Chapter 13 — Future Tense: -ecek / -acak</h3>
-
-        <p>The future tense is refreshingly regular. The suffix <strong>-ecek/-acak</strong> follows 2-way vowel harmony and attaches after the verb stem.</p>
 
         <div class="rule">
           <div class="rule-label">Future tense formation</div>
           Stem ending in consonant + <span class="suf">ecek/acak</span> + personal suffix<br>
           Stem ending in vowel: drop the vowel, add <span class="suf">yecek/yacak</span><br><br>
-          gel- → gel<span class="suf">ecek</span>im (I will come)<br>
-          git- → git<span class="suf">eceğ</span>im (I will go — k→ğ mutation before vowel suffix)<br>
+          gel- → gel<span class="suf">eceğ</span>im (I will come)<br>
+          git- → git<span class="suf">eceğ</span>im (I will go — k→ğ before vowel)<br>
           oku- → oku<span class="suf">yacak</span> (he will read)<br>
           ye- → ye<span class="suf">yeceğ</span>im (I will eat)
         </div>
@@ -937,14 +859,9 @@
           </tbody>
         </table>
 
-        <p>Note the k→ğ mutation in 1st person (eceğim, eceğiz) — the -k of -ecek softens before a vowel-initial personal suffix.</p>
-
-        <h4>Negative future</h4>
-        <p>Insert -me-/-ma- before the future suffix: <em>gelmeyeceğim</em> (I will not come), <em>gitmeyeceğim</em> (I will not go).</p>
-
         <div class="quiz" id="qz13">
           <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you say "They will not come tomorrow" in Turkish? (yarın = tomorrow, gel- = come)</div>
+          <div class="quiz-q">How do you say "They will not come tomorrow"? (yarın = tomorrow, gel- = come)</div>
           <div class="quiz-opts">
             <button class="quiz-btn" data-correct="false" data-qz="qz13">Yarın gelmeyecek</button>
             <button class="quiz-btn" data-correct="true"  data-qz="qz13">Yarın gelmeyecekler</button>
@@ -956,19 +873,15 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 14 -->
+        <!-- ══ CH 14 ══ -->
         <h3 id="ch14">Chapter 14 — Necessity & Obligation: -meli / -malı</h3>
-
-        <p>The necessity suffix <strong>-meli/-malı</strong> expresses obligation ("must", "should", "have to"). It follows 2-way harmony and is straightforward to form.</p>
 
         <div class="rule">
           <div class="rule-label">Necessity suffix — -meli/-malı</div>
           Front vowel stem → stem + <span class="suf">meli</span> + personal suffix<br>
           Back vowel stem  → stem + <span class="suf">malı</span> + personal suffix<br><br>
           gel- → gel<span class="suf">meli</span>yim (I must come)<br>
-          git- → git<span class="suf">meli</span>yim (I must go)<br>
-          yap- → yap<span class="suf">malı</span>yım (I must do it)<br>
-          uyu- → uyu<span class="suf">malı</span>yım (I must sleep)
+          yap- → yap<span class="suf">malı</span>yım (I must do it)
         </div>
 
         <table class="t">
@@ -983,15 +896,11 @@
           </tbody>
         </table>
 
-        <h4>Past necessity and reported necessity</h4>
-        <p>Stack the to-be suffixes: <em>gelmeliydim</em> (I should have come / I had to come), <em>gelmeliymiş</em> (apparently he had to come).</p>
-
-        <h4>Negative necessity</h4>
-        <p><em>Gelmemelisin</em> = "You must not come" (prohibition). <em>Gelmene gerek yok</em> = "You don't need to come" (lack of necessity — different meaning). The distinction between "must not" and "don't need to" matters and Turkish makes it clearly.</p>
+        <p><em>Gelmemelisin</em> = "You must not come" (prohibition). <em>Gelmene gerek yok</em> = "You don't need to come" (lack of necessity — different meaning).</p>
 
         <div class="quiz" id="qz14">
           <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you say "We must study" in Turkish? (çalış- = to study/work)</div>
+          <div class="quiz-q">How do you say "We must study"? (çalış- = to study)</div>
           <div class="quiz-opts">
             <button class="quiz-btn" data-correct="false" data-qz="qz14">Çalışmalıyorum</button>
             <button class="quiz-btn" data-correct="true"  data-qz="qz14">Çalışmalıyız</button>
@@ -1003,37 +912,25 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 15 -->
+        <!-- ══ CH 15 ══ -->
         <h3 id="ch15">Chapter 15 — Negation & Questions</h3>
 
         <h4>Verbal negation — -me / -ma</h4>
-        <p>The negation suffix <strong>-me/-ma</strong> is inserted between the verb stem and the tense suffix. It follows 2-way harmony. The key thing to remember: the position of -me is always the same, but some tenses produce contractions when combined with it.</p>
-
         <div class="rule">
           <div class="rule-label">Negation position</div>
           Verb stem + <span class="suf">me/ma</span> + tense suffix + personal suffix<br><br>
-          gel- + me + iyor → gel<span class="suf">mi</span>yor (not coming) — vowel contracts<br>
+          gel- + me + iyor → gel<span class="suf">mi</span>yor (not coming — vowel contracts)<br>
           git- + me + ecek → git<span class="suf">me</span>yecek (won't go)<br>
           yap- + ma + dı  → yap<span class="suf">ma</span>dı (didn't do)<br>
           gel- + me + r   → gel<span class="suf">mez</span> (doesn't come — aorist special)
         </div>
 
-        <div class="callout">
-          <div class="callout-label">The -miyor contraction</div>
-          In the present continuous negative, -me + iyor contracts: the e of -me merges with the i of -iyor, giving -miyor. So <em>gelmiyor</em> not *"gelme-iyor". This contraction is predictable once you've seen it a few times.
-        </div>
-
         <h4>Question particle — mi / mı / mu / mü</h4>
-        <p>Questions are formed with the particle <strong>mi/mı/mu/mü</strong>, which follows 4-way vowel harmony and is always written as a separate word. It inserts after the verb but before the personal suffix in most tenses, or at the very end in some constructions.</p>
-
         <div class="rule">
           <div class="rule-label">Question formation</div>
-          Statement: Geliyor<span class="suf">sun</span> — You are coming<br>
-          Question:  Geliyor <span class="suf">mu</span>sun? — Are you coming?<br><br>
-          Statement: Türkçe konuşuyor — He speaks Turkish<br>
-          Question:  Türkçe konuşuyor <span class="suf">mu</span>? — Does he speak Turkish?<br><br>
-          Statement: İstanbul'a gideceksin — You will go to Istanbul<br>
-          Question:  İstanbul'a gidecek <span class="suf">mi</span>sin? — Will you go to Istanbul?
+          Geliyor<span class="suf">sun</span> → Geliyor <span class="suf">mu</span>sun? — Are you coming?<br>
+          Türkçe konuşuyor → Türkçe konuşuyor <span class="suf">mu</span>? — Does he speak Turkish?<br>
+          İstanbul'a gideceksin → İstanbul'a gidecek <span class="suf">mi</span>sin? — Will you go?
         </div>
 
         <h4>Question words</h4>
@@ -1050,7 +947,7 @@
 
         <div class="quiz" id="qz15">
           <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you form "Are you tired?" from "Sen yorgunsun" (You are tired)?</div>
+          <div class="quiz-q">How do you form "Are you tired?" from "Sen yorgunsun"?</div>
           <div class="quiz-opts">
             <button class="quiz-btn" data-correct="false" data-qz="qz15">Sen yorgunmusun?</button>
             <button class="quiz-btn" data-correct="true"  data-qz="qz15">Sen yorgun musun?</button>
@@ -1062,30 +959,25 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 16 -->
+        <!-- ══ CH 16 ══ -->
         <h3 id="ch16">Chapter 16 — Postpositions</h3>
-
-        <p>Where French and English use prepositions (before the noun: <em>sur la table</em>, <em>on the table</em>), Turkish uses postpositions — they come <em>after</em> the noun. And they require specific cases on the noun that precedes them. Once you memorize which case each postposition governs, they're quite systematic.</p>
 
         <table class="t">
           <thead><tr><th>Postposition</th><th>Meaning</th><th>Case required</th><th>Example</th></tr></thead>
           <tbody>
-            <tr><td>için</td><td>for, because of</td><td>Bare nominative</td><td>sen için — for you</td></tr>
-            <tr><td>ile / -le/-la</td><td>with, by means of</td><td>Bare nominative</td><td>arabayıla / arabayla — by car</td></tr>
-            <tr><td>gibi</td><td>like, as</td><td>Bare nominative</td><td>su gibi — like water</td></tr>
-            <tr><td>kadar</td><td>until, as far as, as much as</td><td>Bare nominative / dative</td><td>eve kadar — as far as home</td></tr>
+            <tr><td>için</td><td>for, because of</td><td>Nominative</td><td>sen için — for you</td></tr>
+            <tr><td>ile / -le/-la</td><td>with, by means of</td><td>Nominative</td><td>arabayla — by car</td></tr>
+            <tr><td>gibi</td><td>like, as</td><td>Nominative</td><td>su gibi — like water</td></tr>
+            <tr><td>kadar</td><td>until, as far as</td><td>Nominative / dative</td><td>eve kadar — as far as home</td></tr>
             <tr><td>karşı</td><td>against, opposite</td><td>Dative</td><td>bana karşı — against me</td></tr>
             <tr><td>göre</td><td>according to</td><td>Dative</td><td>bana göre — in my opinion</td></tr>
             <tr><td>rağmen</td><td>despite</td><td>Dative</td><td>yağmura rağmen — despite the rain</td></tr>
             <tr><td>önce</td><td>before</td><td>Ablative</td><td>yemekten önce — before the meal</td></tr>
             <tr><td>sonra</td><td>after</td><td>Ablative</td><td>yemekten sonra — after the meal</td></tr>
             <tr><td>beri</td><td>since</td><td>Ablative</td><td>sabahtan beri — since morning</td></tr>
-            <tr><td>dolayı</td><td>because of, due to</td><td>Ablative</td><td>hastalıktan dolayı — due to illness</td></tr>
+            <tr><td>dolayı</td><td>because of</td><td>Ablative</td><td>hastalıktan dolayı — due to illness</td></tr>
           </tbody>
         </table>
-
-        <h4>The -le/-la instrumental</h4>
-        <p><em>İle</em> (with) can be contracted into a suffix: after a consonant → <strong>-le/-la</strong>; after a vowel → <strong>-yle/-yla</strong>. <em>Kalemle</em> (with a pen), <em>arabayla</em> (by car / with the car). This is extremely common in speech.</p>
 
         <div class="quiz" id="qz16">
           <div class="quiz-label">Quick check</div>
@@ -1101,13 +993,8 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 17 -->
+        <!-- ══ CH 17 ══ -->
         <h3 id="ch17">Chapter 17 — Compound Verbs with etmek, olmak & yapmak</h3>
-
-        <p>A huge proportion of Turkish vocabulary consists of compound verbs: a noun or adjective borrowed from Arabic, Persian, or French, paired with one of three light verbs. These light verbs — <em>etmek</em> (to do/make), <em>olmak</em> (to be/become), <em>yapmak</em> (to do/make) — carry the grammatical load while the nominal root carries the meaning.</p>
-
-        <h4>etmek — the most common light verb</h4>
-        <p><em>Etmek</em> is used with Arabic- and Persian-derived nouns. The noun stays unchanged; <em>etmek</em> conjugates normally. Key point: in spoken Turkish the stem of <em>etmek</em> irregularly uses <em>ed-</em> in some forms.</p>
 
         <div class="example">
           <div class="example-label">Common etmek compounds</div>
@@ -1115,20 +1002,15 @@
           yardım etmek — to help<br>
           kabul etmek — to accept<br>
           devam etmek — to continue<br>
-          tercih etmek — to prefer<br>
-          özür dilemek (not etmek) — to apologize
+          tercih etmek — to prefer
         </div>
-
-        <h4>olmak — to be / to become</h4>
-        <p><em>Olmak</em> is both a standalone verb ("to become", "to happen", "to be okay") and a light verb. As a light verb it expresses a state being reached: <em>mutlu olmak</em> (to be/become happy), <em>hazır olmak</em> (to be ready).</p>
 
         <div class="callout">
           <div class="callout-label">Var and yok — existence, not olmak</div>
-          "There is" and "there isn't" in Turkish use <em>var</em> and <em>yok</em>, not <em>olmak</em>. <em>Para var</em> = there is money. <em>Süt yok</em> = there is no milk. These are standalone words, not verbs, and they're extremely high-frequency.
+          "There is" and "there isn't" use <em>var</em> and <em>yok</em>, not <em>olmak</em>. <em>Para var</em> = there is money. <em>Süt yok</em> = there is no milk.
         </div>
 
-        <h4>yapmak — to do / make</h4>
-        <p><em>Yapmak</em> tends to combine with action nouns, especially in colloquial speech: <em>alışveriş yapmak</em> (to go shopping), <em>spor yapmak</em> (to do sport), <em>hata yapmak</em> (to make a mistake).</p>
+        <p><em>Yapmak</em> combines with action nouns: <em>alışveriş yapmak</em> (to go shopping), <em>spor yapmak</em> (to do sport), <em>hata yapmak</em> (to make a mistake).</p>
 
         <div class="quiz" id="qz17">
           <div class="quiz-label">Quick check</div>
@@ -1144,12 +1026,9 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 18 -->
+        <!-- ══ CH 18 ══ -->
         <h3 id="ch18">Chapter 18 — Conditionals</h3>
 
-        <p>Turkish has two main conditional structures: the <em>-se/-sa</em> conditional (if/when clauses) and the past conditional for hypotheticals.</p>
-
-        <h4>The -se/-sa conditional</h4>
         <div class="rule">
           <div class="rule-label">Conditional -se/-sa (2-way harmony)</div>
           Verb stem + <span class="suf">se/sa</span> + personal suffix<br><br>
@@ -1159,20 +1038,8 @@
           Negative: gel<span class="suf">me</span>sem (if I don't come)
         </div>
 
-        <table class="t">
-          <thead><tr><th>Person</th><th>gelmek — conditional</th></tr></thead>
-          <tbody>
-            <tr><td>Ben</td><td>gel<span class="suf">sem</span></td></tr>
-            <tr><td>Sen</td><td>gel<span class="suf">sen</span></td></tr>
-            <tr><td>O</td><td>gel<span class="suf">se</span></td></tr>
-            <tr><td>Biz</td><td>gel<span class="suf">sek</span></td></tr>
-            <tr><td>Siz</td><td>gel<span class="suf">seniz</span></td></tr>
-            <tr><td>Onlar</td><td>gel<span class="suf">seler</span></td></tr>
-          </tbody>
-        </table>
-
-        <h4>Past conditional — hypotheticals and regrets</h4>
-        <p>Stack -se onto the -di past: <em>gelseydi</em> (if he had come), <em>gitseydim</em> (if I had gone). This is used for counterfactuals — things that didn't happen.</p>
+        <h4>Past conditional — hypotheticals</h4>
+        <p>Stack -se onto the -di past: <em>gelseydi</em> (if he had come), <em>gitseydim</em> (if I had gone).</p>
 
         <div class="example">
           <div class="example-label">Full conditional sentences</div>
@@ -1195,29 +1062,26 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 19 -->
+        <!-- ══ CH 19 ══ -->
         <h3 id="ch19">Chapter 19 — Imperatives & Requests</h3>
-
-        <h4>The imperative</h4>
-        <p>The Turkish imperative is the bare verb stem for informal singular commands. For formal or plural, add <strong>-(y)in/-(y)ın/-(y)un/-(y)ün</strong>. For very formal/official, add <strong>-(y)iniz</strong>.</p>
 
         <div class="rule">
           <div class="rule-label">Imperative forms</div>
           Informal singular: bare stem — <span class="suf">Gel!</span> (Come!), <span class="suf">Git!</span> (Go!)<br>
           Formal / plural:   stem + <span class="suf">in/ın/un/ün</span> — Gelin! Gidin!<br>
-          Very formal:       stem + <span class="suf">iniz/ınız/unuz/ünüz</span> — Geliniz! Gidiniz!<br>
+          Very formal:       stem + <span class="suf">iniz/ınız/unuz/ünüz</span> — Geliniz!<br>
           Negative:          stem + <span class="suf">me/ma</span> + imperative — Gelme! (Don't come!)
         </div>
 
-        <h4>Softening requests — -e bilir misin? and -er misin?</h4>
-        <p>A bare imperative is direct and can sound rude. For polite requests Turkish typically uses the question form of the aorist or future: <em>Bana yardım eder misin?</em> (Can/will you help me?), <em>Gelebilir misin?</em> (Can you come?).</p>
+        <h4>Softening requests</h4>
+        <p><em>Bana yardım eder misin?</em> (Can/will you help me?), <em>Gelebilir misin?</em> (Can you come?).</p>
 
         <h4>The let's form — -elim/-alım</h4>
-        <p>To say "let's do something", add <strong>-elim/-alım</strong> to the stem: <em>Gidelim</em> (Let's go), <em>Yiyelim</em> (Let's eat), <em>Çalışalım</em> (Let's work).</p>
+        <p><em>Gidelim</em> (Let's go), <em>Yiyelim</em> (Let's eat), <em>Çalışalım</em> (Let's work).</p>
 
         <div class="quiz" id="qz19">
           <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you politely ask "Can you open the window?" (pen- / aç- = open, pencere = window)?</div>
+          <div class="quiz-q">How do you politely ask "Can you open the window?" (aç- = open, pencere = window)?</div>
           <div class="quiz-opts">
             <button class="quiz-btn" data-correct="false" data-qz="qz19">Pencereyi aç!</button>
             <button class="quiz-btn" data-correct="true"  data-qz="qz19">Pencereyi açar mısın?</button>
@@ -1229,44 +1093,36 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 20 -->
+        <!-- ══ CH 20 ══ -->
         <h3 id="ch20">Chapter 20 — Relative Clauses & Verbal Nouns</h3>
 
-        <p>This is where Turkish becomes genuinely complex for Indo-European speakers. Because Turkish is left-branching, relative clauses come <em>before</em> the noun they modify — the opposite of English and French. And they're formed by converting the verb into a participial form.</p>
-
-        <h4>Verbal nouns (mastar and -me/-ma)</h4>
-        <p>The infinitive suffix <strong>-mek/-mak</strong> forms verbal nouns (like English "to go", "going"). More commonly in subordinate clauses, the verbal noun suffix <strong>-me/-ma</strong> is used with possession suffixes to make gerund-like constructions:</p>
-
+        <h4>Verbal nouns</h4>
         <div class="rule">
           <div class="rule-label">Verbal noun with possession</div>
           gel<span class="suf">me</span>m — my coming<br>
           git<span class="suf">me</span>n — your going<br>
           oku<span class="suf">ma</span>sı — his/her reading<br><br>
-          Benim gel<span class="suf">mem</span>i istedi — He wanted me to come<br>
-          (lit. "He wanted my coming")
+          Benim gel<span class="suf">mem</span>i istedi — He wanted me to come
         </div>
 
         <h4>Relative clauses — -(y)en/-(y)an and -(d)ik</h4>
-        <p>Turkish has two main participial suffixes used in relative clauses. <strong>-(y)en/-(y)an</strong> is used when the modified noun is the <em>subject</em> of the relative clause. <strong>-(d)ik</strong> (with possession suffix) is used when the modified noun is the <em>object or other role</em>:</p>
-
         <div class="rule">
           <div class="rule-label">Participial relative clauses</div>
-          The man who comes: <span class="suf">gelen</span> adam (gel + en + adam)<br>
-          The woman who went: <span class="suf">giden</span> kadın (git + en → giden)<br><br>
-          The book that I read: benim oku<span class="suf">duğum</span> kitap (oku + duk + um + kitap)<br>
+          The man who comes: <span class="suf">gelen</span> adam<br>
+          The woman who went: <span class="suf">giden</span> kadın<br><br>
+          The book that I read: benim oku<span class="suf">duğum</span> kitap<br>
           The city that she lives in: onun otur<span class="suf">duğu</span> şehir
         </div>
 
         <div class="callout">
           <div class="callout-label">Why this feels backward</div>
-          In English: "the book [that I read]" — noun first, clause follows.<br>
-          In Turkish: "[benim okuduğum] kitap" — clause first, noun at the end.<br>
-          The entire relative clause folds into what feels like an adjective placed before the noun. This is consistent with Turkish's left-branching principle but takes real adjustment to produce naturally.
+          English: "the book [that I read]" — noun first, clause follows.<br>
+          Turkish: "[benim okuduğum] kitap" — clause first, noun at the end.
         </div>
 
         <div class="quiz" id="qz20">
           <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you express "the woman who is coming" in Turkish? (kadın = woman, gel- = come)</div>
+          <div class="quiz-q">How do you express "the woman who is coming"? (kadın = woman, gel- = come)</div>
           <div class="quiz-opts">
             <button class="quiz-btn" data-correct="false" data-qz="qz20">kadın gelen</button>
             <button class="quiz-btn" data-correct="true"  data-qz="qz20">gelen kadın</button>
@@ -1278,45 +1134,31 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 21 -->
+        <!-- ══ CH 21 ══ -->
         <h3 id="ch21">Chapter 21 — Causative, Passive & Reciprocal</h3>
 
-        <p>Turkish can modify the basic meaning of a verb by inserting derivational suffixes between the stem and the tense suffix. These are productive — they work on almost any verb.</p>
-
-        <h4>Causative — -dir / -tir / -ir / -t / -it</h4>
-        <p>The causative suffix means "to make/cause someone to do something" or "to have something done". The form varies depending on the stem:</p>
-
+        <h4>Causative — -dir / -tir / -ir / -t</h4>
         <div class="rule">
           <div class="rule-label">Causative suffix</div>
-          After most consonants: stem + <span class="suf">dir/dır/dur/dür</span><br>
-          After voiceless consonants / some verbs: + <span class="suf">tir/tır/tur/tür</span><br>
-          Short stems (1 syllable ending in vowel): + <span class="suf">t</span><br><br>
-          yap- (do) → yap<span class="suf">tır</span>mak (to have done / to make do)<br>
+          yap- (do) → yap<span class="suf">tır</span>mak (to have done)<br>
           giy- (wear) → giy<span class="suf">dir</span>mek (to dress someone)<br>
           ye- (eat) → ye<span class="suf">dir</span>mek (to feed someone)<br>
           iç- (drink) → iç<span class="suf">ir</span>mek (to make drink)
         </div>
 
-        <h4>Passive — -il / -ıl / -ul / -ül or -in / -n</h4>
-        <p>The passive suffix converts an active verb to passive ("it was done", "it is seen"):</p>
-
+        <h4>Passive — -il / -ıl / -ul / -ül or -n</h4>
         <div class="rule">
           <div class="rule-label">Passive suffix</div>
-          After consonant: stem + <span class="suf">il/ıl/ul/ül</span><br>
-          After vowel:     stem + <span class="suf">n</span><br><br>
           yap- → yap<span class="suf">ıl</span>mak (to be done)<br>
           gör- → gör<span class="suf">ül</span>mek (to be seen)<br>
-          iç- → iç<span class="suf">il</span>mek (to be drunk)<br>
           ara- → ara<span class="suf">n</span>mak (to be searched)
         </div>
 
         <h4>Reciprocal — -iş / -ış / -uş / -üş</h4>
-        <p>The reciprocal suffix expresses mutual action ("to do to each other"):</p>
         <div class="rule">
           <div class="rule-label">Reciprocal suffix</div>
-          gör- → gör<span class="suf">üş</span>mek (to meet / see each other)<br>
-          sev- → sev<span class="suf">iş</span>mek (to love each other)<br>
-          konuş- → konuş is already reciprocal (to talk = talking with each other)
+          gör- → gör<span class="suf">üş</span>mek (to meet each other)<br>
+          sev- → sev<span class="suf">iş</span>mek (to love each other)
         </div>
 
         <div class="quiz" id="qz21">
@@ -1324,7 +1166,7 @@
           <div class="quiz-q">What does "yaptırıldı" most likely mean? (yap- = do, -tır = causative, -ıl = passive, -dı = past)</div>
           <div class="quiz-opts">
             <button class="quiz-btn" data-correct="false" data-qz="qz21">He did it himself</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz21">It was had done / It was caused to be done (double suffix: causative + passive)</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz21">It was caused to be done (causative + passive stacked)</button>
             <button class="quiz-btn" data-correct="false" data-qz="qz21">They did it to each other</button>
           </div>
           <div class="quiz-feedback" id="qz21-fb"></div>
@@ -1333,44 +1175,40 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 22 -->
+        <!-- ══ CH 22 ══ -->
         <h3 id="ch22">Chapter 22 — Discourse Markers & Connectors</h3>
-
-        <p>Knowing grammar is one thing; stitching sentences together into natural speech is another. These connectors are the glue of real Turkish conversation and writing.</p>
 
         <h4>Coordinating conjunctions</h4>
         <table class="t">
           <thead><tr><th>Turkish</th><th>English</th><th>Example</th></tr></thead>
           <tbody>
-            <tr><td>ve</td><td>and</td><td>Çay ve kahve — tea and coffee</td></tr>
-            <tr><td>ama / fakat</td><td>but</td><td>Güzel ama pahalı — beautiful but expensive</td></tr>
-            <tr><td>veya / ya da</td><td>or</td><td>Çay veya kahve — tea or coffee</td></tr>
-            <tr><td>hem... hem (de)</td><td>both... and</td><td>Hem yorgun hem açım — I'm both tired and hungry</td></tr>
-            <tr><td>ya... ya (da)</td><td>either... or</td><td>Ya gel ya gitme — either come or don't go</td></tr>
-            <tr><td>ne... ne (de)</td><td>neither... nor</td><td>Ne çay ne kahve — neither tea nor coffee</td></tr>
+            <tr><td>ve</td><td>and</td><td>Çay ve kahve</td></tr>
+            <tr><td>ama / fakat</td><td>but</td><td>Güzel ama pahalı</td></tr>
+            <tr><td>veya / ya da</td><td>or</td><td>Çay veya kahve</td></tr>
+            <tr><td>hem... hem (de)</td><td>both... and</td><td>Hem yorgun hem açım</td></tr>
+            <tr><td>ya... ya (da)</td><td>either... or</td><td>Ya gel ya gitme</td></tr>
+            <tr><td>ne... ne (de)</td><td>neither... nor</td><td>Ne çay ne kahve</td></tr>
           </tbody>
         </table>
 
         <h4>Subordinating and causal connectors</h4>
         <table class="t">
-          <thead><tr><th>Turkish</th><th>English</th><th>Note</th></tr></thead>
+          <thead><tr><th>Turkish</th><th>English</th></tr></thead>
           <tbody>
-            <tr><td>çünkü</td><td>because</td><td>Comes after the clause it introduces</td></tr>
-            <tr><td>o yüzden / bu yüzden</td><td>therefore / that's why</td><td>Common in speech</td></tr>
-            <tr><td>ama</td><td>but / however</td><td>Most neutral contrast marker</td></tr>
-            <tr><td>oysa / oysaki</td><td>whereas / yet</td><td>More formal contrast</td></tr>
-            <tr><td>ayrıca</td><td>furthermore / also</td><td></td></tr>
-            <tr><td>yani</td><td>that is / I mean</td><td>Very common filler in speech</td></tr>
-            <tr><td>mesela / örneğin</td><td>for example</td><td></td></tr>
-            <tr><td>belki</td><td>maybe / perhaps</td><td></td></tr>
-            <tr><td>tabii / tabii ki</td><td>of course</td><td></td></tr>
-            <tr><td>zaten</td><td>anyway / already / as expected</td><td>Very high-frequency filler</td></tr>
+            <tr><td>çünkü</td><td>because</td></tr>
+            <tr><td>o yüzden / bu yüzden</td><td>therefore / that's why</td></tr>
+            <tr><td>oysa / oysaki</td><td>whereas / yet</td></tr>
+            <tr><td>ayrıca</td><td>furthermore / also</td></tr>
+            <tr><td>yani</td><td>that is / I mean</td></tr>
+            <tr><td>mesela / örneğin</td><td>for example</td></tr>
+            <tr><td>belki</td><td>maybe / perhaps</td></tr>
+            <tr><td>zaten</td><td>anyway / already / as expected</td></tr>
           </tbody>
         </table>
 
         <div class="callout">
           <div class="callout-label">Zaten — the word you'll say every day</div>
-          <em>Zaten</em> is one of those words that doesn't translate cleanly. It expresses that something was already expected, already the case, or "as you might expect." <em>Zaten geliyordum</em> = "I was already coming anyway." <em>Zaten biliyorum</em> = "I already know." Learning to use <em>zaten</em> naturally is a real marker of Turkish fluency.
+          <em>Zaten</em> expresses that something was already expected or already the case. <em>Zaten geliyordum</em> = "I was already coming anyway." Learning to use <em>zaten</em> naturally is a real marker of fluency.
         </div>
 
         <div class="quiz" id="qz22">
@@ -1387,38 +1225,31 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 23 -->
+        <!-- ══ CH 23 ══ -->
         <h3 id="ch23">Chapter 23 — Diminutives & Expressive Suffixes</h3>
 
-        <p>Turkish has a rich system of expressive suffixes that add emotional color, affection, or nuance to words. You'll hear them constantly in spoken Turkish, especially in informal registers.</p>
-
-        <h4>The diminutive — -cik / -cığ / -çık</h4>
-        <p>The suffix <strong>-cik/-cığ/-çık/-cük</strong> (4-way harmony, with consonant assimilation) adds smallness, cuteness, or affection. It's used with nouns, adjectives, and even adverbs:</p>
-
+        <h4>The diminutive — -cik / -çık</h4>
         <div class="rule">
           <div class="rule-label">Diminutive suffix -cik / -çık</div>
           küçük (small) → küçü<span class="suf">cük</span> (tiny, sweet-small)<br>
           az (little) → az<span class="suf">cık</span> (a tiny bit)<br>
-          ev (house) → ev<span class="suf">cik</span> (little house, cozy house)<br>
+          ev (house) → ev<span class="suf">cik</span> (little house)<br>
           kız (girl) → kız<span class="suf">cağız</span> (poor little girl — with compassion)<br>
           bir (one) → bir<span class="suf">cik</span> (just one / only one)
         </div>
 
-        <h4>The -cağız / -ceğiz suffix — sympathy and pity</h4>
-        <p>This suffix conveys compassion or pity toward the noun: <em>adamcağız</em> (poor man), <em>çocukcağız</em> (poor little child). It's warm and humanizing, not condescending.</p>
-
-        <h4>The -ca / -ce suffix — languages and "in the manner of"</h4>
-        <p>Used to form language names and adjectives meaning "in the manner of": <em>Türk</em> → <em>Türkçe</em> (Turkish language), <em>Fransız</em> → <em>Fransızca</em> (French), <em>çocuk</em> → <em>çocukça</em> (childish / in a childish manner).</p>
+        <h4>The -ca / -ce suffix</h4>
+        <p>Forms language names and adjectives: <em>Türk</em> → <em>Türkçe</em> (Turkish), <em>Fransız</em> → <em>Fransızca</em> (French), <em>çocuk</em> → <em>çocukça</em> (childish).</p>
 
         <h4>Reduplication for emphasis</h4>
-        <p>Turkish uses reduplication (repeating words) for intensification, especially with adjectives and adverbs: <em>yavaş yavaş</em> (slowly, very slowly), <em>ağır ağır</em> (heavily, slowly), <em>çabuk çabuk</em> (quickly, hurriedly). It has a rhythmic, conversational feel.</p>
+        <p><em>Yavaş yavaş</em> (slowly), <em>ağır ağır</em> (heavily), <em>çabuk çabuk</em> (hurriedly).</p>
 
         <div class="quiz" id="qz23">
           <div class="quiz-label">Quick check</div>
           <div class="quiz-q">What does "biraz" mean, and what suffix pattern is it related to?</div>
           <div class="quiz-opts">
             <button class="quiz-btn" data-correct="false" data-qz="qz23">Very much — an intensifying suffix</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz23">A little — from "bir" + "az" (one + little), common diminutive combination</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz23">A little — from "bir" + "az" (one + little)</button>
             <button class="quiz-btn" data-correct="false" data-qz="qz23">Immediately — a time adverb suffix</button>
           </div>
           <div class="quiz-feedback" id="qz23-fb"></div>
@@ -1427,13 +1258,11 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 24 -->
+        <!-- ══ CH 24 ══ -->
         <h3 id="ch24">Chapter 24 — Reading a Real Text</h3>
 
-        <p>All grammar becomes real when you read authentic Turkish. Here is a sentence from Orhan Pamuk's <em>Kar</em> (Snow), broken down word by word. I picked it because it's challenging but not impossible, and because it contains several of the structures we've covered.</p>
-
         <div class="example">
-          <div class="example-label">Original sentence</div>
+          <div class="example-label">Original sentence — Orhan Pamuk, Kar</div>
           <strong>Kar yağmaya başladığında, Ka trenden iniyordu.</strong><br>
           <em>"When it began to snow, Ka was getting off the train."</em>
         </div>
@@ -1444,23 +1273,18 @@
             <tr><td><strong>Kar</strong></td><td>Bare noun, nominative</td><td>snow</td></tr>
             <tr><td><strong>yağ-</strong></td><td>Verb stem</td><td>to fall (of rain/snow)</td></tr>
             <tr><td><strong>-ma-</strong></td><td>Verbal noun suffix</td><td>nominalization: the falling</td></tr>
-            <tr><td><strong>-ya</strong></td><td>Dative case on verbal noun</td><td>to the falling → "to snow"</td></tr>
+            <tr><td><strong>-ya</strong></td><td>Dative on verbal noun</td><td>to the falling → "to snow"</td></tr>
             <tr><td><strong>başla-</strong></td><td>Verb stem</td><td>to start</td></tr>
-            <tr><td><strong>-dık-</strong></td><td>Participial suffix (-dik)</td><td>the fact of starting</td></tr>
+            <tr><td><strong>-dık-</strong></td><td>Participial suffix</td><td>the fact of starting</td></tr>
             <tr><td><strong>-ında</strong></td><td>Locative + 3rd person possession</td><td>at its starting = when it started</td></tr>
             <tr><td><strong>Ka</strong></td><td>Proper noun, subject</td><td>character name</td></tr>
             <tr><td><strong>tren-</strong></td><td>Noun (loanword)</td><td>train</td></tr>
             <tr><td><strong>-den</strong></td><td>Ablative case</td><td>from the train</td></tr>
             <tr><td><strong>in-</strong></td><td>Verb stem</td><td>to descend / get off</td></tr>
-            <tr><td><strong>-iyor-</strong></td><td>Present continuous tense</td><td>was (in the process of)</td></tr>
+            <tr><td><strong>-iyor-</strong></td><td>Present continuous tense</td><td>ongoing action</td></tr>
             <tr><td><strong>-du</strong></td><td>Past tense on -iyor → past continuous</td><td>was getting off</td></tr>
           </tbody>
         </table>
-
-        <div class="callout">
-          <div class="callout-label">The past continuous — stacking tenses</div>
-          <em>İniyordu</em> is a double tense: present continuous (-iyor) + past (-du). Turkish can stack tense suffixes this way to create temporal nuance. The -iyor marks ongoing action, the -du marks that this ongoing action was situated in the past. The result is exactly the English past continuous: "was getting off."
-        </div>
 
         <div class="quiz" id="qz24">
           <div class="quiz-label">Quick check</div>
@@ -1476,31 +1300,29 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 25 -->
+        <!-- ══ CH 25 ══ -->
         <h3 id="ch25">Chapter 25 — Pitfalls for French & English Speakers</h3>
 
-        <p>After a few years of learning Turkish, I've collected a list of the mistakes I make reliably. Most come from instincts built by French and English that don't transfer.</p>
-
         <h4>1. Forgetting vowel harmony under pressure</h4>
-        <p>When you're thinking fast, the wrong suffix vowel comes out. The most common error: using -de when you need -da, or -im when you need -ım. The fix is to build the habit of mentally checking the last vowel of the root before every suffix. It becomes automatic eventually.</p>
+        <p>The most common error: using -de when you need -da, or -im when you need -ım. Build the habit of mentally checking the last vowel of the root before every suffix.</p>
 
         <h4>2. Putting the verb in the wrong place</h4>
-        <p>French and English speakers instinctively place verbs in the middle of sentences. In Turkish the verb is always last. When sentences get long and complex, the urge to place the verb earlier gets stronger. Resist it. Even a ten-clause sentence ends with the verb.</p>
+        <p>In Turkish the verb is always last. Even a ten-clause sentence ends with the verb.</p>
 
         <h4>3. Confusing -di and -miş</h4>
-        <p>This is genuinely hard because the distinction doesn't exist in French or English. The rule of thumb: if you were there and saw it, use -di. If you read it, heard it, inferred it, or discovered it after the fact, use -miş. When in doubt about your own actions, use -di (you were presumably present for your own life).</p>
+        <p>If you were there and saw it, use -di. If you read it, heard it, inferred it, or discovered it after the fact, use -miş.</p>
 
         <h4>4. Adding plural after numbers</h4>
-        <p><em>Üç kitaplar</em> is wrong. Always <em>üç kitap</em>. This error is so deeply ingrained from European languages that it takes months to eliminate.</p>
+        <p><em>Üç kitaplar</em> is wrong. Always <em>üç kitap</em>.</p>
 
         <h4>5. Using the accusative on indefinite objects</h4>
-        <p><em>Bir kitabı okudum</em> sounds strange — the accusative implies definiteness, but <em>bir kitap</em> is indefinite. Say <em>bir kitap okudum</em>. The accusative is only for specific, identifiable objects.</p>
+        <p><em>Bir kitabı okudum</em> sounds strange. The accusative implies definiteness. Say <em>bir kitap okudum</em>.</p>
 
         <h4>6. Translating prepositions directly</h4>
-        <p>French <em>sur</em>, <em>sous</em>, <em>dans</em>, <em>avant</em> don't map one-to-one to Turkish postpositions. Turkish often uses case suffixes where French would use a preposition: "in Istanbul" = <em>İstanbul'da</em> (locative case — no postposition needed). The urge to find the Turkish equivalent of every French preposition leads to using postpositions where a bare case suffix is correct.</p>
+        <p>Turkish often uses case suffixes where French uses a preposition. "In Istanbul" = <em>İstanbul'da</em> (locative — no postposition needed).</p>
 
-        <h4>7. Expecting grammatical gender everywhere</h4>
-        <p>There is none. <em>O</em> is he, she, and it. <em>Onun</em> is his, her, and its. You never need to specify gender unless you want to for clarity. This should be a relief, but French speakers keep looking for a gender system that isn't there.</p>
+        <h4>7. Expecting grammatical gender</h4>
+        <p>There is none. <em>O</em> is he, she, and it. This should be a relief.</p>
 
         <div class="quiz" id="qz25">
           <div class="quiz-label">Quick check</div>
@@ -1516,10 +1338,8 @@
 
         <p><hr/></p>
 
-        <!-- ══════════════════════════════════════════════ CH 26 -->
+        <!-- ══ CH 26 ══ -->
         <h3 id="ch26">Chapter 26 — Survival Vocabulary</h3>
-
-        <p>Grammar is the skeleton; vocabulary is the flesh. Here are the most high-frequency words and phrases organized by situation.</p>
 
         <h4>Greetings & Basics</h4>
         <table class="t">
@@ -1531,9 +1351,9 @@
             <tr><td>İyi geceler</td><td>Good night</td></tr>
             <tr><td>Nasılsınız? / Nasılsın?</td><td>How are you? (formal/informal)</td></tr>
             <tr><td>İyiyim, teşekkürler</td><td>I'm fine, thanks</td></tr>
-            <tr><td>Hoş geldiniz</td><td>Welcome (said to guest)</td></tr>
+            <tr><td>Hoş geldiniz</td><td>Welcome</td></tr>
             <tr><td>Hoş bulduk</td><td>Thank you (response to welcome)</td></tr>
-            <tr><td>Görüşürüz</td><td>See you (lit. we'll see each other)</td></tr>
+            <tr><td>Görüşürüz</td><td>See you</td></tr>
             <tr><td>Hoşça kalın</td><td>Goodbye (formal)</td></tr>
           </tbody>
         </table>
@@ -1546,9 +1366,9 @@
             <tr><td>Rica ederim</td><td>You're welcome</td></tr>
             <tr><td>Lütfen</td><td>Please</td></tr>
             <tr><td>Özür dilerim / Pardon</td><td>I'm sorry / Excuse me</td></tr>
-            <tr><td>Bir şey değil</td><td>It's nothing / No problem</td></tr>
-            <tr><td>Afiyet olsun</td><td>Enjoy your meal (bon appétit)</td></tr>
-            <tr><td>Geçmiş olsun</td><td>Get well soon / I'm sorry for your trouble</td></tr>
+            <tr><td>Bir şey değil</td><td>No problem</td></tr>
+            <tr><td>Afiyet olsun</td><td>Enjoy your meal</td></tr>
+            <tr><td>Geçmiş olsun</td><td>Get well soon</td></tr>
             <tr><td>Kolay gelsin</td><td>May it come easy (said to someone working)</td></tr>
           </tbody>
         </table>
@@ -1601,9 +1421,9 @@
           <div class="quiz-label">Quick check</div>
           <div class="quiz-q">What is the appropriate response when someone says "Afiyet olsun" to you?</div>
           <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz26">Teşekkür ederim (Thank you)</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz26">Elinize sağlık (Health to your hands — said to the cook) or Sağ olun</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz26">Rica ederim (You're welcome)</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz26">Teşekkür ederim</button>
+            <button class="quiz-btn" data-correct="true"  data-qz="qz26">Elinize sağlık (to the cook) or Sağ olun</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz26">Rica ederim</button>
           </div>
           <div class="quiz-feedback" id="qz26-fb"></div>
           <button class="quiz-reset" id="qz26-rs" onclick="resetQuiz('qz26')">Try again</button>
@@ -1616,40 +1436,39 @@
       </section>
 
       <footer>
-        
+        <p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
 
     <script src="javascripts/scale.fix.js"></script>
     <script>
-      // ── Quiz data ──
       const fb = {
-        qz01: { ok: "Correct — C is always a dj sound in Turkish, like the j in 'jam'. Never an s or k sound.", bad: "Not quite — C in Turkish is always pronounced as dj, like the j in jam. This surprises most French and English speakers." },
-        qz02: { ok: "Exactly. Gün ends in ü (front vowel), so the locative takes the front-vowel form -de.", bad: "Not quite. Gün ends in ü which is a front vowel — so the suffix uses e, not a." },
-        qz03: { ok: "Right. You need the plural (-lar) and the 1st person plural possession (-ımız) stacked together: kitap + lar + ımız.", bad: "Not quite. 'Our books' requires both the plural suffix (-lar) and the 1st person plural possessive (-ımız): kitaplarımız." },
-        qz04: { ok: "Exactly. The 1st person plural to-be suffix after a back vowel (o in yorgun) is -uz, giving yorgunuz.", bad: "Not quite. Yorgun ends in a back vowel, and biz (we) takes the -uz suffix: yorgunuz." },
-        qz05: { ok: "Correct. Going to a place uses the dative case (-a/-e), expressing direction. İstanbul'a = to Istanbul.", bad: "Not quite. Direction toward a place uses the dative case (-a). İstanbul'a gidiyorum = I'm going to Istanbul." },
-        qz06: { ok: "Correct — nouns after numbers always stay singular in Turkish. Üç kitap, not üç kitaplar.", bad: "Not quite. After numbers in Turkish, the noun stays singular. Always üç kitap, never üç kitaplar." },
-        qz07: { ok: "Exactly right. In Turkish, adjectives precede the noun and the verb comes last: subject → adjective → object → verb.", bad: "Not quite. Turkish word order is SOV with adjectives before the noun: Öğrenci iyi bir kitap okuyor." },
-        qz08: { ok: "Right. The -di past of inability: stem + ama + dı + personal suffix = uyuyamadım.", bad: "Not quite. 'Couldn't sleep' uses the -di past of inability: uyuyamadım (uyu + ama + dı + m)." },
-        qz09: { ok: "Exactly. Oku- ends in a vowel, so the vowel drops before -iyor: oku + yor = okuyor.", bad: "Not quite. When the stem ends in a vowel, that vowel drops before -iyor: oku- → okuyor (not okuyiyor)." },
-        qz10: { ok: "Correct. The aorist expresses habitual/repeated actions. İçer is the aorist form of iç- (3rd person).", bad: "Not quite. Habitual actions use the aorist tense (-er/-ir), not the present continuous or future." },
-        qz11: { ok: "Exactly. You witnessed the rain yourself, so the -di past is correct. Yağdı.", bad: "Not quite. First-hand witnessed events always use the -di past in Turkish." },
-        qz12: { ok: "Right. Discovering something after the fact — like finding your keys are gone — triggers the -miş past. Kaybetmişim.", bad: "Not quite. Discovering something you weren't consciously aware of as it happened uses -miş (discovery register)." },
-        qz13: { ok: "Exactly. 'They will not come' = gelmeyecekler (gel + me + yecek + ler).", bad: "Not quite. 'They' is onlar, which takes -ler on the verb. Gelmeyecekler." },
-        qz14: { ok: "Correct. Çalış- has a back vowel (ı), so the necessity suffix is -malı, and biz takes -yız: çalışmalıyız.", bad: "Not quite. Çalış- contains ı (back vowel), so necessity takes -malı. For biz: çalışmalıyız." },
-        qz15: { ok: "Exactly. The question particle mi/mı/mu/mü is always written as a separate word: yorgun musun?", bad: "Not quite. The question particle is always a separate word in Turkish: yorgun musun? (not yorgunmusun)." },
-        qz16: { ok: "Correct. Önce (before) governs the ablative case: toplantıdan önce.", bad: "Not quite. Önce requires the ablative (-den/-dan): toplantıdan önce (before the meeting)." },
-        qz17: { ok: "Right. 'To call' is typically aramak in Turkish. Telefon etmek also works but aramak is more natural for phone calls.", bad: "Not quite. For phone calls, Turkish uses aramak (to call/search). Seni arayacağım = I will call you." },
-        qz18: { ok: "Correct. A real conditional using -se with a future result: çalışırsa geçecek (aorist conditional + future).", bad: "Not quite. The correct real conditional is: çalışırsa (if she studies) geçecek (she will pass)." },
-        qz19: { ok: "Exactly. Polite requests use the aorist question form: açar mısın? (will/can you open?)", bad: "Not quite. Polite requests in Turkish use the question form of the aorist: açar mısın?" },
-        qz20: { ok: "Correct. Left-branching means the relative clause (or participle) comes before the noun: gelen kadın.", bad: "Not quite. Turkish is left-branching — modifiers come before what they modify: gelen kadın (the coming woman)." },
-        qz21: { ok: "Right. Yap + tır (causative) + ıl (passive) + dı (past) = it was caused to be done. Double suffixation is very possible in Turkish.", bad: "Not quite. Yaptırıldı contains two voice suffixes: causative -tır and passive -ıl, meaning it was had done / caused to be done." },
-        qz22: { ok: "Correct. Ne... ne (de) = neither... nor. Both elements are negated.", bad: "Not quite. Hem...hem = both...and, ya...ya = either...or. Neither...nor is ne...ne." },
-        qz23: { ok: "Right. Biraz = a little, from bir (one) + az (little). The -cık diminutive pattern is related in spirit but biraz is its own compound.", bad: "Not quite. Biraz means 'a little', formed from bir + az. It's a very high-frequency word for expressing small quantities." },
-        qz24: { ok: "Exactly. -dık is the participial suffix, -ı the 3rd person possession, -nda the locative: 'at the time of its having started'.", bad: "Not quite. -dığında = participial -dık + 3rd person possession -ı + locative -nda. It creates a subordinate 'when' clause." },
-        qz25: { ok: "Correct. No plural after numbers. İki kitap aldım = I bought two books.", bad: "Not quite. Numbers are always followed by a singular noun in Turkish: iki kitap, not iki kitapları." },
-        qz26: { ok: "Right. The traditional response to Afiyet olsun (said to you as the one eating) is Elinize sağlık (to the cook) or simply Sağ ol/Sağ olun.", bad: "Not quite. When someone says Afiyet olsun, the appropriate response is Elinize sağlık (health to your hands — to the cook) or Sağ olun." }
+        qz01: { ok: "Correct — C is always a dj sound in Turkish, like the j in 'jam'.", bad: "Not quite — C in Turkish is always pronounced as dj, like the j in jam." },
+        qz02: { ok: "Exactly. Gün ends in ü (front vowel), so the locative takes -de.", bad: "Not quite. Gün ends in ü — a front vowel — so the suffix uses e." },
+        qz03: { ok: "Right. You need the plural (-lar) and the 1st person plural possessive (-ımız): kitaplarımız.", bad: "Not quite. 'Our books' requires plural (-lar) + possessive (-ımız): kitaplarımız." },
+        qz04: { ok: "Exactly. Yorgun ends in a back vowel (o), and biz takes -uz: yorgunuz.", bad: "Not quite. Yorgun ends in a back vowel, biz takes -uz: yorgunuz." },
+        qz05: { ok: "Correct. Direction toward a place uses the dative case (-a).", bad: "Not quite. Direction uses the dative (-a). İstanbul'a = to Istanbul." },
+        qz06: { ok: "Correct — nouns after numbers always stay singular in Turkish.", bad: "Not quite. After numbers the noun stays singular: üç kitap, never üç kitaplar." },
+        qz07: { ok: "Exactly. Turkish word order: subject → adjective → object → verb.", bad: "Not quite. Turkish is SOV with adjectives before the noun: Öğrenci iyi bir kitap okuyor." },
+        qz08: { ok: "Right. The -di past of inability: uyu + ama + dı + m = uyuyamadım.", bad: "Not quite. 'Couldn't sleep' uses the -di past of inability: uyuyamadım." },
+        qz09: { ok: "Exactly. Oku- ends in a vowel, so it drops before -iyor: okuyor.", bad: "Not quite. Vowel-final stems drop their vowel before -iyor: oku- → okuyor." },
+        qz10: { ok: "Correct. Habitual actions use the aorist. İçer is the aorist of iç-.", bad: "Not quite. Habitual actions use the aorist tense, not present continuous or future." },
+        qz11: { ok: "Exactly. You witnessed it yourself — -di past.", bad: "Not quite. First-hand witnessed events always use the -di past." },
+        qz12: { ok: "Right. Discovering something after the fact triggers the -miş past.", bad: "Not quite. Discovering something you weren't aware of uses -miş (discovery register)." },
+        qz13: { ok: "Exactly. 'They' (onlar) takes -ler: gelmeyecekler.", bad: "Not quite. Onlar takes -ler on the verb: gelmeyecekler." },
+        qz14: { ok: "Correct. Çalış- has a back vowel (ı), so necessity takes -malı. For biz: çalışmalıyız.", bad: "Not quite. Çalış- has ı (back vowel), so -malı. For biz: çalışmalıyız." },
+        qz15: { ok: "Exactly. The question particle is always a separate word: yorgun musun?", bad: "Not quite. The question particle is always a separate word: yorgun musun?" },
+        qz16: { ok: "Correct. Önce requires the ablative: toplantıdan önce.", bad: "Not quite. Önce requires the ablative (-den): toplantıdan önce." },
+        qz17: { ok: "Right. For phone calls, Turkish uses aramak. Seni arayacağım = I will call you.", bad: "Not quite. For phone calls, Turkish uses aramak: seni arayacağım." },
+        qz18: { ok: "Correct. Real conditional: çalışırsa (if she studies) geçecek (she will pass).", bad: "Not quite. The correct real conditional: çalışırsa geçecek." },
+        qz19: { ok: "Exactly. Polite requests use the aorist question form: açar mısın?", bad: "Not quite. Polite requests use the question form of the aorist: açar mısın?" },
+        qz20: { ok: "Correct. Left-branching: modifier comes before the noun: gelen kadın.", bad: "Not quite. Turkish is left-branching — gelen kadın (the coming woman)." },
+        qz21: { ok: "Right. Causative -tır + passive -ıl stacked = it was caused to be done.", bad: "Not quite. Yaptırıldı contains causative + passive: it was caused to be done." },
+        qz22: { ok: "Correct. Ne... ne = neither... nor.", bad: "Not quite. Hem...hem = both...and, ya...ya = either...or. Neither...nor is ne...ne." },
+        qz23: { ok: "Right. Biraz = a little, from bir + az.", bad: "Not quite. Biraz means 'a little', from bir + az." },
+        qz24: { ok: "Exactly. -dık + 3rd person possession -ı + locative -nda = 'at the time of its having started'.", bad: "Not quite. -dığında = participial -dık + possession -ı + locative -nda." },
+        qz25: { ok: "Correct. Numbers are always followed by a singular noun: iki kitap.", bad: "Not quite. Numbers always take a singular noun: iki kitap, not iki kitapları." },
+        qz26: { ok: "Right. Elinize sağlık (to the cook) or Sağ olun.", bad: "Not quite. The response to Afiyet olsun is Elinize sağlık or Sağ olun." }
       };
 
       document.querySelectorAll('.quiz-btn').forEach(btn => {
@@ -1659,13 +1478,11 @@
           const quiz = document.getElementById(qzId);
           const feedback = document.getElementById(qzId + '-fb');
           const reset = document.getElementById(qzId + '-rs');
-
           quiz.querySelectorAll('.quiz-btn').forEach(b => {
             b.disabled = true;
             if (b.dataset.correct === 'true') b.classList.add('correct');
           });
           if (!isCorrect) this.classList.add('wrong');
-
           feedback.textContent = isCorrect ? '✓ ' + fb[qzId].ok : '✗ ' + fb[qzId].bad;
           feedback.className = 'quiz-feedback show ' + (isCorrect ? 'ok' : 'bad');
           reset.classList.add('show');
@@ -1684,7 +1501,6 @@
         document.getElementById(qzId + '-rs').classList.remove('show');
       }
 
-      // ── Active sidebar on scroll ──
       const chapters = document.querySelectorAll('h3[id]');
       const navLinks = document.querySelectorAll('#toc a');
       const obs = new IntersectionObserver(entries => {
