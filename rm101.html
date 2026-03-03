@@ -206,7 +206,7 @@
         <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
         <img src="/assets/img/rm_main.png" alt="Airline RM" />
         <p><i>Me, thinking about bid prices.</i> <br><hr/>
-        A beginner's guide to airline Revenue Management — the intuitions behind how airlines fill every seat.</p>
+        A beginner's guide to airline Revenue Management, covering the intuitions behind how airlines fill every seat.</p>
 
         <hr/>
         <nav class="chapter-nav" id="toc">
@@ -227,57 +227,57 @@
       <section>
 
         <h2>Airline Revenue Management 101</h2>
-        <p>I work in Revenue Management at Air Canada, and I get asked fairly often what that actually means. The honest answer is that it's a mix of economics, statistics, and a bit of psychology — all applied to the problem of filling an airplane as profitably as possible. This page is my attempt to explain the key ideas in plain language, without hiding behind equations. I'll cover how the field evolved, where it stands today, and what I find genuinely interesting about it.</p>
+        <p>I work in Revenue Management at Air Canada, and I get asked fairly often what that actually means. The honest answer is that it's a mix of economics, statistics, and a bit of psychology, all applied to the problem of filling an airplane as profitably as possible. This page is my attempt to explain the key ideas in plain language, without hiding behind equations. I'll cover how the field evolved, where it stands today, and what I find genuinely interesting about it.</p>
 
         <p><hr/></p>
 
         <!-- ── CH 00 ── -->
-        <h3 id="ch00">Chapter 00 — Why Revenue Management?</h3>
+        <h3 id="ch00">Chapter 00: Why Revenue Management?</h3>
 
-        <p>It starts with a fact that sounds obvious but has enormous consequences: when a plane takes off with an empty seat, that seat is gone forever. You can't put it back on the shelf, sell it tomorrow, or recover its value in any form. The plane was flying anyway — fuel burned, crew paid, gate fees settled — so that empty seat represents pure lost revenue with essentially zero cost saving attached to it.</p>
+        <p>It starts with a fact that sounds obvious but has enormous consequences: when a plane takes off with an empty seat, that seat is gone forever. You can't put it back on the shelf, sell it tomorrow, or recover its value in any form. The plane was flying anyway, with fuel burned, crew paid, and gate fees settled, so that empty seat represents pure lost revenue with essentially zero cost saving attached to it.</p>
 
-        <p>That single property — <em>perishability</em> — is what makes airline pricing so consequential, and so different from most other industries. A clothing retailer with unsold inventory can discount it next week, or next season. A manufacturer with excess stock can warehouse it. An airline can do neither. Every seat on every flight is a separate, non-transferable asset with a hard expiry date, and the clock is always running.</p>
+        <p>That single property, <em>perishability</em>, is what makes airline pricing so consequential and so different from most other industries. A clothing retailer with unsold inventory can discount it next week or next season. A manufacturer with excess stock can warehouse it. An airline can do neither. Every seat on every flight is a separate, non-transferable asset with a hard expiry date, and the clock is always running.</p>
 
-        <p>The second thing that makes airlines special is that they can't easily adjust supply when demand changes. The plane has a fixed number of seats. You can't add a row when a flight sells out, and you can't remove one when it doesn't. Every decision about one seat is implicitly a decision about every other seat on the same flight — every low-fare booking made today is a high-fare booking you won't be able to accept tomorrow.</p>
+        <p>The second thing that makes airlines special is that they can't easily adjust supply when demand changes. The plane has a fixed number of seats. You can't add a row when a flight sells out, and you can't remove one when it doesn't. Every decision about one seat is implicitly a decision about every other seat on the same flight: every low-fare booking made today is a high-fare booking you won't be able to accept tomorrow.</p>
 
-        <p>The third ingredient is demand segmentation. The person booking a beach holiday six months out and the consultant booking the morning of their client meeting are buying the exact same physical product — a seat from A to B — but their willingness to pay can differ by a factor of four or five. The holiday traveler is price-sensitive but flexible; the consultant is time-sensitive and price-insensitive. Revenue Management exists to serve both without letting one segment steal the other's price point.</p>
+        <p>The third ingredient is demand segmentation. The person booking a beach holiday six months out and the consultant booking the morning of their client meeting are buying the exact same physical product, a seat from A to B, but their willingness to pay can differ by a factor of four or five. The holiday traveler is price-sensitive but flexible; the consultant is time-sensitive and price-insensitive. Revenue Management exists to serve both without letting one segment steal the other's price point.</p>
 
         <div class="callout">
           <div class="callout-label">The core tension</div>
-          Sell too cheap too early and you fill the plane with low-fare passengers, leaving no seats for the business traveler who'd have paid 4× more. Hold prices too high for too long and you depart with empty rows. Every RM decision is navigating that tension — flight by flight, day by day, seat by seat.
+          Sell too cheap too early and you fill the plane with low-fare passengers, leaving no seats for the business traveler who'd have paid 4x more. Hold prices too high for too long and you depart with empty rows. Every RM decision is navigating that tension, flight by flight, day by day, seat by seat.
         </div>
 
         <h4>Where it came from</h4>
 
-        <p>Revenue Management was invented by airlines in the late 1970s, and the trigger was political rather than mathematical. The US Airline Deregulation Act of 1978 ended government control over routes and fares, and almost overnight carriers found themselves competing on price for the first time. The established carriers — American, United, Delta — faced a new wave of low-cost entrants offering dramatically cheaper fares on the same routes.</p>
+        <p>Revenue Management was invented by airlines in the late 1970s, and the trigger was political rather than mathematical. The US Airline Deregulation Act of 1978 ended government control over routes and fares, and almost overnight carriers found themselves competing on price for the first time. The established carriers (American, United, Delta) faced a new wave of low-cost entrants offering dramatically cheaper fares on the same routes.</p>
 
-        <p>Their response was to fight back not by matching every low fare, but by offering low fares selectively — only to the customers who were genuinely price-sensitive, while protecting high-fare inventory for those who weren't. American Airlines' DINAMO system, launched in the early 1980s, is generally credited as the first large-scale RM implementation. Bob Crandall, American's CEO at the time, later claimed it added nearly $1.4 billion in annual revenue in its first few years. The era of Revenue Management had begun.</p>
+        <p>Their response was to fight back not by matching every low fare, but by offering low fares selectively, only to the customers who were genuinely price-sensitive, while protecting high-fare inventory for those who weren't. American Airlines' DINAMO system, launched in the early 1980s, is generally credited as the first large-scale RM implementation. Bob Crandall, American's CEO at the time, later claimed it added nearly $1.4 billion in annual revenue in its first few years. The era of Revenue Management had begun.</p>
 
         <div class="example">
           <div class="example-label">The scale of the prize</div>
-          Academic studies consistently estimate that effective RM adds somewhere between 4% and 8% to airline revenues compared to naive pricing. For a major carrier generating $15–20 billion in annual revenue, that's $600 million to $1.6 billion per year — not from flying more planes or hiring more people, but from pricing the existing ones better. It is, in pure dollar-per-employee terms, one of the highest-leverage functions in any large company.
+          Academic studies consistently estimate that effective RM adds somewhere between 4% and 8% to airline revenues compared to naive pricing. For a major carrier generating $15-20 billion in annual revenue, that's $600 million to $1.6 billion per year, generated not from flying more planes or hiring more people, but from pricing the existing ones better. It is, in pure dollar-per-employee terms, one of the highest-leverage functions in any large company.
         </div>
 
-        <p>The chapters that follow trace how airlines actually do this — starting with the fare class structure that makes segmentation mechanically possible, through the forecasting and optimization algorithms that act on it, all the way to where the field is heading today. It's a story that starts with a few economists and a deregulation act, and ends somewhere in the vicinity of real-time personalized pricing driven by machine learning. I find the whole arc genuinely fascinating, and I hope some of that comes through.</p>
-
-        <div class="quiz" id="qz00">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">Which combination of properties makes airline pricing fundamentally different from most other industries?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz00">High fixed costs and government regulation</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz00">Perishable inventory, fixed capacity, and highly segmented demand</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz00">International routes and currency fluctuations</button>
-          </div>
-          <div class="quiz-feedback" id="qz00-fb"></div>
-          <button class="quiz-reset" id="qz00-rs" onclick="resetQuiz('qz00')">Try again</button>
-        </div>
+        <p>The chapters that follow trace how airlines actually do this, starting with the fare class structure that makes segmentation mechanically possible, through the forecasting and optimization algorithms that act on it, all the way to where the field is heading today. It's a story that starts with a few economists and a deregulation act, and ends somewhere in the vicinity of real-time personalized pricing driven by machine learning. I find the whole arc genuinely fascinating, and I hope some of that comes through.</p>
 
         <p><hr/></p>
 
         <!-- ── CH 01 ── -->
-        <h3 id="ch01">Chapter 01 — Fare Classes & Price Fences</h3>
+        <h3 id="ch01">Chapter 01: Fare Classes & Price Fences</h3>
 
-        <p>Before any forecasting or optimization can happen, airlines need a structure to work within. That structure is the fare class — a letter (Y, K, Q, V, and so on) that represents not just a price but a bundle of rules: refundability, changeability, advance purchase requirements. These rules exist for one reason: to make passengers sort themselves into the segment that matches their actual price sensitivity.</p>
+        <p>Before any forecasting or optimization can happen, airlines need a structure to work within. That structure is the fare class, a letter (Y, K, Q, V, and so on) that represents not just a price but a bundle of rules: refundability, changeability, advance purchase requirements, minimum stay conditions. These rules are sometimes called <strong>price fences</strong>, and understanding why they exist is the key to understanding everything that follows.</p>
+
+        <h4>The invention of the SuperSaver</h4>
+
+        <p>In 1977, a year before deregulation, American Airlines introduced the SuperSaver fare on transcontinental routes. It was roughly half the regular coach price, but it came with a catch: you had to book 30 days in advance and stay over a Saturday night. The established carriers were skeptical. People's Express and the other new low-cost entrants offered cheap fares with no strings attached. Why would anyone take the restricted version?</p>
+
+        <p>The answer was that the restrictions weren't really about penalizing anyone. They were about sorting. The 30-day advance purchase meant no last-minute business traveler would accidentally slip into the cheap seats. The Saturday night stay meant no consultant flying out Monday and back Thursday could qualify. The restrictions acted as a filter, letting price-sensitive leisure travelers in while keeping the fare out of reach for the passengers American most needed to charge full price. The SuperSaver was a commercial success, and the concept spread across the industry within a few years. Price fencing as a discipline was born.</p>
+
+        <h4>How the fence works</h4>
+
+        <p>The economic logic is straightforward. Different passengers have radically different willingness to pay for the same seat. If an airline charged a single price, it would either leave money on the table from high-WTP passengers or exclude too many low-WTP passengers who would have generated positive revenue. The ideal solution is to charge each passenger exactly what they're willing to pay, which is impossible in practice, but price fences are the closest practical approximation.</p>
+
+        <p>The key insight is that restrictions don't need to be enforced by a human checking each booking. They work through self-selection: customers voluntarily sort themselves into the fare that matches their situation. A business traveler <em>could</em> technically book the cheapest fare, but the non-refundable advance purchase requirement doesn't fit how they travel, so they don't. The fence does its job without any airline employee making a single judgment call.</p>
 
         <table class="rm-table">
           <thead>
@@ -290,32 +290,62 @@
           </tbody>
         </table>
 
-        <p>The idea is that a business traveler <em>could</em> technically buy the non-refundable advance-purchase fare — but they won't, because it doesn't work for how they travel. The restrictions act as a self-selection mechanism. Elegant, if a bit cynical. One classic example: for decades, discount fares required a Saturday night stay. Business travelers almost never want to spend a weekend away from home, so that single rule cleanly separated the two segments without any airline employee having to make a judgment call on each booking.</p>
+        <div class="example">
+          <div class="example-label">The Saturday night stay rule</div>
+          For decades, discount fares on many routes required a Saturday night stay. Business travelers almost never want to spend a weekend away from home. That single condition cleanly separated business from leisure travelers at essentially zero administrative cost. It's a beautiful example of a price fence: it targets a behavioral difference between segments and uses it as an automatic filter, with no human intervention required.
+        </div>
 
-        <p>One thing worth clarifying: booking class (the letter) and cabin class (Economy, Business) are different things. Two passengers sitting next to each other in Economy can hold Q and Y fares and have paid very different prices under very different conditions. The letter is invisible to the passenger but central to everything the RM system does.</p>
+        <h4>The bucket metaphor</h4>
+
+        <p>Once fare classes exist, the RM system needs a way to think about how many seats to make available at each price. The classic mental model is the bucket stack. Imagine a flight's 200 seats divided into a set of buckets, from cheapest at the bottom to most expensive at the top. Each bucket holds a certain number of seats available at that fare class.</p>
+
+        <p>Early in the booking window, when departure is 90 days away and demand is uncertain, you open the cheap buckets to stimulate early bookings. As the flight fills and departure approaches, you close the cheap buckets one by one, leaving only higher-fare inventory available. By the time a last-minute business traveler searches the day before departure, the only open bucket is the full-fare one. They pay accordingly. The scarcest seats go to the customers who value them most, and the price they pay reflects that scarcity.</p>
+
+        <p>This is the core mechanic that all the forecasting and optimization in later chapters is trying to get right: which buckets to open, how many seats to put in each one, and exactly when to close them.</p>
+
+        <h4>Booking class vs. cabin class</h4>
+
+        <p>One thing worth clarifying before moving on: booking class (the letter) and cabin class (Economy, Business) are different things. Many booking classes can exist within a single cabin. Two passengers sitting next to each other in Economy can hold Q and Y fares and have paid very different prices under very different conditions. The letter is invisible to the passenger but central to everything the RM system does.</p>
 
         <p><hr/></p>
 
         <!-- ── CH 02 ── -->
-        <h3 id="ch02">Chapter 02 — Class-Based Forecasting</h3>
+        <h3 id="ch02">Chapter 02: Class-Based Forecasting</h3>
 
-        <p>Inventory control is only as good as the forecast feeding it. Before the system can decide which fare classes to open or close, it needs to predict what demand looks like — for each fare class, on each flight, at each point in the booking window. This is class-based forecasting, and it's the backbone of traditional Revenue Management.</p>
+        <p>Knowing that you want to fill the cheap buckets first and the expensive ones last is the easy part. The hard part is knowing when to close them. Close too early and you leave cheap seats empty that could have generated some revenue. Close too late and you've sold to leisure travelers the seats you needed for business passengers who were about to book. Getting that timing right requires a forecast, and building good forecasts is most of what RM analysts actually spend their time on.</p>
+
+        <h4>What we are actually forecasting</h4>
+
+        <p>The naive answer is that we forecast how many passengers will fly. The real answer is more granular: we forecast how many passengers will book, in each fare class, on each day between now and departure. A complete forecast is essentially a matrix of fare class by days-to-departure that tells the system where demand will come from and when. Without this level of detail, you cannot make sensible bucket decisions. "This flight will have 180 passengers" tells you nothing useful. "40 passengers will book into low fare classes 60-90 days out, and 30 business travelers will book in the last two weeks" is actionable.</p>
 
         <h4>Booking curves</h4>
 
-        <p>The most fundamental concept here is the booking curve — a picture of how reservations accumulate over time before departure. Every route has its own characteristic shape. Long-haul leisure routes see a burst of early bookings, then a lull, then a spike close to departure. Short-haul business routes are flatter, with most bookings arriving in the last two weeks. The RM system continuously compares actual bookings against the historical curve: ahead of pace means demand is strong, behind means you might need to open cheaper fares to stimulate sales. It's the system's real-time pulse check on each flight.</p>
+        <p>The most fundamental concept in class-based forecasting is the booking curve, which is a picture of how reservations accumulate over time before departure. Every route has its own characteristic shape. Long-haul leisure routes see a burst of early bookings from holiday planners, then a lull in the middle, then a small spike close to departure. Short-haul business routes are flatter, with most bookings arriving in the final two weeks. Transatlantic routes in summer look very different from domestic routes in January.</p>
+
+        <p>The RM system continuously compares actual bookings against the historical curve for that flight. Ahead of pace means demand is stronger than expected and you can afford to close cheap buckets earlier. Behind pace means demand is softer and you may need to keep cheap buckets open longer to stimulate sales. The booking curve is the system's real-time pulse check on each flight, updated every time a new booking comes in.</p>
+
+        <div class="example">
+          <div class="example-label">The snowball metaphor</div>
+          Think of bookings as a snowball rolling downhill toward departure. You know roughly how large it should be at each point along the slope based on historical patterns. If it's larger than expected halfway down, you can relax: it will be plenty large by the bottom on its own, so you close cheap fares and wait for higher-paying passengers. If it's smaller than expected, you need to give it a push by keeping cheap fares open longer. The curve is your map of where the snowball should be.
+        </div>
 
         <h4>The unconstraining problem</h4>
 
-        <p>Here's a subtle but important challenge. If a cheap fare class was closed 45 days before departure, you never observed the demand that existed at that price. Your historical data only shows you what you actually sold — not what was there. Feed that biased data back into a forecasting model and you'll systematically underestimate true demand at low fares. Unconstraining is the statistical process of inferring what demand would have been, had the bucket been open. It's not the most glamorous part of RM, but getting it wrong can quietly distort every downstream decision without anyone noticing.</p>
+        <p>Here is a subtle but important methodological challenge that took the industry years to properly recognize. If a cheap fare class was closed 45 days before departure, you never observed the demand that existed at that price. Your historical data only shows you what you actually sold, not what was there. A passenger who wanted a cheap seat but found none available simply disappears from the data. Feed that censored data back into a forecasting model and you will systematically underestimate true demand at low fares, which will cause you to close cheap buckets even earlier, which will censor the data further, compounding the bias over time.</p>
+
+        <p>Unconstraining is the statistical process of inferring what demand would have been, had the bucket remained open. Common approaches include the EM algorithm (Expectation-Maximization) and Kaplan-Meier survival estimation, both borrowed from other fields of statistics. It is not the most glamorous part of RM, but getting it wrong quietly distorts every downstream decision without anyone noticing until revenue starts lagging the competition.</p>
 
         <h4>Pickup forecasting</h4>
 
-        <p>A common practical approach is pickup forecasting: rather than modelling demand from scratch, you look at how many bookings historically arrive in a given future time window given today's booking position. If a flight currently has 80 bookings with 30 days to go, and historically those flights pick up 40 more in the final 30 days, you forecast 120 total. Simple, interpretable, and widely used — though it struggles when demand patterns shift significantly from historical norms, which happens more often than you'd like.</p>
+        <p>One of the most common practical approaches is pickup forecasting. Rather than modelling total demand from scratch, you look at how many bookings historically arrive in a specific future time window given today's booking position. If a flight currently has 80 bookings with 30 days to go, and historically flights at that position on that route pick up around 40 more bookings in the final 30 days, you forecast 120 total. Simple, interpretable, and robust to a lot of the complications that plague more sophisticated models. It struggles in markets with unusual or shifting patterns, but as a workhorse it has stayed relevant for decades precisely because it is so easy to audit and explain.</p>
+
+        <h4>Seasonality, events, and the limits of history</h4>
+
+        <p>Class-based forecasting is ultimately backward-looking. It assumes that future demand will resemble past demand, adjusted for seasonality and known events. That works well in stable markets. It works less well when something genuinely new happens: a competitor enters or exits the market, a major event drives unusual demand, or an external shock like a pandemic resets every historical baseline at once. The best RM systems blend statistical models with human judgment precisely for these situations, because no algorithm trained on pre-2020 data was going to handle March 2020 gracefully.</p>
 
         <div class="callout">
           <div class="callout-label">The limits of class-based forecasting</div>
-          Class-based forecasting assumes that demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum. The bucket structure is an administrative convenience — not an economic truth. That tension is exactly what Chapter 05 addresses.
+          Class-based forecasting assumes that demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum. The bucket structure is an administrative convenience, not an economic truth. That tension is exactly what Chapter 05 addresses.
         </div>
 
         <div class="quiz" id="qz02">
@@ -324,7 +354,7 @@
           <div class="quiz-opts">
             <button class="quiz-btn" data-correct="false" data-qz="qz02">Open additional low-fare seats to capture the strong demand</button>
             <button class="quiz-btn" data-correct="true"  data-qz="qz02">Close low-fare classes and protect capacity for higher-paying passengers</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz02">Do nothing — the booking curve is just a rough benchmark</button>
+            <button class="quiz-btn" data-correct="false" data-qz="qz02">Do nothing, the booking curve is just a rough benchmark</button>
           </div>
           <div class="quiz-feedback" id="qz02-fb"></div>
           <button class="quiz-reset" id="qz02-rs" onclick="resetQuiz('qz02')">Try again</button>
@@ -333,22 +363,22 @@
         <p><hr/></p>
 
         <!-- ── CH 03 ── -->
-        <h3 id="ch03">Chapter 03 — Leg Inventory Control & EMSR-b</h3>
+        <h3 id="ch03">Chapter 03: Leg Inventory Control & EMSR-b</h3>
 
-        <p>With a forecast in hand, the system needs to act on it: how many seats should be protected for each fare class? This is the inventory control problem, and the dominant algorithm for solving it on a single flight leg is EMSR-b — Expected Marginal Seat Revenue, version b. It's the workhorse of classical RM, and I think the intuition behind it is genuinely beautiful once you see it.</p>
+        <p>With a forecast in hand, the system needs to act on it: how many seats should be protected for each fare class? This is the inventory control problem, and the dominant algorithm for solving it on a single flight leg is EMSR-b (Expected Marginal Seat Revenue, version b). It's the workhorse of classical RM, and I think the intuition behind it is genuinely beautiful once you see it.</p>
 
         <h4>The core question</h4>
 
-        <p>Every seat decision reduces to one question: is the expected value of holding this seat for a future higher-paying passenger greater than the certain value of selling it right now to a lower-paying one? If yes, protect it. If no, sell it. This is an opportunity cost calculation — the cost of selling cheap isn't just the low fare, it's also the revenue you give up by not having that seat available for a higher-fare passenger later.</p>
+        <p>Every seat decision reduces to one question: is the expected value of holding this seat for a future higher-paying passenger greater than the certain value of selling it right now to a lower-paying one? If yes, protect it. If no, sell it. This is an opportunity cost calculation. The cost of selling cheap isn't just the low fare; it's also the revenue you give up by not having that seat available for a higher-fare passenger later.</p>
 
         <h4>Protection levels</h4>
 
-        <p>EMSR-b translates this into a <strong>protection level</strong>: the number of seats reserved for a given fare class and above — seats that won't be sold to lower classes even if they're physically available. For each additional seat you protect, the expected marginal revenue of that protection decreases — you've already locked in the most likely high-fare bookings first. EMSR-b keeps protecting seats until the expected marginal revenue of the next protected seat equals the fare of the class being displaced. That crossing point is the optimal protection level. No more seats than necessary, no fewer.</p>
+        <p>EMSR-b translates this into a <strong>protection level</strong>: the number of seats reserved for a given fare class and above, seats that won't be sold to lower classes even if they're physically available. For each additional seat you protect, the expected marginal revenue of that protection decreases, because you've already locked in the most likely high-fare bookings first. EMSR-b keeps protecting seats until the expected marginal revenue of the next protected seat equals the fare of the class being displaced. That crossing point is the optimal protection level. No more seats than necessary, no fewer.</p>
 
         <div class="example">
           <div class="example-label">Working through the logic</div>
-          You have one seat left. A discount passenger wants it for $180. Your forecast says there's a 55% chance a full-fare passenger books before departure at $480. Expected value of holding: 0.55 × $480 = $264 &gt; $180. Hold the seat.<br><br>
-          Two hours later — same seat, same offer. But departure is now 4 hours away and the full-fare probability has dropped to 25%. Expected value of holding: 0.25 × $480 = $120 &lt; $180. Sell. The optimal decision just flipped.
+          You have one seat left. A discount passenger wants it for $180. Your forecast says there's a 55% chance a full-fare passenger books before departure at $480. Expected value of holding: 0.55 x $480 = $264, which is greater than $180. Hold the seat.<br><br>
+          Two hours later, same seat, same offer. But departure is now 4 hours away and the full-fare probability has dropped to 25%. Expected value of holding: 0.25 x $480 = $120, which is less than $180. Sell. The optimal decision just flipped.
         </div>
 
         <div class="quiz" id="qz03">
@@ -366,52 +396,52 @@
         <p><hr/></p>
 
         <!-- ── CH 04 ── -->
-        <h3 id="ch04">Chapter 04 — Bid Prices & Nested Availability</h3>
+        <h3 id="ch04">Chapter 04: Bid Prices & Nested Availability</h3>
 
-        <p>Protection levels answer the question "how many seats to protect." Bid prices answer a slightly different question: "what is the minimum I should accept for this seat right now?" The two concepts are deeply related, but bid prices turn out to be more flexible and more useful in complex systems — particularly once we move from single-leg to network problems.</p>
+        <p>Protection levels answer the question of how many seats to protect. Bid prices answer a slightly different one: what is the minimum I should accept for this seat right now? The two concepts are deeply related, but bid prices turn out to be more flexible and more useful in complex systems, particularly once we move from single-leg to network problems.</p>
 
         <h4>What is a bid price?</h4>
 
-        <p>A bid price is the opportunity cost of selling a seat at any given moment — the minimum revenue a booking must generate to be worth accepting. It answers the question: given what I know about future demand, what is this seat worth if I hold onto it? Any fare request above the bid price gets accepted; any request below gets declined, even if seats are physically available.</p>
+        <p>A bid price is the opportunity cost of selling a seat at any given moment, specifically the minimum revenue a booking must generate to be worth accepting. It answers the question: given what I know about future demand, what is this seat worth if I hold onto it? Any fare request above the bid price gets accepted; any request below gets declined, even if seats are physically available.</p>
 
-        <p>The bid price evolves continuously as the flight fills up and departure approaches. Early in the booking window with plenty of capacity, it's low — almost any positive revenue is better than an empty seat. As capacity depletes and high-fare bookings become more likely, it rises. In the final hours before departure, it can spike sharply if the flight is full and late-booking business travelers are expected.</p>
+        <p>The bid price evolves continuously as the flight fills up and departure approaches. Early in the booking window with plenty of capacity, it's low, because almost any positive revenue is better than an empty seat. As capacity depletes and high-fare bookings become more likely, it rises. In the final hours before departure, it can spike sharply if the flight is full and late-booking business travelers are expected.</p>
 
         <div class="callout">
           <div class="callout-label">Protection levels and bid prices are two sides of the same coin</div>
-          Given an EMSR-b protection level, you can always derive an implied bid price — it's the fare of the marginal displaced class at that protection level. In practice, bid prices are often the preferred interface because they generalize more naturally to network settings, where you need a single value representing the cost of capacity on each leg rather than a class-by-class allocation.
+          Given an EMSR-b protection level, you can always derive an implied bid price: it's the fare of the marginal displaced class at that protection level. In practice, bid prices are often the preferred interface because they generalize more naturally to network settings, where you need a single value representing the cost of capacity on each leg rather than a class-by-class allocation.
         </div>
 
         <h4>Nested availability</h4>
 
-        <p>One implementation detail with large practical consequences: how fare classes interact when multiple are open simultaneously. In a <strong>nested</strong> availability system, booking classes are hierarchical — opening a high class implicitly keeps it available as long as any seat exists, regardless of whether lower classes are open. A high-fare passenger can always book as long as a physical seat remains; a low-fare passenger can only book if seats are explicitly available to their class.</p>
+        <p>One implementation detail with large practical consequences is how fare classes interact when multiple are open simultaneously. In a <strong>nested</strong> availability system, booking classes are hierarchical. A high-fare passenger can always book as long as a physical seat remains, regardless of whether lower classes are open. A low-fare passenger can only book if seats are explicitly available to their class.</p>
 
-        <p>This asymmetry is intentional and important. It prevents the system from ever turning away a high-yield passenger due to a technicality — a failure mode that would be both embarrassing and costly. In a non-nested (partitioned) system, capacity is strictly divided by class and classes don't share inventory. Partitioned systems are simpler to reason about but can waste capacity when a high-fare class runs empty while a low-fare class is closed.</p>
+        <p>This asymmetry is intentional and important. It prevents the system from ever turning away a high-yield passenger due to a technicality, which would be both embarrassing and costly. In a non-nested (partitioned) system, capacity is strictly divided by class and classes don't share inventory. Partitioned systems are simpler to reason about but can waste capacity when a high-fare class runs short while a low-fare class stays closed.</p>
 
         <div class="example">
           <div class="example-label">Why nesting matters</div>
-          Imagine you've protected 20 seats for Y class and currently have 22 seats remaining. Y class is open. Q class is closed (its protection limit has been reached). Under nesting, a Y passenger can always book — the 22 remaining seats are available to them regardless. Under a partitioned system, if the Y bucket was set to exactly 20 seats and only 18 Y-class bookings arrived, those 2 "spare" Y seats might be unavailable to anyone. Nested systems avoid this waste.
+          Imagine you've protected 20 seats for Y class and currently have 22 seats remaining. Y class is open. Q class is closed. Under nesting, a Y passenger can always book, since the 22 remaining seats are available to them regardless. Under a partitioned system, if the Y bucket was set to exactly 20 seats and only 18 Y-class bookings arrived, those 2 spare Y seats might be unavailable to anyone. Nested systems avoid this waste.
         </div>
 
         <p><hr/></p>
 
         <!-- ── CH 05 ── -->
-        <h3 id="ch05">Chapter 05 — Class-Free Forecasting</h3>
+        <h3 id="ch05">Chapter 05: Class-Free Forecasting</h3>
 
-        <p>Class-based forecasting works, but it carries a hidden assumption: that demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum. The bucket structure is an administrative convenience — not an economic truth. Class-free forecasting lets go of that assumption and tries to model demand as it actually exists.</p>
+        <p>Class-based forecasting works, but it carries a hidden assumption: that demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum. The bucket structure is an administrative convenience, not an economic truth. Class-free forecasting lets go of that assumption and tries to model demand as it actually exists.</p>
 
         <h4>The problem with buckets</h4>
 
-        <p>When you forecast by fare class, you're essentially asking "how many passengers want the Q fare?" But Q is a price point you set — it's not a natural category of human desire. The more honest question is: what is the distribution of willingness to pay across the full passenger population? From that distribution, you can derive optimal prices without being confined to a pre-defined ladder.</p>
+        <p>When you forecast by fare class, you're essentially asking how many passengers want the Q fare. But Q is a price point you set, not a natural category of human desire. The more honest question is: what is the distribution of willingness to pay across the full passenger population? From that distribution, you can derive optimal prices without being confined to a pre-defined ladder.</p>
 
-        <p>Class-based systems also have a hard time handling <strong>buy-down</strong> — when passengers who would have paid a higher fare instead book a cheaper one that's been left open. If you open a $150 fare alongside a $280 fare, some of those $280 passengers will take the cheaper option. A class-based forecast doesn't see this happening; it just records a booking at $150 and moves on. A class-free model that estimates the full WTP distribution can explicitly account for it.</p>
+        <p>Class-based systems also have a hard time handling <strong>buy-down</strong>, which is when passengers who would have paid a higher fare instead book a cheaper one that's been left open. If you open a $150 fare alongside a $280 fare, some of those $280 passengers will take the cheaper option. A class-based forecast doesn't see this happening; it just records a booking at $150 and moves on. A class-free model that estimates the full WTP distribution can explicitly account for it.</p>
 
         <h4>Willingness-to-pay distributions</h4>
 
-        <p>Class-free approaches model the underlying WTP distribution directly — typically as a parametric distribution estimated from historical transaction data. Given this, the system can compute the expected revenue of any price point, not just the pre-defined fare levels. This is what makes it possible to ask: what is the revenue-maximizing price for this specific seat, right now, on this specific flight?</p>
+        <p>Class-free approaches model the underlying WTP distribution directly, typically as a parametric distribution estimated from historical transaction data. Given this, the system can compute the expected revenue of any price point, not just the pre-defined fare levels. This is what makes it possible to ask: what is the revenue-maximizing price for this specific seat, right now, on this specific flight?</p>
 
         <h4>Choice modeling</h4>
 
-        <p>A natural extension is choice modeling: rather than treating demand as fixed per class, you model how customers choose between available fare options. Multinomial logit models, borrowed from economics and marketing, are commonly used here. They explicitly account for buy-down, cross-price elasticities, and the competitive context. The data requirements are significantly heavier — you need not just booked fares but search data, rejected offers, and ideally information about what alternatives were available when a customer chose — but the reward is a much sharper picture of true demand.</p>
+        <p>A natural extension is choice modeling: rather than treating demand as fixed per class, you model how customers choose between available fare options. Multinomial logit models, borrowed from economics and marketing, are commonly used here. They explicitly account for buy-down, cross-price elasticities, and the competitive context. The data requirements are significantly heavier. You need not just booked fares but search data, rejected offers, and ideally information about what alternatives were available when a customer chose. But the reward is a much sharper picture of true demand.</p>
 
         <div class="quiz" id="qz05">
           <div class="quiz-label">Quick check</div>
@@ -428,42 +458,42 @@
         <p><hr/></p>
 
         <!-- ── CH 06 ── -->
-        <h3 id="ch06">Chapter 06 — Network Optimization</h3>
+        <h3 id="ch06">Chapter 06: Network Optimization</h3>
 
-        <p>Everything so far treats each flight leg as an independent problem. But airlines operate networks — a passenger flying Montréal to Frankfurt to Istanbul uses two legs, and optimizing each one in isolation ignores the relationship between them. Network optimization is where classical RM gets genuinely hard, and also genuinely interesting.</p>
+        <p>Everything so far treats each flight leg as an independent problem. But airlines operate networks, and a passenger flying Montréal to Frankfurt to Istanbul uses two legs. Optimizing each one in isolation ignores the relationship between them. Network optimization is where classical RM gets genuinely hard, and also genuinely interesting.</p>
 
         <h4>Why leg-based RM fails on networks</h4>
 
-        <p>Here's a simple example. Your Montréal–Frankfurt leg has one seat left. Two requests arrive at the same time: a local passenger paying $420 for that leg only, and a connecting passenger paying $850 total for Montréal–Frankfurt–Istanbul, with $360 attributed to the first leg. A leg-based system sees $420 vs. $360 and accepts the local passenger. The network just left $430 on the table. This isn't an edge case — it's a systematic bias. Leg-based RM always undervalues connecting passengers because it can't see beyond its own leg.</p>
+        <p>Here's a simple example. Your Montréal–Frankfurt leg has one seat left. Two requests arrive at the same time: a local passenger paying $420 for that leg only, and a connecting passenger paying $850 total for Montréal–Frankfurt–Istanbul, with $360 attributed to the first leg. A leg-based system sees $420 vs. $360 and accepts the local passenger. The network just left $430 on the table. This isn't an edge case. It's a systematic bias, and leg-based RM always undervalues connecting passengers because it can't see beyond its own leg.</p>
 
         <div class="callout">
           <div class="callout-label">Displacement cost</div>
-          The value of accepting a booking isn't its fare — it's its fare minus the opportunity cost of all the capacity it consumes across the network. A connecting itinerary using two congested legs has a high displacement cost. One using two lightly loaded legs has a low one. Network RM makes this explicit. Leg-based RM can't.
+          The value of accepting a booking isn't its fare. It's its fare minus the opportunity cost of all the capacity it consumes across the network. A connecting itinerary using two congested legs has a high displacement cost. One using two lightly loaded legs has a low one. Network RM makes this explicit. Leg-based RM can't.
         </div>
 
         <h4>O&D control and bid prices</h4>
 
-        <p>The solution is to evaluate bookings at the itinerary level rather than the leg level. O&D (Origin-Destination) control computes a network bid price for each leg — the shadow price of one seat on that leg — by solving a network linear program across all flights simultaneously. An itinerary is accepted only if its total revenue exceeds the sum of bid prices for every leg it uses. That single criterion captures both the itinerary's value and the capacity it consumes elsewhere in the network.</p>
+        <p>The solution is to evaluate bookings at the itinerary level rather than the leg level. O&D (Origin-Destination) control computes a network bid price for each leg, specifically the shadow price of one seat on that leg, by solving a network linear program across all flights simultaneously. An itinerary is accepted only if its total revenue exceeds the sum of bid prices for every leg it uses. That single criterion captures both the itinerary's value and the capacity it consumes elsewhere in the network.</p>
 
         <h4>Virtual nesting</h4>
 
-        <p>Solving a full network LP in real time for every booking request is computationally intensive. A widely used approximation is virtual nesting: itineraries are ranked by their computed network value and mapped to a virtual booking class. High-network-value itineraries get a high virtual class; low-value ones get a low class. The leg-based inventory system then controls availability using these virtual classes — approximating network control without re-solving the full network problem every time a request comes in. It's a pragmatic compromise that works surprisingly well in practice.</p>
+        <p>Solving a full network LP in real time for every booking request is computationally intensive. A widely used approximation is virtual nesting: itineraries are ranked by their computed network value and mapped to a virtual booking class. High-network-value itineraries get a high virtual class; low-value ones get a low class. The leg-based inventory system then controls availability using these virtual classes, approximating network control without re-solving the full network problem every time a request comes in. It's a pragmatic compromise that works surprisingly well in practice.</p>
 
         <div class="example">
           <div class="example-label">When displacement cost really bites</div>
-          Imagine Frankfurt is congested on a summer Saturday — every flight near-full, bid prices high. A Montréal–Frankfurt–Mumbai itinerary priced at $1,100 sounds attractive. But if the FRA–BOM leg carries a bid price of $600 and YUL–FRA carries $380, the total displacement cost is $980. That itinerary contributes only $120 to the network. It might rationally get declined in favor of two local bookings each generating more than $120 in net contribution.
+          Imagine Frankfurt is congested on a summer Saturday, with every flight near-full and bid prices high. A Montréal–Frankfurt–Mumbai itinerary priced at $1,100 sounds attractive. But if the FRA–BOM leg carries a bid price of $600 and YUL–FRA carries $380, the total displacement cost is $980. That itinerary contributes only $120 to the network, and it might rationally get declined in favor of two local bookings each generating more than $120 in net contribution.
         </div>
 
         <p><hr/></p>
 
         <!-- ── CH 07 ── -->
-        <h3 id="ch07">Chapter 07 — Dynamic Pricing</h3>
+        <h3 id="ch07">Chapter 07: Dynamic Pricing</h3>
 
-        <p>Classical RM — with its fare classes, buckets, and EMSR-b — is fundamentally a system of availability control. Prices are set by pricing teams and filed in advance; RM decides which pre-set prices to show. Dynamic pricing breaks that assumption. Instead of choosing from a fixed menu, the system continuously computes an optimal price based on current conditions. The price itself becomes the decision variable.</p>
+        <p>Classical RM, with its fare classes, buckets, and EMSR-b, is fundamentally a system of availability control. Prices are set by pricing teams and filed in advance; RM decides which pre-set prices to show. Dynamic pricing breaks that assumption. Instead of choosing from a fixed menu, the system continuously computes an optimal price based on current conditions. The price itself becomes the decision variable.</p>
 
         <h4>From binary to continuous</h4>
 
-        <p>In classical RM, a fare class is either open or closed — a binary decision. Dynamic pricing replaces this with a continuous price function. The optimal price at any moment is a function of remaining capacity, time to departure, booking pace, competitive fares, and whatever demand signals are available. As any input changes, the price adjusts. In practice, prices can update multiple times per day, sometimes more — which is exactly why the flight you searched this morning costs more this evening.</p>
+        <p>In classical RM, a fare class is either open or closed, a binary decision. Dynamic pricing replaces this with a continuous price function. The optimal price at any moment is a function of remaining capacity, time to departure, booking pace, competitive fares, and whatever demand signals are available. As any input changes, the price adjusts. In practice, prices can update multiple times per day, sometimes more, which is exactly why the flight you searched this morning costs more this evening.</p>
 
         <h4>Why now?</h4>
 
@@ -471,7 +501,7 @@
 
         <h4>The anchoring problem</h4>
 
-        <p>One underappreciated challenge is customer psychology. If a fare was $300 yesterday and is $480 today, some passengers feel deceived — even if both prices are perfectly rational from a supply-and-demand perspective. Research in behavioral economics shows that price anchoring and perceived fairness materially affect whether people complete a purchase. Airlines have to balance revenue optimization against the risk of alienating customers who feel the pricing is arbitrary. It's a real tension, and it's one reason continuous dynamic pricing hasn't fully replaced the more legible fare class structure even where it's technically possible.</p>
+        <p>One underappreciated challenge is customer psychology. If a fare was $300 yesterday and is $480 today, some passengers feel deceived, even if both prices are perfectly rational from a supply-and-demand perspective. Research in behavioral economics shows that price anchoring and perceived fairness materially affect whether people complete a purchase. Airlines have to balance revenue optimization against the risk of alienating customers who feel the pricing is arbitrary. It's a real tension, and it's one reason continuous dynamic pricing hasn't fully replaced the more legible fare class structure even where it's technically possible.</p>
 
         <div class="quiz" id="qz07">
           <div class="quiz-label">Quick check</div>
@@ -488,56 +518,56 @@
         <p><hr/></p>
 
         <!-- ── CH 08 ── -->
-        <h3 id="ch08">Chapter 08 — Offer & Order</h3>
+        <h3 id="ch08">Chapter 08: Offer & Order</h3>
 
-        <p>Traditional RM optimizes one thing: the seat. But a seat is not the only thing an airline sells. Bags, seat selection, lounge access, meals, Wi-Fi, partner products — ancillary revenue now represents anywhere from 15% to over 50% of total revenue depending on the carrier. The next frontier of RM is optimizing not just a seat price, but an entire offer.</p>
+        <p>Traditional RM optimizes one thing: the seat. But a seat is not the only thing an airline sells. Bags, seat selection, lounge access, meals, Wi-Fi, partner products, ancillary revenue now represents anywhere from 15% to over 50% of total revenue depending on the carrier. The next frontier of RM is optimizing not just a seat price, but an entire offer.</p>
 
         <h4>The legacy distribution problem</h4>
 
-        <p>The airline industry's distribution infrastructure was built in the 1960s around the Passenger Name Record — a structure designed for a world where airlines sold exactly one product (a seat) through a small number of channels. It's remarkably rigid. IATA's New Distribution Capability (NDC) standard is designed to replace this with a flexible API-based architecture capable of representing any product, any bundle, any personalized offer — constructed dynamically rather than pulled from a pre-filed fare catalog.</p>
+        <p>The airline industry's distribution infrastructure was built in the 1960s around the Passenger Name Record, a structure designed for a world where airlines sold exactly one product (a seat) through a small number of channels. It's remarkably rigid. IATA's New Distribution Capability (NDC) standard is designed to replace this with a flexible API-based architecture capable of representing any product, any bundle, any personalized offer, constructed dynamically rather than pulled from a pre-filed fare catalog.</p>
 
         <div class="callout">
           <div class="callout-label">What NDC actually enables</div>
-          Instead of "here is the Q fare with these rules," an airline using NDC can respond to a search with a fully assembled offer: seat + bag + priority boarding + fare, priced specifically for this customer in this context, in real time. The offer is built on the fly; the price reflects the customer's full value, not just the seat component.
+          Instead of "here is the Q fare with these rules," an airline using NDC can respond to a search with a fully assembled offer: seat, bag, priority boarding, and fare, all priced specifically for this customer in this context, in real time. The offer is built on the fly; the price reflects the customer's full value, not just the seat component.
         </div>
 
         <h4>Attribute-based selling</h4>
 
-        <p>Attribute-based selling takes this further: rather than choosing "Economy" or "Business," a customer assembles their own product from a menu of attributes — window seat, extra legroom, priority boarding, flexibility, meal. RM's role shifts from seat inventory control to pricing a combinatorial space of product bundles. That's a fundamentally harder problem, but also a much richer commercial opportunity.</p>
+        <p>Attribute-based selling takes this further: rather than choosing Economy or Business, a customer assembles their own product from a menu of attributes, such as window seat, extra legroom, priority boarding, flexibility, or a meal. RM's role shifts from seat inventory control to pricing a combinatorial space of product bundles. That's a fundamentally harder problem, but also a much richer commercial opportunity.</p>
 
         <h4>Total revenue optimization</h4>
 
-        <p>Once the offer includes ancillaries, the optimization objective changes. It's no longer "maximize seat revenue" but "maximize total passenger revenue," where the seat is just one component. A passenger paying a low seat fare but generating high ancillary revenue could be more valuable than a high-fare passenger who buys nothing else. RM systems increasingly need to model and optimize the full revenue stack — and that requires connecting systems (loyalty, booking engine, pricing, merchandising) that historically were never designed to talk to each other.</p>
+        <p>Once the offer includes ancillaries, the optimization objective changes. It's no longer "maximize seat revenue" but "maximize total passenger revenue," where the seat is just one component. A passenger paying a low seat fare but generating high ancillary revenue could be more valuable than a high-fare passenger who buys nothing else. RM systems increasingly need to model and optimize the full revenue stack, and that requires connecting systems (loyalty, booking engine, pricing, merchandising) that historically were never designed to talk to each other.</p>
 
         <p><hr/></p>
 
         <!-- ── CH 09 ── -->
-        <h3 id="ch09">Chapter 09 — What's Next</h3>
+        <h3 id="ch09">Chapter 09: What's Next</h3>
 
         <p>Revenue Management has come a long way from EMSR-b running overnight batch jobs in the 1980s. The pace of change is accelerating, and the version of RM practiced in 2035 will probably look as different from today's as today's looks from where it started. Here are the directions I find most interesting.</p>
 
         <h4>Reinforcement learning</h4>
 
-        <p>Classical RM is model-driven: it assumes demand follows a statistical distribution and optimizes within that model. Reinforcement learning takes a different approach — learn a pricing policy directly from interacting with the market, without assuming any particular demand structure. An RL agent sets prices, observes outcomes, and updates its policy over time. Early results in airline RM are promising, especially in volatile markets where historical patterns break down and classical models struggle most. What I find genuinely appealing about RL is that it naturally handles the sequential nature of RM decisions — the prices you set today affect the demand you observe tomorrow, which affects your prices the day after. Classical methods treat these decisions largely as independent. RL doesn't.</p>
+        <p>Classical RM is model-driven: it assumes demand follows a statistical distribution and optimizes within that model. Reinforcement learning takes a different approach, learning a pricing policy directly from interacting with the market, without assuming any particular demand structure. An RL agent sets prices, observes outcomes, and updates its policy over time. Early results in airline RM are promising, especially in volatile markets where historical patterns break down and classical models struggle most. What I find genuinely appealing about RL is that it naturally handles the sequential nature of RM decisions. The prices you set today affect the demand you observe tomorrow, which affects your prices the day after. Classical methods treat these decisions largely as independent. RL doesn't.</p>
 
         <h4>Real-time everything</h4>
 
-        <p>Classical RM systems run on batch cycles — forecasts and optimizations computed overnight, controls updated a few times a day. The direction of travel is continuous, real-time optimization responding to bookings, competitor moves, and external signals as they happen. This requires a fundamentally different technical architecture, and most legacy airline systems weren't built for it. The transition is happening, but slowly — airline IT tends to move at its own pace.</p>
+        <p>Classical RM systems run on batch cycles, with forecasts and optimizations computed overnight and controls updated a few times a day. The direction of travel is continuous, real-time optimization responding to bookings, competitor moves, and external signals as they happen. This requires a fundamentally different technical architecture, and most legacy airline systems weren't built for it. The transition is happening, but slowly, as airline IT tends to move at its own pace.</p>
 
         <h4>Search data and richer demand signals</h4>
 
-        <p>Booked fares tell you what passengers paid. Search data tells you what they considered. The gap between a search and a booking — who searched, what they were shown, what they chose, what they abandoned — is an extraordinarily rich signal for WTP estimation that classical RM largely ignores. As airlines gain more control over their distribution through NDC and direct channels, this data becomes available, and the forecasting models that can use it become dramatically more precise.</p>
+        <p>Booked fares tell you what passengers paid. Search data tells you what they considered. The gap between a search and a booking, covering who searched, what they were shown, what they chose, and what they abandoned, is an extraordinarily rich signal for WTP estimation that classical RM largely ignores. As airlines gain more control over their distribution through NDC and direct channels, this data becomes available, and the forecasting models that can use it become dramatically more precise.</p>
 
         <h4>RM beyond aviation</h4>
 
-        <p>The methods developed in airline RM have already spread to hotels, car rentals, cruises, and rail. The next wave is likely to reach industries that have historically used static pricing: restaurants, parking, sports and entertainment venues, healthcare. The core intuitions — perishability, fixed capacity, demand segmentation, opportunity cost — are universal. What changes is the domain.</p>
+        <p>The methods developed in airline RM have already spread to hotels, car rentals, cruises, and rail. The next wave is likely to reach industries that have historically used static pricing: restaurants, parking, sports and entertainment venues, healthcare. The core intuitions, perishability, fixed capacity, demand segmentation, and opportunity cost, are universal. What changes is the domain.</p>
 
         <p>Anyway, that's the overview. If something here was unclear or you want to go deeper on any chapter, feel free to reach out. I find this stuff genuinely fascinating, and I'm always happy to talk about it.</p>
 
       </section>
 
       <footer>
- 
+        <p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
 
@@ -545,20 +575,16 @@
     <script>
       // ── Quiz logic ──
       const fb = {
-        qz00: {
-          ok:  "Exactly. All three properties together are what make RM so consequential in aviation — and why it was invented here before spreading to other industries.",
-          bad: "Not quite. The three core properties are perishability (seats expire at departure), fixed capacity (you can't add seats), and segmented demand (travelers have very different willingness to pay)."
-        },
         qz02: {
-          ok:  "Correct. Strong demand early means the flight will fill itself — protecting capacity for higher-paying late bookers is exactly the right call.",
+          ok:  "Correct. Strong demand early means the flight will fill itself. Protecting capacity for higher-paying late bookers is exactly the right call.",
           bad: "Not quite. If you're ahead of the booking curve, demand is strong. The right response is to close cheap fares and save seats for higher-paying passengers."
         },
         qz03: {
           ok:  "Exactly. EMSR-b finds the point where the marginal value of protecting one more seat equals the revenue being given up by declining the lower fare.",
-          bad: "Not quite. EMSR-b's stopping rule is about marginal revenue equality — it protects seats until the next protection adds less expected value than the fare it displaces."
+          bad: "Not quite. EMSR-b's stopping rule is about marginal revenue equality. It protects seats until the next protection adds less expected value than the fare it displaces."
         },
         qz05: {
-          ok:  "Right. Buy-down is a key reason why opening cheap fares is risky — you risk cannibalizing passengers who would have paid more.",
+          ok:  "Right. Buy-down is a key reason why opening cheap fares is risky. You risk cannibalizing passengers who would have paid more.",
           bad: "Not quite. Buy-down is about passenger behavior: someone who would have paid more choosing a cheaper fare that was made available."
         },
         qz07: {
