@@ -22,13 +22,22 @@
     <![endif]-->
 
     <style>
-      /* ── Sidebar nav ── */
+      /* Make header a flex column so nav fills remaining space */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      /* Nav takes all remaining space and scrolls within it */
       .city-nav {
         margin-top: 4px;
         font-size: 0.82em;
         line-height: 1.9;
-        max-height: calc(100vh - 320px);
+        flex: 1 1 0;
         overflow-y: auto;
+        min-height: 0;
       }
       .city-nav a {
         display: block;
@@ -341,7 +350,7 @@
 
       </section>
       <footer>
-
+        <p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
