@@ -196,7 +196,87 @@
 
       section h3 { margin-top: 22px; }
       section h4 { font-size: 0.95em; margin-top: 18px; color: #444; }
+
+      /* ── Data tables ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+        margin: 16px 0;
+      }
+      .data-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: center;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .data-table th:first-child { text-align: left; }
+      .data-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .data-table td:first-child { text-align: left; }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table tr.total td { background: #f7f7f7; font-weight: bold; border-top: 2px solid #ddd; }
+      .data-table tr.highlight td { background: #fef6d6; font-weight: bold; }
+      .data-table .yes { color: #2a662a; font-weight: bold; }
+      .data-table .no  { color: #8a1a1a; font-weight: bold; }
+
+      /* ── Formula block ── */
+      .formula {
+        background: #f9f7ff;
+        border-left: 3px solid #7c6fcd;
+        padding: 14px 20px;
+        margin: 18px 0;
+        text-align: center;
+        overflow-x: auto;
+      }
+      .formula-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7c6fcd;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+      .formula .note {
+        font-size: 0.82em;
+        color: #666;
+        margin-top: 8px;
+        text-align: left;
+        font-style: italic;
+      }
+
+      /* ── Chart container ── */
+      .chart-wrap {
+        margin: 20px 0;
+        background: #fff;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        padding: 12px 8px 6px;
+      }
+      .chart-caption {
+        font-size: 0.78em;
+        color: #888;
+        text-align: center;
+        margin-top: 4px;
+        font-style: italic;
+      }
     </style>
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
   </head>
   <body>
     <div class="wrapper">
@@ -312,114 +392,146 @@
         <!-- ── CH 02 ── -->
         <h3 id="ch02">Chapter 02: Class-Based Forecasting</h3>
 
-        <p>Knowing that you want to fill the cheap buckets first and the expensive ones last is the easy part. The hard part is knowing when to close them. Close too early and you leave cheap seats empty that could have generated some revenue. Close too late and you've sold to leisure travelers the seats you needed for business passengers who were about to book. Getting that timing right requires a forecast, and building good forecasts is most of what RM analysts actually spend their time on.</p>
+        <p>Knowing that you want to fill the cheap buckets first and the expensive ones last is the easy part. The hard part is knowing <em>when</em> to close them. Close too early and you leave cheap seats empty that could have generated some revenue. Close too late and you've sold to leisure travelers the seats you needed for business passengers who were about to book. Getting that timing right requires a forecast, and building good forecasts is most of what RM analysts actually spend their time on.</p>
 
         <h4>What we are actually forecasting</h4>
 
-        <p>The naive answer is that we forecast how many passengers will fly. The real answer is more granular: we forecast how many passengers will book, in each fare class, on each day between now and departure. A complete forecast is essentially a matrix of fare class by days-to-departure that tells the system where demand will come from and when. Without this level of detail, you cannot make sensible bucket decisions. "This flight will have 180 passengers" tells you nothing useful. "40 passengers will book into low fare classes 60-90 days out, and 30 business travelers will book in the last two weeks" is actionable.</p>
+        <p>The naive answer is that we forecast how many passengers will fly. The real answer is more granular: we forecast how many passengers will book, in each fare class, on each day between now and departure. A complete forecast is essentially a matrix of fare class by days-to-departure that tells the system where demand will come from and when. Without this level of detail, you cannot make sensible bucket decisions. "This flight will have 180 passengers" tells you nothing useful. "40 passengers will book into low fare classes 60 to 90 days out, and 30 business travelers will book in the last two weeks" is actionable.</p>
 
         <h4>Booking curves</h4>
 
-        <p>The most fundamental concept in class-based forecasting is the booking curve, which is a picture of how reservations accumulate over time before departure. Every route has its own characteristic shape. Long-haul leisure routes see a burst of early bookings from holiday planners, then a lull in the middle, then a small spike close to departure. Short-haul business routes are flatter, with most bookings arriving in the final two weeks. Transatlantic routes in summer look very different from domestic routes in January.</p>
+        <p>The most fundamental concept in class-based forecasting is the booking curve: a picture of how reservations accumulate over time before departure. Every route has its own characteristic shape. Long-haul leisure routes see a burst of early bookings from holiday planners, then a lull in the middle, then a small spike close to departure. Short-haul business routes are flatter, with most bookings arriving in the final two weeks.</p>
 
-        <p>The RM system continuously compares actual bookings against the historical curve for that flight. Ahead of pace means demand is stronger than expected and you can afford to close cheap buckets earlier. Behind pace means demand is softer and you may need to keep cheap buckets open longer to stimulate sales. The booking curve is the system's real-time pulse check on each flight, updated every time a new booking comes in.</p>
+        <p>The RM system maintains a historical average curve for each flight and continuously compares where actual bookings sit against it. Ahead of pace means demand is stronger than expected; you can close cheap buckets earlier and wait for higher-yield passengers. Behind pace means demand is weaker; you may need to keep cheap buckets open longer to stimulate sales.</p>
 
-        <div class="example">
-          <div class="example-label">The snowball metaphor</div>
-          Think of bookings as a snowball rolling downhill toward departure. You know roughly how large it should be at each point along the slope based on historical patterns. If it's larger than expected halfway down, you can relax: it will be plenty large by the bottom on its own, so you close cheap fares and wait for higher-paying passengers. If it's smaller than expected, you need to give it a push by keeping cheap fares open longer. The curve is your map of where the snowball should be.
-        </div>
 
         <h4>The unconstraining problem</h4>
 
-        <p>Here is a subtle but important methodological challenge that took the industry years to properly recognize. If a cheap fare class was closed 45 days before departure, you never observed the demand that existed at that price. Your historical data only shows you what you actually sold, not what was there. A passenger who wanted a cheap seat but found none available simply disappears from the data. Feed that censored data back into a forecasting model and you will systematically underestimate true demand at low fares, which will cause you to close cheap buckets even earlier, which will censor the data further, compounding the bias over time.</p>
+        <p>Here is a methodological trap that took the industry years to properly recognize. If Q class was closed at day 45, you never observed the demand that existed at that price after day 45. Your historical data only captures what you actually sold, not what was there. A passenger who searched, found Q unavailable, and left shows up in your data as nothing. Feed that censored history into a forecasting model and you will systematically underestimate low-fare demand, which causes you to close Q even earlier next cycle, which censors even more data, compounding the error indefinitely.</p>
 
-        <p>Unconstraining is the statistical process of inferring what demand would have been, had the bucket remained open. Common approaches include the EM algorithm (Expectation-Maximization) and Kaplan-Meier survival estimation, both borrowed from other fields of statistics. It is not the most glamorous part of RM, but getting it wrong quietly distorts every downstream decision without anyone noticing until revenue starts lagging the competition.</p>
-
-        <h4>Pickup forecasting</h4>
-
-        <p>One of the most common practical approaches is pickup forecasting. Rather than modelling total demand from scratch, you look at how many bookings historically arrive in a specific future time window given today's booking position. If a flight currently has 80 bookings with 30 days to go, and historically flights at that position on that route pick up around 40 more bookings in the final 30 days, you forecast 120 total. Simple, interpretable, and robust to a lot of the complications that plague more sophisticated models. It struggles in markets with unusual or shifting patterns, but as a workhorse it has stayed relevant for decades precisely because it is so easy to audit and explain.</p>
+        <p>Unconstraining is the statistical process of recovering the demand that was censored. The two most common approaches are Expectation-Maximization (EM) and Kaplan-Meier survival estimation, both borrowed from other statistical disciplines. The intuition in both cases is the same: use the shape of the demand you did observe, combined with what you know about when the fare was closed, to infer the tail you never got to see. It is not glamorous work, but a system that skips it will quietly drift toward under-selling low-fare inventory until the revenue gap becomes impossible to ignore.</p>
 
         <h4>Seasonality, events, and the limits of history</h4>
 
-        <p>Class-based forecasting is ultimately backward-looking. It assumes that future demand will resemble past demand, adjusted for seasonality and known events. That works well in stable markets. It works less well when something genuinely new happens: a competitor enters or exits the market, a major event drives unusual demand, or an external shock like a pandemic resets every historical baseline at once. The best RM systems blend statistical models with human judgment precisely for these situations, because no algorithm trained on pre-2020 data was going to handle March 2020 gracefully.</p>
+        <p>Class-based forecasting is backward-looking by design. It assumes future demand will resemble past demand, adjusted for seasonality and known events. That works well in stable markets. It works less well when something genuinely new happens: a competitor enters or exits, a major event drives unusual demand, or an external shock resets every historical baseline at once. No algorithm trained on pre-2020 data was going to handle March 2020 gracefully. The best RM systems blend statistical models with human analyst judgment precisely for these moments.</p>
 
         <div class="callout">
           <div class="callout-label">The limits of class-based forecasting</div>
-          Class-based forecasting assumes that demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum. The bucket structure is an administrative convenience, not an economic truth. That tension is exactly what Chapter 05 addresses.
+          Class-based forecasting assumes demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum. The bucket structure is an administrative convenience, not an economic truth. That tension is exactly what Chapter 05 addresses.
         </div>
 
-        <div class="quiz" id="qz02">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">A flight is tracking well ahead of its historical booking curve 50 days before departure. What should the RM system most likely do?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz02">Open additional low-fare seats to capture the strong demand</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz02">Close low-fare classes and protect capacity for higher-paying passengers</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz02">Do nothing, the booking curve is just a rough benchmark</button>
-          </div>
-          <div class="quiz-feedback" id="qz02-fb"></div>
-          <button class="quiz-reset" id="qz02-rs" onclick="resetQuiz('qz02')">Try again</button>
-        </div>
 
         <p><hr/></p>
 
         <!-- ── CH 03 ── -->
-        <h3 id="ch03">Chapter 03: Leg Inventory Control & EMSR-b</h3>
+        <h3 id="ch03">Chapter 03: Leg Inventory Control &amp; EMSR-b</h3>
 
-        <p>With a forecast in hand, the system needs to act on it: how many seats should be protected for each fare class? This is the inventory control problem, and the dominant algorithm for solving it on a single flight leg is EMSR-b (Expected Marginal Seat Revenue, version b). It's the workhorse of classical RM, and I think the intuition behind it is genuinely beautiful once you see it.</p>
+        <p>With a forecast in hand, the system needs to act on it: how many seats should be protected for each fare class? This is the inventory control problem, and the dominant algorithm for solving it on a single flight leg is EMSR-b. The intuition behind it is genuinely beautiful once you see how it builds up from a very simple starting point.</p>
 
         <h4>The core question</h4>
 
         <p>Every seat decision reduces to one question: is the expected value of holding this seat for a future higher-paying passenger greater than the certain value of selling it right now to a lower-paying one? If yes, protect it. If no, sell it. This is an opportunity cost calculation. The cost of selling cheap isn't just the low fare; it's also the revenue you give up by not having that seat available for a higher-fare passenger later.</p>
 
-        <h4>Protection levels</h4>
+        <h4>Why you need protection levels</h4>
 
-        <p>EMSR-b translates this into a <strong>protection level</strong>: the number of seats reserved for a given fare class and above, seats that won't be sold to lower classes even if they're physically available. For each additional seat you protect, the expected marginal revenue of that protection decreases, because you've already locked in the most likely high-fare bookings first. EMSR-b keeps protecting seats until the expected marginal revenue of the next protected seat equals the fare of the class being displaced. That crossing point is the optimal protection level. No more seats than necessary, no fewer.</p>
+        <p>Without any protection, a flight would fill up in fare order from cheapest to most expensive, because low-fare demand tends to arrive earlier in the booking window. By the time the business traveler tries to book two weeks before departure, the flight is full. The airline sold 150 seats at $200 when it could have sold 120 at $200 and 30 at $600. Protection levels prevent this by explicitly reserving a block of seats that cannot be sold to lower fare classes, regardless of how far in advance they book.</p>
+
+        <p>The question is how large that block should be. Too small and high-fare passengers get turned away. Too large and cheap seats sit empty at departure. The answer requires reasoning about probability.</p>
+
+        <h4>Littlewood's Rule: the two-class case</h4>
+
+        <p>Ken Littlewood solved the two-class version of this problem in a 1972 paper, working at BOAC (British Overseas Airways Corporation). His setup is simple: one flight, two fare classes, high fare \(f_H\) and low fare \(f_L\), with uncertain demand for the high fare. Low-fare passengers book first. The question is how many seats to protect for high-fare passengers.</p>
+
+        <p>The logic is marginal. Consider the \(y\)-th seat you are thinking of protecting. If you protect it, you forgo a certain \(f_L\) now, but you gain \(f_H\) with probability \(P(D_H \geq y)\), where \(D_H\) is the random high-fare demand. It is worth protecting that seat as long as the expected gain exceeds the certain loss:</p>
+
+        <div class="formula">
+          <div class="formula-label">Littlewood's Rule</div>
+          \[f_H \cdot P(D_H \geq y) \;\geq\; f_L\]
+          <div class="note">Protect the \(y\)-th seat if the expected high-fare revenue exceeds the low fare being turned away. The optimal protection level \(y^*\) is the largest \(y\) satisfying this condition.</div>
+        </div>
+
+        <p>Rearranging gives the threshold directly: protect seats up to \(y^*\) where \(P(D_H \geq y^*) = f_L / f_H\). You keep protecting until the probability that a high-fare passenger fills that seat drops below the fare ratio.</p>
 
         <div class="example">
-          <div class="example-label">Working through the logic</div>
-          You have one seat left. A discount passenger wants it for $180. Your forecast says there's a 55% chance a full-fare passenger books before departure at $480. Expected value of holding: 0.55 x $480 = $264, which is greater than $180. Hold the seat.<br><br>
-          Two hours later, same seat, same offer. But departure is now 4 hours away and the full-fare probability has dropped to 25%. Expected value of holding: 0.25 x $480 = $120, which is less than $180. Sell. The optimal decision just flipped.
+          <div class="example-label">Littlewood in practice</div>
+          Two classes: Y at $500, Q at $200. Forecast: Y demand is normally distributed with mean 40 and standard deviation 10. The threshold probability is $200 / $500 = 0.40. You should protect seats for Y as long as the probability that Y demand reaches that seat is above 40%.<br><br>
+          At \(y = 40\) (the mean), \(P(D_Y \geq 40) = 0.50\) &gt; 0.40 &#8594; protect.<br>
+          At \(y = 43\), \(P(D_Y \geq 43) \approx 0.38\) &lt; 0.40 &#8594; stop.<br><br>
+          The optimal protection level is 42 seats. If the flight has 180 seats, Q is available for the first 138 bookings, then closed.
         </div>
 
-        <div class="quiz" id="qz03">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">EMSR-b stops adding to the protection level for a high fare class when:</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz03">All seats have been assigned to a fare class</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz03">The expected marginal revenue of the next protected seat equals the fare being displaced</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz03">The flight reaches 80% load factor</button>
-          </div>
-          <div class="quiz-feedback" id="qz03-fb"></div>
-          <button class="quiz-reset" id="qz03-rs" onclick="resetQuiz('qz03')">Try again</button>
+        <h4>Extending to multiple classes</h4>
+
+        <p>Most flights have more than two fare classes. The obvious approach is to apply Littlewood's Rule repeatedly: compute the protection level for Y against M, then for (Y + M) against Q, and so on. The problem is that applying the rule independently to each class and summing the results overcounts. When fares are close together, you end up protecting too many seats overall, leaving too few available for the lowest classes and generating unnecessary spoilage.</p>
+
+        <p>The "b" in EMSR-b refers to the solution Belobaba developed at MIT in the late 1980s: rather than treating each higher class separately, aggregate all classes above the one being displaced into a single composite class, then apply Littlewood's Rule once to that composite. This aggregation step is the key insight.</p>
+
+        <h4>EMSR-b</h4>
+
+        <p>To find the protection level for all classes above class \(j\) (i.e., how many seats to keep away from class \(j\) and below), you first build a composite of all higher classes \(j{+}1, \ldots, n\). Its fare is a demand-weighted average of those class fares, and its demand distribution is the sum of the individual distributions:</p>
+
+        <div class="formula">
+          <div class="formula-label">EMSR-b: composite fare and demand</div>
+          \[\bar{f} = \frac{\displaystyle\sum_{i=j+1}^{n} f_i \,\mu_i}{\displaystyle\sum_{i=j+1}^{n} \mu_i} \qquad\qquad \bar{D} \;\sim\; \mathcal{N}\!\left(\sum_{i=j+1}^{n} \mu_i,\; \sum_{i=j+1}^{n} \sigma_i^2\right)\]
+          <div class="note">\(f_i\), \(\mu_i\), \(\sigma_i\) are the fare, mean demand, and demand standard deviation for class \(i\).</div>
         </div>
+
+        <p>The protection level \(y_j^*\) against class \(j\) is then found by applying Littlewood's Rule to this composite:</p>
+
+        <div class="formula">
+          <div class="formula-label">EMSR-b: protection level</div>
+          \[P\!\left(\bar{D} \geq y_j^*\right) \;=\; \frac{f_j}{\bar{f}}\]
+          <div class="note">Protect \(y_j^*\) seats from class \(j\). Any request from class \(j\) beyond this limit is declined, even if seats are physically available.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">Three classes</div>
+          Classes Y ($600, &#956; = 25, &#963; = 8), M ($350, &#956; = 35, &#963; = 10), Q ($180). To find the protection level against Q, aggregate Y and M:<br><br>
+          \(\bar{f} = (600 \times 25 + 350 \times 35)\,/\,(25 + 35) = 27{,}250\,/\,60 = \$454\)<br>
+          \(\bar{D} \sim \mathcal{N}(60,\; 8^2 + 10^2) = \mathcal{N}(60, 164)\), so \(\bar{\sigma} \approx 12.8\)<br><br>
+          Threshold: \(P(\bar{D} \geq y^*) = 180/454 \approx 0.397\)<br>
+          Solving: \(y^* = 60 + 12.8 \times \Phi^{-1}(1 - 0.397) \approx 60 + 12.8 \times 0.26 \approx 63\)<br><br>
+          The system protects 63 seats for Y and M combined. Q is only available for the first 117 bookings on a 180-seat aircraft.
+        </div>
+
+        <p>EMSR-b runs this calculation for every class boundary on every flight, and re-runs it each time new bookings arrive or the forecast is updated. The protection levels shift continuously as the picture of demand evolves. That continuous re-optimization, across thousands of flights simultaneously, is what a modern RM system does all day.</p>
 
         <p><hr/></p>
 
         <!-- ── CH 04 ── -->
-        <h3 id="ch04">Chapter 04: Bid Prices & Nested Availability</h3>
+        <h3 id="ch04">Chapter 04: Bid Prices &amp; Nested Availability</h3>
 
-        <p>Protection levels answer the question of how many seats to protect. Bid prices answer a slightly different one: what is the minimum I should accept for this seat right now? The two concepts are deeply related, but bid prices turn out to be more flexible and more useful in complex systems, particularly once we move from single-leg to network problems.</p>
+        <p>EMSR-b, as we just saw, produces protection levels: a count of seats to reserve for each class boundary. That is the right answer to the right question, but it is an awkward interface for a real-time booking system. Every incoming request requires checking the fare class, looking up the relevant protection level, counting how many seats have already gone to that class and above, and only then making a decision. It works, but it buries the economic logic under accounting.</p>
+
+        <p>There is a cleaner way to express the same thing. At the optimal protection level, EMSR-b stops protecting seats at the exact point where the expected revenue of holding one more seat equals the fare being turned away. That threshold fare has a name: the <strong>bid price</strong>.</p>
 
         <h4>What is a bid price?</h4>
 
-        <p>A bid price is the opportunity cost of selling a seat at any given moment, specifically the minimum revenue a booking must generate to be worth accepting. It answers the question: given what I know about future demand, what is this seat worth if I hold onto it? Any fare request above the bid price gets accepted; any request below gets declined, even if seats are physically available.</p>
+        <p>The bid price is the opportunity cost of one seat at a given moment: the minimum a booking must pay to be worth accepting. Any request above it gets accepted; any request below gets declined, even if seats are physically available. The entire protection level system collapses into a single number that the system compares against every incoming fare.</p>
 
-        <p>The bid price evolves continuously as the flight fills up and departure approaches. Early in the booking window with plenty of capacity, it's low, because almost any positive revenue is better than an empty seat. As capacity depletes and high-fare bookings become more likely, it rises. In the final hours before departure, it can spike sharply if the flight is full and late-booking business travelers are expected.</p>
+        <p>The bid price is not static. Early in the booking window with plenty of capacity, it is low: almost any positive revenue beats an empty seat. As the flight fills and departure approaches, it rises. If the flight is nearly full two days out and the forecast expects a wave of late-booking business travelers, it can be very high. The system is continuously asking: what is this seat worth right now, given everything I know?</p>
 
-        <div class="callout">
-          <div class="callout-label">Protection levels and bid prices are two sides of the same coin</div>
-          Given an EMSR-b protection level, you can always derive an implied bid price: it's the fare of the marginal displaced class at that protection level. In practice, bid prices are often the preferred interface because they generalize more naturally to network settings, where you need a single value representing the cost of capacity on each leg rather than a class-by-class allocation.
+        <div class="example">
+          <div class="example-label">The same seat, two decisions</div>
+          A passenger offers $220 for a seat on a flight departing in 10 days. The bid price is $310. Declined.<br><br>
+          Four days later, same seat, same offer. Several high-fare bookings have come in and the forecast has been revised downward. The bid price has fallen to $190. The $220 fare now clears the threshold. Accepted.
         </div>
+
+        <h4>From class-based control to a single threshold</h4>
+
+        <p>This reframing matters beyond elegance. In a class-based system, the accept/reject decision depends on knowing which bucket a booking belongs to and tracking how many seats remain in it. A bid price system does not care about buckets at all. It only needs two inputs: the fare being offered and the current bid price.</p>
+
+        <p>This becomes important because real bookings do not always arrive neatly labeled by fare class. Connecting itineraries, corporate negotiated fares, and interline bookings often come with a total price that does not map cleanly to any single class. A bid price system evaluates all of them with the same rule: does this fare cover the cost of the capacity being consumed? That simplicity is also why bid prices become essential once we move from a single leg to a network, which Chapter 06 covers.</p>
 
         <h4>Nested availability</h4>
 
-        <p>One implementation detail with large practical consequences is how fare classes interact when multiple are open simultaneously. In a <strong>nested</strong> availability system, booking classes are hierarchical. A high-fare passenger can always book as long as a physical seat remains, regardless of whether lower classes are open. A low-fare passenger can only book if seats are explicitly available to their class.</p>
+        <p>Whether the system is class-based or bid-price-based, there is one further question: when multiple fare classes are open simultaneously, do they share the same inventory or each draw from their own fixed allocation?</p>
 
-        <p>This asymmetry is intentional and important. It prevents the system from ever turning away a high-yield passenger due to a technicality, which would be both embarrassing and costly. In a non-nested (partitioned) system, capacity is strictly divided by class and classes don't share inventory. Partitioned systems are simpler to reason about but can waste capacity when a high-fare class runs short while a low-fare class stays closed.</p>
+        <p>In a <strong>nested</strong> system, all classes draw from the same physical pool. A high-fare passenger can always book as long as any seat remains. In a <strong>partitioned</strong> system, each class gets a fixed bucket and cannot touch another class's allocation. Nesting is almost universally preferred in practice, and the reason is asymmetric regret: turning away a $600 passenger because of an inventory accounting technicality is a far costlier mistake than the reverse. A nested system controlled by a bid price can never make that error. If a seat exists and the fare clears the threshold, the booking goes through.</p>
 
         <div class="example">
           <div class="example-label">Why nesting matters</div>
-          Imagine you've protected 20 seats for Y class and currently have 22 seats remaining. Y class is open. Q class is closed. Under nesting, a Y passenger can always book, since the 22 remaining seats are available to them regardless. Under a partitioned system, if the Y bucket was set to exactly 20 seats and only 18 Y-class bookings arrived, those 2 spare Y seats might be unavailable to anyone. Nested systems avoid this waste.
+          You have protected 20 seats for Y class and 22 seats remain. Under nesting, a Y passenger can always book: any fare that clears the bid price gets a seat. Under a partitioned system, if the Y bucket was capped at 20 and only 18 Y bookings arrived, those 2 spare seats may end up unavailable to anyone. The partitioned system manufactured scarcity that did not exist.
         </div>
 
         <p><hr/></p>
@@ -427,61 +539,62 @@
         <!-- ── CH 05 ── -->
         <h3 id="ch05">Chapter 05: Class-Free Forecasting</h3>
 
-        <p>Class-based forecasting works, but it carries a hidden assumption: that demand naturally organizes itself into discrete fare buckets. In reality, passenger willingness to pay is a continuous spectrum. The bucket structure is an administrative convenience, not an economic truth. Class-free forecasting lets go of that assumption and tries to model demand as it actually exists.</p>
+        <p>The previous chapters treated fare classes as the basic unit of demand: forecast how many passengers want Q, how many want M, how many want Y, then protect inventory accordingly. This works well enough in practice, but it rests on a fiction worth naming. Fare classes are a structure airlines impose on the market. They do not exist in any passenger's head.</p>
 
-        <h4>The problem with buckets</h4>
+        <p>When a passenger searches for a flight, they do not think "I want the Q fare." They think "I want to fly to London and I'm willing to spend up to around $400." Their willingness to pay is a number, not a category. The Q, M, and Y designations are lines the airline draws to slice a continuous range of values into manageable buckets. Class-free forecasting asks: what if we stopped pretending those lines are real, and modelled the underlying distribution directly?</p>
 
-        <p>When you forecast by fare class, you're essentially asking how many passengers want the Q fare. But Q is a price point you set, not a natural category of human desire. The more honest question is: what is the distribution of willingness to pay across the full passenger population? From that distribution, you can derive optimal prices without being confined to a pre-defined ladder.</p>
+        <h4>Buy-down and the spiral it creates</h4>
 
-        <p>Class-based systems also have a hard time handling <strong>buy-down</strong>, which is when passengers who would have paid a higher fare instead book a cheaper one that's been left open. If you open a $150 fare alongside a $280 fare, some of those $280 passengers will take the cheaper option. A class-based forecast doesn't see this happening; it just records a booking at $150 and moves on. A class-free model that estimates the full WTP distribution can explicitly account for it.</p>
+        <p>The most immediate problem with treating buckets as real is buy-down. When a cheap fare and an expensive fare are both open, passengers who would have paid the higher price will naturally take the cheaper one. They are not behaving irrationally — they are simply responding to the options in front of them. The class-based model cannot see this. It records a booking at the low fare, infers that this passenger's willingness to pay was low, and updates its forecast of low-fare demand upward. The higher fare goes under-credited.</p>
 
-        <h4>Willingness-to-pay distributions</h4>
+        <p>This creates a self-reinforcing dynamic. Underestimating high-fare demand leads the system to open cheap classes too early and too widely. More cheap availability means more buy-down. More buy-down means the observed demand at low fares keeps looking strong, while high-fare demand keeps looking weak. Each cycle the model digs itself a little deeper: it is not learning about true demand, it is learning about the consequences of its own pricing decisions, and mistaking them for the underlying market. Left unchecked, this spiral quietly erodes yield over time without any single decision ever looking obviously wrong.</p>
 
-        <p>Class-free approaches model the underlying WTP distribution directly, typically as a parametric distribution estimated from historical transaction data. Given this, the system can compute the expected revenue of any price point, not just the pre-defined fare levels. This is what makes it possible to ask: what is the revenue-maximizing price for this specific seat, right now, on this specific flight?</p>
+        <h4>Modelling willingness to pay directly</h4>
 
-        <h4>Choice modeling</h4>
+        <p>Class-free forecasting breaks this loop by abandoning the bucket as the unit of analysis. Instead of asking how many passengers want Q, it estimates the full distribution of willingness to pay across the passenger population: for any price $p, what fraction of arriving passengers would be willing to pay at least that much? This distribution is estimated from historical transactions, search logs, and rejected offers — every signal that reveals something about what passengers were and were not willing to spend.</p>
 
-        <p>A natural extension is choice modeling: rather than treating demand as fixed per class, you model how customers choose between available fare options. Multinomial logit models, borrowed from economics and marketing, are commonly used here. They explicitly account for buy-down, cross-price elasticities, and the competitive context. The data requirements are significantly heavier. You need not just booked fares but search data, rejected offers, and ideally information about what alternatives were available when a customer chose. But the reward is a much sharper picture of true demand.</p>
+        <p>Once you have that distribution, the revenue optimization problem changes character entirely. In the class-based world, the question is which pre-filed fare to make available. In the class-free world, the question is what price to set. For any given price $p, expected revenue is $p times the probability that an arriving passenger accepts it. That probability decreases as $p rises, so the revenue function peaks somewhere in between. The optimal price is wherever that peak is, and it can be computed for any remaining capacity and any point in the booking window — no fare filing, no buckets, no protection levels.</p>
 
-        <div class="quiz" id="qz05">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">What is "buy-down" in the context of airline demand modeling?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz05">When an airline lowers all fares due to weak demand</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz05">When passengers who would have paid a higher fare instead book a cheaper available one</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz05">When a passenger upgrades from Economy to Business at the gate</button>
-          </div>
-          <div class="quiz-feedback" id="qz05-fb"></div>
-          <button class="quiz-reset" id="qz05-rs" onclick="resetQuiz('qz05')">Try again</button>
-        </div>
+        <p>In practice, many systems use a hybrid approach sometimes called fare transformation. Rather than replacing the entire class structure overnight, the WTP distribution is used to recompute what the optimal fare level should be at each inventory position and re-map it onto the existing class ladder. The distribution handles the demand modelling; the class structure handles the distribution plumbing. It is not fully class-free, but it captures most of the revenue benefit while remaining compatible with legacy systems that still expect a booking class in every message.</p>
 
         <p><hr/></p>
 
         <!-- ── CH 06 ── -->
         <h3 id="ch06">Chapter 06: Network Optimization</h3>
 
-        <p>Everything so far treats each flight leg as an independent problem. But airlines operate networks, and a passenger flying Montréal to Frankfurt to Istanbul uses two legs. Optimizing each one in isolation ignores the relationship between them. Network optimization is where classical RM gets genuinely hard, and also genuinely interesting.</p>
+        <p>Airlines do not operate isolated flights. They operate networks, and the way those networks are structured has a direct bearing on how RM needs to work.</p>
 
-        <h4>Why leg-based RM fails on networks</h4>
+        <p>Consider two carriers at opposite ends of the spectrum. EasyJet is a point-to-point airline: it flies from A to B, the passenger gets off, and that is the end of the transaction. A seat on the London Gatwick to Nice flight is part of exactly one itinerary. The RM problem is entirely self-contained within that leg. This is the world everything in the previous chapters was implicitly describing.</p>
 
-        <p>Here's a simple example. Your Montréal–Frankfurt leg has one seat left. Two requests arrive at the same time: a local passenger paying $420 for that leg only, and a connecting passenger paying $850 total for Montréal–Frankfurt–Istanbul, with $360 attributed to the first leg. A leg-based system sees $420 vs. $360 and accepts the local passenger. The network just left $430 on the table. This isn't an edge case. It's a systematic bias, and leg-based RM always undervalues connecting passengers because it can't see beyond its own leg.</p>
+        <p>Air France operates very differently. Its network is built around Charles de Gaulle as a hub. A passenger flying from Bordeaux to Tokyo does not take a direct flight — they fly Bordeaux–Paris on a regional feeder, connect at CDG, and continue on the long-haul Paris–Tokyo service. A passenger from Nantes might connect through CDG to Nairobi. One from Toulouse to Montréal. The hub acts as a giant mixing point where short-haul feeders from dozens of French and European cities converge and redistribute onto long-haul routes spanning the globe. This structure lets Air France serve an enormous number of city pairs with a manageable fleet, but it creates a problem that EasyJet never has to think about: a single seat on the CDG–NRT leg could belong to passengers originating in Bordeaux, Lyon, Marseille, Amsterdam, or Madrid, each paying a different total fare for a completely different itinerary.</p>
 
-        <div class="callout">
-          <div class="callout-label">Displacement cost</div>
-          The value of accepting a booking isn't its fare. It's its fare minus the opportunity cost of all the capacity it consumes across the network. A connecting itinerary using two congested legs has a high displacement cost. One using two lightly loaded legs has a low one. Network RM makes this explicit. Leg-based RM can't.
-        </div>
+        <p>When you think about it that way, a flight leg is not really a product. It is a piece of infrastructure. The revenue from a seat on that leg depends entirely on which itinerary fills it.</p>
 
-        <h4>O&D control and bid prices</h4>
+        <h4>The problem with leg-based thinking</h4>
 
-        <p>The solution is to evaluate bookings at the itinerary level rather than the leg level. O&D (Origin-Destination) control computes a network bid price for each leg, specifically the shadow price of one seat on that leg, by solving a network linear program across all flights simultaneously. An itinerary is accepted only if its total revenue exceeds the sum of bid prices for every leg it uses. That single criterion captures both the itinerary's value and the capacity it consumes elsewhere in the network.</p>
+        <p>Everything in the previous chapters optimized a single leg at a time. That works reasonably well for point-to-point routes where most passengers are flying from A to B and nothing else. It breaks down on hub-and-spoke networks, and the failure mode is easy to illustrate.</p>
+
+        <p>The YUL–FRA leg has one seat left. Two requests arrive: a local passenger paying $420 for Frankfurt only, and a connecting passenger paying $850 in total for Montréal–Frankfurt–Istanbul, with $360 attributed to the first leg. A leg-based system compares $420 against $360 and accepts the local passenger. It just left $430 on the table.</p>
+
+        <p>This is not a corner case. It is a systematic bias. Leg-based RM always undervalues connecting passengers because it only sees one component of their fare. The connecting passenger's $850 looks like a $360 booking from the perspective of the first leg and a $490 booking from the perspective of the second. Neither leg sees the full picture, so neither makes the right decision.</p>
+
+        <p>The deeper issue is what network RM calls <strong>displacement cost</strong>. The true cost of accepting any booking is not just the seat it occupies on one leg — it is the opportunity cost of all the capacity it consumes across the network. A connecting itinerary using two congested legs displaces two potential high-value bookings elsewhere. An itinerary on two lightly loaded legs displaces almost nothing. Leg-based RM treats both the same. Network RM does not.</p>
+
+        <h4>O&amp;D control</h4>
+
+        <p>The solution is to evaluate bookings at the itinerary level rather than the leg level. Origin-Destination control does this by assigning a network bid price to each leg: the shadow price of one seat on that leg, derived by solving a linear program across all flights in the network simultaneously. The LP balances supply and demand across the entire schedule and produces a bid price for each leg that reflects how scarce and valuable that capacity is in the context of the whole network.</p>
+
+        <p>An itinerary is accepted only if its total revenue exceeds the sum of bid prices for every leg it uses. For the connecting passenger above: if YUL–FRA carries a network bid price of $380 and FRA–IST carries $200, the combined threshold is $580. The $850 fare clears it comfortably. The local passenger's $420 beats the $380 leg bid price on its own. Now the system can compare them properly: the connecting itinerary contributes $850 − $580 = $270 to the network; the local booking contributes $420 − $380 = $40. Take the connecting passenger.</p>
 
         <h4>Virtual nesting</h4>
 
-        <p>Solving a full network LP in real time for every booking request is computationally intensive. A widely used approximation is virtual nesting: itineraries are ranked by their computed network value and mapped to a virtual booking class. High-network-value itineraries get a high virtual class; low-value ones get a low class. The leg-based inventory system then controls availability using these virtual classes, approximating network control without re-solving the full network problem every time a request comes in. It's a pragmatic compromise that works surprisingly well in practice.</p>
+        <p>Re-solving the full network LP every time a booking request arrives is computationally expensive — airlines receive millions of requests per day. The widely used practical approximation is virtual nesting. The network LP is solved periodically, perhaps several times a day, to generate bid prices. Those bid prices are then used to pre-rank all possible itineraries by their net contribution to the network. Each itinerary is assigned to a virtual booking class based on that ranking: high-contribution itineraries get a high virtual class, low-contribution ones get a low class.</p>
+
+        <p>The inventory system then controls availability using these virtual classes, exactly as it would with ordinary fare classes. When a request arrives, the system looks up its virtual class and checks whether that class is open — no LP required at query time. The network intelligence is baked into the class assignments in advance. It is a pragmatic approximation, and it loses some precision compared to solving the full problem in real time, but it captures most of the network benefit at a fraction of the computational cost.</p>
 
         <div class="example">
           <div class="example-label">When displacement cost really bites</div>
-          Imagine Frankfurt is congested on a summer Saturday, with every flight near-full and bid prices high. A Montréal–Frankfurt–Mumbai itinerary priced at $1,100 sounds attractive. But if the FRA–BOM leg carries a bid price of $600 and YUL–FRA carries $380, the total displacement cost is $980. That itinerary contributes only $120 to the network, and it might rationally get declined in favor of two local bookings each generating more than $120 in net contribution.
+          Frankfurt is congested on a summer Saturday. Every flight is near-full and leg bid prices are high: YUL–FRA at $380, FRA–BOM at $600. A Montréal–Frankfurt–Mumbai itinerary priced at $1,100 arrives. It sounds attractive, but its displacement cost is $980. It contributes only $120 to the network — less than almost any local booking on either leg. The system rationally declines it. Without network RM, both legs would have accepted their share of it without realizing the combined cost.
         </div>
 
         <p><hr/></p>
@@ -489,31 +602,25 @@
         <!-- ── CH 07 ── -->
         <h3 id="ch07">Chapter 07: Dynamic Pricing</h3>
 
-        <p>Classical RM, with its fare classes, buckets, and EMSR-b, is fundamentally a system of availability control. Prices are set by pricing teams and filed in advance; RM decides which pre-set prices to show. Dynamic pricing breaks that assumption. Instead of choosing from a fixed menu, the system continuously computes an optimal price based on current conditions. The price itself becomes the decision variable.</p>
+        <p>Classical RM, as described in the previous chapters, is fundamentally a system of <em>availability control</em>. The prices themselves are set by a separate pricing team, filed with distribution systems months in advance, and largely fixed. The RM system's job is to decide which of those pre-set prices to make available at any given moment. It controls the menu, but it did not write it.</p>
 
-        <h4>From binary to continuous</h4>
+        <p>Dynamic pricing abandons that constraint. Rather than choosing from a fixed ladder of pre-approved fares, the system computes the optimal price for each seat as conditions evolve. The price itself becomes the decision variable.</p>
 
-        <p>In classical RM, a fare class is either open or closed, a binary decision. Dynamic pricing replaces this with a continuous price function. The optimal price at any moment is a function of remaining capacity, time to departure, booking pace, competitive fares, and whatever demand signals are available. As any input changes, the price adjusts. In practice, prices can update multiple times per day, sometimes more, which is exactly why the flight you searched this morning costs more this evening.</p>
+        <h4>How it works</h4>
 
-        <h4>Why now?</h4>
+        <p>The intuition is a direct extension of what came before. In classical RM, the bid price is the opportunity cost of a seat — the minimum a fare must clear to be worth accepting. In a dynamic pricing system, that bid price becomes the posted price, or more precisely, the floor from which it is derived. As each seat sells, the remaining capacity shrinks, scarcity increases, and the bid price rises. The price offered to the next customer is automatically higher than the one offered to the previous customer. Seat by seat, the system walks up the demand curve, extracting more from later buyers who are booking into increasingly scarce inventory.</p>
 
-        <p>Dynamic pricing as a concept is as old as supply and demand. What changed is the ability to execute it at scale, in real time, across thousands of flights simultaneously. Cloud infrastructure, NDC distribution (more on that in the next chapter), and ML-based demand estimation have made this operationally feasible in the 2020s in ways it simply wasn't a decade ago.</p>
+        <p>What this means in practice is that the fare a passenger sees is no longer one of a handful of pre-filed price points. It is the output of a continuous calculation that accounts for remaining capacity, time to departure, current booking pace, and estimated demand. The same flight might be priced at $210 when 90 seats remain and $390 when 12 remain, with no discrete class boundary in between.</p>
 
-        <h4>The anchoring problem</h4>
+        <h4>Why it is better</h4>
 
-        <p>One underappreciated challenge is customer psychology. If a fare was $300 yesterday and is $480 today, some passengers feel deceived, even if both prices are perfectly rational from a supply-and-demand perspective. Research in behavioral economics shows that price anchoring and perceived fairness materially affect whether people complete a purchase. Airlines have to balance revenue optimization against the risk of alienating customers who feel the pricing is arbitrary. It's a real tension, and it's one reason continuous dynamic pricing hasn't fully replaced the more legible fare class structure even where it's technically possible.</p>
+        <p>The advantage over classical RM is precision. A fare ladder forces the system to round to the nearest available price point. If the revenue-maximizing price right now is $317 but the nearest fare levels are $280 and $350, something is left on the table either way. Dynamic pricing eliminates that rounding across every seat on every flight. The gains per seat are often small, but compounded over a large network they are material.</p>
 
-        <div class="quiz" id="qz07">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">What is the fundamental difference between classical inventory control and dynamic pricing?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz07">Dynamic pricing only applies to last-minute bookings</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz07">Classical RM uses algorithms; dynamic pricing relies on human judgment</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz07">Classical RM controls availability across fixed pre-set prices; dynamic pricing continuously recomputes the optimal price itself</button>
-          </div>
-          <div class="quiz-feedback" id="qz07-fb"></div>
-          <button class="quiz-reset" id="qz07-rs" onclick="resetQuiz('qz07')">Try again</button>
-        </div>
+        <p>There is also a structural advantage. Classical pricing and RM are two separate functions that have to be coordinated: one team sets the menu, another decides how to use it, and misalignments between them create revenue leakage that is hard to attribute to either side. Dynamic pricing collapses the two into a single optimization. There is one number to set and one system responsible for setting it.</p>
+
+        <h4>The practical limits</h4>
+
+        <p>Continuous dynamic pricing is technically feasible today for airlines with modern distribution infrastructure and direct booking channels. What has slowed its full adoption is partly legacy systems, partly the complexity of coordinating prices across GDS intermediaries that were built for a world of pre-filed fares, and partly the commercial reality that passengers respond to fare predictability. The fare class, for all its inefficiencies, is also a commitment: this seat costs $180 today and tomorrow. Giving that up entirely is a trade-off no major carrier has yet been fully willing to make.</p>
 
         <p><hr/></p>
 
