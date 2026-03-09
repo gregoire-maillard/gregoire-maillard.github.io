@@ -625,9 +625,9 @@
         <p><hr/></p>
 
         <!-- ── CH 08 ── -->
-        <h3 id="ch08">Chapter 08: Offer & Order</h3>
+        <h3 id="ch08">Chapter 08: Offer &amp; Order</h3>
 
-        <p>Traditional RM optimizes one thing: the seat. But a seat is not the only thing an airline sells. Bags, seat selection, lounge access, meals, Wi-Fi, partner products, ancillary revenue now represents anywhere from 15% to over 50% of total revenue depending on the carrier. The next frontier of RM is optimizing not just a seat price, but an entire offer.</p>
+        <p>Traditional RM optimizes one thing: the seat. But a seat is not the only thing an airline sells. Bags, seat selection, lounge access, meals, Wi-Fi, partner products — ancillary revenue now represents anywhere from 15% to over 50% of total revenue depending on the carrier. The next frontier of RM is optimizing not just a seat price, but an entire offer.</p>
 
         <h4>The legacy distribution problem</h4>
 
@@ -638,36 +638,44 @@
           Instead of "here is the Q fare with these rules," an airline using NDC can respond to a search with a fully assembled offer: seat, bag, priority boarding, and fare, all priced specifically for this customer in this context, in real time. The offer is built on the fly; the price reflects the customer's full value, not just the seat component.
         </div>
 
-        <h4>Attribute-based selling</h4>
+        <h4>The rise of ancillary revenue</h4>
 
-        <p>Attribute-based selling takes this further: rather than choosing Economy or Business, a customer assembles their own product from a menu of attributes, such as window seat, extra legroom, priority boarding, flexibility, or a meal. RM's role shifts from seat inventory control to pricing a combinatorial space of product bundles. That's a fundamentally harder problem, but also a much richer commercial opportunity.</p>
+        <p>The unbundling of the airline ticket is one of the defining commercial shifts of the past two decades. It started with low-cost carriers. Ryanair and Spirit realized early that passengers are far more price-sensitive to the headline fare they see in a search result than to the add-ons they buy afterward. By stripping the base fare to its minimum and charging separately for everything else — a checked bag, a seat assignment, priority boarding, a snack — they could advertise a dramatically lower entry price while recovering margin through ancillaries. The result was that passengers who valued those extras paid for them, and passengers who didn't could fly more cheaply than before. Both groups were being served more precisely than a single bundled price ever could.</p>
 
-        <h4>Total revenue optimization</h4>
+        <p>Legacy carriers initially resisted, then followed. Today virtually every airline charges separately for at least some ancillary products, and the range of what counts as an ancillary has expanded well beyond bags. It now includes seat selection (including extra legroom, bulkhead, and exit row seats), lounge access, fast-track security, onboard Wi-Fi, travel insurance, hotel and car rental cross-sells, and increasingly sophisticated loyalty currency products. Carriers like Ryanair and Spirit derive more than half their revenue per passenger from ancillaries. Even full-service carriers like Air Canada or Lufthansa now see ancillaries accounting for a meaningful and growing share of total revenue.</p>
 
-        <p>Once the offer includes ancillaries, the optimization objective changes. It's no longer "maximize seat revenue" but "maximize total passenger revenue," where the seat is just one component. A passenger paying a low seat fare but generating high ancillary revenue could be more valuable than a high-fare passenger who buys nothing else. RM systems increasingly need to model and optimize the full revenue stack, and that requires connecting systems (loyalty, booking engine, pricing, merchandising) that historically were never designed to talk to each other.</p>
+        <p>For RM, this creates both an opportunity and a complication. The opportunity is that there is more total revenue to optimize. The complication is that the products being sold are not all perishable in the same way, do not have the same demand patterns, and do not interact with seat inventory in obvious ways. A bag fee is booked at the time of ticket purchase and generates revenue regardless of when the passenger flies. An exit row seat is as perishable as the seat itself. Lounge access ties to passenger status and route characteristics. Each ancillary product has its own demand curve, its own price sensitivity, and its own relationship to the base fare. Optimizing them together is genuinely harder than optimizing the seat alone.</p>
+
+        <h4>From seats to offers</h4>
+
+        <p>Once the distribution infrastructure can carry rich, dynamic offers, the RM problem expands considerably. The classic seat allocation question — how many seats to protect at each price — becomes only one part of a larger puzzle. Now the system also has to decide what bundle to present to which customer, at what price, and through which channel.</p>
+
+        <p>Attribute-based selling takes this the furthest: rather than choosing between Economy and Business, a customer assembles their own product from a menu of attributes — extra legroom, a checked bag, a flexible ticket, priority boarding, a meal. Two passengers sitting next to each other in the same cabin might have paid for completely different combinations of attributes at completely different total prices. RM's role shifts from protecting blocks of seats to pricing a large combinatorial space of product configurations in real time.</p>
+
+        <h4>Total offer optimization</h4>
+
+        <p>This changes the optimization objective fundamentally. The question is no longer "what is the revenue-maximizing seat fare for this passenger" but "what is the revenue-maximizing offer for this passenger" — a bundle of seat, ancillaries, and services priced as a whole. A passenger on a low base fare who reliably buys a bag, an exit row seat, and lounge access may be worth more to the airline than a higher-fare passenger who buys nothing else. The seat fare alone is a poor proxy for passenger value.</p>
+
+        <p>Getting this right requires connecting systems that were historically never designed to talk to each other: the RM platform, the pricing engine, the ancillary merchandising system, the loyalty program, and the customer data infrastructure. Each of those systems was built to optimize its own slice of the problem. Total offer optimization asks them to solve it jointly. That integration challenge is, in most airlines today, still a work in progress — but it is clearly where the commercial logic of the industry is pointing.</p>
 
         <p><hr/></p>
 
         <!-- ── CH 09 ── -->
         <h3 id="ch09">Chapter 09: What's Next</h3>
 
-        <p>Revenue Management has come a long way from EMSR-b running overnight batch jobs in the 1980s. The pace of change is accelerating, and the version of RM practiced in 2035 will probably look as different from today's as today's looks from where it started. Here are the directions I find most interesting.</p>
+        <p>Revenue Management has come a long way from EMSR-b running overnight batch jobs in the 1980s. The field is still moving, and a few directions stand out as genuinely important.</p>
 
         <h4>Reinforcement learning</h4>
 
-        <p>Classical RM is model-driven: it assumes demand follows a statistical distribution and optimizes within that model. Reinforcement learning takes a different approach, learning a pricing policy directly from interacting with the market, without assuming any particular demand structure. An RL agent sets prices, observes outcomes, and updates its policy over time. Early results in airline RM are promising, especially in volatile markets where historical patterns break down and classical models struggle most. What I find genuinely appealing about RL is that it naturally handles the sequential nature of RM decisions. The prices you set today affect the demand you observe tomorrow, which affects your prices the day after. Classical methods treat these decisions largely as independent. RL doesn't.</p>
+        <p>Classical RM assumes demand follows a statistical distribution and optimizes within that model. Reinforcement learning takes a different approach: rather than fitting a demand model first and optimizing against it, an RL agent learns a pricing policy directly by interacting with the market — setting prices, observing what happened, and updating its behavior accordingly. What I find appealing about RL is that it naturally captures the sequential nature of RM decisions. The price you set today shapes the demand you observe tomorrow. Classical methods treat each decision largely as independent. RL does not, and that difference matters most in volatile or fast-moving markets where historical patterns break down and any pre-fitted model is already out of date.</p>
 
-        <h4>Real-time everything</h4>
+        <h4>Real-time optimization and richer data</h4>
 
-        <p>Classical RM systems run on batch cycles, with forecasts and optimizations computed overnight and controls updated a few times a day. The direction of travel is continuous, real-time optimization responding to bookings, competitor moves, and external signals as they happen. This requires a fundamentally different technical architecture, and most legacy airline systems weren't built for it. The transition is happening, but slowly, as airline IT tends to move at its own pace.</p>
-
-        <h4>Search data and richer demand signals</h4>
-
-        <p>Booked fares tell you what passengers paid. Search data tells you what they considered. The gap between a search and a booking, covering who searched, what they were shown, what they chose, and what they abandoned, is an extraordinarily rich signal for WTP estimation that classical RM largely ignores. As airlines gain more control over their distribution through NDC and direct channels, this data becomes available, and the forecasting models that can use it become dramatically more precise.</p>
+        <p>Most RM systems today still run on batch cycles: forecasts computed overnight, controls updated a few times a day. The direction of travel is continuous optimization that responds to bookings, competitor moves, and external signals as they happen. Alongside this, the data available to feed those models is improving. Booked fares tell you what passengers paid. Search data tells you what they considered and rejected — a much richer signal for estimating true willingness to pay. As airlines gain more control over their distribution through direct channels and NDC, this data becomes available in ways it historically wasn't, and the forecasting models that can use it become correspondingly sharper.</p>
 
         <h4>RM beyond aviation</h4>
 
-        <p>The methods developed in airline RM have already spread to hotels, car rentals, cruises, and rail. The next wave is likely to reach industries that have historically used static pricing: restaurants, parking, sports and entertainment venues, healthcare. The core intuitions, perishability, fixed capacity, demand segmentation, and opportunity cost, are universal. What changes is the domain.</p>
+        <p>The methods developed in airline RM have already spread to hotels, car rentals, cruises, and rail. The next wave is likely to reach industries that have historically used static pricing: restaurants, parking, sports venues, healthcare. The core intuitions — perishability, fixed capacity, demand segmentation, opportunity cost — are universal. What changes is the domain.</p>
 
         <p>Anyway, that's the overview. If something here was unclear or you want to go deeper on any chapter, feel free to reach out. I find this stuff genuinely fascinating, and I'm always happy to talk about it.</p>
 
@@ -678,7 +686,7 @@
       </footer>
     </div>
 
-    <script src="javascripts/scale.fix.js"></script>
+        <script src="javascripts/scale.fix.js"></script>
     <script>
       // ── Quiz logic ──
       const fb = {
