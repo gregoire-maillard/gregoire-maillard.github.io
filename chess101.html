@@ -1,96 +1,30 @@
 <!doctype html>
 <html>
   <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-HT8J8ZFYTB');
-</script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Turkish From Zero — A Complete Grammar Guide</title>
+    <title>Chess: From 1000 to 2000</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
+
     <style>
-      /* ── Scrollable sidebar ── */
-      header {
-        overflow-y: auto !important;
-        max-height: 100vh !important;
-      }
-
-      /* ── Quiz ── */
-      .quiz {
-        background: #f8f8f8;
-        border: 1px solid #ddd;
-        border-left: 3px solid #267CB9;
-        border-radius: 3px;
-        padding: 16px 20px 14px;
-        margin: 24px 0 8px;
-      }
-      .quiz-label {
-        font-size: 0.7em;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: #267CB9;
-        font-weight: bold;
-        margin-bottom: 8px;
-      }
-      .quiz-q {
-        font-style: italic;
-        margin-bottom: 12px;
-        font-size: 0.95em;
-        color: #333;
-      }
-      .quiz-opts { display: flex; flex-direction: column; gap: 6px; margin-bottom: 2px; }
-      .quiz-btn {
-        background: #fff;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        padding: 8px 12px;
-        font-size: 0.88em;
-        cursor: pointer;
-        text-align: left;
-        color: #333;
-        transition: border-color 0.15s, background 0.15s;
-        font-family: Georgia, serif;
-        line-height: 1.5;
-      }
-      .quiz-btn:hover:not(:disabled) { border-color: #267CB9; background: #f0f6fc; color: #267CB9; }
-      .quiz-btn.correct { background: #eaf5ea; border-color: #3a7a3a; color: #1a4d1a; }
-      .quiz-btn.wrong   { background: #fdf0f0; border-color: #c0392b; color: #7a1a1a; }
-      .quiz-btn:disabled { cursor: default; opacity: 0.6; }
-      .quiz-btn.correct:disabled, .quiz-btn.wrong:disabled { opacity: 1; }
-      .quiz-feedback {
-        display: none;
-        margin-top: 10px;
-        padding: 8px 12px;
-        border-radius: 3px;
-        font-size: 0.86em;
-        line-height: 1.5;
-        font-family: Georgia, serif;
-      }
-      .quiz-feedback.show { display: block; }
-      .quiz-feedback.ok  { background: #eaf5ea; color: #1a4d1a; }
-      .quiz-feedback.bad { background: #fef9ec; color: #7a4f00; }
-      .quiz-reset {
-        display: none;
-        margin-top: 8px;
-        font-size: 0.78em;
-        color: #999;
-        background: none;
-        border: none;
-        cursor: pointer;
-        text-decoration: underline;
-        padding: 0;
-        font-family: Georgia, serif;
-      }
-      .quiz-reset.show { display: inline; }
-
       /* ── Sidebar nav ── */
-      .chapter-nav { margin-top: 4px; font-size: 0.78em; line-height: 1.85; }
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .chapter-nav {
+        margin-top: 4px;
+        font-size: 0.82em;
+        line-height: 1.8;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+      }
       .chapter-nav a {
         display: block;
         color: #555;
@@ -101,9 +35,9 @@
       }
       .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
       .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
-      .chapter-nav .ch-n { color: #bbb; font-size: 0.82em; margin-right: 3px; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
 
-      /* ── Callout ── */
+      /* ── Callout / example boxes ── */
       .callout {
         background: #f4f8fd;
         border-left: 3px solid #267CB9;
@@ -121,8 +55,6 @@
         font-weight: bold;
         margin-bottom: 5px;
       }
-
-      /* ── Example ── */
       .example {
         background: #fafafa;
         border: 1px solid #e4e4e4;
@@ -141,36 +73,14 @@
         margin-bottom: 5px;
       }
 
-      /* ── Grammar rule block ── */
-      .rule {
-        background: #fdfdf8;
-        border: 1px solid #e8e4d0;
-        border-left: 3px solid #b8a830;
-        padding: 12px 16px;
-        margin: 18px 0;
-        font-size: 0.92em;
-        line-height: 1.85;
-        color: #333;
-        font-family: 'Courier New', monospace;
-      }
-      .rule-label {
-        font-size: 0.68em;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: #9a8820;
-        font-weight: bold;
-        margin-bottom: 6px;
-        font-family: Georgia, serif;
-      }
-
       /* ── Tables ── */
-      .t {
+      .rm-table {
         width: 100%;
         border-collapse: collapse;
         font-size: 0.86em;
-        margin: 14px 0;
+        margin: 16px 0;
       }
-      .t th {
+      .rm-table th {
         background: #f2f2f2;
         border-bottom: 2px solid #ddd;
         padding: 7px 10px;
@@ -180,1329 +90,684 @@
         letter-spacing: 0.8px;
         color: #888;
       }
-      .t td {
-        padding: 7px 10px;
+      .rm-table td {
+        padding: 8px 10px;
         border-bottom: 1px solid #f0f0f0;
         color: #333;
         vertical-align: top;
       }
-      .t tr:last-child td { border-bottom: none; }
-      .t tr:hover td { background: #fafafa; }
-      .t td.tr { color: #267CB9; font-style: italic; }
-      .t td.en { color: #888; font-size: 0.92em; }
+      .rm-table tr:last-child td { border-bottom: none; }
+      .tag {
+        display: inline-block;
+        padding: 1px 6px;
+        border-radius: 8px;
+        font-size: 0.78em;
+        font-weight: bold;
+      }
+      .tag-h { background: #e4f3e4; color: #2a662a; }
+      .tag-m { background: #fef6d6; color: #7a5500; }
+      .tag-l { background: #fdeaea; color: #8a1a1a; }
 
-      /* ── Vowel harmony color coding ── */
-      .back  { color: #c0392b; font-weight: bold; }
-      .front { color: #2980b9; font-weight: bold; }
-      .suf   { color: #27ae60; font-weight: bold; }
-      .stem  { color: #8e44ad; }
+      /* ── Move notation ── */
+      .move {
+        font-family: 'Courier New', monospace;
+        background: #f0f0f0;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-size: 0.88em;
+        color: #333;
+      }
 
       section h3 { margin-top: 22px; }
-      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; font-style: italic; }
-      section ul { margin: 8px 0 14px 20px; }
-      section ul li { margin-bottom: 5px; color: #333; font-size: 0.95em; }
+      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; }
     </style>
   </head>
   <body>
     <div class="wrapper">
 
+      <!-- ── Sidebar ── -->
       <header>
-        <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
-        <img src="/assets/img/ataturk.png" alt="Atatürk" />
-        <p><i>Not me, but Atatürk.</i><br><hr/>
-        A complete Turkish grammar guide — from the alphabet to fluency, with every suffix you need.</p>
+        <h1><a href="https://gregoiremaillard.com">Gr&eacute;goire Maillard</a></h1>
+        <p><i>A practical guide to reaching ELO 2000.</i><br><hr/>
+        From casual player to expert: everything you need to understand the game deeply and improve deliberately.</p>
+
         <hr/>
         <nav class="chapter-nav" id="toc">
-          <a href="#ch00"><span class="ch-n">00</span> Why Turkish is Different</a>
-          <a href="#ch01"><span class="ch-n">01</span> Alphabet & Pronunciation</a>
-          <a href="#ch02"><span class="ch-n">02</span> Vowel Harmony</a>
-          <a href="#ch03"><span class="ch-n">03</span> Nouns, Plurals & Articles</a>
-          <a href="#ch04"><span class="ch-n">04</span> Pronouns & To Be</a>
-          <a href="#ch05"><span class="ch-n">05</span> The Six Cases</a>
-          <a href="#ch06"><span class="ch-n">06</span> Numbers, Dates & Time</a>
-          <a href="#ch07"><span class="ch-n">07</span> Adjectives & Word Order</a>
-          <a href="#ch08"><span class="ch-n">08</span> Ability: -ebilmek</a>
-          <a href="#ch09"><span class="ch-n">09</span> Present Continuous: -iyor</a>
-          <a href="#ch10"><span class="ch-n">10</span> Aorist: -ir / -er</a>
-          <a href="#ch11"><span class="ch-n">11</span> Past Witnessed: -di</a>
-          <a href="#ch12"><span class="ch-n">12</span> Past Reported: -miş</a>
-          <a href="#ch13"><span class="ch-n">13</span> Future: -ecek</a>
-          <a href="#ch14"><span class="ch-n">14</span> Necessity: -meli</a>
-          <a href="#ch15"><span class="ch-n">15</span> Negation & Questions</a>
-          <a href="#ch16"><span class="ch-n">16</span> Postpositions</a>
-          <a href="#ch17"><span class="ch-n">17</span> Compound Verbs</a>
-          <a href="#ch18"><span class="ch-n">18</span> Conditionals</a>
-          <a href="#ch19"><span class="ch-n">19</span> Imperatives & Requests</a>
-          <a href="#ch20"><span class="ch-n">20</span> Relative Clauses & Verbal Nouns</a>
-          <a href="#ch21"><span class="ch-n">21</span> Causative, Passive, Reciprocal</a>
-          <a href="#ch22"><span class="ch-n">22</span> Discourse Markers</a>
-          <a href="#ch23"><span class="ch-n">23</span> Diminutives & Expressive Suffixes</a>
-          <a href="#ch24"><span class="ch-n">24</span> Reading a Real Text</a>
-          <a href="#ch25"><span class="ch-n">25</span> Pitfalls for French/English Speakers</a>
-          <a href="#ch26"><span class="ch-n">26</span> Survival Vocabulary</a>
+          <a href="#ch00"><span class="ch-n">00</span> Why 2000?</a>
+          <a href="#ch01"><span class="ch-n">01</span> How to Think</a>
+          <a href="#ch02"><span class="ch-n">02</span> Tactics &amp; Patterns</a>
+          <a href="#ch03"><span class="ch-n">03</span> Openings</a>
+          <a href="#ch04"><span class="ch-n">04</span> Pawn Structure</a>
+          <a href="#ch05"><span class="ch-n">05</span> Middlegame Strategy</a>
+          <a href="#ch06"><span class="ch-n">06</span> Endgames</a>
+          <a href="#ch07"><span class="ch-n">07</span> Attacking the King</a>
+          <a href="#ch08"><span class="ch-n">08</span> Exchanges &amp; Simplification</a>
+          <a href="#ch09"><span class="ch-n">09</span> Positional Sacrifices</a>
+          <a href="#ch10"><span class="ch-n">10</span> Learning from the Masters</a>
+          <a href="#ch11"><span class="ch-n">11</span> Psychology &amp; Time Management</a>
+          <a href="#ch12"><span class="ch-n">12</span> How to Study &amp; Improve</a>
         </nav>
       </header>
 
+      <!-- ── Content ── -->
       <section>
 
-        <h2>Turkish From Zero — A Complete Grammar Guide</h2>
-        <p>I started learning Turkish in November 2022, and it's been one of the most rewarding and humbling experiences I've had with a language. Turkish is genuinely different from anything a French or English speaker has encountered. Not harder exactly — just built on completely different principles. Once those principles click, the language becomes surprisingly logical, even beautiful in its regularity. This page is my attempt to lay everything out clearly, from the very first sounds to the suffixes that mark fluency.</p>
+        <h2>Chess: From 1000 to 2000</h2>
+        <p>I got serious about chess a few years ago, starting from the casual end of the spectrum &#8212; someone who knew the rules, could beat friends occasionally, but had no real idea why good players made the moves they did. The jump from casual play to genuine competence felt mysterious from the outside. This guide is my attempt to make it less so. It covers not just what to learn, but why each piece of knowledge matters and how it fits together into the larger skill of playing chess well. The goal is an ELO above 2000, which puts you in the top few percent of rated players worldwide. It is an ambitious target, but an entirely achievable one with the right approach.</p>
 
         <p><hr/></p>
 
-        <!-- ══ CH 00 ══ -->
-        <h3 id="ch00">Chapter 00 — Why Turkish is Different</h3>
+        <!-- ── CH 00 ── -->
+        <h3 id="ch00">Chapter 00: Why 2000?</h3>
 
-        <p>Before you learn a single word, it helps to understand the architecture of the language you're entering. Turkish belongs to the Turkic language family, completely unrelated to Indo-European languages like French, English, or even Persian. It's an <strong>agglutinative</strong> language — meaning it builds words by stacking suffixes onto a root, one after another, each suffix adding a precise grammatical meaning.</p>
+        <p>ELO 2000 is a meaningful milestone in chess. Below it, you are still climbing the ladder of fundamental understanding. Above it, you have genuinely mastered the core of the game &#8212; you can calculate accurately, evaluate positions correctly, handle all phases of the game competently, and play with a coherent strategic identity. The gap between a 1000 and a 2000 player is not primarily about talent or natural ability. It is about the accumulation of three things: pattern recognition, calculation skill, and strategic understanding. All three are learnable. None require exceptional gifts.</p>
 
-        <p>In French you might say <em>je ne pourrai pas y aller</em> — six words. In Turkish: <em>gidemeyeceğim</em> — one word. Every piece of that word is a suffix with its own rule. That's the game.</p>
+        <p>What separates each bracket is worth understanding clearly, because it tells you what to focus on at each stage.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>ELO range</th><th>Main weakness</th><th>What to fix</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>600&#8211;1000</strong></td><td>Hanging pieces, missing one-move threats</td><td>Blunder checks, basic tactics</td></tr>
+            <tr><td><strong>1000&#8211;1400</strong></td><td>No coherent plan, random moves</td><td>Opening principles, piece activity</td></tr>
+            <tr><td><strong>1400&#8211;1700</strong></td><td>Positional blindness, weak endgames</td><td>Pawn structure, essential endings</td></tr>
+            <tr><td><strong>1700&#8211;2000</strong></td><td>Calculation errors, strategic superficiality</td><td>Deep calculation, complex strategy</td></tr>
+          </tbody>
+        </table>
+
+        <p>A few honest things to say upfront. Reaching 2000 will take years of consistent work, not months. The rate-limiting factor for most players is not intelligence but time invested in deliberate practice &#8212; specifically, the uncomfortable kind where you are solving problems at the edge of your current ability rather than replaying comfortable patterns. It also requires playing a lot of real games, analyzing them honestly, and being willing to identify and sit with your own weaknesses rather than avoiding them.</p>
 
         <div class="callout">
-          <div class="callout-label">Three principles that govern everything</div>
-          <strong>1. Agglutination:</strong> suffixes stack onto roots in a fixed order.<br>
-          <strong>2. Vowel harmony:</strong> every suffix adjusts its vowels to match the root.<br>
-          <strong>3. SOV word order:</strong> Subject → Object → Verb. The verb always comes last.
+          <div class="callout-label">The most important thing to know at the start</div>
+          The single biggest predictor of improvement at every level below 2000 is tactical vision. Before worrying about openings, pawn structures, or endgame theory, you need to be able to see what is happening on the board right now. Every other skill builds on top of that foundation.
         </div>
 
-        <p>Turkish also has no grammatical gender — no masculine/feminine distinction anywhere. There is no equivalent of <em>le/la, un/une, der/die/das</em>. There are no articles at all. And the verb <em>to be</em> is a suffix, not a standalone word. None of this is hard once you accept that you're learning a different system entirely, not a variation of what you already know.</p>
+        <h4>A realistic roadmap</h4>
+
+        <p>The chapters that follow are organized roughly in order of priority. Tactics and thinking process come first because they underpin everything else. Openings come after, because opening knowledge without tactical and positional understanding is just memorization with no roots. Pawn structure and middlegame strategy build on that. Endgames are covered as a standalone chapter because most players neglect them and pay a heavy price. Psychology and study methods close the guide, because knowing how to improve is itself a skill that compounds over time.</p>
+
+        <p>You do not need to read this guide linearly. If you are already at 1400 and your openings are solid, jump to pawn structure. If you keep losing won endgames, start with Chapter 06. Use it as a reference. But if you are genuinely starting from 600&#8211;1000, the sequence matters: build the foundation before the superstructure.</p>
 
         <p><hr/></p>
 
-        <!-- ══ CH 01 ══ -->
-        <h3 id="ch01">Chapter 01 — Alphabet & Pronunciation</h3>
+        <!-- ── CH 01 ── -->
+        <h3 id="ch01">Chapter 01: How to Think</h3>
 
-        <p>Turkish uses a Latin alphabet introduced by Atatürk in 1928, replacing the Ottoman Arabic script. It has 29 letters. The key principle: Turkish spelling is almost perfectly phonetic. Every letter has exactly one sound. If you can read it, you can pronounce it correctly — which is a luxury you don't have in French or English.</p>
+        <p>Most players below 1400 do not have a systematic thinking process. They look at the position, a move comes to mind, it looks reasonable, they play it. Sometimes it works. Often it does not. The difference between a 1200 and a 1800 player is not always that the stronger player sees more &#8212; it is that they have a reliable procedure for not missing things. A thinking process is not a creative straitjacket. It is a checklist that keeps you honest.</p>
 
-        <table class="t">
-          <thead><tr><th>Letter</th><th>Pronunciation</th><th>Example</th><th>Like in...</th></tr></thead>
-          <tbody>
-            <tr><td><strong>A a</strong></td><td>ah</td><td>araba (car)</td><td class="en">f<em>a</em>ther</td></tr>
-            <tr><td><strong>B b</strong></td><td>b</td><td>ben (I)</td><td class="en">normal</td></tr>
-            <tr><td><strong>C c</strong></td><td>dj</td><td>cam (glass)</td><td class="en"><em>j</em>am</td></tr>
-            <tr><td><strong>Ç ç</strong></td><td>ch</td><td>çay (tea)</td><td class="en"><em>ch</em>air</td></tr>
-            <tr><td><strong>D d</strong></td><td>d</td><td>dil (tongue)</td><td class="en">normal</td></tr>
-            <tr><td><strong>E e</strong></td><td>eh</td><td>ev (house)</td><td class="en">b<em>e</em>d</td></tr>
-            <tr><td><strong>F f</strong></td><td>f</td><td>fare (mouse)</td><td class="en">normal</td></tr>
-            <tr><td><strong>G g</strong></td><td>g (hard)</td><td>gün (day)</td><td class="en"><em>g</em>et</td></tr>
-            <tr><td><strong>Ğ ğ</strong></td><td>silent / lengthens vowel</td><td>dağ (mountain)</td><td class="en">no equivalent — never pronounce it</td></tr>
-            <tr><td><strong>H h</strong></td><td>h (always pronounced)</td><td>hava (air)</td><td class="en"><em>h</em>at</td></tr>
-            <tr><td><strong>I ı</strong></td><td>uh (back, unrounded)</td><td>kız (girl)</td><td class="en">the <em>a</em> in <em>about</em> — but further back</td></tr>
-            <tr><td><strong>İ i</strong></td><td>ee</td><td>iyi (good)</td><td class="en">m<em>ee</em>t</td></tr>
-            <tr><td><strong>J j</strong></td><td>zh</td><td>jandarma</td><td class="en">plea<em>s</em>ure (French <em>j</em>)</td></tr>
-            <tr><td><strong>K k</strong></td><td>k</td><td>kedi (cat)</td><td class="en">normal</td></tr>
-            <tr><td><strong>L l</strong></td><td>l</td><td>lamba (lamp)</td><td class="en">normal</td></tr>
-            <tr><td><strong>M m</strong></td><td>m</td><td>masa (table)</td><td class="en">normal</td></tr>
-            <tr><td><strong>N n</strong></td><td>n</td><td>ne (what)</td><td class="en">normal</td></tr>
-            <tr><td><strong>O o</strong></td><td>oh (rounded)</td><td>on (ten)</td><td class="en">n<em>o</em>te</td></tr>
-            <tr><td><strong>Ö ö</strong></td><td>like French eu</td><td>söz (word)</td><td class="en">French <em>peu</em></td></tr>
-            <tr><td><strong>P p</strong></td><td>p</td><td>para (money)</td><td class="en">normal</td></tr>
-            <tr><td><strong>R r</strong></td><td>rolled r (slight)</td><td>renk (color)</td><td class="en">slightly rolled</td></tr>
-            <tr><td><strong>S s</strong></td><td>s (always unvoiced)</td><td>su (water)</td><td class="en"><em>s</em>un, never <em>z</em></td></tr>
-            <tr><td><strong>Ş ş</strong></td><td>sh</td><td>şehir (city)</td><td class="en"><em>sh</em>ow</td></tr>
-            <tr><td><strong>T t</strong></td><td>t</td><td>taş (stone)</td><td class="en">normal</td></tr>
-            <tr><td><strong>U u</strong></td><td>oo (short)</td><td>un (flour)</td><td class="en">b<em>oo</em>k</td></tr>
-            <tr><td><strong>Ü ü</strong></td><td>like French u</td><td>üç (three)</td><td class="en">French <em>tu</em></td></tr>
-            <tr><td><strong>V v</strong></td><td>v (softer than English)</td><td>var (there is)</td><td class="en">between v and w</td></tr>
-            <tr><td><strong>Y y</strong></td><td>y (always consonant)</td><td>yok (there isn't)</td><td class="en"><em>y</em>es</td></tr>
-            <tr><td><strong>Z z</strong></td><td>z</td><td>zaman (time)</td><td class="en">normal</td></tr>
-          </tbody>
-        </table>
+        <h4>Before every move: the three questions</h4>
 
-        <div class="callout">
-          <div class="callout-label">The two letters that will trip you up</div>
-          <strong>I ı (dotless i)</strong> — a sound that doesn't exist in French or English. The back of your tongue goes up and back, lips are unrounded. Think of the sound you make when hesitating: "uh". It's not "ee". Confusing ı and i changes word meanings completely.<br><br>
-          <strong>Ğ ğ (soft g)</strong> — never pronounced as a consonant. Between two vowels it slightly lengthens the preceding vowel. At the end of a word, almost silent. <em>Dağ</em> sounds like "daa", <em>öğrenci</em> like "öö-ren-ci".
-        </div>
+        <p>Before you decide what <em>you</em> want to do, ask three questions about what is happening on the board right now.</p>
 
-        <h4>Consonant mutation — voiced and voiceless</h4>
-        <p>Turkish has a systematic rule: certain final consonants change when a vowel-initial suffix is added. The voiceless consonants <strong>ç, k, p, t</strong> soften to <strong>c, ğ, b, d</strong> when followed by a vowel.</p>
+        <p><strong>1. What is my opponent threatening?</strong> This is the first and most important question. The majority of blunders at every level below 1800 happen because a player ignores their opponent&#8217;s last move and continues with their own plan. Every time your opponent makes a move, something has changed. A piece has moved. New lines have opened or closed. New threats may exist that did not before. Before you look for your own candidate moves, understand what just happened.</p>
 
-        <div class="rule">
-          <div class="rule-label">Consonant mutation rule</div>
-          ç → c &nbsp;|&nbsp; k → ğ &nbsp;|&nbsp; p → b &nbsp;|&nbsp; t → d<br><br>
-          ağaç (tree) → ağac<span class="suf">ı</span> (the tree / accusative)<br>
-          kitap (book) → kitab<span class="suf">ı</span> (the book / accusative)<br>
-          sebep (reason) → sebeb<span class="suf">i</span><br>
-          renk (color) → reng<span class="suf">i</span>
-        </div>
+        <p><strong>2. What checks, captures, and threats are available to me?</strong> The acronym CCT &#8212; Checks, Captures, Threats &#8212; is a useful first sweep. Not because every check is good, but because forcing moves constrain your opponent&#8217;s options and are easier to calculate. Starting your candidate move search with CCT ensures you do not miss a tactical sequence that wins immediately.</p>
 
-        <div class="quiz" id="qz01">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How is the letter "C c" pronounced in Turkish?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz01">Like "s" in English (soft c)</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz01">Like "k" (hard c)</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz01">Like "j" in jam — a dj sound</button>
-          </div>
-          <div class="quiz-feedback" id="qz01-fb"></div>
-          <button class="quiz-reset" id="qz01-rs" onclick="resetQuiz('qz01')">Try again</button>
-        </div>
+        <p><strong>3. After I play my intended move, what can my opponent do?</strong> This is the blunder check &#8212; sometimes called the &#8220;Is it safe?&#8221; question. Before you commit, play the move in your head and ask: does this leave anything hanging? Does it open a line I had not considered? Does it give my opponent a forcing sequence? This single step eliminates a huge proportion of blunders at all levels.</p>
 
-        <p><hr/></p>
+        <h4>Candidate moves</h4>
 
-        <!-- ══ CH 02 ══ -->
-        <h3 id="ch02">Chapter 02 — Vowel Harmony</h3>
+        <p>Once you have assessed the position, generate a list of candidate moves before calculating any of them deeply. The reason is psychological: humans tend to fall in love with the first promising move they see and calculate it thoroughly, then play it &#8212; even if a better move exists that they never considered. By forcing yourself to list candidates first, you ensure that at least a few alternatives get a look before you commit.</p>
 
-        <p>Vowel harmony is the single most important rule in Turkish. Everything else builds on it. The principle is simple: <strong>the vowels in a word must come from the same family</strong>. And when you add a suffix, the vowel in that suffix must match the last vowel of the root.</p>
+        <p>At most positions, you do not need many candidates &#8212; two or three is usually enough. What matters is that you are choosing between options rather than defaulting to the first move that comes to mind. At critical positions, especially sharp ones where the game might hinge on the next few moves, a longer search is warranted. Resist the urge to stop looking once you have found something that works. The question is not &#8220;is this move good enough?&#8221; but &#8220;is this the best move?&#8221;</p>
 
-        <table class="t">
-          <thead><tr><th>Group</th><th>Vowels</th><th>Position</th></tr></thead>
-          <tbody>
-            <tr><td><span class="back">Back vowels</span></td><td><span class="back">a, ı, o, u</span></td><td>Produced at the back of the mouth</td></tr>
-            <tr><td><span class="front">Front vowels</span></td><td><span class="front">e, i, ö, ü</span></td><td>Produced at the front of the mouth</td></tr>
-          </tbody>
-        </table>
+        <h4>Evaluation: what is a good position?</h4>
 
-        <h4>The 2-way harmony (e/a)</h4>
-        <div class="rule">
-          <div class="rule-label">2-way harmony: suffix vowel = e or a</div>
-          Front vowels (e, i, ö, ü) → suffix uses <span class="front">e</span><br>
-          Back vowels (a, ı, o, u)  → suffix uses <span class="back">a</span><br><br>
-          ev (house) → ev<span class="front">de</span> (at home)<br>
-          araba (car) → araba<span class="back">da</span> (in the car)
-        </div>
+        <p>After calculating a line, you need to evaluate the resulting position &#8212; to form a judgment about who stands better and why. Four factors dominate that judgment:</p>
 
-        <h4>The 4-way harmony (i/ı/ü/u)</h4>
-        <table class="t">
-          <thead><tr><th>Last vowel of root</th><th>Suffix vowel</th><th>Example</th></tr></thead>
-          <tbody>
-            <tr><td>a, ı</td><td><span class="back">ı</span></td><td>kız → kız<span class="back">ı</span> (the girl)</td></tr>
-            <tr><td>e, i</td><td><span class="front">i</span></td><td>ev → ev<span class="front">i</span> (the house)</td></tr>
-            <tr><td>o, u</td><td><span class="back">u</span></td><td>top → top<span class="back">u</span> (the ball)</td></tr>
-            <tr><td>ö, ü</td><td><span class="front">ü</span></td><td>göz → göz<span class="front">ü</span> (the eye)</td></tr>
-          </tbody>
-        </table>
+        <p><strong>Material.</strong> A rook is worth roughly five pawns, a bishop or knight about three, a queen about nine. Material imbalances &#8212; two rooks vs. a queen, bishop pair vs. rook and pawn &#8212; drive most middlegame decisions. Be precise about material counts. Players below 1200 routinely miscount and give away pieces without realizing it.</p>
 
-        <div class="callout">
-          <div class="callout-label">The harmony mnemonic</div>
-          Think of it as a mouth position: your tongue stays in roughly the same place throughout a word. If the root pulls your tongue back (a, ı, o, u), the suffix vowels stay back. If the root pulls it forward (e, i, ö, ü), the suffixes follow forward.
-        </div>
+        <p><strong>King safety.</strong> An exposed king can be worth many pawns in the calculation of a sacrifice. When assessing a position, always ask: is either king vulnerable? Can lines be opened against it? Is there a potential mating attack? King safety overrides most other considerations when it is genuinely at stake.</p>
 
-        <h4>Exceptions — loanwords</h4>
-        <p>Loanwords from Arabic, Persian, French, or English often violate vowel harmony within the root itself. In these cases, <strong>the suffix follows the last vowel only</strong>. So <em>kitap</em> → <em>kitabı</em> (back, because last vowel is a).</p>
+        <p><strong>Piece activity.</strong> A well-placed piece on an outpost deep in the opponent&#8217;s territory is often stronger than a passive piece sitting at home, even if they are nominally worth the same. Ask of every piece: is it doing something useful? Is it controlling important squares? Could it be improved?</p>
 
-        <div class="quiz" id="qz02">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">The word "gün" (day) ends in ü — a front vowel. Which locative suffix does it take?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz02">günda</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz02">günde</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz02">gündu</button>
-          </div>
-          <div class="quiz-feedback" id="qz02-fb"></div>
-          <button class="quiz-reset" id="qz02-rs" onclick="resetQuiz('qz02')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 03 ══ -->
-        <h3 id="ch03">Chapter 03 — Nouns, Plurals & the Absence of Articles</h3>
-
-        <p>Turkish has no articles. There is no word for <em>a</em>, <em>an</em>, <em>the</em>, <em>un</em>, <em>une</em>, <em>le</em>, or <em>la</em>. The noun stands alone. <em>Ev</em> can mean "a house", "the house", or just "house" depending on context.</p>
-
-        <h4>Plurals — ler / lar</h4>
-        <div class="rule">
-          <div class="rule-label">Plural suffix</div>
-          Front vowel root → root + <span class="front">ler</span><br>
-          Back vowel root  → root + <span class="back">lar</span><br><br>
-          ev → ev<span class="front">ler</span> (houses)<br>
-          araba → araba<span class="back">lar</span> (cars)<br>
-          kitap → kitap<span class="back">lar</span> (books)<br>
-          gün → gün<span class="front">ler</span> (days)
-        </div>
-
-        <div class="callout">
-          <div class="callout-label">No plural after numbers</div>
-          In Turkish, nouns after numbers stay singular. <em>Üç araba</em> = "three car" (not "three cars"). The number already tells you it's plural — adding -lar would be redundant.
-        </div>
-
-        <h4>Possession suffixes (iyelik ekleri)</h4>
-        <table class="t">
-          <thead><tr><th>Person</th><th>Suffix (after consonant)</th><th>Example (ev = house)</th><th>Meaning</th></tr></thead>
-          <tbody>
-            <tr><td>1st sg.</td><td class="tr">-im / -ım / -um / -üm</td><td>ev<span class="suf">im</span></td><td>my house</td></tr>
-            <tr><td>2nd sg.</td><td class="tr">-in / -ın / -un / -ün</td><td>ev<span class="suf">in</span></td><td>your house</td></tr>
-            <tr><td>3rd sg.</td><td class="tr">-i / -ı / -u / -ü</td><td>ev<span class="suf">i</span></td><td>his/her/its house</td></tr>
-            <tr><td>1st pl.</td><td class="tr">-imiz / -ımız / -umuz / -ümüz</td><td>ev<span class="suf">imiz</span></td><td>our house</td></tr>
-            <tr><td>2nd pl.</td><td class="tr">-iniz / -ınız / -unuz / -ünüz</td><td>ev<span class="suf">iniz</span></td><td>your (pl.) house</td></tr>
-            <tr><td>3rd pl.</td><td class="tr">-leri / -ları</td><td>ev<span class="suf">leri</span></td><td>their house</td></tr>
-          </tbody>
-        </table>
-
-        <div class="quiz" id="qz03">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you say "our books" in Turkish? (kitap = book)</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz03">kitapımız</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz03">kitaplarımız</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz03">kitaplarmız</button>
-          </div>
-          <div class="quiz-feedback" id="qz03-fb"></div>
-          <button class="quiz-reset" id="qz03-rs" onclick="resetQuiz('qz03')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 04 ══ -->
-        <h3 id="ch04">Chapter 04 — Personal Pronouns & the Verb To Be</h3>
-
-        <h4>Personal pronouns</h4>
-        <table class="t">
-          <thead><tr><th>Turkish</th><th>English</th><th>Note</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Ben</strong></td><td>I</td><td></td></tr>
-            <tr><td><strong>Sen</strong></td><td>You (singular, informal)</td><td></td></tr>
-            <tr><td><strong>O</strong></td><td>He / She / It</td><td>No gender distinction</td></tr>
-            <tr><td><strong>Biz</strong></td><td>We</td><td></td></tr>
-            <tr><td><strong>Siz</strong></td><td>You (plural or formal singular)</td><td>Use for strangers, elders</td></tr>
-            <tr><td><strong>Onlar</strong></td><td>They</td><td></td></tr>
-          </tbody>
-        </table>
-
-        <h4>The verb to be — a suffix, not a word</h4>
-        <div class="rule">
-          <div class="rule-label">Present "to be" suffixes</div>
-          Ben öğrenci<span class="suf">yim</span>  — I am a student<br>
-          Sen öğrenci<span class="suf">sin</span>  — You are a student<br>
-          O öğrenci<span class="suf">(dir)</span> — He/She is a student (dir often omitted)<br>
-          Biz öğrenci<span class="suf">yiz</span>  — We are students<br>
-          Siz öğrenci<span class="suf">siniz</span> — You (pl.) are students<br>
-          Onlar öğrenci<span class="suf">ler</span> — They are students
-        </div>
-
-        <h4>Negative to be — değil</h4>
-        <p><em>Değil</em> means "not" and is placed before the to-be suffix: <em>öğrenci değilim</em> (I am not a student).</p>
-
-        <h4>Past to be</h4>
-        <p>The past of "to be" adds <em>-di</em> after the noun: <em>öğrenciydim</em> (I was a student), <em>öğrenciydin</em> (you were), <em>öğrenciydi</em> (he/she was).</p>
-
-        <div class="quiz" id="qz04">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you say "We are tired" in Turkish? (yorgun = tired)</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz04">Biz yorgunim</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz04">Biz yorgunuz</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz04">Biz yorgunsin</button>
-          </div>
-          <div class="quiz-feedback" id="qz04-fb"></div>
-          <button class="quiz-reset" id="qz04-rs" onclick="resetQuiz('qz04')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 05 ══ -->
-        <h3 id="ch05">Chapter 05 — The Six Noun Cases</h3>
-
-        <table class="t">
-          <thead><tr><th>Case</th><th>Suffix</th><th>Answers</th><th>Example</th><th>Meaning</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Nominative</strong></td><td class="tr">—</td><td>Who/What (subject)</td><td>Adam geldi</td><td>The man came</td></tr>
-            <tr><td><strong>Accusative</strong></td><td class="tr">-(y)i/ı/u/ü</td><td>Who/What (definite object)</td><td>Adamı gördüm</td><td>I saw the man</td></tr>
-            <tr><td><strong>Dative</strong></td><td class="tr">-(y)e/a</td><td>To where / To whom</td><td>Eve gidiyorum</td><td>I'm going home</td></tr>
-            <tr><td><strong>Locative</strong></td><td class="tr">-de/da/te/ta</td><td>Where (static)</td><td>Evde oturuyorum</td><td>I'm sitting at home</td></tr>
-            <tr><td><strong>Ablative</strong></td><td class="tr">-den/dan/ten/tan</td><td>From where / From whom</td><td>Evden geliyorum</td><td>I'm coming from home</td></tr>
-            <tr><td><strong>Genitive</strong></td><td class="tr">-(n)in/ın/un/ün</td><td>Whose / Of what</td><td>Evin kapısı</td><td>The door of the house</td></tr>
-          </tbody>
-        </table>
-
-        <div class="callout">
-          <div class="callout-label">Accusative — only for definite objects</div>
-          The accusative suffix only marks a <em>specific, definite</em> direct object. If the object is indefinite, no accusative.<br><br>
-          <em>Sandviç yedim</em> — I ate a sandwich (indefinite — no suffix)<br>
-          <em>Sandviçi yedim</em> — I ate the sandwich (definite — accusative)
-        </div>
-
-        <div class="rule">
-          <div class="rule-label">Case suffix full conjugation — ev (house, front vowel)</div>
-          Nominative: ev<br>
-          Accusative: ev<span class="suf">i</span><br>
-          Dative:     ev<span class="suf">e</span><br>
-          Locative:   ev<span class="suf">de</span><br>
-          Ablative:   ev<span class="suf">den</span><br>
-          Genitive:   ev<span class="suf">in</span>
-        </div>
-
-        <div class="rule">
-          <div class="rule-label">Case suffix full conjugation — araba (car, back vowel, ends in vowel)</div>
-          Nominative: araba<br>
-          Accusative: araba<span class="suf">yı</span> (buffer y)<br>
-          Dative:     araba<span class="suf">ya</span> (buffer y)<br>
-          Locative:   araba<span class="suf">da</span><br>
-          Ablative:   araba<span class="suf">dan</span><br>
-          Genitive:   araba<span class="suf">nın</span> (buffer n)
-        </div>
-
-        <div class="quiz" id="qz05">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">You want to say "I'm going to Istanbul" (İstanbul'a gidiyorum). Which case is on İstanbul?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz05">Locative (-da)</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz05">Dative (-a) — direction toward a place</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz05">Ablative (-dan)</button>
-          </div>
-          <div class="quiz-feedback" id="qz05-fb"></div>
-          <button class="quiz-reset" id="qz05-rs" onclick="resetQuiz('qz05')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 06 ══ -->
-        <h3 id="ch06">Chapter 06 — Numbers, Dates & Time</h3>
-
-        <h4>Cardinal numbers</h4>
-        <table class="t">
-          <thead><tr><th>Number</th><th>Turkish</th><th>Number</th><th>Turkish</th></tr></thead>
-          <tbody>
-            <tr><td>0</td><td>sıfır</td><td>11</td><td>on bir</td></tr>
-            <tr><td>1</td><td>bir</td><td>20</td><td>yirmi</td></tr>
-            <tr><td>2</td><td>iki</td><td>30</td><td>otuz</td></tr>
-            <tr><td>3</td><td>üç</td><td>40</td><td>kırk</td></tr>
-            <tr><td>4</td><td>dört</td><td>50</td><td>elli</td></tr>
-            <tr><td>5</td><td>beş</td><td>60</td><td>altmış</td></tr>
-            <tr><td>6</td><td>altı</td><td>70</td><td>yetmiş</td></tr>
-            <tr><td>7</td><td>yedi</td><td>80</td><td>seksen</td></tr>
-            <tr><td>8</td><td>sekiz</td><td>90</td><td>doksan</td></tr>
-            <tr><td>9</td><td>dokuz</td><td>100</td><td>yüz</td></tr>
-            <tr><td>10</td><td>on</td><td>1000</td><td>bin</td></tr>
-          </tbody>
-        </table>
-
-        <h4>Ordinal numbers — -(i)nci</h4>
-        <p>Add <strong>-(i)nci / -(ı)ncı / -(u)ncu / -(ü)ncü</strong> to make ordinals: <em>birinci</em> (first), <em>ikinci</em> (second), <em>üçüncü</em> (third), <em>dördüncü</em> (fourth).</p>
-
-        <h4>Days of the week</h4>
-        <table class="t">
-          <thead><tr><th>Turkish</th><th>English</th><th>Turkish</th><th>English</th></tr></thead>
-          <tbody>
-            <tr><td>Pazartesi</td><td>Monday</td><td>Cuma</td><td>Friday</td></tr>
-            <tr><td>Salı</td><td>Tuesday</td><td>Cumartesi</td><td>Saturday</td></tr>
-            <tr><td>Çarşamba</td><td>Wednesday</td><td>Pazar</td><td>Sunday</td></tr>
-            <tr><td>Perşembe</td><td>Thursday</td><td></td><td></td></tr>
-          </tbody>
-        </table>
-
-        <h4>Months</h4>
-        <p>Ocak, Şubat, Mart, Nisan, Mayıs, Haziran, Temmuz, Ağustos, Eylül, Ekim, Kasım, Aralık.</p>
-
-        <h4>Telling time</h4>
-        <ul>
-          <li><em>Saat kaç?</em> — What time is it?</li>
-          <li><em>Saat üç</em> — It's 3 o'clock</li>
-          <li><em>Saat üçü on geçiyor</em> — It's 10 past 3</li>
-          <li><em>Saat dörde on var</em> — It's 10 to 4</li>
-          <li><em>Saat üçbuçuk</em> — It's half past 3</li>
-        </ul>
-
-        <div class="quiz" id="qz06">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you say "three books" in Turkish?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz06">üç kitaplar</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz06">üç kitap</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz06">üçler kitap</button>
-          </div>
-          <div class="quiz-feedback" id="qz06-fb"></div>
-          <button class="quiz-reset" id="qz06-rs" onclick="resetQuiz('qz06')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 07 ══ -->
-        <h3 id="ch07">Chapter 07 — Adjectives & Word Order</h3>
-
-        <h4>Adjectives never change</h4>
-        <p>Turkish adjectives have no agreement with the noun they modify. <em>Güzel</em> (beautiful) stays <em>güzel</em> regardless of number, case, or anything else. Adjectives always precede the noun: <em>güzel ev</em> (beautiful house), <em>büyük arabalar</em> (big cars).</p>
-
-        <h4>Comparison</h4>
-        <ul>
-          <li>Comparative: <em>daha</em> + adjective — <em>daha büyük</em> (bigger)</li>
-          <li>Superlative: <em>en</em> + adjective — <em>en büyük</em> (biggest)</li>
-          <li>"Than" uses the ablative: <em>ondan daha büyük</em> (bigger than him)</li>
-        </ul>
-
-        <h4>Word order — SOV and left-branching</h4>
-        <div class="example">
-          <div class="example-label">Word order comparison</div>
-          English: I bought a red bag at the market yesterday.<br>
-          Turkish: Ben dün pazarda kırmızı bir çanta satın aldım.<br>
-          (I yesterday market-at red a bag bought.)<br><br>
-          Time (dün) → place (pazarda) → adjective (kırmızı) → object (çanta) → verb (last).
-        </div>
-
-        <div class="quiz" id="qz07">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">Which sentence has correct Turkish word order for "The student reads a good book"?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz07">Öğrenci okuyor iyi bir kitap</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz07">Öğrenci iyi bir kitap okuyor</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz07">İyi bir kitap öğrenci okuyor</button>
-          </div>
-          <div class="quiz-feedback" id="qz07-fb"></div>
-          <button class="quiz-reset" id="qz07-rs" onclick="resetQuiz('qz07')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 08 ══ -->
-        <h3 id="ch08">Chapter 08 — Ability & Possibility: -ebilmek</h3>
-
-        <div class="rule">
-          <div class="rule-label">Ability suffix formation</div>
-          Verb stem ending in consonant: stem + <span class="suf">ebil / abil</span> + tense + person<br>
-          Verb stem ending in vowel: stem + <span class="suf">bil</span> + tense + person<br><br>
-          gel- (come) → gel<span class="suf">ebil</span>iyor (can come)<br>
-          git- (go) → git<span class="suf">ebil</span>irim (I can go)<br>
-          yap- (do) → yap<span class="suf">abil</span>irim (I can do it)<br>
-          ye- (eat) → ye<span class="suf">bil</span>irim (I can eat)
-        </div>
-
-        <h4>Inability — -eme- / -ama-</h4>
-        <div class="rule">
-          <div class="rule-label">Inability formation</div>
-          gel- → gel<span class="suf">eme</span>yorum (I cannot come)<br>
-          git- → git<span class="suf">eme</span>m (I can't go)<br>
-          yap- → yap<span class="suf">ama</span>m (I can't do it)<br>
-          gel- → gel<span class="suf">eme</span>dim (I couldn't come — past)
-        </div>
-
-        <div class="quiz" id="qz08">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you say "I couldn't sleep" in Turkish? (uyu- = to sleep, -di past tense)</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz08">uyuyamıyorum</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz08">uyuyamadım</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz08">uyuyabilmedim</button>
-          </div>
-          <div class="quiz-feedback" id="qz08-fb"></div>
-          <button class="quiz-reset" id="qz08-rs" onclick="resetQuiz('qz08')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 09 ══ -->
-        <h3 id="ch09">Chapter 09 — Present Continuous: -iyor</h3>
-
-        <div class="rule">
-          <div class="rule-label">Present continuous formation</div>
-          After e, i → <span class="front">iyor</span><br>
-          After a, ı → <span class="back">ıyor</span><br>
-          After o, u → <span class="back">uyor</span><br>
-          After ö, ü → <span class="front">üyor</span>
-        </div>
-
-        <p>If the verb stem ends in a vowel, that vowel is dropped before -iyor: <em>ye-</em> (eat) → <em>yiyor</em>. <em>de-</em> (say) → <em>diyor</em>.</p>
-
-        <table class="t">
-          <thead><tr><th>Person</th><th>gelmek (to come)</th><th>gitmek (to go)</th><th>yemek (to eat)</th></tr></thead>
-          <tbody>
-            <tr><td>Ben</td><td>gel<span class="suf">iyorum</span></td><td>git<span class="suf">iyorum</span></td><td>y<span class="suf">iyorum</span></td></tr>
-            <tr><td>Sen</td><td>gel<span class="suf">iyorsun</span></td><td>git<span class="suf">iyorsun</span></td><td>y<span class="suf">iyorsun</span></td></tr>
-            <tr><td>O</td><td>gel<span class="suf">iyor</span></td><td>git<span class="suf">iyor</span></td><td>y<span class="suf">iyor</span></td></tr>
-            <tr><td>Biz</td><td>gel<span class="suf">iyoruz</span></td><td>git<span class="suf">iyoruz</span></td><td>y<span class="suf">iyoruz</span></td></tr>
-            <tr><td>Siz</td><td>gel<span class="suf">iyorsunuz</span></td><td>git<span class="suf">iyorsunuz</span></td><td>y<span class="suf">iyorsunuz</span></td></tr>
-            <tr><td>Onlar</td><td>gel<span class="suf">iyorlar</span></td><td>git<span class="suf">iyorlar</span></td><td>y<span class="suf">iyorlar</span></td></tr>
-          </tbody>
-        </table>
-
-        <h4>Negative present continuous</h4>
-        <p>Insert <strong>-mi-/-mı-/-mu-/-mü-</strong> between stem and -iyor: <em>gelmiyorum</em> (I'm not coming).</p>
-
-        <div class="quiz" id="qz09">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">Conjugate "oku-" (to read) in present continuous, 3rd person singular.</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz09">okuyiyor</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz09">okuyor</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz09">okıyor</button>
-          </div>
-          <div class="quiz-feedback" id="qz09-fb"></div>
-          <button class="quiz-reset" id="qz09-rs" onclick="resetQuiz('qz09')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 10 ══ -->
-        <h3 id="ch10">Chapter 10 — The Aorist: -ir / -er / -ar / -ur</h3>
-
-        <p>The aorist (geniş zaman) expresses habitual actions, general truths, and permanent states — roughly the English simple present. For verbs with stems of two or more syllables: add <strong>-ir/-ır/-ur/-ür</strong>. For one-syllable stems ending in a vowel: add <strong>-r</strong> directly.</p>
-
-        <h4>The 13 irregular aorist verbs</h4>
-        <p>Thirteen common one-syllable verbs take <strong>-er/-ar</strong> instead of -ir/-ır. These must be memorized: <em>almak, bilmek, bulmak, durmak, gelmek, görmek, kalmak, olmak, sanmak, ölmek, vermek, varmak, vurmak</em>.</p>
-
-        <table class="t">
-          <thead><tr><th>Person</th><th>gelmek (come)</th><th>Personal suffix</th></tr></thead>
-          <tbody>
-            <tr><td>Ben</td><td>gel<span class="suf">irim</span></td><td>-im</td></tr>
-            <tr><td>Sen</td><td>gel<span class="suf">irsin</span></td><td>-sin</td></tr>
-            <tr><td>O</td><td>gel<span class="suf">ir</span></td><td>∅</td></tr>
-            <tr><td>Biz</td><td>gel<span class="suf">iriz</span></td><td>-iz</td></tr>
-            <tr><td>Siz</td><td>gel<span class="suf">irsiniz</span></td><td>-siniz</td></tr>
-            <tr><td>Onlar</td><td>gel<span class="suf">irler</span></td><td>-ler</td></tr>
-          </tbody>
-        </table>
-
-        <h4>Negative aorist</h4>
-        <p>The negative aorist uses <strong>stem + -mez/-maz</strong>. First person singular is irregular: <em>gelmem</em> (I don't come).</p>
-
-        <div class="quiz" id="qz10">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">Which form correctly expresses "She usually drinks tea" (çay iç- = drink tea)?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz10">Çay içiyor</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz10">Çay içer</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz10">Çay içecek</button>
-          </div>
-          <div class="quiz-feedback" id="qz10-fb"></div>
-          <button class="quiz-reset" id="qz10-rs" onclick="resetQuiz('qz10')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 11 ══ -->
-        <h3 id="ch11">Chapter 11 — Past Witnessed: -di</h3>
-
-        <p>The <em>-di past</em> is used when you <strong>personally witnessed or directly experienced</strong> the event.</p>
-
-        <div class="rule">
-          <div class="rule-label">-di past formation</div>
-          After voiced sounds: stem + <span class="suf">di/dı/du/dü</span> + personal suffix<br>
-          After voiceless sounds (ç,f,h,k,p,s,ş,t): stem + <span class="suf">ti/tı/tu/tü</span><br><br>
-          gel- → gel<span class="suf">di</span>m (I came)<br>
-          git- → git<span class="suf">ti</span>m (I went)<br>
-          oku- → oku<span class="suf">du</span>m (I read)<br>
-          iç- → iç<span class="suf">ti</span>m (I drank)
-        </div>
-
-        <table class="t">
-          <thead><tr><th>Person</th><th>gelmek — -di past</th><th>gitmek — -di past</th></tr></thead>
-          <tbody>
-            <tr><td>Ben</td><td>gel<span class="suf">dim</span></td><td>git<span class="suf">tim</span></td></tr>
-            <tr><td>Sen</td><td>gel<span class="suf">din</span></td><td>git<span class="suf">tin</span></td></tr>
-            <tr><td>O</td><td>gel<span class="suf">di</span></td><td>git<span class="suf">ti</span></td></tr>
-            <tr><td>Biz</td><td>gel<span class="suf">dik</span></td><td>git<span class="suf">tik</span></td></tr>
-            <tr><td>Siz</td><td>gel<span class="suf">diniz</span></td><td>git<span class="suf">tiniz</span></td></tr>
-            <tr><td>Onlar</td><td>gel<span class="suf">diler</span></td><td>git<span class="suf">tiler</span></td></tr>
-          </tbody>
-        </table>
-
-        <div class="quiz" id="qz11">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">You personally saw it rain this morning. Which past tense do you use?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="true"  data-qz="qz11">-di past — because you witnessed it directly</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz11">-miş past — because it's in the past</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz11">Either — the choice is stylistic</button>
-          </div>
-          <div class="quiz-feedback" id="qz11-fb"></div>
-          <button class="quiz-reset" id="qz11-rs" onclick="resetQuiz('qz11')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 12 ══ -->
-        <h3 id="ch12">Chapter 12 — Past Reported: -miş & Evidentiality</h3>
-
-        <p>The <em>-miş past</em> marks events you did <strong>not</strong> personally witness — things you heard about, read about, inferred, or discovered after the fact. Linguists call this <strong>evidentiality</strong>.</p>
-
-        <div class="rule">
-          <div class="rule-label">-miş past formation (4-way harmony)</div>
-          stem + <span class="suf">miş/mış/muş/müş</span> + personal suffix<br><br>
-          gel- → gel<span class="suf">miş</span>im (I apparently came)<br>
-          git- → git<span class="suf">miş</span> (he apparently went)<br>
-          uyu- → uyu<span class="suf">muş</span> (she apparently slept)<br>
-          düş- → düş<span class="suf">müş</span> (it apparently fell)
-        </div>
-
-        <div class="callout">
-          <div class="callout-label">The three registers of -miş</div>
-          <strong>1. Reported speech:</strong> <em>Ahmet gelmiş</em> — "Ahmet came (I heard)"<br>
-          <strong>2. Discovery:</strong> <em>Anahtarımı kaybetmişim!</em> — "I've lost my keys!" (just noticed)<br>
-          <strong>3. Fairy tales / sarcasm:</strong> <em>bir varmış bir yokmuş</em> = "once upon a time"
-        </div>
-
-        <div class="quiz" id="qz12">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">You wake up and notice your keys are gone. You say to yourself "I lost my keys!" — which past tense?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz12">-di past: anahtarımı kaybettim</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz12">-miş past: anahtarımı kaybetmişim (discovery)</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz12">Either is fine here</button>
-          </div>
-          <div class="quiz-feedback" id="qz12-fb"></div>
-          <button class="quiz-reset" id="qz12-rs" onclick="resetQuiz('qz12')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 13 ══ -->
-        <h3 id="ch13">Chapter 13 — Future Tense: -ecek / -acak</h3>
-
-        <div class="rule">
-          <div class="rule-label">Future tense formation</div>
-          Stem ending in consonant + <span class="suf">ecek/acak</span> + personal suffix<br>
-          Stem ending in vowel: drop the vowel, add <span class="suf">yecek/yacak</span><br><br>
-          gel- → gel<span class="suf">eceğ</span>im (I will come)<br>
-          git- → git<span class="suf">eceğ</span>im (I will go — k→ğ before vowel)<br>
-          oku- → oku<span class="suf">yacak</span> (he will read)<br>
-          ye- → ye<span class="suf">yeceğ</span>im (I will eat)
-        </div>
-
-        <table class="t">
-          <thead><tr><th>Person</th><th>gelmek — future</th><th>gitmek — future</th></tr></thead>
-          <tbody>
-            <tr><td>Ben</td><td>gel<span class="suf">eceğim</span></td><td>git<span class="suf">eceğim</span></td></tr>
-            <tr><td>Sen</td><td>gel<span class="suf">eceksin</span></td><td>git<span class="suf">eceksin</span></td></tr>
-            <tr><td>O</td><td>gel<span class="suf">ecek</span></td><td>git<span class="suf">ecek</span></td></tr>
-            <tr><td>Biz</td><td>gel<span class="suf">eceğiz</span></td><td>git<span class="suf">eceğiz</span></td></tr>
-            <tr><td>Siz</td><td>gel<span class="suf">eceksiniz</span></td><td>git<span class="suf">eceksiniz</span></td></tr>
-            <tr><td>Onlar</td><td>gel<span class="suf">ecekler</span></td><td>git<span class="suf">ecekler</span></td></tr>
-          </tbody>
-        </table>
-
-        <div class="quiz" id="qz13">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you say "They will not come tomorrow"? (yarın = tomorrow, gel- = come)</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz13">Yarın gelmeyecek</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz13">Yarın gelmeyecekler</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz13">Yarın gelmiyorlar</button>
-          </div>
-          <div class="quiz-feedback" id="qz13-fb"></div>
-          <button class="quiz-reset" id="qz13-rs" onclick="resetQuiz('qz13')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 14 ══ -->
-        <h3 id="ch14">Chapter 14 — Necessity & Obligation: -meli / -malı</h3>
-
-        <div class="rule">
-          <div class="rule-label">Necessity suffix — -meli/-malı</div>
-          Front vowel stem → stem + <span class="suf">meli</span> + personal suffix<br>
-          Back vowel stem  → stem + <span class="suf">malı</span> + personal suffix<br><br>
-          gel- → gel<span class="suf">meli</span>yim (I must come)<br>
-          yap- → yap<span class="suf">malı</span>yım (I must do it)
-        </div>
-
-        <table class="t">
-          <thead><tr><th>Person</th><th>gelmek — necessity</th></tr></thead>
-          <tbody>
-            <tr><td>Ben</td><td>gel<span class="suf">meliyim</span></td></tr>
-            <tr><td>Sen</td><td>gel<span class="suf">melisin</span></td></tr>
-            <tr><td>O</td><td>gel<span class="suf">meli</span></td></tr>
-            <tr><td>Biz</td><td>gel<span class="suf">meliyiz</span></td></tr>
-            <tr><td>Siz</td><td>gel<span class="suf">melisiniz</span></td></tr>
-            <tr><td>Onlar</td><td>gel<span class="suf">meliler</span></td></tr>
-          </tbody>
-        </table>
-
-        <p><em>Gelmemelisin</em> = "You must not come" (prohibition). <em>Gelmene gerek yok</em> = "You don't need to come" (lack of necessity — different meaning).</p>
-
-        <div class="quiz" id="qz14">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you say "We must study"? (çalış- = to study)</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz14">Çalışmalıyorum</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz14">Çalışmalıyız</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz14">Çalışmeliyiz</button>
-          </div>
-          <div class="quiz-feedback" id="qz14-fb"></div>
-          <button class="quiz-reset" id="qz14-rs" onclick="resetQuiz('qz14')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 15 ══ -->
-        <h3 id="ch15">Chapter 15 — Negation & Questions</h3>
-
-        <h4>Verbal negation — -me / -ma</h4>
-        <div class="rule">
-          <div class="rule-label">Negation position</div>
-          Verb stem + <span class="suf">me/ma</span> + tense suffix + personal suffix<br><br>
-          gel- + me + iyor → gel<span class="suf">mi</span>yor (not coming — vowel contracts)<br>
-          git- + me + ecek → git<span class="suf">me</span>yecek (won't go)<br>
-          yap- + ma + dı  → yap<span class="suf">ma</span>dı (didn't do)<br>
-          gel- + me + r   → gel<span class="suf">mez</span> (doesn't come — aorist special)
-        </div>
-
-        <h4>Question particle — mi / mı / mu / mü</h4>
-        <div class="rule">
-          <div class="rule-label">Question formation</div>
-          Geliyor<span class="suf">sun</span> → Geliyor <span class="suf">mu</span>sun? — Are you coming?<br>
-          Türkçe konuşuyor → Türkçe konuşuyor <span class="suf">mu</span>? — Does he speak Turkish?<br>
-          İstanbul'a gideceksin → İstanbul'a gidecek <span class="suf">mi</span>sin? — Will you go?
-        </div>
-
-        <h4>Question words</h4>
-        <table class="t">
-          <thead><tr><th>Turkish</th><th>English</th><th>Turkish</th><th>English</th></tr></thead>
-          <tbody>
-            <tr><td>ne</td><td>what</td><td>nasıl</td><td>how</td></tr>
-            <tr><td>kim</td><td>who</td><td>neden / niçin</td><td>why</td></tr>
-            <tr><td>nerede</td><td>where</td><td>kaç</td><td>how many</td></tr>
-            <tr><td>ne zaman</td><td>when</td><td>hangi</td><td>which</td></tr>
-            <tr><td>nereye</td><td>where to</td><td>ne kadar</td><td>how much</td></tr>
-          </tbody>
-        </table>
-
-        <div class="quiz" id="qz15">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you form "Are you tired?" from "Sen yorgunsun"?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz15">Sen yorgunmusun?</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz15">Sen yorgun musun?</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz15">Sen musun yorgun?</button>
-          </div>
-          <div class="quiz-feedback" id="qz15-fb"></div>
-          <button class="quiz-reset" id="qz15-rs" onclick="resetQuiz('qz15')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 16 ══ -->
-        <h3 id="ch16">Chapter 16 — Postpositions</h3>
-
-        <table class="t">
-          <thead><tr><th>Postposition</th><th>Meaning</th><th>Case required</th><th>Example</th></tr></thead>
-          <tbody>
-            <tr><td>için</td><td>for, because of</td><td>Nominative</td><td>sen için — for you</td></tr>
-            <tr><td>ile / -le/-la</td><td>with, by means of</td><td>Nominative</td><td>arabayla — by car</td></tr>
-            <tr><td>gibi</td><td>like, as</td><td>Nominative</td><td>su gibi — like water</td></tr>
-            <tr><td>kadar</td><td>until, as far as</td><td>Nominative / dative</td><td>eve kadar — as far as home</td></tr>
-            <tr><td>karşı</td><td>against, opposite</td><td>Dative</td><td>bana karşı — against me</td></tr>
-            <tr><td>göre</td><td>according to</td><td>Dative</td><td>bana göre — in my opinion</td></tr>
-            <tr><td>rağmen</td><td>despite</td><td>Dative</td><td>yağmura rağmen — despite the rain</td></tr>
-            <tr><td>önce</td><td>before</td><td>Ablative</td><td>yemekten önce — before the meal</td></tr>
-            <tr><td>sonra</td><td>after</td><td>Ablative</td><td>yemekten sonra — after the meal</td></tr>
-            <tr><td>beri</td><td>since</td><td>Ablative</td><td>sabahtan beri — since morning</td></tr>
-            <tr><td>dolayı</td><td>because of</td><td>Ablative</td><td>hastalıktan dolayı — due to illness</td></tr>
-          </tbody>
-        </table>
-
-        <div class="quiz" id="qz16">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">Which postposition + case expresses "before the meeting" (toplantı = meeting)?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz16">toplantıya önce (dative + önce)</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz16">toplantıdan önce (ablative + önce)</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz16">toplantı için (nominative + için)</button>
-          </div>
-          <div class="quiz-feedback" id="qz16-fb"></div>
-          <button class="quiz-reset" id="qz16-rs" onclick="resetQuiz('qz16')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 17 ══ -->
-        <h3 id="ch17">Chapter 17 — Compound Verbs with etmek, olmak & yapmak</h3>
+        <p><strong>Pawn structure.</strong> Pawn weaknesses &#8212; isolated pawns, doubled pawns, backward pawns &#8212; are permanent in a way that piece placement is not. A weak pawn creates a lasting target that good players will exploit throughout the game. Pawn structure is covered in depth in Chapter 04, but it is worth including in every positional evaluation.</p>
 
         <div class="example">
-          <div class="example-label">Common etmek compounds</div>
-          telefon etmek — to phone<br>
-          yardım etmek — to help<br>
-          kabul etmek — to accept<br>
-          devam etmek — to continue<br>
-          tercih etmek — to prefer
+          <div class="example-label">Putting the process together</div>
+          Your opponent just moved their knight to e5. Before touching a piece, you ask: what does this threaten? The knight on e5 attacks g4 and c4 &#8212; nothing immediate, but it is well centralized. What are my CCT options? I could capture it with my bishop, but that looks dubious. I could attack it with f6. I could ignore it and push my queenside pawn. You generate three candidates, calculate each briefly, and identify that f6 attacks the knight and gains space &#8212; but first you run the blunder check: does f6 weaken my king? Yes, slightly, but the knight retreats and you have not opened any critical files. You play f6.
         </div>
 
-        <div class="callout">
-          <div class="callout-label">Var and yok — existence, not olmak</div>
-          "There is" and "there isn't" use <em>var</em> and <em>yok</em>, not <em>olmak</em>. <em>Para var</em> = there is money. <em>Süt yok</em> = there is no milk.
-        </div>
-
-        <p><em>Yapmak</em> combines with action nouns: <em>alışveriş yapmak</em> (to go shopping), <em>spor yapmak</em> (to do sport), <em>hata yapmak</em> (to make a mistake).</p>
-
-        <div class="quiz" id="qz17">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How would you say "I will call you" using the compound verb for "to phone"?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz17">Seni telefon edecek</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz17">Seni arayacağım / Telefon edeceğim</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz17">Sana telefon olmak</button>
-          </div>
-          <div class="quiz-feedback" id="qz17-fb"></div>
-          <button class="quiz-reset" id="qz17-rs" onclick="resetQuiz('qz17')">Try again</button>
-        </div>
+        <p>The thinking process sounds slow when described in full. With practice it becomes fast and mostly unconscious &#8212; a trained instinct rather than a deliberate checklist. But it has to be practiced deliberately first. In every training game, discipline yourself to follow the process. The habit, once formed, is one of the most durable improvements you can make.</p>
 
         <p><hr/></p>
 
-        <!-- ══ CH 18 ══ -->
-        <h3 id="ch18">Chapter 18 — Conditionals</h3>
+        <!-- ── CH 02 ── -->
+        <h3 id="ch02">Chapter 02: Tactics &amp; Patterns</h3>
 
-        <div class="rule">
-          <div class="rule-label">Conditional -se/-sa (2-way harmony)</div>
-          Verb stem + <span class="suf">se/sa</span> + personal suffix<br><br>
-          gel- → gel<span class="suf">se</span>m (if I come)<br>
-          git- → git<span class="suf">se</span>n (if you go)<br>
-          yap- → yap<span class="suf">sa</span>k (if we do)<br>
-          Negative: gel<span class="suf">me</span>sem (if I don't come)
-        </div>
+        <p>Tactics are forced sequences of moves that win material or deliver checkmate. They are the mechanism by which most games below 2000 are actually decided. Not by strategy, not by endgame technique, but by one player seeing a combination that the other missed. At the 1000 level, most tactical motifs are basic. At the 1800 level, they are more deeply hidden and require longer calculation. But the underlying patterns are the same throughout. Learning to see them reliably is the single most important thing you can do to improve your chess.</p>
 
-        <h4>Past conditional — hypotheticals</h4>
-        <p>Stack -se onto the -di past: <em>gelseydi</em> (if he had come), <em>gitseydim</em> (if I had gone).</p>
+        <h4>The core tactical motifs</h4>
+
+        <p><strong>The fork.</strong> A single piece attacks two or more of the opponent&#8217;s pieces simultaneously, so only one can be saved. Knights are the best forking pieces because they move in an L-shape that most players find harder to visualize instinctively. A classic example is a knight on c7 simultaneously forking a king on e8 and a rook on a8. The king must move, and the rook falls. Whenever you place a knight, ask: can it reach a square from which it attacks two valuable targets?</p>
+
+        <p><strong>The pin.</strong> A piece is attacked along a line (rank, file, or diagonal) in such a way that moving it would expose a more valuable piece behind it to capture. An absolute pin is against the king &#8212; the pinned piece literally cannot move legally. A relative pin is against a lesser piece &#8212; the pinned piece can move, but at material cost. Pinned pieces are often weak: they cannot defend other pieces effectively, and they can be attacked repeatedly.</p>
+
+        <p><strong>The skewer.</strong> The reverse of a pin. A valuable piece is attacked directly; when it moves to safety, a lesser piece behind it is captured. A rook skewering a king and queen on the same file is the classic example. The king must flee, the queen is taken.</p>
+
+        <p><strong>Discovered attack.</strong> A piece moves, uncovering an attack from another piece behind it. The moving piece often creates its own threat simultaneously, forcing the opponent to deal with two problems at once. A discovered check is especially powerful because the king must respond to the check, leaving the second threat undefended.</p>
+
+        <p><strong>Double check.</strong> A rare but lethal version of the discovered attack where both the moving piece and the uncovered piece give check simultaneously. The only legal response is to move the king &#8212; blocking or capturing is impossible. This forces the king into positions it cannot escape from.</p>
+
+        <p><strong>Deflection and decoy.</strong> A piece that is performing a defensive function is lured or forced away from that function. The classic deflection sacrifices material to draw a defending piece off a critical square. The classic decoy sacrifices material to force a piece onto a square where it can be exploited. Both rely on the insight that a piece cannot defend two things at once.</p>
+
+        <p><strong>Removal of the guard.</strong> A defender is captured or driven away, exposing the piece or square it was protecting. Often the attacker gives up material to eliminate the guard, because the piece or square being liberated is worth more than the cost of removing the guard.</p>
+
+        <p><strong>Zwischenzug.</strong> An in-between move &#8212; a forcing move inserted into a sequence where the opponent expects a straightforward recapture. The zwischenzug changes the evaluation of the entire exchange by adding a threat that must be addressed before the sequence can continue. Recognizing that you can play a zwischenzug before recapturing, or that your opponent might, is a mark of the 1600+ player.</p>
 
         <div class="example">
-          <div class="example-label">Full conditional sentences</div>
-          Yağmur yağarsa, evde kalırım. — If it rains, I'll stay home.<br>
-          Para olsaydı, seyahat ederdim. — If I had money, I would travel.<br>
-          Erken gelseydin, görüşürdük. — If you had come earlier, we would have met.
+          <div class="example-label">A simple combination</div>
+          White has a bishop on b3, a queen on d1, and a knight on f3. Black has a king on g8 and a queen on e7, with only a pawn on f7 defending the diagonal to the king. White plays Bxf7+, a bishop sacrifice. Black&#8217;s king must capture: Kxf7. White plays Ng5+, forking king and queen. Black must move the king. White captures the queen. The combination was: bishop sacrifice to expose the king, knight fork to win the queen. Each piece played its role in sequence.
         </div>
 
-        <div class="quiz" id="qz18">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">Which sentence correctly expresses "If she studies, she will pass" (çalış- = study, geç- = pass)?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz18">Çalışırsa geçecekmiş</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz18">Çalışırsa geçecek</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz18">Çalışsaydı geçecek</button>
-          </div>
-          <div class="quiz-feedback" id="qz18-fb"></div>
-          <button class="quiz-reset" id="qz18-rs" onclick="resetQuiz('qz18')">Try again</button>
-        </div>
+        <h4>Pattern recognition vs. calculation</h4>
+
+        <p>There are two ways a player finds tactics: they either recognize a pattern they have seen before and know immediately what to look for, or they calculate deeply enough to find the sequence from scratch. At the elite level, both are at work simultaneously. At the beginner level, neither is reliable yet.</p>
+
+        <p>Pattern recognition is faster and cheaper &#8212; it is what allows a grandmaster to see a knight fork possibility instantly while a 1200 player never notices it. It is built through exposure: solving thousands of tactical puzzles, studying annotated games, and replaying famous combinations until the shapes become familiar. Calculation is the fallback when a pattern is not immediately visible &#8212; the methodical search through a tree of moves to find a forcing sequence by logic rather than instinct.</p>
+
+        <p>The practical implication is that you should invest heavily in puzzle training, especially in the 600&#8211;1400 range, with the explicit goal of burning patterns into memory. The goal is not just to solve puzzles correctly, but to reach the point where the pattern triggers recognition rather than requiring full calculation every time.</p>
+
+        <h4>How to do puzzle training properly</h4>
+
+        <p>Most players do puzzles wrong. They look at the position, try a few moves, find the answer (often by guessing or by process of elimination), and move on. This builds almost nothing. The right approach is to treat each puzzle as a miniature game analysis exercise.</p>
+
+        <p>Before looking for the solution, ask the three questions from Chapter 01: what is being threatened, what forcing moves exist, what are the candidate moves? Then calculate the main line fully before playing the first move. Do not guess. If you cannot find the solution after genuine effort, look at the answer and then &#8212; critically &#8212; replay the position from the start and re-solve it correctly with the answer in mind, so that your brain encodes the right pattern rather than just the fact that you got it wrong.</p>
+
+        <p>Spend at least 30 minutes per day on puzzles, deliberately, at the edge of your ability level. Lichess and Chess.com both have puzzle systems that adjust to your rating. Use them. The improvement from consistent puzzle training compounds faster than almost any other form of chess study.</p>
+
+        <h4>Calculation: thinking in trees</h4>
+
+        <p>Calculation is the art of visualizing sequences of moves in your head without moving the pieces. It is genuinely difficult and most players avoid it by playing moves that feel right rather than moves they have actually verified. The difference between a 1400 and a 1800 player in sharp positions is often simply that the 1800 player calculates three moves deeper and does not make assumptions.</p>
+
+        <p>The key discipline is to calculate candidate moves in full before settling on one, and to maintain the board position accurately in your head as the sequence progresses. A useful technique is to always calculate the opponent&#8217;s best response, not the response you hope they will play. When you catch yourself thinking &#8220;if they play the obvious move&#8230;&#8221; and stopping there, ask: but what if they don&#8217;t? What are their other options? Working through those alternatives is uncomfortable and slow at first, but it is how calculation depth is built.</p>
 
         <p><hr/></p>
 
-        <!-- ══ CH 19 ══ -->
-        <h3 id="ch19">Chapter 19 — Imperatives & Requests</h3>
+        <!-- ── CH 03 ── -->
+        <h3 id="ch03">Chapter 03: Openings</h3>
 
-        <div class="rule">
-          <div class="rule-label">Imperative forms</div>
-          Informal singular: bare stem — <span class="suf">Gel!</span> (Come!), <span class="suf">Git!</span> (Go!)<br>
-          Formal / plural:   stem + <span class="suf">in/ın/un/ün</span> — Gelin! Gidin!<br>
-          Very formal:       stem + <span class="suf">iniz/ınız/unuz/ünüz</span> — Geliniz!<br>
-          Negative:          stem + <span class="suf">me/ma</span> + imperative — Gelme! (Don't come!)
-        </div>
+        <p>Openings are the part of chess that beginners worry about most and most expert players would tell them to worry about least, relative to their other weaknesses. Below 1400, you will not lose games because your opening preparation is insufficient. You will lose them because you hang pieces, miss tactics, or have no plan. The opening matters, but only to the extent that it sets up a sensible position from which to play chess. Understanding why opening moves are good is more valuable than memorizing which moves are good.</p>
 
-        <h4>Softening requests</h4>
-        <p><em>Bana yardım eder misin?</em> (Can/will you help me?), <em>Gelebilir misin?</em> (Can you come?).</p>
+        <h4>The three principles</h4>
 
-        <h4>The let's form — -elim/-alım</h4>
-        <p><em>Gidelim</em> (Let's go), <em>Yiyelim</em> (Let's eat), <em>Çalışalım</em> (Let's work).</p>
+        <p>Almost every sound opening move can be justified by one of three principles, and almost every bad opening move violates at least one of them.</p>
 
-        <div class="quiz" id="qz19">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you politely ask "Can you open the window?" (aç- = open, pencere = window)?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz19">Pencereyi aç!</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz19">Pencereyi açar mısın?</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz19">Pencereyi açalım</button>
-          </div>
-          <div class="quiz-feedback" id="qz19-fb"></div>
-          <button class="quiz-reset" id="qz19-rs" onclick="resetQuiz('qz19')">Try again</button>
-        </div>
+        <p><strong>Control the center.</strong> The four central squares &#8212; e4, d4, e5, d5 &#8212; are the most important squares on the board. Pieces that control or occupy the center have more mobility and more influence over the game than pieces cramped on the edges. The first priority of any opening is to contest central space, either by occupying it with pawns or by training pieces on it from a distance.</p>
 
-        <p><hr/></p>
+        <p><strong>Develop your pieces.</strong> Every move that develops a piece (moves it from its starting square to a useful square) improves your position. Every move that does not develop a piece while your opponent is developing is a tempo lost. The first ten moves of a game are largely a race to have your pieces active before your opponent does. Specific rules follow from this: do not move the same piece twice in the opening without good reason, do not bring the queen out early (it will just be chased away, losing more tempos), develop knights before bishops (the knights&#8217; destinations are clearer early), and aim to castle within the first ten moves.</p>
 
-        <!-- ══ CH 20 ══ -->
-        <h3 id="ch20">Chapter 20 — Relative Clauses & Verbal Nouns</h3>
-
-        <h4>Verbal nouns</h4>
-        <div class="rule">
-          <div class="rule-label">Verbal noun with possession</div>
-          gel<span class="suf">me</span>m — my coming<br>
-          git<span class="suf">me</span>n — your going<br>
-          oku<span class="suf">ma</span>sı — his/her reading<br><br>
-          Benim gel<span class="suf">mem</span>i istedi — He wanted me to come
-        </div>
-
-        <h4>Relative clauses — -(y)en/-(y)an and -(d)ik</h4>
-        <div class="rule">
-          <div class="rule-label">Participial relative clauses</div>
-          The man who comes: <span class="suf">gelen</span> adam<br>
-          The woman who went: <span class="suf">giden</span> kadın<br><br>
-          The book that I read: benim oku<span class="suf">duğum</span> kitap<br>
-          The city that she lives in: onun otur<span class="suf">duğu</span> şehir
-        </div>
+        <p><strong>King safety.</strong> Once pieces are developed, castling tucks the king behind a wall of pawns and connects the rooks. A king that remains in the center is a target &#8212; open files and diagonals become dangerous, and the opponent can launch an attack with tempo by threatening the king. Castle early. This principle can be bent in specific systems where the king is safe in the center, but those systems require precise knowledge of why they work. For the developing player, castle early and ask questions later.</p>
 
         <div class="callout">
-          <div class="callout-label">Why this feels backward</div>
-          English: "the book [that I read]" — noun first, clause follows.<br>
-          Turkish: "[benim okuduğum] kitap" — clause first, noun at the end.
+          <div class="callout-label">What bad opening play actually looks like</div>
+          A player plays 1.e4, then 2.Qh5 (queen out too early), then 3.Bc4, then 4.Qxf7# &#8212; the Scholar&#8217;s Mate. This works occasionally at 600, but any player above 800 knows to defend it. What the attacking player has actually done is invested their queen in an attack that failed, wasted tempos, and usually ends up with a poorly developed position after Black plays 3...g6. The &#8220;trick&#8221; openings that beginners rely on are not opening theory &#8212; they are tactics that only work against opponents who do not know the response. Learning the response is more instructive than learning the trick.
         </div>
 
-        <div class="quiz" id="qz20">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">How do you express "the woman who is coming"? (kadın = woman, gel- = come)</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz20">kadın gelen</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz20">gelen kadın</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz20">kadın geliyor</button>
-          </div>
-          <div class="quiz-feedback" id="qz20-fb"></div>
-          <button class="quiz-reset" id="qz20-rs" onclick="resetQuiz('qz20')">Try again</button>
-        </div>
+        <h4>Building a repertoire</h4>
 
-        <p><hr/></p>
+        <p>A repertoire is a set of opening lines you play consistently and understand. Having a repertoire matters not because you need to out-memorize opponents, but because playing the same structures repeatedly lets you learn from your games. If you play a different opening every time, each game is a new unfamiliar position and you cannot build accumulated knowledge about what works and what does not.</p>
 
-        <!-- ══ CH 21 ══ -->
-        <h3 id="ch21">Chapter 21 — Causative, Passive & Reciprocal</h3>
+        <p>The right repertoire for a developing player is simple, principled, and forgiving of deviations. Here is a practical starting point:</p>
 
-        <h4>Causative — -dir / -tir / -ir / -t</h4>
-        <div class="rule">
-          <div class="rule-label">Causative suffix</div>
-          yap- (do) → yap<span class="suf">tır</span>mak (to have done)<br>
-          giy- (wear) → giy<span class="suf">dir</span>mek (to dress someone)<br>
-          ye- (eat) → ye<span class="suf">dir</span>mek (to feed someone)<br>
-          iç- (drink) → iç<span class="suf">ir</span>mek (to make drink)
-        </div>
-
-        <h4>Passive — -il / -ıl / -ul / -ül or -n</h4>
-        <div class="rule">
-          <div class="rule-label">Passive suffix</div>
-          yap- → yap<span class="suf">ıl</span>mak (to be done)<br>
-          gör- → gör<span class="suf">ül</span>mek (to be seen)<br>
-          ara- → ara<span class="suf">n</span>mak (to be searched)
-        </div>
-
-        <h4>Reciprocal — -iş / -ış / -uş / -üş</h4>
-        <div class="rule">
-          <div class="rule-label">Reciprocal suffix</div>
-          gör- → gör<span class="suf">üş</span>mek (to meet each other)<br>
-          sev- → sev<span class="suf">iş</span>mek (to love each other)
-        </div>
-
-        <div class="quiz" id="qz21">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">What does "yaptırıldı" most likely mean? (yap- = do, -tır = causative, -ıl = passive, -dı = past)</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz21">He did it himself</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz21">It was caused to be done (causative + passive stacked)</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz21">They did it to each other</button>
-          </div>
-          <div class="quiz-feedback" id="qz21-fb"></div>
-          <button class="quiz-reset" id="qz21-rs" onclick="resetQuiz('qz21')">Try again</button>
-        </div>
-
-        <p><hr/></p>
-
-        <!-- ══ CH 22 ══ -->
-        <h3 id="ch22">Chapter 22 — Discourse Markers & Connectors</h3>
-
-        <h4>Coordinating conjunctions</h4>
-        <table class="t">
-          <thead><tr><th>Turkish</th><th>English</th><th>Example</th></tr></thead>
+        <table class="rm-table">
+          <thead>
+            <tr><th>Color</th><th>Opening</th><th>Why it works for developing players</th></tr>
+          </thead>
           <tbody>
-            <tr><td>ve</td><td>and</td><td>Çay ve kahve</td></tr>
-            <tr><td>ama / fakat</td><td>but</td><td>Güzel ama pahalı</td></tr>
-            <tr><td>veya / ya da</td><td>or</td><td>Çay veya kahve</td></tr>
-            <tr><td>hem... hem (de)</td><td>both... and</td><td>Hem yorgun hem açım</td></tr>
-            <tr><td>ya... ya (da)</td><td>either... or</td><td>Ya gel ya gitme</td></tr>
-            <tr><td>ne... ne (de)</td><td>neither... nor</td><td>Ne çay ne kahve</td></tr>
+            <tr>
+              <td><strong>White</strong></td>
+              <td>1.d4 &#8594; London System</td>
+              <td>Extremely solid setup (Bf4, Nf3, e3) that is hard to attack and easy to learn. You develop the same way almost every game regardless of what Black plays. Gives you time to understand positions before memorizing theory.</td>
+            </tr>
+            <tr>
+              <td><strong>Black vs 1.e4</strong></td>
+              <td>1...e5 (Open Game)</td>
+              <td>Symmetric response that contests the center immediately. Leads to open tactical positions that build calculation skill. The Italian Game and Ruy Lopez are the most important lines to understand.</td>
+            </tr>
+            <tr>
+              <td><strong>Black vs 1.d4</strong></td>
+              <td>King&#8217;s Indian Defense</td>
+              <td>Dynamic setup where Black fianchettoes the kingside bishop and allows White to build a center, then attacks it. Teaches the concept of counterplay and is used at grandmaster level. Patterns are deep and reusable.</td>
+            </tr>
           </tbody>
         </table>
 
-        <h4>Subordinating and causal connectors</h4>
-        <table class="t">
-          <thead><tr><th>Turkish</th><th>English</th></tr></thead>
-          <tbody>
-            <tr><td>çünkü</td><td>because</td></tr>
-            <tr><td>o yüzden / bu yüzden</td><td>therefore / that's why</td></tr>
-            <tr><td>oysa / oysaki</td><td>whereas / yet</td></tr>
-            <tr><td>ayrıca</td><td>furthermore / also</td></tr>
-            <tr><td>yani</td><td>that is / I mean</td></tr>
-            <tr><td>mesela / örneğin</td><td>for example</td></tr>
-            <tr><td>belki</td><td>maybe / perhaps</td></tr>
-            <tr><td>zaten</td><td>anyway / already / as expected</td></tr>
-          </tbody>
-        </table>
+        <h4>Understanding the ideas, not the moves</h4>
 
-        <div class="callout">
-          <div class="callout-label">Zaten — the word you'll say every day</div>
-          <em>Zaten</em> expresses that something was already expected or already the case. <em>Zaten geliyordum</em> = "I was already coming anyway." Learning to use <em>zaten</em> naturally is a real marker of fluency.
-        </div>
+        <p>The most important question to ask about any opening line is not &#8220;what is the next move?&#8221; but &#8220;what is the plan?&#8221; What are you trying to achieve? Where does your king go? Which files do you want to open? Which piece is your best piece and how do you improve it? What is your opponent&#8217;s plan and how do you stop it?</p>
 
-        <div class="quiz" id="qz22">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">Which connector expresses "neither tea nor coffee"?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz22">Hem çay hem kahve</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz22">Ya çay ya kahve</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz22">Ne çay ne kahve</button>
-          </div>
-          <div class="quiz-feedback" id="qz22-fb"></div>
-          <button class="quiz-reset" id="qz22-rs" onclick="resetQuiz('qz22')">Try again</button>
-        </div>
+        <p>A player who understands the plans of an opening can navigate deviations and transpositions without being lost. A player who has only memorized moves is helpless when the opponent plays something unexpected on move seven. Below 1500, opponents will almost never follow the main lines anyway. What keeps you safe in unfamiliar territory is knowing the underlying logic, not the theory.</p>
+
+        <h4>When memorization starts to matter</h4>
+
+        <p>Around 1500&#8211;1600, you will start encountering players who know opening theory reasonably deeply and who will try to take you out of book into positions they have studied. At this point, a moderate investment in memorizing the key lines of your repertoire starts to pay off. Not long variations &#8212; five to ten moves deep is usually sufficient, plus a clear understanding of the resulting middlegame structures. The goal is to arrive at move ten or twelve in a position you understand, with roughly equal material and a clear plan.</p>
+
+        <p>Above 1800, opening preparation becomes a genuine competitive factor. You need to know not just your main lines but the subtleties: which pawn breaks are available in which structures, which piece trades favor you, what your opponent&#8217;s main ideas are and how to steer away from them. But that level of preparation is meaningless &#8212; actively counterproductive &#8212; if your tactics and positional understanding have not caught up first.</p>
 
         <p><hr/></p>
 
-        <!-- ══ CH 23 ══ -->
-        <h3 id="ch23">Chapter 23 — Diminutives & Expressive Suffixes</h3>
+        <!-- ── CH 04 ── -->
+        <h3 id="ch04">Chapter 04: Pawn Structure</h3>
 
-        <h4>The diminutive — -cik / -çık</h4>
-        <div class="rule">
-          <div class="rule-label">Diminutive suffix -cik / -çık</div>
-          küçük (small) → küçü<span class="suf">cük</span> (tiny, sweet-small)<br>
-          az (little) → az<span class="suf">cık</span> (a tiny bit)<br>
-          ev (house) → ev<span class="suf">cik</span> (little house)<br>
-          kız (girl) → kız<span class="suf">cağız</span> (poor little girl — with compassion)<br>
-          bir (one) → bir<span class="suf">cik</span> (just one / only one)
-        </div>
+        <p>&#8220;Pawns are the soul of chess&#8221; is one of Fran&ccedil;ois-Andr&eacute; Philidor&#8217;s most quoted lines, and it is as true today as it was in the 18th century. Pawns are the only pieces that cannot move backward. Every pawn move is permanent. The pawn structure that emerges from the opening is the skeleton of the position &#8212; it largely determines which pieces are strong, which squares are available, which files will be contested, and what plans each side should pursue. A player who understands pawn structure can navigate almost any middlegame with reasonable competence. A player who ignores it will keep making plans that do not work without knowing why.</p>
 
-        <h4>The -ca / -ce suffix</h4>
-        <p>Forms language names and adjectives: <em>Türk</em> → <em>Türkçe</em> (Turkish), <em>Fransız</em> → <em>Fransızca</em> (French), <em>çocuk</em> → <em>çocukça</em> (childish).</p>
+        <h4>Pawn weaknesses</h4>
 
-        <h4>Reduplication for emphasis</h4>
-        <p><em>Yavaş yavaş</em> (slowly), <em>ağır ağır</em> (heavily), <em>çabuk çabuk</em> (hurriedly).</p>
+        <p><strong>Isolated pawns.</strong> A pawn is isolated when there are no friendly pawns on adjacent files. It cannot be defended by another pawn, which means it must be defended by pieces. A piece babysitting a weak pawn is a piece that is not doing anything else. The opponent can pile pressure on an isolated pawn by doubling rooks on its file, bringing the king toward it in the endgame, or simply restricting the mobility of the pieces defending it. The classic example is the isolated queen&#8217;s pawn (IQP) on d4 or d5, which arises from several important openings. It gives the side carrying it active piece play and attacking chances as compensation &#8212; the trade-off is one of chess&#8217;s most important recurring imbalances.</p>
 
-        <div class="quiz" id="qz23">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">What does "biraz" mean, and what suffix pattern is it related to?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz23">Very much — an intensifying suffix</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz23">A little — from "bir" + "az" (one + little)</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz23">Immediately — a time adverb suffix</button>
-          </div>
-          <div class="quiz-feedback" id="qz23-fb"></div>
-          <button class="quiz-reset" id="qz23-rs" onclick="resetQuiz('qz23')">Try again</button>
-        </div>
+        <p><strong>Doubled pawns.</strong> Two pawns of the same color on the same file. They cannot defend each other, the rearmost one blocks the forward one, and they cover fewer squares than two pawns would if healthy. Doubled pawns are not always a crippling weakness &#8212; they often come with compensation in the form of an open file or bishop pair &#8212; but they are a structural liability that an attentive opponent will target in the endgame.</p>
 
-        <p><hr/></p>
+        <p><strong>Backward pawns.</strong> A pawn that cannot be advanced safely because it would be captured, and cannot be defended by other pawns because it has outrun them or they have moved. A backward pawn on an open file is a serious long-term weakness because it is a permanent target. The square in front of a backward pawn is often an excellent outpost for the opponent&#8217;s pieces.</p>
 
-        <!-- ══ CH 24 ══ -->
-        <h3 id="ch24">Chapter 24 — Reading a Real Text</h3>
+        <p><strong>Passed pawns.</strong> A pawn that has no opposing pawn in front of it or on adjacent files to stop or capture it as it advances. Passed pawns are a structural advantage, not a weakness &#8212; they represent a potential queen. The further advanced a passed pawn, the more dangerous it is. &#8220;A passed pawn must be pushed&#8221; is a well-worn rule because it is almost always right: the threat of promotion ties down the opponent&#8217;s pieces defensively.</p>
+
+        <h4>Open and closed positions</h4>
+
+        <p>Whether a position is open (few central pawns, many open files and diagonals) or closed (interlocked pawn chains, few open lines) has enormous consequences for which pieces are strong and what plans make sense.</p>
+
+        <p>In open positions, bishops are typically stronger than knights. Bishops can operate across long diagonals and move quickly from one side of the board to the other. Knights need outposts &#8212; stable squares where they cannot be chased by pawns &#8212; and in open positions such squares are hard to find. Rooks love open files. Tactical play dominates over maneuvering.</p>
+
+        <p>In closed positions, knights are often stronger than bishops. A pawn chain can completely block a bishop, reducing it to a spectator. A knight can hop over pawns and reach squares that no pawn or bishop can threaten. Plans in closed positions unfold slowly, with both sides maneuvering to achieve pawn breaks &#8212; specific pawn moves that crack open the position and activate the pieces behind them.</p>
 
         <div class="example">
-          <div class="example-label">Original sentence — Orhan Pamuk, Kar</div>
-          <strong>Kar yağmaya başladığında, Ka trenden iniyordu.</strong><br>
-          <em>"When it began to snow, Ka was getting off the train."</em>
+          <div class="example-label">Structure determines the plan</div>
+          White has pawns on c4 and e4, Black has pawns on d5 and e6 &#8212; a Queen&#8217;s Gambit-style structure. The e6 pawn is slightly backward. Black&#8217;s light-squared bishop is hemmed in by its own pawns on c6, d5, and e6. White&#8217;s plan: pressure the d5 pawn, use the c-file, post a knight on e5 (an outpost Black&#8217;s pawns cannot attack). Black&#8217;s plan: try to free the position with ...c5 or ...e5, activating the bishops. Both plans flow directly from the pawn structure. Neither player needs to calculate twenty moves ahead. They just need to understand what the structure requires.
         </div>
 
-        <table class="t">
-          <thead><tr><th>Word</th><th>Analysis</th><th>Meaning</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Kar</strong></td><td>Bare noun, nominative</td><td>snow</td></tr>
-            <tr><td><strong>yağ-</strong></td><td>Verb stem</td><td>to fall (of rain/snow)</td></tr>
-            <tr><td><strong>-ma-</strong></td><td>Verbal noun suffix</td><td>nominalization: the falling</td></tr>
-            <tr><td><strong>-ya</strong></td><td>Dative on verbal noun</td><td>to the falling → "to snow"</td></tr>
-            <tr><td><strong>başla-</strong></td><td>Verb stem</td><td>to start</td></tr>
-            <tr><td><strong>-dık-</strong></td><td>Participial suffix</td><td>the fact of starting</td></tr>
-            <tr><td><strong>-ında</strong></td><td>Locative + 3rd person possession</td><td>at its starting = when it started</td></tr>
-            <tr><td><strong>Ka</strong></td><td>Proper noun, subject</td><td>character name</td></tr>
-            <tr><td><strong>tren-</strong></td><td>Noun (loanword)</td><td>train</td></tr>
-            <tr><td><strong>-den</strong></td><td>Ablative case</td><td>from the train</td></tr>
-            <tr><td><strong>in-</strong></td><td>Verb stem</td><td>to descend / get off</td></tr>
-            <tr><td><strong>-iyor-</strong></td><td>Present continuous tense</td><td>ongoing action</td></tr>
-            <tr><td><strong>-du</strong></td><td>Past tense on -iyor → past continuous</td><td>was getting off</td></tr>
-          </tbody>
-        </table>
+        <h4>Pawn breaks</h4>
 
-        <div class="quiz" id="qz24">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">In "başladığında", the suffix -dığında is a combination of which elements?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz24">Past tense -dı + question particle + locative</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz24">Participial -dık + 3rd person possession -ı + locative -nda: "at the time of its happening"</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz24">Conditional -sa + locative</button>
-          </div>
-          <div class="quiz-feedback" id="qz24-fb"></div>
-          <button class="quiz-reset" id="qz24-rs" onclick="resetQuiz('qz24')">Try again</button>
-        </div>
+        <p>A pawn break is a pawn move that challenges the opponent&#8217;s pawn structure and opens lines for pieces. Identifying and executing the right pawn break at the right moment is one of the most important strategic skills in chess. Classic examples include ...f5 in the King&#8217;s Indian, ...c5 in French-structure positions, e4 in positions where White wants to fight for central space against a hedgehog setup, and b4 in the minority attack.</p>
+
+        <p>The key questions about any potential pawn break are: does it open lines that favor my pieces or my opponent&#8217;s? Does it create new weaknesses in my own structure? Is the timing right, or would my opponent be able to exploit it if I commit now? These are not always easy questions, but asking them is the starting point of real positional thinking.</p>
 
         <p><hr/></p>
 
-        <!-- ══ CH 25 ══ -->
-        <h3 id="ch25">Chapter 25 — Pitfalls for French & English Speakers</h3>
+        <!-- ── CH 05 ── -->
+        <h3 id="ch05">Chapter 05: Middlegame Strategy</h3>
 
-        <h4>1. Forgetting vowel harmony under pressure</h4>
-        <p>The most common error: using -de when you need -da, or -im when you need -ım. Build the habit of mentally checking the last vowel of the root before every suffix.</p>
+        <p>Strategy in chess is the art of making plans &#8212; identifying what you want to achieve and constructing a sequence of moves that works toward it. Tactics are about forcing sequences; strategy is about direction. The two are inseparable in practice: the best plan is often the one that sets up the best tactics, and the best tactics are the ones that serve a strategic goal. But thinking strategically is a distinct skill that needs to be cultivated deliberately.</p>
 
-        <h4>2. Putting the verb in the wrong place</h4>
-        <p>In Turkish the verb is always last. Even a ten-clause sentence ends with the verb.</p>
+        <h4>Piece activity and coordination</h4>
 
-        <h4>3. Confusing -di and -miş</h4>
-        <p>If you were there and saw it, use -di. If you read it, heard it, inferred it, or discovered it after the fact, use -miş.</p>
+        <p>The most reliable strategic question to ask is: which of my pieces is my worst piece, and how do I improve it? This question, attributed to a number of great players, cuts through complexity by focusing attention on the most improvable element of the position. A knight sitting on a rim square, a bishop blocked by its own pawns, a rook not yet on an open file &#8212; these pieces are not contributing. Every move that improves the worst piece improves the whole position.</p>
 
-        <h4>4. Adding plural after numbers</h4>
-        <p><em>Üç kitaplar</em> is wrong. Always <em>üç kitap</em>.</p>
+        <p>Coordination is the related idea that pieces work better together than they do in isolation. Two rooks on the same file double their power. A bishop and knight that cover each other&#8217;s blind spots control more squares than either does alone. A queen and bishop on the same diagonal are a battery that can apply pressure from a distance. Building coordination among your pieces is often more valuable than chasing a pawn.</p>
 
-        <h4>5. Using the accusative on indefinite objects</h4>
-        <p><em>Bir kitabı okudum</em> sounds strange. The accusative implies definiteness. Say <em>bir kitap okudum</em>.</p>
+        <h4>Outposts</h4>
 
-        <h4>6. Translating prepositions directly</h4>
-        <p>Turkish often uses case suffixes where French uses a preposition. "In Istanbul" = <em>İstanbul'da</em> (locative — no postposition needed).</p>
+        <p>An outpost is a square, typically in the opponent&#8217;s half of the board, that cannot be attacked by an enemy pawn. A piece &#8212; most often a knight &#8212; established on an outpost is extremely powerful. It sits deep in the position, it cannot be easily dislodged, and it radiates control over the surrounding squares. The classic knight outpost on e5 or d5 is a recurring middlegame theme in dozens of openings. Creating or preventing outposts is one of the most important positional battles in chess.</p>
 
-        <h4>7. Expecting grammatical gender</h4>
-        <p>There is none. <em>O</em> is he, she, and it. This should be a relief.</p>
+        <p>Outposts are created by pawn structure: a square becomes an outpost when the pawn that would otherwise attack it has been exchanged or advanced. This is why exchanging pawns is not a neutral act &#8212; every exchange reshapes the set of available outposts for both sides. The question &#8220;does this exchange create or destroy outposts?&#8221; should be part of every structural evaluation.</p>
 
-        <div class="quiz" id="qz25">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">Which sentence is correct?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz25">İki kitapları aldım</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz25">İki kitap aldım</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz25">İki bir kitap aldım</button>
-          </div>
-          <div class="quiz-feedback" id="qz25-fb"></div>
-          <button class="quiz-reset" id="qz25-rs" onclick="resetQuiz('qz25')">Try again</button>
-        </div>
+        <h4>The bishop pair</h4>
 
-        <p><hr/></p>
+        <p>Having two bishops when the opponent has only one (or a bishop and a knight) is a well-established long-term advantage. Bishops complement each other perfectly: one controls light squares, the other controls dark squares, and together they cover the whole board. The advantage is most pronounced in open positions with pawns on both sides of the board, where the long-range mobility of bishops is fully expressed. In closed, locked positions, a knight is often preferable to a bishop, because the knight can hop over the pawn barriers that immobilize bishops.</p>
 
-        <!-- ══ CH 26 ══ -->
-        <h3 id="ch26">Chapter 26 — Survival Vocabulary</h3>
+        <p>At the practical level, players below 1600 often give up the bishop pair without realizing its value, trading a bishop for a knight in a position where there was no tactical need to do so. Before trading a bishop for a knight, ask: is this exchange forced? Does the knight I&#8217;m capturing justify giving up the bishop pair? Often the answer is no, and the bishop should be kept.</p>
 
-        <h4>Greetings & Basics</h4>
-        <table class="t">
-          <thead><tr><th>Turkish</th><th>English</th></tr></thead>
-          <tbody>
-            <tr><td>Merhaba</td><td>Hello</td></tr>
-            <tr><td>Günaydın</td><td>Good morning</td></tr>
-            <tr><td>İyi akşamlar</td><td>Good evening</td></tr>
-            <tr><td>İyi geceler</td><td>Good night</td></tr>
-            <tr><td>Nasılsınız? / Nasılsın?</td><td>How are you? (formal/informal)</td></tr>
-            <tr><td>İyiyim, teşekkürler</td><td>I'm fine, thanks</td></tr>
-            <tr><td>Hoş geldiniz</td><td>Welcome</td></tr>
-            <tr><td>Hoş bulduk</td><td>Thank you (response to welcome)</td></tr>
-            <tr><td>Görüşürüz</td><td>See you</td></tr>
-            <tr><td>Hoşça kalın</td><td>Goodbye (formal)</td></tr>
-          </tbody>
-        </table>
+        <h4>Weak squares and colour complexes</h4>
 
-        <h4>Polite phrases</h4>
-        <table class="t">
-          <thead><tr><th>Turkish</th><th>English</th></tr></thead>
-          <tbody>
-            <tr><td>Teşekkür ederim / Sağ ol</td><td>Thank you (formal/informal)</td></tr>
-            <tr><td>Rica ederim</td><td>You're welcome</td></tr>
-            <tr><td>Lütfen</td><td>Please</td></tr>
-            <tr><td>Özür dilerim / Pardon</td><td>I'm sorry / Excuse me</td></tr>
-            <tr><td>Bir şey değil</td><td>No problem</td></tr>
-            <tr><td>Afiyet olsun</td><td>Enjoy your meal</td></tr>
-            <tr><td>Geçmiş olsun</td><td>Get well soon</td></tr>
-            <tr><td>Kolay gelsin</td><td>May it come easy (said to someone working)</td></tr>
-          </tbody>
-        </table>
+        <p>When pawns advance, they leave behind the squares they no longer control. If several pawns of the same color advance together, they may permanently vacate control of all the squares of one color, creating what is called a color weakness. A player whose light-squared bishop has been exchanged off is particularly vulnerable to color weaknesses on the light squares &#8212; the opponent&#8217;s pieces can occupy those squares freely, knowing they will never be challenged by a pawn or the missing bishop.</p>
 
-        <h4>Essential verbs — 50 you need immediately</h4>
-        <table class="t">
-          <thead><tr><th>Turkish</th><th>English</th><th>Turkish</th><th>English</th></tr></thead>
-          <tbody>
-            <tr><td>olmak</td><td>to be / become</td><td>gitmek</td><td>to go</td></tr>
-            <tr><td>gelmek</td><td>to come</td><td>almak</td><td>to take / buy</td></tr>
-            <tr><td>yapmak</td><td>to do / make</td><td>vermek</td><td>to give</td></tr>
-            <tr><td>demek</td><td>to say</td><td>görmek</td><td>to see</td></tr>
-            <tr><td>bilmek</td><td>to know</td><td>bulmak</td><td>to find</td></tr>
-            <tr><td>istemek</td><td>to want</td><td>bakmak</td><td>to look</td></tr>
-            <tr><td>yemek</td><td>to eat</td><td>içmek</td><td>to drink</td></tr>
-            <tr><td>sevmek</td><td>to love / like</td><td>düşünmek</td><td>to think</td></tr>
-            <tr><td>anlamak</td><td>to understand</td><td>konuşmak</td><td>to talk</td></tr>
-            <tr><td>okumak</td><td>to read</td><td>yazmak</td><td>to write</td></tr>
-            <tr><td>çalışmak</td><td>to work / study</td><td>uyumak</td><td>to sleep</td></tr>
-            <tr><td>oturmak</td><td>to sit / live</td><td>kalkmak</td><td>to get up / leave</td></tr>
-            <tr><td>beklemek</td><td>to wait</td><td>sormak</td><td>to ask</td></tr>
-            <tr><td>cevap vermek</td><td>to answer</td><td>başlamak</td><td>to start</td></tr>
-            <tr><td>bitmek</td><td>to end / finish</td><td>dönmek</td><td>to return</td></tr>
-            <tr><td>açmak</td><td>to open</td><td>kapatmak</td><td>to close</td></tr>
-            <tr><td>girmek</td><td>to enter</td><td>çıkmak</td><td>to exit / go out</td></tr>
-            <tr><td>taşımak</td><td>to carry</td><td>koşmak</td><td>to run</td></tr>
-            <tr><td>uçmak</td><td>to fly</td><td>binmek</td><td>to board / ride</td></tr>
-            <tr><td>inmek</td><td>to descend / get off</td><td>aramak</td><td>to call / search</td></tr>
-          </tbody>
-        </table>
+        <p>Recognizing color weaknesses and exploiting them is a hallmark of the 1700+ player. When you see that your opponent has weakened a color complex &#8212; advanced all their dark-squared pawns and traded the dark-squared bishop &#8212; the strategic plan becomes clear: occupy the dark squares, post pieces there, and attack the weaknesses the opponent can no longer defend.</p>
 
-        <h4>Adjectives you'll use daily</h4>
-        <table class="t">
-          <thead><tr><th>Turkish</th><th>English</th><th>Turkish</th><th>English</th></tr></thead>
-          <tbody>
-            <tr><td>iyi</td><td>good</td><td>kötü</td><td>bad</td></tr>
-            <tr><td>büyük</td><td>big</td><td>küçük</td><td>small</td></tr>
-            <tr><td>güzel</td><td>beautiful / nice</td><td>çirkin</td><td>ugly</td></tr>
-            <tr><td>yeni</td><td>new</td><td>eski</td><td>old</td></tr>
-            <tr><td>uzun</td><td>long / tall</td><td>kısa</td><td>short</td></tr>
-            <tr><td>sıcak</td><td>hot / warm</td><td>soğuk</td><td>cold</td></tr>
-            <tr><td>hızlı</td><td>fast</td><td>yavaş</td><td>slow</td></tr>
-            <tr><td>kolay</td><td>easy</td><td>zor</td><td>difficult</td></tr>
-            <tr><td>ucuz</td><td>cheap</td><td>pahalı</td><td>expensive</td></tr>
-            <tr><td>mutlu</td><td>happy</td><td>üzgün</td><td>sad</td></tr>
-          </tbody>
-        </table>
+        <h4>Prophylaxis</h4>
 
-        <div class="quiz" id="qz26">
-          <div class="quiz-label">Quick check</div>
-          <div class="quiz-q">What is the appropriate response when someone says "Afiyet olsun" to you?</div>
-          <div class="quiz-opts">
-            <button class="quiz-btn" data-correct="false" data-qz="qz26">Teşekkür ederim</button>
-            <button class="quiz-btn" data-correct="true"  data-qz="qz26">Elinize sağlık (to the cook) or Sağ olun</button>
-            <button class="quiz-btn" data-correct="false" data-qz="qz26">Rica ederim</button>
-          </div>
-          <div class="quiz-feedback" id="qz26-fb"></div>
-          <button class="quiz-reset" id="qz26-rs" onclick="resetQuiz('qz26')">Try again</button>
-        </div>
+        <p>Prophylaxis is the art of preventing the opponent&#8217;s plan before it gets started. Rather than simply playing your own plans, you ask: what does my opponent want to do next? And you stop it. The great Soviet world champion Tigran Petrosian built an entire career on prophylactic play &#8212; he would spend moves preventing threats that had not yet materialized, calmly suffocating his opponents until they ran out of useful moves.</p>
+
+        <p>Prophylaxis does not mean playing passively. It means playing your own plans while staying alert to the opponent&#8217;s intentions and preemptively shutting them down. A player who only pursues their own ideas without regard for what their opponent is building will eventually run into a devastating response they should have seen coming. The habit of asking &#8220;what is my opponent trying to do?&#8221; before every move is prophylaxis in practice.</p>
+
+        <h4>Imbalances and Silman&#8217;s approach</h4>
+
+        <p>Jeremy Silman&#8217;s concept of imbalances is one of the most useful frameworks for middlegame strategy. An imbalance is any difference between the two positions: one side has the bishop pair; the other has the more active rooks. One side has a passed pawn; the other has a better king position. One side has more space; the other has better piece coordination. The player who correctly identifies the most important imbalance in the position and builds a plan around it is playing better chess than the one trying to assess everything simultaneously.</p>
+
+        <p>The practical process: after the opening, pause and ask what the imbalances are. Which side do they favor? What would I need to do to make the imbalances work for me? This question alone, asked honestly before every middlegame decision, is worth a hundred ELO points.</p>
 
         <p><hr/></p>
 
-        <p>That's the whole language, or at least the architecture of it. Turkish rewards patience — there's a period early on where it feels impossibly foreign, and then something clicks and you realize all the rules you've been memorizing are actually one rule (vowel harmony) applied consistently everywhere. The day you form a sentence with a causative inside a relative clause without thinking about it is a good day. Kolay gelsin.</p>
+        <!-- ── CH 06 ── -->
+        <h3 id="ch06">Chapter 06: Endgames</h3>
+
+        <p>Endgames are the most neglected phase of the game among developing players and the most rewarding to study. The reason players neglect them is that most games below 1400 do not reach a technically demanding endgame &#8212; they are decided by tactics or blunders in the middlegame. But as your level rises and opponents stop hanging pieces, the ability to convert advantages in the endgame becomes the decisive differentiator. A player at 1600 who cannot win a king and pawn endgame consistently is leaving a large amount of rating on the table.</p>
+
+        <p>Endgame study also improves your overall chess understanding in ways that nothing else does. Because there are fewer pieces, the logic is clearer and the consequences of each move more traceable. Concepts like king activity, zugzwang, and piece coordination are seen in their purest form in the endgame, and that clarity transfers back to the middlegame.</p>
+
+        <h4>King and pawn endgames</h4>
+
+        <p>King and pawn endings are the foundation. Every endgame eventually reduces to one if pieces are traded off, and the winner of the piece exchanges is often determined by who will win the resulting king and pawn endgame.</p>
+
+        <p><strong>Opposition.</strong> Two kings are in opposition when they face each other on the same rank, file, or diagonal with one square between them, and it is the opponent&#8217;s turn to move. The player who does not have to move &#8220;holds&#8221; the opposition and limits the other king&#8217;s movement. In pawn endings, having the opposition when the kings confront each other is often the decisive factor in whether a passed pawn can be promoted or stopped.</p>
+
+        <p><strong>Key squares.</strong> For any pawn on a given file, there is a set of squares such that if the attacking king reaches any of them, the pawn promotes regardless of where the defending king is. These are the key squares. For a pawn on e5, the key squares are d7, e7, and f7. The technique in many king and pawn endings is simply: march the king to a key square while the pawn advances. The defending side tries to prevent this.</p>
+
+        <p><strong>Zugzwang.</strong> A position where the player to move is at a disadvantage precisely because they must move &#8212; any move worsens their position. In king and pawn endings, zugzwang arises constantly: the defending king might be perfectly placed to stop the pawn, but if it is their turn to move, the king must step aside and the pawn advances. Zugzwang is also important in pieces endgames, and recognizing when it can be forced is a key endgame technique.</p>
+
+        <p><strong>The rule of the square.</strong> When a pawn and a king are on the board without other pieces, a quick rule determines whether the defending king can catch the pawn before it promotes: draw a diagonal from the pawn to the promotion square, and form a square of that side length. If the defending king can step into that square on their turn, they catch the pawn. If not, the pawn promotes.</p>
+
+        <h4>Rook endgames</h4>
+
+        <p>Rook endgames are the most common endgame type in practice &#8212; rooks are the last pieces to be exchanged, and many games reach a rook-and-pawns ending. They are also notoriously difficult. The two most important positions to know are the Lucena and the Philidor.</p>
+
+        <p><strong>The Lucena position</strong> is the blueprint for winning a rook-and-pawn-vs-rook endgame when the stronger side has its king in front of its pawn and the rook actively placed. The winning technique is called &#8220;building a bridge&#8221;: the attacking rook gives check to drive the defending king away, then the attacking king advances behind a shield of rook checks. Every serious chess player needs to know how to execute this technique.</p>
+
+        <p><strong>The Philidor position</strong> is the blueprint for defending a rook-and-pawn-vs-rook endgame. The defending rook sits on the third rank (the &#8220;Philidor position&#8221;) until the attacking pawn advances to that rank, then swings to the back rank to give perpetual checks. The key insight is that the defending rook should only switch to the back rank when it is too late for the attacking king to shelter from the checks. If you know the Lucena and the Philidor, you understand the core of rook endgame play.</p>
+
+        <h4>Basic piece endgames</h4>
+
+        <p>A few other endgame positions are mandatory knowledge:</p>
+
+        <p><strong>King and queen vs. king.</strong> Trivially winning, but the technique &#8212; using the queen to restrict the opposing king and force it to the edge before delivering checkmate &#8212; is worth practicing to execute without wasting moves.</p>
+
+        <p><strong>King and rook vs. king.</strong> Also a win, slightly trickier. The rook drives the king to the edge of the board by controlling entire ranks or files, and the attacking king assists by cutting off escape squares. The main pitfall is stalemate &#8212; be careful not to box in the king so completely that it has no legal moves.</p>
+
+        <p><strong>King and two bishops vs. king.</strong> A win, though with a specific technique. The bishops control both colors and systematically push the defending king to a corner.</p>
+
+        <p><strong>King, bishop, and knight vs. king.</strong> The hardest of the basic mates &#8212; the defending king must be driven to a corner that the bishop controls. This takes precise technique that most players below 2000 have never learned. Knowing it is worth a surprise win occasionally, and studying it develops calculation skills that transfer everywhere.</p>
+
+        <p><strong>Opposite-colored bishops.</strong> In the endgame, a position with opposite-colored bishops (each side has one bishop, on opposite colors) is heavily drawn even with a pawn advantage of two or more, because the attacking side&#8217;s bishop cannot attack the squares the defending bishop controls. In the middlegame, however, opposite-colored bishops strongly favor the attacking side &#8212; the attacker uses their bishop to support an attack on squares the defender&#8217;s bishop cannot reach.</p>
+
+        <h4>Practical endgame principles</h4>
+
+        <p>Beyond specific technical positions, a few principles apply broadly. Activate the king immediately when queens and a rook come off the board &#8212; a centralized king is a powerful piece in the endgame, not a liability. Rooks belong behind passed pawns, both your own (pushing them forward) and the opponent&#8217;s (restraining them). Create passed pawns when you can, and stop the opponent&#8217;s. When you have a material advantage, trade pieces but not pawns &#8212; fewer pieces make it easier to promote. When you are defending, trade pawns but not pieces &#8212; more pawns give the attacker more winning chances.</p>
+
+        <p><hr/></p>
+
+
+        <!-- ── CH 07 ── -->
+        <h3 id="ch07">Chapter 07: Attacking the King</h3>
+
+        <p>There is no more satisfying experience in chess than a well-executed kingside attack. There is also no more common source of bad moves: players who see the vague outline of an attack and launch it prematurely, burning pieces on dubious sacrifices and leaving themselves with a ruined position when the smoke clears. Learning to attack well means learning both when an attack is justified and how to execute it with precision when it is.</p>
+
+        <h4>Prerequisites for an attack</h4>
+
+        <p>A direct attack on the king is not a plan you choose because you feel like it. It is a plan that the position either supports or does not. Before committing to a kingside assault, the necessary conditions must be in place.</p>
+
+        <p><strong>Lead in development.</strong> If you have more active pieces than your opponent, an attack can succeed before they mobilize their defenses. If development is roughly equal, you need local superiority in the attacking zone &#8212; more pieces aimed at the king than the opponent can bring to defend it.</p>
+
+        <p><strong>Open or openable lines toward the king.</strong> An attack without open lines is an attack without teeth. The question is not just whether lines are open now, but whether they can be forced open with pawn moves or sacrifices. An attack against a well-sheltered king behind an intact pawn wall is almost always premature.</p>
+
+        <p><strong>Weaknesses in the pawn shelter.</strong> A castled king behind an intact f7&#8211;g6&#8211;h7 wall is hard to attack directly. But if the pawns have moved &#8212; h6 pushed, g5 advanced, f6 played &#8212; there are entry squares. Creating or exploiting pawn weaknesses near the enemy king is the foundation of most successful attacks.</p>
+
+        <p><strong>Piece coordination.</strong> An attack requires pieces that can contribute to threats around the king. A queen and bishop on a long diagonal are part of the attack. A knight on a6 is not. Before launching, check that your attacking pieces actually threaten something, and that the opponent&#8217;s defenders are not well enough placed to cover the key squares.</p>
+
+        <h4>The classical kingside attack</h4>
+
+        <p>The most common attacking configuration involves a queen, bishop, and rook converging on the kingside. The bishop is aimed at h7 or f7 from a long diagonal; the queen approaches from d3 or h5; a rook appears on the h-file after a pawn exchange opens it. Understanding these three pieces working together is more instructive than memorizing specific combinations, because the pattern recurs across dozens of openings and middlegames.</p>
+
+        <p>The knight is often the sharpest piece in close-range attacks. A knight on f5 or g5 radiates threats near the king, is difficult to dislodge, and regularly participates in decisive sacrifices. The knight sacrifice on h7 or g7 &#8212; opening lines to the king &#8212; is one of the most recurring patterns in attacking play. It works when the attacker has enough follow-up pieces, and the king has nowhere to hide after accepting.</p>
+
+        <div class="example">
+          <div class="example-label">The Greek Gift: Bxh7+</div>
+          White has a bishop on d3, a queen on h5, a knight on f3. Black has castled with pawns on f7, g7, h7. White plays Bxh7+. If Black accepts with Kxh7, White plays Ng5+, forcing Kg8 (the king cannot go to g6 or the queen delivers mate). Then Qh5 threatens Qh7# and Qxf7#. Black has no defense. The pattern works because the sacrifice opens the h-file, the knight covers f7, and the queen arrives with decisive tempo. It fails if Black has a piece on f6 to block the queen&#8217;s path. The pattern is worth memorizing &#8212; not the moves, but the conditions under which it is correct.
+        </div>
+
+        <h4>Sound vs. speculative sacrifices</h4>
+
+        <p>Most attacking chess involves a sacrifice. A <strong>sound sacrifice</strong> is one where the attacker has verified through calculation that the attack delivers checkmate or wins back material with interest. A <strong>speculative sacrifice</strong> is one where the calculation is incomplete but the attacker judges that the resulting complications favor them practically. Grandmasters sometimes play speculative sacrifices; club players should be honest about the distinction. Before playing a sacrifice you have not fully calculated, ask: if my opponent finds their best defense, can I still win? If the honest answer is &#8220;I&#8217;m not sure,&#8221; the sacrifice is speculative.</p>
+
+        <h4>When the attack stalls</h4>
+
+        <p>When an attack is not breaking through, stop and re-evaluate. Is there a quiet move that maintains pressure without further sacrifice? Can pieces be redirected to another sector? Is there a way to transition to a favorable endgame using the activity gained? These questions are uncomfortable because they require admitting the attack has not worked. But asking them is far better than flinging further pieces at a solidly defended king until the position collapses entirely.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 08 ── -->
+        <h3 id="ch08">Chapter 08: Exchanges &amp; Simplification</h3>
+
+        <p>Every piece trade is a permanent decision. Once a piece comes off the board, the position has a different character &#8212; different imbalances, different plans, different strengths. Most players below 1500 treat exchanges as incidental: pieces get traded because they were in the way, or because the capture was available. Learning to think deliberately about when and whether to exchange is one of the clearest markers of improving play.</p>
+
+        <h4>Why trade at all?</h4>
+
+        <p>The reasons to initiate an exchange fall into clear categories. You trade to win material &#8212; capturing a piece worth more than what you give up. You trade to relieve pressure &#8212; when your position is cramped and the opponent&#8217;s pieces are active, removing some of them reduces the threat. You trade to simplify into a favorable endgame &#8212; when you have a material or structural advantage and fewer pieces means less counterplay. And you trade to remove a key defender &#8212; eliminating a well-placed piece that is holding the position together.</p>
+
+        <p>The reasons not to trade are equally important. Do not trade when you have the more active pieces. Do not trade when a piece you are considering exchanging is needed in a developing attack. Do not trade when you hand the opponent the bishop pair in an open position. And never trade simply because the capture is available &#8212; availability is not justification.</p>
+
+        <h4>The exchange sacrifice</h4>
+
+        <p>A rook is nominally worth five pawns; a minor piece about three. Voluntarily trading a rook for a knight or bishop &#8212; the exchange sacrifice &#8212; is one of the subtlest and most powerful positional ideas in chess. It is correct when what you gain &#8212; a dominant knight on an outpost, a strong passed pawn, long-term pressure on a color complex &#8212; exceeds the material surrendered. Tigran Petrosian built an entire style around the exchange sacrifice, using it as a coldly calculated positional tool rather than a gamble. At club level, most players avoid it because the material loss feels too concrete. Recognizing when the positional compensation is sufficient is a mark of genuine positional maturity.</p>
+
+        <h4>Simplifying to win</h4>
+
+        <p>When you have a material advantage, trade pieces but not pawns. Fewer pieces mean fewer chances for the opponent to create complications. But pawns carry winning potential through promotion &#8212; reduce them and you may trade a winning position into a draw. A player with an extra rook wants to trade the rooks off, not the pawns.</p>
+
+        <p>When defending, trade pawns but not pieces. Reducing pawn count reduces the opponent&#8217;s winning plans. Many theoretically winning rook endgames become drawn once enough pawns come off. The defending side&#8217;s goal in simplification is to reach a theoretically drawn position: a fortress, a position with too few pawns to break through, or opposite-colored bishops.</p>
+
+        <h4>The principle of two weaknesses</h4>
+
+        <p>A single weakness is often not enough to win. The defender can concentrate all their resources on one target and hold indefinitely. The winning technique is to create a second weakness on the other side of the board, forcing the defender to split their attention. When one piece must cover two threats simultaneously, something breaks.</p>
+
+        <p>In practice: after creating one weakness, resist the urge to attack it immediately. Probe the other flank. The defender, watching the first weakness, may overextend to stop both threats and create a second weakness themselves. Then switch. This technique &#8212; probing one side, exploiting the other &#8212; is how grandmasters convert slight advantages in simplified positions.</p>
+
+        <h4>Knowing when to force the endgame</h4>
+
+        <p>Before initiating simplification, ask: in the endgame that results, am I better, equal, or worse? The endgame favors the side with structural advantages: better pawn structure, a more active king, a passed pawn. It disfavors the side whose advantage is temporary initiative or piece activity that would evaporate once pieces come off. If the endgame is worse for you &#8212; even if material is equal &#8212; keep pieces on the board and maintain the tension.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 09 ── -->
+        <h3 id="ch09">Chapter 09: Positional Sacrifices</h3>
+
+        <p>The most interesting chess lives in the space between tactics and strategy. A positional sacrifice is the clearest expression of that middle ground: the voluntary surrender of material &#8212; a pawn, the exchange, sometimes a piece &#8212; not for a forced sequence but for long-term positional compensation. The attacker cannot calculate a forced win. They are making a judgment that the structural and dynamic benefits outweigh the material cost, trusting that the resulting position will be practically superior even if it cannot be proven so by calculation alone.</p>
+
+        <h4>Pawn sacrifices for compensation</h4>
+
+        <p>Gambits are the oldest and most intuitive form of positional sacrifice. The King&#8217;s Gambit, the Benko Gambit, the Queen&#8217;s Gambit &#8212; these opening systems all rest on the idea that a pawn is worth surrendering for something that cannot be measured by material counts: a lead in development, control of open files, a dominating center, or long-term structural pressure.</p>
+
+        <p>The Benko Gambit is particularly instructive. Black sacrifices a pawn on move three to open the a- and b-files for rooks, permanently pressuring White&#8217;s queenside. White carries a material advantage for the entire game, but Black&#8217;s activity is concrete and relentless. The compensation is not tactical &#8212; Black cannot force a win in ten moves. It is positional: Black&#8217;s pieces are more active, White&#8217;s pieces are tied down defensively, and this imbalance persists until one side errs. Learning to play gambit positions on both sides teaches chess&#8217;s most important lesson: material is not the only currency.</p>
+
+        <h4>Piece sacrifices for structural gains</h4>
+
+        <p>The most profound positional sacrifices give up a piece not for an attack but for structural gains &#8212; a dominant pawn chain, a permanent passed pawn, the removal of a key defender. These require the deepest positional understanding because the compensation is slowest to materialize. The attacker is betting on the long-term superiority of the resulting structure, not on a combination.</p>
+
+        <p>Mikhail Tal, the eighth world champion, made sacrificial play an art form. But even Tal acknowledged that the best sacrifices are those where the compensation is real, even if it resists complete calculation. His practical test: does my opponent face only difficult moves after accepting? If yes, the sacrifice is objectively interesting. If the opponent has a clear, clean defense, the sacrifice is likely wrong regardless of how attractive it looks.</p>
+
+        <h4>The exchange sacrifice revisited</h4>
+
+        <p>The exchange sacrifice deserves extended attention in the positional context because it is the most common positional sacrifice at club level and the one most often overlooked. A knight on a perfect outpost &#8212; say e5 or d5, supported by pawns and impossible to dislodge &#8212; can dominate a position in a way a rook cannot. Petrosian&#8217;s innovation was to see this with unusual clarity: if giving up a rook for that knight creates an advantage worth more than the material difference, the sacrifice is correct &#8212; not as a gamble but as a coldly calculated positional decision.</p>
+
+        <p>The conditions for a correct exchange sacrifice: the piece or structure acquired must be a long-term asset; the opponent&#8217;s rook must not be able to find immediate active counterplay; and the resulting position must have a clear plan. An exchange sacrifice without a plan is simply a material loss. An exchange sacrifice with a clear follow-up is one of the most powerful weapons in positional chess.</p>
+
+        <h4>Evaluating positional compensation</h4>
+
+        <p>When considering a positional sacrifice, the question is not &#8220;do I get the material back?&#8221; but &#8220;what do I get instead?&#8221; The compensation can take many forms: a passed pawn, open lines for rooks, a dominant piece, a permanent structural weakness in the opponent&#8217;s camp, or a persistent initiative. A useful self-check: after making the sacrifice mentally, describe the resulting position in words. &#8220;I am a pawn down, but I have an active bishop on the long diagonal, my rooks dominate the c-file, and White&#8217;s d-pawn is permanently isolated.&#8221; If you cannot articulate the compensation clearly, you probably do not understand it well enough to trust it.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 10 ── -->
+        <h3 id="ch10">Chapter 10: Learning from the Masters</h3>
+
+        <p>There is a form of chess study that no puzzle set or engine analysis can replicate: sitting with a well-annotated game played by a great mind and working through it slowly, trying to understand every decision. Not just the moves, but the reasoning. Why this move and not the alternatives? What was the long-term plan? What were the turning points? This kind of study is slow, difficult, and extraordinarily instructive. It is how generations of players learned before engines existed, and it remains one of the most effective paths to genuine understanding.</p>
+
+        <h4>What to look for in master games</h4>
+
+        <p>The instinct when replaying a master game is to focus on the brilliant moves &#8212; the surprising sacrifices, the deep combinations, the decisive finishes. These are worth studying, but they are not where most of the learning happens. The most instructive moments are the quiet positional moves: the knight maneuver that takes twelve moves to reach its ideal square, the patient rook redirection that appears to accomplish nothing but sets up an endgame advantage twenty moves later, the subtle pawn move that fixes a weakness the opponent will spend the rest of the game defending.</p>
+
+        <p>When you see a move you do not understand, stop. Before reading the annotation, ask yourself what the player was thinking. What is this move preparing? What threat does it prevent? What idea does it set up? Only after forming your own hypothesis should you read the explanation. The disagreement between your hypothesis and the annotator&#8217;s reasoning is the learning moment.</p>
+
+        <h4>Players worth studying at each level</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Player</th><th>Era</th><th>Why they are instructive</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Capablanca</strong></td>
+              <td>1910s&#8211;30s</td>
+              <td>The clearest, most logical chess ever played. Every move makes sense; no obscure sacrifices. His endgame play is a masterclass in simplicity and technique. Ideal for players at any level up to 1600.</td>
+            </tr>
+            <tr>
+              <td><strong>Fischer</strong></td>
+              <td>1960s&#8211;70s</td>
+              <td>Ruthlessly concrete chess combining tactical vision, deep preparation, and clinical technique. <em>My 60 Memorable Games</em> &#8212; annotated by Fischer himself &#8212; is one of the finest chess books ever written.</td>
+            </tr>
+            <tr>
+              <td><strong>Tal</strong></td>
+              <td>1950s&#8211;80s</td>
+              <td>The magician from Riga. No player was more creative or more willing to sacrifice for dynamic play. Studying Tal teaches how to create complications, use practical difficulty as a weapon, and trust positional intuition when calculation runs out.</td>
+            </tr>
+            <tr>
+              <td><strong>Petrosian</strong></td>
+              <td>1950s&#8211;70s</td>
+              <td>The master of prophylaxis and the exchange sacrifice. His moves seem innocuous until you understand the method &#8212; a deep and original strategic intelligence. Essential for understanding defensive and prophylactic play.</td>
+            </tr>
+            <tr>
+              <td><strong>Karpov</strong></td>
+              <td>1970s&#8211;90s</td>
+              <td>The greatest positional player of the modern era. A clinic in the accumulation of small advantages: minor structural pressures, subtle maneuvering, gradual squeezing. He never appears to attack, yet opponents are always slowly suffocated. Ideal at 1600+.</td>
+            </tr>
+            <tr>
+              <td><strong>Kasparov</strong></td>
+              <td>1980s&#8211;2000s</td>
+              <td>Perhaps the most complete player in history: Karpov&#8217;s strategic depth combined with Tal&#8217;s tactical ferocity and Fischer&#8217;s preparation. His five-volume <em>My Great Predecessors</em> is the most comprehensive work of chess analysis in print.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>Tournaments worth studying in full</h4>
+
+        <p>Beyond individual players, certain tournaments are worth studying as a complete collection. Zurich 1953, annotated by David Bronstein, is the finest single-tournament chess book ever written &#8212; fifteen of the world&#8217;s best players over a month of classical chess, with Bronstein&#8217;s deep and personal commentary. The 1972 Fischer&#8211;Spassky world championship match is one of the most dramatic sporting events of the 20th century. And any of the five Kasparov&#8211;Karpov world championship matches, where 144 games were played at the absolute peak of the game, each series a complete chess education in itself.</p>
+
+        <h4>Absorbing style, not imitating moves</h4>
+
+        <p>The goal of studying master games is not to copy specific moves into your own games. It is to absorb a way of thinking &#8212; a set of instincts and priorities that transfer to new positions because they are rooted in understanding, not memory. After studying a player intensively for a few weeks, their ideas should start appearing in your own games: not the same moves, but the same kinds of plans. The prophylactic move that prevents the opponent&#8217;s only active idea. The patient knight maneuver toward the ideal square. The exchange sacrifice that creates a dominant piece. That transfer is the sign that the study is working at the right level.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 11 ── -->
+        <h3 id="ch11">Chapter 11: Psychology &amp; Time Management</h3>
+
+        <p>Chess is played by human beings under conditions of uncertainty and time pressure, and the psychological dimension of the game is often what separates two players of nominally equal technical ability. Below 1600, most losses are tactical. Above 1600, an increasing fraction of losses come from psychological errors &#8212; overconfidence, tilt, time trouble, or the failure to maintain objectivity about the position. Understanding these failure modes and having strategies for managing them is a real and undervalued source of improvement.</p>
+
+        <h4>Playing the position, not the opponent</h4>
+
+        <p>The most common psychological trap is to adjust your play based on who you are playing against rather than what the position requires. Against a much weaker player, people play carelessly and blunder. Against a much stronger player, they play timidly and miss opportunities. Against a player with a reputation for aggression, they over-prepare for an attack that never comes.</p>
+
+        <p>The board does not know who is sitting on the other side. The best move is the best move regardless of whether your opponent is a grandmaster or a beginner. Playing &#8220;safe&#8221; moves against a stronger player when the position calls for a sharp decision is not caution &#8212; it is a form of capitulation that often makes the position worse, because you are giving your opponent something for nothing. Conversely, playing recklessly against a weaker player is not confidence &#8212; it is an invitation to be punished. In both cases, the solution is the same: focus on the position.</p>
+
+        <h4>Tilt</h4>
+
+        <p>Tilt is the state of playing suboptimal moves because of emotional disturbance &#8212; anger at a blunder, frustration at a bad position, the desperate desire to complicate a lost game. It is borrowed from poker, where it describes a player making irrational bets after a bad beat. In chess, tilt usually manifests as rushing moves without proper calculation, going for speculative sacrifices that are not objectively sound, or stubbornly pursuing a plan that has clearly failed.</p>
+
+        <p>The antidote is not to suppress emotion but to have a process that interrupts it. When you feel the urge to play quickly out of frustration, slow down deliberately. Go back to the thinking process from Chapter 01. Ask the three questions. The act of returning to a structured process creates distance between the emotional state and the decision, and that distance is usually enough to prevent the worst moves.</p>
+
+        <p>If you are playing online and lose several games in a row, stop. The decision to play &#8220;just one more&#8221; after a bad session is almost always followed by another bad game. Playing while tilted not only loses rating points &#8212; it instills bad habits that are hard to unlearn.</p>
+
+        <h4>Time management</h4>
+
+        <p>Time trouble is a habit, and like all habits it is easier to prevent than to cure. Most players who consistently get into time trouble do so not because they think too slowly in general, but because they spend disproportionate time on one or two difficult decisions early in the game, then are forced to play the rest quickly. The problem is structural: they treat time as unlimited until suddenly it is not.</p>
+
+        <p>A practical rule: in a standard game (90 minutes or more), use no more than ten minutes on any single move before move twenty. Past that point, if you cannot resolve the position with ten minutes of thought, make the best move you can see and accept the uncertainty. A decision made with confidence in five minutes is often as good as one made with anguish in fifteen, and the clock you save is worth more in the complex positions that follow.</p>
+
+        <p>In the opening, use almost no time if you know the theory. Save it for the critical moments. In the endgame, allocate time generously &#8212; endgame errors are irreversible and often game-deciding, and the total number of critical decisions is smaller.</p>
+
+        <h4>The lost position</h4>
+
+        <p>How you play when you are losing is a significant determinant of your rating. Resigning prematurely, or giving up mentally while continuing to move pieces, costs a surprising number of points. Bad positions have resources that computers see but humans miss. The correct attitude in a lost position is not resignation but clinical pragmatism: what is the most difficult move to deal with? What complicates the position most? Is there a fortress, a stalemate trap, a perpetual check, or an unlikely resource?</p>
+
+        <p>Playing on in objectively lost positions is not a character flaw. It is a legitimate competitive strategy, and it is one that rewards opponents who play accurately under psychological pressure &#8212; a skill that is itself worth practicing.</p>
+
+        <h4>Online vs. over-the-board chess</h4>
+
+        <p>Online chess and over-the-board (OTB) chess develop different skills. Online play, particularly rapid and blitz formats, builds pattern recognition and intuition at speed. OTB classical chess builds deep calculation, concentration, and the discipline of the full thinking process. Both matter, but they are not interchangeable.</p>
+
+        <p>A player who only plays blitz online typically develops fast instincts but sloppy calculation and no endgame technique. A player who only plays long classical games may be strong at deep positions but struggle with time pressure. The best development combines both: plenty of rapid and blitz for pattern accumulation, and regular classical games where the full thinking process is applied in earnest.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 12 ── -->
+        <h3 id="ch12">Chapter 12: How to Study &amp; Improve</h3>
+
+        <p>Knowing what to study is necessary but not sufficient. The way you study matters as much as the content. Most improving players spend their study time in low-intensity, comfortable ways &#8212; watching YouTube videos, replaying master games passively, or solving puzzles at their existing comfort level. These activities have some value, but they are not where the real improvement happens. Deliberate practice &#8212; working at the edge of your current ability, with focused attention and honest feedback &#8212; is what drives genuine gains.</p>
+
+        <h4>The study hierarchy</h4>
+
+        <p>Not all study activities are equally valuable, and their value depends on your current level. Here is a rough hierarchy of return on time invested:</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Activity</th><th>Highest value at</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Puzzle training</strong></td>
+              <td>All levels</td>
+              <td>The most efficient way to build pattern recognition. Minimum 30 minutes per day at any level below 2000. Do it deliberately, not for streaks.</td>
+            </tr>
+            <tr>
+              <td><strong>Analyzing your own games</strong></td>
+              <td>All levels</td>
+              <td>The single most personalized form of study. Your games reveal your actual weaknesses, not the weaknesses of a hypothetical player at your level.</td>
+            </tr>
+            <tr>
+              <td><strong>Endgame study</strong></td>
+              <td>1200&#8211;2000+</td>
+              <td>Massively underinvested at most levels. The technical positions in Chapter 06 should be drilled to the point of automaticity.</td>
+            </tr>
+            <tr>
+              <td><strong>Annotated master games</strong></td>
+              <td>1400+</td>
+              <td>Absorbing deep positional and tactical ideas through games played at the highest level. Read the notes, not just the moves.</td>
+            </tr>
+            <tr>
+              <td><strong>Opening preparation</strong></td>
+              <td>1500+</td>
+              <td>Below 1500, understanding the ideas matters far more than memorizing lines. After 1500, a more systematic approach starts paying off.</td>
+            </tr>
+            <tr>
+              <td><strong>Video lectures / courses</strong></td>
+              <td>600&#8211;1400</td>
+              <td>Useful for building conceptual frameworks quickly. Diminishing returns as level increases, unless supplemented by active study.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>Analyzing your own games</h4>
+
+        <p>Game analysis is the most direct path to identifying and fixing your specific weaknesses. The process has two phases: first, analyze without an engine and identify the moments where you were uncertain, where you chose between two moves, or where you sensed something was wrong but played on anyway. Write down your thoughts. Then run the engine and compare. The goal is not to find out what the engine recommends &#8212; it is to understand why your judgment diverged from the best play at those key moments.</p>
+
+        <p>When the engine shows a better move, do not just accept it and move on. Ask: why is that move better? What was I missing? Was it a tactical oversight, a positional misunderstanding, or a failure of the thinking process? Categorize your mistakes. Over time, patterns will emerge: perhaps you consistently misjudge positions with isolated pawns, or you always miss back-rank threats, or you play too quickly in rook endgames. Those patterns are your study curriculum.</p>
+
+        <h4>Using engines correctly</h4>
+
+        <p>Engines are the most powerful chess tool available, and most players use them badly. The temptation is to turn on the engine at the end of a game and watch the evaluation bar move, passively absorbing the moves it recommends. This builds very little understanding. The engine&#8217;s output &#8212; a number and a best move &#8212; tells you nothing about why that move is best unless you work to understand the reasoning behind it.</p>
+
+        <p>Use the engine as a test of your own analysis, not as a replacement for it. Analyze the position yourself first, form a conclusion, then check. When the engine disagrees, treat the disagreement as a question: what is it seeing that I am not? Play out the engine&#8217;s lines yourself, without watching the evaluation bar, and try to understand the positional or tactical logic. This active engagement with the engine&#8217;s output is what converts it from a crutch into a teacher.</p>
+
+        <h4>Deliberate practice and the comfort trap</h4>
+
+        <p>The comfort trap is real and insidious. Solving puzzles at your existing rating, replaying openings you already know, playing blitz where you can make moves on instinct &#8212; all of these feel productive but produce little improvement because they never challenge you beyond your current ability. Genuine improvement requires deliberate discomfort: solving puzzles rated above your current level, studying the openings and endgame positions you do not understand, playing longer time controls where you cannot rely on speed.</p>
+
+        <p>The psychologist Anders Ericsson, whose research on expertise in many fields is relevant here, found that deliberate practice has three characteristics: it operates at the edge of current ability, it involves immediate feedback, and it requires focused attention rather than passive repetition. Chess study that satisfies all three conditions is hard work. It is also the only kind that reliably produces improvement.</p>
+
+        <h4>Realistic milestones</h4>
+
+        <p>How long does it take to reach 2000? The honest answer depends on starting point, time invested, and the quality of that time. As a rough guide: most players starting at 1000 who study consistently and seriously for one to two hours a day can expect to reach 1400&#8211;1500 within a year, 1700 within two to three years, and 2000 within four to six years. These timelines can compress significantly with intensive study or coaching, and stretch considerably with inconsistency.</p>
+
+        <p>The most important thing is not the timeline but the direction. Improvement in chess is not linear &#8212; there are plateaus that last months, followed by jumps as new understanding integrates into your play. The plateaus are not a sign that you have stopped improving. They are often the period when the conceptual groundwork for the next level is being laid. Stay patient, keep studying, and the rating will follow the understanding.</p>
+
+        <div class="callout">
+          <div class="callout-label">The books worth reading</div>
+          A short list of genuinely excellent resources for the developing player: <em>How to Reassess Your Chess</em> by Jeremy Silman (positional strategy), <em>Silman&#8217;s Complete Endgame Course</em> by Jeremy Silman (endgames organized by level), <em>My System</em> by Nimzowitsch (deep positional theory, challenging but rewarding above 1600), <em>Endgame Strategy</em> by Shereshevsky (middlegame-to-endgame transitions), and <em>Zurich 1953</em> by Bronstein (annotated games from one of history&#8217;s great tournaments, with penetrating explanations).
+        </div>
+
+        <p>Chess is a game of infinite depth. The closer you look, the more there is to see. Getting to 2000 is not the end of the journey &#8212; it is the point at which the journey becomes genuinely interesting, because you have enough understanding to appreciate what you still do not know. I hope this guide helps get you there.</p>
 
       </section>
 
       <footer>
-       
+        <p><small>Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
 
     <script src="javascripts/scale.fix.js"></script>
     <script>
-      const fb = {
-        qz01: { ok: "Correct — C is always a dj sound in Turkish, like the j in 'jam'.", bad: "Not quite — C in Turkish is always pronounced as dj, like the j in jam." },
-        qz02: { ok: "Exactly. Gün ends in ü (front vowel), so the locative takes -de.", bad: "Not quite. Gün ends in ü — a front vowel — so the suffix uses e." },
-        qz03: { ok: "Right. You need the plural (-lar) and the 1st person plural possessive (-ımız): kitaplarımız.", bad: "Not quite. 'Our books' requires plural (-lar) + possessive (-ımız): kitaplarımız." },
-        qz04: { ok: "Exactly. Yorgun ends in a back vowel (o), and biz takes -uz: yorgunuz.", bad: "Not quite. Yorgun ends in a back vowel, biz takes -uz: yorgunuz." },
-        qz05: { ok: "Correct. Direction toward a place uses the dative case (-a).", bad: "Not quite. Direction uses the dative (-a). İstanbul'a = to Istanbul." },
-        qz06: { ok: "Correct — nouns after numbers always stay singular in Turkish.", bad: "Not quite. After numbers the noun stays singular: üç kitap, never üç kitaplar." },
-        qz07: { ok: "Exactly. Turkish word order: subject → adjective → object → verb.", bad: "Not quite. Turkish is SOV with adjectives before the noun: Öğrenci iyi bir kitap okuyor." },
-        qz08: { ok: "Right. The -di past of inability: uyu + ama + dı + m = uyuyamadım.", bad: "Not quite. 'Couldn't sleep' uses the -di past of inability: uyuyamadım." },
-        qz09: { ok: "Exactly. Oku- ends in a vowel, so it drops before -iyor: okuyor.", bad: "Not quite. Vowel-final stems drop their vowel before -iyor: oku- → okuyor." },
-        qz10: { ok: "Correct. Habitual actions use the aorist. İçer is the aorist of iç-.", bad: "Not quite. Habitual actions use the aorist tense, not present continuous or future." },
-        qz11: { ok: "Exactly. You witnessed it yourself — -di past.", bad: "Not quite. First-hand witnessed events always use the -di past." },
-        qz12: { ok: "Right. Discovering something after the fact triggers the -miş past.", bad: "Not quite. Discovering something you weren't aware of uses -miş (discovery register)." },
-        qz13: { ok: "Exactly. 'They' (onlar) takes -ler: gelmeyecekler.", bad: "Not quite. Onlar takes -ler on the verb: gelmeyecekler." },
-        qz14: { ok: "Correct. Çalış- has a back vowel (ı), so necessity takes -malı. For biz: çalışmalıyız.", bad: "Not quite. Çalış- has ı (back vowel), so -malı. For biz: çalışmalıyız." },
-        qz15: { ok: "Exactly. The question particle is always a separate word: yorgun musun?", bad: "Not quite. The question particle is always a separate word: yorgun musun?" },
-        qz16: { ok: "Correct. Önce requires the ablative: toplantıdan önce.", bad: "Not quite. Önce requires the ablative (-den): toplantıdan önce." },
-        qz17: { ok: "Right. For phone calls, Turkish uses aramak. Seni arayacağım = I will call you.", bad: "Not quite. For phone calls, Turkish uses aramak: seni arayacağım." },
-        qz18: { ok: "Correct. Real conditional: çalışırsa (if she studies) geçecek (she will pass).", bad: "Not quite. The correct real conditional: çalışırsa geçecek." },
-        qz19: { ok: "Exactly. Polite requests use the aorist question form: açar mısın?", bad: "Not quite. Polite requests use the question form of the aorist: açar mısın?" },
-        qz20: { ok: "Correct. Left-branching: modifier comes before the noun: gelen kadın.", bad: "Not quite. Turkish is left-branching — gelen kadın (the coming woman)." },
-        qz21: { ok: "Right. Causative -tır + passive -ıl stacked = it was caused to be done.", bad: "Not quite. Yaptırıldı contains causative + passive: it was caused to be done." },
-        qz22: { ok: "Correct. Ne... ne = neither... nor.", bad: "Not quite. Hem...hem = both...and, ya...ya = either...or. Neither...nor is ne...ne." },
-        qz23: { ok: "Right. Biraz = a little, from bir + az.", bad: "Not quite. Biraz means 'a little', from bir + az." },
-        qz24: { ok: "Exactly. -dık + 3rd person possession -ı + locative -nda = 'at the time of its having started'.", bad: "Not quite. -dığında = participial -dık + possession -ı + locative -nda." },
-        qz25: { ok: "Correct. Numbers are always followed by a singular noun: iki kitap.", bad: "Not quite. Numbers always take a singular noun: iki kitap, not iki kitapları." },
-        qz26: { ok: "Right. Elinize sağlık (to the cook) or Sağ olun.", bad: "Not quite. The response to Afiyet olsun is Elinize sağlık or Sağ olun." }
-      };
-
-      document.querySelectorAll('.quiz-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const qzId = this.dataset.qz;
-          const isCorrect = this.dataset.correct === 'true';
-          const quiz = document.getElementById(qzId);
-          const feedback = document.getElementById(qzId + '-fb');
-          const reset = document.getElementById(qzId + '-rs');
-          quiz.querySelectorAll('.quiz-btn').forEach(b => {
-            b.disabled = true;
-            if (b.dataset.correct === 'true') b.classList.add('correct');
-          });
-          if (!isCorrect) this.classList.add('wrong');
-          feedback.textContent = isCorrect ? '✓ ' + fb[qzId].ok : '✗ ' + fb[qzId].bad;
-          feedback.className = 'quiz-feedback show ' + (isCorrect ? 'ok' : 'bad');
-          reset.classList.add('show');
-        });
-      });
-
-      function resetQuiz(qzId) {
-        const quiz = document.getElementById(qzId);
-        quiz.querySelectorAll('.quiz-btn').forEach(b => {
-          b.disabled = false;
-          b.classList.remove('correct', 'wrong');
-        });
-        const feedback = document.getElementById(qzId + '-fb');
-        feedback.className = 'quiz-feedback';
-        feedback.textContent = '';
-        document.getElementById(qzId + '-rs').classList.remove('show');
-      }
-
+      // ── Active sidebar highlight on scroll ──
       const chapters = document.querySelectorAll('h3[id]');
       const navLinks = document.querySelectorAll('#toc a');
+
       const obs = new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (e.isIntersecting) {
@@ -1512,6 +777,7 @@
           }
         });
       }, { rootMargin: '-15% 0px -75% 0px' });
+
       chapters.forEach(ch => obs.observe(ch));
     </script>
   </body>
