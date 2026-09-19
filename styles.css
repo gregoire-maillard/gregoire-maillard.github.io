@@ -1,0 +1,549 @@
+/* ==========================================================================
+   gregoiremaillard.com — site stylesheet
+   Visual system: white page, sticky left rail + narrow reading column,
+   system font stack, one blue accent, glass pills, hairline dividers.
+   Replaces the old "Minimal" theme AND the <style> blocks that used to live
+   inside rm101 / chess101 / turkish101 / book / food.
+   ========================================================================== */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  --paper: #fff;
+  --ink: #242424;
+  --body: #555;
+  --muted: #6f6f6f;
+  --faint: #b5b5b0;
+  --blue: #287a9e;
+  --blue-dark: #155b7c;
+  --blue-wash: rgb(40 122 158 / 11%);
+  --blue-tint: rgb(40 122 158 / 5%);
+  --line: #e4e3df;
+  --panel: #fafaf8;
+
+  /* Left-rail portrait: "cover" crops to a square, "contain" shows the whole image. */
+  --portrait-fit: cover;
+  --portrait-bg: #dce6ea;
+
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New", monospace;
+}
+
+/* ---------- 2. Base ---------- */
+* { box-sizing: border-box; }
+
+html {
+  background: var(--paper);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 20rem;
+  min-height: 100dvh;
+  margin: 0;
+  color: var(--body);
+  background: var(--paper);
+  font-size: 0.94rem;
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--blue);
+  text-decoration: none;
+  text-underline-offset: 0.18em;
+}
+a:hover { color: var(--blue-dark); }
+
+img { max-width: 100%; height: auto; }
+
+::selection { color: #fff; background: var(--blue-dark); }
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--blue-dark);
+  outline-offset: 3px;
+}
+
+strong { color: var(--ink); font-weight: 560; }
+
+/* ---------- 3. Page layout: rail + reading column ---------- */
+.wrapper {
+  display: grid;
+  width: min(calc(100% - 5rem), 67.5rem);
+  margin-inline: auto;
+  padding: 3.75rem 0 4rem;
+  grid-template-columns: 20rem minmax(0, 38rem);
+  justify-content: center;
+  align-items: start;
+  column-gap: 6.5rem;
+}
+
+.wrapper > header {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  position: sticky;
+  top: 3.75rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-height: calc(100dvh - 7.5rem);
+}
+
+.wrapper > section {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  max-width: 38rem;
+}
+
+.wrapper > footer {
+  grid-column: 2;
+  grid-row: 2;
+  margin-top: 3.75rem;
+  padding-top: 1.15rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  border-top: 1px solid var(--line);
+}
+/* Footers that only contain empty markup show nothing at all. */
+.wrapper > footer:not(:has(a)) { display: none; }
+.wrapper > footer p { margin: 0; }
+.wrapper > footer small { font-size: inherit; }
+.wrapper > footer a { color: var(--muted); text-decoration: underline; text-underline-offset: 0.18em; }
+
+/* ---------- 4. The left rail ---------- */
+header > * { flex: none; }
+
+header h1 {
+  margin: 0 0 1.25rem;
+  color: var(--ink);
+  font-size: 1.95rem;
+  font-weight: 620;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+header h1 a,
+header h1 a:hover { color: var(--ink); }
+
+/* Portrait: square crop like the reference site. */
+header > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: var(--portrait-fit);
+  background: var(--portrait-bg);
+}
+/* Pages with a long chapter list get a smaller portrait so the list has room. */
+header:has(> nav) > img { width: 10rem; }
+
+/* Italic caption under the portrait; the text after it (description) stays regular. */
+header > p {
+  margin: 0.45rem 0 1rem;
+  font-size: 0.86rem;
+  font-style: italic;
+}
+header br,
+header hr { display: none; }
+
+/* Pill links (LinkedIn, Resume, ...). */
+.profile-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.48rem;
+  margin: 0 0 1.25rem;
+}
+.profile-links a {
+  display: inline-flex;
+  min-height: 2.25rem;
+  padding: 0.3rem 0.78rem;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--blue-dark);
+  font-size: 0.9rem;
+  background: var(--blue-wash);
+  border: 1px solid rgb(59 143 184 / 27%);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 78%),
+    0 5px 14px rgb(43 100 128 / 8%);
+  backdrop-filter: blur(14px) saturate(135%);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+.profile-links a:hover {
+  color: var(--blue-dark);
+  background: rgb(59 143 184 / 19%);
+  border-color: rgb(59 143 184 / 42%);
+  transform: translateY(-1px);
+}
+.profile-links img { width: 0.9rem; height: 0.9rem; }
+
+/* Chapter / city / book lists in the rail (scroll inside the rail, not the page). */
+.chapter-nav,
+.book-nav,
+.city-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 1.1rem 0 0;
+  padding: 0.8rem 0 1.25rem;
+  overflow-y: auto;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 1.25rem), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 1.25rem), transparent);
+  font-size: 0.84rem;
+  line-height: 1.8;
+  border-top: 1px solid var(--line);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.chapter-nav a,
+.book-nav a,
+.city-nav a {
+  display: block;
+  padding-left: 0.7rem;
+  color: var(--muted);
+  border-left: 2px solid transparent;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+.chapter-nav a:hover,
+.book-nav a:hover,
+.city-nav a:hover {
+  color: var(--ink);
+  border-left-color: var(--blue);
+}
+.chapter-nav a.active,
+.book-nav a.active,
+.city-nav a.active {
+  color: var(--blue-dark);
+  border-left-color: var(--blue);
+  font-weight: 560;
+}
+.chapter-nav .ch-n {
+  margin-right: 0.3rem;
+  color: var(--faint);
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 5. Reading column: type ---------- */
+h1, h2, h3, h4 {
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+section > :first-child { margin-top: 0 !important; }
+
+section h2 {
+  margin: 2.2rem 0 1.05rem;
+  font-size: 1.6rem;
+  font-weight: 620;
+  letter-spacing: -0.03em;
+}
+section h3 {
+  margin: 1.6rem 0 0.7rem;
+  font-size: 1.25rem;
+  font-weight: 610;
+  letter-spacing: -0.02em;
+}
+section h4 {
+  margin: 1.5rem 0 0.35rem;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+h2[id], h3[id], h4[id] { scroll-margin-top: 1.5rem; }
+
+p, ul, ol, dl, table { margin: 0 0 1.1rem; }
+p:empty { display: none; }
+
+section ul, section ol { padding-left: 1.25rem; }
+section li { margin-bottom: 0.3rem; }
+
+hr {
+  height: 1px;
+  margin: 2.2rem 0 0;
+  background: var(--line);
+  border: 0;
+}
+
+section img {
+  max-width: 100%;
+  height: auto;
+  margin: 0.6rem 0;
+  vertical-align: bottom;
+}
+
+h4 + .rule,
+h4 + .example,
+h4 + .callout,
+h4 + .formula { margin-top: 0.8rem; }
+
+/* ---------- 6. Tables ---------- */
+table { width: 100%; border-collapse: collapse; }
+
+th, td {
+  padding: 0.52rem 0.45rem;
+  font-size: 0.82rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+th:first-child,
+td:first-child { padding-left: 0; }
+thead th {
+  color: var(--muted);
+  font-weight: 500;
+}
+tbody tr:hover td { background: var(--panel); }
+
+/* Turkish guide tables */
+.t td.tr { color: var(--blue); font-style: italic; }
+.t td.en { color: var(--muted); font-size: 0.92em; }
+
+/* Data tables (RM guide) */
+.data-table th,
+.data-table td { text-align: center; vertical-align: middle; }
+.data-table th:first-child,
+.data-table td:first-child { text-align: left; }
+.data-table tr.total td { color: var(--ink); font-weight: 600; border-top: 2px solid var(--line); }
+.data-table tr.highlight td { background: var(--blue-wash); color: var(--ink); font-weight: 600; }
+.data-table .yes { color: #2a662a; font-weight: 600; }
+.data-table .no  { color: #8a1a1a; font-weight: 600; }
+
+/* Little status badges */
+.tag {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.78em;
+  font-weight: 600;
+}
+.tag-h { background: #e4f3e4; color: #2a662a; }
+.tag-m { background: #fef6d6; color: #7a5500; }
+.tag-l { background: #fdeaea; color: #8a1a1a; }
+
+/* ---------- 7. Content blocks ---------- */
+.callout-label,
+.example-label,
+.formula-label,
+.rule-label,
+.quiz-label {
+  margin-bottom: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.callout {
+  margin: 1.4rem 0;
+  padding: 0.85rem 1.1rem;
+  color: #2f4552;
+  font-size: 0.92em;
+  line-height: 1.7;
+  background: var(--blue-tint);
+  border-left: 2px solid var(--blue);
+}
+.callout-label { color: var(--blue-dark); }
+
+.example {
+  margin: 1.4rem 0;
+  padding: 0.85rem 1.1rem;
+  color: var(--body);
+  font-size: 0.92em;
+  line-height: 1.7;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.example-label { color: var(--muted); }
+
+.formula {
+  margin: 1.4rem 0;
+  padding: 0.9rem 1.2rem;
+  text-align: center;
+  overflow-x: auto;
+  background: var(--blue-tint);
+  border-left: 2px solid var(--blue);
+}
+.formula-label { color: var(--blue-dark); text-align: left; }
+.formula .note {
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-style: italic;
+  text-align: left;
+}
+
+.chart-wrap {
+  margin: 1.4rem 0;
+  padding: 0.75rem 0.5rem 0.4rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+.chart-caption {
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Grammar rule blocks (Turkish guide) */
+.rule {
+  margin: 1.4rem 0;
+  padding: 0.85rem 1.1rem;
+  color: #333;
+  font-family: var(--mono);
+  font-size: 0.86rem;
+  line-height: 1.85;
+  overflow-x: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 2px solid #c9c7bf;
+}
+.rule-label {
+  color: var(--muted);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Vowel-harmony colour coding */
+.back  { color: #c0392b; font-weight: 600; }
+.front { color: #2980b9; font-weight: 600; }
+.suf   { color: #27ae60; font-weight: 600; }
+.stem  { color: #8e44ad; }
+
+/* Chess move notation */
+.move {
+  padding: 1px 5px;
+  color: #333;
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: #f2f2f0;
+  border-radius: 3px;
+}
+
+/* ---------- 8. Quizzes ---------- */
+.quiz {
+  margin: 1.6rem 0 0.5rem;
+  padding: 1rem 1.15rem 0.9rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--blue);
+}
+.quiz-label { color: var(--blue-dark); margin-bottom: 0.5rem; }
+.quiz-q {
+  margin-bottom: 0.8rem;
+  color: var(--ink);
+  font-size: 0.95em;
+  font-style: italic;
+}
+.quiz-opts { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2px; }
+
+.quiz-btn {
+  padding: 0.5rem 0.8rem;
+  color: var(--body);
+  font: inherit;
+  font-size: 0.88em;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
+}
+.quiz-btn:hover:not(:disabled) {
+  color: var(--blue-dark);
+  background: var(--blue-wash);
+  border-color: rgb(40 122 158 / 40%);
+}
+.quiz-btn.correct { color: #1a4d1a; background: #eaf5ea; border-color: #3a7a3a; }
+.quiz-btn.wrong   { color: #7a1a1a; background: #fdf0f0; border-color: #c0392b; }
+.quiz-btn:disabled { cursor: default; opacity: 0.6; }
+.quiz-btn.correct:disabled,
+.quiz-btn.wrong:disabled { opacity: 1; }
+
+.quiz-feedback {
+  display: none;
+  margin-top: 0.7rem;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.86em;
+  line-height: 1.5;
+  border-radius: 0.7rem;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok  { color: #1a4d1a; background: #eaf5ea; }
+.quiz-feedback.bad { color: #7a4f00; background: #fef9ec; }
+
+.quiz-reset {
+  display: none;
+  margin-top: 0.5rem;
+  padding: 0;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.78em;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+.quiz-reset:hover { color: var(--blue-dark); }
+.quiz-reset.show { display: inline; }
+
+/* ---------- 9. Tablet & phone ---------- */
+@media (max-width: 60rem) {
+  .wrapper {
+    width: min(calc(100% - 4rem), 43rem);
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 3.5rem;
+  }
+  .wrapper > header,
+  .wrapper > section,
+  .wrapper > footer {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .wrapper > header {
+    position: static;
+    max-height: none;
+  }
+  .wrapper > section { max-width: none; }
+  .wrapper > footer { margin-top: 0; }
+
+  header > img { max-width: 21rem; }
+  .chapter-nav,
+  .book-nav,
+  .city-nav { max-height: 12rem; }
+}
+
+@media (max-width: 35rem) {
+  body { font-size: 0.9rem; }
+
+  .wrapper {
+    width: calc(100% - 2rem);
+    padding: 1.5rem 0 2.5rem;
+    row-gap: 2.25rem;
+  }
+  header h1 { font-size: 1.75rem; }
+  header > img { max-width: none; }
+  header:has(> nav) > img { width: 8rem; }
+  section h2 { font-size: 1.4rem; }
+  section h3 { font-size: 1.1rem; }
+}
+
+/* ---------- 10. Motion & print ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
+
+@media print {
+  body { font-size: 12pt; color: #444; }
+  .wrapper { display: block; width: auto; padding: 0.4in; }
+  .wrapper > header { position: static; max-height: none; }
+  .chapter-nav, .book-nav, .city-nav { display: none; }
+}

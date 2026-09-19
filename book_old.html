@@ -21,6 +21,35 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+    <style>
+      /* Make header a flex column so nav fills remaining space */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      /* Nav takes all remaining space and scrolls within it */
+      .book-nav {
+        margin-top: 4px;
+        font-size: 0.82em;
+        line-height: 1.9;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+      }
+      .book-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .book-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .book-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+    </style>
 
   </head>
   <body>

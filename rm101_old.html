@@ -16,6 +16,261 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
 
+    <style>
+      /* ── Quiz styles ── */
+      .quiz {
+        background: #f8f8f8;
+        border: 1px solid #ddd;
+        border-left: 3px solid #267CB9;
+        border-radius: 3px;
+        padding: 16px 20px 14px;
+        margin: 24px 0 8px;
+      }
+      .quiz-label {
+        font-size: 0.7em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+      .quiz-q {
+        font-style: italic;
+        margin-bottom: 12px;
+        font-size: 0.95em;
+        color: #333;
+      }
+      .quiz-opts {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 2px;
+      }
+      .quiz-btn {
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        padding: 8px 12px;
+        font-size: 0.88em;
+        cursor: pointer;
+        text-align: left;
+        color: #333;
+        transition: border-color 0.15s, background 0.15s;
+        font-family: Georgia, serif;
+        line-height: 1.5;
+      }
+      .quiz-btn:hover:not(:disabled) {
+        border-color: #267CB9;
+        background: #f0f6fc;
+        color: #267CB9;
+      }
+      .quiz-btn.correct { background: #eaf5ea; border-color: #3a7a3a; color: #1a4d1a; }
+      .quiz-btn.wrong   { background: #fdf0f0; border-color: #c0392b; color: #7a1a1a; }
+      .quiz-btn:disabled { cursor: default; opacity: 0.6; }
+      .quiz-btn.correct:disabled,
+      .quiz-btn.wrong:disabled   { opacity: 1; }
+      .quiz-feedback {
+        display: none;
+        margin-top: 10px;
+        padding: 8px 12px;
+        border-radius: 3px;
+        font-size: 0.86em;
+        line-height: 1.5;
+        font-family: Georgia, serif;
+      }
+      .quiz-feedback.show { display: block; }
+      .quiz-feedback.ok  { background: #eaf5ea; color: #1a4d1a; }
+      .quiz-feedback.bad { background: #fef9ec; color: #7a4f00; }
+      .quiz-reset {
+        display: none;
+        margin-top: 8px;
+        font-size: 0.78em;
+        color: #999;
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 0;
+        font-family: Georgia, serif;
+      }
+      .quiz-reset.show { display: inline; }
+
+      /* ── Sidebar nav ── */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .chapter-nav {
+        margin-top: 4px;
+        font-size: 0.82em;
+        line-height: 1.8;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+      }
+      .chapter-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
+
+      /* ── Callout / example boxes ── */
+      .callout {
+        background: #f4f8fd;
+        border-left: 3px solid #267CB9;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #2a3a4a;
+        line-height: 1.7;
+      }
+      .callout-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .example {
+        background: #fafafa;
+        border: 1px solid #e4e4e4;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #444;
+        line-height: 1.7;
+      }
+      .example-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #888;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Fare table ── */
+      .rm-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86em;
+        margin: 16px 0;
+      }
+      .rm-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: left;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .rm-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        vertical-align: top;
+      }
+      .rm-table tr:last-child td { border-bottom: none; }
+      .tag {
+        display: inline-block;
+        padding: 1px 6px;
+        border-radius: 8px;
+        font-size: 0.78em;
+        font-weight: bold;
+      }
+      .tag-h { background: #e4f3e4; color: #2a662a; }
+      .tag-m { background: #fef6d6; color: #7a5500; }
+      .tag-l { background: #fdeaea; color: #8a1a1a; }
+
+      section h3 { margin-top: 22px; }
+      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; }
+
+      /* ── Data tables ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+        margin: 16px 0;
+      }
+      .data-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: center;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .data-table th:first-child { text-align: left; }
+      .data-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .data-table td:first-child { text-align: left; }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table tr.total td { background: #f7f7f7; font-weight: bold; border-top: 2px solid #ddd; }
+      .data-table tr.highlight td { background: #fef6d6; font-weight: bold; }
+      .data-table .yes { color: #2a662a; font-weight: bold; }
+      .data-table .no  { color: #8a1a1a; font-weight: bold; }
+
+      /* ── Formula block ── */
+      .formula {
+        background: #f9f7ff;
+        border-left: 3px solid #7c6fcd;
+        padding: 14px 20px;
+        margin: 18px 0;
+        text-align: center;
+        overflow-x: auto;
+      }
+      .formula-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7c6fcd;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+      .formula .note {
+        font-size: 0.82em;
+        color: #666;
+        margin-top: 8px;
+        text-align: left;
+        font-style: italic;
+      }
+
+      /* ── Chart container ── */
+      .chart-wrap {
+        margin: 20px 0;
+        background: #fff;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        padding: 12px 8px 6px;
+      }
+      .chart-caption {
+        font-size: 0.78em;
+        color: #888;
+        text-align: center;
+        margin-top: 4px;
+        font-style: italic;
+      }
+    </style>
 
     <!-- KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
