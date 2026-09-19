@@ -104,6 +104,9 @@ strong { color: var(--ink); font-weight: 560; }
 .wrapper > footer {
   grid-column: 2;
   grid-row: 2;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
   margin-top: 3.75rem;
   padding-top: 1.15rem;
   color: var(--muted);
@@ -111,7 +114,7 @@ strong { color: var(--ink); font-weight: 560; }
   border-top: 1px solid var(--line);
 }
 /* Footers that only contain empty markup show nothing at all. */
-.wrapper > footer:not(:has(a)) { display: none; }
+.wrapper > footer:not(:has(a, span)) { display: none; }
 .wrapper > footer p { margin: 0; }
 .wrapper > footer small { font-size: inherit; }
 .wrapper > footer a { color: var(--muted); text-decoration: underline; text-underline-offset: 0.18em; }
@@ -264,7 +267,7 @@ section li { margin-bottom: 0.3rem; }
 
 hr {
   height: 1px;
-  margin: 2.2rem 0 0;
+  margin: 2.2rem 0 1.2rem;
   background: var(--line);
   border: 0;
 }
@@ -280,6 +283,35 @@ h4 + .rule,
 h4 + .example,
 h4 + .callout,
 h4 + .formula { margin-top: 0.8rem; }
+
+/* Experience / education: role and organisation left, dates right. */
+.plain-list {
+  padding: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+.record-list {
+  display: grid;
+  gap: 0.38rem;
+}
+.record-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+}
+.record-main strong {
+  color: var(--body);
+  font-weight: 440;
+}
+.record-main em { color: var(--body); }
+.record-date {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
 
 /* ---------- 6. Tables ---------- */
 table { width: 100%; border-collapse: collapse; }
@@ -531,6 +563,12 @@ tbody tr:hover td { background: var(--panel); }
   header h1 { font-size: 1.75rem; }
   header > img { max-width: none; }
   header:has(> nav) > img { width: 8rem; }
+  .record-list li {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .record-date { white-space: normal; }
+  .wrapper > footer { margin-top: 0; }
   section h2 { font-size: 1.4rem; }
   section h3 { font-size: 1.1rem; }
 }
