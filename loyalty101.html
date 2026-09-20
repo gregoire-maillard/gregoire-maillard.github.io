@@ -1,0 +1,665 @@
+<!doctype html>
+<html>
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Airline Loyalty 101</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+
+    <style>
+      /* ── Sidebar nav ── */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .chapter-nav {
+        margin-top: 4px;
+        font-size: 0.82em;
+        line-height: 1.8;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+      }
+      .chapter-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
+
+      /* ── Callout / example boxes ── */
+      .callout {
+        background: #f4f8fd;
+        border-left: 3px solid #267CB9;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #2a3a4a;
+        line-height: 1.7;
+      }
+      .callout-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .example {
+        background: #fafafa;
+        border: 1px solid #e4e4e4;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #444;
+        line-height: 1.7;
+      }
+      .example-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #888;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Reference table ── */
+      .rm-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86em;
+        margin: 16px 0;
+      }
+      .rm-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: left;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .rm-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        vertical-align: top;
+      }
+      .rm-table tr:last-child td { border-bottom: none; }
+
+      section h3 { margin-top: 22px; }
+      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; }
+
+      /* ── Data tables ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+        margin: 16px 0;
+      }
+      .data-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: center;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .data-table th:first-child { text-align: left; }
+      .data-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .data-table td:first-child { text-align: left; }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table tr.total td { background: #f7f7f7; font-weight: bold; border-top: 2px solid #ddd; }
+      .data-table tr.highlight td { background: #fef6d6; font-weight: bold; }
+
+      /* ── Formula block ── */
+      .formula {
+        background: #f9f7ff;
+        border-left: 3px solid #7c6fcd;
+        padding: 14px 20px;
+        margin: 18px 0;
+        text-align: center;
+        overflow-x: auto;
+      }
+      .formula-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7c6fcd;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+      .formula .note {
+        font-size: 0.82em;
+        color: #666;
+        margin-top: 8px;
+        text-align: left;
+        font-style: italic;
+      }
+    </style>
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+
+      <!-- ── Sidebar ── -->
+      <header>
+        <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+        <img src="/assets/img/loyalty_main.png" alt="Airline loyalty" />
+        <p><i>Me, counting points.</i> <br><hr/>
+        A beginner's guide to airline loyalty programs, covering the intuitions behind why airlines give away miles and still come out ahead.</p>
+
+        <hr/>
+        <nav class="chapter-nav" id="toc">
+          <a href="#ch00"><span class="ch-n">00</span> Why Loyalty?</a>
+          <a href="#ch01"><span class="ch-n">01</span> Points as a Currency</a>
+          <a href="#ch02"><span class="ch-n">02</span> Earning</a>
+          <a href="#ch03"><span class="ch-n">03</span> Burning</a>
+          <a href="#ch04"><span class="ch-n">04</span> Breakage &amp; Liability</a>
+          <a href="#ch05"><span class="ch-n">05</span> Currency Management</a>
+          <a href="#ch06"><span class="ch-n">06</span> Status Tiers</a>
+          <a href="#ch07"><span class="ch-n">07</span> The Co-Brand Card Engine</a>
+          <a href="#ch08"><span class="ch-n">08</span> Segmentation &amp; CLV</a>
+          <a href="#ch09"><span class="ch-n">09</span> Measuring Incrementality</a>
+          <a href="#ch10"><span class="ch-n">10</span> Where Loyalty Meets RM</a>
+          <a href="#ch11"><span class="ch-n">11</span> What's Next</a>
+        </nav>
+      </header>
+
+      <!-- ── Content ── -->
+      <section>
+
+        <h2>Airline Loyalty 101</h2>
+        <p>After four years in Revenue Management, I moved to Loyalty, Currency and Rewards Analytics at Air Canada. If RM is about pricing a seat, loyalty is about pricing the relationship with the person sitting in it, and about managing the currency that relationship is paid in. That currency turns out to be one of the strangest and most valuable things an airline owns. This page is my attempt to explain how it works in plain language, in the same spirit as <a href="/rm101.html">RM 101</a>: the key ideas, a few worked examples, and as little jargon as I can get away with. It describes the industry in general, not how any particular airline runs its program, and every number in the examples is made up for illustration.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 00 ── -->
+        <h3 id="ch00">Chapter 00: Why Loyalty?</h3>
+
+        <p>A frequent flyer program looks, at first glance, like an elaborate way of giving things away. Fly enough and you get a free ticket, a seat upgrade, a lounge invitation. It is hard to see how a business that hands out its own product for free could be anything other than a cost center.</p>
+
+        <p>The numbers say otherwise. In June 2020, at the height of the pandemic, United borrowed against its MileagePlus program and valued it at about $21.9 billion, roughly twice the stock market value of the entire airline at the time. American's AAdvantage was appraised somewhere between $18 and $30 billion, against an equity market cap under $7 billion. In 2019, MileagePlus had generated $5.3 billion in cash from miles sold and credit card activity, around 12% of United's revenue. Commentators pointed out that these valuations implied the market was pricing the flying business itself at less than zero: the airline was, in effect, a loyalty program with airplanes attached.</p>
+
+        <p>To understand why, it helps to see that an airline is two businesses sharing a logo. The first flies planes: capital-heavy, cyclical, thin-margined, exposed to fuel prices and recessions. The second sells a currency: it issues points, sells them in bulk to banks and other partners, and later honors them with seats that often cost very little to provide. The second business is smaller, but it is more profitable and far steadier. The 2019 margins reported around those financings were roughly 34% for United's program and 42% for Delta's (measured differently, so not directly comparable), well above what flying typically earns. Air Canada itself ran the two separately for years: it spun Aeroplan off as its own company in the 2000s, then bought it back in 2019.</p>
+
+        <div class="callout">
+          <div class="callout-label">The core tension</div>
+          Be generous enough that members change how they behave, and stingy enough that the program pays for itself. Reward too little and nobody cares. Reward too much, especially people who would have flown with you anyway, and you are paying for behavior you already had. Every decision in this course, from earn rates to award prices to status thresholds, is a version of that trade-off.
+        </div>
+
+        <h4>Where it came from</h4>
+
+        <p>Loyalty programs share an origin story with Revenue Management: deregulation. Once fares were free to move, airlines needed a reason for a traveler to pick them that was not just price. Texas International launched an early precursor in 1979, and in 1981 American Airlines launched AAdvantage, with United and others following soon after. The idea was to reward the customers who mattered most with a share of the future rather than a discount today. Miles cost almost nothing to issue, they gave the best customers a reason to consolidate their flying with one airline, and the free seats they eventually bought were seats that would often have flown empty anyway.</p>
+
+        <h4>Three ideas to hold onto</h4>
+
+        <div class="example">
+          <div class="example-label">What runs through every chapter</div>
+          <strong>1. Points are a currency.</strong> They have an issuer, a supply, a price level, and a value that can rise or fall.<br>
+          <strong>2. Every point is a liability.</strong> It is a promise on future capacity, and it sits on the balance sheet until it is kept or lapses.<br>
+          <strong>3. The hard question is "because of us?"</strong> Members respond to rewards, but the question that matters is whether they responded <em>because of</em> the reward. That is the problem of incrementality.
+        </div>
+
+        <p>The chapters that follow start with the currency itself, move through how points are earned and burned, then look at the accounting, the psychology of status, the credit card partnerships that fund the whole thing, and the analytics used to run it. The last chapters connect loyalty back to the world of RM, because the two disciplines are managing the same seat.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 01 ── -->
+        <h3 id="ch01">Chapter 01: Points as a Currency</h3>
+
+        <p>A loyalty point is best understood as a private currency. The airline issues it, sets what it can buy, and decides who can earn it and how. Members earn balances, hold them, and spend them, and the airline sits somewhere between a central bank (it controls the supply) and the biggest shop that accepts the money (it provides most of what points buy).</p>
+
+        <p>It has some properties of money. It is a unit of account: award prices are quoted in points. It is a store of value: balances carry over from one trip to the next. It is partly a medium of exchange: points can be transferred, pooled with family, or swapped between programs. But the analogy breaks in useful places. The issuer can unilaterally change what a point buys, can expire it, and will not convert it back to cash. Those asymmetries are what make managing the currency an interesting problem and not just bookkeeping.</p>
+
+        <h4>Three parties, four flows</h4>
+
+        <p>Three parties are involved: the member, the airline that runs the program, and partners such as banks, hotels and retailers. Between them, points move in four ways.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Flow</th><th>What happens</th><th>Economics for the airline</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Earn from flying</strong></td><td>A member buys a ticket and receives points on top</td><td>A cost: a rebate paid in future seats</td></tr>
+            <tr><td><strong>Earn from partners</strong></td><td>A member spends on a co-brand card or at a hotel; the partner buys the points from the airline</td><td>Revenue: the partner pays cash up front</td></tr>
+            <tr><td><strong>Burn</strong></td><td>A member exchanges points for a seat, an upgrade or a partner reward</td><td>Capacity provided, at a cost between near zero and a full fare</td></tr>
+            <tr><td><strong>Expire</strong></td><td>Points lapse unused</td><td>The promise is never called</td></tr>
+          </tbody>
+        </table>
+
+        <h4>The balance equation</h4>
+
+        <p>The whole system reduces to a bookkeeping identity. Points outstanding at the end of a period equal what was outstanding at the start, plus what was issued, minus what was redeemed, minus what expired.</p>
+
+        <div class="formula">
+          <div class="formula-label">Points outstanding</div>
+          \[B_{t+1} \;=\; B_t + I_t - R_t - E_t\]
+          <div class="note">\(B_t\) is the outstanding balance, \(I_t\) points issued, \(R_t\) points redeemed, and \(E_t\) points expired, all in period \(t\).</div>
+        </div>
+
+        <p>A few ratios come straight out of it. The burn ratio, redeemed divided by issued, tells you whether the stock of points is growing or shrinking. A ratio persistently below one means balances are piling up. That can be healthy (members are saving for something big, cards are pumping in points) or a warning sign (members cannot find anything worth spending on, and a growing pile of unspent points is a promise the airline will eventually have to honor). Much of the analytics in a loyalty team is, one way or another, about understanding the four terms in that equation and what drives each of them.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 02 ── -->
+        <h3 id="ch02">Chapter 02: Earning</h3>
+
+        <p>Earning is the front door of the program: how many points do members get, for what, and why? The answer has changed a lot over forty years.</p>
+
+        <h4>From distance to dollars</h4>
+
+        <p>The original design was distance-based: fly 2,000 miles, earn 2,000 miles. It was simple, transparent and easy to explain. It was also blind to what the airline actually earned from the passenger. Someone on a deeply discounted fare and someone paying a full flexible fare on the same route received the same reward, even though one was worth several times more to the airline.</p>
+
+        <p>In 2015 and 2016 the large US carriers moved to revenue-based earning: Delta and United in 2015, American in 2016. Points became a function of dollars spent, usually with a multiplier that rises with elite status, and most large programs have since moved in the same direction. The shift reallocated points from cheap-fare frequent flyers to high-spending travelers, and it tied the cost of the program to the revenue it was rewarding.</p>
+
+        <div class="example">
+          <div class="example-label">Same route, opposite outcomes</div>
+          Two passengers fly the same 2,000-mile route. Passenger A found a $150 fare; passenger B booked a flexible $600 fare.
+          <table class="data-table">
+            <thead>
+              <tr><th>Passenger</th><th>Fare</th><th>Distance-based (1 point per mile)</th><th>Revenue-based (5 points per $)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>A</td><td>$150</td><td>2,000</td><td>750</td></tr>
+              <tr><td>B</td><td>$600</td><td>2,000</td><td>3,000</td></tr>
+            </tbody>
+          </table>
+          Under distance-based earning the two are treated identically. Under revenue-based earning, A earns 62% fewer points and B earns 50% more, which is roughly the difference in what each is worth to the airline.
+        </div>
+
+        <h4>Earning as a rebate</h4>
+
+        <p>The mental model that makes earn rates click for me is that points are a rebate paid in a different currency. If a member earns 5 points per dollar and a point is worth about 1.3 cents to them, the airline is effectively returning 6.5% of the fare.</p>
+
+        <div class="formula">
+          <div class="formula-label">Effective rebate</div>
+          \[\text{effective rebate} \;=\; \text{earn rate} \times \text{value per point}\]
+          <div class="note">With a value per point of 1.3¢: 5 points per dollar is a 6.5% rebate, 7 points per dollar is 9.1%, and 10 points per dollar is 13%.</div>
+        </div>
+
+        <p>Seen this way, an earn structure is a discount schedule. The design question becomes who should get the bigger discounts, and the sensible answer is the members whose behavior the discount can actually change.</p>
+
+        <div class="callout">
+          <div class="callout-label">Why not just lower the fare?</div>
+          A fare discount is visible to everyone, paid immediately, and impossible to take back. A rebate in points is paid later, only if the member redeems, at a price the airline sets. Some of it is never redeemed at all (Chapter 04). And it gives the member a balance they want to grow, which is a reason to come back. A fare cut has none of that flexibility.
+        </div>
+
+        <h4>Other ways to earn</h4>
+
+        <p>Flying is only one door in. Members also earn through credit cards, hotel stays, car rentals, dining and shopping portals, and increasingly through everyday spending. Those partner points are not a cost to the airline: they are sold, which is what Chapter 07 is about. The difference between a point earned on a flight (a cost) and a point earned on a card (revenue) is the reason loyalty teams think so carefully about the mix.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 03 ── -->
+        <h3 id="ch03">Chapter 03: Burning</h3>
+
+        <p>Redemption is where the currency becomes tangible. Members exchange points for award flights, upgrades, and partner rewards such as hotel nights, and increasingly for a mix of points and cash. It is the moment that decides whether a member thinks the program is generous or a scam, and it is where most of the airline's real cost lives.</p>
+
+        <h4>What a point is worth</h4>
+
+        <p>The standard yardstick is cents per point (CPP): what cash price does a member give up for each point they spend?</p>
+
+        <div class="formula">
+          <div class="formula-label">Value per point</div>
+          \[\text{CPP} \;=\; \frac{\text{cash price} - \text{taxes and fees paid in cash}}{\text{points required}} \times 100\]
+          <div class="note">Taxes and fees come out because the member pays them either way. Only the fare itself is being bought with points.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">Working out a value per point</div>
+          A flight costs $600 in cash, including $60 of taxes and fees. The award price is 40,000 points plus the same $60.<br><br>
+          \(\text{CPP} = (600 - 60) \,/\, 40{,}000 \times 100 = 1.35\) cents per point.<br><br>
+          Members use CPP to compare deals, and airlines use it to see how generous their redemptions really are. Values between one and two cents are common, with wide variation depending on the route, the cabin and the day.
+        </div>
+
+        <h4>Award pricing: charts vs. dynamic</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Approach</th><th>How it works</th><th>Strength</th><th>Weakness</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Award chart</strong></td><td>A fixed price by route zone and cabin, regardless of the date</td><td>Predictable and easy to explain</td><td>Value per point swings with the cash fare, which creates "sweet spots"</td></tr>
+            <tr><td><strong>Dynamic pricing</strong></td><td>The points price follows the cash fare</td><td>Value per point stays roughly stable and is hard to arbitrage</td><td>Less predictable; members lose the ability to plan around fixed prices</td></tr>
+          </tbody>
+        </table>
+
+        <p>Under a chart, a member deciding where to spend 25,000 points will pick the route where the cash fare is highest. This is adverse selection, exactly as in insurance: the people who use the option are the ones who get the most out of it, and the airline is on the other side of every trade. Dynamic pricing removes most sweet spots by tying the points price to the cash price, and several large programs have moved in that direction in recent years.</p>
+
+        <div class="example">
+          <div class="example-label">A dynamic award price</div>
+          The program targets a value of 1.25 cents per point, so the points price is the cash fare (before taxes) divided by 0.0125.<br><br>
+          A $200 fare costs 16,000 points. An $800 fare costs 64,000 points.<br><br>
+          The same seat costs more points when it is expensive in cash, so a member can no longer get outsized value just by searching for the priciest flight.
+        </div>
+
+        <h4>What it costs the airline</h4>
+
+        <p>From the member's side, an award is worth its cash price. From the airline's side, the cost of an award seat depends on what that seat would otherwise have done. If it would have flown empty, the cost is only the marginal cost of one more passenger: a meal, a little fuel, handling, distribution. If it would have sold at a full fare, the cost is that fare. This is the same opportunity cost logic as the bid prices in RM 101, and Chapter 10 comes back to it. Award economics is really a question about which seats to hand over, and when.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 04 ── -->
+        <h3 id="ch04">Chapter 04: Breakage &amp; the Points Liability</h3>
+
+        <p>Every point outstanding is a promise, and promises show up on the balance sheet. The accounting sounds dry, but it drives real decisions, because the size of the liability and how it moves is something executives and investors watch closely.</p>
+
+        <h4>Why revenue gets deferred</h4>
+
+        <p>When a member buys a ticket and earns points, the airline has sold two things in one transaction: a flight now, and a promise of a future reward. Under IFRS 15 (and its US counterpart, ASC 606) the airline splits the ticket price between the two in proportion to their standalone selling prices. The flight portion becomes revenue when the flight is flown. The points portion sits on the balance sheet as deferred revenue, and turns into revenue only when members redeem the points, or when the points are expected to lapse.</p>
+
+        <h4>Breakage</h4>
+
+        <p>Not every point ever gets redeemed. Members lose interest, forget their accounts, or hold balances too small to use. The share that never gets used is called breakage. Airlines estimate it from history and reduce the value assigned to a point accordingly.</p>
+
+        <div class="formula">
+          <div class="formula-label">Deferred value of issued points</div>
+          \[\text{Deferred value} \;=\; P \times v \times (1 - b)\]
+          <div class="note">\(P\) is points issued, \(v\) is the fair value per point, and \(b\) is the expected breakage rate.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">Splitting a ticket</div>
+          A member buys a $500 ticket and earns 5,000 points. Assume a fair value of 1.3 cents per point and 15% expected breakage.<br><br>
+          Standalone value of the points: 5,000 × $0.013 × (1 − 0.15) = $55.25<br>
+          Standalone value of the flight: $500<br><br>
+          The $500 is allocated in proportion: the points get 500 × 55.25 / 555.25 ≈ $49.75, and the flight gets ≈ $450.25. The airline books $450.25 as revenue when the flight is flown and defers $49.75 until the points are redeemed.
+        </div>
+
+        <p>Breakage sounds like a technical detail, but it moves real money. A program with a billion dollars of deferred revenue that revises its breakage estimate by two percentage points shifts tens of millions of dollars. It also creates a subtle tension: making redemption easier, or removing expiry rules, is good for members but lowers breakage and raises the liability. Programs weigh those trade-offs carefully.</p>
+
+        <h4>Two kinds of value</h4>
+
+        <p>One last distinction that trips people up: the value a member sees in a point and the cost the airline bears are different numbers. A point may be worth 1.3 cents to a member and be sold to a bank for 1.2 cents, while the airline's expected cost of honoring it is well below both, after breakage and the low marginal cost of an award seat. The gap between them is the margin in the business, and Chapter 07 returns to it.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 05 ── -->
+        <h3 id="ch05">Chapter 05: Currency Management</h3>
+
+        <p>Issuing a currency means inheriting the problems of a central bank, on a smaller scale. Points enter circulation through earning and through sales to partners, they leave through redemption and expiry, and what a point is worth is set by how many seats or rewards it can buy. If the airline issues points faster than the award inventory behind them grows, each point buys less, exactly like inflation.</p>
+
+        <h4>Inflation and devaluation</h4>
+
+        <p>Points inflation is a slow, structural risk. Card partners keep buying points, promotions keep giving them out, and balances swell. Award seats, meanwhile, are limited by the number of seats on the plane and by how many the airline is willing to release. When the supply of points outpaces the supply of awards, the effective price of an award rises for members even if the published prices do not change: they find less availability, and higher-priced options, when they go to spend. The formal response is a devaluation, an increase in the points price of awards. It restores the balance, but it also cuts the purchasing power of balances members already hold, which is why devaluations generate so much anger.</p>
+
+        <p>This is a problem game designers know well. Any virtual economy needs sources and sinks, and too many sources with too few sinks debases the currency.</p>
+
+        <h4>The levers</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Lever</th><th>Examples</th><th>Effect on the currency</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Issuance</strong></td><td>Earn rates, bonuses, sales to partners</td><td>Raises the supply of points</td></tr>
+            <tr><td><strong>Redemption prices</strong></td><td>Award charts, dynamic pricing, surcharges</td><td>Sets the price level</td></tr>
+            <tr><td><strong>Sinks</strong></td><td>Award redemptions, expiry policy, upgrades, partner rewards</td><td>Removes points from circulation</td></tr>
+            <tr><td><strong>Availability</strong></td><td>Award seats released on each flight</td><td>Determines what a point can actually buy</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">Devaluation is a tax on the past</div>
+          Raising award prices lowers what existing balances can buy. The airline benefits in the sense that its future obligation shrinks, but members are angry because the value they thought they held has gone. Programs that devalue often, or without warning, find that members respond by spending balances quickly and holding less, which shortens the life of a point and weakens the reason to stay loyal. A currency is only worth holding if people believe it will keep its value.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 06 ── -->
+        <h3 id="ch06">Chapter 06: Status Tiers</h3>
+
+        <p>If points are the currency, status is the class system. Most programs sort members into tiers (say Silver, Gold, Platinum and Diamond) unlocked by flying or spending a certain amount within a qualification year. The benefits typically include priority check-in and boarding, bonus points, lounge access, free bags, waived change fees, and above all upgrades and preferred seats.</p>
+
+        <p>Status exists because airline revenue is concentrated. A relatively small share of travelers accounts for a large share of the money, and those travelers are exactly the ones with choices: they can fly any airline on the route. Keeping them is worth real effort.</p>
+
+        <h4>Why status changes behavior</h4>
+
+        <p>Status is the part of loyalty where psychology does most of the work. Three effects show up again and again. First, the goal gradient: researchers studying coffee shop loyalty cards found that customers buy faster as they get closer to the reward, and the same thing happens to a traveler 5,000 miles short of the next tier in November, who suddenly finds reasons to fly. Second, endowed progress: people are more likely to finish a goal when they feel they have already started it, which is why programs like to credit you with a head start. Third, loss aversion: once you hold status, losing it feels worse than never having had it, which motivates requalifying even when it is not the best deal.</p>
+
+        <h4>What it costs</h4>
+
+        <p>Many status benefits are cheap. Priority boarding and preferred seats cost almost nothing, because they reallocate a scarce resource among people who are already on the plane. Lounges and waived fees cost real money. Upgrades cost the most, because an upgraded seat is a premium seat that might have been sold, which is why upgrade inventory is a shared problem with RM.</p>
+
+        <h4>The design problem</h4>
+
+        <p>Where to set the thresholds is a genuine optimization. Set them too low and half the plane is elite: the upgrade list is crowded, priority boarding no longer feels special, and the benefits get diluted. Set them too high and most travelers decide the tier is out of reach and stop trying. The value of a benefit to one member depends on how many others share it, which makes status a strangely positional good: it is worth more when it is scarce.</p>
+
+        <div class="callout">
+          <div class="callout-label">Status as a price fence</div>
+          Recall the price fences from RM 101: rules that let an airline charge different customers different prices without anyone having to check who is who. Status works the same way in reverse. It lets the airline give its best customers something valuable (priority, upgrades, flexibility) without cutting the fare they see. The reward goes to the member, and the price stays where it was.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 07 ── -->
+        <h3 id="ch07">Chapter 07: The Co-Brand Card Engine</h3>
+
+        <p>If loyalty is the most profitable part of an airline, the co-brand credit card is the engine. It is where the airline stops giving points away as a cost and starts selling them as a product.</p>
+
+        <h4>How the deal works</h4>
+
+        <p>A bank issues a credit card branded with the airline's name. Cardholders earn points on everyday purchases and get a welcome bonus, sometimes tens of thousands of points, when they sign up. The bank buys those points from the airline in bulk, at a negotiated price per point. Contracts are confidential, but outside analysts often estimate the price at somewhere between one and two cents per point. On top of the points, the bank typically pays for the use of the airline's brand, and the partnership often includes perks such as a free bag or lounge access.</p>
+
+        <p>Why would a bank pay for this? Because a co-brand card is a highly effective way to acquire and retain profitable customers. The bank earns interchange fees, paid by merchants on each swipe and often in the neighborhood of 2% on premium cards in some markets, plus interest and annual fees. Points are how the bank buys the customer's attention and spending, and the airline is the supplier of a currency the customer actually wants.</p>
+
+        <div class="example">
+          <div class="example-label">The margin in a point (illustrative)</div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Per 1,000 points</th><th>Amount</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Price paid by the bank (1.2 cents per point)</td><td>$12.00</td></tr>
+              <tr><td>Airline's expected cost to honor them (0.7 cents per point)</td><td>$7.00</td></tr>
+              <tr class="total"><td>Margin</td><td>$5.00 (about 42%)</td></tr>
+            </tbody>
+          </table>
+          The bank pays roughly what a point is worth to a member. The airline's cost of honoring it is much lower, because redemptions often use seats that would otherwise fly empty, and because some points are never redeemed at all.
+        </div>
+
+        <p>Multiply that gap by billions of points a year and you get numbers like the $5.3 billion United reported in 2019 from miles sold and credit card activity.</p>
+
+        <h4>Why lenders like it</h4>
+
+        <p>Card spending is stable in a way that flying is not. When air travel collapsed in 2020, cardholders kept spending on everyday things and banks kept buying points, so this revenue kept flowing while ticket sales dried up. That is why United could borrow $5 billion against MileagePlus that June, and why American and Delta also raised billions against their programs. Lenders were happy to lend against the currency business when they were not sure about the airline business.</p>
+
+        <h4>The flywheel, and its caveat</h4>
+
+        <p>Cards create a loop. Cardholders accumulate points, which gives them a reason to fly the airline. More flying raises engagement, engaged members are more valuable to both the bank and the airline, and that makes the partnership worth more. The loop is real, but I would be careful about how much of it is causal. Cardholders do fly more, but people who already fly a lot are exactly the ones who take the card. Chapter 09 comes back to why that distinction matters.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 08 ── -->
+        <h3 id="ch08">Chapter 08: Segmentation &amp; Customer Lifetime Value</h3>
+
+        <p>A loyalty program is a database of millions of individuals, each with a history: what they booked, when, where, at what price, how they paid, whether they redeemed. The analytics question is how to turn that history into decisions about who gets what.</p>
+
+        <h4>Segments</h4>
+
+        <p>The classic starting point is RFM: recency (when did they last fly), frequency (how often), and monetary value (how much they spend). It is simple, transparent, and surprisingly hard to beat as a first cut. Richer segmentations add behavior: business or leisure, home market, route loyalty, whether they redeem or hoard, whether they hold the co-brand card, how much they respond to promotions. A useful segmentation is one that leads to different actions. If two segments would get the same offer, they are really one segment.</p>
+
+        <h4>Customer lifetime value</h4>
+
+        <p>The number that ties it together is customer lifetime value (CLV): the present value of all the margin a member is expected to generate over the relationship. The simplest version assumes a constant yearly margin \(m\), a yearly retention rate \(r\), and a discount rate \(d\).</p>
+
+        <div class="formula">
+          <div class="formula-label">Customer lifetime value</div>
+          \[\text{CLV} \;=\; \sum_{t=0}^{\infty} \frac{m\, r^{t}}{(1+d)^{t}} \;=\; m \cdot \frac{1+d}{1+d-r}\]
+          <div class="note">The first year counts fully. Each later year is scaled down by the chance the member is still around and by the time value of money.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">Why retention is the big lever</div>
+          A member generates $200 of margin per year, with a discount rate of 10%.<br><br>
+          At 80% retention: CLV = 200 × 1.1 / (1.1 − 0.8) ≈ <strong>$733</strong><br>
+          At 85% retention: CLV = 200 × 1.1 / (1.1 − 0.85) = <strong>$880</strong><br><br>
+          Five points of retention add about 20% to the value of the member. Small improvements in keeping members compound over every future year, which is why programs spend so much effort on the relationship.
+        </div>
+
+        <h4>Prediction models</h4>
+
+        <p>On top of segments, analytics teams build propensity models that score every member on things like the likelihood to churn, take the card, upgrade, or respond to a specific offer. The scores rank members and let marketing spend go where it should matter most.</p>
+
+        <div class="callout">
+          <div class="callout-label">Two different questions</div>
+          A model that predicts who is likely to buy is not the same as a model that predicts who will buy <em>because of</em> your offer. The members with the highest predicted spend are usually the ones who would have spent anyway, so targeting them with a promotion mostly gives away points. What you want is uplift: the difference an offer makes for each individual member. Which brings us to the hardest problem in the field.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 09 ── -->
+        <h3 id="ch09">Chapter 09: Measuring Incrementality</h3>
+
+        <p>Here is the problem that keeps loyalty analysts humble. Suppose you email a bonus-points offer to a million members, and afterwards you see that many of them booked. Did the offer work? You cannot tell. Frequent flyers book a lot to begin with. Some of those bookings would have happened anyway, and you cannot see the ones that did not happen. The naive comparison, members who got the offer versus members who did not, is even worse, because the two groups were rarely chosen at random.</p>
+
+        <h4>The holdout</h4>
+
+        <p>The cleanest fix is a randomized experiment. Before sending, randomly set aside a share of eligible members who do not get the offer. The holdout group is statistically identical to the treated group in everything except the offer, so any difference in behavior afterwards can be attributed to it. That difference is the lift.</p>
+
+        <div class="formula">
+          <div class="formula-label">Lift</div>
+          \[\text{Lift} \;=\; \frac{\bar{Y}_{\text{treated}} - \bar{Y}_{\text{holdout}}}{\bar{Y}_{\text{holdout}}}\]
+          <div class="note">\(\bar{Y}\) is the average outcome per member (for example, the booking rate) in each group.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">A bonus-points campaign</div>
+          An airline offers 2,000 bonus points on any booking made in the next 60 days. 100,000 members receive the offer, and 100,000 are held out.
+          <table class="data-table">
+            <thead>
+              <tr><th>Group</th><th>Members</th><th>Booking rate</th><th>Bookings</th><th>Points issued</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Treated</td><td>100,000</td><td>8.0%</td><td>8,000</td><td>16,000,000</td></tr>
+              <tr><td>Holdout</td><td>100,000</td><td>6.5%</td><td>6,500</td><td>0</td></tr>
+              <tr class="highlight"><td>Incremental</td><td></td><td>+1.5 pts</td><td>+1,500</td><td></td></tr>
+            </tbody>
+          </table>
+          Only 1,500 of the 8,000 treated bookings, about 19%, were caused by the offer. The other 6,500 would have happened anyway, and they still earned the bonus.<br><br>
+          If the average booking is worth $400 and each point costs the airline 0.8 cents to honor, the campaign produced $600,000 of incremental revenue for $128,000 of points, or about $85 per incremental booking. That may still be a good deal, but it is a very different deal from the one the raw booking count suggests: over 80% of the points went to members who did not need them.
+        </div>
+
+        <p>That last observation is the case for targeting on uplift rather than on propensity. If the offer only works on part of the base, the way to improve it is to send it to that part, and to test whether it works there.</p>
+
+        <h4>When you cannot randomize</h4>
+
+        <p>Some changes cannot be tested on a random half of members: a new earn structure for everyone, a change in status thresholds, a new partner. Here analysts rely on quasi-experimental methods. Difference-in-differences compares the change in a group that was exposed with the change in one that was not. Synthetic controls build a weighted blend of unaffected markets to imitate what would have happened. Matched cohorts pair each affected member with a similar unaffected one. They are less clean than a randomized test and rest on assumptions worth stating out loud, but they are far better than staring at a before-and-after chart.</p>
+
+        <h4>Sample size and patience</h4>
+
+        <p>Effects in loyalty are often small, a percentage point or less, so tests need large samples and enough time to see the full response. A campaign that looks great after three days may just have pulled forward bookings that would have happened next week anyway. Always measure over a window long enough to catch it.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 10 ── -->
+        <h3 id="ch10">Chapter 10: Where Loyalty Meets RM</h3>
+
+        <p>Loyalty and Revenue Management manage the same scarce thing, a seat, and they have to agree on what it is worth.</p>
+
+        <h4>Award seats are inventory</h4>
+
+        <p>An award booking is not a special case outside the RM system. It is a passenger asking to occupy a seat, and that seat has an opportunity cost like any other. In most airlines the RM system decides how many seats to make available for award bookings on each flight, much as it decides how many to make available to any fare class. As RM 101 puts it, a booking is worth accepting if it pays more than the bid price. So the question becomes: what does an award booking pay?</p>
+
+        <p>One useful way to think about it is that the airline has already been paid for the points. If it sells points to banks at about 1.2 cents each, then a 40,000-point award is backed by roughly $480 of partner revenue. Treat it like a fare. If the bid price on the flight is $300, accept it. If the bid price is $520, decline it, or price it higher in points. It is a simplification, since points are not sold flight by flight, but it shows why award availability is an RM decision and a currency decision at the same time.</p>
+
+        <h4>The tension</h4>
+
+        <p>Here is the catch. The pure RM answer would be to release awards only on flights that would otherwise fly empty. The currency answer, from Chapter 05, is that if members can never find award seats, points become worthless in practice, and the program loses the thing that makes miles and the co-brand card valuable. The two teams end up negotiating an award availability policy: enough seats, at enough times, that a point stays credible, but not so many that awards displace paying passengers on the best flights.</p>
+
+        <div class="callout">
+          <div class="callout-label">Where the two meet</div>
+          Dynamic award pricing is the meeting point. When the points price is tied to the cash fare, the bid price is built into the award price: the airline asks for more points when the seat is scarce and fewer when it is not. RM's logic ends up inside the currency's price list.
+        </div>
+
+        <h4>Upgrades and status</h4>
+
+        <p>The same logic applies to upgrades. A complimentary upgrade for an elite member consumes a premium seat that might have been sold, so it has an opportunity cost equal to what that seat could have earned. Upgrade inventory rules, priority orders among elites, and how far ahead upgrades clear are all RM decisions with loyalty consequences.</p>
+
+        <h4>Loyalty as information for RM</h4>
+
+        <p>The flow also goes the other way. Members have identities, and identities carry information: what they have paid before, how flexible they are, how they respond to prices. That information can sharpen forecasts and willingness-to-pay estimates, which is exactly the shift from class-based to class-free thinking in RM 101. A loyalty ID is the closest thing an airline has to a persistent view of one customer's behavior over time.</p>
+
+        <p>And because revenue-based earning ties points to the fare, every pricing decision RM makes changes how many points get issued, and therefore the size of the liability. The two systems are coupled whether or not the two teams talk to each other, which is a good reason to make sure that they do.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 11 ── -->
+        <h3 id="ch11">Chapter 11: What's Next</h3>
+
+        <p>Loyalty is changing quickly, and a few directions seem worth watching.</p>
+
+        <h4>Personalization</h4>
+
+        <p>Today a member typically sees the same earn rates and award prices as everyone else in their tier, plus some targeted offers. The direction of travel is individualized offers: which bonus, at what moment, for which member, chosen by a model that estimates each member's uplift rather than their propensity. The measurement discipline from Chapter 09 gets more important, not less, because a personalized system that is never tested against a holdout can drift toward giving away rewards for behavior it is not changing. There is also a trust question: members accept that programs reward them differently by tier, but they react badly when the same product is priced differently in ways they cannot see.</p>
+
+        <h4>Currencies competing</h4>
+
+        <p>Bank points programs such as those from Chase, American Express and Capital One let cardholders transfer points into many airline programs. That gives banks their own flexible currency and turns the airline's currency into one option among many. For airline programs it raises the stakes on how a point is valued and what it can buy, because a transferable bank point is compared directly against cash back.</p>
+
+        <h4>Loyalty beyond airlines</h4>
+
+        <p>Hotels run very similar programs, and during the 2020 crisis chains like Marriott and Hilton raised cash by pre-selling points to their card issuers. Retailers, coffee chains and delivery apps run their own points systems, with the same issues of liability, breakage, inflation and incrementality. Everything on this page carries over. What changes is the price list.</p>
+
+        <p>Anyway, that's the overview. If something here was unclear or you want to go deeper on any chapter, feel free to reach out. I find this stuff genuinely fascinating, and I'm always happy to talk about it.</p>
+
+      </section>
+
+      <footer>
+      </footer>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+      // ── Active sidebar highlight on scroll ──
+      const chapters = document.querySelectorAll('h3[id]');
+      const navLinks = document.querySelectorAll('#toc a');
+
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px' });
+
+      chapters.forEach(ch => obs.observe(ch));
+    </script>
+  </body>
+</html>
