@@ -1,0 +1,859 @@
+<!doctype html>
+<html>
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Airline Network Planning 101</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+
+    <style>
+      /* ── Sidebar nav ── */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .chapter-nav {
+        margin-top: 4px;
+        font-size: 0.82em;
+        line-height: 1.8;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+      }
+      .chapter-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
+
+      /* ── Callout / example boxes ── */
+      .callout {
+        background: #f4f8fd;
+        border-left: 3px solid #267CB9;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #2a3a4a;
+        line-height: 1.7;
+      }
+      .callout-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .example {
+        background: #fafafa;
+        border: 1px solid #e4e4e4;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #444;
+        line-height: 1.7;
+      }
+      .example-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #888;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Reference table ── */
+      .rm-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86em;
+        margin: 16px 0;
+      }
+      .rm-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: left;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .rm-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        vertical-align: top;
+      }
+      .rm-table tr:last-child td { border-bottom: none; }
+
+      section h3 { margin-top: 22px; }
+      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; }
+
+      /* ── Data tables ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+        margin: 16px 0;
+      }
+      .data-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: center;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .data-table th:first-child { text-align: left; }
+      .data-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .data-table td:first-child { text-align: left; }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table tr.total td { background: #f7f7f7; font-weight: bold; border-top: 2px solid #ddd; }
+      .data-table tr.highlight td { background: #fef6d6; font-weight: bold; }
+
+      /* ── Formula block ── */
+      .formula {
+        background: #f9f7ff;
+        border-left: 3px solid #7c6fcd;
+        padding: 14px 20px;
+        margin: 18px 0;
+        text-align: center;
+        overflow-x: auto;
+      }
+      .formula-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7c6fcd;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+      .formula .note {
+        font-size: 0.82em;
+        color: #666;
+        margin-top: 8px;
+        text-align: left;
+        font-style: italic;
+      }
+
+      /* ── Chart container ── */
+      .chart-wrap {
+        margin: 20px 0;
+        background: #fff;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        padding: 12px 8px 6px;
+      }
+      .chart-wrap svg { display: block; width: 100%; height: auto; }
+      .chart-caption {
+        font-size: 0.78em;
+        color: #888;
+        text-align: center;
+        margin-top: 4px;
+        font-style: italic;
+      }
+    </style>
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+
+      <!-- ── Sidebar ── -->
+      <header>
+        <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+        <img src="/assets/img/network_main.png" alt="Airline network planning" />
+        <p><i>Me, drawing routes on a map.</i> <br><hr/>
+        A beginner's guide to airline network planning, covering the intuitions behind where airlines fly, when, and with what aircraft.</p>
+
+        <hr/>
+        <nav class="chapter-nav" id="toc">
+          <a href="#ch00"><span class="ch-n">00</span> Why Network Planning?</a>
+          <a href="#ch01"><span class="ch-n">01</span> Hubs, Spokes &amp; Point-to-Point</a>
+          <a href="#ch02"><span class="ch-n">02</span> The Language of Unit Metrics</a>
+          <a href="#ch03"><span class="ch-n">03</span> Demand &amp; Market Share</a>
+          <a href="#ch04"><span class="ch-n">04</span> The Schedule</a>
+          <a href="#ch05"><span class="ch-n">05</span> Fleet Assignment</a>
+          <a href="#ch06"><span class="ch-n">06</span> Route Profitability &amp; What-Ifs</a>
+          <a href="#ch07"><span class="ch-n">07</span> Real-World Constraints</a>
+          <a href="#ch08"><span class="ch-n">08</span> Fleet Planning</a>
+          <a href="#ch09"><span class="ch-n">09</span> Partnerships &amp; Alliances</a>
+          <a href="#ch10"><span class="ch-n">10</span> Planning Meets RM</a>
+          <a href="#ch11"><span class="ch-n">11</span> What's Next</a>
+        </nav>
+      </header>
+
+      <!-- ── Content ── -->
+      <section>
+
+        <h2>Airline Network Planning 101</h2>
+        <p>Network planning is the part of an airline that decides where to fly, how often, when, and with what aircraft. If Revenue Management is about pricing a seat, network planning is about deciding which seats exist in the first place. This page is my attempt to explain how it works in plain language, in the same spirit as <a href="/rm101.html">RM 101</a> and <a href="/loyalty101.html">Loyalty 101</a>: the key ideas, a few worked examples, and as little jargon as I can get away with. It describes the industry in general, not how any particular airline plans its network, and every number in the examples is made up for illustration.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 00 ── -->
+        <h3 id="ch00">Chapter 00: Why Network Planning?</h3>
+
+        <p>Every flight you have ever taken was decided a long time before you booked it. Months earlier, someone chose that the airline would fly between those two cities, at that time of day, with that type of aircraft, that many times a week. Years earlier, someone chose that the airline would own aircraft of that size at all. Network planning is the function that makes those decisions.</p>
+
+        <p>RM works with the capacity it is given. Network planning creates it. Once a schedule is published and aircraft are committed, changing course is slow and expensive, so the decisions have to be made under uncertainty: about demand that has not materialized, competitors that have not yet moved, and an economy nobody can see six months ahead.</p>
+
+        <h4>Three questions, four horizons</h4>
+
+        <p>Almost everything in network planning is a version of three questions: <strong>where</strong> to fly (the network), <strong>when</strong> to fly (the schedule), and <strong>with what</strong> (the fleet). Each gets answered over a different horizon, and the earlier the decision, the harder it is to undo.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Horizon</th><th>Typical decisions</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Strategic</strong> (years)</td><td>Fleet plan, hub locations, alliances</td><td>Ordering aircraft for delivery several years from now</td></tr>
+            <tr><td><strong>Seasonal</strong> (6 to 18 months)</td><td>Route entry and exit, frequencies, schedule design</td><td>Adding a second daily flight next summer</td></tr>
+            <tr><td><strong>Tactical</strong> (weeks to months)</td><td>Retiming, aircraft swaps, capacity adjustments</td><td>Swapping to a larger aircraft on a flight that is booking strongly</td></tr>
+            <tr><td><strong>Operational</strong> (days)</td><td>Recovery from disruption</td><td>Re-routing aircraft after a storm</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Where it came from</h4>
+
+        <p>Network planning has the same origin story as RM and loyalty: deregulation. Before 1978, US regulators largely decided which airlines could fly which routes. Once carriers could choose for themselves, the shape of the network became a competitive weapon. The hub-and-spoke model had been pioneered earlier: Delta is generally credited with building it at Atlanta in 1955, partly to compete with Eastern, and FedEx used the same structure for overnight packages in the 1970s. After deregulation, other airlines rushed to copy it, and to build the analytical machinery needed to run a network that complicated.</p>
+
+        <div class="example">
+          <div class="example-label">The scale of the prize</div>
+          In 1994, Delta described its Coldstart model in the journal <em>Interfaces</em>. Delta was flying over 2,500 domestic flight legs a day with about 450 aircraft from 10 different fleets, and the model, which decided which type of aircraft should fly each leg, was expected to save $300 million over three years. Not from flying more or hiring more, but from matching aircraft to flights better.
+        </div>
+
+        <div class="callout">
+          <div class="callout-label">The core tension</div>
+          Capacity is committed long before demand is known, and it cannot be changed cheaply. Too little and you spill passengers to competitors. Too much and you fly empty seats that can never be resold. It is the same tension as in RM, in slow motion: RM manages what a seat is worth over a few weeks, while network planning decides whether the seat exists at all.
+        </div>
+
+        <p>The chapters that follow start with the shape of a network, then the language planners use to compare flights, how demand is sized, and how a schedule and a fleet assignment are built. After that come profitability, the constraints that get in the way, the long game of fleet planning, and partnerships. The last chapters connect planning to the world of RM.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 01 ── -->
+        <h3 id="ch01">Chapter 01: Hubs, Spokes &amp; Point-to-Point</h3>
+
+        <p>The first choice in designing a network is how to connect cities. There are two pure models. In a <strong>point-to-point</strong> network, each route links two cities directly, and a passenger flies from A to B on a single flight. In a <strong>hub-and-spoke</strong> network, flights radiate out from a central airport, and most passengers change planes at the hub to get where they are going.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 262" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Point-to-point network with 15 routes versus hub-and-spoke network with 5 routes, both serving 15 city pairs" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<text x="130" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#333333">Point-to-point</text>
+<text x="390" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#333333">Hub-and-spoke</text>
+<line x1="130.0" y1="44.0" x2="197.5" y2="83.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="130.0" y1="44.0" x2="197.5" y2="161.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="130.0" y1="44.0" x2="130.0" y2="200.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="130.0" y1="44.0" x2="62.5" y2="161.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="130.0" y1="44.0" x2="62.5" y2="83.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="197.5" y1="83.0" x2="197.5" y2="161.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="197.5" y1="83.0" x2="130.0" y2="200.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="197.5" y1="83.0" x2="62.5" y2="161.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="197.5" y1="83.0" x2="62.5" y2="83.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="197.5" y1="161.0" x2="130.0" y2="200.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="197.5" y1="161.0" x2="62.5" y2="161.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="197.5" y1="161.0" x2="62.5" y2="83.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="130.0" y1="200.0" x2="62.5" y2="161.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="130.0" y1="200.0" x2="62.5" y2="83.0" stroke="#b7c9da" stroke-width="1.2"/>
+<line x1="62.5" y1="161.0" x2="62.5" y2="83.0" stroke="#b7c9da" stroke-width="1.2"/>
+<circle cx="130.0" cy="44.0" r="8" fill="#267CB9"/>
+<circle cx="197.5" cy="83.0" r="8" fill="#267CB9"/>
+<circle cx="197.5" cy="161.0" r="8" fill="#267CB9"/>
+<circle cx="130.0" cy="200.0" r="8" fill="#267CB9"/>
+<circle cx="62.5" cy="161.0" r="8" fill="#267CB9"/>
+<circle cx="62.5" cy="83.0" r="8" fill="#267CB9"/>
+<line x1="390" y1="122" x2="390.0" y2="44.0" stroke="#7c6fcd" stroke-width="2.2"/>
+<line x1="390" y1="122" x2="464.2" y2="97.9" stroke="#7c6fcd" stroke-width="2.2"/>
+<line x1="390" y1="122" x2="435.8" y2="185.1" stroke="#7c6fcd" stroke-width="2.2"/>
+<line x1="390" y1="122" x2="344.2" y2="185.1" stroke="#7c6fcd" stroke-width="2.2"/>
+<line x1="390" y1="122" x2="315.8" y2="97.9" stroke="#7c6fcd" stroke-width="2.2"/>
+<circle cx="390.0" cy="44.0" r="8" fill="#267CB9"/>
+<circle cx="464.2" cy="97.9" r="8" fill="#267CB9"/>
+<circle cx="435.8" cy="185.1" r="8" fill="#267CB9"/>
+<circle cx="344.2" cy="185.1" r="8" fill="#267CB9"/>
+<circle cx="315.8" cy="97.9" r="8" fill="#267CB9"/>
+<circle cx="390" cy="122" r="13" fill="#7c6fcd"/>
+<text x="390" y="125.5" text-anchor="middle" font-size="10" font-weight="600" fill="#ffffff">Hub</text>
+<text x="130" y="234" text-anchor="middle" font-size="13" font-weight="600" fill="#333333">15 routes</text>
+<text x="130" y="251" text-anchor="middle" font-size="12" fill="#888888">to serve 15 city pairs</text>
+<text x="390" y="234" text-anchor="middle" font-size="13" font-weight="600" fill="#333333">5 routes</text>
+<text x="390" y="251" text-anchor="middle" font-size="12" fill="#888888">to serve the same 15 city pairs</text>
+</svg>
+          <div class="chart-caption">Six cities have 15 possible city pairs. A point-to-point network needs a route for each. A hub network needs five.</div>
+        </div>
+
+        <p>The counting argument is simple. With one hub and \(n\) spokes, the airline flies \(n\) routes, and every city pair can be served: \(n\) pairs between the hub and each spoke, plus one pair for every two spokes, connecting through the hub.</p>
+
+        <div class="formula">
+          <div class="formula-label">City pairs served by a hub</div>
+          \[\text{city pairs} \;=\; n + \frac{n(n-1)}{2} \;=\; \frac{n(n+1)}{2}\]
+          <div class="note">A hub needs only \(n\) routes to serve all of them. A point-to-point network needs one route per pair. With 5 spokes that is 5 routes against 15. With 20 spokes it is 20 routes against 210.</div>
+        </div>
+
+        <p>The saving is bigger than it looks, because a route is not the same as a flight. A route flown twice a day has to be filled twice a day. In a hub network, the flight from a small city to the hub carries local passengers plus everyone connecting to dozens of other cities, so it fills up even when demand for any single market would never justify a flight. That pooling of demand is the whole point. It allows higher frequency, larger aircraft and better load factors on markets that are too thin to support a direct service.</p>
+
+        <h4>What hubs cost</h4>
+
+        <p>Hubs are not free. To make connections work, an airline has to bring lots of flights into the hub at roughly the same time and send them out again shortly after, which produces sharp peaks of activity followed by quiet periods. Gates, ground crews and baggage systems sit idle between waves and are overloaded during them. Delays spread: a late inbound flight can make dozens of passengers miss connections, and a storm at the hub can disrupt the whole network at once. Passengers pay in longer journeys and the risk of misconnecting.</p>
+
+        <p>There is also a competitive cost. On dense city pairs with plenty of local demand, a low-cost airline flying point-to-point can undercut a hub carrier's fares, because it avoids the complexity and cost of the hub. That is why the two models coexist rather than one replacing the other.</p>
+
+        <h4>Local and connecting traffic</h4>
+
+        <p>A hub flight carries two kinds of passengers. <strong>Local</strong> passengers start or end their journey at the hub. <strong>Connecting</strong> passengers pass through it. The distinction matters because a connecting passenger pays for a whole itinerary, and the revenue has to be divided across the flights it uses. Chapter 06 shows why that division can change whether a flight looks profitable, and RM 101 shows how the same passenger is valued in the network optimization.</p>
+
+        <h4>Real networks are hybrids</h4>
+
+        <p>Few airlines are pure examples of either model. Many operate several hubs, often one on each side of a large market, so passengers do not have to detour far. Some add focus cities, secondary bases that serve dense point-to-point routes bypassing the main hub. Some hubs owe their strength to geography rather than to local demand: an airport located between two large markets can connect them with less of a detour than the alternatives. Low-cost carriers sometimes mix in connecting itineraries too. The pure models are useful mostly as the two ends of a spectrum.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 02 ── -->
+        <h3 id="ch02">Chapter 02: The Language of Unit Metrics</h3>
+
+        <p>Planners constantly compare flights that differ in length, aircraft size and load. A 500-kilometre flight on a small jet and a 9,000-kilometre flight on a widebody cannot be compared using total revenue or total cost. They need units that scale with capacity and distance. The industry standardized on a handful.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Metric</th><th>Definition</th><th>What it tells you</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>ASK</strong><br>Available Seat Kilometres</td><td>Seats × kilometres flown</td><td>How much capacity was produced</td></tr>
+            <tr><td><strong>RPK</strong><br>Revenue Passenger Kilometres</td><td>Paying passengers × kilometres flown</td><td>How much of it was sold</td></tr>
+            <tr><td><strong>Load factor</strong></td><td>RPK ÷ ASK</td><td>How full the aircraft is</td></tr>
+            <tr><td><strong>Yield</strong></td><td>Passenger revenue ÷ RPK</td><td>The price paid per kilometre</td></tr>
+            <tr><td><strong>RASK</strong></td><td>Revenue ÷ ASK</td><td>Revenue per unit of capacity</td></tr>
+            <tr><td><strong>CASK</strong></td><td>Operating cost ÷ ASK</td><td>Cost per unit of capacity</td></tr>
+          </tbody>
+        </table>
+
+        <p>North American airlines usually quote the same metrics per mile (ASM, RASM, CASM). The logic is identical.</p>
+
+        <p>Two relationships do most of the work. RASK is simply yield multiplied by load factor: the price you charge per kilometre, times the share of your capacity you actually sell. And an airline earns a profit on a flight when RASK exceeds CASK, which pins down the load factor it needs.</p>
+
+        <div class="formula">
+          <div class="formula-label">Revenue per unit of capacity, and the breakeven load factor</div>
+          \[\text{RASK} \;=\; \text{yield} \times \text{load factor} \qquad\qquad \text{breakeven load factor} \;=\; \frac{\text{CASK}}{\text{yield}}\]
+          <div class="note">The breakeven is the load factor at which RASK equals CASK.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">One flight, worked through</div>
+          A 180-seat aircraft flies 1,000 km with 144 passengers. Yield is 12 cents per RPK and CASK is 8.5 cents.<br><br>
+          ASK = 180 × 1,000 = 180,000. RPK = 144 × 1,000 = 144,000. Load factor = 80%.<br>
+          Revenue = 144,000 × $0.12 = $17,280, so RASK = 9.6 cents (= 12 × 0.80).<br>
+          Cost = 180,000 × $0.085 = $15,300. Profit = $1,980.<br>
+          Breakeven load factor = 8.5 / 12 ≈ 71%.
+        </div>
+
+        <h4>Why stage length matters</h4>
+
+        <p>Many costs are incurred per flight, not per kilometre: taking off, landing, ground handling, air traffic fees. Spread over a long flight they shrink per kilometre, so CASK falls as stage length rises. Yields tend to fall with distance too, because fares rise less than proportionally with kilometres flown. A short flight therefore has both a higher CASK and a higher RASK than a long one, and comparing them directly is misleading. Planners use stage-length adjusted versions of the metrics to make fair comparisons.</p>
+
+        <div class="callout">
+          <div class="callout-label">A metric is not a decision</div>
+          A route with a healthy RASK can still lose money, and a route with a poor RASK can be the reason a long-haul flight fills up. Unit metrics are a way to compare and to spot outliers. They do not know about feed traffic, aircraft opportunity cost or competitors. Chapter 06 is about what they leave out.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 03 ── -->
+        <h3 id="ch03">Chapter 03: Demand &amp; Market Share</h3>
+
+        <p>Airline demand is not measured in flights. It is measured in markets: an origin and a destination, regardless of how the traveler gets there. Planners think in three layers. First, how many people want to travel between the two cities at all, on any airline and any routing. Second, what share of them a given airline can capture. Third, how those passengers spread across the airline's itineraries.</p>
+
+        <h4>Sizing a market</h4>
+
+        <p>The classic starting point is a gravity model, borrowed from physics: the demand between two cities grows with their size and shrinks with the distance between them.</p>
+
+        <div class="formula">
+          <div class="formula-label">Gravity model of demand</div>
+          \[D_{ij} \;=\; k \cdot \frac{M_i \, M_j}{d_{ij}^{\,\gamma}}\]
+          <div class="note">\(M_i\) and \(M_j\) measure the economic size of each city (population, income), \(d_{ij}\) is the distance between them, and \(k\) and \(\gamma\) are estimated from data.</div>
+        </div>
+
+        <p>Real models add a lot on top: the mix of business and leisure travel, tourism, family and diaspora ties, business links between regions, and the alternatives to flying, such as a fast train. Price matters too, and it does not matter equally for everyone. Leisure travelers are typically more price elastic than business travelers, so a fare cut stimulates more demand in leisure markets than in corporate ones.</p>
+
+        <h4>Winning a share</h4>
+
+        <p>Once the size of a market is known, the question is how much of it an airline gets. Planners score each itinerary on what travelers care about: price, total travel time, the number of connections, departure time, aircraft type, the airline's brand. Traffic then splits across itineraries in proportion to their scores. This is often called a Quality of Service Index, or QSI, approach.</p>
+
+        <p>One variable stands out: frequency. An airline with more daily flights offers a departure time closer to what each traveler wants, and travelers, business travelers especially, choose accordingly. The empirical result is the S-curve: the airline with a larger share of the flights gets a disproportionately larger share of the passengers.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="S-curve: share of traffic against share of frequencies" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<line x1="64.0" y1="252" x2="64.0" y2="34" stroke="#eeeeee" stroke-width="1"/>
+<line x1="64" y1="252.0" x2="492" y2="252.0" stroke="#eeeeee" stroke-width="1"/>
+<text x="64.0" y="268" text-anchor="middle" font-size="11" fill="#888888">0%</text>
+<text x="56" y="256.0" text-anchor="end" font-size="11" fill="#888888">0%</text>
+<line x1="171.0" y1="252" x2="171.0" y2="34" stroke="#eeeeee" stroke-width="1"/>
+<line x1="64" y1="197.5" x2="492" y2="197.5" stroke="#eeeeee" stroke-width="1"/>
+<text x="171.0" y="268" text-anchor="middle" font-size="11" fill="#888888">25%</text>
+<text x="56" y="201.5" text-anchor="end" font-size="11" fill="#888888">25%</text>
+<line x1="278.0" y1="252" x2="278.0" y2="34" stroke="#eeeeee" stroke-width="1"/>
+<line x1="64" y1="143.0" x2="492" y2="143.0" stroke="#eeeeee" stroke-width="1"/>
+<text x="278.0" y="268" text-anchor="middle" font-size="11" fill="#888888">50%</text>
+<text x="56" y="147.0" text-anchor="end" font-size="11" fill="#888888">50%</text>
+<line x1="385.0" y1="252" x2="385.0" y2="34" stroke="#eeeeee" stroke-width="1"/>
+<line x1="64" y1="88.5" x2="492" y2="88.5" stroke="#eeeeee" stroke-width="1"/>
+<text x="385.0" y="268" text-anchor="middle" font-size="11" fill="#888888">75%</text>
+<text x="56" y="92.5" text-anchor="end" font-size="11" fill="#888888">75%</text>
+<line x1="492.0" y1="252" x2="492.0" y2="34" stroke="#eeeeee" stroke-width="1"/>
+<line x1="64" y1="34.0" x2="492" y2="34.0" stroke="#eeeeee" stroke-width="1"/>
+<text x="492.0" y="268" text-anchor="middle" font-size="11" fill="#888888">100%</text>
+<text x="56" y="38.0" text-anchor="end" font-size="11" fill="#888888">100%</text>
+<line x1="64" y1="252" x2="492" y2="252" stroke="#999999" stroke-width="1.2"/>
+<line x1="64" y1="252" x2="64" y2="34" stroke="#999999" stroke-width="1.2"/>
+<line x1="64.0" y1="252.0" x2="492.0" y2="34.0" stroke="#9a9a9a" stroke-width="1.4" stroke-dasharray="5 4"/>
+<path d="M 64.0 252.0 L 72.6 251.9 L 81.1 251.6 L 89.7 251.1 L 98.2 250.4 L 106.8 249.3 L 115.4 248.0 L 123.9 246.4 L 132.5 244.4 L 141.0 242.0 L 149.6 239.2 L 158.2 235.9 L 166.7 232.2 L 175.3 228.0 L 183.8 223.4 L 192.4 218.2 L 201.0 212.5 L 209.5 206.3 L 218.1 199.6 L 226.6 192.5 L 235.2 184.9 L 243.8 177.0 L 252.3 168.8 L 260.9 160.3 L 269.4 151.7 L 278.0 143.0 L 286.6 134.3 L 295.1 125.7 L 303.7 117.2 L 312.2 109.0 L 320.8 101.1 L 329.4 93.5 L 337.9 86.4 L 346.5 79.7 L 355.0 73.5 L 363.6 67.8 L 372.2 62.6 L 380.7 58.0 L 389.3 53.8 L 397.8 50.1 L 406.4 46.8 L 415.0 44.0 L 423.5 41.6 L 432.1 39.6 L 440.6 38.0 L 449.2 36.7 L 457.8 35.6 L 466.3 34.9 L 474.9 34.4 L 483.4 34.1 L 492.0 34.0" fill="none" stroke="#267CB9" stroke-width="2.8" stroke-linejoin="round"/>
+<circle cx="320.8" cy="101.1" r="5" fill="#267CB9" stroke="#ffffff" stroke-width="1.5"/>
+<line x1="320.8" y1="101.1" x2="320.8" y2="252" stroke="#267CB9" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="320.8" y1="101.1" x2="64" y2="101.1" stroke="#267CB9" stroke-width="1" stroke-dasharray="2 3"/>
+<text x="78" y="50" font-size="12" fill="#333333" font-weight="600">60% of the frequencies</text>
+<text x="78" y="66" font-size="12" fill="#333333">brings about 69% of the traffic</text>
+<text x="484" y="218" text-anchor="end" font-size="11" fill="#888888">Dashed: proportional share</text>
+<text x="484" y="234" text-anchor="end" font-size="11" fill="#888888">Solid: illustrative S-curve</text>
+<text x="278.0" y="302" text-anchor="middle" font-size="12" fill="#333333">Share of frequencies on the route</text>
+<text transform="translate(16 143.0) rotate(-90)" text-anchor="middle" font-size="12" fill="#333333">Share of traffic</text>
+</svg>
+          <div class="chart-caption">The S-curve: share of traffic rises faster than share of frequencies once an airline is ahead. Illustrative.</div>
+        </div>
+
+        <div class="formula">
+          <div class="formula-label">Frequency share model</div>
+          \[\text{traffic share}_i \;=\; \frac{f_i^{\,\alpha}}{\sum_j f_j^{\,\alpha}}\]
+          <div class="note">\(f_i\) is the number of frequencies airline \(i\) operates on the route. The exponent \(\alpha\) is above 1, which creates the S shape. With \(\alpha = 2\), an airline with 60% of the frequencies captures about 69% of the traffic, and one with 40% captures about 31%.</div>
+        </div>
+
+        <p>The consequence is that adding a flight is worth more to the airline that already has more of them, and worth less to the one behind. This is why some routes end up in capacity races, and why a small airline often does better focusing on a few routes than spreading thin across many.</p>
+
+        <h4>Unconstrained demand, again</h4>
+
+        <p>Planners face the same problem as in RM 101, Chapter 02. Bookings show what an airline sold, not what customers wanted. If a flight is full every day, the bookings look identical on a route where demand is exactly at capacity and on one where demand is double. A planner deciding whether to add a second flight needs demand with the capacity limit removed, which means unconstraining historical data, and estimating the passengers who were spilled.</p>
+
+        <h4>Forecasting a route with no history</h4>
+
+        <p>New routes have no booking history at all. Planners use analogues (existing routes between similar city pairs), gravity models, and surveys of local travel patterns. They also allow for stimulation: launching a new nonstop flight tends to create demand that did not exist while travelers had to make a connection. And they allow for ramp-up. A new route rarely reaches its mature load factor on day one, because travelers, travel agents and corporate buyers need time to discover it. A route should be judged by whether it follows a credible ramp-up path, not by its first month.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 04 ── -->
+        <h3 id="ch04">Chapter 04: The Schedule</h3>
+
+        <p>The schedule is the product customers actually see. Two airlines with the same aircraft and the same routes can have very different businesses depending on when they fly, and how those flights fit together.</p>
+
+        <h4>Frequency versus gauge</h4>
+
+        <p>Suppose an airline wants to offer 200 seats a day on a route. It can fly one aircraft with 200 seats, or two with 100. The capacity is the same. The economics are not.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Option</th><th>Strengths</th><th>Weaknesses</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Two smaller aircraft</strong><br>(higher frequency)</td><td>More departure times to choose from, a higher share of traffic (the S-curve), and less exposure to a single cancellation</td><td>Higher cost per seat, more airport slots and gate time needed</td></tr>
+            <tr><td><strong>One larger aircraft</strong><br>(higher gauge)</td><td>Lower cost per seat, fewer slots used</td><td>Fewer time options, more spill at peak times, weaker competitive position</td></tr>
+          </tbody>
+        </table>
+
+        <p>Frequency matters most where business travelers dominate and where competitors are close, because convenience decides the booking. Gauge matters most where demand is price-driven and slots are scarce. Most airlines mix the two: small aircraft at more times where time-of-day matters, larger ones where it does not.</p>
+
+        <h4>Time of day</h4>
+
+        <p>Demand is not spread evenly over the day. Business travelers want to leave early in the morning and return in the evening. Leisure travelers are more flexible but prefer to avoid nights. Long-haul flights are timed to land at convenient hours and to connect onward. A flight's revenue can change more when it is retimed by an hour than when it is upgauged, and the best departure slots are contested, at the airport and in the schedule.</p>
+
+        <h4>Banks and waves</h4>
+
+        <p>At a hub, timing is a puzzle with many pieces. To let passengers connect, the airline groups flights into <strong>banks</strong>: a wave of arrivals from the spokes, followed shortly by a wave of departures back out. The gap between them has to be long enough to make the connection but short enough to be attractive. Airports publish a minimum connecting time for each type of connection, and planners also cap the maximum time beyond which a connection is no longer competitive.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 168" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A hub day with three banks, each made of a wave of arrivals followed by a wave of departures" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<rect x="20" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="33" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="46" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="59" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="72" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="90" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="103" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="116" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="129" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="142" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<text x="85" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="#333333">Bank 1</text>
+<rect x="190" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="203" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="216" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="229" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="242" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="260" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="273" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="286" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="299" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="312" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<text x="255" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="#333333">Bank 2</text>
+<rect x="360" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="373" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="386" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="399" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="412" y="48" width="8" height="42" rx="1.5" fill="#267CB9"/>
+<rect x="430" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="443" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="456" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="469" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<rect x="482" y="48" width="8" height="42" rx="1.5" fill="#7c6fcd"/>
+<text x="425" y="32" text-anchor="middle" font-size="13" font-weight="600" fill="#333333">Bank 3</text>
+<text x="170" y="73.0" text-anchor="middle" font-size="11" font-style="italic" fill="#aaaaaa">quiet</text>
+<text x="340" y="73.0" text-anchor="middle" font-size="11" font-style="italic" fill="#aaaaaa">quiet</text>
+<line x1="20" y1="112" x2="496" y2="112" stroke="#999999" stroke-width="1.2"/>
+<polygon points="496,108 504,112 496,116" fill="#999999"/>
+<text x="504" y="128" text-anchor="end" font-size="11" fill="#888888">time</text>
+<rect x="20" y="138" width="10" height="10" rx="1.5" fill="#267CB9"/>
+<text x="36" y="147" font-size="12" fill="#333333">Arrivals (spokes to hub)</text>
+<rect x="220" y="138" width="10" height="10" rx="1.5" fill="#7c6fcd"/>
+<text x="236" y="147" font-size="12" fill="#333333">Departures (hub to spokes)</text>
+</svg>
+          <div class="chart-caption">A hub day organized in three banks. Passengers arrive in a wave, connect, and leave in a wave.</div>
+        </div>
+
+        <p>The design question is how many banks, and how tightly to pack them. More banks give passengers more choice and spread the workload, but each one carries fewer flights and connections. Some carriers have moved to more evenly spread schedules, sometimes called de-peaked or rolling hubs, that make better use of aircraft, gates and staff at the cost of some connection quality.</p>
+
+        <h4>The calendar</h4>
+
+        <p>Schedules are built for two seasons a year: northern summer, starting around the end of March, and northern winter, starting around the end of October. Airlines typically design each season roughly a year ahead, and open sales close to a year before departure. Changes after that are costly: customers already have tickets, connections have been sold, crews have been rostered. So planners try to get the schedule right early and make later changes small.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 05 ── -->
+        <h3 id="ch05">Chapter 05: Fleet Assignment</h3>
+
+        <p>Once the schedule exists, each flight needs an aircraft. The fleet assignment problem is to decide which type of aircraft flies each flight, so that the airline earns as much as it can from the fleet it has. It sounds like a sorting exercise, but the decisions are tightly linked: an aircraft that lands in a city has to depart from that city, the airline has a limited number of each type, and putting a large aircraft on one flight means another flight gets a smaller one.</p>
+
+        <h4>The trade-off: spill versus cost</h4>
+
+        <p>A bigger aircraft has more seats, which means fewer passengers turned away when demand is high. It also costs more to operate. The right choice for each flight balances the revenue lost to <strong>spill</strong> against the extra cost of the larger aircraft.</p>
+
+        <div class="formula">
+          <div class="formula-label">Expected spill</div>
+          \[\text{Spill}(C) \;=\; \mathbb{E}\big[\max(D - C,\, 0)\big]\]
+          <div class="note">\(D\) is unconstrained demand for the flight, which is uncertain, and \(C\) is the number of seats. Some spilled passengers are recaptured on other flights of the same airline, which reduces the true loss.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">Two flights, two aircraft</div>
+          An airline has a 150-seat and a 200-seat aircraft. Operating the larger one costs $4,000 more per flight. The average fare is $250.
+          <table class="data-table">
+            <thead>
+              <tr><th>Flight</th><th>Demand</th><th>Passengers on 150 seats</th><th>Passengers on 200 seats</th><th>Larger aircraft: extra revenue − extra cost</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Morning peak</td><td>180</td><td>150</td><td>180</td><td>+$7,500 − $4,000 = <strong>+$3,500</strong></td></tr>
+              <tr><td>Midday</td><td>110</td><td>110</td><td>110</td><td>$0 − $4,000 = <strong>−$4,000</strong></td></tr>
+            </tbody>
+          </table>
+          The larger aircraft belongs on the morning flight and the smaller one on the midday flight. Put the larger one on the wrong flight and the airline pays $4,000 more for nothing. Do it across 2,500 flights and the numbers add up quickly.
+        </div>
+
+        <h4>The time-space network</h4>
+
+        <p>The standard way to solve this is to draw the schedule as a time-space network. Every airport at every moment is a node, every flight is an arc from one node to another, and waiting on the ground is an arc too. Each aircraft type flows through the network: it enters at the start of the day, follows flights, and has to leave the network in the same place and in the same numbers as it began. The model chooses which type flies each arc, subject to two rules: every flight gets exactly one type, and at every node the number of aircraft arriving must match the number departing. This is the kind of integer optimization problem that was a research challenge in the early 1990s, and is routine today.</p>
+
+        <h4>From fleet types to individual aircraft</h4>
+
+        <p>Fleet assignment picks a type. A second step, aircraft routing, decides which physical aircraft, identified by its tail number, flies each sequence of flights. This is where maintenance comes in: every aircraft has to visit a maintenance base regularly and be on the ground at the right time. Crew scheduling is a third, separate step built on top. Each is solved in turn, and each constrains the ones that come after it.</p>
+
+        <div class="callout">
+          <div class="callout-label">The value of flexibility</div>
+          Because demand is uncertain, airlines like to keep the option of changing the aircraft later, once booking data shows which flights are really strong. Assigning aircraft types that are easy to swap, for instance because they share a cockpit and pilots can fly both, preserves that option. A slightly worse assignment on paper can be worth more than a perfect one that cannot be adjusted.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 06 ── -->
+        <h3 id="ch06">Chapter 06: Route Profitability &amp; What-Ifs</h3>
+
+        <p>How do you know whether a route or a flight is worth flying? The answer depends on which costs you count, and which decision you are making.</p>
+
+        <h4>Which costs count</h4>
+
+        <p>Airline costs fall into two broad groups. <strong>Direct operating costs</strong> are driven by flying a particular flight: fuel, crew, maintenance, landing and navigation fees, ground handling, catering. <strong>Indirect costs</strong> are overheads: sales and distribution, administration, brand, headquarters. For most decisions, the right measure is the <strong>contribution</strong> of a flight: its revenue minus the costs that would disappear if the flight were cancelled, its avoidable costs.</p>
+
+        <p>Fully allocated profit, which spreads overheads across flights, answers a different question. It tells you whether the network as a whole covers its costs in the long run. It is a poor guide to whether to add or drop one flight, because dropping a flight does not make the overhead go away.</p>
+
+        <h4>Adding a flight</h4>
+
+        <div class="example">
+          <div class="example-label">A second daily flight</div>
+          A route has one daily flight on a 180-seat aircraft. Demand is 200, so 20 passengers are spilled. The average fare is $250 and each flight costs $32,000. The airline considers adding a second daily flight.
+          <table class="data-table">
+            <thead>
+              <tr><th></th><th>One daily flight</th><th>Two daily flights</th><th>Change</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Seats</td><td>180</td><td>360</td><td>+180</td></tr>
+              <tr><td>Passengers</td><td>180</td><td>260</td><td>+80</td></tr>
+              <tr><td>Load factor</td><td>100%</td><td>72%</td><td></td></tr>
+              <tr><td>Revenue</td><td>$45,000</td><td>$65,000</td><td>+$20,000</td></tr>
+              <tr><td>Cost</td><td>$32,000</td><td>$64,000</td><td>+$32,000</td></tr>
+              <tr class="highlight"><td>Contribution</td><td>$13,000</td><td>$1,000</td><td>−$12,000</td></tr>
+            </tbody>
+          </table>
+          The second flight recaptures the 20 spilled passengers and attracts 60 more through better timing and a stronger position against competitors, but it adds only $20,000 of revenue for $32,000 of cost. On its own, it loses money.
+        </div>
+
+        <h4>The network view</h4>
+
+        <p>That is not the end of the analysis. A flight is not only a route, it is part of a network, and it may create value that does not show up in its own revenue line.</p>
+
+        <div class="example">
+          <div class="example-label">A spoke that feeds long-haul</div>
+          Suppose 40 of the passengers on the new flight connect onward to a long-haul flight, and each contributes $400 to that flight's revenue. That is $16,000 of revenue on the long-haul leg that would not exist otherwise. The new flight's contribution changes from −$12,000 to +$4,000, and it now looks worth flying.<br><br>
+          There is a catch. This holds only if the seats those 40 passengers occupy would otherwise have flown empty. If the long-haul flight was going to be full anyway, they displace other passengers, and the true value is much lower. It is the displacement cost from RM 101, Chapter 06, coming back in a different form.
+        </div>
+
+        <h4>What-if analysis</h4>
+
+        <p>Nearly every network decision is a what-if: what happens if we add this flight, retime that one, swap the aircraft, drop the route? The method is always the same. Build a baseline, build the scenario, and compare the whole network between the two, not just the route that changed. The hard part is knowing what moves when you change one thing.</p>
+
+        <div class="example">
+          <div class="example-label">What moves in a what-if</div>
+          <strong>Local demand:</strong> new passengers stimulated, plus spilled passengers recaptured.<br>
+          <strong>Cannibalization:</strong> passengers who move over from the airline's other flights.<br>
+          <strong>Connecting flows:</strong> passengers whose itineraries pass through the changed flight, on every leg.<br>
+          <strong>Competitors:</strong> share won or lost, and how they might respond.<br>
+          <strong>Costs:</strong> everything avoidable, including crew and airport fees.<br>
+          <strong>Aircraft:</strong> what else that aircraft could have done with its time.
+        </div>
+
+        <div class="callout">
+          <div class="callout-label">The aircraft has an opportunity cost too</div>
+          Every aircraft-hour has a value in the network, in the same way that every seat has a bid price. A flight that keeps an aircraft busy for six hours means those six hours cannot be used elsewhere. A good what-if analysis charges the flight for that, or it will keep finding attractive flights that all need the same aircraft.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 07 ── -->
+        <h3 id="ch07">Chapter 07: Real-World Constraints</h3>
+
+        <p>A network that looks perfect on a spreadsheet still has to be flown. A lot of the craft in network planning is knowing which constraints are real, which ones can be negotiated, and which ones will bite six months later.</p>
+
+        <h4>Airports and slots</h4>
+
+        <p>Airports have finite runways, gates and hours of operation. Some have night curfews or noise limits. At the busiest airports, airlines need <strong>slots</strong>, permission to land or take off at a particular time, in order to operate at all. Under the IATA guidelines used at many congested airports, an airline generally keeps its historic slots only if it operates at least 80% of them, the so-called 80/20 rule. That is why airlines sometimes fly nearly empty flights to hold on to a valuable slot, and why regulators temporarily relaxed the rule when air travel collapsed in 2020.</p>
+
+        <h4>Bilateral agreements</h4>
+
+        <p>International flying is governed by air service agreements between governments. These decide which airlines can fly between two countries, how often, and sometimes with what capacity. Open skies agreements remove many of those limits, but plenty of markets remain restricted. A route that makes commercial sense may simply not be available, or may be available only in fixed quantities.</p>
+
+        <h4>Crew and maintenance</h4>
+
+        <p>Pilots and cabin crew have legal limits on how long they can work, and rest requirements between duties. A schedule that is cheap for aircraft can be expensive for crews if it forces overnights in the wrong places or leaves them waiting between flights. Aircraft also need regular maintenance checks, many of them overnight at specific bases, so the schedule has to bring each aircraft to the right place at the right time.</p>
+
+        <h4>Aircraft performance</h4>
+
+        <p>Each aircraft type has a range, a payload, and runway requirements that vary with temperature and altitude. A route may work in winter and not in summer, because a hot day at a high-altitude airport reduces how much the aircraft can carry. Twin-engine aircraft flying long routes over water have to stay within a limited diversion time of a suitable airport, a rule known as ETOPS, which shapes which routes they can fly.</p>
+
+        <div class="callout">
+          <div class="callout-label">Efficiency versus robustness</div>
+          A schedule squeezed to its limit has no slack. Short turnarounds and high aircraft utilization look great on paper, and then one delay in the morning ripples through the whole day, especially at a hub, where hundreds of connections depend on each other. Planners add buffers on purpose: longer turn times, spare aircraft, reserve crews. It costs a small amount every day to avoid a large loss on the bad ones.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 08 ── -->
+        <h3 id="ch08">Chapter 08: Fleet Planning</h3>
+
+        <p>Fleet planning is the strategic version of fleet assignment: deciding what aircraft the airline will own or lease years from now. It is one of the largest and least reversible decisions an airline makes. Aircraft cost tens or hundreds of millions each, orders can take years to deliver, and an aircraft, once bought, stays in the fleet for two decades or more.</p>
+
+        <h4>The main categories</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Category</th><th>Rough size</th><th>Typical role</th><th>Cost profile</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Regional aircraft</strong></td><td>Up to about 100 seats</td><td>Thin routes and feeding a hub</td><td>Highest cost per seat</td></tr>
+            <tr><td><strong>Narrowbody</strong></td><td>About 120 to 240 seats</td><td>The workhorse for domestic and medium-haul flying</td><td>Mid cost per seat</td></tr>
+            <tr><td><strong>Widebody</strong></td><td>About 250 seats and up</td><td>Long-haul and the densest trunk routes</td><td>Competitive cost per seat on long flights, but a large commitment</td></tr>
+          </tbody>
+        </table>
+
+        <h4>The trade-offs</h4>
+
+        <p>Three forces pull in different directions. <strong>Right-sizing</strong> says to match each aircraft to the routes it serves, which argues for many types. <strong>Commonality</strong> says that every additional type means more pilot training, more spare parts and more maintenance expertise, which argues for few. And <strong>timing</strong>: an aircraft ordered today is delivered into an economy nobody can see, and the choice between leasing and owning shifts how much of that risk the airline carries.</p>
+
+        <h4>Planning under uncertainty</h4>
+
+        <p>Because the future is uncertain, fleet planners work with scenarios rather than a single forecast. Consider a route where the airline has to choose between a 150-seat and a 200-seat aircraft, and does not know how strong demand will be.</p>
+
+        <div class="example">
+          <div class="example-label">Which aircraft? (contribution per flight, illustrative)</div>
+          The average fare is $250. The 150-seat aircraft costs $28,000 per flight and the 200-seat costs $32,000.
+          <table class="data-table">
+            <thead>
+              <tr><th>Scenario</th><th>Probability</th><th>Passengers wanting to fly</th><th>150-seat</th><th>200-seat</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Weak demand</td><td>30%</td><td>110</td><td>−$500</td><td>−$4,500</td></tr>
+              <tr><td>Base demand</td><td>50%</td><td>150</td><td>$9,500</td><td>$5,500</td></tr>
+              <tr><td>Strong demand</td><td>20%</td><td>190</td><td>$9,500</td><td>$15,500</td></tr>
+              <tr class="total"><td>Expected</td><td></td><td></td><td>$6,500</td><td>$4,500</td></tr>
+            </tbody>
+          </table>
+          On average the smaller aircraft wins, but only by winning in the two most likely scenarios. The larger one has much more upside if demand turns out strong. Which is better depends on the probabilities, and above all on whether the airline can change its mind later.
+        </div>
+
+        <p>That last part is why planners value flexibility so much: options to defer or cancel deliveries, leases that can be ended early, aircraft families that allow conversion between variants, and a used-aircraft market for resale. In 2020, when demand collapsed, airlines that could defer deliveries and retire older aircraft early were in a far better position than those locked into commitments.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 09 ── -->
+        <h3 id="ch09">Chapter 09: Partnerships &amp; Alliances</h3>
+
+        <p>No airline flies everywhere. Partnerships let it offer the customer a much larger network than it operates itself. The arrangements form a ladder, from light cooperation to almost merging.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Arrangement</th><th>What it is</th><th>Effect on the network</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Interline</strong></td><td>Airlines agree to sell and carry each other's passengers on one ticket and share the revenue</td><td>Extends reach with no coordination of schedules</td></tr>
+            <tr><td><strong>Codeshare</strong></td><td>An airline sells seats on a partner's flight under its own flight number</td><td>Adds destinations without operating them, but connections need to be coordinated</td></tr>
+            <tr><td><strong>Alliance</strong></td><td>Broad cooperation on connections, lounges and loyalty benefits</td><td>Turns several networks into one larger network for the customer</td></tr>
+            <tr><td><strong>Joint venture</strong></td><td>Partners plan capacity and pricing together on specific routes and share the results, usually needing antitrust immunity</td><td>Behaves like a single airline on that corridor</td></tr>
+          </tbody>
+        </table>
+
+        <p>Cooperation started small. Northwest and KLM began code-sharing on transatlantic flights in 1989, and in 1997 five airlines founded Star Alliance: Air Canada, Lufthansa, SAS, Thai Airways and United. oneworld followed in 1999 and SkyTeam in 2000.</p>
+
+        <h4>What partners change for planners</h4>
+
+        <p>Partner flights become part of the demand model: a passenger can reach a destination on a partner's flight, and that itinerary competes with the airline's own. Schedules need to be coordinated so that connections between partners work, which is a bank design problem across two airlines instead of one. And the make-or-buy question shows up for every market: fly it yourself, sell a partner's flights, or stay out.</p>
+
+        <div class="callout">
+          <div class="callout-label">Build, borrow or skip</div>
+          For each market, an airline has three options. It can <strong>build</strong> by flying the route itself, taking the cost and the risk but keeping the revenue and control. It can <strong>borrow</strong>, selling seats on a partner's flights and sharing the revenue in return for no capital and no capacity risk. Or it can <strong>skip</strong> the market altogether. Partnerships make the second option far more attractive than it used to be, and they change which routes are worth building.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 10 ── -->
+        <h3 id="ch10">Chapter 10: Planning Meets RM</h3>
+
+        <p>Network planning and Revenue Management deal with the same seats at different moments. Planning decides what is for sale. RM decides how it is sold. The two are constantly feeding information to each other, whether or not the teams talk.</p>
+
+        <h4>Planning creates the supply RM sells</h4>
+
+        <p>Everything RM does happens inside the boundaries planning sets: the flights, the times, the aircraft, the number of seats. A well-designed schedule can make RM's job easy, and a poorly designed one cannot be rescued by clever pricing. On the other side, a planner who ignores how seats are actually sold will keep building capacity that can only be filled with cheap fares.</p>
+
+        <h4>RM reveals the demand planning had to guess</h4>
+
+        <p>A planner has to forecast a year ahead. RM watches actual bookings arrive, from the moment a flight opens for sale until departure. That data is the earliest and most reliable signal of whether the plan was right. Bookings ahead of pace on a flight, sell-outs on a route, and spilled demand estimates are all evidence that capacity is short. Bookings behind pace say the opposite.</p>
+
+        <p>Bid prices carry the same signal. As RM 101 explains, a bid price is the opportunity cost of a seat. A leg where the bid price stays high across many departures is a leg where the airline keeps turning away passengers willing to pay, which is exactly where added capacity would earn the most. A leg where it stays near zero has more capacity than the market wants.</p>
+
+        <h4>The tactical loop</h4>
+
+        <p>The clearest connection between the two is the tactical loop. Weeks or months before departure, RM data shows which flights are booking strongly or weakly. Planners then swap aircraft: a larger one on the flight that is filling up, a smaller one on the flight that is not, provided the assignment was made flexibly enough to allow it (Chapter 05). This is the single most valuable use of RM data for planning, and it works only if both sides trust each other's numbers.</p>
+
+        <div class="callout">
+          <div class="callout-label">Planning proposes, RM discloses</div>
+          Planners commit to a forecast long before there is evidence. RM sees the evidence pile up over the following months. Each learns from the other: RM's bookings correct planning's forecast, and planning's choices define the world RM operates in. Neither has the whole picture alone.
+        </div>
+
+        <h4>And loyalty</h4>
+
+        <p>Loyalty data adds a third view. Members have identities, and identities carry information about who is flying, how often, and how much they are worth. That helps planning judge the value of a route beyond its own revenue, for example if it serves an important city for high-value members or a partner's card portfolio. It also links planning to Loyalty 101: more capacity means more seats for award redemptions, and award availability is an RM decision that planning makes possible.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 11 ── -->
+        <h3 id="ch11">Chapter 11: What's Next</h3>
+
+        <p>Network planning is changing, and a few directions seem worth watching.</p>
+
+        <h4>Integrated optimization</h4>
+
+        <p>Historically, planning was a chain of separate problems: schedule, fleet assignment, aircraft routing, crew pairing, each solved after the previous one. The trouble is that a decision that looks best at one step can make the next step much harder. Modern research and tools increasingly solve two or more of them together, for instance choosing schedule and fleet at the same time, or building schedules that already account for how RM will price them. As computing power grows, the boundaries between these problems get blurrier.</p>
+
+        <h4>Better demand data</h4>
+
+        <p>The best demand forecasts use richer inputs than bookings alone: search data, competitor schedules, mobile and loyalty data, and external signals such as events or economic indicators. As with RM, the shift is from asking what was sold to asking what was wanted. Machine learning is increasingly used to estimate demand for markets with little or no history.</p>
+
+        <h4>New aircraft, new routes</h4>
+
+        <p>Aircraft technology changes what is possible. Newer long-range narrowbodies, like the Airbus A321XLR, make thinner long-haul routes viable that would have been too small for a widebody, opening city pairs that never had a nonstop. Whether they create a new class of routes or mostly substitute for existing ones is exactly the kind of question planners are working on.</p>
+
+        <h4>Sustainability and resilience</h4>
+
+        <p>Fuel efficiency, carbon pricing and sustainable fuel requirements are becoming inputs to route and fleet decisions rather than afterthoughts. At the same time, recent years have made airlines value resilience more: the ability to recover quickly from storms, strikes and shortages. The cost of slack and the value of resilience are both easier to put in numbers than they used to be, and that is likely to change how schedules are built.</p>
+
+        <p>Anyway, that's the overview. If something here was unclear or you want to go deeper on any chapter, feel free to reach out. I find this stuff genuinely fascinating, and I'm always happy to talk about it.</p>
+
+        <p><hr/></p>
+
+        <h4>Sources for the historical facts</h4>
+
+        <p><small>
+          Delta and the origins of hub-and-spoke: <a href="https://en.wikipedia.org/wiki/Spoke%E2%80%93hub_distribution_paradigm">Wikipedia, Spoke–hub distribution paradigm</a>.<br>
+          Coldstart: Subramanian et al., <a href="https://pubsonline.informs.org/doi/abs/10.1287/inte.24.1.104">"Coldstart: Fleet Assignment at Delta Air Lines"</a>, <em>Interfaces</em> 24(1), 1994.<br>
+          Star Alliance and the first codeshare: <a href="https://airwaysmag.com/star-alliance-is-founded">Airways Magazine, Star Alliance is founded</a>.
+        </small></p>
+
+      </section>
+
+      <footer>
+      </footer>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+      // ── Active sidebar highlight on scroll ──
+      const chapters = document.querySelectorAll('h3[id]');
+      const navLinks = document.querySelectorAll('#toc a');
+
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px' });
+
+      chapters.forEach(ch => obs.observe(ch));
+    </script>
+  </body>
+</html>
