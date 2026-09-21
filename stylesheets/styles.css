@@ -585,3 +585,14 @@ tbody tr:hover td { background: var(--panel); }
   .wrapper > header { position: static; max-height: none; }
   .chapter-nav, .book-nav, .city-nav { display: none; }
 }
+
+a.external::after {
+  content: "\2197";
+  display: inline-block;
+  margin-left: 0.25em;
+  font-size: 0.85em;
+  transition: transform 0.15s;
+}
+a.external:hover::after {
+  transform: translate(2px, -2px);
+}
