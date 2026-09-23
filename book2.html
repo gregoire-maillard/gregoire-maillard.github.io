@@ -1,0 +1,460 @@
+<!doctype html>
+<html>
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Expand my literary world</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <style>
+      /* ── Wider stage for this page only ── */
+      .wrapper { width: 1040px; }
+      section  { width: 700px; }
+
+      /* ── Sidebar: header becomes a fixed column, nav fills what's left ── */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .book-nav {
+        margin-top: 10px;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+        padding-right: 6px;
+      }
+      .book-nav-group { margin-bottom: 24px; }
+      .book-nav-group:last-child { margin-bottom: 0; }
+
+      /* ── The "spine" lines ── */
+      .book-line {
+        display: block;
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 7px 0;
+        margin: 0;
+        text-align: left;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .book-line .bar {
+        display: block;
+        height: 2px;
+        width: 42px;
+        background: #ddd;
+        border-radius: 1px;
+        transition: width 0.18s ease, height 0.18s ease, background 0.18s ease;
+      }
+      .book-line .label {
+        display: block;
+        font-size: 0.72em;
+        color: #999;
+        margin-top: 6px;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: opacity 0.15s ease, max-height 0.15s ease;
+      }
+      .book-line:hover .bar { background: #267CB9; width: 58px; }
+      .book-line:hover .label { opacity: 1; max-height: 20px; color: #777; }
+      .book-line.active .bar { background: #267CB9; width: 58px; height: 3px; }
+      .book-line.active .label { opacity: 1; max-height: 20px; color: #267CB9; font-weight: bold; }
+
+      /* ── Book detail pane ── */
+      .book-panel { display: none; }
+      .book-panel.active { display: block; animation: bookIn 0.25s ease; }
+      @keyframes bookIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .book-display {
+        display: flex;
+        align-items: flex-start;
+        gap: 36px;
+      }
+      .book-cover {
+        flex: 0 0 200px;
+      }
+      .book-cover img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
+        border-radius: 2px;
+        box-shadow: 0 14px 28px rgba(0,0,0,0.16), 0 2px 6px rgba(0,0,0,0.08);
+      }
+      .book-info { flex: 1; min-width: 0; }
+      .book-title {
+        font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+        font-size: 1.65em;
+        line-height: 1.25;
+        margin-bottom: 12px;
+      }
+      .book-author {
+        font-style: italic;
+        color: #777;
+        line-height: 1.6;
+        margin-bottom: 18px;
+      }
+      .book-author a { color: #267CB9; }
+      .book-review p { margin: 0 0 16px; }
+      .book-review .empty-note {
+        color: #aaa;
+        font-style: italic;
+        margin: 0;
+      }
+      .chatgpt-note {
+        background: #fafafa;
+        border: 1px solid #e4e4e4;
+        padding: 14px 18px;
+        margin: 4px 0 16px;
+        font-size: 0.92em;
+        color: #555;
+        line-height: 1.7;
+      }
+      .chatgpt-note p { margin: 0 0 10px; }
+      .chatgpt-note ol { margin: 10px 0 0 20px; padding: 0; }
+      .chatgpt-note li { margin-bottom: 12px; }
+
+      @media print, screen and (max-width: 960px) {
+        .wrapper, header, section { width: auto !important; }
+        .book-display { flex-direction: column; }
+        .book-cover { flex: 0 0 auto; max-width: 200px; }
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <div class="wrapper">
+      <header>
+        <h1> <a href=https://gregoiremaillard.com> Grégoire Maillard </a> </h1>
+
+        <p><i>One of my favorite bookstore.</i> <br><hr/> Read a Nobel Prize author bibliography every year, and review it. </p>
+        <hr/>
+        <nav class="book-nav" id="toc">
+
+          <div class="book-nav-group">
+            <button class="book-line" data-target="panel-camus-envers" title="L'envers et l'endroit — Albert Camus, 1937">
+              <span class="bar"></span><span class="label">L'envers et l'endroit</span>
+            </button>
+            <button class="book-line active" data-target="panel-camus-lachute" title="La Chute — Albert Camus, 1956">
+              <span class="bar"></span><span class="label">La Chute</span>
+            </button>
+          </div>
+
+          <div class="book-nav-group">
+            <button class="book-line" data-target="panel-garcia-cronica" title="Crónica de una muerte anunciada — Gabriel García Márquez, 1981">
+              <span class="bar"></span><span class="label">Crónica de una muerte anunciada</span>
+            </button>
+            <button class="book-line" data-target="panel-garcia-amor" title="El amor en los tiempos del cólera — Gabriel García Márquez, 1985">
+              <span class="bar"></span><span class="label">El amor en los tiempos del cólera</span>
+            </button>
+            <button class="book-line" data-target="panel-garcia-memoria" title="Memoria de mis putas tristes — Gabriel García Márquez, 2004">
+              <span class="bar"></span><span class="label">Memoria de mis putas tristes</span>
+            </button>
+          </div>
+
+          <div class="book-nav-group">
+            <button class="book-line" data-target="panel-pamuk-beyazkale" title="Beyaz Kale — Orhan Pamuk, 1985">
+              <span class="bar"></span><span class="label">Beyaz Kale</span>
+            </button>
+            <button class="book-line" data-target="panel-pamuk-karakitap" title="Kara Kitap — Orhan Pamuk, 1990">
+              <span class="bar"></span><span class="label">Kara Kitap</span>
+            </button>
+            <button class="book-line" data-target="panel-pamuk-yenihayat" title="Yeni Hayat — Orhan Pamuk, 1994">
+              <span class="bar"></span><span class="label">Yeni Hayat</span>
+            </button>
+            <button class="book-line" data-target="panel-pamuk-kar" title="Kar — Orhan Pamuk, 2002">
+              <span class="bar"></span><span class="label">Kar</span>
+            </button>
+            <button class="book-line" data-target="panel-pamuk-istanbul" title="İstanbul: Hatıralar ve Şehir — Orhan Pamuk, 2003">
+              <span class="bar"></span><span class="label">İstanbul: Hatıralar ve Şehir</span>
+            </button>
+            <button class="book-line" data-target="panel-pamuk-masumiyet" title="Masumiyet Müzesi — Orhan Pamuk, 2008">
+              <span class="bar"></span><span class="label">Masumiyet Müzesi</span>
+            </button>
+            <button class="book-line" data-target="panel-pamuk-kafamda" title="Kafamda Bir Tuhaflık — Orhan Pamuk, 2014">
+              <span class="bar"></span><span class="label">Kafamda Bir Tuhaflık</span>
+            </button>
+          </div>
+
+        </nav>
+
+        <p></p>
+      </header>
+      <section>
+
+        <!-- ══════════ CAMUS ══════════ -->
+
+        <article class="book-panel" id="panel-camus-envers">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/camus1.png" alt="L'envers et l'endroit"></div>
+            <div class="book-info">
+              <h2 class="book-title">L'envers et l'endroit (1937)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Albert_Camus" target="_blank" rel="noopener">Albert Camus</a>, whose literary production illuminated the problems of the human conscience in his times, is the recipient of the 1957 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p class="empty-note">Review coming soon.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="book-panel active" id="panel-camus-lachute">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/camus15.png" alt="La Chute"></div>
+            <div class="book-info">
+              <h2 class="book-title">La Chute (1956)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Albert_Camus" target="_blank" rel="noopener">Albert Camus</a>, whose literary production illuminated the problems of the human conscience in his times, is the recipient of the 1957 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p>Dare I say that I fell from my chair reading it? The Fall definitely felt like a unique piece of literature, and it also has a unique place in Camus’ bibliography. After closing his cycle of the absurd and the cycle of the revolt, as well as being in the midst of a quarrel with Jean-Paul Sartre, The Fall emerged as a surprise to many, as Camus goes beyond what he previously wrote.</p>
+                <p>But first, let’s come back to what this book is about. It’s a series of monologues from Jean-Baptiste Clamence towards a mysterious protagonist (it could be you or me as far as I know). We find Clamence drunk in a lost bar in Amsterdam, where he tells us his life story. A long time ago, Clamence was close to being successful at everything: at his job, with women, and in every other aspect of life. One day, he notices an accident (or he thinks that he did?); a woman jumped into the canal. He is the only witness to this situation, and walks away, not knowing what ever became of the woman. From then on, our main character spirals down and sabotages himself until his unstoppable downfall in society, leading him to flee Paris and become this mysterious character hidden in a bar abroad.</p>
+                <p>One of the philosophical themes that Camus deals with in this fiction is goodness and the perception of goodness. The main character, apparently sincerely good in every aspect, realizes that he is not sincerely good when facing a situation where his display of goodness wouldn’t be perceived by anyone else but himself. This makes him question: is his true nature bad? What does it say about all of his past good actions? And what does it say about everyone else's good actions? Here are a bunch of philosophical questions that would be pleasant to discuss over a glass of wine. I find that it almost comes back to the opposition between Rousseau, who believes people are good by nature but corrupted by society, and Voltaire, who advocates the opposite. Camus’ story feels like a concatenation of both, where Clamence is initially a good human being but his true nature is bad, and his experience with the rest of society leads him to become a worse version of himself. Although, this same society and its norms were the reasons that originally pushed him to be a better person.</p>
+                <p>I was initially spoiled about the pivotal scene where the woman jumps into the Seine, hence I was expecting it for a while. I was actually surprised by how late it arrives in the book, and how fast this major event in the life of the character is written. One would barely understand that the accident happened before the new chapter already begins. Maybe Camus was trying to make the reader feel the way people live through tragic events that appear blurry in their memories later on. About the accident itself, which haunts Clamence for the rest of his life, I find it interesting that we actually have very few details about it. No one knows if the woman actually fell, if she actually died, or if it was intentional. It is not about the woman herself, who is a vague figure; it is all about finding out who Clamence really was. What I liked even more is the question asked at the end. Faced with the same accident today, and after decades of remorse, what would Clamence do this time? One might make a mistake one time, and maybe Clamence shouldn’t have defined himself by one mistake. But what actually mattered and caused his fall wasn’t the accident itself; it was, "what if the accident were to happen again, what would I do?" And the fact that his actions would be the same confirms his true self. Indeed, the water doesn’t get any warmer.</p>
+                <p>Once Clamence is aware of his true nature, and fails to live with it, he wants everyone to stop their hypocrisy and become self-aware as well. This is where he takes on his role of « juge-pénitent », which he keeps repeating, and maybe makes him an even worse character. His confidences had only one final goal: not to confess himself, but to put his audience face to face with themselves and make them confess their true nature. Who among us would jump into the icy water at the first splash? Really? Clamence transforms his guilt into a weapon and increases his power over others. In a way, it might be a mirror of the USSR's revolutionary self-criticism as a way of claiming moral superiority over others.</p>
+                <p>I really loved this novel. It is fast to read, the themes really got me, and the full-monologue format makes it even more addictive.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ══════════ GARCÍA MÁRQUEZ ══════════ -->
+
+        <article class="book-panel" id="panel-garcia-cronica">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/garcia6.png" alt="Crónica de una muerte anunciada"></div>
+            <div class="book-info">
+              <h2 class="book-title">Crónica de una muerte anunciada (1981)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Gabriel_García_Márquez" target="_blank" rel="noopener">Gabriel García Márquez</a> work, in which the fantastic and the realistic are combined in a richly composed world of imagination, reflecting a continent's life and conflicts, is the recipient of the 1982 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p class="empty-note">Review coming soon.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="book-panel" id="panel-garcia-amor">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/garcia7.png" alt="El amor en los tiempos del cólera"></div>
+            <div class="book-info">
+              <h2 class="book-title">El amor en los tiempos del cólera (1985)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Gabriel_García_Márquez" target="_blank" rel="noopener">Gabriel García Márquez</a> work, in which the fantastic and the realistic are combined in a richly composed world of imagination, reflecting a continent's life and conflicts, is the recipient of the 1982 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p>After reading Orhan Pamuk for a whole year, it felt very fresh reading a book from a different author. Thousands of miles away from Turkey, Gabriel Garcia Marquez transported me to an unexplored continent in my imagination: South America. I don't know if it was the tropical cover of the book, the Spanish-sounding name of the author, or the content of the book itself, but I immediately felt immersed in this new continent: with shades of yellow (orientalism but make it latino), a constant sweat and humidity, and also its surrounding jungle.</p>
+                <p>Love in the Time of Cholera is the life story of three characters: Fermina, Juvenal, and Florentino. It starts with the end. Juvenal dies. Florentino attempts a romantic approach towards the newly widowed Fermina who immediately rejects him. From there, we follow the youth of Fermina, her epistolary love with Florentino, her emancipation from it, her encounter with Juvenal and all the disappointments that followed. In parallel, Florentino's life-long passion, dedicating his life to waiting for his only love: Fermina. Trying to summarize all this feels a bit messy, but isn't love a bit messy sometimes?</p>
+                <p>At first glance, there isn't much love in this book, nor cholera. The characters never truly love each other. Florentino only fantasizes the idea of someone from his youth. Fermina only follows what different forms of authority dictate her, and Juvenal seems to consider his wife more as a trophy wife than an actual passionate love. Cholera is mentioned sometimes, during a few descriptive scenes, but it always feels like a tertiary topic.</p>
+                <p>However, I truly believe this book is about love under all of its stages as it explores it chronologically. From the birth of love as a teenager, the never-ending letters, the unreasonable passion, and the love that we build ourselves in our head. And then the stages of love at a more mature age with everything that it provokes: the marital love, the jealousy of unrequited love, ephemeral love, and all the good and bad moments that they cause. Finally, the death of it. Grieving the rejection from someone we love, or grieving someone we love who isn't there anymore.</p>
+                <p>The book also exhibits love under all its forms. First, there's the responsible love which is the relationship between Fermina and Juvenal, one that is wished by society (Fermina's father, expected by everyone), the kind of love that makes sense and that doesn't give any space for personal passion. Then, there is the love of the body which Florentino enjoys more than anyone else by accumulating affairs over the years. Florentino also experiences the love that doesn't materialize but in his head, and that happens to be the strongest feeling he could get!</p>
+                <p>Also, cholera itself might not be one of the main characters, but its symptoms are everywhere. Florentino is sick to death from his passion, it gets him pale, dry, insomniac, and nauseous. All of the symptoms of a sad love end up being epidemic across the region. Every character ends up causing harm to other people as the lack of love exists in one place and it keeps being propagated all along this fiction. At the end of the day, this is actually a book about love and about cholera.</p>
+                <p>Overall, this is a sad story if you were to ask me. Everyone is submissive to the form of love their fate chose for them, but nobody really ever feels fulfilled with what they have. Florentino fails reaching the woman he loves. Juvenal isn't satisfied and ends up having affairs with random people. But the whole sadness of the story in my eyes is characterized by Fermina. She incarnates the Madame Bovary of the tropics. She is lonely. Her whole life is summarized from other people's wishes. She failed to emancipate herself from her father. Then, she failed to emancipate herself from her husband. And even after her husband passes away, she still cannot emancipate herself from what society expects from a widow. Fermina can only truly love outside of society, and in a way that's what she succeeds in getting. But is it the love she always wished for?</p>
+                <p>To conclude, it was an entertaining read. Garcia Marquez knows how to entertain his audience with comic and ridiculous scenes. I'm still laughing at the scene where the burglar steals the whole living room furniture overnight, or even Juvenal's tragicomic death scene. Nevertheless, it also feels like these 400 pages would have made an even better 250 pages. At some point, and after the x-th woman with whom Florentino has an adventure, it felt a bit repetitive and I was waiting for the story to reach a more interesting part. But it is a good read and a great introduction to the author for anyone who feels intrigued.</p>
+                <p>From now on, the scent of bitter almonds will always remind me of the fate of unrequited love.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="book-panel" id="panel-garcia-memoria">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/garcia10.png" alt="Memoria de mis putas tristes"></div>
+            <div class="book-info">
+              <h2 class="book-title">Memoria de mis putas tristes (2004)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Gabriel_García_Márquez" target="_blank" rel="noopener">Gabriel García Márquez</a> work, in which the fantastic and the realistic are combined in a richly composed world of imagination, reflecting a continent's life and conflicts, is the recipient of the 1982 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p>Memories of My Melancholy Whores was weird in many ways.</p>
+                <p>Last book from Gabriel Garcia Marquez, and probably his most controversial one, this fiction is the relatively short story of a ninety-year-old journalist who spent his whole life never committing to anyone, only living passions and adventures with prostitutes, away from any emotional connections. For his ninetieth birthday, his favorite pimp offers him to spend the night with a very young woman.</p>
+                <p>The main character, for whom many people would feel disgust and revolt, offers a full panorama of human feelings. We will see him going through a phase of curiosity, platonic tenderness, as well as an immense love that ends up making him rot from inside through grief, jealousy, and the hope that something might ever happen.</p>
+                <p>Here, love is more about how it impacts oneself rather than the relationship between two human beings. In some ways, I found many similarities with Love in the Time of Cholera, as the main character truly lives love and its related feelings through his own gaze but without the acknowledgment nor consent of the loved one. The existence of the body is enough for the narrator; the rest (her feelings, her thoughts, her reactions) are only imagined and dreamed by himself.</p>
+                <p>However, in my eyes, before being a book about love, it is a book about loneliness. He meets only people he gets money from (the magazine editorial office) and the ones he pays (the prostitute and her pimp). His loneliness is emphasized by his old age. And the novel transpires regret. Through his imaginary love, the narrator feels what he wishes he had lived a long time ago, when his body was able to act on it, when he didn't have to pay for it.</p>
+                <p>Also, what disturbs me even more than the plot itself is the fact that the main character has many resemblances to the author himself. They are both old and ready to die. Both journalists or former journalists. And both fantasizing about unreciprocated love in some ways. In fine, it makes me wonder if this book isn't just about Marquez's fantasies of him and his melancholy whores.</p>
+                <p>Gabriel Garcia Marquez's final book is a quick read where love and loneliness intersect in a strange way. Not a book to put in every hand, but for those who accept the words of an old man.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ══════════ PAMUK ══════════ -->
+
+        <article class="book-panel" id="panel-pamuk-beyazkale">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/pamuk2.png" alt="Beyaz Kale"></div>
+            <div class="book-info">
+              <h2 class="book-title">Beyaz Kale (1985)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Orhan_Pamuk" target="_blank" rel="noopener">Ohran Pamuk</a> who, in the quest for the melancholic soul of his native city has discovered new symbols for the clash and interlacing of cultures, is the recipient of the 2006 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p>The White Castle is the shortest and (hence?) one of the most popular book from Pamuk. It is set in the 17th century, in an era where existed sultans, vizirs, and other pachas. We follow an Italian scientist who is captured in the sea and enslaved by the Ottomans. Brought to Istanbul, he is paired with a master, obsessed himself by the Western science. The master and the slave engage themselves into different projects along the books which bring them to confront themselves with the traditional East vs. West thought division as well as collaborating with each other to achieve the different quests that come along their ways.</p>
+                <p>I read White Castle after reading some of his other major works that he released later in life, hence this read had its pros and cons. On one hand it was amusing and pleasing to see some of the author's favorite themes already at play in his early work. But it also felt less deep or less emotionally charged overall in comparison to its later work. For example, duality is a prominent theme here but it is so much more well dealt with in The Black Book.</p>
+                <p>I don't want to repeat myself over all my critics of Pamuk's books, but the author never stops surprising me with his different and original narrative structures and techniques. It is illustrated here by the use of a « metafictional frame » which means the author add another layer of fiction which allow to emphasize the fictional aspect of the main piece. Indeed, the book starts with an intriguing preface in which a narrator explains that he found a manuscript which he translated to nowadays Turkish. Reaching the end of the book, this fictional non-fictional preface raises doubt on the real author behind this manuscript and what point of view we were having since the beginning. It's quite amusing as a concept, although it's nothing obvious at all.</p>
+                <p>The thematic around identity is very present in this book, and in a very troubling way! The master has the particularity to look exactly like the enslaved Italian. I guess a major point of the book is the cherished Pamuk theme of identity, meaning, what is making ourself actually ourself. We see these two scientists, both sharing similar intellectual and physical characteristics. What makes them different from each other? Are they actually different at all? Is it innate or shaped by society? And also, maybe as a pre-taste of what was coming up in the Black Book, can we be someone else?</p>
+                <p>What ends up being the most intriguing in this fiction is actually what was under our eyes since the beginning: its title. Because there is no White Castle at any moment in this story. Digging on the different theories behind this non-mentioned building across the book, I mostly found that the concept of White Castle evokes purity and clarity, probably what the master is chasing with his scientific researches. And similar to its title, the story ends up not bringing any clear answer to the questions it raises. What matters is actually is the intellectual quest that comes from questioning it, even though the answer will always remain blurred.</p>
+                <p>Overall, in my quest of reading (most of) all Pamuk's books, this one felt like an easy and great achievement, and it felt like a potential great introduction before reading My Name is Red.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="book-panel" id="panel-pamuk-karakitap">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/pamuk4.png" alt="Kara Kitap"></div>
+            <div class="book-info">
+              <h2 class="book-title">Kara Kitap (1990)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Orhan_Pamuk" target="_blank" rel="noopener">Ohran Pamuk</a> who, in the quest for the melancholic soul of his native city has discovered new symbols for the clash and interlacing of cultures, is the recipient of the 2006 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p>Orhan Pamuk's The Black Book is a hypnotic, intricate novel that pulled me deep into its labyrinthine streets of Istanbul and its endless reflections on identity, storytelling, and reality. While I found it a bit long-winded at times, I was ultimately captivated by Pamuk's imagination and the way he plays with narration and perspective.</p>
+                <p>The book alternates between Galip's search for his missing wife, Rüya, and the newspaper columns of Celâl, a famous journalist who may or may not hold the key to her disappearance. As Galip slowly begins to inhabit Celâl's world, his own identity starts to blur. The novel keeps circling around this idea of becoming someone else, of losing yourself in words and stories, which makes for a fascinating reading experience.</p>
+                <p>One of the aspects I really enjoyed was how Pamuk explores the role of media in shaping reality. The Turkish press, with its conspiracy theories, mythologizing, and reinvention of history, becomes a reflection of a society caught between modernity and tradition. The book constantly plays with the idea of what's real, what's fiction, and does it even matter?</p>
+                <p>One of my favorite chapter in this book is the story of the painting and the mirror in the castle. That one really stuck with me in which the characters are staring into a painting and a mirror facing this paining for so long that both fake reality and its reflections starts to mix with each other and end up driving everyone crazy. It sums up so much of what this book is about: the blurry lines between perception and truth, the way we construct ourselves through the stories we tell.</p>
+                <p>Pamuk is also fascinated by the concept of doppelgängers and borrowed identities. Throughout the novel, Galip not only adopts Celâl's voice and mannerisms but also seems to dissolve into his persona, raising questions about the authenticity of the self. Can identity be inherited or fabricated? Is individuality nothing more than an accumulation of influences? The book doesn't offer easy answers, but it forces the reader to consider how much of their own selfhood is constructed from external narratives.</p>
+                <p>Another key theme is the tension between East and West, a motif that runs through much of Pamuk's work. Istanbul itself is a city that is on the border of two continents, and this duality plays out in the novel through its characters, symbols, and historical references. There's a constant push and pull between tradition and modernity, between Ottoman heritage and Westernization, between the old and the new. This tension seeps into every aspect of the book, making it feel like a meditation on Turkey's cultural identity.</p>
+                <p>I won't lie, some parts dragged for me. There were moments when the endless philosophical musings felt repetitive, and I found myself wishing the plot would move along. But even then, Pamuk's writing is so evocative, so rich in detail, that I couldn't stop reading. The Black Book is definitely not a light read, but it's a rewarding one, full of mystery, history, and an undeniable love for Istanbul.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="book-panel" id="panel-pamuk-yenihayat">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/pamuk5.png" alt="Yeni Hayat"></div>
+            <div class="book-info">
+              <h2 class="book-title">Yeni Hayat (1994)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Orhan_Pamuk" target="_blank" rel="noopener">Ohran Pamuk</a> who, in the quest for the melancholic soul of his native city has discovered new symbols for the clash and interlacing of cultures, is the recipient of the 2006 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p>One day, our narrator reads a book. Then, all his life changes. Knowing this, I initially wondered if the same would happen to me after finishing this book.</p>
+                <p>The New Life narrates the life of Osman, who reads a book called The New Life after seeing that his university crush, Djanan, was reading it as well. From that point in time, this book shatters Osman, who goes on a quest to understand the secret behind it, but also on a quest to find Djanan, and also Mehmet, who is Djanan's lover. In his quest, Osman goes across all of Turkey, from the smallest places to even smaller ones. It depicts an era and faces of a country that are still unexplored to my eyes. Osman will face hope, love, disappointment, and anger, and will be sent on different missions that will always be linked to this famous new life.</p>
+                <p>In this novel, once again, Pamuk deals with the duality of his characters. But for once, it was one of my favourite times that he did it. Indeed, Osman ends up being more and more like Mehmet (or at least he wishes), and even Mehmet renames himself Osman. One being a killer and the other a victim, one being the past lover and the other only a dreamer. The roles seem to be voluntarily mixed, switching, sometimes not calling the characters by their names (what would be the point, even, as the names become fluid?) but by adjectives or supposed roles. It was smartly brought; I liked this aspect.</p>
+                <p>Moreover, it is hard to talk about this book without going in many directions. This book might feel a bit empty at times, and the word count is saved by an unnecessary amount of adjectives. But it's a book about life: the quest for the life we don't have while living the most beautiful life we can have, the current one. It's also a book about love. A genuine love. One that is lived deeply, and that doesn't need to be reciprocated to still be unconditional. It's a book about traveling. And it shows that travel doesn't always need to have a purpose. Our main character travels in a quest for answers, but also with the goal of fleeing his current life, and all of his fake lives. It is also a book about interpretation. Everyone makes interpretations: Osman, the other characters, and even ourselves. Interpretations of what is happening, why it is happening, and when it contradicts our initial beliefs, do we still want to understand what we maybe didn't want or shouldn't have understood? And for all of these topics, The New Life is a great piece of literature despite its writing weaknesses.</p>
+                <p>Surprisingly, the ending moved me. In the same way that, sometimes, we don't want a book to end while feeling the number of remaining pages becoming smaller and smaller, here we don't want Osman's travel to end. A tragedy implies that the hero goes towards an inevitable misfortune. At first glance, The New Life is not a tragedy, as this new life could be anything and occur anytime, including after death. But it suddenly becomes tragic when the author finally ends up fantasizing about starting to live his current life. Only the realization of death in his last seconds of life proves to him that no new life could feel greater than the life he already has. It's a bit how I felt about reading it. I sometimes found this book boring. Sometimes too wordy for no reason. Sometimes too unnecessarily mysterious. But at the final finish line, I didn't want to go home either. I didn't want to reach a new life without this book. I didn't want the character nor the story to die in my hands. I didn't want all that…</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="book-panel" id="panel-pamuk-kar">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/pamuk6.png" alt="Kar"></div>
+            <div class="book-info">
+              <h2 class="book-title">Kar (2002)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Orhan_Pamuk" target="_blank" rel="noopener">Ohran Pamuk</a> who, in the quest for the melancholic soul of his native city has discovered new symbols for the clash and interlacing of cultures, is the recipient of the 2006 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p>Snow was the book that I was the most looking forward to read from Orhan Pamuk as it might be his most political piece, dealing with the whole spectrum of Turkish politics and mixing it with his usual topics. And it definitely fulfilled its promises with its strong symbols and the plenty of discussions between Kemalists, islamists and Kurds on various topics such as religion and politics.</p>
+                <p>In this sixth book from the author, we are witnessing the three days of the poet Ka in the small city of Kars, located in the far east of Anatolia after an exile of 12 years in Germany. His initial motive, or at least the one that he claims, is that he is abandoning for a few days the comfort of his western exile to investigate on the suicide of young girls who wear the veil. On his short stay, he also intend to find a former classmate with the desire to marry her.</p>
+                <p>To start with, snow is the most apparent symbol. Once Ka arrives in Kars, a continuous snowstorm is blocking the city. Snow is omnipresent, both in the descriptions and in the life of the characters. Snow is beautiful, covering the city of white cushions. It hides the misery of Kars, although it might only be a supposed misery as everything is hidden. Snow isolates everyone who gets more and more in their own thoughts, but it also mobilizes everyone for their own causes. The isolation, both of the city and of the main character sort of made me think of The Shining actually. Snow also allows everything to happen, even a local coup d'état that the government cannot stop, but it limits its scope as well.</p>
+                <p>During an intervention at the beginning of the book, our main character Ka say that Kars is very beautiful, very poor, and very sad. To which a student in the audience say that it's not poor nor sad, it only is in his perception. I really liked this moment because it was somehow powerful. Ka is projecting his own melancholy onto the city and romanticize its poverty, but it only is true from the outsider's perspective. The student who belong to the city challenges it and is a great example of the east versus west confrontation.</p>
+                <p>At this point, it is a recurring point to make to say that Pamuk, again, deal with the opposition between the east and the west in terms of values and perceptions. It's always all about perception. There is a sort of obsession in the way Turkish characters in the book are perceived by the « West », and as it is explained in his essay-memoire, in real life too. What I found more interesting in Snow regarding this topic is that the author adds a third level to it by adding a division between people coming from the big city, Istanbul, in opposition to those who live in the « real » Turkey, for example Kars, that would be loyal to their true identity while the others would betray their own selves by perverting it with too many values from the West. But those values are deeply linked also to religion and the act of believing or not. I felt that the concept of identities existed only by the opposition with the other. Limiting the West at a unique way of thinking and living, and that Islamism was always put in perspective with atheism. On top of that, the duality of the characters also is an evident recurring theme (as I read recently The Black Book). Most characters are similar with another character in the book, and even the main character and the narrator end up with similar feelings and desire.</p>
+                <p>I deeply enjoy Pamuk's writing style. It is simple but very imaginative and always keeps my interest with a vast panoply of characters. Over the previous books I read from the author, I liked how inventive he gets in respect to the way the story is narrated, and once again it is the case! Along the book, I often forgot that the story is narrated by an outside perspective, in fact a friend of Ka (and also in fact, Pamuk himself!), which brings some timeline changes and also some sudden fourth wall breaks. Rarely, some dialogues or descriptions feel very kitsch. Knowing a bit of Turkish, I can see how it might be a translation that is too raw, and while it correctly translate, the tone might appear weird to the foreign eye.</p>
+                <p>Another aspect I liked in this book is the tragedy it conveys. We know early in the story that our main character will die and that he will not spend his last years with the potential love of his life. The main newspaper in town publishes articles of events before they occur. We also know that a character will die a few pages before it actually occurs. From there, everything that happens feels like a greek tragedy where, regardless of what is happening and what is said, we know to which fate our characters are going towards, and we know that nothing will save them. This feeling of greek tragedy might even be reinforced by the fact that there are two plays within the books which are two turning points of the story as well.</p>
+                <p>One side I dislike about the book is the romance which might be too much out of the blue, too passionated for characters that barely know each other and which might be reinforced by the immature side of Ka sometimes.</p>
+                <p>Overall, Snow is one of my favorite book from Orhan Pamuk, a real page turner which happen to be very complete both in thematics and dialogues.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="book-panel" id="panel-pamuk-istanbul">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/pamuk7.png" alt="İstanbul: Hatıralar ve Şehir"></div>
+            <div class="book-info">
+              <h2 class="book-title">İstanbul: Hatıralar ve Şehir (2003)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Orhan_Pamuk" target="_blank" rel="noopener">Ohran Pamuk</a> who, in the quest for the melancholic soul of his native city has discovered new symbols for the clash and interlacing of cultures, is the recipient of the 2006 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p>This book was a fun and unexpected ride I'd say. Published in 2003, it juggles between being an essay on the city of Istanbul as well as being the author's memoire of his youth which also occurs in Istanbul as the young Pamuk wouldn't really want to go anywhere else.</p>
+                <p>Pamuk loves Istanbul like he loves his family. As he hinted at, maybe he loves Istanbul as anyone would love the city they live in as one might not have the choice to go anywhere else. Or as the author would say himself: "Why should we expect a city to cure us of our spiritual pains? Perhaps we cannot help loving our city like a family. But we still have to decide which part of the city we love and invent the reasons why." and « I've accepted the city into which I was born in the same way I've accepted my body ... This is my fate, and there's no sense arguing with it ».</p>
+                <p>I loved the chapters where Pamuk describes different parts of his young self. The chapter where he talks about his first love is breathtaking, the one where he fights verbally with his mother is also intense and kept me wanting more arguments just to be able to not finish that chapter. His views on money and religion were quite interesting and original in the way that he was able to discuss with his old-self and some ideas might feel unique for the foreign reader.</p>
+                <p>I might be more mitigated on the essay on the city although it had many great parts. A lot of emphasis is made on the profound sadness that emanates from the city, its collective melancholy: huzun. I might be biased by my French, but I was pretty fascinated with the thesis that the way that Istanbul people view themselves is intensively linked with how the foreign eyes, and especially the French artists, are seeing them, as well as how they are trying to flee any aspect for which foreigners would be tempted to practice Orientalism. There is this sequence of actions where the western literature creates a romanticized image of Turkey, which Turkish intellectuals internalized and which end up shaping the city's collective consciousness, full of melancholy and an aesthetically pleasing sense of destruction.</p>
+                <p>Mingling both the essay and the memoir put me off of this book many times, feeling a disinterest sometimes with the repetition of the same ideas. But at the same time, it was a great way to mix two different kind of melancholies which happened to be strongly correlated: the one of the author as well as the one of the whole city.</p>
+                <p>Overall, this book is a great read for the one among you that would read Pamuk books as some of his reference, anecdotes, and personal stories can be found in his fiction works. Also, the book has a lot of old and sometimes personal pictures of the city, the author, and other illustrations. Many of them are from Ara Güler, a famous Istanbul photographer!</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="book-panel" id="panel-pamuk-masumiyet">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/pamuk8.png" alt="Masumiyet Müzesi"></div>
+            <div class="book-info">
+              <h2 class="book-title">Masumiyet Müzesi (2008)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Orhan_Pamuk" target="_blank" rel="noopener">Ohran Pamuk</a> who, in the quest for the melancholic soul of his native city has discovered new symbols for the clash and interlacing of cultures, is the recipient of the 2006 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p>I initially started Pamuk's Museum of Innocence a year ago, and stopped after 200 pages once the part of the book about the passionate love between the two main protagonists, Kemal and Fusun, ends. After a year of getting older, and probably not wiser, I restarted it from scratch. This time, the passion between Kemal and Füsun felt even more real, but I also had to go through the 600 remaining pages of depression, hopes, and unexpected twists to get the full picture of their story.</p>
+                <p>Briefly, Pamuk's eighth book is about Kemal who comes from the Istanbul bourgeoisie and is close to marrying Sibel until he meets Füsun, a far-away cousin, much younger and also from a way lower social class. An affair emerges between the two, a passionate love is provoked for both but ends up exploding following the engagement party between Kemal and Sibel. At that point, only the surface of the book is explored, and a whole story about Kemal's regrets from not living his love with Füsun starts until he finds her again and tries at any cost to maybe get her back one day.</p>
+                <p>This book is about many things, but it's mostly about love, passive and passionate, informally imposed and formally forbidden, towards soulmates and even family. It's also about everything that can result from love: jealousy, doubt, loss, etc. As well, Museum of Innocence also covers all the cherished themes of the author. Notably, there is the classic dichotomy between East and West (but dear God he is a bit more subtle about it this time), and the duality of the characters (who is the writer and who is the hero, as well as how much one isn't the other), and it also includes Pamuk personal presence brought in an interesting way.</p>
+                <p>The main character, Kemal, has everything to be despicable. He is super egocentric, outside of reality, never have a single thought on anyone's feelings, chase his 18yo cousin, totally obsessive, and is honestly weird (who would stole this many objects from someone and make a museum out of it?). One might even quit reading as Kemal would repel them. Personally, as much as I don't like him, I still have some empathy for him (maybe because he is the hero?). Kemal lives through it all, the peak of the passion, the disappearance of it and his world that collapses, the non-acceptance, the intense jealousy, the compromise with reality, and the illusions that pave the rest of his life. Constantly over his eras, he lives his emotions fully. His sad parts might be written in such a raw way (although knowing it's the seventies in Turkey might nuance them) that it makes him seem irrational, but aren't these moments supposed to be irrational anyway?</p>
+                <p>One thing that I like when reading Pamuk, and that this book doesn't fail at all, is the presence of chapters where we randomly learn stuff about Turkish culture and trivia facts on Istanbul. Of course I want to know about the time when the Bosphorus was on fire and that the whole city of Istanbul was looking at an orange sky for a week. Tell me more about the time when thousands of sheep invaded the city after a boat crash. And never stop teaching me about Turkish TV traditions in people's household, the cinema culture in the troubled eighties, or the tombola that must have been quite fun in its own time. About Pamuk being able to beautifully depict era and places I cannot be, I also liked how he succeeded in picturing the different social classes over this story, with a special mention to the engagement party chapter which allows a vast panorama of the Turkish bourgeoisie and its vices.</p>
+                <p>I wonder which « Innocence » the title is referencing to as I was expecting a final revelation about it. What I discovered is that I had to find the answer myself. Maybe what Pamuk had in mind is the innocence of the objects that surround us wherever we are and that are spectators (sometimes actors) in the different moments of our existence, good and bad. The broken handle, that let the window open allowing the summer breeze to blow after a night of love. The blue earring, that falls in the sheets and marks its territory. The cute plush, sitting in silence on the desk and being the privileged witness of laughs and cries. Objects act as a constant in a world of tumultuous stories; does that make them this innocent?</p>
+                <p>On another note, I also have something to say about the length of Museum of Innocence. Is it too long? Yes. Could some chapters be trimmed? Definitely. Should it be? Well, frankly I don't think so! I feel in the same way that, in L'étranger by Camus, the chaptering is designed in a way to express the relativity of time for the hero, here I see the length of the book as an opportunity to live through each phase of love in a prolonged and relative way for the reader to understand it fully. The happiest part being at the beginning, and being something that passes too fast, that the reader would be sad of finishing already, and that one would wish to find again as much as Kemal would crave for it. Then, the depression part which feels way too long, it's never ending, and it makes us wonder when a new part would ever emerge; but isn't it what it's all about? And finally, the part about (false?) hopes, which makes us keep going through the book and wishing for better horizons and maybe giving more meaning to all of this suffering.</p>
+                <p>To close this too long review (at the image of the book), I wanted to add to those who wouldn't know that the Museum of Innocence exists in Istanbul (and I would love to visit it!). I read online that the idea behind this whole story, and behind mixing identities and realities (again!!) actually came to the author a few decades ago. The first step of this book wasn't the book itself, but it was actually buying the apartment in question, and then gathering the elements of the museum over time, which ultimately helped to come up with all the details filling the book. I find more and more that Pamuk likes himself too much, but at least I also like him too much for his creativity.</p>
+                <p>Anyway, I wonder what my museum would be about.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="book-panel" id="panel-pamuk-kafamda">
+          <div class="book-display">
+            <div class="book-cover"><img src="/assets/img/pamuk9.png" alt="Kafamda Bir Tuhaflık"></div>
+            <div class="book-info">
+              <h2 class="book-title">Kafamda Bir Tuhaflık (2014)</h2>
+              <p class="book-author"><a href="https://en.wikipedia.org/wiki/Orhan_Pamuk" target="_blank" rel="noopener">Ohran Pamuk</a> who, in the quest for the melancholic soul of his native city has discovered new symbols for the clash and interlacing of cultures, is the recipient of the 2006 Nobel Prize in literature.</p>
+              <div class="book-review">
+                <p>A Strangeness in my mind is the first book I read from Ohran Pamuk, and it is honestly the best book I have read for a while.</p>
+                <p>Among the things I loved about it, the variety of thematics and how well they were treated is quite amazing. It's a book about love, about destiny, about Istanbul, about beliefs, about social classes, about Turkish history; but overall a book about life. Its narration unique and far from what I ever saw, and it gives to the different part of the story some unique perspectives. Also this roman is a rollercoaster of emotions, the scene of the kidnapping at the beginning really made me laugh, whereas some of the Ferhat stories feels like a police fiction, and the childhood of Mevlut is clearly a page-turner. More about Turkish history: it is fascinating how much you can learn about Turkey between the 60's to almost-nowadays, from the apparitions to the gecekondu, to the political moves, the Kurds situations, and random events such as the ship that sank with 20,000 goats onboard.</p>
+                <p>Finally, I am copy/pasting below an interesting analysis made by ChatGPT (what a life are we leaving uh?) about the symbols behind the figure of the dogs in this book:</p>
+                <div class="chatgpt-note">
+                  <p><strong>Dogs in "A Strangeness in My Mind"</strong></p>
+                  <ol>
+                    <li><strong>Guardians of the City's Margins.</strong> Dogs in the novel often appear in the peripheral areas of Istanbul—on the fringes of neighborhoods, construction sites, and streets where Mevlut roams as a street vendor. These dogs represent the unseen and overlooked aspects of the city, much like Mevlut himself, who exists on the margins of society both economically and socially.</li>
+                    <li><strong>Loneliness and Alienation.</strong> Dogs are frequently associated with solitude, echoing Mevlut's feelings of isolation as he wanders the city streets selling boza. Their presence reinforces the idea of being an outsider, navigating an urban landscape that often feels indifferent or hostile.</li>
+                    <li><strong>Transition and Change.</strong> The stray dogs symbolize the changes in Istanbul. As the city modernizes and expands, stray animals become symbols of the old Istanbul, displaced and struggling to survive in a new, less hospitable environment. Mevlut's interactions with them reflect his connection to this older, vanishing world.</li>
+                    <li><strong>Fear and Vulnerability.</strong> At times, the dogs are portrayed as menacing, especially to Mevlut during his nighttime walks. This reflects his vulnerability and the precariousness of life on the streets. The threat posed by the dogs mirrors the larger dangers and uncertainties of urban life, particularly for someone of Mevlut's socioeconomic status.</li>
+                    <li><strong>Loyalty and Survival.</strong> Conversely, the dogs also symbolize survival and resilience. Like Mevlut, they adapt to the city's transformations, finding ways to endure despite being marginalized. This parallel emphasizes Mevlut's tenacity and his ability to navigate a rapidly changing world.</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </section>
+      <footer>
+
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+      document.querySelectorAll('.book-line').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.book-line').forEach(function (b) {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+          });
+          document.querySelectorAll('.book-panel').forEach(function (p) {
+            p.classList.remove('active');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+          document.getElementById(btn.dataset.target).classList.add('active');
+        });
+      });
+    </script>
+  </body>
+</html>
