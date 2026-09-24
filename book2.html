@@ -26,7 +26,7 @@
 
       /* This page opts out of the site's default fixed header/section columns
          in favor of a slim fixed spine at the true left edge. */
-      .wrapper { width: auto; margin: 0; }
+      .wrapper { width: 100% !important; max-width: none !important; margin: 0 !important; }
 
       /* ── The spine: fixed to the viewport edge, independent of body padding ── */
       .spine-rail {
@@ -87,12 +87,11 @@
 
       /* ── Main content column ── */
       .page-body {
-        margin-left: 40px;
-        max-width: 1180px;
-        padding: 56px 48px 80px 40px;
+        margin-left: 32px;
+        padding: 48px 56px 90px 0;
         box-sizing: border-box;
       }
-      .book-header { margin-bottom: 46px; }
+      .book-header { margin-bottom: 46px; max-width: 520px; }
       .book-header h1 { margin-bottom: 10px; }
 
       /* ── One tinted block per author/year ── */
@@ -107,18 +106,18 @@
       .year-blurb {
         font-style: italic;
         color: #777;
-        max-width: 640px;
+        max-width: 900px;
         margin-bottom: 36px;
       }
-      .year-camus  { background: #FBF8F2; }
-      .year-garcia { background: #F4F8F1; }
-      .year-pamuk  { background: #F2F6F9; }
+      .year-camus  { background: #FCFAF6; }
+      .year-garcia { background: #F6F9F4; }
+      .year-pamuk  { background: #F4F7FA; }
 
       .book-entry { margin-bottom: 48px; }
       .book-entry:last-child { margin-bottom: 0; }
 
-      .book-display { display: flex; align-items: flex-start; gap: 44px; }
-      .book-cover { flex: 0 0 240px; }
+      .book-display { display: flex; align-items: flex-start; gap: 56px; }
+      .book-cover { flex: 0 0 260px; }
       .book-cover img {
         display: block;
         width: 100%;
@@ -127,7 +126,7 @@
         border-radius: 2px;
         box-shadow: 0 14px 28px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
       }
-      .book-info { flex: 1 1 auto; max-width: 640px; min-width: 0; }
+      .book-info { flex: 1 1 auto; min-width: 0; }
       .book-title {
         font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
         font-size: 1.5em;
@@ -219,10 +218,10 @@
 
       <div class="page-body">
 
-        <header class="book-header">
+        <div class="book-header">
           <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
           <p>Read a Nobel Prize author bibliography every year, and review it.</p>
-        </header>
+        </div>
 
         <!-- ══════════ CAMUS ══════════ -->
         <div class="year-block year-camus">
