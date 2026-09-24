@@ -88,17 +88,16 @@
       /* ── Main content column ── */
       .page-body {
         margin-left: 32px;
+        width: calc(100vw - 132px);
         padding: 48px 56px 90px 0;
         box-sizing: border-box;
       }
       .book-header { margin-bottom: 46px; max-width: 520px; }
       .book-header h1 { margin-bottom: 10px; }
 
-      /* ── One tinted block per author/year ── */
+      /* ── One block per author/year ── */
       .year-block {
-        padding: 44px 52px;
-        border-radius: 6px;
-        margin-bottom: 40px;
+        margin-bottom: 56px;
       }
       .year-block:last-child { margin-bottom: 0; }
       .year-block h2 { margin-bottom: 10px; }
@@ -109,15 +108,16 @@
         max-width: 900px;
         margin-bottom: 36px;
       }
-      .year-camus  { background: #FCFAF6; }
-      .year-garcia { background: #F6F9F4; }
-      .year-pamuk  { background: #F4F7FA; }
 
       .book-entry { margin-bottom: 48px; }
       .book-entry:last-child { margin-bottom: 0; }
 
-      .book-display { display: flex; align-items: flex-start; gap: 56px; }
-      .book-cover { flex: 0 0 260px; }
+      .book-display {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        column-gap: 56px;
+        align-items: start;
+      }
       .book-cover img {
         display: block;
         width: 100%;
@@ -126,7 +126,7 @@
         border-radius: 2px;
         box-shadow: 0 14px 28px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
       }
-      .book-info { flex: 1 1 auto; min-width: 0; }
+      .book-info { min-width: 0; }
       .book-title {
         font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
         font-size: 1.5em;
@@ -151,8 +151,8 @@
 
       @media print, screen and (max-width: 900px) {
         .spine-rail { display: none; }
-        .page-body { margin-left: 0; padding: 40px 24px; }
-        .book-display { flex-direction: column; }
+        .page-body { margin-left: 0; width: auto; padding: 40px 24px; }
+        .book-display { grid-template-columns: 1fr; }
         .book-cover { max-width: 220px; }
       }
     </style>
