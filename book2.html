@@ -23,6 +23,7 @@
 
     <style>
       html { scroll-behavior: smooth; }
+      html, body { overflow-x: hidden; }
 
       /* This page opts out of the site's default fixed header/section columns
          in favor of a slim fixed spine at the true left edge. */
@@ -88,11 +89,16 @@
       /* ── Main content column ── */
       .page-body {
         margin-left: 70px;
-        width: calc(100vw - 70px);
-        padding: 56px 8% 100px 15%;
+        width: calc(100vw - 170px);
+        padding: 0 8% 100px 15%;
         box-sizing: border-box;
       }
-      .book-header { margin-bottom: 54px; max-width: 520px; }
+      .book-header {
+        margin-left: 32px;
+        margin-top: 56px;
+        margin-bottom: 54px;
+        max-width: 480px;
+      }
       .book-header h1 { margin-bottom: 10px; }
 
       /* ── One block per author/year ── */
@@ -151,7 +157,8 @@
 
       @media print, screen and (max-width: 900px) {
         .spine-rail { display: none; }
-        .page-body { margin-left: 0; width: auto; padding: 40px 24px; }
+        .book-header { margin-left: 0; margin-top: 40px; }
+        .page-body { margin-left: 0; width: auto; padding: 24px 24px 40px; }
         .book-display { grid-template-columns: 1fr; }
         .book-cover { max-width: 220px; }
       }
@@ -216,12 +223,12 @@
         </a>
       </nav>
 
-      <div class="page-body">
+      <div class="book-header">
+        <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+        <p>Read a Nobel Prize author bibliography every year, and review it.</p>
+      </div>
 
-        <div class="book-header">
-          <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
-          <p>Read a Nobel Prize author bibliography every year, and review it.</p>
-        </div>
+      <div class="page-body">
 
         <!-- ══════════ CAMUS ══════════ -->
         <div class="year-block year-camus">
