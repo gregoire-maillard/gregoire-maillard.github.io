@@ -104,6 +104,37 @@
         .spine-tick .tick-bar { transition-delay: 0ms !important; }
       }
 
+      /* The desktop cover stays in a fixed stage while the matching review scrolls. */
+      .cover-stage {
+        position: fixed;
+        left: calc(18vw + 39.4px);
+        top: 14vh;
+        width: clamp(260px, calc(30vw - 52px), 565px);
+        aspect-ratio: 3 / 4;
+        z-index: 2;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+      .cover-stage.has-active { opacity: 1; visibility: visible; }
+      .cover-layer {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 2px;
+        box-shadow: 0 14px 28px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.08);
+        opacity: 0;
+        transform: translateY(18px) scale(0.985);
+        transition: opacity 0.55s ease, transform 0.7s cubic-bezier(0.2, 0.75, 0.25, 1);
+      }
+      .cover-layer.active { opacity: 1; transform: none; }
+      .book-cover img { opacity: 1; }
+      .cover-stage-ready .book-cover img { opacity: 0; }
+
       /* ── Main content column ── */
       .page-body {
         margin-left: 70px;
@@ -175,10 +206,12 @@
 
       @media print, screen and (max-width: 1000px) {
         .spine-rail { display: none; }
+        .cover-stage { display: none; }
         .book-header { margin: 28px 24px 36px; }
         .page-body { margin-left: 0; width: auto; padding: 24px 24px 40px; }
         .book-display { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
         .book-cover { max-width: 220px; }
+        .cover-stage-ready .book-cover img { opacity: 1; }
       }
     </style>
 
@@ -241,9 +274,11 @@
         </a>
       </nav>
 
+      <div class="cover-stage" id="coverStage" aria-hidden="true"></div>
+
       <div class="book-header">
         <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
-        <p>Read a Nobel Prize author bibliography every year, and review it.</p>
+        <p>Read a renown author bibliography every year, and review it.</p>
       </div>
 
       <div class="page-body">
@@ -543,6 +578,40 @@
         });
       }, { rootMargin: '-15% 0px -75% 0px' });
       entries.forEach(e => obs.observe(e));
+
+      const coverStage = document.getElementById('coverStage');
+      const coverByEntry = new Map();
+      entries.forEach(entry => {
+        const source = entry.querySelector('.book-cover img');
+        if (!source) return;
+
+        const layer = document.createElement('img');
+        layer.className = 'cover-layer';
+        layer.src = source.currentSrc || source.src;
+        layer.alt = '';
+        coverStage.appendChild(layer);
+        coverByEntry.set(entry, layer);
+      });
+      document.body.classList.add('cover-stage-ready');
+
+      let currentCover = null;
+      let coverLayerOrder = 0;
+      const setCover = (entry) => {
+        const nextCover = coverByEntry.get(entry);
+        if (!nextCover || nextCover === currentCover) return;
+        if (currentCover) currentCover.classList.remove('active');
+        nextCover.style.zIndex = String(++coverLayerOrder);
+        nextCover.classList.add('active');
+        coverStage.classList.add('has-active');
+        currentCover = nextCover;
+      };
+
+      const coverObserver = new IntersectionObserver((observed) => {
+        observed.forEach(e => {
+          if (e.isIntersecting) setCover(e.target);
+        });
+      }, { rootMargin: '-45% 0px -45% 0px' });
+      entries.forEach(e => coverObserver.observe(e));
     </script>
   </body>
 </html>
