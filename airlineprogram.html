@@ -1,0 +1,323 @@
+<!doctype html>
+<html>
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Commercial Airline Program</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+
+    <style>
+      /* ── Sidebar nav ── */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .chapter-nav {
+        margin-top: 4px;
+        font-size: 0.82em;
+        line-height: 1.8;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+      }
+      .chapter-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
+
+      section h3 { margin-top: 26px; }
+
+      /* ── Callout (reused pattern) ── */
+      .callout {
+        background: #f4f8fd;
+        border-left: 3px solid #267CB9;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #2a3a4a;
+        line-height: 1.7;
+      }
+      .callout-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Tags (reused pattern) ── */
+      .tag {
+        display: inline-block;
+        padding: 1px 8px;
+        border-radius: 8px;
+        font-size: 0.78em;
+        font-weight: bold;
+      }
+      .tag-h { background: #e4f3e4; color: #2a662a; }
+      .tag-m { background: #fef6d6; color: #7a5500; }
+
+      /* ── Program map ── */
+      .program-map {
+        display: flex;
+        align-items: stretch;
+        gap: 6px;
+        margin: 18px 0 6px;
+      }
+      .map-node {
+        flex: 1;
+        background: #f9f9f9;
+        border: 1px solid #e4e4e4;
+        border-radius: 6px;
+        padding: 14px;
+        text-align: center;
+      }
+      .map-node-title {
+        font-weight: bold;
+        color: #222;
+        margin-bottom: 6px;
+        font-size: 0.92em;
+      }
+      .map-node-sub {
+        font-size: 0.8em;
+        color: #666;
+        line-height: 1.5;
+      }
+      .map-link {
+        flex: 0 0 88px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .map-arrow {
+        font-size: 1.4em;
+        color: #267CB9;
+        line-height: 1;
+      }
+      .map-link-label {
+        font-size: 0.68em;
+        color: #888;
+        margin-top: 4px;
+        line-height: 1.3;
+      }
+      @media (max-width: 720px) {
+        .program-map { flex-direction: column; }
+        .map-link { flex-direction: row; padding: 6px 0; }
+        .map-arrow { transform: rotate(90deg); }
+      }
+
+      /* ── Course cards ── */
+      .course-card {
+        border: 1px solid #e4e4e4;
+        border-radius: 6px;
+        padding: 16px 20px;
+        margin: 14px 0 10px;
+      }
+      .course-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .course-title {
+        font-size: 1.05em;
+        font-weight: bold;
+        color: #222;
+      }
+      .course-desc {
+        font-size: 0.92em;
+        color: #444;
+        line-height: 1.7;
+        margin: 0 0 10px;
+      }
+      .outline-note {
+        font-size: 0.86em;
+        color: #888;
+        margin: 0 0 6px;
+      }
+      .outline-list {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px 16px;
+        padding: 0;
+        margin: 0 0 10px;
+        font-size: 0.84em;
+        color: #666;
+      }
+      .outline-list li { white-space: nowrap; }
+      .course-link { font-size: 0.9em; margin: 0; }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+
+      <!-- ── Sidebar ── -->
+      <header>
+        <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+        <p><i>The commercial engine room of an airline, mapped out.</i> <br><hr/>
+        A home for the 101 courses I'm building on airline commercial strategy, and how the pieces connect.</p>
+        <hr/>
+        <nav class="chapter-nav" id="toc">
+          <a href="#map"><span class="ch-n">00</span> How the Courses Connect</a>
+          <a href="#rm101"><span class="ch-n">01</span> Revenue Management</a>
+          <a href="#loyalty101"><span class="ch-n">02</span> Loyalty</a>
+          <a href="#network101"><span class="ch-n">03</span> Network Planning</a>
+        </nav>
+      </header>
+
+      <!-- ── Content ── -->
+      <section>
+
+        <h2>Commercial Airline Program</h2>
+        <p>Three disciplines run the commercial side of an airline, and they never stop talking to each other. Network Planning decides where to fly and with how much capacity. Revenue Management decides how to price and allocate that capacity. Loyalty decides how to keep the people who already fly with you coming back, and how much of that same capacity to give away as rewards. I've worked inside two of the three so far, first in Revenue Management and now in Loyalty at Air Canada, and this page is where I'm building a short course on each, plus a map of how they fit together.</p>
+
+        <p><hr/></p>
+
+        <h3 id="map">How the Courses Connect</h3>
+
+        <div class="program-map">
+          <div class="map-node">
+            <div class="map-node-title">Network Planning</div>
+            <div class="map-node-sub">decides where to fly, how often, and with which aircraft</div>
+          </div>
+          <div class="map-link">
+            <span class="map-arrow">&#8594;</span>
+            <span class="map-link-label">sets the fixed capacity RM has to work with</span>
+          </div>
+          <div class="map-node">
+            <div class="map-node-title">Revenue Management</div>
+            <div class="map-node-sub">decides who gets that capacity, and at what price</div>
+          </div>
+          <div class="map-link">
+            <span class="map-arrow">&#8594;</span>
+            <span class="map-link-label">prices award seats like any other fare class</span>
+          </div>
+          <div class="map-node">
+            <div class="map-node-title">Loyalty</div>
+            <div class="map-node-sub">decides who redeems that capacity for free, and who gets recognized</div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div class="callout-label">It runs the other way too</div>
+          A redemption isn't free to the airline — RM has to put a bid price on an award seat just like it would a discount fare, which is the same opportunity-cost logic RM 101 covers for cash fares. And a strong elite base is itself a network-planning input: it's part of the case for defending or growing a route long after the raw economics stop looking obvious on their own.
+        </div>
+
+        <p><hr/></p>
+
+        <h3 id="rm101">Revenue Management (RM 101)</h3>
+
+        <div class="course-card">
+          <div class="course-head">
+            <span class="course-title">RM 101</span>
+            <span class="tag tag-h">Live</span>
+          </div>
+          <p class="course-desc">The first course in the series. What Revenue Management actually does, why an empty seat is lost revenue forever, and how the logic of protecting a seat for a higher-paying passenger scales from a single flight leg all the way up to a global network.</p>
+          <ul class="outline-list">
+            <li>00 Why RM?</li>
+            <li>01 Fare Classes &amp; Price Fences</li>
+            <li>02 Class-Based Forecasting</li>
+            <li>03 Leg Inventory &amp; EMSR-b</li>
+            <li>04 Bid Prices &amp; Nesting</li>
+            <li>05 Class-Free Forecasting</li>
+            <li>06 Network Optimization</li>
+            <li>07 Dynamic Pricing</li>
+            <li>08 Offer &amp; Order</li>
+            <li>09 What's Next</li>
+          </ul>
+          <p class="course-link"><a href="/rm101.html">Read RM 101</a></p>
+        </div>
+
+        <h3 id="loyalty101">Loyalty (Loyalty 101)</h3>
+
+        <div class="course-card">
+          <div class="course-head">
+            <span class="course-title">Loyalty 101</span>
+            <span class="tag tag-m">Coming soon</span>
+          </div>
+          <p class="course-desc">How airlines turn frequent flying into a currency, and how that currency has to be earned, priced, and funded just as carefully as a cash fare.</p>
+          <p class="outline-note">Planned chapters, likely to change:</p>
+          <ul class="outline-list">
+            <li>Points as a Currency</li>
+            <li>Earning &amp; Elite Tiers</li>
+            <li>Award Pricing &amp; Availability</li>
+            <li>Co-Brand Credit Cards</li>
+            <li>Partnerships &amp; Alliances</li>
+            <li>Member Segmentation</li>
+          </ul>
+        </div>
+
+        <h3 id="network101">Network Planning (Network Planning 101)</h3>
+
+        <div class="course-card">
+          <div class="course-head">
+            <span class="course-title">Network Planning 101</span>
+            <span class="tag tag-m">Coming soon</span>
+          </div>
+          <p class="course-desc">How airlines decide where to fly in the first place: route economics, hub design, and the fleet and schedule constraints that Revenue Management and Loyalty both have to live with afterward.</p>
+          <p class="outline-note">Planned chapters, likely to change:</p>
+          <ul class="outline-list">
+            <li>Route Economics &amp; O&amp;D Demand</li>
+            <li>Hub-and-Spoke vs. Point-to-Point</li>
+            <li>Fleet Assignment</li>
+            <li>Schedule &amp; Slot Constraints</li>
+            <li>Codeshare &amp; Alliance Networks</li>
+          </ul>
+        </div>
+
+        <p><hr/></p>
+
+        <p>More 101s may get added here as I write them — distribution and ancillary revenue are the obvious next candidates. This page will grow as the series does.</p>
+
+      </section>
+
+      <footer>
+
+      </footer>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+      // ── Active sidebar highlight on scroll ──
+      const chapters = document.querySelectorAll('h3[id]');
+      const navLinks = document.querySelectorAll('#toc a');
+
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px' });
+
+      chapters.forEach(ch => obs.observe(ch));
+    </script>
+  </body>
+</html>
