@@ -55,6 +55,8 @@
         display: block;
         padding: 5px 0;
         text-decoration: none;
+        --wave-width: 28px;
+        --wave-delay: 0ms;
       }
       .spine-tick .tick-year {
         position: absolute;
@@ -66,15 +68,16 @@
       }
       .spine-tick .tick-bar {
         display: block;
-        width: 28px;
+        width: var(--wave-width);
         height: 2px;
         background: #ddd;
         border-radius: 1px;
-        transition: width 0.18s ease, height 0.18s ease, background 0.18s ease;
+        transition: width 0.42s cubic-bezier(0.2, 0.75, 0.25, 1), height 0.18s ease, background 0.18s ease;
+        transition-delay: var(--wave-delay);
       }
       .spine-tick .tick-label {
         position: absolute;
-        left: 40px;
+        left: calc(var(--wave-width) + 12px);
         top: 50%;
         transform: translateY(-50%);
         white-space: nowrap;
@@ -85,12 +88,20 @@
         border-radius: 3px;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.15s ease;
+        transition: opacity 0.15s ease, left 0.18s ease;
       }
-      .spine-tick:hover .tick-bar { width: 44px; background: #267CB9; }
+      .spine-tick:hover,
+      .spine-tick:focus-visible { --wave-width: 44px; }
+      .spine-tick:hover .tick-bar,
+      .spine-tick:focus-visible .tick-bar { background: #267CB9; }
       .spine-tick:hover .tick-label { opacity: 1; }
-      .spine-tick.active .tick-bar { width: 44px; height: 3px; background: #267CB9; }
+      .spine-tick:focus-visible .tick-label { opacity: 1; }
+      .spine-tick.active { --wave-width: 44px; }
+      .spine-tick.active .tick-bar { height: 3px; background: #267CB9; }
       .spine-tick.active .tick-label { opacity: 1; color: #267CB9; font-weight: bold; }
+      @media (prefers-reduced-motion: reduce) {
+        .spine-tick .tick-bar { transition-delay: 0ms !important; }
+      }
 
       /* ── Main content column ── */
       .page-body {
@@ -100,7 +111,9 @@
         box-sizing: border-box;
       }
       .book-header {
-        margin: 32px 0 42px clamp(96px, 7vw, 144px);
+        position: relative;
+        z-index: 30;
+        margin: 24px 24px 42px;
         max-width: 440px;
       }
       .book-header h1 { margin-bottom: 10px; }
@@ -469,8 +482,51 @@
     <script src="javascripts/scale.fix.js"></script>
     <script>
       const ticks = Array.from(document.querySelectorAll('.spine-tick'));
+      const spineRail = document.getElementById('spineRail');
       const tickByHash = {};
       ticks.forEach(t => { tickByHash[t.getAttribute('href')] = t; });
+
+      let pointerIndex = null;
+      let focusIndex = null;
+      const drawWave = () => {
+        const sourceIndex = pointerIndex ?? focusIndex;
+        ticks.forEach((tick, index) => {
+          if (sourceIndex === null) {
+            tick.style.removeProperty('--wave-width');
+            tick.style.removeProperty('--wave-delay');
+            return;
+          }
+
+          const distance = Math.abs(index - sourceIndex);
+          const decay = Math.exp(-distance / 5);
+          const ripple = 0.72 + 0.28 * Math.cos(distance * 0.95);
+          const width = 28 + 122 * decay * ripple;
+          tick.style.setProperty('--wave-width', `${width.toFixed(1)}px`);
+          tick.style.setProperty('--wave-delay', `${Math.min(distance * 28, 160)}ms`);
+        });
+      };
+
+      ticks.forEach((tick, index) => {
+        tick.addEventListener('pointerenter', () => {
+          pointerIndex = index;
+          drawWave();
+        });
+        tick.addEventListener('focus', () => {
+          if (!tick.matches(':focus-visible')) return;
+          focusIndex = index;
+          drawWave();
+        });
+        tick.addEventListener('blur', () => {
+          if (focusIndex === index) {
+            focusIndex = null;
+            drawWave();
+          }
+        });
+      });
+      spineRail.addEventListener('pointerleave', () => {
+        pointerIndex = null;
+        drawWave();
+      });
 
       const setActive = (hash) => {
         const tick = tickByHash[hash];
