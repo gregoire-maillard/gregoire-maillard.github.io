@@ -27,7 +27,13 @@
 
       /* This page opts out of the site's default fixed header/section columns
          in favor of a slim fixed spine at the true left edge. */
-      .wrapper { width: 100% !important; max-width: none !important; margin: 0 !important; }
+      .wrapper {
+        display: block;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0;
+      }
 
       /* ── The spine: fixed to the viewport edge, independent of body padding ── */
       .spine-rail {
@@ -90,14 +96,12 @@
       .page-body {
         margin-left: 70px;
         width: calc(100vw - 170px);
-        padding: 0 8% 100px 15%;
+        padding: 0 3% 100px 20%;
         box-sizing: border-box;
       }
       .book-header {
-        margin-left: 32px;
-        margin-top: 56px;
-        margin-bottom: 54px;
-        max-width: 480px;
+        margin: 32px 0 42px clamp(96px, 7vw, 144px);
+        max-width: 440px;
       }
       .book-header h1 { margin-bottom: 10px; }
 
@@ -120,8 +124,8 @@
 
       .book-display {
         display: grid;
-        grid-template-columns: minmax(260px, 32%) 1fr;
-        column-gap: 8%;
+        grid-template-columns: minmax(260px, 39%) minmax(0, 1fr);
+        column-gap: 12%;
         align-items: start;
       }
       .book-cover img {
@@ -155,11 +159,11 @@
       .chatgpt-note ol { margin: 10px 0 0 20px; padding: 0; }
       .chatgpt-note li { margin-bottom: 12px; }
 
-      @media print, screen and (max-width: 900px) {
+      @media print, screen and (max-width: 1000px) {
         .spine-rail { display: none; }
-        .book-header { margin-left: 0; margin-top: 40px; }
+        .book-header { margin: 28px 24px 36px; }
         .page-body { margin-left: 0; width: auto; padding: 24px 24px 40px; }
-        .book-display { grid-template-columns: 1fr; }
+        .book-display { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
         .book-cover { max-width: 220px; }
       }
     </style>
