@@ -595,10 +595,24 @@
       document.body.classList.add('cover-stage-ready');
 
       let currentCover = null;
+      let pendingCover = null;
       let coverLayerOrder = 0;
+      const authorInterstices = new Set();
+      const hideCover = () => {
+        if (currentCover) currentCover.classList.remove('active');
+        currentCover = null;
+        coverStage.classList.remove('has-active');
+      };
       const setCover = (entry) => {
         const nextCover = coverByEntry.get(entry);
-        if (!nextCover || nextCover === currentCover) return;
+        if (!nextCover) return;
+        if (authorInterstices.size) {
+          pendingCover = entry;
+          hideCover();
+          return;
+        }
+        pendingCover = null;
+        if (nextCover === currentCover) return;
         if (currentCover) currentCover.classList.remove('active');
         nextCover.style.zIndex = String(++coverLayerOrder);
         nextCover.classList.add('active');
@@ -612,6 +626,23 @@
         });
       }, { rootMargin: '-45% 0px -45% 0px' });
       entries.forEach(e => coverObserver.observe(e));
+
+      const authorSections = document.querySelectorAll('.year-block > h2[id], .year-block > .year-blurb');
+      const authorObserver = new IntersectionObserver((observed) => {
+        observed.forEach(e => {
+          if (e.isIntersecting) authorInterstices.add(e.target);
+          else authorInterstices.delete(e.target);
+        });
+
+        if (authorInterstices.size) {
+          hideCover();
+        } else if (pendingCover) {
+          const nextEntry = pendingCover;
+          pendingCover = null;
+          setCover(nextEntry);
+        }
+      }, { rootMargin: '-14% 0px -7% 0px' });
+      authorSections.forEach(section => authorObserver.observe(section));
     </script>
   </body>
 </html>
