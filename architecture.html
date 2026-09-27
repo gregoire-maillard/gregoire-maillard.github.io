@@ -49,26 +49,40 @@
       .content {
         max-width: 1600px;
         margin: 0 auto;
-        padding: 10px 5% 60px;
+        padding: 20px 5% 60px;
         box-sizing: border-box;
       }
-      .content h2 { margin-top: 0; }
+      .content hr {
+        border: 0;
+        border-top: 1px solid #e5e5e5;
+        margin: 8px 0 34px;
+      }
+
+      /* ── Each city owns one accent color, used for its heading underline
+         and for every photo's tape strip in that section. ── */
+      .city-block { margin-bottom: 6px; }
+      .city-block h2 {
+        display: inline-block;
+        border-bottom: 4px solid var(--tape, #ddd);
+        padding-bottom: 5px;
+        margin-bottom: 4px;
+      }
 
       /* ── Scrapbook boards ── */
       .board {
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: flex-start;
-        margin: 6px 0 22px;
+        margin: 10px 0 4px;
       }
       .polaroid {
         position: relative;
         background: #fdfdfa;
         border: 1px solid #ececec;
         padding: 10px 10px 10px;
-        margin: 18px 16px;
-        width: 175px;
+        margin: 18px 20px 18px 0;
+        width: 210px;
         box-shadow: 0 3px 8px rgba(0,0,0,0.15);
         transition: transform 0.25s ease, box-shadow 0.25s ease;
       }
@@ -77,25 +91,26 @@
         position: absolute;
         top: -9px;
         left: 50%;
-        width: 54px;
-        height: 18px;
+        width: 62px;
+        height: 20px;
         transform: translateX(-50%) rotate(-3deg);
+        background: var(--tape, rgba(200,200,200,.6));
         box-shadow: 0 1px 2px rgba(0,0,0,0.12);
       }
       .polaroid img {
         display: block;
         width: 100%;
-        height: 160px;
+        height: 190px;
         object-fit: cover;
         cursor: zoom-in;
       }
       .polaroid figcaption {
         font-family: 'Caveat', cursive;
-        font-size: 17px;
+        font-size: 18px;
         color: #666;
         text-align: center;
         padding-top: 6px;
-        min-height: 20px;
+        min-height: 22px;
         margin: 0;
       }
       .polaroid:hover {
@@ -104,17 +119,11 @@
         z-index: 5;
       }
       .rot-1 { transform: rotate(-4deg); margin-top: 4px; }
-      .rot-1::before { background: rgba(255,214,102,.65); }
       .rot-2 { transform: rotate(3deg); margin-top: -6px; }
-      .rot-2::before { background: rgba(255,179,186,.65); }
       .rot-3 { transform: rotate(-2deg); margin-top: 12px; }
-      .rot-3::before { background: rgba(179,229,252,.65); }
       .rot-4 { transform: rotate(5deg); margin-top: -3px; }
-      .rot-4::before { background: rgba(197,225,165,.65); }
       .rot-5 { transform: rotate(-6deg); margin-top: 9px; }
-      .rot-5::before { background: rgba(255,214,102,.65); }
       .rot-6 { transform: rotate(2deg); margin-top: -2px; }
-      .rot-6::before { background: rgba(179,229,252,.65); }
 
       /* ── Lightbox ── */
       .lightbox {
@@ -180,157 +189,166 @@
 
       <div class="content">
 
-        <h2>Astana</h2>
-
-        <div class="board">
-          <figure class="polaroid rot-1">
-            <img src="/assets/img/astana1.png" alt="astana1" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-2">
-            <img src="/assets/img/astana2.png" alt="astana2" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-3">
-            <img src="/assets/img/astana3.png" alt="astana3" />
-            <figcaption></figcaption>
-          </figure>
+        <div class="city-block" style="--tape: rgba(255,214,102,.65);">
+          <h2>Astana</h2>
+          <div class="board">
+            <figure class="polaroid rot-1">
+              <img src="/assets/img/astana1.png" alt="astana1" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-2">
+              <img src="/assets/img/astana2.png" alt="astana2" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-3">
+              <img src="/assets/img/astana3.png" alt="astana3" />
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
 
-        <p><hr/></p>
+        <hr/>
 
-        <h2>Chicago</h2>
-
-        <div class="board">
-          <figure class="polaroid rot-4">
-            <img src="/assets/img/chicago1.png" alt="chicago1" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-5">
-            <img src="/assets/img/chicago2.png" alt="chicago2" />
-            <figcaption></figcaption>
-          </figure>
+        <div class="city-block" style="--tape: rgba(255,179,186,.65);">
+          <h2>Chicago</h2>
+          <div class="board">
+            <figure class="polaroid rot-4">
+              <img src="/assets/img/chicago1.png" alt="chicago1" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-5">
+              <img src="/assets/img/chicago2.png" alt="chicago2" />
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
 
-        <p><hr/></p>
+        <hr/>
 
-        <h2>Istanbul</h2>
-
-        <div class="board">
-          <figure class="polaroid rot-6">
-            <img src="/assets/img/istanbul1.png" alt="istanbul1" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-1">
-            <img src="/assets/img/istanbul2.png" alt="istanbul2" />
-            <figcaption></figcaption>
-          </figure>
+        <div class="city-block" style="--tape: rgba(179,229,252,.65);">
+          <h2>Istanbul</h2>
+          <div class="board">
+            <figure class="polaroid rot-6">
+              <img src="/assets/img/istanbul1.png" alt="istanbul1" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-1">
+              <img src="/assets/img/istanbul2.png" alt="istanbul2" />
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
 
-        <p><hr/></p>
+        <hr/>
 
-        <h2>Mexico City</h2>
-
-        <div class="board">
-          <figure class="polaroid rot-2">
-            <img src="/assets/img/mexico1.png" alt="mexico1" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-3">
-            <img src="/assets/img/mexico2.png" alt="mexico2" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-4">
-            <img src="/assets/img/mexico3.png" alt="mexico3" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-5">
-            <img src="/assets/img/mexico4.png" alt="mexico4" />
-            <figcaption></figcaption>
-          </figure>
+        <div class="city-block" style="--tape: rgba(197,225,165,.65);">
+          <h2>Mexico City</h2>
+          <div class="board">
+            <figure class="polaroid rot-2">
+              <img src="/assets/img/mexico1.png" alt="mexico1" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-3">
+              <img src="/assets/img/mexico2.png" alt="mexico2" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-4">
+              <img src="/assets/img/mexico3.png" alt="mexico3" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-5">
+              <img src="/assets/img/mexico4.png" alt="mexico4" />
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
 
-        <p><hr/></p>
+        <hr/>
 
-        <h2>Mumbai</h2>
-
-        <div class="board">
-          <figure class="polaroid rot-6">
-            <img src="/assets/img/mumbai1.png" alt="mumbai1" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-1">
-            <img src="/assets/img/mumbai2.png" alt="mumbai2" />
-            <figcaption></figcaption>
-          </figure>
+        <div class="city-block" style="--tape: rgba(216,191,255,.65);">
+          <h2>Mumbai</h2>
+          <div class="board">
+            <figure class="polaroid rot-6">
+              <img src="/assets/img/mumbai1.png" alt="mumbai1" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-1">
+              <img src="/assets/img/mumbai2.png" alt="mumbai2" />
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
 
-        <p><hr/></p>
+        <hr/>
 
-        <h2>Montréal</h2>
-
-        <div class="board">
-          <figure class="polaroid rot-2">
-            <img src="/assets/img/montreal1.png" alt="montreal1" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-3">
-            <img src="/assets/img/montreal2.png" alt="montreal2" />
-            <figcaption></figcaption>
-          </figure>
+        <div class="city-block" style="--tape: rgba(255,200,170,.65);">
+          <h2>Montréal</h2>
+          <div class="board">
+            <figure class="polaroid rot-2">
+              <img src="/assets/img/montreal1.png" alt="montreal1" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-3">
+              <img src="/assets/img/montreal2.png" alt="montreal2" />
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
 
-        <p><hr/></p>
+        <hr/>
 
-        <h2>Paris</h2>
-
-        <div class="board">
-          <figure class="polaroid rot-4">
-            <img src="/assets/img/paris1.png" alt="paris1" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-5">
-            <img src="/assets/img/paris2.png" alt="paris2" />
-            <figcaption></figcaption>
-          </figure>
+        <div class="city-block" style="--tape: rgba(255,214,102,.65);">
+          <h2>Paris</h2>
+          <div class="board">
+            <figure class="polaroid rot-4">
+              <img src="/assets/img/paris1.png" alt="paris1" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-5">
+              <img src="/assets/img/paris2.png" alt="paris2" />
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
 
-        <p><hr/></p>
+        <hr/>
 
-        <h2>Seoul</h2>
-
-        <div class="board">
-          <figure class="polaroid rot-6">
-            <img src="/assets/img/seoul1.png" alt="seoul1" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-1">
-            <img src="/assets/img/seoul2.png" alt="seoul2" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-2">
-            <img src="/assets/img/seoul3.png" alt="seoul3" />
-            <figcaption></figcaption>
-          </figure>
+        <div class="city-block" style="--tape: rgba(255,179,186,.65);">
+          <h2>Seoul</h2>
+          <div class="board">
+            <figure class="polaroid rot-6">
+              <img src="/assets/img/seoul1.png" alt="seoul1" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-1">
+              <img src="/assets/img/seoul2.png" alt="seoul2" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-2">
+              <img src="/assets/img/seoul3.png" alt="seoul3" />
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
 
-        <p><hr/></p>
+        <hr/>
 
-        <h2>Tashkent</h2>
-
-        <div class="board">
-          <figure class="polaroid rot-3">
-            <img src="/assets/img/tashkent1.png" alt="tashkent1" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-4">
-            <img src="/assets/img/tashkent2.png" alt="tashkent2" />
-            <figcaption></figcaption>
-          </figure>
-          <figure class="polaroid rot-5">
-            <img src="/assets/img/tashkent3.png" alt="tashkent3" />
-            <figcaption></figcaption>
-          </figure>
+        <div class="city-block" style="--tape: rgba(179,229,252,.65);">
+          <h2>Tashkent</h2>
+          <div class="board">
+            <figure class="polaroid rot-3">
+              <img src="/assets/img/tashkent1.png" alt="tashkent1" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-4">
+              <img src="/assets/img/tashkent2.png" alt="tashkent2" />
+              <figcaption></figcaption>
+            </figure>
+            <figure class="polaroid rot-5">
+              <img src="/assets/img/tashkent3.png" alt="tashkent3" />
+              <figcaption></figcaption>
+            </figure>
+          </div>
         </div>
 
       </div>
