@@ -2,6 +2,24 @@
 // Turns a snapshot of live ADS-B positions into a per-aircraft status that
 // remembers where each plane last landed, so parked planes keep a location.
 
+// The airlines shown on the page. Air Canada's fleet comes from the Canadian
+// register; the others are discovered from aircraft flying under their callsign
+// with their country's registration prefix (filters out wet-leased aircraft).
+export const AIRLINES = {
+  AC: { name: "Air Canada", callsigns: ["ACA", "ROU", "JZA"], reg: /^C-/, fleet: "register" },
+  UA: { name: "United Airlines", callsigns: ["UAL"], reg: /^N\d/, fleet: "discover" },
+  AF: { name: "Air France", callsigns: ["AFR"], reg: /^F-/, fleet: "discover", cargoTypes: ["B77L"] },
+  EY: { name: "Etihad Airways", callsigns: ["ETD"], reg: /^A6-/, fleet: "discover", cargoTypes: ["B77L"] },
+};
+
+// Aircraft types scanned for discovery, one group per run (adsb.lol rate limits).
+export const DISCOVERY_GROUPS = [
+  "A318,A319,A320,A20N,A321,A21N,BCS1,BCS3",
+  "B737,B738,B739,B38M,B39M,B752,B753",
+  "B763,B764,B772,B77W,B77L,B788,B789,B78X",
+  "A332,A333,A339,A359,A35K,A388,E170,E75L,E75S,E190,E195,E290,E295,CRJ7,CRJ9,CRJ1",
+];
+
 export const OPERATORS = {
   "Air Canada": "AC",
   "Air Canada rouge LP": "RV",
@@ -45,6 +63,35 @@ export function parseCSVLine(line) {
   return out;
 }
 
+// OurAirports "municipality" is sometimes a suburb (Spata for Athens, Ferno for
+// Milan Malpensa…). Fix the ones Air Canada flies to; otherwise tidy it up.
+export const AIRPORTS_VERSION = 2;
+const CITY_FIX = {
+  ATH: "Athens", MXP: "Milan", LIN: "Milan", BRU: "Brussels", NRT: "Tokyo", HND: "Tokyo", IAD: "Washington",
+  DCA: "Washington", EDI: "Edinburgh", PTY: "Panama City", ANU: "Antigua", CVG: "Cincinnati", SNA: "Orange County",
+  DFW: "Dallas", FRA: "Frankfurt", PVG: "Shanghai", PEK: "Beijing", PKX: "Beijing", AUA: "Aruba", SXM: "St. Maarten",
+  RDU: "Raleigh-Durham", KIX: "Osaka", ICN: "Seoul", CDG: "Paris", ORY: "Paris", BOG: "Bogotá", CUN: "Cancún",
+  SJD: "Los Cabos", LIR: "Liberia, Costa Rica", SJO: "San José, Costa Rica", GIG: "Rio de Janeiro", EZE: "Buenos Aires",
+  SCL: "Santiago", DXB: "Dubai", DOH: "Doha", BOM: "Mumbai", DEL: "Delhi", CMN: "Casablanca", ALG: "Algiers",
+  KEF: "Reykjavík", MSP: "Minneapolis", PBI: "West Palm Beach", RSW: "Fort Myers", OGG: "Maui", KOA: "Kona",
+  LIH: "Kauai", TPE: "Taipei", MNL: "Manila", BKK: "Bangkok", SGN: "Ho Chi Minh City", BCN: "Barcelona",
+  YTZ: "Toronto City", YUL: "Montréal", YQB: "Québec City", YXU: "London, Ontario", YYT: "St. John's",
+  YXJ: "Fort St. John", STL: "St. Louis", SFO: "San Francisco", EWR: "Newark", LAS: "Las Vegas", MBJ: "Montego Bay",
+  PUJ: "Punta Cana", POP: "Puerto Plata", VRA: "Varadero", HOG: "Holguín", CCC: "Cayo Coco", SNU: "Santa Clara",
+  GCM: "Grand Cayman", NAS: "Nassau", BGI: "Barbados", UVF: "St. Lucia", POS: "Port of Spain", KIN: "Kingston",
+  ZIH: "Ixtapa", PVR: "Puerto Vallarta", HUX: "Huatulco", MID: "Mérida", GDL: "Guadalajara", MEX: "Mexico City",
+  LHR: "London", LGW: "London", MAN: "Manchester", DUB: "Dublin", SNN: "Shannon", GLA: "Glasgow",
+  FCO: "Rome", VCE: "Venice", NCE: "Nice", LYS: "Lyon", MRS: "Marseille", TLS: "Toulouse", BOD: "Bordeaux",
+  ZRH: "Zurich", GVA: "Geneva", AMS: "Amsterdam", CPH: "Copenhagen", LIS: "Lisbon", OPO: "Porto", MAD: "Madrid",
+  TLV: "Tel Aviv", IST: "Istanbul", CAI: "Cairo", ACC: "Accra", LOS: "Lagos", HKG: "Hong Kong", SIN: "Singapore",
+  SYD: "Sydney", BNE: "Brisbane", AKL: "Auckland", MEL: "Melbourne", GRU: "São Paulo", LIM: "Lima",
+};
+export function cleanCity(iata, muni, name) {
+  if (CITY_FIX[iata]) return CITY_FIX[iata];
+  let c = String(muni || "").replace(/\s*\([^)]*\)/g, "").split(" / ")[0].split(",")[0].trim();
+  return c || name || iata;
+}
+
 export function buildAirports(csvText) {
   const lines = csvText.split(/\r?\n/);
   const head = parseCSVLine(lines[0]);
@@ -60,7 +107,7 @@ export function buildAirports(csvText) {
     const iata = r[I.iata];
     if (!s || !iata || !/^[A-Z]{3}$/.test(iata)) continue;
     if (s === "S" && r[I.sched] !== "yes" && !MRO_IATA.has(iata)) continue;
-    rows.push([iata, r[I.name], r[I.city], r[I.cc], +(+r[I.lat]).toFixed(4), +(+r[I.lon]).toFixed(4), s]);
+    rows.push([iata, r[I.name], cleanCity(iata, r[I.city], r[I.name]), r[I.cc], +(+r[I.lat]).toFixed(4), +(+r[I.lon]).toFixed(4), s]);
   }
   return rows;
 }
@@ -96,19 +143,57 @@ export function airportByIata(airports, iata) {
 }
 
 // ---------------------------------------------------------------- routes
-// adsb.lol /api/0/routeset answers "YUL-NRT" style routes from a crowd-sourced
-// database. We only trust a route if it is geographically plausible or if it
-// starts where we saw the plane take off.
-export function pickRoute(route, fromIata) {
-  if (!route || !route._airport_codes_iata) return null;
-  const legs = route._airport_codes_iata.split("-").filter((x) => /^[A-Z]{3}$/.test(x));
-  if (legs.length < 2) return null;
-  if (fromIata && legs.includes(fromIata)) {
-    const i = legs.indexOf(fromIata);
-    if (i < legs.length - 1) return { from: legs[i], to: legs[i + 1] };
+// Route databases (adsb.lol, adsbdb) are crowd-sourced and often stale: the same
+// callsign can be "BOS-YYZ" in one and "YUL-STL" in the other. So a candidate
+// route is only accepted if the aircraft is actually on it: its position must lie
+// near the great circle between the two airports and it must be heading towards
+// the destination. If we saw where it took off, the route must start there.
+export function bearing(lat1, lon1, lat2, lon2) {
+  const toR = Math.PI / 180;
+  const y = Math.sin((lon2 - lon1) * toR) * Math.cos(lat2 * toR);
+  const x = Math.cos(lat1 * toR) * Math.sin(lat2 * toR) - Math.sin(lat1 * toR) * Math.cos(lat2 * toR) * Math.cos((lon2 - lon1) * toR);
+  return (Math.atan2(y, x) / toR + 360) % 360;
+}
+
+export function airportIndex(airports) {
+  const m = new Map();
+  for (const a of airports) if (!m.has(a[0]) || a[6] === "L") m.set(a[0], a);
+  return m;
+}
+
+/**
+ * @param candidates ["YUL-STL", "YYZ-YUL-MXP", ...]
+ * @param fromIata   airport where we saw it take off (or null)
+ * @param pos        {lat, lon, trk}
+ * @param apt        Map iata -> airport row
+ * @returns {from, to} or null
+ */
+export function resolveRoute(candidates, fromIata, pos, apt) {
+  let best = null;
+  for (const c of candidates || []) {
+    const legs = String(c).split("-").filter((x) => /^[A-Z]{3}$/.test(x));
+    for (let i = 0; i < legs.length - 1; i++) {
+      const o = apt.get(legs[i]), d = apt.get(legs[i + 1]);
+      if (!o || !d || o === d) continue;
+      const fromMatch = !!fromIata && legs[i] === fromIata;
+      if (fromIata && !fromMatch) continue;
+      let score = fromMatch ? -1 : 0;
+      if (pos && typeof pos.lat === "number") {
+        const dOD = distKm(o[4], o[5], d[4], d[5]);
+        const dOP = distKm(o[4], o[5], pos.lat, pos.lon);
+        const dPD = distKm(pos.lat, pos.lon, d[4], d[5]);
+        const detour = dOP + dPD - dOD;
+        if (detour > 0.2 * dOD + 150) continue;             // not on this route
+        if (typeof pos.trk === "number" && dOP > 100 && dPD > 100) {
+          const diff = Math.abs(((bearing(pos.lat, pos.lon, d[4], d[5]) - pos.trk) + 540) % 360 - 180);
+          if (diff > 75) continue;                           // flying away from that destination
+        }
+        score += detour / (dOD + 1);
+      } else if (!fromMatch) continue;
+      if (!best || score < best.score) best = { from: legs[i], to: legs[i + 1], score };
+    }
   }
-  if (route.plausible) return { from: legs[legs.length - 2], to: legs[legs.length - 1] };
-  return null;
+  return best ? { from: best.from, to: best.to } : null;
 }
 
 // ---------------------------------------------------------------- state machine
@@ -133,19 +218,21 @@ function callsignOf(ac) { return (ac.flight || "").trim() || null; }
  * @param fleet    [{reg, hex, type, op, msn}]
  * @param prev     previous status.json aircraft array (may be empty)
  * @param live     adsb.lol "ac" entries for our hexes
- * @param routes   map callsign -> adsb.lol route object
+ * @param routes   map callsign -> array of candidate route strings ("YYZ-HND")
  * @param airports compact airport rows
  * @param now      epoch ms (snapshot time)
  */
 export function computeStatus(fleet, prev, live, routes, airports, now) {
   const prevBy = new Map((prev || []).map((p) => [p.hex, p]));
   const liveBy = new Map(live.map((a) => [String(a.hex).toLowerCase().replace(/^~/, ""), a]));
+  const aptIdx = airportIndex(airports);
+  const cityOf = (iata) => (iata && aptIdx.get(iata) ? aptIdx.get(iata)[2] : null);
   const out = [];
 
   for (const f of fleet) {
     const p = prevBy.get(f.hex) || {};
     const s = {
-      reg: f.reg, hex: f.hex, type: f.type, op: f.op, msn: f.msn,
+      reg: f.reg, hex: f.hex, type: f.type, op: f.op, msn: f.msn, cargo: f.cargo,
       status: p.status || "unknown",
       lastSeen: p.lastSeen || null,
       pos: p.pos || null,
@@ -181,6 +268,7 @@ export function computeStatus(fleet, prev, live, routes, airports, now) {
         if (s.status === "air") {
           // just landed
           s.lastFlight = { ...(s.flight || {}), cs: (s.flight && s.flight.cs) || cs, to: apt ? apt.iata : (s.flight && s.flight.to) || null, arr: seenAt };
+          s.lastFlight.toCity = cityOf(s.lastFlight.to);
           s.flight = null;
           s.groundSince = seenAt;
           s.groundExact = true;
@@ -200,8 +288,12 @@ export function computeStatus(fleet, prev, live, routes, airports, now) {
           s.flight = { cs, from, to: null, dep: s.status === "ground" ? seenAt : null };
         }
         if (cs) s.flight.cs = cs;
-        const r = pickRoute(routes[cs], s.flight.from);
-        if (r) { if (!s.flight.from) s.flight.from = r.from; if (s.flight.from === r.from || !s.flight.to) s.flight.to = r.to; }
+        if (!s.flight.to) {
+          const r = resolveRoute(routes[cs], s.flight.from, s.pos, aptIdx);
+          if (r) { s.flight.from = r.from; s.flight.to = r.to; }
+        }
+        s.flight.fromCity = cityOf(s.flight.from);
+        s.flight.toCity = cityOf(s.flight.to);
         s.status = "air";
         s.inferred = false;
       }
@@ -213,7 +305,7 @@ export function computeStatus(fleet, prev, live, routes, airports, now) {
       const apt = low ? nearestAirport(airports, pos.lat, pos.lon, CFG.landingMatchKm) : null;
       const justDeparted = apt && s.flight && s.flight.from === apt.iata && s.flight.dep && (s.lastSeen - s.flight.dep) < 30 * 60e3;
       if (age > CFG.lostAfterMs && apt && !justDeparted) {
-        s.lastFlight = { ...(s.flight || {}), to: apt.iata, arr: s.lastSeen };
+        s.lastFlight = { ...(s.flight || {}), to: apt.iata, toCity: apt.city, arr: s.lastSeen };
         s.flight = null; s.status = "ground"; s.airport = apt; s.groundSince = s.lastSeen; s.groundExact = true; s.inferred = true;
       } else if (age > CFG.assumeArrivedMs) {
         if (s.flight && s.flight.to) {

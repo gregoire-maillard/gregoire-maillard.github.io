@@ -176,7 +176,7 @@
       <div class="controls">
         <div class="chips" id="brands"></div>
         <select id="type" aria-label="Aircraft type"></select>
-        <input id="q" type="search" placeholder="Search: C-FIUV, YUL, AC 856…" aria-label="Search">
+        <input id="q" type="search" placeholder="Search: C-FIUV, AC 856, Tokyo, YUL…" aria-label="Search">
       </div>
 
       <div id="notice"></div>
@@ -186,7 +186,7 @@
         <h3>How it works</h3>
         <p><b>Fleet:</b> every airliner registered to Air Canada, Air Canada rouge LP or Jazz Aviation LP in Transport Canada's civil aircraft register, refreshed weekly. The register counts aircraft that are stored or awaiting retirement, so a few old ones will show as not seen.</p>
         <p><b>Positions:</b> ADS-B signals picked up by volunteer receivers of the <a href="https://adsb.lol" target="_blank" rel="noopener">adsb.lol</a> network (open data, ODbL), collected every ~5 minutes. Over oceans and remote areas there are no receivers, so a plane can be flying but out of range.</p>
-        <p><b>Parked:</b> the airport where the plane was last seen on the ground or on final approach. <b>Maintenance</b> is inferred, since no public source reports it: parked for 2+ days, sitting at a known maintenance or storage site, or not seen at all for 3+ days. Routes come from a crowd-sourced database and can occasionally be wrong.</p>
+        <p><b>Parked:</b> the airport where the plane was last seen on the ground or on final approach. <b>Maintenance</b> is inferred, since no public source reports it: parked for 2+ days, sitting at a known maintenance or storage site, or not seen at all for 3+ days. Routes come from two crowd-sourced databases (adsb.lol and adsbdb) and are only shown when the plane's position and heading actually match them; when they don't, the page says the route is unknown rather than guessing.</p>
         <p>The aircraft drawings are generic profiles I made for this page; they aren't official Air Canada artwork. This is a personal project and isn't affiliated with Air Canada.</p>
       </div>
     </div>
@@ -339,7 +339,10 @@
       function place(a) {
         if (!a) return "an unknown airport";
         if (!a.city && !a.name) return a.iata;
-        return esc(a.city || a.name) + " (" + esc(a.iata) + ")";
+        return esc(String(a.city || a.name).replace(/\s*\([^)]*\)/g, "")) + " (" + esc(a.iata) + ")";
+      }
+      function cityCode(city, iata) {
+        return city && city !== iata ? esc(city) + " (" + esc(iata) + ")" : esc(iata);
       }
       function level(alt) {
         if (alt === "ground" || alt == null) return "";
@@ -351,23 +354,28 @@
         var seenAgo = a.lastSeen ? now - a.lastSeen : null;
         if (a.status === "air" && seenAgo !== null && seenAgo < OUT_OF_RANGE_MS) {
           var fl = a.flight || {};
-          var route = fl.from || fl.to ? " · " + esc(fl.from || "?") + " → " + esc(fl.to || "?") : "";
+          var from = fl.from ? cityCode(fl.fromCity, fl.from) : "";
+          var to = fl.to ? cityCode(fl.toCity, fl.to) : "";
+          var text = from && to ? "Flying from " + from + " to " + to
+            : from ? "Flying from " + from + ", destination unknown"
+            : to ? "Flying to " + to
+            : "Flying, route unknown";
           var no = flightNo(fl.cs || a.callsign);
           var pos = a.pos || {};
-          var bits = [level(pos.alt), pos.gs ? Math.round(pos.gs) + " kt" : ""].filter(Boolean).join(" · ");
+          var bits = [no ? esc(no) : "", level(pos.alt), pos.gs ? Math.round(pos.gs) + " kt" : ""].filter(Boolean).join(" · ");
           if (seenAgo < LIVE_MS) {
-            return { cat: "air", text: "Flying" + (no ? " · " + esc(no) : "") + route,
+            return { cat: "air", text: text,
               sub: (bits ? bits + " · " : "") + "seen " + ago(seenAgo) + (fl.dep ? " · took off " + clock(fl.dep) : "") };
           }
-          return { cat: "air", text: "Flying" + (no ? " · " + esc(no) : "") + route + " (out of receiver range)",
-            sub: "last heard " + ago(seenAgo) + (bits ? " at " + bits : "") };
+          return { cat: "air", text: text,
+            sub: (no ? esc(no) + " · " : "") + "out of receiver range, last heard " + ago(seenAgo) + (level(pos.alt) ? " at " + level(pos.alt) : "") };
         }
         if (a.status === "ground" && a.airport) {
           var since = a.groundSince;
           var parked = since ? now - since : null;
           var lf = a.lastFlight;
-          var arrived = lf && lf.arr ? "landed " + clock(lf.arr) + (lf.cs ? " as " + esc(flightNo(lf.cs)) : "") + (lf.from ? " from " + esc(lf.from) : "") : "";
-          var sinceTxt = since ? (a.groundExact ? arrived || "on the ground since " + clock(since) : "seen there since " + clock(since)) : (lf && lf.cs ? "arrived as " + esc(flightNo(lf.cs)) + (lf.from ? " from " + esc(lf.from) : "") : "");
+          var arrived = lf && lf.arr ? "landed " + clock(lf.arr) + (lf.cs ? " as " + esc(flightNo(lf.cs)) : "") + (lf.from ? " from " + cityCode(lf.fromCity, lf.from) : "") : "";
+          var sinceTxt = since ? (a.groundExact ? arrived || "on the ground since " + clock(since) : "seen there since " + clock(since)) : (lf && lf.cs ? "arrived as " + esc(flightNo(lf.cs)) + (lf.from ? " from " + cityCode(lf.fromCity, lf.from) : "") : "");
           var guess = a.inferred ? " · probable (signal lost on approach)" : "";
           var mro = MRO_SITES[a.airport.iata];
           if (mro) {
@@ -449,7 +457,8 @@
           if (ui.type && a.type !== ui.type) return false;
           if (q) {
             var hay = [a.reg, a.reg.replace("-", ""), a.hex, a.type, (TYPES[a.type] || {}).name, a.callsign, flightNo(a.callsign),
-              a.airport && a.airport.iata, a.airport && a.airport.city, a.flight && a.flight.from, a.flight && a.flight.to, BRAND_LONG[a.op]]
+              a.airport && a.airport.iata, a.airport && a.airport.city, a.flight && a.flight.from, a.flight && a.flight.to,
+              a.flight && a.flight.fromCity, a.flight && a.flight.toCity, BRAND_LONG[a.op]]
               .filter(Boolean).join(" ").toLowerCase().replace(/\s+/g, "");
             if (hay.indexOf(q) < 0) return false;
           }
