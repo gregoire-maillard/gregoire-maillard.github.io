@@ -5,7 +5,7 @@
 //
 // prevDir: files from the previous run (fleet-data branch), may be empty.
 // outDir : where the new files are written:
-//            status-AC.json, status-UA.json, status-AF.json, status-EY.json  (read by acfleet.html)
+//            status-AC.json, status-UA.json, status-AF.json, status-EY.json  (read by fleettracker.html)
 //            status.json   (= Air Canada, kept for older copies of the page)
 //            fleet.json    (internal state carried from run to run)
 //            airports.json (compact airport list, refreshed weekly)

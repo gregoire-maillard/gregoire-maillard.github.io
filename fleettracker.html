@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Airline fleets, live</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <style>
+      /* Same slim top-bar pattern as food.html / architecture.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #8a8a8a;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        --air: #2f8fce;
+        --ground: #3a9a5b;
+        --maint: #d98a1f;
+        --unknown: #b8b8b8;
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+        box-sizing: border-box;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+      .top-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+
+      /* ── Airline switcher ── */
+      .airlines { display: flex; gap: 8px; flex-wrap: wrap; }
+      .al {
+        display: flex; align-items: center; gap: 8px;
+        border: 1px solid var(--line); border-radius: 10px; padding: 6px 12px 6px 6px;
+        color: var(--text); background: #fff; text-decoration: none; font-size: 13px;
+        transition: border-color .15s, box-shadow .15s;
+      }
+      .al:hover { border-color: #cfcfcf; color: var(--ink); }
+      .al.on { border-color: var(--b); box-shadow: inset 0 0 0 1px var(--b); color: var(--ink); }
+      .al .mk {
+        width: 30px; height: 30px; border-radius: 7px; background: var(--b); color: #fff;
+        display: grid; place-items: center; font-weight: 700; font-size: 12px; letter-spacing: .03em; overflow: hidden;
+      }
+      .al .mk { position: relative; }
+      .al .mk img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; display: none; }
+      .al .mk.logo img { display: block; }
+      .al .mk.logo { border: 1px solid var(--line); }
+
+      .content {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+        box-sizing: border-box;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 760px; }
+      .stamp { color: var(--muted); font-size: 12px; margin-top: 8px; }
+      .stamp .live-dot {
+        display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+        background: var(--ground); margin-right: 6px; vertical-align: 1px;
+        animation: pulse 2s infinite;
+      }
+      .stamp.stale .live-dot { background: var(--maint); animation: none; }
+      @keyframes pulse { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
+
+      /* ── Summary tiles (also act as status filters) ── */
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin: 22px 0 18px;
+      }
+      .tile {
+        text-align: left;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 12px 14px;
+        cursor: pointer;
+        font: inherit;
+        color: var(--text);
+        transition: border-color .15s, box-shadow .15s;
+      }
+      .tile:hover { border-color: #cfcfcf; }
+      .tile.on { border-color: var(--c); box-shadow: inset 0 0 0 1px var(--c); }
+      .tile b { display: block; font-size: 26px; font-weight: 500; color: var(--ink); line-height: 1.1; }
+      .tile span { font-size: 12px; }
+      .tile i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin-right: 6px; }
+
+      /* ── Controls ── */
+      .controls {
+        display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center;
+        padding: 10px 0 14px; border-bottom: 1px solid var(--line); margin-bottom: 8px;
+      }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip {
+        border: 1px solid var(--line); background: #fff; color: var(--text);
+        border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer;
+      }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .controls select, .controls input {
+        font: inherit; font-size: 13px; color: var(--ink);
+        border: 1px solid var(--line); border-radius: 6px; padding: 5px 9px; background: #fff;
+      }
+      .controls input { flex: 1 1 200px; min-width: 0; }
+
+      /* ── Fleet list ── */
+      .family { margin-top: 26px; }
+      .family h3 { margin: 0 0 10px; font-size: 16px; }
+      .family h3 small { color: var(--muted); font-weight: 400; margin-left: 6px; font-size: 12px; }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 8px;
+      }
+      .plane {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 12px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px 12px 8px 8px;
+        background: #fff;
+        min-width: 0;
+      }
+      .plane svg { width: 150px; height: 42px; display: block; }
+      .plane .id { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+      .plane .reg { color: var(--ink); font-weight: 600; letter-spacing: .02em; }
+      .plane .reg:hover { color: var(--link); }
+      .tag { font-size: 10.5px; border-radius: 3px; padding: 0 5px; line-height: 16px; background: var(--soft); color: #666; border: 1px solid #ececec; }
+      .tag.RV { color: #b3122b; border-color: #f1c9cf; background: #fdf3f4; }
+      .tag.JZ { color: #555; }
+      .tag.CG { color: #555; }
+      .status { margin-top: 2px; color: var(--ink); font-size: 13px; line-height: 1.35; }
+      .status i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c); margin-right: 6px; vertical-align: 0; }
+      .sub { color: var(--muted); font-size: 12px; line-height: 1.35; margin-top: 1px; }
+      .empty { color: var(--muted); padding: 30px 0; }
+      .notice {
+        border: 1px solid #f0dcb8; background: #fffaf1; color: #7a5a1f;
+        border-radius: 8px; padding: 10px 14px; margin: 18px 0 0; font-size: 13px;
+      }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method p { margin: 0 0 8px; }
+
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .grid { grid-template-columns: 1fr; }
+        .plane { grid-template-columns: 112px 1fr; gap: 10px; }
+        .plane svg { width: 112px; height: 32px; }
+        .al .nm { display: none; }
+        .al { padding: 5px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <div>
+        <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+        <p>Where is every plane right now?</p>
+      </div>
+      <nav class="airlines" id="airlines" aria-label="Choose an airline"></nav>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2 id="title">Fleet, live</h2>
+        <p id="blurb"></p>
+        <div class="stamp" id="stamp"><span class="live-dot"></span>Loading…</div>
+      </div>
+
+      <div class="tiles" id="tiles"></div>
+
+      <div class="controls">
+        <div class="chips" id="brands"></div>
+        <select id="type" aria-label="Aircraft type"></select>
+        <input id="q" type="search" placeholder="Search" aria-label="Search">
+      </div>
+
+      <div id="notice"></div>
+      <div id="list"></div>
+
+      <div class="method">
+        <h3>How it works</h3>
+        <p id="fleetNote"></p>
+        <p><b>Positions:</b> ADS-B signals picked up by volunteer receivers of the <a href="https://adsb.lol" target="_blank" rel="noopener">adsb.lol</a> network (open data, ODbL), collected every ~5 minutes. Over oceans and remote areas there are no receivers, so a plane can be flying but out of range.</p>
+        <p><b>Parked:</b> the airport where the plane was last seen on the ground or on final approach. <b>Maintenance</b> is inferred, since no public source reports it: parked for 2+ days, sitting at a known maintenance or storage site, or not seen at all for 3+ days. Routes come from two crowd-sourced databases (adsb.lol and adsbdb) and are only shown when the plane's position and heading actually match them; when they don't, the page says the route is unknown rather than guessing.</p>
+        <p>The aircraft drawings are generic profiles I made for this page, not airline artwork. This is a personal project and isn't affiliated with any of these airlines.</p>
+      </div>
+    </div>
+
+    <script>
+    (function () {
+      // ───────────────────────────── config
+      var DATA_BASE = "https://raw.githubusercontent.com/gregoire-maillard/gregoire-maillard.github.io/fleet-data/";
+      var SEED_URL = "/scripts/ac-fleet/seed-fleet.json";
+      var REFRESH_MS = 60 * 1000;
+      var LIVE_MS = 20 * 60 * 1000;          // heard within 20 min = live
+      var OUT_OF_RANGE_MS = 14 * 3600 * 1000; // after this an unheard flight is not shown as flying
+      var MAINT_PARKED_MS = 48 * 3600 * 1000; // parked this long = likely maintenance
+      var MAINT_UNSEEN_MS = 3 * 86400 * 1000; // never seen this long = likely maintenance / stored
+
+      // Maintenance & storage sites (IATA -> label). Keep in sync with MRO_IATA in core.mjs.
+      var MRO_SITES = {
+        XMN: "HAECO, Xiamen", ROW: "Roswell storage", VCV: "Victorville storage", MZJ: "Pinal Airpark",
+        GYR: "Goodyear storage", MHV: "Mojave storage", IGM: "Kingman storage", BFM: "Mobile Aeroplex MRO",
+        GSO: "HAECO Americas", YMX: "Mirabel", PAE: "Boeing Everett", BFI: "Boeing Field", LDE: "Tarbes storage",
+        TEV: "Teruel storage", ASP: "Alice Springs storage", XSP: "Seletar MRO", SBD: "San Bernardino MRO",
+        CHS: "Boeing Charleston", XFW: "Airbus Finkenwerder", TLS: "Airbus Toulouse"
+      };
+
+      // Airlines. "mark" is shown in the header; to use your own logo image instead,
+      // put a square PNG at /assets/img/airlines/<code>.png (e.g. UA.png).
+      var AIRLINES = {
+        AC: { name: "Air Canada", short: "Air Canada", color: "#c8102e", search: "C-FIUV, AC 856, Tokyo, YUL…",
+          blurb: "Every aircraft flying for Air Canada, Air Canada Rouge, Air Canada Express (Jazz) and Air Canada Cargo: in the air, parked at an airport, or probably in maintenance.",
+          fleetNote: "<b>Fleet:</b> every airliner registered to Air Canada, Air Canada rouge LP or Jazz Aviation LP in Transport Canada's civil aircraft register, refreshed weekly. The register counts aircraft that are stored or awaiting retirement, so a few old ones will show as not seen.",
+          brands: { AC: "Air Canada", RV: "Rouge", JZ: "Express", CG: "Cargo" }, typeNames: { B763: "Boeing 767-300 Freighter" } },
+        UA: { name: "United Airlines", short: "United", color: "#1b3a8c", search: "N37502, UA 901, Denver, SFO…",
+          blurb: "Every United Airlines mainline aircraft: in the air, parked at an airport, or probably in maintenance. United Express flights are flown by partner airlines and aren't included." },
+        AF: { name: "Air France", short: "Air France", color: "#0b2a66", search: "F-GSQA, AF 006, New York, CDG…",
+          blurb: "Every Air France aircraft, including its cargo 777s: in the air, parked at an airport, or probably in maintenance.",
+          typeNames: { B77L: "Boeing 777 Freighter" } },
+        EY: { name: "Etihad Airways", short: "Etihad", color: "#9a7b4f", search: "A6-BLA, EY 11, Toronto, AUH…",
+          blurb: "Every Etihad Airways aircraft, including Etihad Cargo's 777 freighters: in the air, parked at an airport, or probably in maintenance.",
+          typeNames: { B77L: "Boeing 777 Freighter" } }
+      };
+      var DISCOVER_NOTE = function (al) {
+        return "<b>Fleet:</b> there's no public fleet register to download for " + al.name + ", so the list is built from what the ADS-B network sees: every aircraft transmitting an " +
+          al.name + " flight number with the airline's own registration prefix (this leaves out planes leased in with crew from other airlines). A plane joins the list the first time it's spotted and drops off after four months without flying for " + al.short + ".";
+      };
+      var AL_ORDER = ["AC", "UA", "AF", "EY"];
+      var PREFIX = { ACA: "AC", ROU: "AC", JZA: "AC", UAL: "UA", AFR: "AF", ETD: "EY" };
+
+      // Side-profile specs, metres (length, fuselage diameter, fin height above fuselage,
+      // fin root chord, engine length & diameter, wing position from nose as fraction).
+      var TYPES = {
+        A388: { name: "Airbus A380", L: 72.7, D: 7.1, fin: 11.5, fc: 13, eL: 6.0, eD: 3.0, w: .44, eng: "four", deck2: true },
+        A35K: { name: "Airbus A350-1000", L: 73.8, D: 5.96, fin: 9.8, fc: 10, eL: 6.8, eD: 3.6, w: .40, nose: "787" },
+        A359: { name: "Airbus A350-900", L: 66.8, D: 5.96, fin: 9.8, fc: 10, eL: 6.8, eD: 3.6, w: .42, nose: "787" },
+        A339: { name: "Airbus A330-900", L: 63.7, D: 5.64, fin: 9.4, fc: 9.5, eL: 6.9, eD: 3.4, w: .42 },
+        A332: { name: "Airbus A330-200", L: 58.8, D: 5.64, fin: 9.4, fc: 9.5, eL: 6.3, eD: 3.1, w: .44 },
+        B772: { name: "Boeing 777-200", L: 63.7, D: 6.2, fin: 9.8, fc: 11, eL: 6.8, eD: 3.6, w: .42 },
+        B764: { name: "Boeing 767-400", L: 61.4, D: 5.03, fin: 8.8, fc: 8.5, eL: 5.4, eD: 2.8, w: .42 },
+        B753: { name: "Boeing 757-300", L: 54.4, D: 3.76, fin: 7.0, fc: 6.4, eL: 5.0, eD: 2.3, w: .40 },
+        B752: { name: "Boeing 757-200", L: 47.3, D: 3.76, fin: 7.0, fc: 6.4, eL: 5.0, eD: 2.3, w: .42 },
+        B39M: { name: "Boeing 737 MAX 9", L: 42.2, D: 3.76, fin: 6.6, fc: 5.8, eL: 4.3, eD: 2.2, w: .43 },
+        B739: { name: "Boeing 737-900", L: 42.1, D: 3.76, fin: 6.6, fc: 5.8, eL: 3.9, eD: 2.0, w: .43 },
+        B738: { name: "Boeing 737-800", L: 39.5, D: 3.76, fin: 6.6, fc: 5.8, eL: 3.9, eD: 2.0, w: .44 },
+        B737: { name: "Boeing 737-700", L: 33.6, D: 3.76, fin: 6.6, fc: 5.8, eL: 3.9, eD: 2.0, w: .46 },
+        A20N: { name: "Airbus A320neo", L: 37.6, D: 3.95, fin: 6.0, fc: 5.8, eL: 5.0, eD: 2.4, w: .44 },
+        A318: { name: "Airbus A318", L: 31.4, D: 3.95, fin: 6.3, fc: 5.8, eL: 4.4, eD: 2.1, w: .49 },
+        BCS1: { name: "Airbus A220-100", L: 35.0, D: 3.7, fin: 6.4, fc: 5.4, eL: 4.3, eD: 2.1, w: .48, nose: "a220" },
+        E170: { name: "Embraer E170", L: 29.9, D: 3.0, fin: 5.4, fc: 4.4, eL: 3.3, eD: 1.6, w: .48 },
+        E75L: { name: "Embraer E175", L: 31.7, D: 3.0, fin: 5.6, fc: 4.4, eL: 3.3, eD: 1.6, w: .47 },
+        E75S: { name: "Embraer E175", L: 31.7, D: 3.0, fin: 5.6, fc: 4.4, eL: 3.3, eD: 1.6, w: .47 },
+        E190: { name: "Embraer E190", L: 36.2, D: 3.0, fin: 5.9, fc: 4.8, eL: 3.6, eD: 1.9, w: .46 },
+        E195: { name: "Embraer E195", L: 38.7, D: 3.0, fin: 5.9, fc: 4.8, eL: 3.6, eD: 1.9, w: .45 },
+        E290: { name: "Embraer E190-E2", L: 36.2, D: 3.0, fin: 5.9, fc: 4.8, eL: 3.9, eD: 2.1, w: .46 },
+        E295: { name: "Embraer E195-E2", L: 41.5, D: 3.0, fin: 5.9, fc: 4.8, eL: 3.9, eD: 2.1, w: .44 },
+        CRJ7: { name: "Bombardier CRJ700", L: 32.3, D: 2.7, fin: 4.6, fc: 4.0, eL: 3.6, eD: 1.5, w: .50, eng: "tail", tt: true },
+        B77W: { name: "Boeing 777-300ER", L: 73.9, D: 6.2, fin: 9.8, fc: 11, eL: 7.3, eD: 4.0, w: .40 },
+        B77L: { name: "Boeing 777-200LR", L: 63.7, D: 6.2, fin: 9.8, fc: 11, eL: 7.3, eD: 4.0, w: .42 },
+        B78X: { name: "Boeing 787-10", L: 68.3, D: 5.8, fin: 9.2, fc: 9.5, eL: 6.6, eD: 3.4, w: .42, nose: "787" },
+        B789: { name: "Boeing 787-9", L: 62.8, D: 5.8, fin: 9.2, fc: 9.5, eL: 6.6, eD: 3.4, w: .43, nose: "787" },
+        B788: { name: "Boeing 787-8", L: 56.7, D: 5.8, fin: 9.2, fc: 9.5, eL: 6.6, eD: 3.4, w: .44, nose: "787" },
+        A333: { name: "Airbus A330-300", L: 63.7, D: 5.64, fin: 9.4, fc: 9.5, eL: 6.3, eD: 3.1, w: .42 },
+        B763: { name: "Boeing 767-300", L: 54.9, D: 5.03, fin: 8.8, fc: 8.5, eL: 5.4, eD: 2.8, w: .44 },
+        A21N: { name: "Airbus A321XLR", L: 44.5, D: 3.95, fin: 6.0, fc: 5.8, eL: 5.0, eD: 2.4, w: .40 },
+        A321: { name: "Airbus A321", L: 44.5, D: 3.95, fin: 6.0, fc: 5.8, eL: 4.4, eD: 2.1, w: .40 },
+        A320: { name: "Airbus A320", L: 37.6, D: 3.95, fin: 6.0, fc: 5.8, eL: 4.4, eD: 2.1, w: .44 },
+        A319: { name: "Airbus A319", L: 33.8, D: 3.95, fin: 6.0, fc: 5.8, eL: 4.4, eD: 2.1, w: .47 },
+        B38M: { name: "Boeing 737 MAX 8", L: 39.5, D: 3.76, fin: 6.6, fc: 5.8, eL: 4.3, eD: 2.2, w: .44 },
+        BCS3: { name: "Airbus A220-300", L: 38.7, D: 3.7, fin: 6.4, fc: 5.4, eL: 4.3, eD: 2.1, w: .46, nose: "a220" },
+        E175: { name: "Embraer E175", L: 31.7, D: 3.0, fin: 5.6, fc: 4.4, eL: 3.3, eD: 1.6, w: .47 },
+        CRJ9: { name: "Bombardier CRJ900", L: 36.2, D: 2.7, fin: 4.6, fc: 4.0, eL: 3.6, eD: 1.5, w: .50, eng: "tail", tt: true },
+        DH8D: { name: "De Havilland Dash 8-400", L: 32.8, D: 2.7, fin: 5.2, fc: 4.2, eL: 6.2, eD: 1.3, w: .46, eng: "prop", tt: true, nose: "q400" }
+      };
+      var ORDER = ["A388", "B77W", "B77L", "B772", "A35K", "A359", "B78X", "B789", "B788", "B764", "B763", "A339", "A333", "A332",
+        "B753", "B752", "A21N", "A321", "A20N", "A320", "A319", "A318", "B39M", "B38M", "B739", "B738", "B737", "BCS3", "BCS1",
+        "E295", "E290", "E195", "E190", "E75L", "E75S", "E175", "E170", "CRJ9", "CRJ7", "DH8D"];
+
+      // ───────────────────────────── aircraft drawing (generic side profile, nose right)
+      var svgCache = {};
+      var TAIL = { AC: "#1d1d1f", RV: "#c8102e", JZ: "#1d1d1f", CG: "#1d1d1f", UA: "#1b3a8c", AF: "#0b2a66", EY: "#9a7b4f" };
+      function planeSVG(code, op, cargo) {
+        var key = code + op + (cargo ? "c" : "");
+        if (svgCache[key]) return svgCache[key];
+        var t = TYPES[code] || TYPES.A320;
+        var W = 200, H = 56;
+        var s = Math.min(2.6, (H - 4) / (t.D + t.fin + t.eD * 0.7), (W - 6) / t.L);
+        var Ls = t.L * s, r = t.D / 2 * s, x0 = (W - Ls) / 2, xN = x0 + Ls, cy = Math.max(37, 3 + t.fin * s + r);
+        var top = cy - r, bot = cy + r;
+        var nl = r * (t.nose === "787" ? 2.1 : t.nose === "q400" ? 2.2 : 1.75), tl = r * 3.4;
+        var tail = TAIL[op] || "#1d1d1f";
+        var f = function (n) { return n.toFixed(1); };
+        var p = [];
+
+        // fin (drawn first, fuselage overlaps its root)
+        var c = t.fc * s, h = t.fin * s, rTE = x0 + 0.015 * Ls, tipTE = rTE + (t.tt ? 0.2 : 0.06) * c, tipC = (t.tt ? 0.62 : 0.42) * c;
+        p.push('<path d="M' + f(rTE) + ' ' + f(top + 2) + ' L' + f(tipTE) + ' ' + f(top - h) + ' L' + f(tipTE + tipC) + ' ' + f(top - h) +
+          ' L' + f(rTE + c) + ' ' + f(top + 2) + ' Z" fill="' + tail + '"/>');
+        // tailplane
+        if (t.tt) {
+          p.push('<path d="M' + f(tipTE - 0.25 * c) + ' ' + f(top - h + 0.3) + ' L' + f(tipTE + tipC + 0.05 * c) + ' ' + f(top - h - 0.6) +
+            ' L' + f(tipTE + tipC + 0.05 * c) + ' ' + f(top - h + 1.2) + ' L' + f(tipTE - 0.25 * c) + ' ' + f(top - h + 1.4) + ' Z" fill="' + tail + '"/>');
+        }
+        var xW = xN - t.w * Ls, wc = Ls * (t.eng === "prop" ? 0.09 : 0.15);
+        // fuselage
+        var n1 = t.nose === "a220" ? 0.25 : 0.35;
+        p.push('<path d="M' + f(x0) + ' ' + f(cy - 0.72 * r) + ' L' + f(x0 + tl * 0.8) + ' ' + f(top) + ' L' + f(xN - nl) + ' ' + f(top) +
+          ' C' + f(xN - nl * n1) + ' ' + f(top) + ' ' + f(xN) + ' ' + f(cy - 0.35 * r) + ' ' + f(xN) + ' ' + f(cy + 0.12 * r) +
+          ' C' + f(xN) + ' ' + f(cy + 0.62 * r) + ' ' + f(xN - nl * 0.45) + ' ' + f(bot) + ' ' + f(xN - nl) + ' ' + f(bot) +
+          ' L' + f(x0 + tl) + ' ' + f(bot) + ' C' + f(x0 + tl * 0.5) + ' ' + f(bot) + ' ' + f(x0 + tl * 0.12) + ' ' + f(cy - 0.1 * r) + ' ' + f(x0) + ' ' + f(cy - 0.32 * r) +
+          ' Z" fill="#fff" stroke="#aeb5bd" stroke-width="0.6"/>');
+        // windows
+        if (!cargo) {
+          var rows = t.deck2 ? [cy - 0.55 * r, cy + 0.05 * r] : [cy - 0.28 * r];
+          var step = r > 5 ? 2.3 : 2.1, wr = r > 5 ? 0.55 : 0.45;
+          rows.forEach(function (wy, i) {
+            for (var x = xN - nl - (i === 0 && t.deck2 ? 4 : 1.5); x > x0 + tl * (i === 0 && t.deck2 ? 1.05 : 0.95); x -= step) p.push('<circle cx="' + f(x) + '" cy="' + f(wy) + '" r="' + wr + '" fill="#56616d"/>');
+          });
+        }
+        // horizontal tailplane (conventional tails)
+        if (!t.tt) {
+          p.push('<path d="M' + f(x0 + 0.01 * Ls) + ' ' + f(cy - 0.5 * r) + ' L' + f(x0 + 0.02 * Ls + 0.95 * c) + ' ' + f(cy - 0.05 * r) +
+            ' L' + f(x0 + 0.02 * Ls + 0.6 * c) + ' ' + f(cy + 0.08 * r) + ' Z" fill="#d3d8dd" stroke="#9fa8b1" stroke-width="0.4" stroke-linejoin="round"/>');
+        }
+        // near wing: seen edge-on, a thin swept sliver rising towards the tip (dihedral)
+        if (t.eng !== "prop") {
+          p.push('<path d="M' + f(xW) + ' ' + f(bot - 0.4) + ' L' + f(xW - wc * 1.75) + ' ' + f(cy + 0.05 * r) + ' L' + f(xW - wc * 2.0) + ' ' + f(cy + 0.12 * r) +
+            ' L' + f(xW - wc * 0.95) + ' ' + f(bot + 0.3) + ' Z" fill="#d3d8dd" stroke="#9fa8b1" stroke-width="0.4" stroke-linejoin="round"/>');
+        }
+        // cockpit
+        p.push('<path d="M' + f(xN - nl * 0.64) + ' ' + f(cy - 0.62 * r) + ' L' + f(xN - nl * 0.3) + ' ' + f(cy - 0.5 * r) + ' L' + f(xN - nl * 0.2) + ' ' + f(cy - 0.3 * r) +
+          ' L' + f(xN - nl * 0.62) + ' ' + f(cy - 0.3 * r) + ' Z" fill="#2b333d"/>');
+        // engines
+        var eL = t.eL * s, eD = t.eD * s;
+        if (t.eng === "tail") {
+          var ex = x0 + tl * 0.95, ey = cy - 0.45 * r;
+          p.push('<rect x="' + f(ex) + '" y="' + f(ey - eD / 2) + '" width="' + f(eL) + '" height="' + f(eD) + '" rx="' + f(eD * 0.45) + '" fill="#e4e7ea" stroke="#9fa8b1" stroke-width="0.5"/>');
+        } else if (t.eng === "prop") {
+          // high wing on top, nacelle under it, propeller disc in front
+          p.push('<path d="M' + f(xW + 2) + ' ' + f(top + 0.5) + ' Q' + f(xW - wc / 2) + ' ' + f(top - 2.4) + ' ' + f(xW - wc - 2) + ' ' + f(top + 0.5) + ' Z" fill="#d4d9de"/>');
+          var px = xW + eL * 0.28, py = top + eD * 0.35;
+          p.push('<rect x="' + f(px - eL) + '" y="' + f(py - eD / 2) + '" width="' + f(eL) + '" height="' + f(eD) + '" rx="' + f(eD * 0.5) + '" fill="#e4e7ea" stroke="#9fa8b1" stroke-width="0.5"/>');
+          p.push('<ellipse cx="' + f(px + 0.6) + '" cy="' + f(py) + '" rx="0.7" ry="' + f(4.1 * s / 2) + '" fill="#5b6570" opacity=".45"/>');
+        } else {
+          var nacelle = function (fx, ecy, k) {
+            var L2 = eL * k, D2 = eD * k;
+            p.push('<path d="M' + f(fx - L2 * 0.6) + ' ' + f(ecy - D2 * 0.4) + ' L' + f(fx - L2 * 0.75) + ' ' + f(ecy - D2 * 0.9) + '" stroke="#9fa8b1" stroke-width="' + f(Math.max(1, D2 * 0.18)) + '"/>');
+            p.push('<path d="M' + f(fx) + ' ' + f(ecy - D2 / 2) + ' L' + f(fx - L2 * 0.82) + ' ' + f(ecy - D2 * 0.42) + ' L' + f(fx - L2) + ' ' + f(ecy) +
+              ' L' + f(fx - L2 * 0.82) + ' ' + f(ecy + D2 * 0.42) + ' L' + f(fx) + ' ' + f(ecy + D2 / 2) + ' Z" fill="#e4e7ea" stroke="#9fa8b1" stroke-width="0.5" stroke-linejoin="round"/>');
+            p.push('<ellipse cx="' + f(fx) + '" cy="' + f(ecy) + '" rx="' + f(D2 * 0.14) + '" ry="' + f(D2 / 2) + '" fill="#c3cad1"/>');
+          };
+          if (t.eng === "four") nacelle(xW - wc * 0.8 + eL * 0.5, bot - r * 0.15, 0.92); // outer engine, further out on the swept wing
+          nacelle(xW + eL * 0.5, bot + eD * 0.12, 1);
+        }
+        var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + t.name + '">' + p.join("") + "</svg>";
+        svgCache[key] = svg;
+        return svg;
+      }
+
+      // ───────────────────────────── helpers
+      function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+      function ago(ms) {
+        if (ms < 0) ms = 0;
+        var m = Math.round(ms / 60000);
+        if (m < 1) return "just now";
+        if (m < 60) return m + " min ago";
+        var h = Math.round(ms / 3600000);
+        if (h < 48) return h + " h ago";
+        return Math.round(ms / 86400000) + " days ago";
+      }
+      function dur(ms) {
+        var h = ms / 3600000;
+        if (h < 1) return Math.max(1, Math.round(ms / 60000)) + " min";
+        if (h < 48) return Math.round(h) + " h";
+        return Math.round(h / 24) + " days";
+      }
+      function clock(ts) {
+        var d = new Date(ts), today = new Date();
+        var t = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        if (d.toDateString() === today.toDateString()) return t;
+        return d.toLocaleDateString([], { day: "numeric", month: "short" }) + ", " + t;
+      }
+      function flightNo(cs) {
+        if (!cs) return "";
+        var m = /^(ACA|ROU|JZA|UAL|AFR|ETD)(\d+[A-Z]?)$/.exec(cs);
+        return m ? PREFIX[m[1]] + " " + m[2] : cs;
+      }
+      function place(a) {
+        if (!a) return "an unknown airport";
+        if (!a.city && !a.name) return a.iata;
+        return esc(String(a.city || a.name).replace(/\s*\([^)]*\)/g, "")) + " (" + esc(a.iata) + ")";
+      }
+      function cityCode(city, iata) {
+        return city && city !== iata ? esc(city) + " (" + esc(iata) + ")" : esc(iata);
+      }
+      function level(alt) {
+        if (alt === "ground" || alt == null) return "";
+        return alt >= 18000 ? "FL" + Math.round(alt / 100) : Math.round(alt).toLocaleString() + " ft";
+      }
+
+      // ───────────────────────────── status -> what we show
+      function describe(a, now, started) {
+        var seenAgo = a.lastSeen ? now - a.lastSeen : null;
+        if (a.status === "air" && seenAgo !== null && seenAgo < OUT_OF_RANGE_MS) {
+          var fl = a.flight || {};
+          var from = fl.from ? cityCode(fl.fromCity, fl.from) : "";
+          var to = fl.to ? cityCode(fl.toCity, fl.to) : "";
+          var text = from && to ? "Flying from " + from + " to " + to
+            : from ? "Flying from " + from + ", destination unknown"
+            : to ? "Flying to " + to
+            : "Flying, route unknown";
+          var no = flightNo(fl.cs || a.callsign);
+          var pos = a.pos || {};
+          var bits = [no ? esc(no) : "", level(pos.alt), pos.gs ? Math.round(pos.gs) + " kt" : ""].filter(Boolean).join(" · ");
+          if (seenAgo < LIVE_MS) {
+            return { cat: "air", text: text,
+              sub: (bits ? bits + " · " : "") + "seen " + ago(seenAgo) + (fl.dep ? " · took off " + clock(fl.dep) : "") };
+          }
+          return { cat: "air", text: text,
+            sub: (no ? esc(no) + " · " : "") + "out of receiver range, last heard " + ago(seenAgo) + (level(pos.alt) ? " at " + level(pos.alt) : "") };
+        }
+        if (a.status === "ground" && a.airport) {
+          var since = a.groundSince;
+          var parked = since ? now - since : null;
+          var lf = a.lastFlight;
+          var arrived = lf && lf.arr ? "landed " + clock(lf.arr) + (lf.cs ? " as " + esc(flightNo(lf.cs)) : "") + (lf.from ? " from " + cityCode(lf.fromCity, lf.from) : "") : "";
+          var sinceTxt = since ? (a.groundExact ? arrived || "on the ground since " + clock(since) : "seen there since " + clock(since)) : (lf && lf.cs ? "arrived as " + esc(flightNo(lf.cs)) + (lf.from ? " from " + cityCode(lf.fromCity, lf.from) : "") : "");
+          var guess = a.inferred ? " · probable (signal lost on approach)" : "";
+          var mro = MRO_SITES[a.airport.iata];
+          if (mro) {
+            return { cat: "maint", text: "Maintenance or storage · " + place(a.airport),
+              sub: esc(mro) + (parked ? " · there for " + dur(parked) : "") };
+          }
+          if (parked !== null && parked > MAINT_PARKED_MS) {
+            return { cat: "maint", text: "Parked at " + place(a.airport) + " for " + dur(parked),
+              sub: "likely maintenance" + (sinceTxt ? " · " + sinceTxt : "") };
+          }
+          return { cat: "ground", text: "Parked at " + place(a.airport) + (parked !== null && a.groundExact ? " for " + dur(parked) : ""),
+            sub: (sinceTxt || "on the ground") + guess };
+        }
+        if (a.lastSeen) {
+          var cat = seenAgo > MAINT_UNSEEN_MS ? "maint" : "unknown";
+          return { cat: cat, text: cat === "maint" ? "Not seen for " + dur(seenAgo) : "Whereabouts unknown",
+            sub: (cat === "maint" ? "likely maintenance or storage · " : "") + "last signal " + ago(seenAgo) };
+        }
+        var tracked = started ? now - started : 0;
+        if (started && tracked > MAINT_UNSEEN_MS) {
+          return { cat: "maint", text: "No signal for " + dur(tracked) + "+", sub: "likely stored, in heavy maintenance or retired" };
+        }
+        return { cat: "unknown", text: "No signal yet", sub: started ? "tracking since " + clock(started) : "waiting for the first update" };
+      }
+
+      var CATS = [
+        { k: "air", label: "Flying", c: "var(--air)" },
+        { k: "ground", label: "Parked at an airport", c: "var(--ground)" },
+        { k: "maint", label: "Likely maintenance or stored", c: "var(--maint)" },
+        { k: "unknown", label: "No recent signal", c: "var(--unknown)" }
+      ];
+
+      // ───────────────────────────── state & rendering
+      var data = null, seedOnly = false, cur = "AC", loadSeq = 0;
+      var ui = { cat: null, brand: null, type: "", q: "" };
+      try { var saved = JSON.parse(localStorage.getItem("fleettracker-ui") || "null"); if (saved) ui = Object.assign(ui, { cat: saved.cat || null }); } catch (e) {}
+      function save() { try { localStorage.setItem("fleettracker-ui", JSON.stringify({ cat: ui.cat })); } catch (e) {} }
+
+      var $ = function (id) { return document.getElementById(id); };
+      function typeName(k) { return (AIRLINES[cur].typeNames || {})[k] || (TYPES[k] || { name: k }).name; }
+      function brandsOf() { return AIRLINES[cur].brands || null; }
+
+      function renderHeader() {
+        var al = AIRLINES[cur];
+        $("airlines").innerHTML = AL_ORDER.map(function (code) {
+          var a = AIRLINES[code];
+          return '<a class="al' + (code === cur ? " on" : "") + '" href="#' + code + '" style="--b:' + a.color + '" title="' + esc(a.name) + '" aria-current="' + (code === cur) + '">' +
+            '<span class="mk">' + code + '<img src="/assets/img/airlines/' + code + '.png" alt="" onload="this.parentNode.classList.add(\'logo\')" onerror="this.remove()"></span>' +
+            '<span class="nm">' + esc(a.short) + "</span></a>";
+        }).join("");
+        $("title").textContent = al.name + " fleet, live";
+        document.title = al.name + " fleet, live";
+        $("blurb").textContent = al.blurb;
+        $("fleetNote").innerHTML = al.fleetNote || DISCOVER_NOTE(al);
+        $("q").placeholder = "Search: " + al.search;
+        $("brands").style.display = brandsOf() ? "" : "none";
+      }
+
+      function render() {
+        if (!data) { $("list").innerHTML = ""; $("tiles").innerHTML = ""; return; }
+        var now = Date.now(), brands = brandsOf();
+        var rows = data.aircraft.map(function (a) { var d = describe(a, now, data.started); return { a: a, d: d }; });
+
+        // tiles
+        var counts = { air: 0, ground: 0, maint: 0, unknown: 0 };
+        rows.forEach(function (r) {
+          if (ui.brand && r.a.op !== ui.brand) return;
+          if (ui.type && r.a.type !== ui.type) return;
+          counts[r.d.cat]++;
+        });
+        $("tiles").innerHTML = CATS.map(function (c) {
+          return '<button class="tile' + (ui.cat === c.k ? " on" : "") + '" data-cat="' + c.k + '" style="--c:' + c.c + '"><b>' + counts[c.k] + '</b><span><i></i>' + c.label + "</span></button>";
+        }).join("");
+
+        // brand chips (Air Canada only: mainline / Rouge / Express / Cargo)
+        $("brands").innerHTML = !brands ? "" : '<button class="chip' + (!ui.brand ? " on" : "") + '" data-brand="">All</button>' + Object.keys(brands).map(function (o) {
+          return '<button class="chip' + (ui.brand === o ? " on" : "") + '" data-brand="' + o + '">' + brands[o] + "</button>";
+        }).join("");
+
+        // type select
+        var present = {};
+        data.aircraft.forEach(function (a) { present[a.type] = (present[a.type] || 0) + 1; });
+        if (ui.type && !present[ui.type]) ui.type = "";
+        var sel = $("type");
+        var opts = '<option value="">All aircraft types</option>' + ORDER.concat(Object.keys(present).filter(function (k) { return ORDER.indexOf(k) < 0; }))
+          .filter(function (k) { return present[k]; })
+          .map(function (k) { return '<option value="' + k + '"' + (ui.type === k ? " selected" : "") + ">" + esc(typeName(k)) + " (" + present[k] + ")</option>"; }).join("");
+        if (sel.innerHTML !== opts) sel.innerHTML = opts;
+
+        // filter + group
+        var q = ui.q.trim().toLowerCase().replace(/\s+/g, "");
+        var rank = { air: 0, ground: 1, maint: 2, unknown: 3 };
+        var shown = rows.filter(function (r) {
+          var a = r.a;
+          if (ui.cat && r.d.cat !== ui.cat) return false;
+          if (ui.brand && a.op !== ui.brand) return false;
+          if (ui.type && a.type !== ui.type) return false;
+          if (q) {
+            var hay = [a.reg, a.reg.replace("-", ""), a.hex, a.type, typeName(a.type), a.callsign, flightNo(a.callsign),
+              a.airport && a.airport.iata, a.airport && a.airport.city, a.flight && a.flight.from, a.flight && a.flight.to,
+              a.flight && a.flight.fromCity, a.flight && a.flight.toCity, brands && brands[a.op]]
+              .filter(Boolean).join(" ").toLowerCase().replace(/\s+/g, "");
+            if (hay.indexOf(q) < 0) return false;
+          }
+          return true;
+        });
+        var groups = {};
+        shown.forEach(function (r) { (groups[r.a.type] = groups[r.a.type] || []).push(r); });
+        var keys = Object.keys(groups).sort(function (x, y) {
+          var i = ORDER.indexOf(x), j = ORDER.indexOf(y); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j);
+        });
+        if (!keys.length) { $("list").innerHTML = '<p class="empty">' + (data.aircraft.length ? "No aircraft match these filters." : "No aircraft spotted yet.") + "</p>"; return; }
+
+        $("list").innerHTML = keys.map(function (k) {
+          var g = groups[k].sort(function (x, y) { return rank[x.d.cat] - rank[y.d.cat] || x.a.reg.localeCompare(y.a.reg); });
+          var fly = g.filter(function (r) { return r.d.cat === "air"; }).length;
+          return '<section class="family"><h3>' + esc(typeName(k)) + "<small>" + g.length + " aircraft · " + fly + " flying</small></h3><div class=\"grid\">" +
+            g.map(function (r) {
+              var a = r.a, c = (CATS.filter(function (x) { return x.k === r.d.cat; })[0] || CATS[3]).c;
+              var cargo = a.cargo || a.op === "CG";
+              var tag = brands ? '<span class="tag ' + a.op + '">' + brands[a.op] + "</span>" : (cargo ? '<span class="tag">Cargo</span>' : "");
+              return '<div class="plane">' + planeSVG(a.type, a.op, cargo) +
+                '<div style="min-width:0"><div class="id"><a class="reg" href="https://adsb.lol/?icao=' + esc(a.hex) + '" target="_blank" rel="noopener" title="Open on the adsb.lol live map">' + esc(a.reg) + "</a>" +
+                tag + "</div>" +
+                '<div class="status" style="--c:' + c + '"><i></i>' + r.d.text + "</div>" +
+                (r.d.sub ? '<div class="sub">' + r.d.sub + "</div>" : "") + "</div></div>";
+            }).join("") + "</div></section>";
+        }).join("");
+      }
+
+      function renderStamp() {
+        var el = $("stamp");
+        if (!data) { el.className = "stamp"; el.innerHTML = '<span class="live-dot"></span>Loading…'; return; }
+        if (seedOnly) { el.className = "stamp stale"; el.innerHTML = '<span class="live-dot"></span>Live data not available yet: showing the fleet list only.'; return; }
+        var age = Date.now() - data.updated;
+        el.className = "stamp" + (age > 30 * 60000 ? " stale" : "");
+        el.innerHTML = '<span class="live-dot"></span>Positions updated ' + ago(age) + " (" + clock(data.updated) + ") · " + data.aircraft.length +
+          " aircraft · refreshes by itself";
+      }
+
+      function renderNotice() {
+        var al = AIRLINES[cur];
+        if (seedOnly || !data) return;
+        if (!al.fleetNote && data.started && Date.now() - data.started < 3 * 86400000) {
+          $("notice").innerHTML = '<div class="notice">This fleet list started building on ' + esc(new Date(data.started).toLocaleDateString([], { day: "numeric", month: "long" })) +
+            ": aircraft are added as they're spotted flying for " + esc(al.short) + ", so it will be close to complete after a few days.</div>";
+        } else {
+          $("notice").innerHTML = "";
+        }
+      }
+
+      function show(j) { data = j; seedOnly = false; renderNotice(); renderStamp(); render(); }
+
+      function load() {
+        var code = cur, seq = ++loadSeq;
+        var ov = window.AC_STATUS_OVERRIDE;
+        if (ov) { show(ov[code] || (code === "AC" && ov.aircraft ? ov : { updated: Date.now(), started: Date.now(), aircraft: [] })); return; }
+        var t = "?t=" + Math.floor(Date.now() / 60000);
+        var get = function (file) {
+          return fetch(DATA_BASE + file + t, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+        };
+        get("status-" + code + ".json")
+          .catch(function (e) { if (code === "AC") return get("status.json"); throw e; })
+          .then(function (j) { if (seq === loadSeq) show(j); })
+          .catch(function () {
+            if (seq !== loadSeq) return;
+            if (data && !seedOnly) { renderStamp(); return; } // keep last good data
+            if (code !== "AC") {
+              data = { updated: 0, started: 0, aircraft: [] }; seedOnly = true;
+              $("notice").innerHTML = '<div class="notice">No data for ' + esc(AIRLINES[code].name) + ' yet. It appears after the next run of the tracker (about every 5 minutes).</div>';
+              renderStamp(); render(); return;
+            }
+            fetch(SEED_URL).then(function (r) { return r.json(); }).then(function (seed) {
+              if (seq !== loadSeq) return;
+              data = { updated: 0, started: 0, aircraft: seed.aircraft.map(function (a) { return Object.assign({ status: "unknown" }, a); }) };
+              seedOnly = true;
+              $("notice").innerHTML = '<div class="notice">The live tracker hasn\'t published any data yet. Once the GitHub Action has run (about every 5 minutes), positions will appear here.</div>';
+              renderStamp(); render();
+            });
+          });
+      }
+
+      function selectFromHash() {
+        var code = (location.hash || "").replace("#", "").toUpperCase();
+        if (!AIRLINES[code]) code = "AC";
+        if (code === cur && data) return;
+        cur = code; data = null; seedOnly = false;
+        ui.brand = null; ui.type = ""; ui.q = ""; $("q").value = ""; $("notice").innerHTML = "";
+        try { localStorage.setItem("fleettracker-airline", code); } catch (e) {}
+        renderHeader(); renderStamp(); render(); load();
+      }
+
+      // ───────────────────────────── events
+      document.addEventListener("click", function (e) {
+        var t = e.target.closest("[data-cat],[data-brand]");
+        if (!t) return;
+        if (t.hasAttribute("data-cat")) ui.cat = ui.cat === t.getAttribute("data-cat") ? null : t.getAttribute("data-cat");
+        else ui.brand = t.getAttribute("data-brand") || null;
+        save(); render();
+      });
+      $("type").addEventListener("change", function () { ui.type = this.value; render(); });
+      $("q").addEventListener("input", function () { ui.q = this.value; render(); });
+      window.addEventListener("hashchange", selectFromHash);
+
+      if (!location.hash) { try { var last = localStorage.getItem("fleettracker-airline"); if (last && AIRLINES[last] && last !== "AC") history.replaceState(null, "", "#" + last); } catch (e) {} }
+      cur = null;
+      selectFromHash();
+      setInterval(load, REFRESH_MS);
+      setInterval(function () { renderStamp(); render(); }, 30000);
+      window.__fleettracker = { planeSVG: planeSVG, TYPES: TYPES };
+    })();
+    </script>
+  </body>
+</html>

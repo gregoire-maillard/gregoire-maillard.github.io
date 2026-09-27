@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Air travel flows</title>
+    <meta name="description" content="The largest US city-pair air travel markets on a map, and which of them have no nonstop flight.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as acfleet.html / food.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        --land: #f1f0ec;
+        --border: #d6d4cc;
+        --direct: #2a7fb5;
+        --seasonal: #9a6fb0;
+        --none: #d9480f;
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .stamp { color: var(--muted); font-size: 12px; margin-top: 8px; }
+
+      /* ── Summary tiles (the three status tiles also filter the map) ── */
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin: 22px 0 16px;
+      }
+      .tile {
+        text-align: left;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 12px 14px;
+        font: inherit;
+        color: var(--text);
+      }
+      button.tile { cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+      button.tile:hover { border-color: #cfcfcf; }
+      button.tile.off { opacity: .45; }
+      .tile b { display: block; font-size: 26px; font-weight: 500; color: var(--ink); line-height: 1.1; font-variant-numeric: tabular-nums; }
+      .tile span { font-size: 12px; }
+      .key { display: inline-block; width: 16px; height: 0; border-top: 3px solid var(--c); margin-right: 6px; vertical-align: 3px; }
+      .key.dash { border-top-style: dashed; }
+
+      /* ── Controls ── */
+      .controls {
+        display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center;
+        padding: 4px 0 12px;
+      }
+      .controls label.lbl { font-size: 12.5px; color: var(--muted); }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip {
+        border: 1px solid var(--line); background: #fff; color: var(--text);
+        border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer;
+      }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .controls input[type=search] {
+        font: inherit; font-size: 13px; color: var(--ink);
+        border: 1px solid var(--line); border-radius: 6px; padding: 5px 9px; background: #fff;
+        flex: 0 1 240px; min-width: 0;
+      }
+      .focus-pill {
+        display: none; align-items: center; gap: 6px;
+        font-size: 12.5px; color: var(--ink); background: var(--soft);
+        border: 1px solid var(--line); border-radius: 999px; padding: 3px 4px 3px 11px;
+      }
+      .focus-pill.on { display: inline-flex; }
+      .focus-pill button { border: 0; background: #e6e6e6; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; line-height: 20px; padding: 0; color: #444; }
+
+      /* ── Map + side panel ── */
+      .stage {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: 18px;
+        align-items: start;
+      }
+      .map-wrap { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fbfcfd; overflow: hidden; }
+      #map { display: block; width: 100%; height: auto; }
+      #map .land { fill: var(--land); }
+      #map .states { fill: none; stroke: #fff; stroke-width: 1; }
+      #map .borders { fill: none; stroke: var(--border); stroke-width: .8; }
+      #map .arc { fill: none; stroke-linecap: round; }
+      #map .arc.s0 { stroke: var(--direct); stroke-opacity: .28; }
+      #map .arc.s1 { stroke: var(--seasonal); stroke-opacity: .9; stroke-dasharray: 5 3; }
+      #map .arc.s2 { stroke: var(--none); stroke-opacity: .9; }
+      #map .arc.hot { stroke-opacity: 1 !important; }
+      #map .hit { fill: none; stroke: transparent; pointer-events: stroke; cursor: pointer; }
+      #map .city { fill: #fff; stroke: #444; stroke-width: 1.2; cursor: pointer; }
+      #map .city:hover, #map .city.sel { stroke: var(--ink); stroke-width: 2; }
+      #map .lab { font-size: 11px; fill: #333; paint-order: stroke; stroke: #fbfcfd; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+      #map .lab.big { font-weight: 600; }
+      .map-legend {
+        position: absolute; left: 12px; bottom: 10px;
+        background: rgba(255,255,255,.9); border: 1px solid var(--line); border-radius: 6px;
+        padding: 6px 10px; font-size: 11.5px; color: var(--text); line-height: 1.7;
+      }
+      .map-legend .w { display: inline-block; background: #9aa9b4; border-radius: 2px; vertical-align: middle; margin: 0 4px 0 8px; width: 20px; }
+      .loading { padding: 80px 20px; text-align: center; color: var(--muted); }
+
+      .tip {
+        position: absolute; pointer-events: none; z-index: 5;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 9px 12px; font-size: 12.5px; color: var(--text); line-height: 1.45;
+        max-width: 320px; display: none;
+      }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13.5px; }
+      .tip .n { color: var(--ink); font-variant-numeric: tabular-nums; }
+      .tip .st { margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--line); }
+
+      .side { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fff; }
+      .side h3 { margin: 0 0 4px; font-size: 14.5px; color: var(--ink); }
+      .side .sub { color: var(--muted); font-size: 12px; margin: 0 0 10px; line-height: 1.45; }
+      .side ol { margin: 0; padding: 0; list-style: none; }
+      .side li {
+        display: grid; grid-template-columns: 38px 1fr auto; gap: 6px;
+        padding: 6px 0; border-top: 1px solid #f0f0f0; font-size: 12.5px; cursor: pointer;
+      }
+      .side li:hover .pr { color: var(--link); }
+      .side .rk { color: var(--muted); font-variant-numeric: tabular-nums; }
+      .side .pr { color: var(--ink); }
+      .side .pr small { display: block; color: var(--muted); font-size: 11px; }
+      .side .px { color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; }
+      .side .note { font-size: 12.5px; color: var(--text); line-height: 1.5; }
+      .side .note b { color: var(--ink); font-weight: 600; }
+
+      /* ── Table ── */
+      .table-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 30px 0 8px; flex-wrap: wrap; }
+      .table-head h3 { margin: 0; font-size: 16px; }
+      .table-head span { color: var(--muted); font-size: 12px; }
+      .tbl-wrap { overflow-x: auto; border-top: 1px solid var(--line); }
+      table.flows { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 720px; }
+      table.flows th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+      table.flows td { padding: 7px 10px; border-bottom: 1px solid #f1f1f1; color: var(--text); vertical-align: top; }
+      table.flows td.num, table.flows th.num { text-align: right; font-variant-numeric: tabular-nums; }
+      table.flows td.pair { color: var(--ink); }
+      table.flows tbody tr:hover { background: var(--soft); }
+      .badge { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+      .badge .key { width: 12px; margin-right: 0; vertical-align: 0; }
+      .badge.s2 { color: #b23c0c; font-weight: 500; }
+      .more { margin: 12px 0 0; }
+      .more button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 6px 12px; cursor: pointer; color: var(--ink); }
+      .more button:hover { border-color: #cfcfcf; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method p { margin: 0 0 8px; }
+
+      @media (max-width: 980px) {
+        .stage { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .map-legend { position: static; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
+        #map .lab { font-size: 13px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>Where do people fly, and which big markets still have no nonstop?</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Air travel flows</h2>
+        <p>The largest origin–destination markets between US cities, ranked by how many passengers actually travel between them (not how many seats are flown). Markets with no nonstop flight between the two cities are highlighted.</p>
+        <div class="stamp" id="stamp">Loading…</div>
+      </div>
+
+      <div class="tiles" id="tiles"></div>
+
+      <div class="controls">
+        <label class="lbl">Show the top</label>
+        <div class="chips" id="topn"></div>
+        <input id="q" type="search" list="city-list" placeholder="Focus on a city: Boston, Tucson…" aria-label="Focus on a city">
+        <datalist id="city-list"></datalist>
+        <span class="focus-pill" id="focus"><span id="focus-name"></span><button type="button" aria-label="Clear city" id="focus-clear">✕</button></span>
+      </div>
+
+      <div class="stage">
+        <div class="map-wrap" id="map-wrap">
+          <div class="loading" id="loading">Loading map…</div>
+          <div class="tip" id="tip"></div>
+        </div>
+        <aside class="side" id="side"></aside>
+      </div>
+
+      <div class="table-head">
+        <h3 id="tbl-title">All markets</h3>
+        <span>Passengers per day = both directions combined, averaged over the year.</span>
+      </div>
+      <div class="tbl-wrap">
+        <table class="flows">
+          <thead>
+            <tr>
+              <th class="num">#</th>
+              <th>City pair</th>
+              <th class="num">Passengers / day</th>
+              <th class="num">Distance</th>
+              <th class="num">Avg fare</th>
+              <th>Largest carrier</th>
+              <th>Nonstop?</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="more" id="more"></div>
+
+      <div class="method">
+        <h3>How it works</h3>
+        <p><b>Demand:</b> passenger counts come from the US Department of Transportation's <a href="https://www.transportation.gov/policy/aviation-policy/domestic-airline-consumer-airfare-report" target="_blank" rel="noopener">Domestic Airline Consumer Airfare Report</a> (<a href="https://data.transportation.gov/Aviation/Consumer-Airfare-Report-Table-6-Contiguous-State-C/yj5y-b2ir" target="_blank" rel="noopener">Table 6</a>), which is built from the DB1B survey, a 10% sample of all airline tickets. It measures true origin and destination: someone flying Boston to Tucson via Dallas counts once for Boston–Tucson and not at all for Boston–Dallas. The four quarters from Q2 2025 to Q1 2026 are averaged, so seasonal markets aren't over- or under-counted. Only the 48 contiguous states are covered.</p>
+        <p><b>Cities, not airports:</b> the DOT groups airports serving the same area into one city market (New York = JFK, LaGuardia, Newark, White Plains and Islip; Los Angeles includes Orange County, Burbank, Ontario and Long Beach; Miami includes Fort Lauderdale). A market counts as having a nonstop if any airport on one side has one to any airport on the other.</p>
+        <p><b>Nonstops:</b> scheduled nonstop routes come from the open <a href="https://github.com/Jonty/airline-route-data" target="_blank" rel="noopener">airline-route-data</a> project, which collects published schedules from FlightsFrom. <i>Nonstop</i> means a route was scheduled in September 2026. <i>Seasonal or dropped</i> means it was scheduled at some point in March–May 2026 but not in September. <i>No nonstop</i> means none was found at any point in those snapshots. Schedule scrapes can miss a route, so treat a single pair with some care.</p>
+        <p><b>Canada:</b> the goal is to add Canadian and transborder markets. Statistics Canada's public city-pair origin–destination tables stop in 2018 and it does not publish domestic city pairs at all, so there is no current public equivalent of the DOT data yet.</p>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      // ───────────────────────────── config
+      var DATA_URL = "assets/data/us-od-flows.json";
+      var LAND_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json";
+      var STATES_URL = "https://cdn.jsdelivr.net/npm/us-atlas@3.0.1/states-10m.json";
+      var TOP_OPTIONS = [100, 500, 1000, 2000];
+      var ROWS_STEP = 50;
+      var W = 960, H = 580;
+
+      var CARRIERS = {
+        AA: "American", DL: "Delta", UA: "United", WN: "Southwest", AS: "Alaska", B6: "JetBlue",
+        NK: "Spirit", F9: "Frontier", G4: "Allegiant", MX: "Breeze", SY: "Sun Country", XP: "Avelo",
+        HA: "Hawaiian", "3M": "Silver", "9K": "Cape Air", QX: "Horizon", OO: "SkyWest", YX: "Republic",
+        MQ: "Envoy", OH: "PSA", "9E": "Endeavor", ZW: "Air Wisconsin", C5: "CommuteAir", G7: "GoJet",
+        YV: "Mesa", PT: "Piedmont", AC: "Air Canada", WS: "WestJet", PD: "Porter", F8: "Flair"
+      };
+      var STATUS = [
+        { key: "direct", label: "Nonstop", css: "var(--direct)" },
+        { key: "seasonal", label: "Seasonal or dropped", css: "var(--seasonal)", dash: true },
+        { key: "none", label: "No nonstop", css: "var(--none)" }
+      ];
+
+      // ───────────────────────────── state
+      var D, cities, flows;
+      var state = { top: 500, focus: null, show: [true, true, true], rows: ROWS_STEP };
+      var svg, gArcs, gCities, gLabels, projection, wScale;
+
+      var fmt = d3.format(",");
+      function fmtPax(p) { return p >= 100 ? fmt(Math.round(p)) : p.toFixed(0); }
+      function fmtYear(p) {
+        var y = p * 365;
+        return y >= 1e6 ? (y / 1e6).toFixed(1) + "M" : Math.round(y / 1000) + "k";
+      }
+      function cName(c) { return c.city; }
+      function pairName(f) { return cName(cities[f.a]) + " – " + cName(cities[f.b]); }
+      function carrierList(codes) { return codes.split(",").map(function (c) { return CARRIERS[c] || c; }).join(", "); }
+
+      // ───────────────────────────── load
+      Promise.all([
+        fetch(DATA_URL).then(function (r) { return r.json(); }),
+        fetch(LAND_URL).then(function (r) { return r.json(); }),
+        fetch(STATES_URL).then(function (r) { return r.json(); })
+      ]).then(function (res) {
+        D = res[0];
+        cities = D.cities.map(function (c, i) {
+          return { i: i, id: c[0], city: c[1], st: c[2], lat: c[3], lon: c[4], aps: c[5] };
+        });
+        flows = D.flows.map(function (f, i) {
+          var o = { rank: i + 1, a: f[0], b: f[1], pax: f[2], fare: f[3], mi: f[4], st: f[6], ns: f[7] };
+          var lg = f[5] ? f[5].split(":") : null;
+          o.lg = lg ? { code: lg[0], share: +lg[1] } : null;
+          // Draw west to east so every arc bows the same way.
+          if (cities[o.a].lon > cities[o.b].lon) { o.w = o.b; o.e = o.a; } else { o.w = o.a; o.e = o.b; }
+          return o;
+        });
+        document.getElementById("stamp").textContent =
+          "Passengers: " + D.meta.period + " · Nonstop schedules: " + D.meta.routesCurrent;
+        buildControls();
+        buildMap(res[1], res[2]);
+        render();
+      }).catch(function (err) {
+        document.getElementById("loading").textContent = "Couldn't load the data. Try reloading the page.";
+        console.error(err);
+      });
+
+      // ───────────────────────────── controls
+      function buildControls() {
+        var topn = document.getElementById("topn");
+        TOP_OPTIONS.forEach(function (n) {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip"; b.textContent = fmt(n); b.dataset.n = n;
+          b.addEventListener("click", function () { state.top = n; state.rows = ROWS_STEP; render(); });
+          topn.appendChild(b);
+        });
+        var dl = document.getElementById("city-list");
+        cities.slice().sort(function (x, y) { return d3.ascending(x.city, y.city); }).forEach(function (c) {
+          var o = document.createElement("option"); o.value = c.city + ", " + c.st; dl.appendChild(o);
+        });
+        var q = document.getElementById("q");
+        q.addEventListener("change", function () {
+          var v = q.value.trim().toLowerCase();
+          if (!v) return;
+          var hit = cities.find(function (c) { return (c.city + ", " + c.st).toLowerCase() === v; }) ||
+                    cities.find(function (c) { return c.city.toLowerCase().indexOf(v) === 0; }) ||
+                    cities.find(function (c) { return (c.city + " " + c.aps).toLowerCase().indexOf(v) >= 0; });
+          if (hit) setFocus(hit.i);
+        });
+        document.getElementById("focus-clear").addEventListener("click", function () { setFocus(null); });
+      }
+      function setFocus(i) {
+        state.focus = i; state.rows = ROWS_STEP;
+        document.getElementById("q").value = "";
+        render();
+      }
+
+      // ───────────────────────────── map
+      function buildMap(world, us) {
+        document.getElementById("loading").remove();
+        var wrap = document.getElementById("map-wrap");
+        var lower48 = topojson.feature(us, us.objects.states);
+        lower48.features = lower48.features.filter(function (f) { return ["02", "15", "60", "66", "69", "72", "78"].indexOf(f.id) < 0; });
+        projection = d3.geoConicConformal().parallels([30, 46]).rotate([96, 0])
+          .fitExtent([[18, 34], [W - 18, H - 10]], lower48);
+        var path = d3.geoPath(projection);
+
+        svg = d3.select(wrap).insert("svg", ".tip")
+          .attr("id", "map").attr("viewBox", "0 0 " + W + " " + H)
+          .attr("role", "img").attr("aria-label", "Map of the largest US air travel markets");
+        svg.append("path").attr("class", "land").attr("d", path(topojson.feature(world, world.objects.land)));
+        svg.append("path").attr("class", "states").attr("d", path(topojson.mesh(us, us.objects.states, function (a, b) { return a !== b; })));
+        svg.append("path").attr("class", "borders").attr("d", path(topojson.mesh(world, world.objects.countries, function (a, b) { return a !== b; })));
+        svg.append("path").attr("class", "borders").attr("d", path(topojson.mesh(world, world.objects.land)));
+
+        gArcs = svg.append("g");
+        gCities = svg.append("g");
+        gLabels = svg.append("g");
+
+        cities.forEach(function (c) { var p = projection([c.lon, c.lat]); c.x = p[0]; c.y = p[1]; });
+        flows.forEach(function (f) {
+          var A = cities[f.w], B = cities[f.e];
+          var dx = B.x - A.x, dy = B.y - A.y, len = Math.hypot(dx, dy);
+          var k = 0.16 * len;                       // bow height
+          var cx = (A.x + B.x) / 2 + (dy / len) * k, cy = (A.y + B.y) / 2 - (dx / len) * k;
+          f.d = "M" + A.x.toFixed(1) + " " + A.y.toFixed(1) + " Q" + cx.toFixed(1) + " " + cy.toFixed(1) + " " + B.x.toFixed(1) + " " + B.y.toFixed(1);
+        });
+        wScale = d3.scaleSqrt().domain([0, d3.max(flows, function (f) { return f.pax; })]).range([0, 7]);
+
+        var legend = document.createElement("div");
+        legend.className = "map-legend";
+        legend.innerHTML = STATUS.map(function (s) {
+          return '<span style="margin-right:12px"><i class="key' + (s.dash ? " dash" : "") + '" style="--c:' + s.css + '"></i>' + s.label + "</span>";
+        }).join("") + '<br>Line width = passengers/day <span class="w" style="height:1px"></span>500 <span class="w" style="height:3px"></span>5,000 <span class="w" style="height:6px"></span>15,000';
+        wrap.appendChild(legend);
+      }
+
+      function visibleFlows() {
+        return flows.filter(function (f) {
+          if (f.rank > state.top) return false;
+          if (state.focus !== null && f.a !== state.focus && f.b !== state.focus) return false;
+          return true;
+        });
+      }
+
+      function render() {
+        var inTop = visibleFlows();
+        var shown = inTop.filter(function (f) { return state.show[f.st]; });
+
+        document.querySelectorAll("#topn .chip").forEach(function (b) { b.classList.toggle("on", +b.dataset.n === state.top); });
+        var fp = document.getElementById("focus");
+        fp.classList.toggle("on", state.focus !== null);
+        if (state.focus !== null) document.getElementById("focus-name").textContent = "Flows touching " + cities[state.focus].city;
+
+        renderTiles(inTop);
+        renderArcs(shown);
+        renderCities(shown);
+        renderSide(inTop);
+        renderTable(shown);
+      }
+
+      function renderTiles(list) {
+        var counts = [0, 0, 0];
+        list.forEach(function (f) { counts[f.st]++; });
+        var pax = d3.sum(list, function (f) { return f.pax; });
+        var el = document.getElementById("tiles");
+        el.innerHTML = "";
+        var t0 = document.createElement("div");
+        t0.className = "tile";
+        t0.innerHTML = "<b>" + fmt(Math.round(pax)) + "</b><span>passengers a day across " + fmt(list.length) + " markets</span>";
+        el.appendChild(t0);
+        STATUS.forEach(function (s, i) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "tile" + (state.show[i] ? "" : " off");
+          b.title = state.show[i] ? "Hide on the map and table" : "Show on the map and table";
+          b.innerHTML = "<b>" + fmt(counts[i]) + '</b><span><i class="key' + (s.dash ? " dash" : "") + '" style="--c:' + s.css + '"></i>' + s.label + "</span>";
+          b.addEventListener("click", function () { state.show[i] = !state.show[i]; state.rows = ROWS_STEP; render(); });
+          el.appendChild(b);
+        });
+      }
+
+      function renderArcs(list) {
+        // Nonstop markets underneath (smallest on top so they stay visible), gaps on top.
+        var order = list.slice().sort(function (x, y) { return d3.ascending(x.st, y.st) || d3.descending(x.pax, y.pax); });
+        var g = gArcs.selectAll("g.f").data(order, function (f) { return f.rank; });
+        g.exit().remove();
+        var enter = g.enter().append("g").attr("class", "f");
+        enter.append("path").attr("class", function (f) { return "arc s" + f.st; })
+          .attr("d", function (f) { return f.d; })
+          .attr("stroke-width", function (f) { return baseWidth(f); });
+        enter.append("path").attr("class", "hit").attr("d", function (f) { return f.d; })
+          .attr("stroke-width", function (f) { return Math.max(7, wScale(f.pax) + 4); })
+          .on("mouseenter", function (ev, f) { d3.select(this.previousSibling).classed("hot", true); showTip(ev, f); })
+          .on("mousemove", moveTip)
+          .on("mouseleave", function () { d3.select(this.previousSibling).classed("hot", false); hideTip(); })
+          .on("click", function (ev, f) { showTip(ev, f); });
+        g.merge(enter).order();
+        var focused = state.focus !== null;
+        gArcs.selectAll("path.arc.s0").style("stroke-opacity", focused ? 0.6 : null);
+      }
+
+      function renderCities(list) {
+        var tot = new Map();
+        list.forEach(function (f) { tot.set(f.a, (tot.get(f.a) || 0) + f.pax); tot.set(f.b, (tot.get(f.b) || 0) + f.pax); });
+        if (state.focus !== null && !tot.has(state.focus)) tot.set(state.focus, 0);
+        var arr = Array.from(tot, function (e) { return { c: cities[e[0]], v: e[1] }; }).sort(function (x, y) { return y.v - x.v; });
+        var r = d3.scaleSqrt().domain([0, d3.max(arr, function (d) { return d.v; }) || 1]).range([2.2, 7.5]);
+
+        var dots = gCities.selectAll("circle").data(arr, function (d) { return d.c.i; });
+        dots.exit().remove();
+        dots.enter().append("circle").attr("class", "city")
+          .on("click", function (ev, d) { setFocus(state.focus === d.c.i ? null : d.c.i); })
+          .on("mouseenter", function (ev, d) { showCityTip(ev, d); })
+          .on("mousemove", moveTip)
+          .on("mouseleave", hideTip)
+          .merge(dots)
+          .attr("cx", function (d) { return d.c.x; }).attr("cy", function (d) { return d.c.y; })
+          .attr("r", function (d) { return r(d.v); })
+          .classed("sel", function (d) { return d.c.i === state.focus; });
+
+        // Label the biggest cities (or, in city focus, the partners) while avoiding overlaps.
+        var placed = [], labels = [];
+        var maxLabels = state.focus !== null ? 40 : 22;
+        arr.forEach(function (d) {
+          if (labels.length >= maxLabels) return;
+          var name = d.c.city.replace("New York City", "New York").replace("Minneapolis/St. Paul", "Minneapolis").replace("Dallas/Fort Worth", "Dallas").replace("West Palm Beach/Palm Beach", "West Palm Beach").replace("Raleigh/Durham", "Raleigh");
+          var wd = name.length * 6.1 + 4, x = d.c.x + 7, y = d.c.y + 4;
+          var box = [x, y - 10, x + wd, y + 2];
+          var clash = placed.some(function (p) { return !(box[2] < p[0] || box[0] > p[2] || box[3] < p[1] || box[1] > p[3]); });
+          if (clash || box[2] > W) return;
+          placed.push(box);
+          labels.push({ d: d, name: name, x: x, y: y });
+        });
+        var t = gLabels.selectAll("text").data(labels, function (l) { return l.d.c.i; });
+        t.exit().remove();
+        t.enter().append("text").attr("class", "lab").merge(t)
+          .classed("big", function (l) { return l.d.c.i === state.focus; })
+          .attr("x", function (l) { return l.x; }).attr("y", function (l) { return l.y; })
+          .text(function (l) { return l.name; });
+      }
+
+      // ───────────────────────────── side panel
+      function renderSide(list) {
+        var side = document.getElementById("side");
+        var gaps = list.filter(function (f) { return f.st !== 0; });
+        var scope = state.focus !== null ? " touching " + cities[state.focus].city : "";
+        var h = "<h3>Largest markets without a nonstop</h3>";
+        if (!gaps.length) {
+          var pool = flows.filter(function (f) { return f.st !== 0 && (state.focus === null || f.a === state.focus || f.b === state.focus); });
+          var first = pool[0];
+          h += '<p class="sub">Among the top ' + fmt(state.top) + scope + ".</p>";
+          h += '<p class="note">Every one of these markets has at least one nonstop flight.';
+          if (first) {
+            h += " The first gap in the ranking is <b>#" + first.rank + " " + pairName(first) + "</b> (" + fmtPax(first.pax) + " passengers a day, " +
+              (first.st === 1 ? "seasonal or dropped nonstop" : "no nonstop") + ").";
+            if (first.rank <= 2000) h += ' <a href="#" id="jump">Show the top ' + fmt(TOP_OPTIONS.find(function (n) { return n >= first.rank; })) + "</a>";
+          } else {
+            h += " None of the top " + fmt(flows.length) + " markets" + scope + " lacks a nonstop.";
+          }
+          h += "</p>";
+          side.innerHTML = h;
+          var j = document.getElementById("jump");
+          if (j) j.addEventListener("click", function (e) { e.preventDefault(); state.top = TOP_OPTIONS.find(function (n) { return n >= first.rank; }); state.show[1] = state.show[2] = true; render(); });
+          return;
+        }
+        h += '<p class="sub">' + fmt(gaps.length) + " of the top " + fmt(state.top) + scope + ". Passengers per day.</p><ol>";
+        gaps.slice(0, 12).forEach(function (f) {
+          h += '<li data-rank="' + f.rank + '"><span class="rk">#' + f.rank + '</span><span class="pr">' + pairName(f) +
+            "<small>" + fmt(f.mi) + " mi · " + (f.st === 1 ? "seasonal or dropped" : "no nonstop") + '</small></span><span class="px">' + fmtPax(f.pax) + "</span></li>";
+        });
+        h += "</ol>";
+        side.innerHTML = h;
+        side.querySelectorAll("li").forEach(function (li) {
+          var f = flows[+li.dataset.rank - 1];
+          li.addEventListener("mouseenter", function () { highlight(f, true); });
+          li.addEventListener("mouseleave", function () { highlight(f, false); });
+          li.addEventListener("click", function () { setFocus(f.a === state.focus ? f.b : f.a); });
+        });
+      }
+
+      function highlight(f, on) {
+        gArcs.selectAll("g.f").filter(function (d) { return d === f; }).select(".arc").classed("hot", on)
+          .attr("stroke-width", function (d) { return on ? Math.max(3, wScale(d.pax) + 2) : baseWidth(d); });
+      }
+      // Markets without a nonstop get a slightly thicker floor so they read through the dense network.
+      function baseWidth(f) { return Math.max(f.st ? 1.6 : 0.7, wScale(f.pax)); }
+
+      // ───────────────────────────── table
+      function renderTable(list) {
+        var n = state.focus !== null ? " touching " + cities[state.focus].city : "";
+        document.getElementById("tbl-title").textContent = fmt(list.length) + " markets" + n;
+        var rows = list.slice(0, state.rows);
+        var tb = document.getElementById("tbody");
+        tb.innerHTML = rows.map(function (f) {
+          var s = STATUS[f.st];
+          var detail = f.st === 0 ? "Yes" : s.label;
+          return "<tr data-rank=\"" + f.rank + "\"><td class=\"num\">" + f.rank + "</td>" +
+            "<td class=\"pair\">" + cities[f.a].city + ", " + cities[f.a].st + " – " + cities[f.b].city + ", " + cities[f.b].st + "</td>" +
+            "<td class=\"num\">" + fmtPax(f.pax) + "</td>" +
+            "<td class=\"num\">" + fmt(f.mi) + " mi</td>" +
+            "<td class=\"num\">$" + f.fare + "</td>" +
+            "<td>" + (f.lg ? (CARRIERS[f.lg.code] || f.lg.code) + " <span style=\"color:var(--muted)\">" + f.lg.share + "%</span>" : "–") + "</td>" +
+            "<td><span class=\"badge s" + f.st + "\"><i class=\"key" + (s.dash ? " dash" : "") + "\" style=\"--c:" + s.css + "\"></i>" + detail + "</span></td></tr>";
+        }).join("");
+        tb.querySelectorAll("tr").forEach(function (tr) {
+          var f = flows[+tr.dataset.rank - 1];
+          tr.addEventListener("mouseenter", function () { highlight(f, true); });
+          tr.addEventListener("mouseleave", function () { highlight(f, false); });
+        });
+        var more = document.getElementById("more");
+        more.innerHTML = "";
+        if (list.length > state.rows) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.textContent = "Show " + fmt(Math.min(ROWS_STEP * 4, list.length - state.rows)) + " more (" + fmt(list.length - state.rows) + " left)";
+          b.addEventListener("click", function () { state.rows += ROWS_STEP * 4; renderTable(list); });
+          more.appendChild(b);
+        }
+      }
+
+      // ───────────────────────────── tooltip
+      var tip = document.getElementById("tip");
+      function showTip(ev, f) {
+        var s = STATUS[f.st];
+        var h = '<div class="t">#' + f.rank + " · " + pairName(f) + "</div>" +
+          '<span class="n">' + fmtPax(f.pax) + "</span> passengers a day (≈" + fmtYear(f.pax) + " a year)<br>" +
+          fmt(f.mi) + " mi · average one-way fare $" + f.fare +
+          (f.lg ? "<br>Largest carrier: " + (CARRIERS[f.lg.code] || f.lg.code) + " (" + f.lg.share + "% of passengers)" : "");
+        h += '<div class="st"><i class="key' + (s.dash ? " dash" : "") + '" style="--c:' + s.css + '"></i><b style="color:var(--ink)">' + s.label + "</b>";
+        if (f.ns) {
+          var parts = f.ns.split(";");
+          var shown = parts.slice(0, 4).map(function (p) {
+            var kv = p.split(":");
+            return kv[0].replace("-", "–") + " (" + carrierList(kv[1]) + ")";
+          });
+          h += "<br>" + (f.st === 1 ? "Flown in spring 2026: " : "") + shown.join("<br>") + (parts.length > 4 ? "<br>+ " + (parts.length - 4) + " more airport pairs" : "");
+        } else if (f.st === 2) {
+          h += "<br>Travellers connect somewhere.";
+        }
+        h += "</div>";
+        tip.innerHTML = h;
+        tip.style.display = "block";
+        moveTip(ev);
+      }
+      function showCityTip(ev, d) {
+        var c = d.c;
+        var all = flows.filter(function (f) { return f.rank <= state.top && (f.a === c.i || f.b === c.i); });
+        var gaps = all.filter(function (f) { return f.st !== 0; }).length;
+        tip.innerHTML = '<div class="t">' + c.city + ", " + c.st + "</div>Airports: " + c.aps.split(" ").join(", ") +
+          "<br>" + fmt(all.length) + " markets in the top " + fmt(state.top) + (gaps ? ", " + gaps + " without a nonstop" : "") +
+          '<div class="st" style="color:var(--muted)">Click to ' + (state.focus === c.i ? "show all cities" : "focus on this city") + "</div>";
+        tip.style.display = "block";
+        moveTip(ev);
+      }
+      function moveTip(ev) {
+        var wrap = document.getElementById("map-wrap").getBoundingClientRect();
+        var x = ev.clientX - wrap.left + 14, y = ev.clientY - wrap.top + 14;
+        var tw = tip.offsetWidth, th = tip.offsetHeight;
+        if (x + tw > wrap.width - 6) x = Math.max(6, ev.clientX - wrap.left - tw - 14);
+        if (y + th > wrap.height - 6) y = Math.max(6, ev.clientY - wrap.top - th - 14);
+        tip.style.left = x + "px"; tip.style.top = y + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      document.addEventListener("touchstart", function (e) { if (!e.target.closest("#map")) hideTip(); }, { passive: true });
+    });
+    </script>
+  </body>
+</html>
