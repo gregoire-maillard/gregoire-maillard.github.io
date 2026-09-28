@@ -1,0 +1,1022 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Booking curve forecaster</title>
+    <meta name="description" content="How airlines forecast a flight's final bookings while it is still on sale: booking curves, pickup methods, exponential smoothing and regression, compared on synthetic data.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / airlinetools.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        --hist: #b8c1c8;
+        --event: #9a6fb0;
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .crumb { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+      .crumb a { color: var(--muted); }
+      .crumb a:hover { color: var(--link); }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Controls ── */
+      .controls { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: center; margin: 22px 0 6px; }
+      .controls .lbl { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+      .chip {
+        border: 1px solid var(--line); background: #fff; color: var(--text);
+        border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer;
+        font-variant-numeric: tabular-nums; min-height: 30px;
+      }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .chip.reveal { border-color: #9cc3dc; color: #155b7c; }
+      .chip.reveal.on { background: #155b7c; border-color: #155b7c; color: #fff; }
+      select#dep {
+        font: inherit; font-size: 13px; color: var(--ink);
+        border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; background: #fff; max-width: 100%;
+      }
+      .unit { font-size: 12px; color: var(--muted); margin-left: 2px; }
+      .scen-note { margin: 10px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--text); background: #f8f5fa; border: 1px solid #e4d8ec; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+      .scen-note:empty { display: none; }
+      .scen-note b { color: var(--ink); font-weight: 600; }
+      .scen-note .when { color: #6b4a80; }
+
+      /* ── Chart + side panel ── */
+      .chart-head { margin: 22px 0 10px; }
+      .chart-head h3 { margin: 0 0 2px; font-size: 16px; }
+      .chart-head p { margin: 0; font-size: 12.5px; color: var(--muted); }
+      .stage { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; align-items: start; }
+      .box { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; overflow: hidden; }
+      .plot { padding: 8px 4px 0; }
+      .plot svg { display: block; touch-action: pan-y; }
+      .legend {
+        border-top: 1px solid var(--line); padding: 8px 14px; font-size: 11.5px; color: var(--text);
+        display: flex; flex-wrap: wrap; gap: 4px 16px; line-height: 1.5;
+      }
+      .legend .grp { white-space: nowrap; }
+      .k { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--ink); margin-right: 6px; vertical-align: 3px; }
+      .k.sofar { border-top-width: 3px; }
+      .k.hist { border-top: 1px solid var(--hist); }
+      .k.act { border-top: 2px dotted var(--ink); }
+      .k.fc { border-top: 2px dashed; }
+      .k.solid { border-top: 2px solid; }
+
+      svg text { font-family: inherit; }
+      .axis text, .grid text { font-size: 10.5px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .axis .tick { stroke: #cfcfcf; }
+      .axis .axis-title { font-size: 11px; fill: var(--muted); }
+      .grid line { stroke: #f0f0f0; }
+      .hist path { fill: none; stroke: var(--hist); stroke-width: 1; stroke-opacity: .55; }
+      .sofar { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+      .now-dot { fill: var(--ink); stroke: #fff; stroke-width: 2; }
+      .actual { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 1.5 3; stroke-linecap: round; }
+      .act-dot { fill: #fff; stroke: var(--ink); stroke-width: 2; }
+      .actual-h { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 1.5 3; stroke-linecap: round; }
+      .fc { fill: none; stroke-width: 2; stroke-dasharray: 6 4; }
+      .end { stroke: #fff; stroke-width: 2; }
+      .evo { fill: none; stroke-width: 2; stroke-linejoin: round; }
+      .evo-dot { stroke: #fff; stroke-width: 1.5; }
+      .today { stroke: #9a9a9a; stroke-width: 1; stroke-dasharray: 3 3; }
+      .today-lab { font-size: 11px; fill: var(--muted); }
+      .event line { stroke: var(--event); stroke-width: 1.5; }
+      .event rect { fill: var(--event); fill-opacity: .12; }
+      .event text { font-size: 11px; fill: #6b4a80; }
+      .future-shade { fill: #f6f7f8; }
+      .future-lab { font-size: 11px; fill: var(--muted); }
+      .end-labs text, text.end-labs { font-size: 11.5px; fill: var(--text); font-variant-numeric: tabular-nums; }
+      .end-labs text.b, text.end-labs.b { fill: var(--ink); font-weight: 600; }
+      .off-lab { font-size: 10.5px; fill: var(--muted); }
+      .hover-rule { stroke: #bdbdbd; stroke-width: 1; pointer-events: none; }
+      .hit-area { fill: transparent; cursor: crosshair; }
+
+      .tip {
+        position: absolute; pointer-events: none; z-index: 5;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 9px 12px; font-size: 12.5px; color: var(--text); line-height: 1.5;
+        min-width: 200px; max-width: 280px; display: none;
+      }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+      .tip .n { color: var(--ink); font-variant-numeric: tabular-nums; }
+      .tip .mu { color: var(--muted); }
+      .tip .st { margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--line); color: var(--ink); }
+      .tip .row { display: flex; align-items: center; gap: 6px; }
+      .tip .row i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+      .tip .row .n { margin-left: auto; padding-left: 10px; }
+      .tip .row.win { color: var(--ink); font-weight: 600; }
+
+      .side { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fff; }
+      .side h3 { margin: 0 0 4px; font-size: 14.5px; color: var(--ink); }
+      .side .sub { color: var(--muted); font-size: 12px; margin: 0 0 10px; line-height: 1.45; }
+      .side ol { margin: 0; padding: 0; list-style: none; }
+      .side li { display: grid; grid-template-columns: 22px 1fr auto; gap: 6px; align-items: baseline; padding: 7px 0; border-top: 1px solid #f0f0f0; font-size: 13px; }
+      .side .sw { display: inline-block; width: 16px; border-top: 2.5px dashed; vertical-align: 4px; }
+      .side .nm { color: var(--ink); }
+      .side small { display: block; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+      .side .v { text-align: right; color: var(--ink); font-size: 17px; font-variant-numeric: tabular-nums; line-height: 1.2; }
+      .side .v small { font-size: 11px; }
+      .side .v small.best { color: #155b7c; font-weight: 600; }
+      .side .actual-row { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--ink); padding: 8px 0 0; margin-top: 2px; color: var(--ink); font-size: 13px; }
+      .side .actual-row b { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; }
+      .side .verdict { font-size: 12.5px; margin: 12px 0 0; line-height: 1.5; }
+      .side .verdict b { color: var(--ink); font-weight: 600; }
+
+      /* ── Accuracy ── */
+      .section { margin-top: 44px; }
+      .section > h3 { margin: 0 0 6px; font-size: 18px; }
+      .section > p { max-width: 820px; margin: 0 0 8px; }
+      .acc-grid { display: grid; grid-template-columns: minmax(0, 1fr) 470px; gap: 18px; align-items: start; margin-top: 10px; }
+      .acc-summary { font-size: 13px; margin: 12px 0 0; max-width: 900px; }
+      .acc-summary b { color: var(--ink); font-weight: 600; }
+      table.acc { font-size: 12.5px; margin: 0; }
+      table.acc th, table.acc td { padding: 5px 6px; font-size: 12.5px; }
+      table.acc th { color: var(--muted); font-weight: 500; white-space: nowrap; }
+      table.acc td.num, table.acc th.num { text-align: right; font-variant-numeric: tabular-nums; }
+      table.acc td.win { background: rgb(40 122 158 / 11%); color: var(--ink); font-weight: 600; }
+      table.acc tr.avg td { border-top: 1px solid #cfcfcf; color: var(--ink); }
+      .sw-s { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; vertical-align: 1px; }
+      .tbl-wrap { overflow-x: auto; }
+      table.acc .sm { display: none; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p { margin: 0 0 8px; }
+      .method ul { margin: 0 0 8px; padding-left: 1.2rem; }
+      .method li { margin-bottom: 4px; }
+      .method .f { font-family: var(--mono); font-size: 12px; color: var(--ink); background: var(--soft); padding: 1px 5px; border-radius: 4px; white-space: nowrap; }
+
+      @media (max-width: 980px) {
+        .stage, .acc-grid { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .controls { grid-template-columns: 1fr; gap: 4px; }
+        .controls .lbl { margin-top: 8px; }
+        .chip { padding: 4px 9px; }
+        .method .f { white-space: normal; }
+        table.acc .lg { display: none; }
+        table.acc .sm { display: inline; }
+        table.acc th, table.acc td { padding: 5px 3px; font-size: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>How airlines forecast a flight's final bookings while it's still on sale.</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumb"><a href="/airlinetools.html">Airline tools</a> · Revenue management</div>
+        <h2>Booking curve forecaster</h2>
+        <p>A flight goes on sale almost a year before it leaves, and the revenue management system has to guess, every step of the way, how many people will end up booking it. Pick a departure and a "today" in its booking window: the chart shows the bookings so far, the curves of similar past flights behind them, and where five classic forecasting methods expect it to finish.</p>
+        <p class="note-line">Illustrative numbers: every booking on this page is synthetic, generated in your browser from a fixed random seed. None of it comes from an airline.</p>
+      </div>
+
+      <div class="controls">
+        <label class="lbl" for="dep">Departure</label>
+        <div class="chips"><select id="dep" aria-label="Departure date"></select></div>
+        <span class="lbl">Today is</span>
+        <div class="chips" id="today" role="group" aria-label="Days before departure"></div>
+        <span class="lbl">Scenario</span>
+        <div class="chips" id="scen" role="group" aria-label="Scenario"></div>
+        <span class="lbl">Outcome</span>
+        <div class="chips"><button type="button" class="chip reveal" id="reveal">Reveal actual outcome</button></div>
+      </div>
+      <p class="scen-note" id="scen-note"></p>
+
+      <div class="chart-head">
+        <h3 id="chart-title">Loading…</h3>
+        <p id="chart-sub"></p>
+      </div>
+      <div class="stage">
+        <div class="box" id="main-wrap">
+          <div class="plot" id="main-chart"></div>
+          <div class="legend" id="main-legend"></div>
+          <div class="tip" id="main-tip"></div>
+        </div>
+        <aside class="side" id="side"></aside>
+      </div>
+
+      <div class="chart-head">
+        <h3>How the forecast moved as departure approached</h3>
+        <p id="evo-sub"></p>
+      </div>
+      <div class="box" id="evo-wrap">
+        <div class="plot" id="evo-chart"></div>
+        <div class="tip" id="evo-tip"></div>
+      </div>
+
+      <div class="section">
+        <h3>Which method wins when</h3>
+        <p>Every departure from 1 October 2025 to 30 September 2026 (<span id="acc-n">365</span> flights) was forecast at each data collection point, using only what was known on that day, and compared with how it actually ended. MAE is the average miss in bookings; MAPE is the average miss as a share of final bookings.</p>
+        <div class="chips" id="metric" role="group" aria-label="Error measure"></div>
+        <div class="acc-grid">
+          <div class="box" id="acc-wrap">
+            <div class="plot" id="acc-chart"></div>
+            <div class="legend" id="acc-legend"></div>
+            <div class="tip" id="acc-tip"></div>
+          </div>
+          <div class="tbl-wrap">
+            <table class="acc">
+              <thead id="acc-thead"></thead>
+              <tbody id="acc-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <p class="acc-summary" id="acc-summary"></p>
+      </div>
+
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>Why RM teams forecast by DCP</h4>
+        <p>A revenue management system doesn't watch bookings continuously. It takes snapshots of every future flight at a fixed set of <b>data collection points</b> (DCPs), counted in days before departure: here 330, 180, 120, 90, 60, 45, 30, 21, 14, 7, 3, 1 and 0. They are sparse far out and dense near departure because that is when bookings move fastest and when a wrong decision is hardest to undo. Measuring every flight at the same relative points is what makes a Friday in November comparable with a Friday in September: "bookings at 30 days out" means the same thing for both. It also keeps the data manageable (thousands of flights, each with dozens of fare classes, over nearly a year of sale), and it sets the rhythm of the system, which re-forecasts and re-optimizes seat availability at each DCP. Because what is known changes so much between 330 days and 3 days out, each method is effectively a different model at each DCP, and its accuracy is judged DCP by DCP. More on booking curves and forecasting in <a href="/rm101.html#ch02">Revenue Management 101, Chapter 02</a>.</p>
+
+        <h4>The simulated route</h4>
+        <p>One daily flight on a fictional route, from 1 September 2024 to 31 December 2026. Each departure's expected demand is a base level times a day-of-week factor, a seasonal curve (leisure peaks in July, business dips in August), a Christmas and New Year effect (more leisure, much less business, leisure booking earlier), 3% yearly growth and random departure-to-departure noise. Two fare families book on different curves: leisure passengers book on average two to three months ahead, with some booking close to a year out, and business passengers mostly in the last two weeks. Each day's bookings are Poisson draws around that curve. The average flight ends with about 135 bookings, from about 105 on a Tuesday to about 165 on a Friday or Sunday. Everything is generated from seed <span id="seed">20260928</span>, so every visitor sees the same data.</p>
+
+        <h4>The five methods</h4>
+        <p>Notation: <span class="f">b</span> is the bookings on hand today, at DCP <span class="f">d</span>; <span class="f">B<sub>j</sub>(d)</span> is what departure <span class="f">j</span> had at the same DCP, and <span class="f">B<sub>j</sub>(0)</span> its final bookings. "Similar flights" are the most recent departures on the same day of the week.</p>
+        <ul>
+          <li><b>Classical pickup</b> adds the average pickup of the last 8 similar flights that have already departed: <span class="f">F = b + mean(B<sub>j</sub>(0) − B<sub>j</sub>(d))</span>.</li>
+          <li><b>Advanced pickup</b> splits the remaining window into DCP intervals and, for each one, uses the last 8 similar flights that have already passed that interval, including flights still on sale. It learns from more recent data, which matters when conditions change.</li>
+          <li><b>Multiplicative pickup</b> scales bookings on hand by the ratio seen on the last 8 departed similar flights: <span class="f">F = b × ΣB<sub>j</sub>(0) / ΣB<sub>j</sub>(d)</span>. Far out, when <span class="f">b</span> is a handful of bookings, the ratio amplifies noise; if the past flights had no bookings yet at that point, it falls back to their average final.</li>
+          <li><b>Exponential smoothing</b> ignores bookings on hand and smooths the final bookings of past flights on the same weekday: <span class="f">S = α·B<sub>j</sub>(0) + (1 − α)·S</span> with α = 0.15, forecasting <span class="f">max(S, b)</span>.</li>
+          <li><b>Regression</b> fits, at each DCP, <span class="f">B(0) = a + β·B(d)</span> by least squares on the last 26 departed similar flights. Far out β is small and the forecast stays near the historical average; close in β approaches 1 and bookings on hand dominate.</li>
+        </ul>
+        <p>On the chart, each method's path from today to departure follows the shape of the average curve of recent similar flights, stretched to end at its forecast.</p>
+
+        <h4>Scenarios</h4>
+        <p>Each scenario is anchored to the chosen departure and hits every flight on the route from that date, so the flights the methods learn from are affected too. <b>Demand shock</b>: 40 days before departure, bookings start arriving 45% slower. <b>Schedule change</b>: 40 days before departure the flight is retimed; 12% of existing bookings move away that day, then business bookings halve and leisure bookings drop 15%. <b>Fare sale</b>: a one-week sale starting 42 days before departure, for travel from two weeks later, lifts leisure bookings to about 2.6 times the normal pace, followed by three weeks at 25% below normal. Methods that lean on bookings on hand (multiplicative pickup, regression) react fastest to a shock but also overreact to a sale; smoothing does not react at all until the affected flights have departed.</p>
+
+        <h4>Reading the accuracy results</h4>
+        <p>Errors shrink as departure approaches because more of the final number is already on the books. The exception is the very first DCP: 330 days before a departure, the most recent flights that have already flown are from roughly the same season a year earlier, so history happens to line up; at 180 days the recent flights are from the opposite season and every history-based method suffers. Real systems handle this with seasonal indices or "same period last year" data far out, which these textbook versions leave out on purpose.</p>
+
+        <h4>Sources</h4>
+        <p>No external data: bookings are simulated in the page. The methods follow the standard textbook versions, as described in K. Talluri and G. van Ryzin, <a href="https://link.springer.com/book/10.1007/b139000" target="_blank" rel="noopener"><i>The Theory and Practice of Revenue Management</i></a> (Springer, 2004), chapter 9 on forecasting, and compared in L. Weatherford and S. Kimes, <a href="https://www.sciencedirect.com/science/article/abs/pii/S0169207002000110" target="_blank" rel="noopener">"A comparison of forecasting methods for hotel revenue management"</a>, <i>International Journal of Forecasting</i> 19(3), 2003 (<a href="https://ecommons.cornell.edu/items/046131d9-289a-4ee2-8249-23c59a5362f0" target="_blank" rel="noopener">open version</a>), where pickup methods also came out ahead of pure time-series models.</p>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>The data are synthetic, and the parameters (demand levels, curve shapes, seasonality, noise, scenario sizes) are illustrative assumptions, not estimates from any airline.</li>
+          <li>Bookings are unconstrained demand: there is no seat limit and no closed fare class, so the censoring problem real forecasts must correct for (unconstraining) doesn't arise.</li>
+          <li>No cancellations, no-shows or group bookings, except the moved passengers in the schedule change scenario. Forecasts are for total bookings on one leg, not by fare class or origin–destination.</li>
+          <li>The methods are deliberately untuned. Production systems blend several models, adjust for seasons and events, and let analysts override the forecast when they know something the history doesn't.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    // ───────────────────────────── Booking-curve engine (pure functions, no DOM)
+    // Synthetic daily bookings for one daily flight, fixed seed, plus five forecasting methods.
+    var BC = (function () {
+      "use strict";
+
+      var SEED = 20260928;
+      var DCPS = [330, 180, 120, 90, 60, 45, 30, 21, 14, 7, 3, 1, 0];
+      var NK = DCPS.length;          // 13 DCPs, index 12 = departure day (final bookings)
+      var H = 360;                   // bookings can arrive from 360 days out
+      var DAY = 864e5;
+      var START = Date.UTC(2024, 8, 1);   // first simulated departure: 1 Sep 2024
+      var END = Date.UTC(2026, 11, 31);   // last: 31 Dec 2026
+      var ND = Math.round((END - START) / DAY) + 1;
+
+      function dateOf(i) { return new Date(START + i * DAY); }
+      function idxOf(y, m, d) { return Math.round((Date.UTC(y, m - 1, d) - START) / DAY); }
+
+      // mulberry32: small, fast, reproducible
+      function rng(seed) {
+        var a = seed >>> 0;
+        return function () {
+          a = (a + 0x6D2B79F5) | 0;
+          var t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      function gauss(r) {
+        var u = 1 - r(), v = r();
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+      }
+      function pois(l, r) {
+        if (l <= 0) return 0;
+        if (l > 30) return Math.max(0, Math.round(l + Math.sqrt(l) * gauss(r)));
+        var L = Math.exp(-l), k = 0, p = 1;
+        do { k++; p *= r(); } while (p > L);
+        return k - 1;
+      }
+      function binom(n, p, r) { var k = 0; for (var i = 0; i < n; i++) if (r() < p) k++; return k; }
+
+      // ── Demand drivers (all illustrative)
+      // Day-of-week factors indexed by getUTCDay(): Sun..Sat
+      var DOW_L = [1.30, 0.85, 0.68, 0.74, 0.92, 1.28, 1.10];
+      var DOW_B = [0.85, 1.40, 1.10, 1.05, 1.30, 1.10, 0.30];
+      var BASE_L = 96, BASE_B = 36;
+
+      function doy(dt) { return (dt - Date.UTC(dt.getUTCFullYear(), 0, 1)) / DAY; }
+      function seasonL(dt) { var x = 2 * Math.PI * (doy(dt) - 196) / 365.25; return 1 + 0.12 * Math.cos(x) + 0.04 * Math.cos(2 * x); }
+      function seasonB(dt) { var z = (doy(dt) - 222) / 18; return 1 - 0.15 * Math.exp(-z * z) + 0.04 * Math.cos(2 * Math.PI * (doy(dt) - 280) / 365.25); }
+      // Christmas / New Year peak for leisure, trough for business
+      function holiday(dt) {
+        var m = dt.getUTCMonth() + 1, d = dt.getUTCDate();
+        var L = 1, B = 1, early = false;
+        if (m === 12 && d >= 18) {
+          early = true;
+          L = d <= 23 ? 1.75 : d === 24 ? 1.1 : d === 25 ? 0.6 : d <= 30 ? 1.3 : 0.8;
+          if (d >= 20) B = 0.35;
+        } else if (m === 1 && d <= 4) {
+          early = true;
+          L = d === 1 ? 0.8 : 1.55;
+          B = d <= 2 ? 0.35 : 0.7;
+        }
+        return { L: L, B: B, early: early };
+      }
+
+      // Booking lead-time distributions (days before departure a booking is made)
+      function gamma2cdf(x, th) { return 1 - Math.exp(-x / th) * (1 + x / th); }
+      function expcdf(x, m) { return 1 - Math.exp(-x / m); }
+      function unifcdf(x, a, b) { return x <= a ? 0 : x >= b ? 1 : (x - a) / (b - a); }
+      function leadPdf(fam, s) {
+        // fam 0 = leisure (books early), 1 = business (books late); s stretches the curve
+        var cdf = fam === 0
+          ? function (x) { return 0.70 * gamma2cdf(x, 45 * s) + 0.22 * expcdf(x, 18 * s) + 0.08 * unifcdf(x, 120, 360); }
+          : function (x) { return 0.80 * expcdf(x, 9 * s) + 0.20 * gamma2cdf(x, 22 * s); };
+        var p = new Float64Array(H + 1), tot = 0;
+        for (var t = 0; t <= H; t++) { p[t] = cdf(t + 1) - cdf(t); tot += p[t]; }
+        for (t = 0; t <= H; t++) p[t] /= tot;
+        return p;
+      }
+
+      // ── Simulate
+      var W = H + 1;
+      var nL = new Uint16Array(ND * W), nB = new Uint16Array(ND * W);
+      var muL = new Float64Array(ND), muB = new Float64Array(ND), sL = new Float64Array(ND), sB = new Float64Array(ND);
+      var pdfCache = {};
+
+      (function simulate() {
+        var r = rng(SEED);
+        for (var j = 0; j < ND; j++) {
+          var dt = dateOf(j), wd = dt.getUTCDay(), hol = holiday(dt);
+          var trend = 1 + 0.03 * j / 365.25;
+          var z0 = gauss(r), zL = gauss(r), zB = gauss(r);
+          var common = Math.exp(0.07 * z0 - 0.00245);
+          muL[j] = BASE_L * DOW_L[wd] * seasonL(dt) * hol.L * trend * common * Math.exp(0.07 * zL - 0.00245);
+          muB[j] = BASE_B * DOW_B[wd] * seasonB(dt) * hol.B * trend * common * Math.exp(0.09 * zB - 0.00405);
+          sL[j] = Math.exp(0.10 * gauss(r)) * (hol.early ? 1.35 : 1);
+          sB[j] = Math.exp(0.10 * gauss(r));
+          var pL = leadPdf(0, sL[j]), pB = leadPdf(1, sB[j]);
+          for (var t = 0; t <= H; t++) {
+            nL[j * W + t] = pois(muL[j] * pL[t], r);
+            nB[j * W + t] = pois(muB[j] * pB[t], r);
+          }
+        }
+      })();
+
+      function pdfL(j) { return pdfCache[j] || (pdfCache[j] = leadPdf(0, sL[j])); }
+
+      // Cumulative bookings at each DCP: B(d) = bookings made d or more days before departure
+      function cumRow(net, out, j) {
+        var acc = 0, k = 0;
+        for (var t = H; t >= 0; t--) {
+          acc += net[t];
+          while (k < NK && DCPS[k] === t) { out[j * NK + k] = acc; k++; }
+        }
+      }
+      var BASE = new Float64Array(ND * NK);
+      (function () {
+        var net = new Float64Array(W);
+        for (var j = 0; j < ND; j++) {
+          for (var t = 0; t <= H; t++) net[t] = nL[j * W + t] + nB[j * W + t];
+          cumRow(net, BASE, j);
+        }
+      })();
+
+      function baseDaily(j) {
+        var net = new Float64Array(W);
+        for (var t = 0; t <= H; t++) net[t] = nL[j * W + t] + nB[j * W + t];
+        return net;
+      }
+
+      // ── Scenarios, anchored to the selected departure iD
+      var SCEN = {
+        none:  { label: "No scenario" },
+        shock: { label: "Demand shock", day: 40 },
+        sched: { label: "Schedule change", day: 40 },
+        sale:  { label: "Fare sale", day: 42 }
+      };
+
+      // Returns { cum, daily(j), E } with the scenario applied to every affected departure
+      function scenario(kind, iD) {
+        if (kind === "none") return { cum: BASE, daily: baseDaily, E: null, kind: kind };
+        var E = iD - SCEN[kind].day;
+        var cum = new Float64Array(BASE);
+        var mod = {};
+        var code = { shock: 1, sched: 2, sale: 3 }[kind];
+        var jFrom = Math.max(0, E);
+        var jTo = kind === "sale" ? Math.min(ND - 1, E + 180) : ND - 1;
+        for (var j = jFrom; j <= jTo; j++) {
+          if (kind === "sale" && j < E + 14) continue;
+          var r = rng(SEED + code * 1000003 + j * 7919);
+          var net = new Float64Array(W), cancel = 0, tE = j - E;
+          var pL = kind === "sale" ? pdfL(j) : null;
+          for (var t = H; t >= 0; t--) {
+            var bd = j - t;                 // booking date index
+            var l = nL[j * W + t], b = nB[j * W + t];
+            if (kind === "shock") {
+              if (bd >= E) { l = binom(l, 0.55, r); b = binom(b, 0.55, r); }
+            } else if (kind === "sched") {
+              if (bd < E) { var c = binom(l + b, 0.12, r); cancel += c; }
+              else { l = binom(l, 0.85, r); b = binom(b, 0.50, r); }
+            } else if (kind === "sale") {
+              if (bd >= E && bd <= E + 6) l += pois(1.6 * muL[j] * pL[t], r);
+              else if (bd >= E + 7 && bd <= E + 27) l = binom(l, 0.75, r);
+            }
+            net[t] = l + b;
+          }
+          if (kind === "sched" && tE >= 0 && tE <= H) net[tE] -= cancel;
+          mod[j] = net;
+          cumRow(net, cum, j);
+        }
+        return { cum: cum, daily: function (j) { return mod[j] || baseDaily(j); }, E: E, kind: kind };
+      }
+
+      // ── Forecasting methods
+      var METHODS = [
+        { id: "cp", name: "Classical pickup", short: "Classical", abbr: "Class." },
+        { id: "ap", name: "Advanced pickup", short: "Advanced", abbr: "Adv." },
+        { id: "mp", name: "Multiplicative pickup", short: "Multiplicative", abbr: "Mult." },
+        { id: "es", name: "Exponential smoothing", short: "Smoothing", abbr: "Smooth." },
+        { id: "rg", name: "Regression on bookings", short: "Regression", abbr: "Regr." }
+      ];
+      var N_PICK = 8, N_REG = 26, ALPHA = 0.15, N_HIST = 20;
+
+      // Most recent n departures on the same weekday as iD, dated <= maxIdx and before iD
+      function sameDow(iD, maxIdx, n) {
+        var m = Math.min(maxIdx, iD - 1);
+        var j = m - (((m - iD) % 7) + 7) % 7;
+        var out = [];
+        while (j >= 0 && out.length < n) { out.push(j); j -= 7; }
+        return out;
+      }
+
+      function esValue(C, iD, T) {
+        var first = iD % 7, S = null, seen = 0, sum = 0;
+        for (var j = first; j <= T && j < iD; j += 7) {
+          var y = C[j * NK + NK - 1];
+          if (seen < 4) { sum += y; seen++; S = sum / seen; }
+          else S = ALPHA * y + (1 - ALPHA) * S;
+        }
+        return S;
+      }
+
+      // Forecast final bookings for departure iD standing at DCP index k (T = today)
+      function forecast(C, iD, k) {
+        var d = DCPS[k], T = iD - d, b = C[iD * NK + k], F = NK - 1;
+        var comp = sameDow(iD, T, N_PICK), n = comp.length, i, j;
+        var res = { b: b, T: T, comp: comp, f: [] };
+        if (!n) { res.f = [b, b, b, b, b]; return res; }
+
+        // 1. Classical pickup: bookings on hand + average pickup of departed flights
+        var pick = 0; for (i = 0; i < n; i++) { j = comp[i]; pick += C[j * NK + F] - C[j * NK + k]; }
+        res.f.push(b + pick / n);
+
+        // 2. Advanced pickup: pickup by DCP interval, each from the most recent flights that have passed it
+        var adv = 0;
+        for (var m = k; m < F; m++) {
+          var set = sameDow(iD, T + DCPS[m + 1], N_PICK), s = 0;
+          for (i = 0; i < set.length; i++) { j = set[i]; s += C[j * NK + m + 1] - C[j * NK + m]; }
+          adv += set.length ? s / set.length : 0;
+        }
+        res.f.push(b + adv);
+
+        // 3. Multiplicative pickup: bookings on hand x (final / on-hand) of departed flights
+        var sa = 0, sb = 0;
+        for (i = 0; i < n; i++) { j = comp[i]; sa += C[j * NK + F]; sb += C[j * NK + k]; }
+        res.f.push(sb > 0 ? b * sa / sb : sa / n);
+
+        // 4. Exponential smoothing of final bookings, same weekday (ignores bookings on hand)
+        res.f.push(Math.max(esValue(C, iD, T), b));
+
+        // 5. Regression of final bookings on bookings on hand at this DCP
+        var rs = sameDow(iD, T, N_REG), mx = 0, my = 0, sxx = 0, sxy = 0, nr = rs.length;
+        for (i = 0; i < nr; i++) { j = rs[i]; mx += C[j * NK + k]; my += C[j * NK + F]; }
+        mx /= nr; my /= nr;
+        for (i = 0; i < nr; i++) { j = rs[i]; var dx = C[j * NK + k] - mx; sxx += dx * dx; sxy += dx * (C[j * NK + F] - my); }
+        var beta = sxx > 0 ? sxy / sxx : 0;
+        res.f.push(Math.max(my + beta * (b - mx), b));
+        res.beta = beta;
+        return res;
+      }
+
+      // Average booking curve of recent departed same-weekday flights (used to shape forecast paths)
+      function avgCurve(C, comp) {
+        var a = new Float64Array(NK);
+        comp.forEach(function (j) { for (var k = 0; k < NK; k++) a[k] += C[j * NK + k]; });
+        for (var k = 0; k < NK; k++) a[k] /= Math.max(1, comp.length);
+        return a;
+      }
+
+      // ── Backtest: every departure from 1 Oct 2025 to 30 Sep 2026, at every DCP before departure
+      var EVAL_FROM = idxOf(2025, 10, 1), EVAL_TO = idxOf(2026, 9, 30);
+      function backtest() {
+        var M = METHODS.length, K = NK - 1;
+        var ae = [], ape = [], cnt = 0;
+        for (var m = 0; m < M; m++) { ae.push(new Float64Array(K)); ape.push(new Float64Array(K)); }
+        for (var iD = EVAL_FROM; iD <= EVAL_TO; iD++) {
+          var A = BASE[iD * NK + NK - 1];
+          for (var k = 0; k < K; k++) {
+            var f = forecast(BASE, iD, k).f;
+            for (m = 0; m < M; m++) { var e = Math.abs(f[m] - A); ae[m][k] += e; ape[m][k] += e / A; }
+          }
+          cnt++;
+        }
+        for (m = 0; m < M; m++) for (k = 0; k < K; k++) { ae[m][k] /= cnt; ape[m][k] = 100 * ape[m][k] / cnt; }
+        return { mae: ae, mape: ape, n: cnt };
+      }
+
+      return {
+        SEED: SEED, DCPS: DCPS, NK: NK, H: H, ND: ND, METHODS: METHODS, SCEN: SCEN,
+        N_PICK: N_PICK, N_REG: N_REG, ALPHA: ALPHA, N_HIST: N_HIST,
+        EVAL_FROM: EVAL_FROM, EVAL_TO: EVAL_TO,
+        dateOf: dateOf, idxOf: idxOf, BASE: BASE, baseDaily: baseDaily,
+        scenario: scenario, forecast: forecast, avgCurve: avgCurve, sameDow: sameDow, backtest: backtest
+      };
+    })();
+    if (typeof module !== "undefined") module.exports = BC;
+    </script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var DCPS = BC.DCPS, NK = BC.NK, F = NK - 1, M = BC.METHODS, H = BC.H;
+      var COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#4a3aa7", "#e87ba4"];
+      var fmtLong = d3.utcFormat("%a %-d %b %Y"), fmtShort = d3.utcFormat("%a %-d %b"), fmtMonth = d3.utcFormat("%B %Y");
+      var DEP_FROM = BC.idxOf(2026, 10, 1), DEP_TO = BC.idxOf(2026, 12, 31);
+      var DOW_PLURAL = d3.utcFormat("%A");
+      var state = { iD: BC.idxOf(2026, 11, 13), k: DCPS.indexOf(30), scen: "none", reveal: false, metric: "mape" };
+      var S = BC.scenario("none", state.iD);
+      var BT = BC.backtest();
+
+      function $(id) { return document.getElementById(id); }
+      function r0(v) { return Math.round(v); }
+      function signed(v) { v = Math.round(v); return (v > 0 ? "+" : v < 0 ? "−" : "±") + Math.abs(v); }
+
+      // ───────────────────────────── controls
+      var sel = $("dep"), og = null, lastMonth = "";
+      for (var i = DEP_FROM; i <= DEP_TO; i++) {
+        var dt = BC.dateOf(i), mo = fmtMonth(dt);
+        if (mo !== lastMonth) { og = document.createElement("optgroup"); og.label = mo; sel.appendChild(og); lastMonth = mo; }
+        var o = document.createElement("option");
+        o.value = i; o.textContent = fmtShort(dt) + (dt.getUTCMonth() === 11 && dt.getUTCDate() >= 18 ? " · holiday peak" : "");
+        og.appendChild(o);
+      }
+      sel.value = state.iD;
+      sel.addEventListener("change", function () { state.iD = +sel.value; S = BC.scenario(state.scen, state.iD); render(); });
+
+      function chips(el, items, isOn, onClick) {
+        el.innerHTML = "";
+        items.forEach(function (it) {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip" + (isOn(it.v) ? " on" : "");
+          b.textContent = it.t; if (it.title) b.title = it.title;
+          b.setAttribute("aria-pressed", isOn(it.v) ? "true" : "false");
+          b.addEventListener("click", function () { onClick(it.v); });
+          el.appendChild(b);
+        });
+      }
+      function drawControls() {
+        chips($("today"), DCPS.slice(0, F).map(function (d, k) { return { v: k, t: String(d), title: d + " days before departure" }; }),
+          function (v) { return v === state.k; }, function (v) { state.k = v; render(); });
+        chips($("scen"), ["none", "shock", "sched", "sale"].map(function (s) { return { v: s, t: s === "none" ? "None" : BC.SCEN[s].label }; }),
+          function (v) { return v === state.scen; }, function (v) { state.scen = v; S = BC.scenario(v, state.iD); render(); });
+        var rv = $("reveal");
+        rv.className = "chip reveal" + (state.reveal ? " on" : "");
+        rv.setAttribute("aria-pressed", state.reveal ? "true" : "false");
+        rv.textContent = state.reveal ? "Hide actual outcome" : "Reveal actual outcome";
+      }
+      $("reveal").addEventListener("click", function () { state.reveal = !state.reveal; render(); });
+
+      // ───────────────────────────── shared chart helpers
+      function xScale(w, ml, mr) { return d3.scalePow().exponent(0.5).domain([330, 0]).range([ml, w - mr]); }
+      function tickSet(w) { return w < 520 ? [330, 180, 120, 90, 60, 45, 30, 14, 7, 3, 0] : DCPS; }
+      function axisX(g, x, y0, w, ticks) {
+        var ax = g.append("g").attr("class", "axis");
+        ticks.forEach(function (d) {
+          ax.append("text").attr("x", x(d)).attr("y", y0 + 16).attr("text-anchor", "middle").text(d);
+          ax.append("line").attr("x1", x(d)).attr("x2", x(d)).attr("y1", y0).attr("y2", y0 + 4).attr("class", "tick");
+        });
+        ax.append("text").attr("class", "axis-title").attr("x", x(0)).attr("y", y0 + 32).attr("text-anchor", "end").text("Days before departure →");
+      }
+      function gridY(g, y, x0, x1, ticks, fmt) {
+        var gg = g.append("g").attr("class", "grid");
+        y.ticks(ticks).forEach(function (v) {
+          gg.append("line").attr("x1", x0).attr("x2", x1).attr("y1", y(v)).attr("y2", y(v));
+          gg.append("text").attr("x", x0 - 6).attr("y", y(v) + 3.5).attr("text-anchor", "end").text(fmt ? fmt(v) : v);
+        });
+      }
+      // Cap a y-domain so one extreme value (e.g. multiplicative pickup far out) doesn't flatten everything else
+      function robustMax(vals) {
+        var v = vals.filter(isFinite).slice().sort(function (a, b) { return b - a; });
+        while (v.length > 2 && v[0] > 1.6 * v[1]) v.shift();
+        return v[0] || 1;
+      }
+      // Spread direct labels vertically so they don't overlap, keeping them inside [lo, hi]
+      function spread(labs, lo, hi, gap) {
+        labs.sort(function (a, b) { return a.y - b.y; });
+        for (var i = 1; i < labs.length; i++) labs[i].y = Math.max(labs[i].y, labs[i - 1].y + gap);
+        var n = labs.length; if (n && labs[n - 1].y > hi) labs[n - 1].y = hi;
+        for (i = n - 2; i >= 0; i--) labs[i].y = Math.min(labs[i].y, labs[i + 1].y - gap);
+        if (n && labs[0].y < lo) { var sh = lo - labs[0].y; labs.forEach(function (l) { l.y += sh; }); }
+        return labs;
+      }
+      function tip(el, html, px, py, wrap) {
+        el.innerHTML = html; el.style.display = "block";
+        var W = wrap.clientWidth, tw = el.offsetWidth, th = el.offsetHeight;
+        var left = px + 14; if (left + tw > W - 4) left = px - tw - 14; if (left < 4) left = 4;
+        var top = py - th / 2; if (top < 4) top = 4;
+        el.style.left = left + "px"; el.style.top = top + "px";
+      }
+      function hover(svg, x, dcps, y0, y1, wrap, tipEl, htmlFor) {
+        var rule = svg.append("line").attr("class", "hover-rule").attr("y1", y0).attr("y2", y1).style("display", "none");
+        svg.append("rect").attr("class", "hit-area").attr("x", x.range()[0] - 10).attr("y", y0)
+          .attr("width", x.range()[1] - x.range()[0] + 20).attr("height", y1 - y0)
+          .on("pointermove", function (ev) {
+            var p = d3.pointer(ev, this), best = null, bd = 1e9;
+            dcps.forEach(function (d) { var dd = Math.abs(x(d) - p[0]); if (dd < bd) { bd = dd; best = d; } });
+            rule.attr("x1", x(best)).attr("x2", x(best)).style("display", null);
+            var h = htmlFor(best); if (!h) { tipEl.style.display = "none"; return; }
+            var wp = d3.pointer(ev, wrap); tip(tipEl, h, wp[0], wp[1], wrap);
+          })
+          .on("pointerleave", function () { rule.style("display", "none"); tipEl.style.display = "none"; });
+      }
+
+      // ───────────────────────────── compute everything for the current state
+      function compute() {
+        var C = S.cum, iD = state.iD, k = state.k, d = DCPS[k];
+        var fc = BC.forecast(C, iD, k);
+        var fc0 = state.scen === "none" ? fc : BC.forecast(BC.BASE, iD, k);
+        var net = S.daily(iD), cumAt = new Float64Array(H + 2);
+        for (var t = H; t >= 0; t--) cumAt[t] = cumAt[t + 1] + net[t];
+        var A = C[iD * NK + F], A0 = BC.BASE[iD * NK + F];
+        var hist = BC.sameDow(iD, fc.T, BC.N_HIST);
+        var avg = BC.avgCurve(C, fc.comp);
+        var paths = fc.f.map(function (Fv) {
+          var den = avg[F] - avg[k], pts = [];
+          for (var e = k; e < NK; e++) {
+            var frac = den > 0 ? (avg[e] - avg[k]) / den : (e - k) / (F - k);
+            pts.push([DCPS[e], fc.b + (Fv - fc.b) * frac]);
+          }
+          return pts;
+        });
+        var evo = [];
+        for (var kk = 0; kk < F; kk++) evo.push(BC.forecast(C, iD, kk).f);
+        return { C: C, iD: iD, k: k, d: d, fc: fc, fc0: fc0, cumAt: cumAt, A: A, A0: A0, hist: hist, avg: avg, paths: paths, evo: evo };
+      }
+
+      // ───────────────────────────── main chart: the booking curve
+      function renderMain(R) {
+        var wrap = $("main-wrap"), holder = $("main-chart"), tipEl = $("main-tip");
+        holder.innerHTML = "";
+        var w = holder.clientWidth, sm = w < 560;
+        var h = sm ? 300 : 400, ml = 40, mr = sm ? 14 : 132, mt = 16, mb = 42;
+        var x = xScale(w, ml, mr);
+        var vals = [];
+        R.hist.forEach(function (j) { vals.push(R.C[j * NK + F]); });
+        R.fc.f.forEach(function (v) { vals.push(v); });
+        if (state.reveal) vals.push(R.A);
+        vals.push(R.cumAt[R.d]);
+        var y = d3.scaleLinear().domain([0, d3.max(vals) * 1.06]).nice().range([h - mb, mt]);
+        var svg = d3.select(holder).append("svg").attr("viewBox", "0 0 " + w + " " + h).attr("width", w).attr("height", h)
+          .attr("role", "img").attr("aria-label", "Booking curve with forecasts to departure");
+        gridY(svg, y, ml, w - mr, 5);
+        axisX(svg, x, h - mb, w, tickSet(w));
+
+        // scenario event
+        if (S.E !== null) {
+          var evd = R.iD - S.E, ev = svg.append("g").attr("class", "event");
+          if (state.scen === "sale") {
+            ev.append("rect").attr("x", x(evd)).attr("width", Math.max(2, x(evd - 7) - x(evd))).attr("y", mt).attr("height", h - mb - mt);
+          } else {
+            ev.append("line").attr("x1", x(evd)).attr("x2", x(evd)).attr("y1", mt).attr("y2", h - mb);
+          }
+          ev.append("text").attr("x", x(evd) - 4).attr("y", mt + 10).attr("text-anchor", "end").text(BC.SCEN[state.scen].label);
+        }
+
+        // history
+        var line = d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return y(p[1]); });
+        var gh = svg.append("g").attr("class", "hist");
+        R.hist.forEach(function (j) {
+          gh.append("path").attr("d", line(DCPS.map(function (d, k) { return [d, R.C[j * NK + k]]; })));
+        });
+
+        // today
+        svg.append("line").attr("class", "today").attr("x1", x(R.d)).attr("x2", x(R.d)).attr("y1", mt).attr("y2", h - mb);
+        svg.append("text").attr("class", "today-lab").attr("x", x(R.d) + 5).attr("y", h - mb - 6).text("Today");
+
+        // actual (revealed)
+        if (state.reveal) {
+          var act = []; for (var t = R.d; t >= 0; t--) act.push([t, R.cumAt[t]]);
+          svg.append("path").attr("class", "actual").attr("d", line(act));
+        }
+        // forecasts
+        var gf = svg.append("g");
+        R.paths.forEach(function (p, m) {
+          gf.append("path").attr("class", "fc").attr("d", line(p)).attr("stroke", COLORS[m]);
+        });
+        R.fc.f.forEach(function (v, m) {
+          gf.append("circle").attr("class", "end").attr("cx", x(0)).attr("cy", y(v)).attr("r", 4.5).attr("fill", COLORS[m]);
+        });
+        // bookings so far
+        var sofar = []; for (t = 330; t >= R.d; t--) sofar.push([t, R.cumAt[t]]);
+        svg.append("path").attr("class", "sofar").attr("d", line(sofar));
+        svg.append("circle").attr("class", "now-dot").attr("cx", x(R.d)).attr("cy", y(R.cumAt[R.d])).attr("r", 4.5);
+
+        if (state.reveal) {
+          svg.append("circle").attr("class", "act-dot").attr("cx", x(0)).attr("cy", y(R.A)).attr("r", 5);
+        }
+
+        // direct labels at the right edge, nudged apart
+        if (!sm) {
+          var labs = R.fc.f.map(function (v, m) { return { y: y(v), t: M[m].short + " " + r0(v), c: COLORS[m], m: m }; });
+          if (state.reveal) labs.push({ y: y(R.A), t: "Actual " + r0(R.A), c: null, bold: true });
+          spread(labs, mt + 4, h - mb - 4, 14);
+          var gl = svg.append("g").attr("class", "end-labs");
+          labs.forEach(function (l) {
+            gl.append("text").attr("x", x(0) + 12).attr("y", l.y + 4).text(l.t).attr("class", l.bold ? "b" : null);
+          });
+        }
+
+        hover(svg, x, DCPS, mt, h - mb, wrap, tipEl, function (d) {
+          var k = DCPS.indexOf(d), dateStr = fmtShort(BC.dateOf(R.iD - d));
+          var s = '<div class="t">' + (d === 0 ? "Departure day" : d + " days before") + ' · ' + dateStr + '</div>';
+          if (d >= R.d) s += 'Bookings on hand: <span class="n">' + r0(R.C[R.iD * NK + k]) + "</span><br>";
+          else if (state.reveal) s += 'Actual bookings: <span class="n">' + r0(R.C[R.iD * NK + k]) + "</span><br>";
+          s += '<span class="mu">Average of recent ' + DOW_PLURAL(BC.dateOf(R.iD)) + 's: ' + r0(R.avg[k]) + "</span>";
+          if (d < R.d) {
+            s += '<div class="st">Forecast path</div>';
+            R.paths.forEach(function (p, m) {
+              var pt = p.filter(function (q) { return q[0] === d; })[0];
+              s += '<div class="row"><i style="background:' + COLORS[m] + '"></i>' + M[m].name + '<span class="n">' + r0(pt[1]) + "</span></div>";
+            });
+          }
+          return s;
+        });
+
+        // legend
+        var lg = '<span class="grp"><i class="k sofar"></i>Bookings so far</span>' +
+          '<span class="grp"><i class="k hist"></i>Last ' + R.hist.length + ' ' + DOW_PLURAL(BC.dateOf(R.iD)) + ' departures</span>';
+        if (state.reveal) lg += '<span class="grp"><i class="k act"></i>Actual outcome</span>';
+        M.forEach(function (m, i) { lg += '<span class="grp"><i class="k fc" style="border-color:' + COLORS[i] + '"></i>' + m.name + "</span>"; });
+        $("main-legend").innerHTML = lg;
+      }
+
+      // ───────────────────────────── side panel: the numbers
+      function renderSide(R) {
+        var dep = BC.dateOf(R.iD), today = BC.dateOf(R.fc.T);
+        $("chart-title").textContent = fmtLong(dep) + ", seen from " + R.d + " days out";
+        $("chart-sub").textContent = "Today is " + fmtLong(today) + ". Bookings so far: " + r0(R.fc.b) + ".";
+        var sc = state.scen !== "none";
+        var h = '<h3>Forecast of final bookings</h3><p class="sub">What each method expects on departure day, using only what was known ' + R.d + " days out." +
+          (sc ? " Small figures: change versus the same day with no scenario." : "") + "</p><ol>";
+        var errs = R.fc.f.map(function (v) { return Math.abs(v - R.A); });
+        var best = errs.indexOf(Math.min.apply(null, errs));
+        R.fc.f.forEach(function (v, m) {
+          h += '<li><i class="sw" style="border-color:' + COLORS[m] + '"></i><span class="nm">' + M[m].name +
+            (sc ? '<small>' + signed(v - R.fc0.f[m]) + " vs no scenario</small>" : "") + "</span>" +
+            '<span class="v">' + r0(v) + (state.reveal ? '<small class="' + (m === best ? "best" : "") + '">' + signed(v - R.A) + " (" + Math.round(100 * Math.abs(v - R.A) / R.A) + "%)</small>" : "") + "</span></li>";
+        });
+        h += "</ol>";
+        if (state.reveal) {
+          h += '<div class="actual-row"><span>Actual final bookings' + (sc ? "<small>" + signed(R.A - R.A0) + " vs no scenario</small>" : "") + '</span><b>' + r0(R.A) + "</b></div>";
+          h += '<p class="verdict">Closest here: <b>' + M[best].name + "</b>, off by " + r0(errs[best]) + ". One flight is noisy: the accuracy table below scores every method across a whole year.</p>";
+        } else {
+          h += '<p class="verdict">Press <b>Reveal actual outcome</b> to see how the flight really ended.</p>';
+        }
+        $("side").innerHTML = h;
+      }
+
+      // ───────────────────────────── scenario note
+      function renderScenNote(R) {
+        var el = $("scen-note");
+        if (state.scen === "none") { el.innerHTML = ""; return; }
+        var txt = {
+          shock: "<b>Demand shock.</b> 40 days before this departure, demand for every flight on the route suddenly falls: from that day on, 45% fewer bookings arrive (think of a security scare or an economic shock). Bookings already made stay.",
+          sched: "<b>Schedule change.</b> 40 days before this departure, the flight moves to a less convenient time. That day, 12% of passengers already booked are moved to other flights, and from then on business bookings fall by half and leisure bookings by 15%. The change applies to every later departure too.",
+          sale: "<b>Fare sale.</b> A one-week sale starts 42 days before this departure, for travel from two weeks after it starts. Leisure bookings run at about 2.6 times the normal pace during the sale, then 25% below normal for three weeks, because the sale pulled bookings forward."
+        }[state.scen];
+        var since = R.fc.T - S.E;
+        var when = since < 0
+          ? " <span class=\"when\">Today is " + (-since) + " days before it happens, so no method can see it yet: only the actual outcome changes. Pick a day closer to departure to watch the methods react.</span>"
+          : " <span class=\"when\">Today is " + (since === 0 ? "the day it happens" : since + " day" + (since > 1 ? "s" : "") + " after it started") + ".</span>";
+        el.innerHTML = txt + when;
+      }
+
+      // ───────────────────────────── evolution chart: forecast at each DCP for this departure
+      function renderEvo(R) {
+        var wrap = $("evo-wrap"), holder = $("evo-chart"), tipEl = $("evo-tip");
+        holder.innerHTML = "";
+        var w = holder.clientWidth, sm = w < 560;
+        var h = sm ? 250 : 300, ml = 40, mr = sm ? 14 : 132, mt = 14, mb = 42;
+        var x = xScale(w, ml, mr);
+        var kMax = state.reveal ? F - 1 : R.k;
+        var shown = DCPS.slice(0, kMax + 1);
+        var vals = [];
+        for (var k = 0; k <= kMax; k++) R.evo[k].forEach(function (v) { vals.push(v); });
+        if (state.reveal) vals.push(R.A);
+        var lo = d3.min(vals), hi = Math.min(robustMax(vals), 1.5 * d3.median(vals));
+        var pad = Math.max(8, (hi - lo) * 0.12);
+        var y = d3.scaleLinear().domain([Math.max(0, lo - pad), hi + pad]).nice().range([h - mb, mt]);
+        var svg = d3.select(holder).append("svg").attr("viewBox", "0 0 " + w + " " + h).attr("width", w).attr("height", h)
+          .attr("role", "img").attr("aria-label", "Forecast of final bookings at each data collection point");
+        gridY(svg, y, ml, w - mr, 5);
+        axisX(svg, x, h - mb, w, tickSet(w).filter(function (d) { return d > 0; }));
+        var yTop = y.range()[1];
+
+        if (S.E !== null) {
+          var evd = R.iD - S.E, ev = svg.append("g").attr("class", "event");
+          if (state.scen === "sale") ev.append("rect").attr("x", x(evd)).attr("width", Math.max(2, x(evd - 7) - x(evd))).attr("y", mt).attr("height", h - mb - mt);
+          else ev.append("line").attr("x1", x(evd)).attr("x2", x(evd)).attr("y1", mt).attr("y2", h - mb);
+          ev.append("text").attr("x", x(evd) - 4).attr("y", mt + 10).attr("text-anchor", "end").text(BC.SCEN[state.scen].label);
+        }
+        svg.append("line").attr("class", "today").attr("x1", x(R.d)).attr("x2", x(R.d)).attr("y1", mt).attr("y2", h - mb);
+        svg.append("text").attr("class", "today-lab").attr("x", x(R.d) + 5).attr("y", h - mb - 6).text("Today");
+        if (state.reveal) {
+          svg.append("line").attr("class", "actual-h").attr("x1", ml).attr("x2", w - mr).attr("y1", y(R.A)).attr("y2", y(R.A));
+          if (!sm) svg.append("text").attr("class", "end-labs b").attr("x", w - mr + 12).attr("y", y(R.A) + 4).text("Actual " + r0(R.A));
+        }
+        var cy = function (v) { return Math.max(yTop, y(v)); };
+        var line = d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return cy(p[1]); });
+        M.forEach(function (m, mi) {
+          var pts = shown.map(function (d, k) { return [d, R.evo[k][mi]]; });
+          svg.append("path").attr("class", "evo").attr("d", line(pts)).attr("stroke", COLORS[mi]);
+          pts.forEach(function (p) {
+            if (y(p[1]) < yTop) {
+              svg.append("path").attr("d", d3.symbol(d3.symbolTriangle, 44)()).attr("transform", "translate(" + x(p[0]) + "," + (yTop + 4) + ")").attr("fill", COLORS[mi]).attr("class", "off");
+            } else {
+              svg.append("circle").attr("cx", x(p[0])).attr("cy", y(p[1])).attr("r", 3.2).attr("fill", COLORS[mi]).attr("class", "evo-dot");
+            }
+          });
+        });
+        if (state.reveal && R.k < F - 1) {
+          svg.insert("rect", ":first-child").attr("class", "future-shade").attr("x", x(R.d)).attr("y", mt).attr("width", x(1) - x(R.d) + 6).attr("height", h - mb - mt);
+          svg.append("text").attr("class", "future-lab").attr("x", (x(R.d) + x(1)) / 2).attr("y", mt + 10).attr("text-anchor", "middle").text(x(1) - x(R.d) > 70 ? "After today" : "");
+        }
+        hover(svg, x, shown, mt, h - mb, wrap, tipEl, function (d) {
+          var k = DCPS.indexOf(d);
+          var s = '<div class="t">Forecast made ' + d + " days out · " + fmtShort(BC.dateOf(R.iD - d)) + "</div>";
+          s += '<span class="mu">Bookings on hand then: ' + r0(R.C[R.iD * NK + k]) + "</span>";
+          M.forEach(function (m, mi) {
+            s += '<div class="row"><i style="background:' + COLORS[mi] + '"></i>' + m.name + '<span class="n">' + r0(R.evo[k][mi]) + "</span></div>";
+          });
+          if (state.reveal) s += '<div class="st">Actual: <span class="n">' + r0(R.A) + "</span></div>";
+          return s;
+        });
+        $("evo-sub").textContent = state.reveal
+          ? "Each dot is the forecast each method would have made at that point. Right of Today is hindsight, shown because the outcome is revealed."
+          : "Each dot is the forecast each method made at that point, up to today. Reveal the actual outcome to see the rest of the booking window.";
+      }
+
+      // ───────────────────────────── accuracy
+      function renderAcc() {
+        var metric = state.metric, data = BT[metric], unit = metric === "mape" ? "%" : "";
+        var fmtv = function (v) { return metric === "mape" ? v.toFixed(1) + "%" : v.toFixed(1); };
+        chips($("metric"), [{ v: "mape", t: "MAPE (%)" }, { v: "mae", t: "MAE (bookings)" }],
+          function (v) { return v === state.metric; }, function (v) { state.metric = v; renderAcc(); });
+
+        var wrap = $("acc-wrap"), holder = $("acc-chart"), tipEl = $("acc-tip");
+        holder.innerHTML = "";
+        var w = holder.clientWidth, sm = w < 560;
+        var h = sm ? 260 : 320, ml = 44, mr = sm ? 14 : 132, mt = 14, mb = 42;
+        var x = xScale(w, ml, mr), dc = DCPS.slice(0, F);
+        var vals = []; data.forEach(function (a) { for (var k = 0; k < F; k++) vals.push(a[k]); });
+        var y = d3.scaleLinear().domain([0, robustMax(vals) * 1.08]).nice().range([h - mb, mt]);
+        var yTop = y.range()[1];
+        var svg = d3.select(holder).append("svg").attr("viewBox", "0 0 " + w + " " + h).attr("width", w).attr("height", h)
+          .attr("role", "img").attr("aria-label", "Forecast error by method and data collection point");
+        gridY(svg, y, ml, w - mr, 5, function (v) { return v + unit; });
+        axisX(svg, x, h - mb, w, tickSet(w).filter(function (d) { return d > 0; }));
+        var line = d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return Math.max(yTop, y(p[1])); });
+        var labs = [];
+        data.forEach(function (a, m) {
+          var pts = dc.map(function (d, k) { return [d, a[k]]; });
+          svg.append("path").attr("class", "evo").attr("d", line(pts)).attr("stroke", COLORS[m]);
+          pts.forEach(function (p) {
+            if (y(p[1]) < yTop) {
+              svg.append("path").attr("d", d3.symbol(d3.symbolTriangle, 44)()).attr("transform", "translate(" + x(p[0]) + "," + (yTop + 4) + ")").attr("fill", COLORS[m]);
+              svg.append("text").attr("class", "off-lab").attr("x", x(p[0]) + 8).attr("y", yTop + 8).text(M[m].short + " " + fmtv(p[1]));
+            } else svg.append("circle").attr("cx", x(p[0])).attr("cy", y(p[1])).attr("r", 3.2).attr("fill", COLORS[m]).attr("class", "evo-dot");
+          });
+          labs.push({ y: Math.max(yTop, y(a[F - 1])), t: M[m].short });
+        });
+        if (!sm) {
+          // label at the last DCP, spread out
+          spread(labs, mt + 4, h - mb - 4, 14);
+          var gl = svg.append("g").attr("class", "end-labs");
+          labs.forEach(function (l) { gl.append("text").attr("x", x(1) + 12).attr("y", l.y + 4).text(l.t); });
+        }
+        hover(svg, x, dc, mt, h - mb, wrap, tipEl, function (d) {
+          var k = DCPS.indexOf(d), order = M.map(function (m, i) { return i; }).sort(function (a, b) { return data[a][k] - data[b][k]; });
+          var s = '<div class="t">Forecasts made ' + d + " days out</div>";
+          order.forEach(function (mi, r) {
+            s += '<div class="row' + (r === 0 ? " win" : "") + '"><i style="background:' + COLORS[mi] + '"></i>' + M[mi].name + '<span class="n">' + fmtv(data[mi][k]) + "</span></div>";
+          });
+          return s;
+        });
+        var lg = ""; M.forEach(function (m, i) { lg += '<span class="grp"><i class="k solid" style="border-color:' + COLORS[i] + '"></i>' + m.name + "</span>"; });
+        $("acc-legend").innerHTML = lg;
+
+        // table: one row per DCP, best method highlighted
+        var th = "<tr><th>Days out</th>" + M.map(function (m, i) { return '<th class="num"><i class="sw-s" style="background:' + COLORS[i] + '"></i><span class="lg">' + m.short + '</span><span class="sm">' + m.abbr + "</span></th>"; }).join("") + "</tr>";
+        var tb = "", avg = M.map(function () { return 0; });
+        var winners = [];
+        for (var k = 0; k < F; k++) {
+          var row = data.map(function (a) { return a[k]; }), bi = row.indexOf(Math.min.apply(null, row));
+          winners.push(bi);
+          tb += "<tr><td>" + DCPS[k] + "</td>" + row.map(function (v, m) { avg[m] += v / F; return '<td class="num' + (m === bi ? " win" : "") + '">' + fmtv(v) + "</td>"; }).join("") + "</tr>";
+        }
+        var ba = avg.indexOf(Math.min.apply(null, avg));
+        tb += '<tr class="avg"><td>Average</td>' + avg.map(function (v, m) { return '<td class="num' + (m === ba ? " win" : "") + '">' + fmtv(v) + "</td>"; }).join("") + "</tr>";
+        $("acc-thead").innerHTML = th; $("acc-tbody").innerHTML = tb;
+
+        // who wins when: runs of consecutive DCPs with the same best method
+        var runs = [], cur = null;
+        for (k = 0; k < F; k++) {
+          if (cur && cur.m === winners[k]) cur.to = DCPS[k];
+          else { cur = { m: winners[k], from: DCPS[k], to: DCPS[k] }; runs.push(cur); }
+        }
+        var bestAt = function (k) { return Math.min.apply(null, data.map(function (a) { return a[k]; })); };
+        var k180 = DCPS.indexOf(180);
+        var sum = "Best method by " + (metric === "mape" ? "MAPE" : "MAE") + ": " + runs.map(function (r) {
+          return (r.from === r.to ? r.from : r.from + "–" + r.to) + " days out, <b>" + M[r.m].name.toLowerCase() + "</b>";
+        }).join("; ") + ". The best error falls from " + fmtv(bestAt(k180)) + " at 180 days to " + fmtv(bestAt(F - 1)) + " the day before departure.";
+        $("acc-summary").innerHTML = sum;
+      }
+
+      // ───────────────────────────── render loop
+      function render() {
+        drawControls();
+        var R = compute();
+        renderSide(R);
+        renderScenNote(R);
+        renderMain(R);
+        renderEvo(R);
+      }
+      render();
+      renderAcc();
+      $("acc-n").textContent = BT.n;
+      var rt = null, lastW = window.innerWidth;
+      window.addEventListener("resize", function () {
+        if (window.innerWidth === lastW) return;
+        lastW = window.innerWidth;
+        clearTimeout(rt); rt = setTimeout(function () { render(); renderAcc(); }, 150);
+      });
+    });
+    </script>
+  </body>
+</html>

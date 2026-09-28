@@ -122,6 +122,14 @@ main { padding-top: 48px; }
 .tool:hover .btn.dark { background: #000; }
 @media (max-width: 839px) { .tool { grid-column: 1 / -1; } }
 
+/* tools grouped by area: one column per area (thirds), its tools stacked underneath */
+.area { grid-column: span 4; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.area .tool + .tool { margin-top: 12px; }
+.area-h { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.area .tool .viz { height: 176px; }
+@media (max-width: 1099px) { .area { grid-column: span 6; } }
+@media (max-width: 839px) { .area { grid-column: 1 / -1; } }
+
 /* knowledge cards: thirds */
 .course { grid-column: span 4; padding: 24px; display: flex; flex-direction: column; gap: 12px; transition: box-shadow .2s, transform .2s; }
 .course:hover { box-shadow: var(--lift); transform: translateY(-2px); }
@@ -156,7 +164,7 @@ main { padding-top: 48px; }
       <a class="tab" href="#knowledge">Knowledge</a>
     </nav>
     <div class="grow"></div>
-    <span class="pill"><b>2</b> tools · <b>3</b> courses</span>
+    <span class="pill"><b>4</b> tools · <b>3</b> courses</span>
   </div>
 </header>
 
@@ -173,72 +181,131 @@ main { padding-top: 48px; }
   </div>
 
   <section class="sec" id="tools" aria-labelledby="h-tools">
-    <div class="sec-head"><h2 id="h-tools">Tools</h2><span>Live data and interactive visualizations</span></div>
+    <div class="sec-head"><h2 id="h-tools">Tools</h2><span>Live data, maps and simulators</span></div>
     <div class="grid">
 
-      <a class="panel tool" href="/fleettracker.html">
-        <div class="viz" aria-hidden="true">
-          <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <radialGradient id="gl" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#fff"/><stop offset=".7" stop-color="#F3F5F9"/><stop offset="1" stop-color="#DDE2EA"/></radialGradient>
-              <clipPath id="gc"><circle cx="300" cy="190" r="170"/></clipPath>
-            </defs>
-            <circle cx="300" cy="190" r="170" fill="url(#gl)"/>
-            <g clip-path="url(#gc)" fill="none" stroke="rgb(15 23 42 / .07)">
-              <ellipse cx="300" cy="190" rx="170" ry="40"/><ellipse cx="300" cy="190" rx="170" ry="95"/><ellipse cx="300" cy="190" rx="170" ry="140"/>
-              <ellipse cx="300" cy="190" rx="50" ry="170"/><ellipse cx="300" cy="190" rx="110" ry="170"/><line x1="300" y1="20" x2="300" y2="360"/>
-            </g>
-            <g clip-path="url(#gc)" fill="none" stroke="#8FA9F2" stroke-width="1.2" opacity=".9">
-              <path d="M205 118 Q300 40 420 96"/><path d="M230 150 Q330 90 455 150"/><path d="M180 170 Q260 120 350 132"/><path d="M262 104 Q350 60 400 70"/>
-            </g>
-            <g clip-path="url(#gc)">
-              <g fill="#2455E6"><circle cx="286" cy="66" r="3.2"/><circle cx="352" cy="102" r="3.2"/><circle cx="318" cy="112" r="3.2"/><circle cx="410" cy="128" r="3.2"/><circle cx="246" cy="138" r="3.2"/><circle cx="372" cy="78" r="3.2"/><circle cx="222" cy="104" r="3.2"/><circle cx="440" cy="154" r="3.2"/></g>
-              <g fill="#12A150"><circle cx="205" cy="118" r="3.2"/><circle cx="420" cy="96" r="3.2"/><circle cx="455" cy="150" r="3.2"/><circle cx="180" cy="170" r="3.2"/><circle cx="350" cy="132" r="3.2"/></g>
-              <g fill="#C2378F"><circle cx="262" cy="176" r="3.2"/><circle cx="398" cy="186" r="3.2"/></g>
-            </g>
-          </svg>
-        </div>
-        <div class="body">
-          <div class="meta">
-            <span class="pill"><i class="dot" style="--c:var(--air)"></i>Live · every 5 min</span>
-            <span class="pill"><b>4</b> airlines</span>
+      <div class="area">
+        <h3 class="area-h">Network</h3>
+        <a class="panel tool" href="/airflows.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <g fill="rgb(15 23 42 / .06)">
+                <path d="M60 70 Q120 40 210 52 Q300 44 380 58 Q470 50 540 78 Q560 120 520 150 Q470 176 400 170 Q330 186 250 176 Q170 184 110 160 Q60 130 60 70Z"/>
+              </g>
+              <g fill="none" stroke-linecap="round">
+                <path d="M130 120 Q260 40 470 96" stroke="#2455E6" stroke-width="3" opacity=".85"/>
+                <path d="M150 150 Q300 90 500 130" stroke="#2455E6" stroke-width="2.2" opacity=".6"/>
+                <path d="M210 90 Q330 50 430 120" stroke="#2455E6" stroke-width="1.6" opacity=".5"/>
+                <path d="M300 150 Q380 110 470 96" stroke="#2455E6" stroke-width="1.2" opacity=".45"/>
+                <path d="M130 120 Q220 150 300 150" stroke="#8FA9F2" stroke-width="1.4"/>
+                <path d="M250 70 Q400 20 520 84" stroke="#151A23" stroke-width="1.6" stroke-dasharray="4 5" opacity=".75"/>
+              </g>
+              <g fill="#fff" stroke="#151A23" stroke-width="1.5">
+                <circle cx="130" cy="120" r="5"/><circle cx="470" cy="96" r="6"/><circle cx="150" cy="150" r="4"/><circle cx="500" cy="130" r="5"/>
+                <circle cx="210" cy="90" r="4"/><circle cx="430" cy="120" r="4"/><circle cx="300" cy="150" r="4"/><circle cx="250" cy="70" r="4"/><circle cx="520" cy="84" r="4"/>
+              </g>
+            </svg>
           </div>
-          <h3>Fleet tracker</h3>
-          <p>Every Air Canada, United, Air France and Etihad aircraft on a live globe: in the air with its route, parked at an airport, or likely in maintenance.</p>
-          <div class="cta"><span class="btn dark">Open the tracker<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-        </div>
-      </a>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Interactive map</span>
+              <span class="pill">Passenger markets</span>
+            </div>
+            <h3>Air travel flows</h3>
+            <p>The biggest city-pair markets by passengers actually travelling, and which ones still have no nonstop flight.</p>
+            <div class="cta"><span class="btn dark">Open the map<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+      </div>
 
-      <a class="panel tool" href="/airflows.html">
-        <div class="viz" aria-hidden="true">
-          <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-            <g fill="rgb(15 23 42 / .06)">
-              <path d="M60 70 Q120 40 210 52 Q300 44 380 58 Q470 50 540 78 Q560 120 520 150 Q470 176 400 170 Q330 186 250 176 Q170 184 110 160 Q60 130 60 70Z"/>
-            </g>
-            <g fill="none" stroke-linecap="round">
-              <path d="M130 120 Q260 40 470 96" stroke="#2455E6" stroke-width="3" opacity=".85"/>
-              <path d="M150 150 Q300 90 500 130" stroke="#2455E6" stroke-width="2.2" opacity=".6"/>
-              <path d="M210 90 Q330 50 430 120" stroke="#2455E6" stroke-width="1.6" opacity=".5"/>
-              <path d="M300 150 Q380 110 470 96" stroke="#2455E6" stroke-width="1.2" opacity=".45"/>
-              <path d="M130 120 Q220 150 300 150" stroke="#8FA9F2" stroke-width="1.4"/>
-              <path d="M250 70 Q400 20 520 84" stroke="#151A23" stroke-width="1.6" stroke-dasharray="4 5" opacity=".75"/>
-            </g>
-            <g fill="#fff" stroke="#151A23" stroke-width="1.5">
-              <circle cx="130" cy="120" r="5"/><circle cx="470" cy="96" r="6"/><circle cx="150" cy="150" r="4"/><circle cx="500" cy="130" r="5"/>
-              <circle cx="210" cy="90" r="4"/><circle cx="430" cy="120" r="4"/><circle cx="300" cy="150" r="4"/><circle cx="250" cy="70" r="4"/><circle cx="520" cy="84" r="4"/>
-            </g>
-          </svg>
-        </div>
-        <div class="body">
-          <div class="meta">
-            <span class="pill">Interactive map</span>
-            <span class="pill">Passenger markets</span>
+      <div class="area">
+        <h3 class="area-h">Fleet</h3>
+        <a class="panel tool" href="/fleettracker.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <radialGradient id="gl" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#fff"/><stop offset=".7" stop-color="#F3F5F9"/><stop offset="1" stop-color="#DDE2EA"/></radialGradient>
+                <clipPath id="gc"><circle cx="300" cy="190" r="170"/></clipPath>
+              </defs>
+              <circle cx="300" cy="190" r="170" fill="url(#gl)"/>
+              <g clip-path="url(#gc)" fill="none" stroke="rgb(15 23 42 / .07)">
+                <ellipse cx="300" cy="190" rx="170" ry="40"/><ellipse cx="300" cy="190" rx="170" ry="95"/><ellipse cx="300" cy="190" rx="170" ry="140"/>
+                <ellipse cx="300" cy="190" rx="50" ry="170"/><ellipse cx="300" cy="190" rx="110" ry="170"/><line x1="300" y1="20" x2="300" y2="360"/>
+              </g>
+              <g clip-path="url(#gc)" fill="none" stroke="#8FA9F2" stroke-width="1.2" opacity=".9">
+                <path d="M205 118 Q300 40 420 96"/><path d="M230 150 Q330 90 455 150"/><path d="M180 170 Q260 120 350 132"/><path d="M262 104 Q350 60 400 70"/>
+              </g>
+              <g clip-path="url(#gc)">
+                <g fill="#2455E6"><circle cx="286" cy="66" r="3.2"/><circle cx="352" cy="102" r="3.2"/><circle cx="318" cy="112" r="3.2"/><circle cx="410" cy="128" r="3.2"/><circle cx="246" cy="138" r="3.2"/><circle cx="372" cy="78" r="3.2"/><circle cx="222" cy="104" r="3.2"/><circle cx="440" cy="154" r="3.2"/></g>
+                <g fill="#12A150"><circle cx="205" cy="118" r="3.2"/><circle cx="420" cy="96" r="3.2"/><circle cx="455" cy="150" r="3.2"/><circle cx="180" cy="170" r="3.2"/><circle cx="350" cy="132" r="3.2"/></g>
+                <g fill="#C2378F"><circle cx="262" cy="176" r="3.2"/><circle cx="398" cy="186" r="3.2"/></g>
+              </g>
+            </svg>
           </div>
-          <h3>Air travel flows</h3>
-          <p>The biggest city-pair markets by passengers actually travelling, and which ones still have no nonstop flight.</p>
-          <div class="cta"><span class="btn dark">Open the map<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-        </div>
-      </a>
+          <div class="body">
+            <div class="meta">
+              <span class="pill"><i class="dot" style="--c:var(--air)"></i>Live · every 5 min</span>
+              <span class="pill"><b>4</b> airlines</span>
+            </div>
+            <h3>Fleet tracker</h3>
+            <p>Every Air Canada, United, Air France and Etihad aircraft on a live globe: in the air with its route, parked at an airport, or likely in maintenance.</p>
+            <div class="cta"><span class="btn dark">Open the tracker<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+      </div>
+
+      <div class="area">
+        <h3 class="area-h">Revenue management</h3>
+        <a class="panel tool" href="/bookinglimits.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- nested booking limits: each fare class can sell its own bucket and every cheaper one -->
+              <g transform="translate(150 34)">
+                <g fill="#E8EEFD"><rect x="0" y="0" width="300" height="16" rx="4"/><rect x="0" y="26" width="300" height="16" rx="4"/><rect x="0" y="52" width="300" height="16" rx="4"/><rect x="0" y="78" width="300" height="16" rx="4"/><rect x="0" y="104" width="300" height="16" rx="4"/><rect x="0" y="130" width="300" height="16" rx="4"/></g>
+                <g fill="#C9D6FA"><rect x="0" y="0" width="30" height="16" rx="4"/><rect x="0" y="26" width="30" height="16" rx="4"/><rect x="0" y="52" width="30" height="16" rx="4"/><rect x="0" y="78" width="30" height="16" rx="4"/><rect x="0" y="104" width="30" height="16" rx="4"/><rect x="0" y="130" width="30" height="16" rx="4"/></g>
+                <g fill="#8FA9F2"><rect x="32" y="0" width="86" height="16" rx="3"/><rect x="32" y="26" width="86" height="16" rx="3"/><rect x="32" y="52" width="86" height="16" rx="3"/><rect x="32" y="78" width="86" height="16" rx="3"/><rect x="32" y="104" width="86" height="16" rx="3"/></g>
+                <g fill="#5B80EC"><rect x="120" y="0" width="68" height="16" rx="3"/><rect x="120" y="26" width="68" height="16" rx="3"/><rect x="120" y="52" width="68" height="16" rx="3"/><rect x="120" y="78" width="68" height="16" rx="3"/></g>
+                <g fill="#2455E6"><rect x="190" y="0" width="52" height="16" rx="3"/><rect x="190" y="26" width="52" height="16" rx="3"/><rect x="190" y="52" width="52" height="16" rx="3"/></g>
+                <g fill="#1A3FAE"><rect x="244" y="0" width="36" height="16" rx="3"/><rect x="244" y="26" width="36" height="16" rx="3"/></g>
+                <rect x="282" y="0" width="18" height="16" rx="3" fill="#151A23"/>
+                <g font-size="11" font-weight="600" fill="#5B6272" text-anchor="end"><text x="-10" y="12">Y</text><text x="-10" y="38">B</text><text x="-10" y="64">M</text><text x="-10" y="90">H</text><text x="-10" y="116">Q</text><text x="-10" y="142">V</text></g>
+              </g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Simulator</span>
+              <span class="pill"><b>2,000</b> simulated flights</span>
+            </div>
+            <h3>Booking limits</h3>
+            <p>How many seats to keep for late, high-fare passengers with EMSR-a and EMSR-b, and how many extra bookings to accept for no-shows.</p>
+            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/bookingcurve.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- a flight's booking curve: past departures behind, bookings so far, forecasts fanning out to departure day -->
+              <g stroke="rgb(15 23 42 / .07)"><line x1="120" y1="190" x2="480" y2="190"/><line x1="120" y1="130" x2="480" y2="130"/><line x1="120" y1="70" x2="480" y2="70"/></g>
+              <g fill="none" stroke="#A0A7B4" stroke-width="1" opacity=".5"><path d="M120 190 L129 189 L138 188 L147 187 L156 185 L165 183 L174 180 L183 178 L192 175 L201 172 L210 169 L219 166 L228 163 L237 159 L246 156 L255 152 L264 148 L273 144 L282 140 L291 136 L300 132 L309 127 L318 123 L327 118 L336 113 L345 108 L354 104 L363 98 L372 93 L381 88 L390 83 L399 77 L408 72 L417 66 L426 61 L435 55 L444 49 L453 43 L462 37 L471 31 L480 25"/><path d="M120 190 L129 189 L138 188 L147 186 L156 184 L165 182 L174 179 L183 177 L192 174 L201 171 L210 168 L219 165 L228 162 L237 159 L246 156 L255 153 L264 149 L273 146 L282 142 L291 139 L300 135 L309 131 L318 128 L327 124 L336 120 L345 116 L354 112 L363 108 L372 104 L381 99 L390 95 L399 91 L408 86 L417 82 L426 78 L435 73 L444 69 L453 64 L462 59 L471 55 L480 50"/><path d="M120 190 L129 190 L138 189 L147 188 L156 187 L165 186 L174 185 L183 183 L192 181 L201 180 L210 178 L219 176 L228 173 L237 171 L246 168 L255 166 L264 163 L273 160 L282 157 L291 154 L300 151 L309 148 L318 145 L327 141 L336 137 L345 134 L354 130 L363 126 L372 122 L381 118 L390 114 L399 110 L408 106 L417 101 L426 97 L435 92 L444 87 L453 83 L462 78 L471 73 L480 68"/><path d="M120 190 L129 190 L138 189 L147 187 L156 186 L165 184 L174 182 L183 180 L192 178 L201 175 L210 173 L219 170 L228 167 L237 164 L246 161 L255 158 L264 154 L273 151 L282 147 L291 143 L300 139 L309 135 L318 131 L327 126 L336 122 L345 117 L354 113 L363 108 L372 103 L381 98 L390 93 L399 88 L408 83 L417 78 L426 72 L435 67 L444 61 L453 56 L462 50 L471 44 L480 38"/><path d="M120 190 L129 189 L138 188 L147 187 L156 186 L165 184 L174 183 L183 181 L192 179 L201 177 L210 175 L219 173 L228 171 L237 168 L246 166 L255 163 L264 161 L273 158 L282 155 L291 153 L300 150 L309 147 L318 144 L327 141 L336 138 L345 135 L354 132 L363 128 L372 125 L381 122 L390 118 L399 115 L408 111 L417 108 L426 104 L435 101 L444 97 L453 93 L462 90 L471 86 L480 82"/><path d="M120 190 L129 190 L138 189 L147 189 L156 188 L165 187 L174 186 L183 184 L192 183 L201 181 L210 179 L219 177 L228 175 L237 173 L246 170 L255 167 L264 165 L273 162 L282 159 L291 155 L300 152 L309 149 L318 145 L327 141 L336 137 L345 133 L354 129 L363 125 L372 121 L381 116 L390 111 L399 107 L408 102 L417 97 L426 91 L435 86 L444 81 L453 75 L462 70 L471 64 L480 58"/><path d="M120 190 L129 189 L138 187 L147 184 L156 182 L165 179 L174 176 L183 173 L192 170 L201 166 L210 163 L219 160 L228 156 L237 152 L246 149 L255 145 L264 141 L273 137 L282 133 L291 129 L300 125 L309 121 L318 116 L327 112 L336 108 L345 103 L354 99 L363 94 L372 90 L381 85 L390 81 L399 76 L408 71 L417 66 L426 62 L435 57 L444 52 L453 47 L462 42 L471 37 L480 32"/><path d="M120 190 L129 190 L138 189 L147 188 L156 186 L165 185 L174 183 L183 181 L192 179 L201 177 L210 175 L219 173 L228 171 L237 168 L246 166 L255 163 L264 160 L273 157 L282 154 L291 151 L300 148 L309 145 L318 142 L327 139 L336 135 L345 132 L354 128 L363 125 L372 121 L381 117 L390 113 L399 109 L408 106 L417 102 L426 98 L435 93 L444 89 L453 85 L462 81 L471 76 L480 72"/></g>
+              <line x1="365" y1="14" x2="365" y2="190" stroke="#5B6272" stroke-width="1" stroke-dasharray="3 4"/>
+              <g fill="none" stroke-width="2.2" stroke-dasharray="6 5" stroke-linecap="round"><path d="M365 129 L372 123 L381 115 L390 107 L399 99 L408 91 L417 82 L426 74 L435 65 L444 56 L453 47 L462 37 L471 28 L480 18" stroke="#2455E6"/><path d="M365 129 L372 124 L381 119 L390 113 L399 107 L408 101 L417 95 L426 89 L435 82 L444 76 L453 69 L462 62 L471 55 L480 48" stroke="#5B80EC"/><path d="M365 129 L372 126 L381 122 L390 118 L399 115 L408 111 L417 107 L426 102 L435 98 L444 94 L453 90 L462 85 L471 81 L480 76" stroke="#8FA9F2"/></g>
+              <path d="M120 190 L129 190 L138 189 L147 189 L156 188 L165 187 L174 185 L183 184 L192 182 L201 181 L210 179 L219 177 L228 175 L237 173 L246 170 L255 168 L264 165 L273 162 L282 160 L291 157 L300 154 L309 151 L318 147 L327 144 L336 140 L345 137 L354 133 L363 130 L365 129" fill="none" stroke="#151A23" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="365" cy="129" r="5" fill="#151A23" stroke="#fff" stroke-width="2"/>
+              <g fill="#fff" stroke-width="2"><circle cx="480" cy="18" r="4.5" stroke="#2455E6"/><circle cx="480" cy="48" r="4.5" stroke="#5B80EC"/><circle cx="480" cy="76" r="4.5" stroke="#8FA9F2"/></g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Forecaster</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Booking curve forecaster</h3>
+            <p>Watch a flight's bookings build up and compare five ways airlines forecast where they'll finish: pickup, smoothing and regression, scored across a year of simulated departures.</p>
+            <div class="cta"><span class="btn dark">Open the forecaster<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+      </div>
 
     </div>
   </section>

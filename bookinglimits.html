@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Booking limits</title>
+    <meta name="description" content="An interactive booking-limit simulator: EMSR-a and EMSR-b protection levels, a Monte Carlo test against first come, first served, and optimal overbooking.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / airlinetools.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* Policies (validated as a categorical set) */
+        --p-emsrb: #2a7fb5;
+        --p-fcfs: #d9480f;
+        --p-hind: #3a8f5c;
+        --p-emsra: #9a6fb0;
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Tabs (same pill switcher as airflows) ── */
+      .switch { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 20px 0 18px; }
+      .views {
+        display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff;
+        flex-wrap: wrap; gap: 2px;
+      }
+      .views button {
+        border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text);
+        padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .views.small button { font-size: 12.5px; padding: 4px 11px; }
+      .panel[hidden] { display: none; }
+
+      /* ── Layout: inputs rail + results ── */
+      .stage {
+        display: grid;
+        grid-template-columns: 290px minmax(0, 1fr);
+        gap: 26px;
+        align-items: start;
+      }
+      .inputs {
+        border: 1px solid var(--line); border-radius: 8px; background: #fff;
+        padding: 14px 16px 16px;
+        position: sticky; top: 14px;
+      }
+      .inputs h3 { margin: 16px 0 8px; font-size: 13px; color: var(--ink); font-weight: 600; }
+      .inputs h3:first-child { margin-top: 0; }
+      .field { display: grid; grid-template-columns: 1fr 96px; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 12.5px; }
+      .field label { color: var(--text); line-height: 1.3; }
+      .field small { display: block; color: var(--muted); font-size: 11px; }
+      input[type=number] {
+        font: inherit; font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums;
+        border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; background: #fff;
+        width: 100%; min-width: 0; box-sizing: border-box;
+      }
+      input[type=number]:focus { outline: 2px solid #9cc7df; outline-offset: 0; border-color: #9cc7df; }
+      input.bad { border-color: #d9480f; background: #fff6f2; }
+      table.cls { width: 100%; border-collapse: collapse; margin: 0 0 6px; }
+      table.cls th { font-size: 11px; color: var(--muted); font-weight: 500; padding: 0 3px 4px; text-align: left; border: 0; }
+      table.cls td { padding: 2px 3px; border: 0; font-size: 12.5px; }
+      table.cls th:first-child, table.cls td:first-child { padding-left: 0; width: 34px; }
+      table.cls tbody tr:hover td { background: transparent; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .cls-letter { color: var(--ink); font-weight: 600; white-space: nowrap; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+      .warn { font-size: 12px; color: #9a3b0b; margin: 6px 0 0; }
+      .warn:empty { display: none; }
+      .btn {
+        font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff;
+        border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink);
+      }
+      .btn:hover { border-color: #cfcfcf; }
+      .toggle { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text); margin: 4px 0 10px; cursor: pointer; }
+      .toggle input { margin: 0; }
+      .sub-fields { border-left: 2px solid var(--line); padding-left: 10px; margin: 0 0 8px; }
+      .sub-fields[hidden] { display: none; }
+
+      /* ── Result tiles ── */
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin: 0 0 18px;
+      }
+      .tile {
+        border: 1px solid var(--line); border-radius: 8px; background: #fff;
+        padding: 12px 14px; color: var(--text);
+      }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .tile span { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+
+      .block { margin: 0 0 30px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h3 { margin: 0; font-size: 16px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .block > p.lead { margin: 0 0 10px; font-size: 13px; max-width: 760px; }
+      .rm-link { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart svg text { font-family: inherit; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; }
+      table.res { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 520px; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 7px 9px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+      table.res td { padding: 6px 9px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res td.hl { color: var(--ink); font-weight: 600; }
+      table.res tr.opt td { background: #eef5fa; color: var(--ink); }
+      table.res tbody tr:hover td { background: var(--soft); }
+
+      /* ── Worked formulas ── */
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+      .chip {
+        border: 1px solid var(--line); background: #fff; color: var(--text);
+        border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer;
+      }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .work {
+        background: rgb(40 122 158 / 5%); border-left: 2px solid #287a9e;
+        padding: 12px 16px; font-size: 13px; line-height: 1.75; color: #33434d; overflow-x: auto;
+      }
+      .work .lbl { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #155b7c; margin-bottom: 4px; }
+      .work .row { white-space: nowrap; }
+      .work .row span.k { display: inline-block; min-width: 150px; color: var(--muted); white-space: normal; }
+      .work var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+      .work b { color: var(--ink); font-weight: 600; }
+      .general { font-size: 12.5px; color: var(--muted); margin: 10px 0 0; }
+      .general var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--text); }
+
+      .run-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 10px 0 0; font-size: 12px; color: var(--muted); }
+
+      /* ── Tooltip ── */
+      .tip {
+        position: fixed; pointer-events: none; z-index: 20;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45;
+        max-width: 280px; display: none;
+      }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: center; gap: 7px; }
+      .tip .r i { display: inline-block; width: 12px; height: 0; border-top: 2px solid; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+
+      @media (max-width: 980px) {
+        .stage { grid-template-columns: minmax(0, 1fr); }
+        .inputs { position: static; }
+        .two { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        .work .row { white-space: normal; }
+        .work .row span.k { display: block; min-width: 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>How airlines keep seats for passengers who book late and pay more, and how many seats they sell twice.</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Booking limits</h2>
+        <p>Cheap fares sell first and expensive ones sell last, so a flight left to itself fills up with the cheapest passengers. Revenue management sets a cap on each fare class and keeps the rest for later, higher-paying bookings. Change the fares and the forecast and see how the caps move, then test them on thousands of simulated flights. The second tab does the same for overbooking. This is the hands-on companion to <a href="/rm101.html">Revenue Management 101</a>.</p>
+        <p class="note-line">All fares, demand figures and costs on this page are illustrative assumptions, not any airline's data.</p>
+      </div>
+
+      <div class="switch">
+        <div class="views" id="tabs" role="tablist" aria-label="Simulator">
+          <button role="tab" data-tab="seats" class="on" aria-selected="true">Seat allocation</button>
+          <button role="tab" data-tab="overbooking" aria-selected="false">Overbooking</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ SEAT ALLOCATION ═══════════════════════════ -->
+      <div class="panel" id="panel-seats" role="tabpanel">
+        <div class="stage">
+          <aside class="inputs" aria-label="Seat allocation inputs">
+            <h3>Flight</h3>
+            <div class="field">
+              <label for="cap">Seats in the cabin</label>
+              <input id="cap" type="number" min="20" max="500" step="1" value="150">
+            </div>
+
+            <h3>Fare classes and demand forecast</h3>
+            <div class="views small" id="ncls" role="group" aria-label="Number of fare classes">
+              <button data-n="4">4 classes</button><button data-n="5">5</button><button data-n="6" class="on">6</button>
+            </div>
+            <table class="cls" style="margin-top:10px">
+              <thead><tr><th>Class</th><th>Fare ($)</th><th>Mean</th><th>Std dev</th></tr></thead>
+              <tbody id="cls-body"></tbody>
+            </table>
+            <p class="hint">Highest fare at the top. Demand for each class is normal with the mean and standard deviation shown, counted in passengers who would book that class if it were open (<a href="/rm101.html#ch02">forecasting in RM 101</a>).</p>
+            <p class="warn" id="cls-warn"></p>
+
+            <h3>Method</h3>
+            <div class="views small" id="method" role="group" aria-label="Method">
+              <button data-m="b" class="on">EMSR-b</button><button data-m="a">EMSR-a</button>
+            </div>
+            <p class="hint">EMSR-b is the standard heuristic. EMSR-a, the older version, protects each higher class on its own and adds the results up.</p>
+
+            <div style="margin-top:14px"><button class="btn" id="reset-seats">Reset the example</button></div>
+          </aside>
+
+          <div class="results">
+            <div class="tiles" id="seat-tiles"></div>
+
+            <div class="block">
+              <div class="block-head"><h3>Protection levels and booking limits</h3><span id="lim-sub"></span></div>
+              <p class="lead">A <b>protection level</b> is the number of seats kept for a class and every class above it. The <b>booking limit</b> of a class is what's left: the most seats that class and the cheaper ones below it can sell together. Limits are nested, so a higher class can always take a seat a lower class could have had.</p>
+              <div class="tbl-wrap"><table class="res" id="lim-table"></table></div>
+              <p class="rm-link">Why protect seats at all: <a href="/rm101.html#ch03">RM 101, chapter 03</a>. How nesting works: <a href="/rm101.html#ch04">chapter 04</a>.</p>
+            </div>
+
+            <div class="block">
+              <div class="block-head"><h3>Nested booking limits</h3><span>Seats open to each class</span></div>
+              <div class="chart" id="ch-nest"></div>
+            </div>
+
+            <div class="block">
+              <div class="block-head"><h3>Expected marginal seat revenue</h3><span id="emsr-sub"></span></div>
+              <p class="lead" id="emsr-lead"></p>
+              <div class="chart" id="ch-emsr"></div>
+            </div>
+
+            <div class="block">
+              <div class="block-head"><h3>The formulas, with these numbers</h3><span>Pick a class boundary</span></div>
+              <div class="chips" id="step-chips"></div>
+              <div class="work" id="work"></div>
+              <p class="general" id="general"></p>
+            </div>
+
+            <div class="block">
+              <div class="block-head"><h3>Monte Carlo: 2,000 departures</h3><span id="mc-sub"></span></div>
+              <p class="lead">Each simulated departure draws a demand for every class, then bookings arrive cheapest class first. The same draws are replayed under each policy: <b>EMSR</b> applies the booking limits above, <b>first come, first served</b> sells to anyone until the cabin is full, and <b>perfect hindsight</b> knows the demand in advance and fills the cabin from the most expensive fare down, which is the ceiling no real policy can reach.</p>
+              <div class="two">
+                <div>
+                  <div class="block-head" style="margin-bottom:6px"><h3 style="font-size:14px">Revenue per departure</h3></div>
+                  <div class="chart" id="ch-rev"></div>
+                </div>
+                <div>
+                  <div class="block-head" style="margin-bottom:6px"><h3 style="font-size:14px">Load factor</h3></div>
+                  <div class="chart" id="ch-lf"></div>
+                </div>
+              </div>
+              <div class="tbl-wrap" style="margin-top:14px"><table class="res" id="mc-table"></table></div>
+              <div class="run-row"><button class="btn" id="rerun">Run 2,000 new departures</button><span id="seed-note"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ OVERBOOKING ═══════════════════════════ -->
+      <div class="panel" id="panel-overbooking" role="tabpanel" hidden>
+        <div class="stage">
+          <aside class="inputs" aria-label="Overbooking inputs">
+            <h3>Flight</h3>
+            <div class="field">
+              <label for="ob-cap">Seats in the cabin</label>
+              <input id="ob-cap" type="number" min="20" max="500" step="1" value="150">
+            </div>
+            <div class="field" id="ob-p-row">
+              <label for="ob-p">Show-up rate (%)<small>Share of booked passengers who turn up</small></label>
+              <input id="ob-p" type="number" min="50" max="100" step="0.5" value="92">
+            </div>
+            <label class="toggle"><input type="checkbox" id="ob-mix"> Different rates for business and leisure</label>
+            <div class="sub-fields" id="ob-mix-fields" hidden>
+              <div class="field">
+                <label for="ob-share">Business share of bookings (%)</label>
+                <input id="ob-share" type="number" min="0" max="100" step="1" value="30">
+              </div>
+              <div class="field">
+                <label for="ob-pb">Business show-up rate (%)</label>
+                <input id="ob-pb" type="number" min="50" max="100" step="0.5" value="85">
+              </div>
+              <div class="field">
+                <label for="ob-pl">Leisure show-up rate (%)</label>
+                <input id="ob-pl" type="number" min="50" max="100" step="0.5" value="95">
+              </div>
+            </div>
+
+            <h3>Costs</h3>
+            <div class="field">
+              <label for="ob-db">Denied boarding cost ($)<small>Compensation, rebooking, hotel, goodwill</small></label>
+              <input id="ob-db" type="number" min="0" step="10" value="900">
+            </div>
+            <div class="field">
+              <label for="ob-sp">Spoilage cost ($)<small>Average fare of a seat that flies empty</small></label>
+              <input id="ob-sp" type="number" min="1" step="10" value="250">
+            </div>
+
+            <div style="margin-top:14px"><button class="btn" id="reset-ob">Reset the example</button></div>
+          </aside>
+
+          <div class="results">
+            <div class="tiles" id="ob-tiles"></div>
+
+            <div class="block">
+              <div class="block-head"><h3>Expected cost by authorisation level</h3><span id="ob-sub"></span></div>
+              <p class="lead">The <b>authorisation level</b> is how many bookings the airline accepts for the cabin. Accept too few and no-shows leave seats empty (spoilage). Accept too many and passengers with a ticket are left at the gate (denied boarding). The page assumes demand is strong enough to fill every authorised booking, and each passenger shows up independently.</p>
+              <div class="chart" id="ch-cost"></div>
+            </div>
+
+            <div class="block">
+              <div class="block-head"><h3>The critical-fractile rule, with these numbers</h3></div>
+              <div class="work" id="ob-work"></div>
+              <p class="rm-link">It is the same marginal reasoning as Littlewood's rule for fare classes: <a href="/rm101.html#ch03">RM 101, chapter 03</a>.</p>
+            </div>
+
+            <div class="block">
+              <div class="block-head"><h3>How many passengers show up</h3><span id="ob-dist-sub"></span></div>
+              <div class="chart" id="ch-show"></div>
+            </div>
+
+            <div class="block">
+              <div class="block-head"><h3>Around the optimum</h3></div>
+              <div class="tbl-wrap"><table class="res" id="ob-table"></table></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>Seat allocation</h4>
+        <p>Classes are ranked from the highest fare <var>f</var><sub>1</sub> to the lowest <var>f</var><sub>n</sub>. Demand for class <var>i</var> is independent and normal, <var>D</var><sub>i</sub> ~ N(<var>μ</var><sub>i</sub>, <var>σ</var><sub>i</sub><sup>2</sup>). Everything rests on Littlewood's rule: keep one more seat for a higher fare <var>f</var><sub>H</sub> as long as <var>f</var><sub>H</sub> · P(<var>D</var><sub>H</sub> ≥ <var>y</var>) ≥ <var>f</var><sub>L</sub>, the lower fare you would turn away. The left-hand side is the expected marginal seat revenue (EMSR) of the <var>y</var>-th seat, and the charts plot it seat by seat.</p>
+        <p><b>EMSR-b</b> (Belobaba, 1992) protects classes 1 to <var>j</var> together against class <var>j</var>+1 by merging them into one composite class, with fare <var>f̄</var> = Σ <var>f</var><sub>i</sub><var>μ</var><sub>i</sub> / Σ <var>μ</var><sub>i</sub> and demand N(Σ <var>μ</var><sub>i</sub>, Σ <var>σ</var><sub>i</sub><sup>2</sup>). The protection level is <var>y</var><sub>j</sub> = <var>μ̄</var> + <var>σ̄</var> · Φ<sup>−1</sup>(1 − <var>f</var><sub>j+1</sub> / <var>f̄</var>). <b>EMSR-a</b> (Belobaba, 1987) applies Littlewood's rule to each higher class on its own against class <var>j</var>+1 and adds up the results. Protection levels are rounded to the nearest seat, kept between 0 and the capacity, and never allowed to fall as you go down the classes. The booking limit of class <var>j</var>+1 is the capacity minus <var>y</var><sub>j</sub>; the top class can sell the whole cabin.</p>
+        <p><b>Monte Carlo:</b> 2,000 departures, each with a fresh demand draw per class (rounded, and floored at zero). Bookings arrive strictly from the cheapest class to the most expensive, which is the textbook assumption behind EMSR and the case where control matters most. All policies see the same draws. The random generator is seeded, so the page opens on the same results every time; "Run 2,000 new departures" changes the seed.</p>
+
+        <h4>Overbooking</h4>
+        <p>With <var>A</var> bookings accepted and a show-up rate <var>p</var>, the number of passengers at the gate is binomial, <var>S</var> ~ Bin(<var>A</var>, <var>p</var>). The expected cost is <var>c</var><sub>DB</sub> · E[(<var>S</var> − <var>C</var>)<sup>+</sup>] + <var>c</var><sub>sp</sub> · E[(<var>C</var> − <var>S</var>)<sup>+</sup>], where <var>C</var> is the capacity. One more booking is worth accepting while the chance that everyone else leaves a seat free, P(<var>S</var><sub>A</sub> ≤ <var>C</var> − 1), is above the critical fractile <var>c</var><sub>DB</sub> / (<var>c</var><sub>DB</sub> + <var>c</var><sub>sp</sub>). The page also computes the expected cost for every level and checks that the minimum is where the rule says. With separate business and leisure rates, bookings are split by the business share and show-ups are the sum of two binomials; the page then takes the level with the lowest expected cost directly.</p>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>Littlewood, K. (1972), "Forecasting and control of passenger bookings", AGIFORS Symposium; reprinted in the <a href="https://doi.org/10.1057/palgrave.rpm.5170134" target="_blank" rel="noopener">Journal of Revenue and Pricing Management 4, 2005</a>.</li>
+          <li>Belobaba, P. (1987), <a href="https://dspace.mit.edu/handle/1721.1/68077" target="_blank" rel="noopener">Air travel demand and airline seat inventory management</a>, PhD thesis, MIT (EMSR-a); Belobaba, P. (1989), "Application of a probabilistic decision model to airline seat inventory control", <a href="https://doi.org/10.1287/opre.37.2.183" target="_blank" rel="noopener">Operations Research 37(2)</a>; Belobaba, P. (1992), "Optimal vs. heuristic methods for nested seat allocation", AGIFORS Reservations and Yield Management Study Group (EMSR-b).</li>
+          <li>Talluri, K. and van Ryzin, G. (2004), <a href="https://link.springer.com/book/10.1007/b139000" target="_blank" rel="noopener">The Theory and Practice of Revenue Management</a>, Springer: chapter 2 (single-resource capacity control) and chapter 4 (overbooking).</li>
+          <li>Denied boarding costs, for scale: in the US, involuntary denied boarding compensation is 200% or 400% of the one-way fare, capped at $1,075 and $2,150 (<a href="https://www.ecfr.gov/current/title-14/chapter-II/subchapter-A/part-250/section-250.5" target="_blank" rel="noopener">14 CFR 250.5</a>, as amended in October 2024, checked September 2026). In Canada the minimum for large airlines is CA$900, CA$1,800 or CA$2,400 depending on the delay (<a href="https://otc-cta.gc.ca/eng/publication/denied-boarding-a-guide" target="_blank" rel="noopener">Canadian Transportation Agency guide</a>, updated February 2026). Most passengers who give up a seat are volunteers paid less than that, so the $900 default is an assumption, not a figure for any airline. US denied boarding counts are published in the DOT's <a href="https://www.bts.gov/denied-confirmed-space" target="_blank" rel="noopener">Passengers Denied Confirmed Space report</a>.</li>
+          <li>Fares, for scale: the US average domestic itinerary fare was $387 in 2025 (<a href="https://www.bts.gov/newsroom/2025-annual-average-domestic-air-fare-decreases-2024" target="_blank" rel="noopener">BTS</a>). The six example fares are invented around that level.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>Demand in each class is independent of what else is open. Real passengers buy down to a cheaper class when it's available, which EMSR ignores; see <a href="/rm101.html#ch05">RM 101, chapter 05</a>.</li>
+          <li>One flight leg, one pass. Real systems re-optimise many times before departure, forecast from unconstrained history, and control whole itineraries rather than single legs (<a href="/rm101.html#ch06">chapter 06</a>).</li>
+          <li>Strict low-before-high arrivals flatter EMSR against first come, first served. With mixed arrival orders the gap is smaller.</li>
+          <li>No cancellations, group bookings or upgrades, and overbooking is modelled separately from seat allocation. In practice the two are combined by setting booking limits on a virtual capacity above the physical one.</li>
+          <li>The overbooking model treats every denied passenger as costing the same and every no-show as independent. Families and groups tend to no-show together, which widens the spread and argues for a lower authorisation level.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+
+      // ───────────────────────────── maths
+      function normCdf(x) {
+        var t = 1 / (1 + 0.2316419 * Math.abs(x));
+        var d = 0.3989422804014327 * Math.exp(-x * x / 2);
+        var p = d * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+        return x > 0 ? 1 - p : p;
+      }
+      // Acklam's inverse normal CDF
+      function normInv(p) {
+        if (p <= 0) return -Infinity;
+        if (p >= 1) return Infinity;
+        var a = [-39.69683028665376, 220.9460984245205, -275.9285104469687, 138.3577518672690, -30.66479806614716, 2.506628277459239];
+        var b = [-54.47609879822406, 161.5858368580409, -155.6989798598866, 66.80131188771972, -13.28068155288572];
+        var c = [-0.007784894002430293, -0.3223964580411365, -2.400758277161838, -2.549732539343734, 4.374664141464968, 2.938163982698783];
+        var d = [0.007784695709041462, 0.3224671290700398, 2.445134137142996, 3.754408661907416];
+        var q, r;
+        if (p < 0.02425) {
+          q = Math.sqrt(-2 * Math.log(p));
+          return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+        }
+        if (p <= 1 - 0.02425) {
+          q = p - 0.5; r = q * q;
+          return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+        }
+        q = Math.sqrt(-2 * Math.log(1 - p));
+        return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+      }
+      // P(D >= y) for D ~ N(mu, sd)
+      function tail(y, mu, sd) {
+        if (sd <= 0) return y <= mu ? 1 : 0;
+        return 1 - normCdf((y - mu) / sd);
+      }
+      function mulberry32(a) {
+        return function () {
+          a |= 0; a = a + 0x6D2B79F5 | 0;
+          var t = Math.imul(a ^ a >>> 15, 1 | a);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      function gaussFactory(rng) {
+        var spare = null;
+        return function () {
+          if (spare !== null) { var s = spare; spare = null; return s; }
+          var u, v, w;
+          do { u = rng() * 2 - 1; v = rng() * 2 - 1; w = u * u + v * v; } while (w >= 1 || w === 0);
+          var m = Math.sqrt(-2 * Math.log(w) / w);
+          spare = v * m;
+          return u * m;
+        };
+      }
+      function clamp(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); }
+
+      // ───────────────────────────── EMSR
+      function finish(cls, C, prot, steps, method) {
+        var n = cls.length, BL = [C], bucket = [];
+        for (var j = 0; j < n - 1; j++) BL.push(C - prot[j]);
+        for (var i = 0; i < n; i++) {
+          var hi = i < n - 1 ? prot[i] : C;
+          var lo = i > 0 ? prot[i - 1] : 0;
+          bucket.push(hi - lo);
+        }
+        return { method: method, cls: cls, C: C, prot: prot, BL: BL, bucket: bucket, steps: steps };
+      }
+      function emsrb(cls, C) {
+        var n = cls.length, prot = [], steps = [], sf = 0, sm = 0, sv = 0, prev = 0;
+        for (var j = 0; j < n - 1; j++) {
+          sf += cls[j].fare * cls[j].mu; sm += cls[j].mu; sv += cls[j].sd * cls[j].sd;
+          var fbar = sm > 0 ? sf / sm : cls[j].fare;
+          var sbar = Math.sqrt(sv);
+          var ratio = fbar > 0 ? cls[j + 1].fare / fbar : 1;
+          var z = null, yraw;
+          if (ratio >= 1) yraw = 0;
+          else if (ratio <= 0) yraw = C;
+          else { z = normInv(1 - ratio); yraw = sm + sbar * z; }
+          var y = Math.max(prev, clamp(Math.round(yraw), 0, C));
+          steps.push({ j: j, fbar: fbar, mubar: sm, sdbar: sbar, ratio: ratio, z: z, yraw: yraw, y: y, raised: y > clamp(Math.round(yraw), 0, C) });
+          prot.push(y); prev = y;
+        }
+        return finish(cls, C, prot, steps, "b");
+      }
+      function emsra(cls, C) {
+        var n = cls.length, prot = [], steps = [], prev = 0;
+        for (var j = 0; j < n - 1; j++) {
+          var low = cls[j + 1].fare, parts = [], tot = 0;
+          for (var i = 0; i <= j; i++) {
+            var r = cls[i].fare > 0 ? low / cls[i].fare : 1, z = null, v;
+            if (r >= 1) v = 0;
+            else if (r <= 0) v = C;
+            else { z = normInv(1 - r); v = Math.max(0, cls[i].mu + cls[i].sd * z); }
+            parts.push({ i: i, ratio: r, z: z, v: v });
+            tot += v;
+          }
+          var y = Math.max(prev, clamp(Math.round(tot), 0, C));
+          steps.push({ j: j, parts: parts, yraw: tot, y: y, raised: y > clamp(Math.round(tot), 0, C) });
+          prot.push(y); prev = y;
+        }
+        return finish(cls, C, prot, steps, "a");
+      }
+
+      // ───────────────────────────── Monte Carlo
+      var N_DEP = 2000;
+      function simulate(cls, C, policies, seed) {
+        var n = cls.length, rng = mulberry32(seed), g = gaussFactory(rng);
+        var out = policies.map(function (p) { return { id: p.id, rev: new Float64Array(N_DEP), sold: new Int32Array(N_DEP) }; });
+        var d = new Array(n);
+        for (var t = 0; t < N_DEP; t++) {
+          for (var i = 0; i < n; i++) d[i] = Math.max(0, Math.round(cls[i].mu + cls[i].sd * g()));
+          for (var k = 0; k < policies.length; k++) {
+            var pol = policies[k], booked = 0, rev = 0, acc;
+            if (pol.id === "hind") {
+              for (i = 0; i < n; i++) { acc = Math.min(d[i], C - booked); booked += acc; rev += acc * cls[i].fare; }
+            } else {
+              // cheapest class books first; class i accepts while total bookings < its booking limit
+              for (i = n - 1; i >= 0; i--) {
+                acc = Math.max(0, Math.min(d[i], pol.BL[i] - booked));
+                booked += acc; rev += acc * cls[i].fare;
+              }
+            }
+            out[k].rev[t] = rev; out[k].sold[t] = booked;
+          }
+        }
+        return out;
+      }
+      function quantile(sorted, q) {
+        var pos = (sorted.length - 1) * q, lo = Math.floor(pos), hi = Math.ceil(pos);
+        return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+      }
+
+      // ───────────────────────────── Overbooking
+      var LNF = [0];
+      function lnFact(k) { while (LNF.length <= k) LNF.push(LNF[LNF.length - 1] + Math.log(LNF.length)); return LNF[k]; }
+      function binom(n, p) {
+        var out = new Float64Array(n + 1);
+        if (p >= 1) { out[n] = 1; return out; }
+        if (p <= 0) { out[0] = 1; return out; }
+        var lp = Math.log(p), lq = Math.log(1 - p);
+        for (var k = 0; k <= n; k++) out[k] = Math.exp(lnFact(n) - lnFact(k) - lnFact(n - k) + k * lp + (n - k) * lq);
+        return out;
+      }
+      function conv(a, b) {
+        var out = new Float64Array(a.length + b.length - 1);
+        for (var i = 0; i < a.length; i++) { if (a[i] < 1e-15) continue; for (var j = 0; j < b.length; j++) out[i + j] += a[i] * b[j]; }
+        return out;
+      }
+      function showDist(A, cfg) {
+        if (!cfg.mix) return binom(A, cfg.p);
+        var nb = Math.round(A * cfg.share);
+        return conv(binom(nb, cfg.pb), binom(A - nb, cfg.pl));
+      }
+      function evalLevel(A, cfg) {
+        var pmf = showDist(A, cfg), C = cfg.C, ed = 0, ee = 0, pdb = 0, below = 0;
+        for (var s = 0; s < pmf.length; s++) {
+          if (s > C) { ed += (s - C) * pmf[s]; pdb += pmf[s]; }
+          if (s < C) { ee += (C - s) * pmf[s]; below += pmf[s]; }
+        }
+        return { A: A, pmf: pmf, ed: ed, ee: ee, pdb: pdb, below: below,
+                 cdb: cfg.db * ed, csp: cfg.sp * ee, cost: cfg.db * ed + cfg.sp * ee };
+      }
+      function overbook(cfg) {
+        var pmin = cfg.mix ? Math.min(cfg.pb, cfg.pl) : cfg.p;
+        pmin = Math.max(pmin, 0.3);
+        var Amax = Math.min(3 * cfg.C, Math.ceil(cfg.C / pmin * 1.08 + 4 * Math.sqrt(cfg.C * (1 - pmin)) / pmin) + 6);
+        var levels = [], best = null;
+        for (var A = cfg.C; A <= Amax; A++) {
+          var e = evalLevel(A, cfg);
+          levels.push(e);
+          if (!best || e.cost < best.cost - 1e-9) best = e;
+        }
+        var ratio = cfg.db + cfg.sp > 0 ? cfg.db / (cfg.db + cfg.sp) : 0;
+        // Critical fractile: smallest A with P(S_A <= C-1) <= ratio
+        var fr = null;
+        for (var k = 0; k < levels.length; k++) { if (levels[k].below <= ratio) { fr = levels[k]; break; } }
+        var base = levels[0];
+        return { levels: levels, best: best, ratio: ratio, fractile: fr, base: base, Amax: Amax };
+      }
+
+      // Exposed for testing in the console
+      window.BookingLimits = { emsrb: emsrb, emsra: emsra, simulate: simulate, overbook: overbook, normInv: normInv };
+
+      // ───────────────────────────── formatting & colours
+      var fmt$ = d3.format("$,.0f"), fmtInt = d3.format(",.0f"), fmt1 = d3.format(".1f"), fmt2 = d3.format(".2f"),
+          fmt3 = d3.format(".3f"), fmtPct = d3.format(".1%"), fmtPct0 = d3.format(".0%");
+      function sgn(x, f) { return (x >= 0 ? "+" : "−") + f(Math.abs(x)); }
+      var CLASS_COL = { Y: "#0b3c5d", B: "#155b7c", M: "#287a9e", H: "#4f9bbd", Q: "#86bdd6", V: "#b9d9e8" };
+      var POL = {
+        emsrb: { name: "EMSR-b", col: "#2a7fb5" },
+        emsra: { name: "EMSR-a", col: "#9a6fb0", dash: true },
+        fcfs:  { name: "First come, first served", short: "FCFS", col: "#d9480f" },
+        hind:  { name: "Perfect hindsight", short: "Hindsight", col: "#3a8f5c" }
+      };
+
+      // ───────────────────────────── tooltip
+      var tip = document.getElementById("tip");
+      function showTip(ev, title, rows) {
+        tip.textContent = "";
+        if (title) { var t = document.createElement("div"); t.className = "t"; t.textContent = title; tip.appendChild(t); }
+        rows.forEach(function (r) {
+          var row = document.createElement("div"); row.className = "r";
+          if (r.col) { var i = document.createElement("i"); i.style.borderColor = r.col; if (r.dash) i.style.borderTopStyle = "dashed"; row.appendChild(i); }
+          var b = document.createElement("b"); b.textContent = r.value; row.appendChild(b);
+          if (r.label) { var s = document.createElement("span"); s.textContent = r.label; row.appendChild(s); }
+          tip.appendChild(row);
+        });
+        tip.style.display = "block";
+        var pt = ev.touches ? ev.touches[0] : ev;
+        var w = tip.offsetWidth, h = tip.offsetHeight;
+        var x = pt.clientX + 14, y = pt.clientY + 14;
+        if (x + w > window.innerWidth - 8) x = pt.clientX - w - 14;
+        if (x < 8) x = 8;
+        if (y + h > window.innerHeight - 8) y = pt.clientY - h - 14;
+        tip.style.left = x + "px"; tip.style.top = y + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+
+      // ───────────────────────────── chart helpers
+      function frame(el, height, m) {
+        el.textContent = "";
+        var W = Math.max(280, el.clientWidth - 12);
+        var svg = d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + height).attr("width", W).attr("height", height);
+        var g = svg.append("g").attr("transform", "translate(" + m.l + "," + m.t + ")");
+        return { svg: svg, g: g, W: W, iw: W - m.l - m.r, ih: height - m.t - m.b };
+      }
+      function legend(el, items) {
+        var box = document.createElement("div"); box.className = "legend";
+        items.forEach(function (it) {
+          var s = document.createElement("span"), i = document.createElement("i");
+          if (it.line) { i.className = "ln" + (it.dash ? " dash" : ""); i.style.borderColor = it.col; }
+          else i.style.background = it.col;
+          s.appendChild(i); s.appendChild(document.createTextNode(it.name)); box.appendChild(s);
+        });
+        el.appendChild(box);
+      }
+
+      // ───────────────────────────── seat allocation state
+      var DEFAULTS = [
+        { k: "Y", fare: 620, mu: 14, sd: 5 },
+        { k: "B", fare: 480, mu: 18, sd: 6 },
+        { k: "M", fare: 360, mu: 26, sd: 8 },
+        { k: "H", fare: 270, mu: 32, sd: 10 },
+        { k: "Q", fare: 190, mu: 40, sd: 12 },
+        { k: "V", fare: 130, mu: 50, sd: 15 }
+      ];
+      var SETS = { 4: ["Y", "M", "Q", "V"], 5: ["Y", "B", "M", "Q", "V"], 6: ["Y", "B", "M", "H", "Q", "V"] };
+      var state = { C: 150, rows: DEFAULTS.map(function (r) { return Object.assign({}, r); }), n: 6, method: "b", seed: 1, step: null };
+      var seat = null, sim = null;
+
+      function activeClasses() {
+        var keys = SETS[state.n];
+        return state.rows.filter(function (r) { return keys.indexOf(r.k) >= 0; });
+      }
+
+      function buildClassTable() {
+        var body = document.getElementById("cls-body");
+        body.textContent = "";
+        activeClasses().forEach(function (r) {
+          var tr = document.createElement("tr");
+          var td0 = document.createElement("td");
+          td0.innerHTML = '<span class="sw"></span><span class="cls-letter"></span>';
+          td0.querySelector(".sw").style.background = CLASS_COL[r.k];
+          td0.querySelector(".cls-letter").textContent = r.k;
+          tr.appendChild(td0);
+          [["fare", 1, 10000, 5], ["mu", 0, 1000, 1], ["sd", 0, 500, 1]].forEach(function (f) {
+            var td = document.createElement("td"), inp = document.createElement("input");
+            inp.type = "number"; inp.min = f[1]; inp.max = f[2]; inp.step = f[3]; inp.value = r[f[0]];
+            inp.setAttribute("aria-label", r.k + " " + (f[0] === "fare" ? "fare" : f[0] === "mu" ? "mean demand" : "standard deviation"));
+            inp.dataset.k = r.k; inp.dataset.f = f[0];
+            inp.addEventListener("input", onClassInput);
+            td.appendChild(inp); tr.appendChild(td);
+          });
+          body.appendChild(tr);
+        });
+      }
+      var seatTimer = null;
+      function onClassInput(e) {
+        var inp = e.target, v = parseFloat(inp.value);
+        var row = state.rows.filter(function (r) { return r.k === inp.dataset.k; })[0];
+        var ok = isFinite(v) && v >= parseFloat(inp.min);
+        inp.classList.toggle("bad", !ok);
+        if (ok) row[inp.dataset.f] = v;
+        clearTimeout(seatTimer); seatTimer = setTimeout(recomputeSeats, 150);
+      }
+
+      function recomputeSeats() {
+        var cls = activeClasses().map(function (r) { return Object.assign({}, r); });
+        var warn = [];
+        for (var i = 1; i < cls.length; i++) if (cls[i].fare >= cls[i - 1].fare) { warn.push("Fares should fall from the top class to the bottom one. The model sorts them by fare."); break; }
+        cls.sort(function (a, b) { return b.fare - a.fare; });
+        document.getElementById("cls-warn").textContent = warn.join(" ");
+        var C = state.C;
+        var resB = emsrb(cls, C), resA = emsra(cls, C);
+        seat = state.method === "a" ? resA : resB;
+        seat.other = state.method === "a" ? resB : resA;
+        var pols = [{ id: "emsrb", BL: resB.BL }];
+        if (state.method === "a") pols.push({ id: "emsra", BL: resA.BL });
+        pols.push({ id: "fcfs", BL: cls.map(function () { return C; }) }, { id: "hind" });
+        var raw = simulate(cls, C, pols, state.seed);
+        sim = raw.map(function (o) {
+          var r = Array.from(o.rev).sort(d3.ascending);
+          var lf = Array.from(o.sold, function (s) { return s / C; });
+          var full = 0; for (var t = 0; t < o.sold.length; t++) if (o.sold[t] >= C) full++;
+          return { id: o.id, rev: o.rev, revSorted: r, lf: lf, mean: d3.mean(r), p5: quantile(r, 0.05), p50: quantile(r, 0.5), p95: quantile(r, 0.95),
+                   lfMean: d3.mean(lf), full: full / o.sold.length };
+        });
+        // share of departures where EMSR beats FCFS
+        var emsr = sim[0], fcfs = sim.filter(function (s) { return s.id === "fcfs"; })[0];
+        var wins = 0, ties = 0;
+        for (var t2 = 0; t2 < N_DEP; t2++) { if (emsr.rev[t2] > fcfs.rev[t2] + 0.5) wins++; else if (Math.abs(emsr.rev[t2] - fcfs.rev[t2]) <= 0.5) ties++; }
+        sim.wins = wins / N_DEP; sim.ties = ties / N_DEP;
+        if (state.step === null || state.step > cls.length - 2) state.step = cls.length - 2;
+        renderSeats();
+      }
+
+      function renderSeats() {
+        var cls = seat.cls, C = seat.C, n = cls.length;
+        var mname = seat.method === "a" ? "EMSR-a" : "EMSR-b";
+        var hind = sim.filter(function (s) { return s.id === "hind"; })[0];
+        var fcfs = sim.filter(function (s) { return s.id === "fcfs"; })[0];
+        var main = sim.filter(function (s) { return s.id === (seat.method === "a" ? "emsra" : "emsrb"); })[0];
+
+        // tiles
+        var tiles = [
+          { v: fmtInt(seat.prot[0]), l: "seats kept for " + cls[0].k + " alone, the top fare" },
+          { v: fmtInt(seat.BL[n - 1]), l: "booking limit for " + cls[n - 1].k + ": it closes after that many bookings" },
+          { v: sgn(main.mean / fcfs.mean - 1, fmtPct), l: mname + " revenue vs first come, first served, on average" },
+          { v: fmtPct(main.mean / hind.mean), l: "of the perfect-hindsight revenue captured by " + mname }
+        ];
+        var tb = document.getElementById("seat-tiles"); tb.textContent = "";
+        tiles.forEach(function (t) {
+          var d = document.createElement("div"); d.className = "tile";
+          var b = document.createElement("b"); b.textContent = t.v;
+          var s = document.createElement("span"); s.textContent = t.l;
+          d.appendChild(b); d.appendChild(s); tb.appendChild(d);
+        });
+
+        // limits table
+        document.getElementById("lim-sub").textContent = mname + " · " + C + " seats · expected demand " + fmtInt(d3.sum(cls, function (c) { return c.mu; })) + " passengers";
+        var T = document.getElementById("lim-table"); T.textContent = "";
+        var th = T.createTHead().insertRow();
+        ["Class", "Fare", "Demand (mean ± sd)", "Protected for this class and above", "Booking limit", "Bucket (seats only this class and above can use)"].forEach(function (h) {
+          var c = document.createElement("th"); c.textContent = h; th.appendChild(c);
+        });
+        var tbody = T.createTBody();
+        cls.forEach(function (c, i) {
+          var tr = tbody.insertRow();
+          var cells = [null, fmt$(c.fare), fmtInt(c.mu) + " ± " + fmtInt(c.sd),
+                       i < n - 1 ? fmtInt(seat.prot[i]) : "—", fmtInt(seat.BL[i]), fmtInt(seat.bucket[i])];
+          cells.forEach(function (v, k) {
+            var td = tr.insertCell();
+            if (k === 0) {
+              var sw = document.createElement("span"); sw.className = "sw"; sw.style.background = CLASS_COL[c.k];
+              td.appendChild(sw); var s = document.createElement("span"); s.className = "cls-letter"; s.textContent = c.k; td.appendChild(s);
+            } else td.textContent = v;
+            if (k === 4) td.className = "hl";
+          });
+        });
+
+        renderNest(); renderEmsr(); renderWork(); renderMC();
+      }
+
+      // Nested booking limits: one bar per class, stacked by bucket
+      function renderNest() {
+        var cls = seat.cls, C = seat.C, n = cls.length, el = document.getElementById("ch-nest");
+        var rowH = 30, m = { t: 10, r: 46, b: 36, l: 34 };
+        var f = frame(el, m.t + m.b + n * rowH, m);
+        var x = d3.scaleLinear().domain([0, C]).range([0, f.iw]);
+        var y = d3.scaleBand().domain(cls.map(function (c) { return c.k; })).range([0, f.ih]).paddingInner(0.28).paddingOuter(0.1);
+        f.g.append("g").attr("class", "grid").attr("transform", "translate(0," + f.ih + ")")
+          .call(d3.axisBottom(x).ticks(6).tickSize(-f.ih).tickFormat(""));
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")").call(d3.axisBottom(x).ticks(6));
+        f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickSize(0).tickPadding(8)).select(".domain").remove();
+        cls.forEach(function (c, i) {
+          var yy = y(c.k), hh = y.bandwidth();
+          // capacity outline (seats kept for higher classes)
+          f.g.append("rect").attr("x", x(seat.BL[i])).attr("y", yy).attr("width", Math.max(0, x(C) - x(seat.BL[i]))).attr("height", hh)
+            .attr("fill", "#f4f4f4").attr("rx", 3)
+            .on("pointermove", function (ev) { showTip(ev, "Class " + c.k, [{ value: fmtInt(C - seat.BL[i]) + " seats", label: "kept for higher classes" }]); })
+            .on("pointerleave", hideTip);
+          // buckets from the lowest class (left) up to class i
+          var x0 = 0;
+          for (var k = n - 1; k >= i; k--) {
+            var w = seat.bucket[k];
+            if (w > 0) {
+              (function (k, x0, w) {
+                f.g.append("rect").attr("x", x(x0) + (x0 > 0 ? 1 : 0)).attr("y", yy)
+                  .attr("width", Math.max(0.5, x(x0 + w) - x(x0) - (x0 > 0 ? 1 : 0))).attr("height", hh)
+                  .attr("fill", CLASS_COL[cls[k].k]).attr("rx", 2)
+                  .on("pointermove", function (ev) {
+                    showTip(ev, "Class " + c.k + " can sell these", [{ col: CLASS_COL[cls[k].k], value: fmtInt(w) + " seats", label: "in the " + cls[k].k + " bucket" + (k === n - 1 ? " (open to every class)" : " (" + cls[k].k + " and above)") }]);
+                  })
+                  .on("pointerleave", hideTip);
+              })(k, x0, w);
+            }
+            x0 += w;
+          }
+          f.g.append("text").attr("x", x(seat.BL[i]) + 5).attr("y", yy + hh / 2).attr("dy", "0.35em")
+            .attr("font-size", 12).attr("fill", "#222").attr("font-variant-numeric", "tabular-nums")
+            .text(fmtInt(seat.BL[i]));
+        });
+        f.g.append("text").attr("x", x(C)).attr("y", f.ih + 32).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("seats");
+        legend(el, cls.map(function (c) { return { name: c.k + " bucket", col: CLASS_COL[c.k] }; }).concat([{ name: "kept for higher classes", col: "#e9e9e9" }]));
+      }
+
+      // EMSR curves
+      function renderEmsr() {
+        var cls = seat.cls, C = seat.C, n = cls.length, el = document.getElementById("ch-emsr");
+        var isB = seat.method === "b";
+        document.getElementById("emsr-sub").textContent = isB ? "EMSR-b composite curves" : "EMSR-a class curves";
+        document.getElementById("emsr-lead").textContent = isB
+          ? "Each curve is the expected revenue of the next seat kept for a group of higher classes: the group's average fare times the chance its demand reaches that seat. Where a curve falls below the fare of the next class down (the dashed line), keeping more seats stops paying, and that crossing is the protection level."
+          : "Each curve is the expected revenue of the next seat kept for one class: its fare times the chance its demand reaches that seat. EMSR-a reads each curve against the fare of every lower class (dashed lines) and adds up the crossings.";
+        var m = { t: 12, r: 70, b: 40, l: 52 };
+        var H = el.clientWidth < 520 ? 280 : 320;
+        var f = frame(el, H, m);
+        var curves = [];
+        var sMax = C;
+        if (isB) {
+          seat.steps.forEach(function (st, j) {
+            var name = j === 0 ? cls[0].k : cls[0].k + "–" + cls[j].k;
+            curves.push({ name: name, col: CLASS_COL[cls[j].k], mu: st.mubar, sd: st.sdbar, fare: st.fbar, ref: cls[j + 1].fare, refK: cls[j + 1].k, y: st.y, yraw: st.yraw });
+          });
+        } else {
+          cls.forEach(function (c) { curves.push({ name: c.k, col: CLASS_COL[c.k], mu: c.mu, sd: c.sd, fare: c.fare }); });
+        }
+        // x-range: up to where the widest curve is negligible, capped at capacity
+        var xr = d3.max(curves, function (c) { return c.mu + 3.2 * c.sd; }) || C;
+        sMax = Math.min(C, Math.max(20, Math.ceil(xr / 5) * 5));
+        var x = d3.scaleLinear().domain([0, sMax]).range([0, f.iw]);
+        var yMax = d3.max(cls, function (c) { return c.fare; }) * 1.05;
+        var y = d3.scaleLinear().domain([0, yMax]).nice().range([f.ih, 0]);
+        f.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(5).tickSize(-f.iw).tickFormat(""));
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")").call(d3.axisBottom(x).ticks(6));
+        f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat(fmt$));
+        f.g.append("text").attr("x", f.iw).attr("y", f.ih + 34).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("seats protected");
+        // reference fare lines
+        var refs = isB ? curves.map(function (c) { return { k: c.refK, fare: c.ref, col: CLASS_COL[c.refK] }; })
+                       : cls.slice(1).map(function (c) { return { k: c.k, fare: c.fare, col: CLASS_COL[c.k] }; });
+        refs.forEach(function (r) {
+          f.g.append("line").attr("x1", 0).attr("x2", f.iw).attr("y1", y(r.fare)).attr("y2", y(r.fare))
+            .attr("stroke", "#9a9a9a").attr("stroke-width", 1).attr("stroke-dasharray", "3 3").attr("opacity", 0.7);
+          f.g.append("text").attr("x", f.iw + 6).attr("y", y(r.fare)).attr("dy", "0.35em").attr("font-size", 11).attr("fill", "#767676")
+            .text(r.k + " fare " + fmt$(r.fare));
+        });
+        var line = d3.line().x(function (d) { return x(d[0]); }).y(function (d) { return y(d[1]); });
+        curves.forEach(function (c) {
+          var pts = [];
+          for (var s = 0; s <= sMax; s += Math.max(0.25, sMax / 400)) pts.push([s, c.fare * tail(s, c.mu, c.sd)]);
+          c.pts = pts;
+          f.g.append("path").attr("d", line(pts)).attr("fill", "none").attr("stroke", c.col).attr("stroke-width", 2);
+        });
+        if (isB) {
+          curves.forEach(function (c) {
+            if (c.y > sMax) return;
+            f.g.append("line").attr("x1", x(c.y)).attr("x2", x(c.y)).attr("y1", y(c.ref)).attr("y2", f.ih)
+              .attr("stroke", c.col).attr("stroke-width", 1).attr("stroke-dasharray", "2 3");
+            f.g.append("circle").attr("cx", x(c.y)).attr("cy", y(c.ref)).attr("r", 4.5).attr("fill", c.col).attr("stroke", "#fff").attr("stroke-width", 2);
+          });
+        }
+        // crosshair
+        var cross = f.g.append("line").attr("y1", 0).attr("y2", f.ih).attr("stroke", "#bbb").attr("display", "none");
+        f.g.append("rect").attr("width", f.iw).attr("height", f.ih).attr("fill", "transparent")
+          .on("pointermove", function (ev) {
+            var s = Math.round(clamp(x.invert(d3.pointer(ev)[0]), 0, sMax));
+            cross.attr("x1", x(s)).attr("x2", x(s)).attr("display", null);
+            showTip(ev, "Seat " + s + " kept for…", curves.map(function (c) {
+              return { col: c.col, value: fmt$(c.fare * tail(s, c.mu, c.sd)), label: c.name };
+            }).reverse());
+          })
+          .on("pointerleave", function () { cross.attr("display", "none"); hideTip(); });
+        legend(el, curves.map(function (c) { return { name: (isB ? "EMSR of " : "") + c.name, col: c.col, line: true }; })
+          .concat(isB ? [{ name: "protection level", col: "#555" }] : []));
+      }
+
+      // Worked formulas
+      function renderWork() {
+        var cls = seat.cls, n = cls.length, C = seat.C;
+        var chips = document.getElementById("step-chips"); chips.textContent = "";
+        for (var j = 0; j < n - 1; j++) {
+          var b = document.createElement("button"); b.className = "chip" + (j === state.step ? " on" : "");
+          b.textContent = (j === 0 ? cls[0].k : cls[0].k + "–" + cls[j].k) + " vs " + cls[j + 1].k;
+          b.dataset.j = j;
+          b.addEventListener("click", function () { state.step = +this.dataset.j; renderWork(); });
+          chips.appendChild(b);
+        }
+        var j = state.step, st = seat.steps[j], lowK = cls[j + 1].k, low = cls[j + 1].fare;
+        var hiNames = cls.slice(0, j + 1).map(function (c) { return c.k; });
+        var W = document.getElementById("work"); W.textContent = "";
+        function row(label, html) {
+          var d = document.createElement("div"); d.className = "row";
+          var k = document.createElement("span"); k.className = "k"; k.textContent = label;
+          var v = document.createElement("span"); v.innerHTML = html;
+          d.appendChild(k); d.appendChild(v); W.appendChild(d);
+        }
+        var lbl = document.createElement("div"); lbl.className = "lbl";
+        lbl.textContent = "Protecting " + hiNames.join(", ") + " against " + lowK + " · " + (seat.method === "a" ? "EMSR-a" : "EMSR-b");
+        W.appendChild(lbl);
+        function zTxt(z) { return z === null ? "—" : (z < 0 ? "(−" + fmt2(-z) + ")" : fmt2(z)); }
+        if (seat.method === "b") {
+          var top = cls.slice(0, j + 1);
+          var num = top.map(function (c) { return fmtInt(c.fare) + "×" + fmtInt(c.mu); }).join(" + ");
+          var den = top.map(function (c) { return fmtInt(c.mu); }).join(" + ");
+          var sfm = d3.sum(top, function (c) { return c.fare * c.mu; });
+          if (j === 0) row("Fare of the group", "<var>f̄</var> = <var>f</var><sub>" + cls[0].k + "</sub> = <b>" + fmt$(st.fbar) + "</b>");
+          else row("Composite fare", "<var>f̄</var> = (" + num + ") / (" + den + ") = " + fmtInt(sfm) + " / " + fmtInt(st.mubar) + " = <b>" + fmt$(st.fbar) + "</b>");
+          var sds = top.map(function (c) { return fmtInt(c.sd) + "²"; }).join(" + ");
+          row("Composite demand", "<var>D̄</var> ~ N(<var>μ̄</var> = <b>" + fmtInt(st.mubar) + "</b>, <var>σ̄</var> = " + (j === 0 ? "" : "√(" + sds + ") = ") + "<b>" + fmt1(st.sdbar) + "</b>)");
+          row("Littlewood's rule", "P(<var>D̄</var> ≥ <var>y</var>) = <var>f</var><sub>" + lowK + "</sub> / <var>f̄</var> = " + fmtInt(low) + " / " + fmtInt(st.fbar) + " = <b>" + fmt3(st.ratio) + "</b>");
+          if (st.z !== null) row("Protection level", "<var>y</var> = <var>μ̄</var> + <var>σ̄</var> · Φ<sup>−1</sup>(1 − " + fmt3(st.ratio) + ") = " + fmtInt(st.mubar) + " + " + fmt1(st.sdbar) + " × " + zTxt(st.z) + " = " + fmt1(st.yraw) + " → <b>" + st.y + " seats</b>" + (st.raised ? " (raised to the level above)" : ""));
+          else row("Protection level", "<b>" + st.y + " seats</b>");
+        } else {
+          st.parts.forEach(function (p) {
+            var c = cls[p.i];
+            if (p.z === null) { row(c.k + " against " + lowK, "<var>y</var><sub>" + c.k + "</sub> = <b>" + fmt1(p.v) + "</b>"); return; }
+            row(c.k + " against " + lowK, "<var>y</var><sub>" + c.k + "</sub> = " + fmtInt(c.mu) + " + " + fmtInt(c.sd) + " × Φ<sup>−1</sup>(1 − " + fmtInt(low) + "/" + fmtInt(c.fare) + ") = " +
+              fmtInt(c.mu) + " + " + fmtInt(c.sd) + " × " + zTxt(p.z) + " = <b>" + fmt1(p.v) + "</b>" + (c.mu + c.sd * p.z < 0 ? " (floored at 0)" : ""));
+          });
+          row("Protection level", "<var>y</var> = " + st.parts.map(function (p) { return fmt1(p.v); }).join(" + ") + " = " + fmt1(st.yraw) + " → <b>" + st.y + " seats</b>" + (st.raised ? " (raised to the level above)" : ""));
+        }
+        row("Booking limit for " + lowK, "<var>C</var> − <var>y</var> = " + C + " − " + st.y + " = <b>" + (C - st.y) + "</b>");
+        var other = seat.other.steps[j].y;
+        document.getElementById("general").innerHTML = seat.method === "b"
+          ? "For comparison, EMSR-a would protect " + other + " seats at this boundary."
+          : "For comparison, EMSR-b would protect " + other + " seats at this boundary.";
+      }
+
+      // Monte Carlo small multiples
+      function smallMultiples(el, key, fmtX, domain, bins) {
+        var rows = sim.map(function (s) { return { s: s, pol: POL[s.id] }; });
+        var rowH = 54, m = { t: 6, r: 12, b: 28, l: 12 };
+        var f = frame(el, m.t + m.b + rows.length * rowH, m);
+        var x = d3.scaleLinear().domain(domain).range([0, f.iw]);
+        var bin = d3.bin().domain(domain).thresholds(bins);
+        var all = rows.map(function (r) { return bin(Array.from(r.s[key])); });
+        // Load factor: the sold-out bin (100%) can dwarf everything else, so the scale is set by the
+        // other bins and a taller sold-out bar is cut at the row height and labelled with its share.
+        var capLast = key === "lf";
+        var maxC = d3.max(all, function (bs) { return d3.max(capLast ? bs.slice(0, -1) : bs, function (b) { return b.length; }); }) || 1;
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + (rows.length * rowH) + ")").call(d3.axisBottom(x).ticks(5).tickFormat(fmtX));
+        rows.forEach(function (r, i) {
+          var g = f.g.append("g").attr("transform", "translate(0," + (i * rowH) + ")");
+          var hh = rowH - 20;
+          var yy = d3.scaleLinear().domain([0, maxC]).range([0, hh]);
+          g.append("line").attr("x1", 0).attr("x2", f.iw).attr("y1", rowH).attr("y2", rowH).attr("stroke", "#ececec");
+          all[i].forEach(function (b) {
+            if (!b.length) return;
+            var bw = Math.max(1, x(b.x1) - x(b.x0) - 1.5);
+            var bh = Math.min(hh + 6, yy(b.length));
+            g.append("rect").attr("x", x(b.x0) + 0.75).attr("width", bw).attr("y", rowH - bh).attr("height", bh)
+              .attr("fill", r.pol.col).attr("opacity", 0.85).attr("rx", 1)
+              .on("pointermove", function (ev) {
+                showTip(ev, r.pol.name, [{ col: r.pol.col, value: fmtPct(b.length / N_DEP), label: "of departures at " + fmtX(b.x0) + "–" + fmtX(b.x1) }]);
+              })
+              .on("pointerleave", hideTip);
+          });
+          var mean = key === "rev" ? r.s.mean : r.s.lfMean;
+          g.append("line").attr("x1", x(mean)).attr("x2", x(mean)).attr("y1", 15).attr("y2", rowH).attr("stroke", "#222").attr("stroke-width", 1.5);
+          g.append("text").attr("x", 0).attr("y", 11).attr("font-size", 11.5).attr("fill", "#222").text(r.pol.short || r.pol.name)
+            .append("tspan").attr("fill", "#767676").attr("font-size", 11).text(capLast ? " · sold out on " + fmtPct0(r.s.full) : "");
+          var tx = x(mean), anchor = tx > f.iw * 0.7 ? "end" : "start";
+          g.append("text").attr("x", tx + (anchor === "end" ? -4 : 4)).attr("y", 11).attr("text-anchor", anchor)
+            .attr("font-size", 11).attr("fill", "#595959").text("mean " + fmtX(mean));
+        });
+      }
+      function renderMC() {
+        var C = seat.C;
+        document.getElementById("mc-sub").textContent = "seed " + state.seed;
+        var lo = d3.min(sim, function (s) { return s.revSorted[0]; }), hi = d3.max(sim, function (s) { return s.revSorted[s.revSorted.length - 1]; });
+        var pad = (hi - lo) * 0.02 || 100;
+        smallMultiples(document.getElementById("ch-rev"), "rev", d3.format("$,.2~s"), [Math.max(0, lo - pad), hi + pad], 34);
+        // start the axis near the 0.5th percentile so the bulk of each distribution stays readable
+        var lfLo = d3.min(sim, function (s) { return d3.quantile(Array.from(s.lf).sort(d3.ascending), 0.005); });
+        lfLo = Math.max(0, Math.floor(lfLo * 20) / 20);
+        // equal-width bins with 100% starting the last one, so sold-out flights get a full bar
+        var nb = Math.max(8, Math.min(24, Math.round((1 - lfLo) * 60))), step = (1 - lfLo) / nb;
+        var th = d3.range(1, nb).map(function (i) { return lfLo + i * step; }).concat([1]);
+        smallMultiples(document.getElementById("ch-lf"), "lf", fmtPct0, [lfLo, 1 + step], th);
+
+        var T = document.getElementById("mc-table"); T.textContent = "";
+        var th = T.createTHead().insertRow();
+        ["Policy", "Mean revenue", "5th percentile", "Median", "95th percentile", "Mean load factor", "Flights sold out"].forEach(function (h) {
+          var c = document.createElement("th"); c.textContent = h; th.appendChild(c);
+        });
+        var tb = T.createTBody();
+        sim.forEach(function (s) {
+          var tr = tb.insertRow(), p = POL[s.id];
+          var td = tr.insertCell();
+          var sw = document.createElement("span"); sw.className = "sw"; sw.style.background = p.col; td.appendChild(sw);
+          td.appendChild(document.createTextNode(p.name));
+          [fmt$(s.mean), fmt$(s.p5), fmt$(s.p50), fmt$(s.p95), fmtPct(s.lfMean), fmtPct0(s.full)].forEach(function (v, k) {
+            var c = tr.insertCell(); c.textContent = v; if (k === 0) c.className = "hl";
+          });
+        });
+        var mname = seat.method === "a" ? "EMSR-a" : "EMSR-b";
+        var winTxt = "EMSR-b earns more than first come, first served on " + fmtPct0(sim.wins) + " of departures" +
+          (sim.ties > 0.005 ? " and the same on " + fmtPct0(sim.ties) + " (when demand is weak, no class ever hits its limit)." : ".");
+        document.getElementById("seed-note").textContent = winTxt;
+      }
+
+      // ───────────────────────────── seat allocation controls
+      document.getElementById("cap").addEventListener("input", function () {
+        var v = parseInt(this.value, 10), ok = isFinite(v) && v >= 20 && v <= 500;
+        this.classList.toggle("bad", !ok);
+        if (ok) { state.C = v; clearTimeout(seatTimer); seatTimer = setTimeout(recomputeSeats, 150); }
+      });
+      document.querySelectorAll("#ncls button").forEach(function (b) {
+        b.addEventListener("click", function () {
+          state.n = +this.dataset.n;
+          document.querySelectorAll("#ncls button").forEach(function (x) { x.classList.toggle("on", x === b); });
+          state.step = null; buildClassTable(); recomputeSeats();
+        });
+      });
+      document.querySelectorAll("#method button").forEach(function (b) {
+        b.addEventListener("click", function () {
+          state.method = this.dataset.m;
+          document.querySelectorAll("#method button").forEach(function (x) { x.classList.toggle("on", x === b); });
+          recomputeSeats();
+        });
+      });
+      document.getElementById("rerun").addEventListener("click", function () { state.seed += 1; recomputeSeats(); });
+      document.getElementById("reset-seats").addEventListener("click", function () {
+        state.C = 150; state.rows = DEFAULTS.map(function (r) { return Object.assign({}, r); }); state.n = 6; state.method = "b"; state.seed = 1; state.step = null;
+        var cap = document.getElementById("cap"); cap.value = 150; cap.classList.remove("bad");
+        document.querySelectorAll("#ncls button").forEach(function (x) { x.classList.toggle("on", x.dataset.n === "6"); });
+        document.querySelectorAll("#method button").forEach(function (x) { x.classList.toggle("on", x.dataset.m === "b"); });
+        buildClassTable(); recomputeSeats();
+      });
+
+      // ───────────────────────────── overbooking
+      var OB_DEFAULT = { C: 150, p: 0.92, mix: false, share: 0.30, pb: 0.85, pl: 0.95, db: 900, sp: 250 };
+      var ob = Object.assign({}, OB_DEFAULT), obRes = null;
+      var OB_FIELDS = { "ob-cap": ["C", 1, 20, 500], "ob-p": ["p", 100, 50, 100], "ob-share": ["share", 100, 0, 100],
+                        "ob-pb": ["pb", 100, 50, 100], "ob-pl": ["pl", 100, 50, 100], "ob-db": ["db", 1, 0, 100000], "ob-sp": ["sp", 1, 1, 100000] };
+      var obTimer = null;
+      Object.keys(OB_FIELDS).forEach(function (id) {
+        document.getElementById(id).addEventListener("input", function () {
+          var spec = OB_FIELDS[id], v = parseFloat(this.value);
+          var ok = isFinite(v) && v >= spec[2] && v <= spec[3];
+          this.classList.toggle("bad", !ok);
+          if (!ok) return;
+          ob[spec[0]] = spec[0] === "C" ? Math.round(v) : v / spec[1];
+          clearTimeout(obTimer); obTimer = setTimeout(recomputeOb, 120);
+        });
+      });
+      document.getElementById("ob-mix").addEventListener("change", function () {
+        ob.mix = this.checked;
+        document.getElementById("ob-mix-fields").hidden = !ob.mix;
+        document.getElementById("ob-p-row").style.opacity = ob.mix ? 0.45 : 1;
+        document.getElementById("ob-p").disabled = ob.mix;
+        recomputeOb();
+      });
+      document.getElementById("reset-ob").addEventListener("click", function () {
+        ob = Object.assign({}, OB_DEFAULT);
+        Object.keys(OB_FIELDS).forEach(function (id) {
+          var spec = OB_FIELDS[id], el = document.getElementById(id);
+          el.value = spec[0] === "C" ? ob.C : +(ob[spec[0]] * spec[1]).toFixed(2); el.classList.remove("bad");
+        });
+        document.getElementById("ob-mix").checked = false;
+        document.getElementById("ob-mix-fields").hidden = true;
+        document.getElementById("ob-p-row").style.opacity = 1;
+        document.getElementById("ob-p").disabled = false;
+        recomputeOb();
+      });
+
+      function recomputeOb() { obRes = overbook(ob); renderOb(); }
+
+      function renderOb() {
+        var r = obRes, best = r.best, C = ob.C, base = r.base;
+        var avgP = ob.mix ? ob.share * ob.pb + (1 - ob.share) * ob.pl : ob.p;
+        var tiles = [
+          { v: fmtInt(best.A), l: "bookings to accept for " + C + " seats (" + sgn((best.A - C) / C, fmtPct) + ")" },
+          { v: fmt2(best.ed), l: "passengers denied boarding per flight, on average (" + fmtPct(best.pdb) + " of flights have at least one)" },
+          { v: fmt2(best.ee), l: "empty seats per flight, on average" },
+          { v: fmt$(base.cost - best.cost), l: "saved per flight vs never overbooking (" + fmt$(base.cost) + " → " + fmt$(best.cost) + ")" }
+        ];
+        var tb = document.getElementById("ob-tiles"); tb.textContent = "";
+        tiles.forEach(function (t) {
+          var d = document.createElement("div"); d.className = "tile";
+          var b = document.createElement("b"); b.textContent = t.v;
+          var s = document.createElement("span"); s.textContent = t.l;
+          d.appendChild(b); d.appendChild(s); tb.appendChild(d);
+        });
+        document.getElementById("ob-sub").textContent = C + " seats · average show-up rate " + fmtPct(avgP);
+
+        // critical fractile work
+        var W = document.getElementById("ob-work"); W.textContent = "";
+        function row(label, html) {
+          var d = document.createElement("div"); d.className = "row";
+          var k = document.createElement("span"); k.className = "k"; k.textContent = label;
+          var v = document.createElement("span"); v.innerHTML = html;
+          d.appendChild(k); d.appendChild(v); W.appendChild(d);
+        }
+        var lbl = document.createElement("div"); lbl.className = "lbl"; lbl.textContent = "Accept one more booking while it pays";
+        W.appendChild(lbl);
+        row("Critical fractile", "<var>c</var><sub>DB</sub> / (<var>c</var><sub>DB</sub> + <var>c</var><sub>sp</sub>) = " + fmtInt(ob.db) + " / (" + fmtInt(ob.db) + " + " + fmtInt(ob.sp) + ") = <b>" + fmt3(r.ratio) + "</b>");
+        var dist = ob.mix ? "a sum of two binomials (" + fmtPct0(ob.share) + " business at " + fmtPct(ob.pb) + ", the rest at " + fmtPct(ob.pl) + ")" : "Bin(<var>A</var>, " + fmt3(ob.p) + ")";
+        row("Show-ups", "<var>S</var><sub>A</sub> ~ " + dist);
+        var prev = r.levels.filter(function (l) { return l.A === best.A - 1; })[0];
+        if (prev && best.A > C) {
+          row("Booking " + best.A, "P(<var>S</var><sub>" + prev.A + "</sub> ≤ " + (C - 1) + ") = " + fmt3(prev.below) + " &gt; " + fmt3(r.ratio) + " → <b>accept</b>");
+        } else {
+          row("At capacity", "P(<var>S</var><sub>" + C + "</sub> ≤ " + (C - 1) + ") = " + fmt3(base.below) + " ≤ " + fmt3(r.ratio) + " → overbooking doesn't pay");
+        }
+        var nxt = r.levels.filter(function (l) { return l.A === best.A; })[0];
+        if (best.A > C || !prev) row("Booking " + (best.A + 1), "P(<var>S</var><sub>" + best.A + "</sub> ≤ " + (C - 1) + ") = " + fmt3(nxt.below) + " ≤ " + fmt3(r.ratio) + " → <b>stop at " + best.A + "</b>");
+        if (ob.mix && r.fractile && r.fractile.A !== best.A) {
+          row("Note", "With two segments the extra booking's show-up rate depends on the mix, so the page takes the lowest expected cost directly (" + best.A + "); the rule alone gives " + r.fractile.A + ".");
+        }
+        if (best.A >= r.Amax) row("Note", "The optimum is at the edge of the range the page searches (" + r.Amax + "). Check the inputs.");
+
+        renderCost(); renderShow(); renderObTable();
+      }
+
+      function renderCost() {
+        var r = obRes, el = document.getElementById("ch-cost"), C = ob.C;
+        var m = { t: 14, r: 16, b: 40, l: 58 };
+        var H = el.clientWidth < 520 ? 270 : 310;
+        var f = frame(el, H, m);
+        // show the range where the total cost stays within reach of the no-overbooking cost
+        var xMax = r.Amax;
+        for (var i = r.best.A - C; i < r.levels.length; i++) { if (r.levels[i].cost >= Math.max(r.base.cost * 1.4, r.best.cost * 2.5)) { xMax = Math.min(r.Amax, r.levels[i].A + 2); break; } }
+        xMax = Math.max(xMax, C + 10);
+        var lv = r.levels.filter(function (l) { return l.A <= xMax; });
+        var x = d3.scaleLinear().domain([C, xMax]).range([0, f.iw]);
+        var yMax = d3.max(lv, function (l) { return Math.max(l.cost, l.cdb, l.csp); });
+        var yCap = Math.max(r.base.cost * 1.6, r.best.cost * 3, 50);
+        var y = d3.scaleLinear().domain([0, Math.min(yMax, yCap)]).nice().range([f.ih, 0]);
+        f.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(5).tickSize(-f.iw).tickFormat(""));
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")").call(d3.axisBottom(x).ticks(7).tickFormat(d3.format("d")));
+        f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("$,.0f")));
+        f.g.append("text").attr("x", f.iw).attr("y", f.ih + 34).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("bookings accepted");
+        var clip = "clip-cost";
+        f.svg.append("defs").append("clipPath").attr("id", clip).append("rect").attr("x", m.l).attr("y", m.t - 2).attr("width", f.iw).attr("height", f.ih + 2);
+        var series = [
+          { k: "csp", name: "Spoilage cost", col: "#3a8f5c", w: 1.75 },
+          { k: "cdb", name: "Denied boarding cost", col: "#d9480f", w: 1.75 },
+          { k: "cost", name: "Total expected cost", col: "#2a7fb5", w: 2.5 }
+        ];
+        var lg = f.svg.append("g").attr("clip-path", "url(#" + clip + ")").append("g").attr("transform", "translate(" + m.l + "," + m.t + ")");
+        series.forEach(function (s) {
+          lg.append("path").datum(lv).attr("fill", "none").attr("stroke", s.col).attr("stroke-width", s.w)
+            .attr("d", d3.line().x(function (d) { return x(d.A); }).y(function (d) { return y(d[s.k]); }));
+        });
+        var b = r.best;
+        f.g.append("line").attr("x1", x(b.A)).attr("x2", x(b.A)).attr("y1", y(b.cost)).attr("y2", f.ih).attr("stroke", "#2a7fb5").attr("stroke-dasharray", "3 3");
+        f.g.append("circle").attr("cx", x(b.A)).attr("cy", y(b.cost)).attr("r", 5).attr("fill", "#2a7fb5").attr("stroke", "#fff").attr("stroke-width", 2);
+        var labTxt = "Minimum: accept " + b.A + " · " + fmt$(b.cost);
+        var right = x(b.A) + 12 + labTxt.length * 6.6 > f.iw;
+        f.g.append("text").attr("x", x(b.A) + (right ? -8 : 8)).attr("y", y(b.cost) + 22).attr("text-anchor", right ? "end" : "start")
+          .attr("font-size", 12).attr("fill", "#222").attr("paint-order", "stroke").attr("stroke", "#fff").attr("stroke-width", 3).text(labTxt);
+        var cross = f.g.append("line").attr("y1", 0).attr("y2", f.ih).attr("stroke", "#bbb").attr("display", "none");
+        f.g.append("rect").attr("width", f.iw).attr("height", f.ih).attr("fill", "transparent")
+          .on("pointermove", function (ev) {
+            var A = Math.round(clamp(x.invert(d3.pointer(ev)[0]), C, xMax));
+            var l = lv[A - C];
+            cross.attr("x1", x(A)).attr("x2", x(A)).attr("display", null);
+            showTip(ev, A + " bookings accepted", series.slice().reverse().map(function (s) { return { col: s.col, value: fmt$(l[s.k]), label: s.name }; })
+              .concat([{ value: fmt2(l.ed), label: "denied boardings" }, { value: fmt2(l.ee), label: "empty seats" }]));
+          })
+          .on("pointerleave", function () { cross.attr("display", "none"); hideTip(); });
+        legend(el, series.slice().reverse().map(function (s) { return { name: s.name, col: s.col, line: true }; }));
+      }
+
+      function renderShow() {
+        var el = document.getElementById("ch-show"), b = obRes.best, C = ob.C, pmf = b.pmf;
+        document.getElementById("ob-dist-sub").textContent = "with " + b.A + " bookings accepted";
+        var lo = 0, hi = pmf.length - 1;
+        while (lo < pmf.length && pmf[lo] < 5e-4) lo++;
+        while (hi > 0 && pmf[hi] < 5e-4) hi--;
+        lo = Math.min(lo, C - 2); hi = Math.max(hi, C + 2);
+        var data = []; for (var s = lo; s <= hi; s++) data.push({ s: s, p: pmf[s] || 0 });
+        var m = { t: 12, r: 12, b: 40, l: 46 };
+        var f = frame(el, el.clientWidth < 520 ? 230 : 250, m);
+        var x = d3.scaleBand().domain(data.map(function (d) { return d.s; })).range([0, f.iw]).paddingInner(0.12);
+        var y = d3.scaleLinear().domain([0, d3.max(data, function (d) { return d.p; })]).nice().range([f.ih, 0]);
+        f.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(4).tickSize(-f.iw).tickFormat(""));
+        var every = Math.ceil(data.length / (f.iw / 34));
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")")
+          .call(d3.axisBottom(x).tickValues(data.map(function (d) { return d.s; }).filter(function (v) { return (v - C) % every === 0; })));
+        f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(4).tickFormat(fmtPct0));
+        f.g.append("text").attr("x", f.iw).attr("y", f.ih + 34).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("passengers at the gate");
+        f.g.selectAll("rect.bar").data(data).enter().append("rect").attr("class", "bar")
+          .attr("x", function (d) { return x(d.s); }).attr("width", x.bandwidth())
+          .attr("y", function (d) { return y(d.p); }).attr("height", function (d) { return f.ih - y(d.p); })
+          .attr("fill", function (d) { return d.s > C ? "#d9480f" : "#2a7fb5"; }).attr("rx", 1.5)
+          .on("pointermove", function (ev, d) {
+            var extra = d.s > C ? (d.s - C) + " denied boarding" : d.s < C ? (C - d.s) + " empty seats" : "exactly full";
+            showTip(ev, d.s + " passengers show up", [{ col: d.s > C ? "#d9480f" : "#2a7fb5", value: fmtPct(d.p), label: "of flights · " + extra }]);
+          })
+          .on("pointerleave", hideTip);
+        var cx = x(C) + x.bandwidth() + x.step() * x.paddingInner() / 2;
+        f.g.append("line").attr("x1", cx).attr("x2", cx).attr("y1", -4).attr("y2", f.ih).attr("stroke", "#222").attr("stroke-dasharray", "3 3");
+        f.g.append("text").attr("x", cx - 4).attr("y", 8).attr("text-anchor", "end").attr("font-size", 11.5).attr("fill", "#222").text(C + " seats");
+        legend(el, [{ name: "everyone boards", col: "#2a7fb5" }, { name: "someone is denied boarding", col: "#d9480f" }]);
+      }
+
+      function renderObTable() {
+        var r = obRes, T = document.getElementById("ob-table"); T.textContent = "";
+        var th = T.createTHead().insertRow();
+        ["Bookings accepted", "Expected cost", "Denied boardings", "Empty seats", "Flights with a denied boarding"].forEach(function (h) {
+          var c = document.createElement("th"); c.textContent = h; th.appendChild(c);
+        });
+        var tb = T.createTBody();
+        r.levels.filter(function (l) { return Math.abs(l.A - r.best.A) <= 3 || l.A === ob.C; }).forEach(function (l) {
+          var tr = tb.insertRow(); if (l.A === r.best.A) tr.className = "opt";
+          [fmtInt(l.A) + (l.A === ob.C ? " (no overbooking)" : l.A === r.best.A ? " (optimum)" : ""), fmt$(l.cost), fmt2(l.ed), fmt2(l.ee), fmtPct(l.pdb)].forEach(function (v) {
+            tr.insertCell().textContent = v;
+          });
+        });
+      }
+
+      // ───────────────────────────── tabs
+      function setTab(name, push) {
+        document.querySelectorAll("#tabs button").forEach(function (b) {
+          var on = b.dataset.tab === name; b.classList.toggle("on", on); b.setAttribute("aria-selected", on);
+        });
+        document.getElementById("panel-seats").hidden = name !== "seats";
+        document.getElementById("panel-overbooking").hidden = name !== "overbooking";
+        if (push) history.replaceState(null, "", name === "overbooking" ? "#overbooking" : location.pathname);
+        redraw();
+      }
+      document.querySelectorAll("#tabs button").forEach(function (b) {
+        b.addEventListener("click", function () { setTab(this.dataset.tab, true); });
+      });
+
+      function redraw() {
+        if (!document.getElementById("panel-seats").hidden && seat) renderSeats();
+        if (!document.getElementById("panel-overbooking").hidden && obRes) renderOb();
+      }
+      var rt = null, lastW = window.innerWidth;
+      window.addEventListener("resize", function () {
+        if (window.innerWidth === lastW) return; lastW = window.innerWidth;
+        clearTimeout(rt); rt = setTimeout(redraw, 150);
+      });
+      document.addEventListener("scroll", hideTip, { passive: true });
+
+      // ───────────────────────────── start
+      buildClassTable();
+      obRes = overbook(ob);
+      recomputeSeats();
+      setTab(location.hash === "#overbooking" ? "overbooking" : "seats", false);
+    });
+    </script>
+  </body>
+</html>
