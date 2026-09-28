@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
 <script>
@@ -10,150 +10,269 @@
 
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Airline tools</title>
-    <meta name="description" content="Visualizations and strategic tools for the airline industry, built on open data, plus short courses on how airlines work.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#EEF1F5">
+<title>Airline tools</title>
+<meta name="description" content="Visualizations and strategic tools for the airline industry, built on open data, plus short courses on how airlines work.">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+<link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Same design language as fleettracker.html: glass panels on a soft page,
+   one family (Inter) at 12 / 14 / 24 / 40, a 12 / 8 / 4 column grid. */
+@font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+:root {
+  color-scheme: light;
+  --page: #EEF1F5;
+  --ink: #151A23;
+  --ink-2: #5B6272;
+  --ink-3: #6B7282;
+  --hair: rgb(15 23 42 / .07);
+  --wash: rgb(15 23 42 / .04);
+  --glass: rgb(255 255 255 / .72);
+  --glass-2: rgb(255 255 255 / .92);
+  --edge: 0 0 0 1px rgb(15 23 42 / .06), 0 1px 2px rgb(15 23 42 / .04), 0 16px 40px -24px rgb(15 23 42 / .22), inset 0 1px 0 rgb(255 255 255 / .95);
+  --lift: 0 0 0 1px rgb(15 23 42 / .08), 0 2px 4px rgb(15 23 42 / .05), 0 24px 48px -20px rgb(15 23 42 / .28), inset 0 1px 0 #fff;
+  --blur: blur(20px) saturate(180%);
+  --air: #2455E6; --air-2: #8FA9F2; --air-t: #E8EEFD;
+  --ground: #12A150; --ground-t: #E3F5EA;
+  --maint: #C2378F; --maint-t: #F8E7F0;
+  --none: #A0A7B4;
+  --cols: 12; --gutter: 24px; --margin: 40px; --max: 1320px; --hdr: 64px; --ctl: 40px;
+  --r-panel: 16px; --r-cell: 10px; --r-pill: 6px;
+}
+@media (max-width: 1279px) { :root { --margin: 24px; } }
+@media (max-width: 839px)  { :root { --cols: 8; } }
+@media (max-width: 599px)  { :root { --cols: 4; --gutter: 16px; --margin: 16px; } }
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width">
-    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--hdr) + 24px); background: var(--page); }
+body {
+  margin: 0; min-height: 100vh;
+  font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 14px; line-height: 20px; color: var(--ink); -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(1000px 600px at 0% -10%, rgb(36 85 230 / .09), transparent 70%),
+    radial-gradient(800px 520px at 100% 0%, rgb(194 55 143 / .05), transparent 70%),
+    radial-gradient(1000px 700px at 50% 115%, rgb(18 161 80 / .05), transparent 70%),
+    var(--page);
+  background-attachment: fixed;
+}
+h1, h2, h3, p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-    <style>
-      /* Same slim top-bar pattern as airflows.html / food.html:
-         this page opts out of the fixed header / narrow section columns. */
-      html, body { margin: 0; padding: 0; }
+.wrap { width: 100%; max-width: calc(var(--max) + 2 * var(--margin)); margin-inline: auto; padding-inline: var(--margin); }
+.grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); column-gap: var(--gutter); row-gap: var(--gutter); }
+.panel { background: var(--glass); box-shadow: var(--edge); border-radius: var(--r-panel); min-width: 0; -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); }
+.pill {
+  display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: var(--r-pill);
+  font-size: 12px; line-height: 16px; white-space: nowrap;
+  background: var(--glass-2); box-shadow: 0 0 0 1px var(--hair), inset 0 1px 0 #fff; color: var(--ink-2);
+}
+.pill b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--c); align-self: center; }
+.ico { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.btn {
+  height: var(--ctl); padding: 0 16px; border-radius: var(--r-cell); background: var(--glass-2);
+  box-shadow: 0 0 0 1px rgb(15 23 42 / .09), 0 1px 2px rgb(15 23 42 / .05), inset 0 1px 0 #fff;
+  display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; font-weight: 500; transition: background-color .15s;
+}
+.btn.dark { background: var(--ink); color: #fff; box-shadow: 0 1px 2px rgb(15 23 42 / .2), inset 0 1px 0 rgb(255 255 255 / .12); }
 
-      :root {
-        --ink: #222;
-        --text: #595959;
-        --muted: #767676;
-        --line: #e5e5e5;
-        --soft: #f7f7f7;
-        --link: #39c;
-      }
+/* header */
+.hdr { position: sticky; top: 0; z-index: 10; background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); box-shadow: 0 1px 0 var(--hair), inset 0 -1px 0 rgb(255 255 255 / .6); }
+.hdr .wrap { height: var(--hdr); display: flex; align-items: center; gap: 24px; }
+.home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: var(--r-cell); }
+.home:hover { background: var(--wash); }
+.home .mk { width: 24px; height: 24px; border-radius: 7px; background: var(--ink); display: grid; place-items: center; }
+.home .mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+.tabs { display: flex; align-self: stretch; gap: 8px; }
+.tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--ink-2); font-weight: 500; }
+.tab:hover { color: var(--ink); }
+.grow { flex: 1; }
+@media (max-width: 599px) { .tabs, .hdr .pill { display: none; } }
 
-      .top-bar {
-        padding: 18px 30px 14px;
-        border-bottom: 1px solid var(--line);
-        background: #fff;
-      }
-      .top-bar h1 { margin: 0 0 6px; }
-      .top-bar h1 a { color: var(--ink); text-decoration: none; }
-      .top-bar h1 a:hover { color: var(--link); }
-      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+/* hero */
+main { padding-top: 48px; }
+.hero { align-items: end; }
+.hero .t { grid-column: span 8; }
+.hero h1 { font-size: 40px; line-height: 48px; font-weight: 600; letter-spacing: -0.03em; }
+.hero p { margin-top: 16px; max-width: 640px; color: var(--ink-2); font-size: 16px; line-height: 24px; }
+.hero .stats { grid-column: span 4; justify-self: end; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 839px) { .hero .t, .hero .stats { grid-column: 1 / -1; justify-self: start; justify-content: flex-start; } }
+@media (max-width: 599px) { .hero h1 { font-size: 32px; line-height: 40px; } }
 
-      .content {
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 30px 30px 70px;
-      }
-      .intro h2 { margin: 0 0 8px; font-size: 26px; }
-      .intro p { margin: 0; max-width: 680px; }
+/* sections */
+.sec { margin-top: 48px; }
+.sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; }
+.sec-head h2 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; }
+.sec-head span { color: var(--ink-2); font-size: 14px; }
 
-      .group { margin-top: 38px; }
-      .group-head {
-        display: flex; align-items: baseline; gap: 10px;
-        border-bottom: 1px solid var(--line);
-        padding-bottom: 8px; margin-bottom: 16px;
-      }
-      .group-head h3 { margin: 0; font-size: 17px; color: var(--ink); }
-      .group-head span { color: var(--muted); font-size: 13px; }
+/* tool cards: halves */
+.tool { grid-column: span 6; display: grid; grid-template-rows: auto 1fr; overflow: hidden; transition: box-shadow .2s, transform .2s; }
+.tool:hover { box-shadow: var(--lift); transform: translateY(-2px); }
+.tool .viz { height: 216px; position: relative; border-bottom: 1px solid var(--hair); background: linear-gradient(180deg, rgb(255 255 255 / .55), rgb(255 255 255 / .15)); }
+.tool .viz svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tool .body { padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+.tool .meta { display: flex; gap: 8px; flex-wrap: wrap; }
+.tool h3 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; }
+.tool p { color: var(--ink-2); max-width: 520px; }
+.tool .cta { margin-top: 4px; }
+.tool:hover .btn.dark { background: #000; }
+@media (max-width: 839px) { .tool { grid-column: 1 / -1; } }
 
-      .cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-        gap: 14px;
-      }
-      .card {
-        display: flex; flex-direction: column;
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 16px 18px 14px;
-        background: #fff;
-        color: var(--text);
-        text-decoration: none;
-        transition: border-color .15s, box-shadow .15s, transform .15s;
-      }
-      .card:hover {
-        color: var(--text);
-        border-color: #cfd8df;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
-        transform: translateY(-1px);
-      }
-      .kicker {
-        font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
-        color: var(--muted); margin-bottom: 6px;
-      }
-      .card h4 { margin: 0 0 6px; font-size: 16px; color: var(--ink); font-weight: 500; }
-      .card p { margin: 0 0 12px; font-size: 13.5px; line-height: 1.5; flex: 1; }
-      .card .go { font-size: 13px; color: var(--link); }
-      .card:hover .go { color: #069; }
+/* knowledge cards: thirds */
+.course { grid-column: span 4; padding: 24px; display: flex; flex-direction: column; gap: 12px; transition: box-shadow .2s, transform .2s; }
+.course:hover { box-shadow: var(--lift); transform: translateY(-2px); }
+.course .num { font-size: 40px; line-height: 48px; font-weight: 600; letter-spacing: -0.03em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.course .num small { font-size: 14px; letter-spacing: 0; color: var(--ink-3); font-weight: 500; margin-left: 6px; }
+.course h3 { font-size: 14px; line-height: 20px; font-weight: 600; }
+.course p { color: var(--ink-2); flex: 1; }
+.course .go { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+.course:hover .go .ico { transform: translateX(2px); }
+.go .ico { transition: transform .15s; }
+@media (max-width: 839px) { .course { grid-column: span 4; } }
 
-      .more { margin-top: 30px; color: var(--muted); font-size: 13px; }
+/* footer */
+.foot { margin-top: 64px; padding-block: 24px 48px; box-shadow: inset 0 1px 0 var(--hair); font-size: 12px; line-height: 16px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.foot a { color: var(--ink); text-decoration: underline; text-decoration-color: rgb(15 23 42 / .2); text-underline-offset: 3px; }
+.foot .r { margin-left: auto; }
 
-      @media (max-width: 720px) {
-        .top-bar { padding: 14px 16px 12px; }
-        .content { padding: 22px 16px 50px; }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="top-bar">
-      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
-      <p>Visualizations and strategic tools for the airline industry.</p>
+@media (prefers-reduced-motion: reduce) { .tool, .course, .go .ico { transition: none; } .tool:hover, .course:hover { transform: none; } }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></symbol>
+</svg>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="home" href="/" aria-label="Grégoire Maillard, home"><span class="mk"><i></i></span>Grégoire Maillard</a>
+    <nav class="tabs" aria-label="Sections">
+      <a class="tab" href="#tools">Tools</a>
+      <a class="tab" href="#knowledge">Knowledge</a>
+    </nav>
+    <div class="grow"></div>
+    <span class="pill"><b>2</b> tools · <b>3</b> courses</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero grid">
+    <div class="t">
+      <h1>Airline tools</h1>
+      <p>Visualizations and strategic tools that make the airline business easier to see: where the planes are, where people want to fly, and how the commercial side works. Built on open data, with short courses from my years in Revenue Management and Loyalty.</p>
     </div>
-
-    <div class="content">
-      <div class="intro">
-        <h2>Airline tools</h2>
-        <p>Tools that make the airline business easier to see: where the planes are, where people want to fly, and how the commercial side works. They're built on open data and short courses from my years in Revenue Management and Loyalty.</p>
-      </div>
-
-      <section class="group" aria-labelledby="tools">
-        <div class="group-head"><h3 id="tools">Tools</h3><span>Live data and interactive visualizations</span></div>
-        <div class="cards">
-          <a class="card" href="/fleettracker.html">
-            <div class="kicker">Live · every 5 minutes</div>
-            <h4>Fleet tracker</h4>
-            <p>Every Air Canada, United, Air France and Etihad aircraft on a globe: in the air with its route, parked at an airport, or likely in maintenance.</p>
-            <span class="go">Open the tracker →</span>
-          </a>
-          <a class="card" href="/airflows.html">
-            <div class="kicker">Interactive map</div>
-            <h4>Air travel flows</h4>
-            <p>The biggest city-pair markets by passengers actually travelling, and which ones still have no nonstop flight.</p>
-            <span class="go">Open the map →</span>
-          </a>
-        </div>
-      </section>
-
-      <section class="group" aria-labelledby="knowledge">
-        <div class="group-head"><h3 id="knowledge">Knowledge</h3><span>Beginner's guides to the commercial side of an airline</span></div>
-        <div class="cards">
-          <a class="card" href="/rm101.html">
-            <div class="kicker">Course</div>
-            <h4>Revenue Management 101</h4>
-            <p>How airlines price seats and fill planes as profitably as possible: a mix of economics, statistics and a bit of psychology.</p>
-            <span class="go">Read →</span>
-          </a>
-          <a class="card" href="/loyalty101.html">
-            <div class="kicker">Course</div>
-            <h4>Loyalty 101</h4>
-            <p>Why airlines give away miles and still come out ahead, and how the points currency behind a loyalty program is managed.</p>
-            <span class="go">Read →</span>
-          </a>
-          <a class="card" href="/np101.html">
-            <div class="kicker">Course</div>
-            <h4>Network Planning 101</h4>
-            <p>How airlines decide where to fly, how often, when, and with what aircraft.</p>
-            <span class="go">Read →</span>
-          </a>
-        </div>
-      </section>
-
-      <p class="more">More tools to come.</p>
+    <div class="stats">
+      <span class="pill"><i class="dot" style="--c:var(--air)"></i>Live data</span>
+      <span class="pill">Open sources</span>
     </div>
-  </body>
+  </div>
+
+  <section class="sec" id="tools" aria-labelledby="h-tools">
+    <div class="sec-head"><h2 id="h-tools">Tools</h2><span>Live data and interactive visualizations</span></div>
+    <div class="grid">
+
+      <a class="panel tool" href="/fleettracker.html">
+        <div class="viz" aria-hidden="true">
+          <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="gl" cx="42%" cy="35%" r="70%"><stop offset="0" stop-color="#fff"/><stop offset=".7" stop-color="#F3F5F9"/><stop offset="1" stop-color="#DDE2EA"/></radialGradient>
+              <clipPath id="gc"><circle cx="300" cy="190" r="170"/></clipPath>
+            </defs>
+            <circle cx="300" cy="190" r="170" fill="url(#gl)"/>
+            <g clip-path="url(#gc)" fill="none" stroke="rgb(15 23 42 / .07)">
+              <ellipse cx="300" cy="190" rx="170" ry="40"/><ellipse cx="300" cy="190" rx="170" ry="95"/><ellipse cx="300" cy="190" rx="170" ry="140"/>
+              <ellipse cx="300" cy="190" rx="50" ry="170"/><ellipse cx="300" cy="190" rx="110" ry="170"/><line x1="300" y1="20" x2="300" y2="360"/>
+            </g>
+            <g clip-path="url(#gc)" fill="none" stroke="#8FA9F2" stroke-width="1.2" opacity=".9">
+              <path d="M205 118 Q300 40 420 96"/><path d="M230 150 Q330 90 455 150"/><path d="M180 170 Q260 120 350 132"/><path d="M262 104 Q350 60 400 70"/>
+            </g>
+            <g clip-path="url(#gc)">
+              <g fill="#2455E6"><circle cx="286" cy="66" r="3.2"/><circle cx="352" cy="102" r="3.2"/><circle cx="318" cy="112" r="3.2"/><circle cx="410" cy="128" r="3.2"/><circle cx="246" cy="138" r="3.2"/><circle cx="372" cy="78" r="3.2"/><circle cx="222" cy="104" r="3.2"/><circle cx="440" cy="154" r="3.2"/></g>
+              <g fill="#12A150"><circle cx="205" cy="118" r="3.2"/><circle cx="420" cy="96" r="3.2"/><circle cx="455" cy="150" r="3.2"/><circle cx="180" cy="170" r="3.2"/><circle cx="350" cy="132" r="3.2"/></g>
+              <g fill="#C2378F"><circle cx="262" cy="176" r="3.2"/><circle cx="398" cy="186" r="3.2"/></g>
+            </g>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="meta">
+            <span class="pill"><i class="dot" style="--c:var(--air)"></i>Live · every 5 min</span>
+            <span class="pill"><b>4</b> airlines</span>
+          </div>
+          <h3>Fleet tracker</h3>
+          <p>Every Air Canada, United, Air France and Etihad aircraft on a live globe: in the air with its route, parked at an airport, or likely in maintenance.</p>
+          <div class="cta"><span class="btn dark">Open the tracker<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+        </div>
+      </a>
+
+      <a class="panel tool" href="/airflows.html">
+        <div class="viz" aria-hidden="true">
+          <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+            <g fill="rgb(15 23 42 / .06)">
+              <path d="M60 70 Q120 40 210 52 Q300 44 380 58 Q470 50 540 78 Q560 120 520 150 Q470 176 400 170 Q330 186 250 176 Q170 184 110 160 Q60 130 60 70Z"/>
+            </g>
+            <g fill="none" stroke-linecap="round">
+              <path d="M130 120 Q260 40 470 96" stroke="#2455E6" stroke-width="3" opacity=".85"/>
+              <path d="M150 150 Q300 90 500 130" stroke="#2455E6" stroke-width="2.2" opacity=".6"/>
+              <path d="M210 90 Q330 50 430 120" stroke="#2455E6" stroke-width="1.6" opacity=".5"/>
+              <path d="M300 150 Q380 110 470 96" stroke="#2455E6" stroke-width="1.2" opacity=".45"/>
+              <path d="M130 120 Q220 150 300 150" stroke="#8FA9F2" stroke-width="1.4"/>
+              <path d="M250 70 Q400 20 520 84" stroke="#151A23" stroke-width="1.6" stroke-dasharray="4 5" opacity=".75"/>
+            </g>
+            <g fill="#fff" stroke="#151A23" stroke-width="1.5">
+              <circle cx="130" cy="120" r="5"/><circle cx="470" cy="96" r="6"/><circle cx="150" cy="150" r="4"/><circle cx="500" cy="130" r="5"/>
+              <circle cx="210" cy="90" r="4"/><circle cx="430" cy="120" r="4"/><circle cx="300" cy="150" r="4"/><circle cx="250" cy="70" r="4"/><circle cx="520" cy="84" r="4"/>
+            </g>
+          </svg>
+        </div>
+        <div class="body">
+          <div class="meta">
+            <span class="pill">Interactive map</span>
+            <span class="pill">Passenger markets</span>
+          </div>
+          <h3>Air travel flows</h3>
+          <p>The biggest city-pair markets by passengers actually travelling, and which ones still have no nonstop flight.</p>
+          <div class="cta"><span class="btn dark">Open the map<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <section class="sec" id="knowledge" aria-labelledby="h-know">
+    <div class="sec-head"><h2 id="h-know">Knowledge</h2><span>Beginner's guides to the commercial side of an airline</span></div>
+    <div class="grid">
+      <a class="panel course" href="/rm101.html">
+        <div class="num">RM<small>101</small></div>
+        <h3>Revenue Management</h3>
+        <p>How airlines price seats and fill planes as profitably as possible: a mix of economics, statistics and a bit of psychology.</p>
+        <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="panel course" href="/loyalty101.html">
+        <div class="num">Loyalty<small>101</small></div>
+        <h3>Loyalty programs</h3>
+        <p>Why airlines give away miles and still come out ahead, and how the points currency behind a loyalty program is managed.</p>
+        <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="panel course" href="/np101.html">
+        <div class="num">NP<small>101</small></div>
+        <h3>Network Planning</h3>
+        <p>How airlines decide where to fly, how often, when, and with what aircraft.</p>
+        <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>By <a href="/">Grégoire Maillard</a></span>
+    <span>More tools to come</span>
+    <span class="r">Personal project, not affiliated with any airline.</span>
+  </footer>
+</main>
+
+</body>
 </html>
