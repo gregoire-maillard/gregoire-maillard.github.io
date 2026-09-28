@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Airline tools</title>
+    <meta name="description" content="Visualizations and strategic tools for the airline industry, built on open data, plus short courses on how airlines work.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / food.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 30px 30px 70px;
+      }
+      .intro h2 { margin: 0 0 8px; font-size: 26px; }
+      .intro p { margin: 0; max-width: 680px; }
+
+      .group { margin-top: 38px; }
+      .group-head {
+        display: flex; align-items: baseline; gap: 10px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 8px; margin-bottom: 16px;
+      }
+      .group-head h3 { margin: 0; font-size: 17px; color: var(--ink); }
+      .group-head span { color: var(--muted); font-size: 13px; }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: 14px;
+      }
+      .card {
+        display: flex; flex-direction: column;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 16px 18px 14px;
+        background: #fff;
+        color: var(--text);
+        text-decoration: none;
+        transition: border-color .15s, box-shadow .15s, transform .15s;
+      }
+      .card:hover {
+        color: var(--text);
+        border-color: #cfd8df;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
+        transform: translateY(-1px);
+      }
+      .kicker {
+        font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+        color: var(--muted); margin-bottom: 6px;
+      }
+      .card h4 { margin: 0 0 6px; font-size: 16px; color: var(--ink); font-weight: 500; }
+      .card p { margin: 0 0 12px; font-size: 13.5px; line-height: 1.5; flex: 1; }
+      .card .go { font-size: 13px; color: var(--link); }
+      .card:hover .go { color: #069; }
+
+      .more { margin-top: 30px; color: var(--muted); font-size: 13px; }
+
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 22px 16px 50px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>Visualizations and strategic tools for the airline industry.</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Airline tools</h2>
+        <p>Tools that make the airline business easier to see: where the planes are, where people want to fly, and how the commercial side works. They're built on open data and short courses from my years in Revenue Management and Loyalty.</p>
+      </div>
+
+      <section class="group" aria-labelledby="tools">
+        <div class="group-head"><h3 id="tools">Tools</h3><span>Live data and interactive visualizations</span></div>
+        <div class="cards">
+          <a class="card" href="/fleettracker.html">
+            <div class="kicker">Live · every 5 minutes</div>
+            <h4>Fleet tracker</h4>
+            <p>Every Air Canada, United, Air France and Etihad aircraft on a globe: in the air with its route, parked at an airport, or likely in maintenance.</p>
+            <span class="go">Open the tracker →</span>
+          </a>
+          <a class="card" href="/airflows.html">
+            <div class="kicker">Interactive map</div>
+            <h4>Air travel flows</h4>
+            <p>The biggest city-pair markets by passengers actually travelling, and which ones still have no nonstop flight.</p>
+            <span class="go">Open the map →</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="knowledge">
+        <div class="group-head"><h3 id="knowledge">Knowledge</h3><span>Beginner's guides to the commercial side of an airline</span></div>
+        <div class="cards">
+          <a class="card" href="/rm101.html">
+            <div class="kicker">Course</div>
+            <h4>Revenue Management 101</h4>
+            <p>How airlines price seats and fill planes as profitably as possible: a mix of economics, statistics and a bit of psychology.</p>
+            <span class="go">Read →</span>
+          </a>
+          <a class="card" href="/loyalty101.html">
+            <div class="kicker">Course</div>
+            <h4>Loyalty 101</h4>
+            <p>Why airlines give away miles and still come out ahead, and how the points currency behind a loyalty program is managed.</p>
+            <span class="go">Read →</span>
+          </a>
+          <a class="card" href="/np101.html">
+            <div class="kicker">Course</div>
+            <h4>Network Planning 101</h4>
+            <p>How airlines decide where to fly, how often, when, and with what aircraft.</p>
+            <span class="go">Read →</span>
+          </a>
+        </div>
+      </section>
+
+      <p class="more">More tools to come.</p>
+    </div>
+  </body>
+</html>

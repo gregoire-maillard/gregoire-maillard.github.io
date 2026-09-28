@@ -101,7 +101,7 @@
       .controls input[type=search] {
         font: inherit; font-size: 13px; color: var(--ink);
         border: 1px solid var(--line); border-radius: 6px; padding: 5px 9px; background: #fff;
-        flex: 0 1 240px; min-width: 0;
+        flex: 0 1 280px; min-width: 0;
       }
       .focus-pill {
         display: none; align-items: center; gap: 6px;
@@ -198,7 +198,79 @@
         .content { padding: 18px 16px 40px; }
         .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .map-legend { position: static; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
-        #map .lab { font-size: 13px; }
+        #map .lab { font-size: 15px; }
+      }
+      /* ── View switcher: country × market ── */
+      .switch { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 20px 0 0; }
+      .views {
+        display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff;
+        flex-wrap: wrap; gap: 2px;
+      }
+      .views button {
+        border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text);
+        padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .views button:disabled { color: #c4c4c4; cursor: default; }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+      .note-line:empty { display: none; }
+      #map .sphere { fill: #fbfcfd; }
+      #map .grat { fill: none; stroke: #eceae4; stroke-width: .5; }
+      #map .arc.intl { stroke: var(--direct); stroke-opacity: .45; }
+      #map .arc.minor { stroke: #7f95a6; stroke-opacity: .45; }
+      #map .arc.gone { stroke: #9aa0a6; stroke-opacity: .7; stroke-dasharray: 4 3; }
+      #map .city.far { fill: #555; stroke: #fff; }
+      #map .city.far:hover, #map .city.far.sel { stroke: var(--ink); fill: #333; }
+      .controls.no-top .lbl, .controls.no-top #topn { display: none; }
+      /* Lines keep their width when the map is zoomed */
+      #map .arc, #map .hit, #map .states, #map .borders, #map .grat { vector-effect: non-scaling-stroke; }
+      /* Hovering a city lights up its routes and fades the rest */
+      #map.hovering g.f .arc { stroke-opacity: .05 !important; }
+      #map.hovering g.f.lit .arc { stroke-opacity: .9 !important; }
+      .map-wrap .map-legend {
+        position: static; border: 0; border-top: 1px solid var(--line); border-radius: 0;
+        background: #fff; padding: 8px 14px; display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; line-height: 1.5;
+      }
+      .map-legend .grp { white-space: nowrap; }
+      .zoom-ctl { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 4; }
+      .zoom-ctl button {
+        width: 30px; height: 30px; border: 1px solid var(--line); background: rgba(255,255,255,.95); border-radius: 6px;
+        font: inherit; font-size: 16px; line-height: 1; color: var(--ink); cursor: pointer; padding: 0;
+      }
+      .zoom-ctl button:hover { border-color: #bdbdbd; }
+      .zoom-ctl button.reset { font-size: 12px; }
+      .zoom-hint { position: absolute; top: 12px; left: 12px; font-size: 11.5px; color: var(--muted); background: rgba(255,255,255,.85); padding: 2px 6px; border-radius: 4px; pointer-events: none; }
+      /* Table: sortable headers, bars behind the volume */
+      table.flows th.sort { cursor: pointer; user-select: none; }
+      table.flows th.sort:hover { color: var(--ink); }
+      table.flows th.sort.on { color: var(--ink); }
+      table.flows th.sort.on::after { content: " ↓"; }
+      table.flows th.sort.on.asc::after { content: " ↑"; }
+      table.flows td.bar {
+        background-image: linear-gradient(90deg, rgb(42 127 181 / 16%) 0 100%);
+        background-repeat: no-repeat; background-position: right 6px center; background-size: calc((100% - 12px) * var(--w)) 64%;
+      }
+      .rk-m { display: none; }
+      .sort-m { display: none; font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; background: #fff; color: var(--ink); }
+      @media (max-width: 720px) {
+        .views { display: flex; border-radius: 10px; width: 100%; }
+        .views button { flex: 1 1 auto; border-radius: 8px; padding: 6px 8px; }
+        .zoom-hint { display: none; }
+        /* Table becomes one card per route */
+        .sort-m { display: inline-block; }
+        .tbl-wrap { overflow: visible; }
+        table.flows { min-width: 0; }
+        table.flows thead { display: none; }
+        table.flows, table.flows tbody, table.flows tr, table.flows td { display: block; width: 100%; }
+        table.flows tr { padding: 10px 0; border-bottom: 1px solid var(--line); }
+        table.flows td { border: 0; padding: 2px 0; display: flex; justify-content: space-between; gap: 12px; text-align: right; }
+        table.flows td::before { content: attr(data-label); color: var(--muted); font-size: 12px; text-align: left; flex: none; }
+        table.flows td.rank { display: none; }
+        table.flows td.pair { display: block; font-weight: 600; text-align: left; padding-bottom: 4px; }
+        table.flows td.pair::before { content: none; }
+        table.flows td.bar { background-position: right center; background-size: calc(55% * var(--w)) 70%; }
+        .rk-m { display: inline; color: var(--muted); font-weight: 400; margin-right: 4px; }
       }
     </style>
   </head>
@@ -211,16 +283,22 @@
     <div class="content">
       <div class="intro">
         <h2>Air travel flows</h2>
-        <p>The largest origin–destination markets between US cities, ranked by how many passengers actually travel between them (not how many seats are flown). Markets with no nonstop flight between the two cities are highlighted.</p>
-        <div class="stamp" id="stamp">Loading…</div>
+        <p id="intro-text">Loading…</p>
+        <div class="stamp" id="stamp"></div>
       </div>
+
+      <div class="switch">
+        <div class="views" id="country" role="tablist" aria-label="Country"></div>
+        <div class="views" id="market" role="tablist" aria-label="Market"></div>
+      </div>
+      <p class="note-line" id="note-line"></p>
 
       <div class="tiles" id="tiles"></div>
 
-      <div class="controls">
+      <div class="controls" id="controls">
         <label class="lbl">Show the top</label>
         <div class="chips" id="topn"></div>
-        <input id="q" type="search" list="city-list" placeholder="Focus on a city: Boston, Tucson…" aria-label="Focus on a city">
+        <input id="q" type="search" list="city-list" placeholder="Focus on a city" aria-label="Focus on a city">
         <datalist id="city-list"></datalist>
         <span class="focus-pill" id="focus"><span id="focus-name"></span><button type="button" aria-label="Clear city" id="focus-clear">✕</button></span>
       </div>
@@ -235,21 +313,12 @@
 
       <div class="table-head">
         <h3 id="tbl-title">All markets</h3>
-        <span>Passengers per day = both directions combined, averaged over the year.</span>
+        <select class="sort-m" id="sort-m" aria-label="Sort by"></select>
+        <span id="tbl-note"></span>
       </div>
       <div class="tbl-wrap">
         <table class="flows">
-          <thead>
-            <tr>
-              <th class="num">#</th>
-              <th>City pair</th>
-              <th class="num">Passengers / day</th>
-              <th class="num">Distance</th>
-              <th class="num">Avg fare</th>
-              <th>Largest carrier</th>
-              <th>Nonstop?</th>
-            </tr>
-          </thead>
+          <thead><tr id="thead"></tr></thead>
           <tbody id="tbody"></tbody>
         </table>
       </div>
@@ -257,10 +326,14 @@
 
       <div class="method">
         <h3>How it works</h3>
-        <p><b>Demand:</b> passenger counts come from the US Department of Transportation's <a href="https://www.transportation.gov/policy/aviation-policy/domestic-airline-consumer-airfare-report" target="_blank" rel="noopener">Domestic Airline Consumer Airfare Report</a> (<a href="https://data.transportation.gov/Aviation/Consumer-Airfare-Report-Table-6-Contiguous-State-C/yj5y-b2ir" target="_blank" rel="noopener">Table 6</a>), which is built from the DB1B survey, a 10% sample of all airline tickets. It measures true origin and destination: someone flying Boston to Tucson via Dallas counts once for Boston–Tucson and not at all for Boston–Dallas. The four quarters from Q2 2025 to Q1 2026 are averaged, so seasonal markets aren't over- or under-counted. Only the 48 contiguous states are covered.</p>
-        <p><b>Cities, not airports:</b> the DOT groups airports serving the same area into one city market (New York = JFK, LaGuardia, Newark, White Plains and Islip; Los Angeles includes Orange County, Burbank, Ontario and Long Beach; Miami includes Fort Lauderdale). A market counts as having a nonstop if any airport on one side has one to any airport on the other.</p>
-        <p><b>Nonstops:</b> scheduled nonstop routes come from the open <a href="https://github.com/Jonty/airline-route-data" target="_blank" rel="noopener">airline-route-data</a> project, which collects published schedules from FlightsFrom. <i>Nonstop</i> means a route was scheduled in September 2026. <i>Seasonal or dropped</i> means it was scheduled at some point in March–May 2026 but not in September. <i>No nonstop</i> means none was found at any point in those snapshots. Schedule scrapes can miss a route, so treat a single pair with some care.</p>
-        <p><b>Canada:</b> the goal is to add Canadian and transborder markets. Statistics Canada's public city-pair origin–destination tables stop in 2018 and it does not publish domestic city pairs at all, so there is no current public equivalent of the DOT data yet.</p>
+        <p><b>US domestic, demand:</b> passenger counts come from the US Department of Transportation's <a href="https://www.transportation.gov/policy/aviation-policy/domestic-airline-consumer-airfare-report" target="_blank" rel="noopener">Domestic Airline Consumer Airfare Report</a> (<a href="https://data.transportation.gov/Aviation/Consumer-Airfare-Report-Table-6-Contiguous-State-C/yj5y-b2ir" target="_blank" rel="noopener">Table 6</a>), which is built from the DB1B survey, a 10% sample of all airline tickets. It measures true origin and destination: someone flying Boston to Tucson via Dallas counts once for Boston–Tucson and not at all for Boston–Dallas. The four quarters from Q2 2025 to Q1 2026 are averaged, so seasonal markets aren't over- or under-counted. Only the 48 contiguous states are covered.</p>
+        <p><b>Cities, not airports:</b> the DOT groups airports serving the same area into one city market (New York = JFK, LaGuardia, Newark, White Plains and Islip; Los Angeles includes Orange County, Burbank, Ontario and Long Beach; Miami includes Fort Lauderdale). A market counts as having a nonstop if any airport on one side has one to any airport on the other. In the Canadian views, Toronto combines Pearson and Billy Bishop, London combines Heathrow and Gatwick, and Tokyo combines Haneda and Narita.</p>
+        <p><b>Nonstop schedules:</b> scheduled nonstop routes come from the open <a href="https://github.com/Jonty/airline-route-data" target="_blank" rel="noopener">airline-route-data</a> project, which collects published schedules from FlightsFrom. <i>Nonstop</i> means a route was scheduled in September 2026. <i>Seasonal or dropped</i> means it was scheduled at some point in March–May 2026 but not in September. <i>No nonstop</i> means none was found at any point in those snapshots. Schedule scrapes can miss a route, so treat a single pair with some care.</p>
+        <p><b>US – Europe and US – Asia:</b> the DOT does collect international itineraries, but keeps them confidential, and foreign airlines don't report them at all, so there is no public origin–destination data for these markets. These two views use <a href="https://www.transtats.bts.gov/DL_SelectFields.aspx?gnoyr_VQ=FJE&QO_fu146_anzr=Nv4%20Pn44vr45" target="_blank" rel="noopener">T-100 International Segment</a> data instead: every passenger carried on a scheduled nonstop flight between a US airport and a foreign one, by any airline, from July 2025 to June 2026. That counts people who connect: a Denver passenger flying to Rome through Frankfurt shows up only on Denver–Frankfurt. So these maps show where the nonstop flights go and how full they are, not where people are ultimately travelling. Routes with fewer than 20,000 passengers a year are left out. "Asia" includes the Middle East; Turkey is counted with Europe; Guam and the Northern Mariana Islands are left out.</p>
+        <p><b>Canada domestic:</b> Canada doesn't publish passengers by route. Statistics Canada's origin–destination tables stop in 2018 and never covered domestic city pairs publicly. The best public figure is Transport Canada's <a href="https://tdih-cdit.tc.canada.ca/en/addendum-tables-2024/A13" target="_blank" rel="noopener">top 25 domestic markets</a>, measured in scheduled seats per day in each direction for 2024 (from OAG), with each airline's share. Those 25 are drawn by size. Every other nonstop route between Canadian airports with at least 150,000 passengers a year (<a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=2310025301" target="_blank" rel="noopener">Statistics Canada</a>) is drawn as a thin line from the September 2026 schedules, without a volume.</p>
+        <p><b>Canada – Europe:</b> passenger counts are reported by the European end of each route: <a href="https://ec.europa.eu/eurostat/databrowser/view/avia_par_fr/default/table" target="_blank" rel="noopener">Eurostat</a> route data for EU countries, Switzerland, Iceland and Turkey, and the <a href="https://www.caa.co.uk/data-and-analysis/uk-aviation-market/airports/uk-airport-data/uk-airport-data-2024/annual-2024/" target="_blank" rel="noopener">UK Civil Aviation Authority</a> for British airports. Both count every passenger on nonstop flights in 2024, the latest full year they publish, so like the US international views they show nonstop traffic rather than true origin and destination. Only the main airports report route data, and routes under 20,000 passengers are left out. Airlines are taken from the September 2026 schedules; a dashed grey line means the route carried passengers in 2024 but isn't scheduled any more.</p>
+        <p><b>Canada – Asia:</b> no public source gives passengers on these routes: Canada doesn't publish them, and the Asian and Middle East countries at the other end mostly don't either. This view shows the nonstop network from the September 2026 schedules, with the airlines on each route, but no volumes.</p>
+        <p><b>Latin America:</b> Mexico, Central and South America, Cuba, the Dominican Republic and Haiti. French Guiana, Martinique and Guadeloupe are part of France, so flights to Paris count as French domestic and are left out. The Asia view and, for now, the Europe view show the nonstop network from the September 2026 schedules, with the airlines on each route but no volumes. Schedules include a few "tag" flights that stop on the way, such as Beijing–Tijuana–Mexico City, which appear as two routes.</p>
         <p>This is a personal project and isn't affiliated with any airline.</p>
       </div>
     </div>
@@ -269,30 +342,104 @@
     <script>
     window.addEventListener("DOMContentLoaded", function () {
       // ───────────────────────────── config
-      var DATA_URL = "assets/data/us-od-flows.json";
+      var DOM_URL = "assets/data/us-od-flows.json";
+      var INTL_URL = "assets/data/us-intl-flows.json";
+      var CA_URL = "assets/data/canada-flows.json";
+      var LA_URL = "assets/data/latam-flows.json";
       var LAND_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json";
       var STATES_URL = "https://cdn.jsdelivr.net/npm/us-atlas@3.0.1/states-10m.json";
-      var TOP_OPTIONS = [100, 500, 1000, 2000];
       var ROWS_STEP = 50;
-      var W = 960, H = 580;
+      var W = 960, H = 580;   // H becomes taller on phones, see mapH()
 
       var CARRIERS = {
         AA: "American", DL: "Delta", UA: "United", WN: "Southwest", AS: "Alaska", B6: "JetBlue",
         NK: "Spirit", F9: "Frontier", G4: "Allegiant", MX: "Breeze", SY: "Sun Country", XP: "Avelo",
         HA: "Hawaiian", "3M": "Silver", "9K": "Cape Air", QX: "Horizon", OO: "SkyWest", YX: "Republic",
         MQ: "Envoy", OH: "PSA", "9E": "Endeavor", ZW: "Air Wisconsin", C5: "CommuteAir", G7: "GoJet",
-        YV: "Mesa", PT: "Piedmont", AC: "Air Canada", WS: "WestJet", PD: "Porter", F8: "Flair"
+        YV: "Mesa", PT: "Piedmont", AC: "Air Canada", WS: "WestJet", PD: "Porter", F8: "Flair",
+        TS: "Air Transat", "8P": "Pacific Coastal", "9M": "Central Mountain Air", "4N": "Air North",
+        "5T": "Canadian North", "3H": "Air Inuit", PB: "PAL Airlines", MO: "Calm Air", P6: "Pascan",
+        BA: "British Airways", VS: "Virgin Atlantic", AF: "Air France", KL: "KLM", LH: "Lufthansa",
+        LX: "Swiss", OS: "Austrian", SN: "Brussels Airlines", IB: "Iberia", UX: "Air Europa", LL: "Level",
+        EI: "Aer Lingus", TP: "TAP Air Portugal", S4: "Azores Airlines", AZ: "ITA Airways", NOS: "Neos",
+        TK: "Turkish Airlines", SK: "SAS", AY: "Finnair", FI: "Icelandair", LO: "LOT", JU: "Air Serbia",
+        DE: "Condor", "4Y": "Discover", "8R": "Edelweiss", N0: "Norse Atlantic", Z0: "Norse Atlantic UK",
+        B0: "La Compagnie", BF: "French bee", TN: "Air Tahiti Nui", E9: "Iberojet", ET: "Ethiopian",
+        EK: "Emirates", EY: "Etihad", QR: "Qatar Airways", LY: "El Al", SV: "Saudia", RJ: "Royal Jordanian",
+        KU: "Kuwait Airways", GF: "Gulf Air", HY: "Uzbekistan Airways", AI: "Air India", PK: "PIA", BG: "Biman",
+        NH: "ANA", JL: "Japan Airlines", ZG: "ZIPAIR", KE: "Korean Air", OZ: "Asiana", YP: "Air Premia", TW: "T'way Air",
+        BR: "EVA Air", CI: "China Airlines", JX: "Starlux", CX: "Cathay Pacific", HX: "Hong Kong Airlines", SQ: "Singapore Airlines",
+        PR: "Philippine Airlines", CA: "Air China", MU: "China Eastern", CZ: "China Southern", JD: "Beijing Capital",
+        HU: "Hainan Airlines", MF: "Xiamen Airlines", "3U": "Sichuan Airlines", Others: "Others"
       };
       var STATUS = [
         { key: "direct", label: "Nonstop", css: "var(--direct)" },
         { key: "seasonal", label: "Seasonal or dropped", css: "var(--seasonal)", dash: true },
         { key: "none", label: "No nonstop", css: "var(--none)" }
       ];
+      // kind: od = US O&D with nonstop gaps; seg = nonstop passengers; seats = top-25 seats + other routes; net = routes only
+      var VIEWS = {
+        us: {
+          country: "us", market: "dom", kind: "od", tops: [100, 500, 1000, 2000], top: 1000,
+          intro: "The largest origin–destination markets between US cities, ranked by how many passengers actually travel between them (not how many seats are flown). Markets with no nonstop flight between the two cities are highlighted.",
+          search: "Focus on a city: Boston, Tucson…"
+        },
+        eu: {
+          country: "us", market: "eu", kind: "seg", center: [-45, 47], tops: [25, 50, 100, 0], top: 50, home: "US", farLabel: "European cities",
+          intro: "The busiest nonstop routes between US and European cities, by passengers carried on every airline over the last 12 months. There's no public origin–destination data for international trips, so this shows where the nonstop flights go, not where people end up (see How it works).",
+          search: "Focus on a city: Boston, Lisbon…"
+        },
+        as: {
+          country: "us", market: "as", kind: "seg", center: [-165, 42], tops: [25, 50, 100, 0], top: 50, home: "US", farLabel: "Asian & Middle East cities",
+          intro: "The busiest nonstop routes between US cities and Asia (including the Middle East), by passengers carried on every airline over the last 12 months. There's no public origin–destination data for international trips, so this shows where the nonstop flights go, not where people end up (see How it works).",
+          search: "Focus on a city: Seattle, Tokyo…"
+        },
+        ca: {
+          country: "ca", market: "dom", kind: "seats", center: [-96, 55], tops: [25, 0], top: 0, topLabels: { 25: "Top 25 markets", 0: "All nonstops" },
+          intro: "Canada's domestic air network. Canada doesn't publish passengers by route, so the 25 biggest markets are sized by scheduled seats (Transport Canada, 2024), and every other nonstop between the larger Canadian airports is drawn as a thin line.",
+          note: "Different measure from the US view: seats per day in each direction, not passengers. Only the top 25 markets have a published volume.",
+          search: "Focus on a city: Halifax, Kelowna…"
+        },
+        cae: {
+          country: "ca", market: "eu", kind: "seg", center: [-40, 50], tops: [25, 0], top: 0, topLabels: { 25: "Top 25", 0: "All" }, home: "Canadian", farLabel: "European cities",
+          intro: "Nonstop routes between Canadian and European cities, by passengers carried on every airline in 2024, as reported by the European airports. Like the US international views, this is nonstop traffic, not where people end up.",
+          note: "2024 figures (the latest full year Eurostat and the UK publish), so a year older than the US views.",
+          search: "Focus on a city: Montreal, Lyon…"
+        },
+        caa: {
+          country: "ca", market: "as", kind: "net", center: [-165, 45], tops: [], top: 0, home: "Canadian", farLabel: "Asian & Middle East cities",
+          intro: "Every nonstop route between Canada and Asia (including the Middle East) in the September 2026 schedules, with the airlines that fly it.",
+          note: "No public source gives passenger numbers for these routes, so every route is drawn the same width.",
+          search: "Focus on a city: Vancouver, Manila…"
+        },
+        lae: {
+          country: "la", market: "eu", kind: "seg", center: [-35, 10], tops: [25, 50, 0], top: 50, topLabels: { 25: "Top 25", 50: "Top 50", 0: "All" }, home: "Latin American", farLabel: "European cities",
+          intro: "Nonstop routes between Latin American and European cities, by passengers carried on every airline in 2024, as reported by the European airports. Like the other international views, this is nonstop traffic, not where people end up.",
+          introNet: "Every nonstop route between Latin America and Europe in the September 2026 schedules, with the airlines that fly it.",
+          note: "2024 figures (the latest full year Eurostat and the UK publish), so a year older than the US views.",
+          noteNet: "Passenger numbers for this view aren't loaded yet, so every route is drawn the same width.",
+          search: "Focus on a city: Bogotá, Madrid…"
+        },
+        laa: {
+          country: "la", market: "as", kind: "net", center: [-100, 30], tops: [], top: 0, home: "Latin American", farLabel: "Asian & Middle East cities",
+          intro: "Every nonstop route between Latin America and Asia (including the Middle East) in the September 2026 schedules, with the airlines that fly it.",
+          note: "Only a handful of routes exist, and some are 'tag' flights that stop on the way (for example Beijing–Tijuana–Mexico City). No public source gives passenger numbers, so every route is drawn the same width.",
+          search: "Focus on a city: Mexico City, Doha…"
+        }
+      };
+      var HASH = { us: "", eu: "eu", as: "as", ca: "ca", cae: "ca-eu", caa: "ca-as", lae: "latam-eu", laa: "latam-as" };
+      var COUNTRIES = [["us", "United States"], ["ca", "Canada"], ["la", "Latin America"]];
+      var MARKETS = [["dom", "Domestic"], ["eu", "Europe"], ["as", "Asia & Middle East"]];
 
       // ───────────────────────────── state
-      var D, cities, flows;
-      var state = { top: 500, focus: null, show: [true, true, true], rows: ROWS_STEP };
-      var svg, gArcs, gCities, gLabels, projection, wScale;
+      var DATA = {};
+      var world, usTopo, landFeature;
+      var state = { view: "us", top: 1000, focus: null, show: [true, true, true], rows: ROWS_STEP, sort: { key: "rank", asc: true } };
+      var svg, gZoom, gBase, gArcs, gCities, gLabels, projection, wScale, opScale, V, zoom;
+      var zt = d3.zoomIdentity, lastShown = [], mobile = window.innerWidth < 720;
+      // Phones get a narrower, taller drawing area so labels and dots stay readable.
+      function mapW() { return mobile ? 560 : 960; }
+      function mapH() { return mobile ? 600 : 580; }
 
       var fmt = d3.format(",");
       function fmtPax(p) { return p >= 100 ? fmt(Math.round(p)) : p.toFixed(0); }
@@ -300,62 +447,245 @@
         var y = p * 365;
         return y >= 1e6 ? (y / 1e6).toFixed(1) + "M" : Math.round(y / 1000) + "k";
       }
-      function cName(c) { return c.city; }
-      function pairName(f) { return cName(cities[f.a]) + " – " + cName(cities[f.b]); }
-      function carrierList(codes) { return codes.split(",").map(function (c) { return CARRIERS[c] || c; }).join(", "); }
+      function cities() { return DATA[state.view].cities; }
+      function flows() { return DATA[state.view].flows; }
+      function pairName(f) { var c = cities(); return c[f.a].city + " – " + c[f.b].city; }
+      function carrierName(c) { return CARRIERS[c] || c; }
+      function carrierList(codes) { return codes ? codes.split(",").map(carrierName).join(", ") : ""; }
+      function topLabel(n) { return (V.topLabels && V.topLabels[n]) || (n === 0 ? "All" : fmt(n)); }
+      function topValue() { return state.top === 0 ? Infinity : state.top; }
+      function hasVol(f) { return f.pax != null; }
+      function miles(A, B) { return Math.round(d3.geoDistance([A.lon, A.lat], [B.lon, B.lat]) * 3958.8); }
+      function nsCarriers(ns) {
+        var s = new Set();
+        (ns || "").split(";").forEach(function (p) { var c = p.split(":")[1]; if (c) c.split(",").forEach(function (x) { s.add(x); }); });
+        return Array.from(s);
+      }
 
       // ───────────────────────────── load
       Promise.all([
-        fetch(DATA_URL).then(function (r) { return r.json(); }),
+        fetch(DOM_URL).then(function (r) { return r.json(); }),
+        fetch(INTL_URL).then(function (r) { return r.json(); }),
+        fetch(CA_URL).then(function (r) { return r.json(); }),
+        fetch(LA_URL).then(function (r) { return r.json(); }),
         fetch(LAND_URL).then(function (r) { return r.json(); }),
         fetch(STATES_URL).then(function (r) { return r.json(); })
       ]).then(function (res) {
-        D = res[0];
-        cities = D.cities.map(function (c, i) {
-          return { i: i, id: c[0], city: c[1], st: c[2], lat: c[3], lon: c[4], aps: c[5] };
-        });
-        flows = D.flows.map(function (f, i) {
-          var o = { rank: i + 1, a: f[0], b: f[1], pax: f[2], fare: f[3], mi: f[4], st: f[6], ns: f[7] };
-          var lg = f[5] ? f[5].split(":") : null;
-          o.lg = lg ? { code: lg[0], share: +lg[1] } : null;
-          // Draw west to east so every arc bows the same way.
-          if (cities[o.a].lon > cities[o.b].lon) { o.w = o.b; o.e = o.a; } else { o.w = o.a; o.e = o.b; }
-          return o;
-        });
-        document.getElementById("stamp").textContent =
-          "Passengers: " + D.meta.period + " · Nonstop schedules: " + D.meta.routesCurrent;
-        buildControls();
-        buildMap(res[1], res[2]);
-        render();
+        prepDomestic(res[0]);
+        prepIntl(res[1]);
+        prepSimple(res[2], ["ca", "cae", "caa"]);
+        prepSimple(res[3], ["lae", "laa"]);
+        // Latin America – Europe falls back to the schedule network if no passenger data is in the file.
+        if (!DATA.lae.flows.some(hasVol)) {
+          VIEWS.lae.kind = "net"; VIEWS.lae.tops = []; VIEWS.lae.top = 0;
+          VIEWS.lae.intro = VIEWS.lae.introNet; VIEWS.lae.note = VIEWS.lae.noteNet;
+        }
+        world = res[4]; usTopo = res[5];
+        landFeature = topojson.feature(world, world.objects.land);
+        buildShell();
+        var h = (location.hash || "").replace("#", "");
+        var k = Object.keys(HASH).find(function (key) { return HASH[key] === h; }) || "us";
+        setView(k, true);
       }).catch(function (err) {
         document.getElementById("loading").textContent = "Couldn't load the data. Try reloading the page.";
         console.error(err);
       });
 
-      // ───────────────────────────── controls
-      function buildControls() {
-        var topn = document.getElementById("topn");
-        TOP_OPTIONS.forEach(function (n) {
-          var b = document.createElement("button");
-          b.type = "button"; b.className = "chip"; b.textContent = fmt(n); b.dataset.n = n;
-          b.addEventListener("click", function () { state.top = n; state.rows = ROWS_STEP; render(); });
-          topn.appendChild(b);
+      function prepDomestic(D) {
+        var cs = D.cities.map(function (c, i) {
+          return { i: i, id: c[0], city: c[1], st: c[2], lat: c[3], lon: c[4], aps: c[5], far: false };
         });
-        var dl = document.getElementById("city-list");
-        cities.slice().sort(function (x, y) { return d3.ascending(x.city, y.city); }).forEach(function (c) {
-          var o = document.createElement("option"); o.value = c.city + ", " + c.st; dl.appendChild(o);
+        var fs = D.flows.map(function (f, i) {
+          var o = { rank: i + 1, a: f[0], b: f[1], pax: f[2], fare: f[3], mi: f[4], st: f[6], ns: f[7] };
+          var lg = f[5] ? f[5].split(":") : null;
+          o.lg = lg ? { code: lg[0], share: +lg[1] } : null;
+          return o;
         });
+        DATA.us = { meta: D.meta, cities: cs, flows: fs };
+      }
+      function prepIntl(D) {
+        [0, 1].forEach(function (reg) {
+          var key = reg === 0 ? "eu" : "as";
+          var used = new Map(), cs = [];
+          function idx(k) {
+            if (!used.has(k)) {
+              var c = D.cities[k];
+              used.set(k, cs.length);
+              cs.push({ i: cs.length, id: c[0], city: c[1], st: c[2], lat: c[3], lon: c[4], aps: c[5] });
+            }
+            return used.get(k);
+          }
+          var fs = D.flows.filter(function (f) { return f[0] === reg; }).map(function (f, i) {
+            var a = idx(f[1]), b = idx(f[2]);
+            cs[b].far = true;
+            var car = f[6].split(";").map(function (x) { var p = x.split(":"); return { code: p[0], share: +p[1] }; });
+            return {
+              rank: i + 1, a: a, b: b, pax: f[3] / 365, seats: f[4], mi: miles(cs[a], cs[b]), st: 0,
+              lf: f[4] ? f[3] / f[4] : null, weekly: f[5] / 2 / 52.14, car: car, lg: car[0],
+              apsplit: f[7].split(";").map(function (p) { var q = p.split(":"); return { pair: q[0], share: +q[1] }; })
+            };
+          });
+          DATA[key] = { meta: { period: D.meta.period }, cities: cs, flows: fs };
+        });
+      }
+      function prepSimple(D, keys) {
+        keys.forEach(function (key) {
+          var src = D[key];
+          var cs = src.cities.map(function (c, i) { return { i: i, id: c[0] + "|" + c[1], city: c[0], st: c[1], lat: c[2], lon: c[3], aps: c[4], far: !!c[5] }; });
+          var fs = src.flows.map(function (f, i) {
+            var o = { rank: i + 1, a: f[0], b: f[1], pax: f[2], ns: f[3], mi: miles(cs[f[0]], cs[f[1]]), st: 0 };
+            o.airlines = nsCarriers(o.ns);
+            if (key === "ca") {
+              o.prev = f[4];
+              o.car = f[5] ? f[5].split(";").map(function (x) { var p = x.split(":"); return { code: p[0], share: +p[1] }; }) : null;
+              o.lg = o.car ? o.car[0] : null;
+            }
+            if (Array.isArray(f[4])) {   // passenger split between airport pairs (Canada/Latin America – Europe)
+              var pairs = o.ns.split(";").map(function (p) { return p.split(":")[0]; });
+              o.apsplit = pairs.map(function (p, j) { return { pair: p, share: f[4][j] }; });
+              o.gone = o.airlines.length === 0;
+            }
+            return o;
+          });
+          DATA[key] = { meta: { period: D.meta[key] }, cities: cs, flows: fs };
+        });
+      }
+
+      function viewFor(country, market) {
+        return Object.keys(VIEWS).find(function (k) { return VIEWS[k].country === country && VIEWS[k].market === market; });
+      }
+
+      // ───────────────────────────── shell (built once)
+      function buildShell() {
+        function seg(el, items, onClick) {
+          items.forEach(function (it) {
+            var b = document.createElement("button");
+            b.type = "button"; b.textContent = it[1]; b.dataset.k = it[0]; b.setAttribute("role", "tab");
+            b.addEventListener("click", function () { onClick(it[0]); });
+            el.appendChild(b);
+          });
+        }
+        seg(document.getElementById("country"), COUNTRIES, function (c) { setView(viewFor(c, V.market) || viewFor(c, "eu")); });
+        seg(document.getElementById("market"), MARKETS, function (m) { var k = viewFor(V.country, m); if (k) setView(k); });
+
         var q = document.getElementById("q");
         q.addEventListener("change", function () {
           var v = q.value.trim().toLowerCase();
           if (!v) return;
-          var hit = cities.find(function (c) { return (c.city + ", " + c.st).toLowerCase() === v; }) ||
-                    cities.find(function (c) { return c.city.toLowerCase().indexOf(v) === 0; }) ||
-                    cities.find(function (c) { return (c.city + " " + c.aps).toLowerCase().indexOf(v) >= 0; });
+          var cs = cities();
+          var hit = cs.find(function (c) { return (c.city + ", " + c.st).toLowerCase() === v; }) ||
+                    cs.find(function (c) { return c.city.toLowerCase().indexOf(v) === 0; }) ||
+                    cs.find(function (c) { return (c.city + " " + c.aps).toLowerCase().indexOf(v) >= 0; });
           if (hit) setFocus(hit.i);
         });
         document.getElementById("focus-clear").addEventListener("click", function () { setFocus(null); });
+
+        document.getElementById("loading").remove();
+        var wrap = document.getElementById("map-wrap");
+        svg = d3.select(wrap).insert("svg", ".tip")
+          .attr("id", "map")
+          .attr("role", "img").attr("aria-label", "Map of air travel flows");
+        // Base map and routes zoom together; dots and labels are re-placed so they stay the same size.
+        gZoom = svg.append("g");
+        gBase = gZoom.append("g");
+        gArcs = gZoom.append("g");
+        gCities = svg.append("g");
+        gLabels = svg.append("g");
+        zoom = d3.zoom().scaleExtent([1, 10])
+          .filter(function (ev) {
+            if (ev.type === "wheel") return ev.ctrlKey || ev.metaKey;           // pinch on a trackpad, or Ctrl/⌘ + scroll
+            if (ev.type === "touchstart") return ev.touches.length > 1 || zt.k > 1; // two fingers, or pan once zoomed
+            if (ev.type === "dblclick") return true;
+            return !ev.button && zt.k > 1;                                      // drag to pan once zoomed
+          })
+          .on("zoom", function (ev) {
+            zt = ev.transform;
+            gZoom.attr("transform", zt);
+            svg.style("cursor", zt.k > 1 ? "grab" : null);
+            placeCities();
+          });
+        svg.call(zoom).on("dblclick.zoom", function (ev) {
+          var p = d3.pointer(ev);
+          svg.transition().duration(350).call(zoom.scaleBy, ev.shiftKey ? 0.5 : 2, p);
+        });
+        var ctl = document.createElement("div");
+        ctl.className = "zoom-ctl";
+        ctl.innerHTML = '<button type="button" aria-label="Zoom in" data-z="in">+</button><button type="button" aria-label="Zoom out" data-z="out">−</button><button type="button" class="reset" aria-label="Reset zoom" data-z="reset">⟲</button>';
+        ctl.addEventListener("click", function (e) {
+          var b = e.target.closest("button"); if (!b) return;
+          var z = b.dataset.z;
+          if (z === "reset") svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity);
+          else svg.transition().duration(300).call(zoom.scaleBy, z === "in" ? 2 : 0.5);
+        });
+        wrap.appendChild(ctl);
+        var hint = document.createElement("div");
+        hint.className = "zoom-hint";
+        hint.textContent = (/Mac/.test(navigator.platform) ? "⌘" : "Ctrl") + " + scroll, or double-click, to zoom";
+        wrap.appendChild(hint);
+        var legend = document.createElement("div");
+        legend.className = "map-legend"; legend.id = "legend";
+        wrap.appendChild(legend);
+
+        document.getElementById("sort-m").addEventListener("change", function (e) {
+          var v = e.target.value.split(":"); state.sort = { key: v[0], asc: v[1] === "asc" }; state.rows = ROWS_STEP; render();
+        });
+        // Phones get a taller map; rebuild when crossing the breakpoint.
+        window.addEventListener("resize", function () {
+          var m = window.innerWidth < 720;
+          if (m !== mobile) { mobile = m; buildMap(); render(); }
+        });
       }
+
+      function setView(k, initial) {
+        var prevCity = state.focus !== null && !initial ? cities()[state.focus] : null;
+        state.view = k; V = VIEWS[k];
+        state.top = V.top; state.rows = ROWS_STEP; state.show = [true, true, true];
+        state.sort = { key: "rank", asc: true };
+        state.focus = null;
+        if (prevCity) {
+          var same = cities().find(function (c) { return c.city === prevCity.city; });
+          if (same) state.focus = same.i;
+        }
+        if (!initial) history.replaceState(null, "", HASH[k] ? "#" + HASH[k] : location.pathname);
+
+        document.querySelectorAll("#country button").forEach(function (b) { var on = b.dataset.k === V.country; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+        document.querySelectorAll("#market button").forEach(function (b) {
+          var on = b.dataset.k === V.market; b.classList.toggle("on", on); b.setAttribute("aria-selected", on);
+          var none = !viewFor(V.country, b.dataset.k);   // e.g. no Latin America domestic view
+          b.disabled = none; b.title = none ? "No public data for this market" : "";
+        });
+        document.getElementById("intro-text").textContent = V.intro;
+        document.getElementById("note-line").textContent = V.note || "";
+        document.getElementById("q").placeholder = V.search;
+        var m = DATA[k].meta;
+        document.getElementById("stamp").textContent =
+          k === "us" ? "Passengers: " + m.period + " · Nonstop schedules: " + m.routesCurrent :
+          V.country === "us" ? "Nonstop passengers, all airlines: " + m.period : "Sources: " + m.period;
+        document.getElementById("tbl-note").textContent =
+          V.kind === "od" ? "Passengers per day = both directions combined, averaged over the year." :
+          V.kind === "seg" ? "Passengers per day = both directions combined, averaged over the year. Every route here is a nonstop." :
+          V.kind === "seats" ? "Seats per day in each direction, 2024. Other routes have no published volume." :
+          "Routes in the September 2026 schedules. No passenger data is published.";
+        document.getElementById("controls").classList.toggle("no-top", !V.tops.length);
+
+        var topn = document.getElementById("topn");
+        topn.innerHTML = "";
+        V.tops.forEach(function (n) {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip"; b.textContent = topLabel(n); b.dataset.n = n;
+          b.addEventListener("click", function () { state.top = n; state.rows = ROWS_STEP; render(); });
+          topn.appendChild(b);
+        });
+        var dl = document.getElementById("city-list");
+        dl.innerHTML = "";
+        cities().slice().sort(function (x, y) { return d3.ascending(x.city, y.city); }).forEach(function (c) {
+          var o = document.createElement("option"); o.value = c.city + ", " + c.st; dl.appendChild(o);
+        });
+
+        buildMap();
+        render();
+      }
+
       function setFocus(i) {
         state.focus = i; state.rows = ROWS_STEP;
         document.getElementById("q").value = "";
@@ -363,48 +693,93 @@
       }
 
       // ───────────────────────────── map
-      function buildMap(world, us) {
-        document.getElementById("loading").remove();
-        var wrap = document.getElementById("map-wrap");
-        var lower48 = topojson.feature(us, us.objects.states);
-        lower48.features = lower48.features.filter(function (f) { return ["02", "15", "60", "66", "69", "72", "78"].indexOf(f.id) < 0; });
-        projection = d3.geoConicConformal().parallels([30, 46]).rotate([96, 0])
-          .fitExtent([[18, 34], [W - 18, H - 10]], lower48);
-        var path = d3.geoPath(projection);
+      function buildMap() {
+        var cs = cities(), fs = flows();
+        W = mapW(); H = mapH();
+        svg.attr("viewBox", "0 0 " + W + " " + H);
+        zoom.extent([[0, 0], [W, H]]).translateExtent([[0, 0], [W, H]]);
+        zt = d3.zoomIdentity;
+        svg.call(zoom.transform, zt);
+        gBase.selectAll("*").remove();
+        gArcs.selectAll("*").remove();
+        gCities.selectAll("*").remove();
+        gLabels.selectAll("*").remove();
+        var path;
 
-        svg = d3.select(wrap).insert("svg", ".tip")
-          .attr("id", "map").attr("viewBox", "0 0 " + W + " " + H)
-          .attr("role", "img").attr("aria-label", "Map of the largest US air travel markets");
-        svg.append("path").attr("class", "land").attr("d", path(topojson.feature(world, world.objects.land)));
-        svg.append("path").attr("class", "states").attr("d", path(topojson.mesh(us, us.objects.states, function (a, b) { return a !== b; })));
-        svg.append("path").attr("class", "borders").attr("d", path(topojson.mesh(world, world.objects.countries, function (a, b) { return a !== b; })));
-        svg.append("path").attr("class", "borders").attr("d", path(topojson.mesh(world, world.objects.land)));
+        if (V.kind === "od") {
+          var lower48 = topojson.feature(usTopo, usTopo.objects.states);
+          lower48.features = lower48.features.filter(function (f) { return ["02", "15", "60", "66", "69", "72", "78"].indexOf(f.id) < 0; });
+          projection = d3.geoConicConformal().parallels([30, 46]).rotate([96, 0])
+            .fitExtent([[18, 34], [W - 18, H - 10]], lower48);
+          path = d3.geoPath(projection);
+          gBase.append("path").attr("class", "land").attr("d", path(landFeature));
+          gBase.append("path").attr("class", "states").attr("d", path(topojson.mesh(usTopo, usTopo.objects.states, function (a, b) { return a !== b; })));
+        } else {
+          // Azimuthal equal-area centred on a fixed point per view (north up), fitted tightly to
+          // the cities and the midpoint of each route so great circles stay on the map.
+          var pts = [];
+          fs.forEach(function (f) {
+            var A = [cs[f.a].lon, cs[f.a].lat], B = [cs[f.b].lon, cs[f.b].lat];
+            pts.push(A, B, d3.geoInterpolate(A, B)(0.5));
+          });
+          var mp = { type: "MultiPoint", coordinates: pts };
+          projection = d3.geoAzimuthalEqualArea().rotate([-V.center[0], -V.center[1]]).clipAngle(170)
+            .fitExtent([[24, 22], [W - 24, H - 22]], mp);
+          path = d3.geoPath(projection);
+          gBase.append("path").attr("class", "sphere").attr("d", path({ type: "Sphere" }));
+          gBase.append("path").attr("class", "grat").attr("d", path(d3.geoGraticule10()));
+          gBase.append("path").attr("class", "land").attr("d", path(landFeature));
+        }
+        gBase.append("path").attr("class", "borders").attr("d", path(topojson.mesh(world, world.objects.countries, function (a, b) { return a !== b; })));
+        gBase.append("path").attr("class", "borders").attr("d", path(topojson.mesh(world, world.objects.land)));
 
-        gArcs = svg.append("g");
-        gCities = svg.append("g");
-        gLabels = svg.append("g");
-
-        cities.forEach(function (c) { var p = projection([c.lon, c.lat]); c.x = p[0]; c.y = p[1]; });
-        flows.forEach(function (f) {
-          var A = cities[f.w], B = cities[f.e];
+        cs.forEach(function (c) { var p = projection([c.lon, c.lat]); c.x = p[0]; c.y = p[1]; });
+        fs.forEach(function (f) {
+          if (V.kind !== "od") {
+            f.d = path({ type: "LineString", coordinates: [[cs[f.a].lon, cs[f.a].lat], [cs[f.b].lon, cs[f.b].lat]] });
+            return;
+          }
+          // US domestic: draw west to east so every arc bows the same way.
+          var A = cs[f.a], B = cs[f.b];
+          if (A.lon > B.lon) { var t = A; A = B; B = t; }
           var dx = B.x - A.x, dy = B.y - A.y, len = Math.hypot(dx, dy);
-          var k = 0.16 * len;                       // bow height
+          var k = 0.16 * len;
           var cx = (A.x + B.x) / 2 + (dy / len) * k, cy = (A.y + B.y) / 2 - (dx / len) * k;
           f.d = "M" + A.x.toFixed(1) + " " + A.y.toFixed(1) + " Q" + cx.toFixed(1) + " " + cy.toFixed(1) + " " + B.x.toFixed(1) + " " + B.y.toFixed(1);
         });
-        wScale = d3.scaleSqrt().domain([0, d3.max(flows, function (f) { return f.pax; })]).range([0, 7]);
+        var maxV = d3.max(fs, function (f) { return f.pax; }) || 1;
+        wScale = d3.scaleSqrt().domain([0, maxV]).range([0, V.kind === "od" ? 7 : 9]);
+        // Small routes fade into the background so the big ones stand out.
+        opScale = d3.scaleSqrt().domain([0, maxV]).range(V.kind === "od" ? [0.08, 0.55] : [0.18, 0.7]).clamp(true);
 
-        var legend = document.createElement("div");
-        legend.className = "map-legend";
-        legend.innerHTML = STATUS.map(function (s) {
-          return '<span style="margin-right:12px"><i class="key' + (s.dash ? " dash" : "") + '" style="--c:' + s.css + '"></i>' + s.label + "</span>";
-        }).join("") + '<br>Line width = passengers/day <span class="w" style="height:1px"></span>500 <span class="w" style="height:3px"></span>5,000 <span class="w" style="height:6px"></span>15,000';
-        wrap.appendChild(legend);
+        var lg = document.getElementById("legend");
+        var dots = '<span class="grp"><svg width="10" height="10" style="vertical-align:-1px"><circle cx="5" cy="5" r="4" fill="#fff" stroke="#444" stroke-width="1.2"/></svg> ' + V.home + ' city</span>' +
+          '<span class="grp"><svg width="10" height="10" style="vertical-align:-1px"><circle cx="5" cy="5" r="4" fill="#555"/></svg> ' + (V.market === "eu" ? "European" : "Asian / Middle East") + ' city</span>';
+        if (V.kind === "od") {
+          lg.innerHTML = STATUS.map(function (s) {
+            return '<span class="grp"><i class="key' + (s.dash ? " dash" : "") + '" style="--c:' + s.css + '"></i>' + s.label + "</span>";
+          }).join("") + '<span class="grp">Line width = passengers/day ' + legendWidths([500, 5000, 15000]) + "</span>";
+        } else if (V.kind === "seg") {
+          lg.innerHTML = '<span class="grp"><i class="key" style="--c:var(--direct)"></i>Nonstop route</span>' + dots +
+            (state.view === "cae" ? '<span class="grp"><i class="key dash" style="--c:#9aa0a6"></i>No longer scheduled</span>' : "") +
+            '<span class="grp">Line width = passengers/day ' + legendWidths(state.view === "cae" ? [100, 1000, 3000] : [500, 3000, 10000]) + "</span>";
+        } else if (V.kind === "seats") {
+          lg.innerHTML = '<span class="grp"><i class="key" style="--c:var(--direct)"></i>Top 25 market</span><span class="grp"><i class="key" style="--c:#7f95a6;border-top-width:1px"></i>Other nonstop (no volume published)</span>' +
+            '<span class="grp">Line width = seats/day each way ' + legendWidths([1500, 5000, 10000]) + "</span>";
+        } else {
+          lg.innerHTML = '<span class="grp"><i class="key" style="--c:var(--direct)"></i>Nonstop route</span>' + dots;
+        }
+      }
+      function legendWidths(vals) {
+        return vals.map(function (v) {
+          return '<span class="w" style="height:' + Math.max(1, wScale(v)).toFixed(1) + 'px"></span>' + fmt(v);
+        }).join(" ");
       }
 
       function visibleFlows() {
-        return flows.filter(function (f) {
-          if (f.rank > state.top) return false;
+        var t = topValue();
+        return flows().filter(function (f) {
+          if (f.rank > t) return false;
           if (state.focus !== null && f.a !== state.focus && f.b !== state.focus) return false;
           return true;
         });
@@ -412,90 +787,182 @@
 
       function render() {
         var inTop = visibleFlows();
-        var shown = inTop.filter(function (f) { return state.show[f.st]; });
+        var shown = V.kind === "od" ? inTop.filter(function (f) { return state.show[f.st]; }) : inTop;
 
         document.querySelectorAll("#topn .chip").forEach(function (b) { b.classList.toggle("on", +b.dataset.n === state.top); });
         var fp = document.getElementById("focus");
         fp.classList.toggle("on", state.focus !== null);
-        if (state.focus !== null) document.getElementById("focus-name").textContent = "Flows touching " + cities[state.focus].city;
+        if (state.focus !== null) document.getElementById("focus-name").textContent = (V.kind === "od" ? "Flows touching " : "Routes touching ") + cities()[state.focus].city;
 
+        document.getElementById("thead").innerHTML = headRow();
         renderTiles(inTop);
         renderArcs(shown);
         renderCities(shown);
-        renderSide(inTop);
+        if (V.kind === "od") renderSide(inTop); else renderSideRoutes(inTop);
         renderTable(shown);
       }
 
+      function tile(el, big, small, extra) {
+        var d = document.createElement("div"); d.className = "tile";
+        d.innerHTML = "<b>" + big + "</b><span>" + (extra || "") + small + "</span>";
+        el.appendChild(d);
+      }
       function renderTiles(list) {
-        var counts = [0, 0, 0];
-        list.forEach(function (f) { counts[f.st]++; });
-        var pax = d3.sum(list, function (f) { return f.pax; });
         var el = document.getElementById("tiles");
         el.innerHTML = "";
-        var t0 = document.createElement("div");
-        t0.className = "tile";
-        t0.innerHTML = "<b>" + fmt(Math.round(pax)) + "</b><span>passengers a day across " + fmt(list.length) + " markets</span>";
-        el.appendChild(t0);
-        STATUS.forEach(function (s, i) {
-          var b = document.createElement("button");
-          b.type = "button";
-          b.className = "tile" + (state.show[i] ? "" : " off");
-          b.title = state.show[i] ? "Hide on the map and table" : "Show on the map and table";
-          b.innerHTML = "<b>" + fmt(counts[i]) + '</b><span><i class="key' + (s.dash ? " dash" : "") + '" style="--c:' + s.css + '"></i>' + s.label + "</span>";
-          b.addEventListener("click", function () { state.show[i] = !state.show[i]; state.rows = ROWS_STEP; render(); });
-          el.appendChild(b);
-        });
+        var vol = d3.sum(list, function (f) { return f.pax || 0; });
+        var home = new Set(), far = new Set();
+        list.forEach(function (f) { home.add(f.a); far.add(f.b); });
+        if (V.kind === "od") {
+          tile(el, fmt(Math.round(vol)), "passengers a day across " + fmt(list.length) + " markets");
+          var counts = [0, 0, 0];
+          list.forEach(function (f) { counts[f.st]++; });
+          STATUS.forEach(function (s, i) {
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "tile" + (state.show[i] ? "" : " off");
+            b.title = state.show[i] ? "Hide on the map and table" : "Show on the map and table";
+            b.innerHTML = "<b>" + fmt(counts[i]) + '</b><span><i class="key' + (s.dash ? " dash" : "") + '" style="--c:' + s.css + '"></i>' + s.label + "</span>";
+            b.addEventListener("click", function () { state.show[i] = !state.show[i]; state.rows = ROWS_STEP; render(); });
+            el.appendChild(b);
+          });
+        } else if (V.kind === "seg") {
+          tile(el, fmt(Math.round(vol)), "passengers a day across " + fmt(list.length) + " nonstop routes");
+          tile(el, fmt(home.size), V.home + " cities with a nonstop");
+          tile(el, fmt(far.size), V.farLabel + " served");
+          if (state.view === "cae") {
+            var cars = new Set(); list.forEach(function (f) { f.airlines.forEach(function (c) { cars.add(c); }); });
+            tile(el, fmt(cars.size), "airlines flying these routes today");
+          } else {
+            var seats = d3.sum(list, function (f) { return f.seats; }), paxY = d3.sum(list, function (f) { return f.pax * 365; });
+            tile(el, seats ? Math.round(paxY / seats * 100) + "%" : "–", "of seats filled");
+          }
+        } else if (V.kind === "seats") {
+          var top = list.filter(hasVol);
+          var cs = new Set(); list.forEach(function (f) { cs.add(f.a); cs.add(f.b); });
+          tile(el, fmt(Math.round(d3.sum(top, function (f) { return f.pax; }))), "seats a day each way in the " + top.length + " biggest markets");
+          var ac = d3.sum(top, function (f) { var c = (f.car || []).find(function (x) { return x.code === "AC"; }); return c ? f.pax * c.share / 100 : 0; });
+          var ws = d3.sum(top, function (f) { var c = (f.car || []).find(function (x) { return x.code === "WS"; }); return c ? f.pax * c.share / 100 : 0; });
+          var tot = d3.sum(top, function (f) { return f.pax; }) || 1;
+          tile(el, Math.round(ac / tot * 100) + "% · " + Math.round(ws / tot * 100) + "%", "Air Canada · WestJet share of those seats");
+          tile(el, fmt(list.length), "nonstop city pairs shown");
+          tile(el, fmt(cs.size), "Canadian cities");
+        } else {
+          var cars2 = new Set(); list.forEach(function (f) { f.airlines.forEach(function (c) { cars2.add(c); }); });
+          tile(el, fmt(list.length), "nonstop routes");
+          tile(el, fmt(home.size), V.home + " cities with a nonstop");
+          tile(el, fmt(far.size), V.farLabel + " served");
+          tile(el, fmt(cars2.size), "airlines");
+        }
+      }
+
+      function baseWidth(f) {
+        if (V.kind === "od") return Math.max(f.st ? 1.6 : 0.7, wScale(f.pax));
+        if (!hasVol(f)) return V.kind === "net" ? 1.8 : 0.9;
+        return Math.max(0.9, wScale(f.pax));
+      }
+      function arcClass(f) {
+        if (V.kind === "od") return "arc s" + f.st;
+        if (f.gone) return "arc gone";
+        if (V.kind === "seats" && !hasVol(f)) return "arc minor";
+        return "arc intl";
       }
 
       function renderArcs(list) {
-        // Nonstop markets underneath (smallest on top so they stay visible), gaps on top.
-        var order = list.slice().sort(function (x, y) { return d3.ascending(x.st, y.st) || d3.descending(x.pax, y.pax); });
+        // Big routes underneath, small ones on top; gaps (US domestic) above everything.
+        var order = list.slice().sort(function (x, y) { return d3.ascending(x.st, y.st) || d3.descending(x.pax || 0, y.pax || 0); });
+        if (V.kind === "seats") order.sort(function (x, y) { return d3.ascending(hasVol(x), hasVol(y)) || d3.descending(x.pax || 0, y.pax || 0); });
         var g = gArcs.selectAll("g.f").data(order, function (f) { return f.rank; });
         g.exit().remove();
         var enter = g.enter().append("g").attr("class", "f");
-        enter.append("path").attr("class", function (f) { return "arc s" + f.st; })
+        enter.append("path").attr("class", arcClass)
           .attr("d", function (f) { return f.d; })
-          .attr("stroke-width", function (f) { return baseWidth(f); });
+          .attr("stroke-width", baseWidth);
         enter.append("path").attr("class", "hit").attr("d", function (f) { return f.d; })
-          .attr("stroke-width", function (f) { return Math.max(7, wScale(f.pax) + 4); })
+          .attr("stroke-width", function (f) { return Math.max(7, baseWidth(f) + 4); })
           .on("mouseenter", function (ev, f) { d3.select(this.previousSibling).classed("hot", true); showTip(ev, f); })
           .on("mousemove", moveTip)
           .on("mouseleave", function () { d3.select(this.previousSibling).classed("hot", false); hideTip(); })
           .on("click", function (ev, f) { showTip(ev, f); });
         g.merge(enter).order();
-        var focused = state.focus !== null;
-        gArcs.selectAll("path.arc.s0").style("stroke-opacity", focused ? 0.6 : null);
+        var boost = state.focus !== null ? 1.6 : 1;
+        gArcs.selectAll("path.arc.s0, path.arc.intl").style("stroke-opacity", function (f) {
+          return hasVol(f) ? Math.min(0.9, opScale(f.pax) * boost) : null;
+        });
       }
 
+      var cityData = [], rScale;
       function renderCities(list) {
+        var cs = cities();
         var tot = new Map();
-        list.forEach(function (f) { tot.set(f.a, (tot.get(f.a) || 0) + f.pax); tot.set(f.b, (tot.get(f.b) || 0) + f.pax); });
+        list.forEach(function (f) {
+          var v = hasVol(f) ? f.pax : 1;   // routes without a volume count as one each
+          tot.set(f.a, (tot.get(f.a) || 0) + v); tot.set(f.b, (tot.get(f.b) || 0) + v);
+        });
         if (state.focus !== null && !tot.has(state.focus)) tot.set(state.focus, 0);
-        var arr = Array.from(tot, function (e) { return { c: cities[e[0]], v: e[1] }; }).sort(function (x, y) { return y.v - x.v; });
-        var r = d3.scaleSqrt().domain([0, d3.max(arr, function (d) { return d.v; }) || 1]).range([2.2, 7.5]);
+        cityData = Array.from(tot, function (e) { return { c: cs[e[0]], v: e[1] }; }).sort(function (x, y) { return y.v - x.v; });
+        rScale = d3.scaleSqrt().domain([0, d3.max(cityData, function (d) { return d.v; }) || 1]).range([2.2, 7.5]);
 
-        var dots = gCities.selectAll("circle").data(arr, function (d) { return d.c.i; });
+        var dots = gCities.selectAll("circle").data(cityData, function (d) { return d.c.i; });
         dots.exit().remove();
-        dots.enter().append("circle").attr("class", "city")
+        dots.enter().append("circle")
           .on("click", function (ev, d) { setFocus(state.focus === d.c.i ? null : d.c.i); })
-          .on("mouseenter", function (ev, d) { showCityTip(ev, d); })
+          .on("mouseenter", function (ev, d) { litCity(d.c.i); showCityTip(ev, d); })
           .on("mousemove", moveTip)
-          .on("mouseleave", hideTip)
+          .on("mouseleave", function () { litCity(null); hideTip(); })
           .merge(dots)
-          .attr("cx", function (d) { return d.c.x; }).attr("cy", function (d) { return d.c.y; })
-          .attr("r", function (d) { return r(d.v); })
+          .attr("class", function (d) { return "city" + (d.c.far ? " far" : ""); })
+          .attr("r", function (d) { return rScale(d.v); })
           .classed("sel", function (d) { return d.c.i === state.focus; });
+        placeCities();
+      }
 
-        // Label the biggest cities (or, in city focus, the partners) while avoiding overlaps.
+      // Light up one city's routes and fade everything else.
+      function litCity(i) {
+        svg.classed("hovering", i !== null);
+        gArcs.selectAll("g.f").classed("lit", function (f) { return i !== null && (f.a === i || f.b === i); });
+      }
+
+      // Position dots and labels for the current zoom; more labels fit as you zoom in.
+      function placeCities() {
+        gCities.selectAll("circle")
+          .attr("cx", function (d) { return zt.applyX(d.c.x); })
+          .attr("cy", function (d) { return zt.applyY(d.c.y); });
         var placed = [], labels = [];
-        var maxLabels = state.focus !== null ? 40 : 22;
-        arr.forEach(function (d) {
+        var maxLabels = Math.round((state.focus !== null ? 40 : (V.kind === "od" ? 22 : 30)) * Math.sqrt(zt.k));
+        var dotsBoxes = [];
+        gCities.selectAll("circle").each(function (d) {
+          var cx = zt.applyX(d.c.x), cy = zt.applyY(d.c.y);
+          if (cx < 0 || cx > W || cy < 0 || cy > H) return;
+          var r = rScale(d.v) + 2;
+          dotsBoxes.push([cx - r, cy - r, cx + r, cy + r]);   // labels try not to cover dots either
+        });
+        cityData.forEach(function (d) {
           if (labels.length >= maxLabels) return;
+          var cx = zt.applyX(d.c.x), cy = zt.applyY(d.c.y);
+          if (cx < 0 || cx > W || cy < 0 || cy > H) return;
           var name = d.c.city.replace("New York City", "New York").replace("Minneapolis/St. Paul", "Minneapolis").replace("Dallas/Fort Worth", "Dallas").replace("West Palm Beach/Palm Beach", "West Palm Beach").replace("Raleigh/Durham", "Raleigh");
-          var wd = name.length * 6.1 + 4, x = d.c.x + 7, y = d.c.y + 4;
-          var box = [x, y - 10, x + wd, y + 2];
-          var clash = placed.some(function (p) { return !(box[2] < p[0] || box[0] > p[2] || box[3] < p[1] || box[1] > p[3]); });
-          if (clash || box[2] > W) return;
+          var fs = mobile ? 7.4 : 6.1;
+          var wd = name.length * fs + 4, r = rScale(d.v);
+          var own = [cx - r - 2, cy - r - 2, cx + r + 2, cy + r + 2];
+          function hits(box, list) {
+            return list.some(function (p) {
+              if (p[0] === own[0] && p[1] === own[1]) return false;
+              return !(box[2] < p[0] || box[0] > p[2] || box[3] < p[1] || box[1] > p[3]);
+            });
+          }
+          function fits(x, y, avoidDots) {
+            var box = [x, y - (mobile ? 12 : 10), x + wd, y + 2];
+            if (box[0] < 2 || box[2] > W - 2 || box[1] < 2 || box[3] > H - 2) return null;
+            return hits(box, placed) || (avoidDots && hits(box, dotsBoxes)) ? null : box;
+          }
+          // Try right of the dot, then left, above and below; the biggest cities may cover small dots if needed.
+          var spots = [[cx + r + 3, cy + 4], [cx - r - 3 - wd, cy + 4], [cx - wd / 2, cy - r - 3], [cx - wd / 2, cy + r + 12]];
+          var x, y, box = null;
+          for (var pass = 0; pass < (labels.length < 10 ? 2 : 1) && !box; pass++) {
+            for (var k = 0; k < spots.length && !box; k++) { x = spots[k][0]; y = spots[k][1]; box = fits(x, y, pass === 0); }
+          }
+          if (!box) return;
           placed.push(box);
           labels.push({ d: d, name: name, x: x, y: y });
         });
@@ -507,28 +974,30 @@
           .text(function (l) { return l.name; });
       }
 
-      // ───────────────────────────── side panel
+      // ───────────────────────────── side panels
       function renderSide(list) {
         var side = document.getElementById("side");
+        var cs = cities(), fs = flows();
         var gaps = list.filter(function (f) { return f.st !== 0; });
-        var scope = state.focus !== null ? " touching " + cities[state.focus].city : "";
+        var scope = state.focus !== null ? " touching " + cs[state.focus].city : "";
         var h = "<h3>Largest markets without a nonstop</h3>";
         if (!gaps.length) {
-          var pool = flows.filter(function (f) { return f.st !== 0 && (state.focus === null || f.a === state.focus || f.b === state.focus); });
+          var pool = fs.filter(function (f) { return f.st !== 0 && (state.focus === null || f.a === state.focus || f.b === state.focus); });
           var first = pool[0];
+          var jumpTo = first ? V.tops.find(function (n) { return n >= first.rank; }) : null;
           h += '<p class="sub">Among the top ' + fmt(state.top) + scope + ".</p>";
           h += '<p class="note">Every one of these markets has at least one nonstop flight.';
           if (first) {
             h += " The first gap in the ranking is <b>#" + first.rank + " " + pairName(first) + "</b> (" + fmtPax(first.pax) + " passengers a day, " +
               (first.st === 1 ? "seasonal or dropped nonstop" : "no nonstop") + ").";
-            if (first.rank <= 2000) h += ' <a href="#" id="jump">Show the top ' + fmt(TOP_OPTIONS.find(function (n) { return n >= first.rank; })) + "</a>";
+            if (jumpTo) h += ' <a href="#" id="jump">Show the top ' + fmt(jumpTo) + "</a>";
           } else {
-            h += " None of the top " + fmt(flows.length) + " markets" + scope + " lacks a nonstop.";
+            h += " None of the top " + fmt(fs.length) + " markets" + scope + " lacks a nonstop.";
           }
           h += "</p>";
           side.innerHTML = h;
           var j = document.getElementById("jump");
-          if (j) j.addEventListener("click", function (e) { e.preventDefault(); state.top = TOP_OPTIONS.find(function (n) { return n >= first.rank; }); state.show[1] = state.show[2] = true; render(); });
+          if (j) j.addEventListener("click", function (e) { e.preventDefault(); state.top = jumpTo; state.show[1] = state.show[2] = true; render(); });
           return;
         }
         h += '<p class="sub">' + fmt(gaps.length) + " of the top " + fmt(state.top) + scope + ". Passengers per day.</p><ol>";
@@ -538,49 +1007,163 @@
         });
         h += "</ol>";
         side.innerHTML = h;
+        wireSide(side, function (f) { setFocus(f.a === state.focus ? f.b : f.a); });
+      }
+
+      function renderSideRoutes(list) {
+        var side = document.getElementById("side");
+        var cs = cities();
+        var h;
+        var unit = V.kind === "seats" ? "Seats a day each way" : V.kind === "seg" ? "Passengers a day" : "Number of airlines";
+        if (state.focus === null) {
+          if (V.kind === "seats") {
+            h = "<h3>Biggest domestic markets</h3><p class=\"sub\">Seats a day in each direction, 2024.</p><ol>";
+            list.filter(hasVol).slice(0, 12).forEach(function (f) {
+              h += '<li data-rank="' + f.rank + '"><span class="rk">#' + f.rank + '</span><span class="pr">' + pairName(f) +
+                "<small>" + (f.car || []).slice(0, 2).map(function (c) { return carrierName(c.code) + " " + Math.round(c.share) + "%"; }).join(" · ") + '</small></span><span class="px">' + fmt(f.pax) + "</span></li>";
+            });
+          } else {
+            // Biggest cities on the far side.
+            var tot = d3.rollups(list, function (v) {
+              return { vol: V.kind === "net" ? v.length : d3.sum(v, function (f) { return f.pax; }), n: v.length };
+            }, function (f) { return f.b; }).sort(function (x, y) { return y[1].vol - x[1].vol; });
+            h = "<h3>Biggest " + V.farLabel.replace(" cities", "") + " gateways</h3><p class=\"sub\">" +
+              (V.kind === "net" ? "By number of " + V.home + " cities with a nonstop." : "Nonstop passengers a day to and from " + (V.country === "us" ? "the US" : "Canada") + ".") + "</p><ol>";
+            tot.slice(0, 12).forEach(function (e, i) {
+              var c = cs[e[0]];
+              h += '<li data-city="' + c.i + '"><span class="rk">' + (i + 1) + '</span><span class="pr">' + c.city +
+                "<small>" + c.st + " · " + e[1].n + " " + V.home + " " + (e[1].n === 1 ? "city" : "cities") + '</small></span><span class="px">' + (V.kind === "net" ? "" : fmtPax(e[1].vol)) + "</span></li>";
+            });
+          }
+        } else {
+          var c0 = cs[state.focus];
+          h = "<h3>Routes from " + c0.city + "</h3><p class=\"sub\">" + unit + ".</p><ol>";
+          list.slice(0, 16).forEach(function (f) {
+            var other = cs[f.a === state.focus ? f.b : f.a];
+            var sub = f.car ? carrierName(f.car[0].code) + (f.car.length > 1 ? " +" + (f.car.length - 1) : "") :
+              f.airlines.length ? f.airlines.slice(0, 2).map(carrierName).join(", ") + (f.airlines.length > 2 ? " +" + (f.airlines.length - 2) : "") : "no longer scheduled";
+            if (f.weekly) sub += " · " + Math.round(f.weekly) + " flights/week";
+            h += '<li data-rank="' + f.rank + '" data-city="' + other.i + '"><span class="rk">' + (V.kind === "net" ? "" : "#" + f.rank) + '</span><span class="pr">' + other.city +
+              "<small>" + sub + '</small></span><span class="px">' + (hasVol(f) ? fmtPax(f.pax) : (V.kind === "net" ? f.airlines.length : "–")) + "</span></li>";
+          });
+        }
+        h += "</ol>";
+        side.innerHTML = h;
+        wireSide(side, function (f, li) { setFocus(li.dataset.city ? +li.dataset.city : (f.a === state.focus ? f.b : f.a)); });
+      }
+      function wireSide(side, onClick) {
         side.querySelectorAll("li").forEach(function (li) {
-          var f = flows[+li.dataset.rank - 1];
-          li.addEventListener("mouseenter", function () { highlight(f, true); });
-          li.addEventListener("mouseleave", function () { highlight(f, false); });
-          li.addEventListener("click", function () { setFocus(f.a === state.focus ? f.b : f.a); });
+          var f = li.dataset.rank ? flows()[+li.dataset.rank - 1] : null;
+          if (f) {
+            li.addEventListener("mouseenter", function () { highlight(f, true); });
+            li.addEventListener("mouseleave", function () { highlight(f, false); });
+          }
+          li.addEventListener("click", function () { if (f || li.dataset.city) onClick(f, li); });
         });
       }
 
       function highlight(f, on) {
         gArcs.selectAll("g.f").filter(function (d) { return d === f; }).select(".arc").classed("hot", on)
-          .attr("stroke-width", function (d) { return on ? Math.max(3, wScale(d.pax) + 2) : baseWidth(d); });
+          .attr("stroke-width", function (d) { return on ? Math.max(3, baseWidth(d) + 2) : baseWidth(d); });
       }
-      // Markets without a nonstop get a slightly thicker floor so they read through the dense network.
-      function baseWidth(f) { return Math.max(f.st ? 1.6 : 0.7, wScale(f.pax)); }
 
       // ───────────────────────────── table
+      // One column list per kind of view: label, sort value, cell html. "bar" draws a bar behind the number.
+      function columns() {
+        var cs = cities();
+        var rank = { key: "rank", label: "#", num: true, cls: "rank", get: function (f) { return f.rank; }, cell: function (f) { return f.rank; } };
+        var pair = { key: "pair", label: V.kind === "od" ? "City pair" : "Route (cities)", cls: "pair",
+          get: function (f) { return pairName(f); },
+          cell: function (f) { var A = cs[f.a], B = cs[f.b]; return '<span class="rk-m">#' + f.rank + "</span>" + A.city + ", " + A.st + " – " + B.city + ", " + B.st; } };
+        var dist = { key: "mi", label: "Distance", num: true, get: function (f) { return f.mi; }, cell: function (f) { return fmt(f.mi) + " mi"; } };
+        var pax = { key: "pax", label: "Passengers / day", num: true, bar: true, desc: true, get: function (f) { return f.pax; }, cell: function (f) { return fmtPax(f.pax); } };
+        var airlines = { key: "air", label: "Airlines", get: function (f) { return f.car ? carrierName(f.car[0].code) : (f.airlines[0] ? carrierName(f.airlines[0]) : "~"); }, cell: airlinesCell };
+        if (V.kind === "od") {
+          return [rank, pair, pax, dist,
+            { key: "fare", label: "Avg fare", num: true, desc: true, get: function (f) { return f.fare; }, cell: function (f) { return "$" + f.fare; } },
+            { key: "lg", label: "Largest carrier", get: function (f) { return f.lg ? carrierName(f.lg.code) : "~"; },
+              cell: function (f) { return f.lg ? carrierName(f.lg.code) + ' <span style="color:var(--muted)">' + f.lg.share + "%</span>" : "–"; } },
+            { key: "st", label: "Nonstop?", get: function (f) { return f.st; }, desc: true,
+              cell: function (f) { var s = STATUS[f.st]; return '<span class="badge s' + f.st + '"><i class="key' + (s.dash ? " dash" : "") + '" style="--c:' + s.css + '"></i>' + (f.st === 0 ? "Yes" : s.label) + "</span>"; } }];
+        }
+        if (V.kind === "seg" && V.country === "us") {
+          return [rank, pair, pax, dist,
+            { key: "wk", label: "Flights / week", num: true, desc: true, get: function (f) { return f.weekly; }, cell: function (f) { return Math.round(f.weekly); } },
+            { key: "lf", label: "Seats filled", num: true, desc: true, get: function (f) { return f.lf || 0; }, cell: function (f) { return f.lf ? Math.round(f.lf * 100) + "%" : "–"; } },
+            airlines];
+        }
+        if (V.kind === "seg") {
+          return [rank, pair, pax, dist, Object.assign({}, airlines, { label: "Airlines (2026 schedules)" }),
+            { key: "aps", label: "Airports", get: function (f) { return f.apsplit[0].pair; },
+              cell: function (f) { return f.apsplit.map(function (p) { return p.pair.replace("-", "–") + (f.apsplit.length > 1 ? ' <span style="color:var(--muted)">' + p.share + "%</span>" : ""); }).join(", "); } }];
+        }
+        if (V.kind === "seats") {
+          return [rank, pair,
+            { key: "pax", label: "Seats / day each way", num: true, bar: true, desc: true, get: function (f) { return hasVol(f) ? f.pax : -1; }, cell: function (f) { return hasVol(f) ? fmt(f.pax) : "–"; } },
+            { key: "ch", label: "vs 2023", num: true, desc: true, get: function (f) { return hasVol(f) && f.prev ? f.pax / f.prev - 1 : -9; },
+              cell: function (f) { if (!hasVol(f) || !f.prev) return ""; var ch = Math.round((f.pax / f.prev - 1) * 100); return (ch > 0 ? "+" : "") + ch + "%"; } },
+            dist, airlines];
+        }
+        return [rank, pair, dist, Object.assign({}, airlines, { desc: true, get: function (f) { return f.airlines.length; }, label: "Airlines" }),
+          { key: "aps", label: "Airports", get: function (f) { return f.ns; }, cell: function (f) { return f.ns.split(";").map(function (p) { return p.split(":")[0].replace("-", "–"); }).join(", "); } }];
+      }
+      function headRow() {
+        var cols = columns();
+        // Mobile: the same sorts as a dropdown.
+        var sel = document.getElementById("sort-m");
+        sel.innerHTML = cols.filter(function (c) { return c.key !== "pair"; }).map(function (c) {
+          var dir = c.desc ? "desc" : "asc";
+          var lab = c.key === "rank" ? "Sort: ranking" : "Sort: " + c.label.toLowerCase();
+          return '<option value="' + c.key + ":" + (c.key === "rank" ? "asc" : dir) + '"' + (state.sort.key === c.key ? " selected" : "") + ">" + lab + "</option>";
+        }).join("");
+        return cols.map(function (c) {
+          var on = state.sort.key === c.key;
+          return '<th class="sort' + (c.num ? " num" : "") + (on ? " on" + (state.sort.asc ? " asc" : "") : "") + '" data-key="' + c.key + '" title="Sort">' + c.label + "</th>";
+        }).join("");
+      }
+      function airlinesCell(f) {
+        if (f.car) return f.car.map(function (c) { return carrierName(c.code) + ' <span style="color:var(--muted)">' + Math.round(c.share) + "%</span>"; }).join(", ");
+        return f.airlines.length ? f.airlines.map(carrierName).join(", ") : '<span style="color:var(--muted)">No longer scheduled</span>';
+      }
+      document.getElementById("thead").addEventListener("click", function (e) {
+        var th = e.target.closest("th"); if (!th) return;
+        var col = columns().find(function (c) { return c.key === th.dataset.key; });
+        if (state.sort.key === col.key) state.sort.asc = !state.sort.asc;
+        else state.sort = { key: col.key, asc: !col.desc };
+        state.rows = ROWS_STEP;
+        render();
+      });
       function renderTable(list) {
-        var n = state.focus !== null ? " touching " + cities[state.focus].city : "";
-        document.getElementById("tbl-title").textContent = fmt(list.length) + " markets" + n;
-        var rows = list.slice(0, state.rows);
+        var cs = cities(), cols = columns();
+        var n = state.focus !== null ? " touching " + cs[state.focus].city : "";
+        document.getElementById("tbl-title").textContent = fmt(list.length) + (V.kind === "od" ? " markets" : " nonstop routes") + n;
+        var col = cols.find(function (c) { return c.key === state.sort.key; }) || cols[0];
+        var sorted = list.slice().sort(function (x, y) {
+          var a = col.get(x), b = col.get(y);
+          var r = typeof a === "string" ? a.localeCompare(b) : a - b;
+          return (state.sort.asc ? r : -r) || x.rank - y.rank;
+        });
+        var maxBar = d3.max(flows(), function (f) { return f.pax || 0; }) || 1;
+        var rows = sorted.slice(0, state.rows);
         var tb = document.getElementById("tbody");
         tb.innerHTML = rows.map(function (f) {
-          var s = STATUS[f.st];
-          var detail = f.st === 0 ? "Yes" : s.label;
-          return "<tr data-rank=\"" + f.rank + "\"><td class=\"num\">" + f.rank + "</td>" +
-            "<td class=\"pair\">" + cities[f.a].city + ", " + cities[f.a].st + " – " + cities[f.b].city + ", " + cities[f.b].st + "</td>" +
-            "<td class=\"num\">" + fmtPax(f.pax) + "</td>" +
-            "<td class=\"num\">" + fmt(f.mi) + " mi</td>" +
-            "<td class=\"num\">$" + f.fare + "</td>" +
-            "<td>" + (f.lg ? (CARRIERS[f.lg.code] || f.lg.code) + " <span style=\"color:var(--muted)\">" + f.lg.share + "%</span>" : "–") + "</td>" +
-            "<td><span class=\"badge s" + f.st + "\"><i class=\"key" + (s.dash ? " dash" : "") + "\" style=\"--c:" + s.css + "\"></i>" + detail + "</span></td></tr>";
+          return "<tr data-rank=\"" + f.rank + "\">" + cols.map(function (c) {
+            var cls = [c.cls, c.num ? "num" : "", c.bar && hasVol(f) ? "bar" : ""].filter(Boolean).join(" ");
+            var st = c.bar && hasVol(f) ? ' style="--w:' + Math.max(0.01, f.pax / maxBar).toFixed(3) + '"' : "";
+            return '<td class="' + cls + '" data-label="' + c.label + '"' + st + "><span>" + c.cell(f) + "</span></td>";
+          }).join("") + "</tr>";
         }).join("");
         tb.querySelectorAll("tr").forEach(function (tr) {
-          var f = flows[+tr.dataset.rank - 1];
+          var f = flows()[+tr.dataset.rank - 1];
           tr.addEventListener("mouseenter", function () { highlight(f, true); });
           tr.addEventListener("mouseleave", function () { highlight(f, false); });
         });
         var more = document.getElementById("more");
         more.innerHTML = "";
-        if (list.length > state.rows) {
+        if (sorted.length > state.rows) {
           var b = document.createElement("button");
           b.type = "button";
-          b.textContent = "Show " + fmt(Math.min(ROWS_STEP * 4, list.length - state.rows)) + " more (" + fmt(list.length - state.rows) + " left)";
+          b.textContent = "Show " + fmt(Math.min(ROWS_STEP * 4, sorted.length - state.rows)) + " more (" + fmt(sorted.length - state.rows) + " left)";
           b.addEventListener("click", function () { state.rows += ROWS_STEP * 4; renderTable(list); });
           more.appendChild(b);
         }
@@ -588,35 +1171,65 @@
 
       // ───────────────────────────── tooltip
       var tip = document.getElementById("tip");
+      function nsLines(ns, max) {
+        var parts = (ns || "").split(";").filter(Boolean);
+        return parts.slice(0, max).map(function (p) {
+          var kv = p.split(":");
+          return kv[0].replace("-", "–") + (kv[1] ? " (" + carrierList(kv[1]) + ")" : " (not scheduled)");
+        }).join("<br>") + (parts.length > max ? "<br>+ " + (parts.length - max) + " more airport pairs" : "");
+      }
       function showTip(ev, f) {
-        var s = STATUS[f.st];
-        var h = '<div class="t">#' + f.rank + " · " + pairName(f) + "</div>" +
-          '<span class="n">' + fmtPax(f.pax) + "</span> passengers a day (≈" + fmtYear(f.pax) + " a year)<br>" +
-          fmt(f.mi) + " mi · average one-way fare $" + f.fare +
-          (f.lg ? "<br>Largest carrier: " + (CARRIERS[f.lg.code] || f.lg.code) + " (" + f.lg.share + "% of passengers)" : "");
-        h += '<div class="st"><i class="key' + (s.dash ? " dash" : "") + '" style="--c:' + s.css + '"></i><b style="color:var(--ink)">' + s.label + "</b>";
-        if (f.ns) {
-          var parts = f.ns.split(";");
-          var shown = parts.slice(0, 4).map(function (p) {
-            var kv = p.split(":");
-            return kv[0].replace("-", "–") + " (" + carrierList(kv[1]) + ")";
-          });
-          h += "<br>" + (f.st === 1 ? "Flown in spring 2026: " : "") + shown.join("<br>") + (parts.length > 4 ? "<br>+ " + (parts.length - 4) + " more airport pairs" : "");
-        } else if (f.st === 2) {
-          h += "<br>Travellers connect somewhere.";
+        var h = '<div class="t">' + (V.kind === "net" ? "" : "#" + f.rank + " · ") + pairName(f) + "</div>";
+        if (V.kind === "od") {
+          var s = STATUS[f.st];
+          h += '<span class="n">' + fmtPax(f.pax) + "</span> passengers a day (≈" + fmtYear(f.pax) + " a year)<br>" +
+            fmt(f.mi) + " mi · average one-way fare $" + f.fare +
+            (f.lg ? "<br>Largest carrier: " + carrierName(f.lg.code) + " (" + f.lg.share + "% of passengers)" : "");
+          h += '<div class="st"><i class="key' + (s.dash ? " dash" : "") + '" style="--c:' + s.css + '"></i><b style="color:var(--ink)">' + s.label + "</b>";
+          if (f.ns) h += "<br>" + (f.st === 1 ? "Flown in spring 2026: " : "") + nsLines(f.ns, 4);
+          else if (f.st === 2) h += "<br>Travellers connect somewhere.";
+          h += "</div>";
+        } else if (V.kind === "seg" && V.country === "us") {
+          h += '<span class="n">' + fmtPax(f.pax) + "</span> passengers a day (≈" + fmtYear(f.pax) + " a year)<br>" +
+            fmt(f.mi) + " mi · " + Math.round(f.weekly) + " flights a week each way" +
+            (f.lf ? " · " + Math.round(f.lf * 100) + "% of seats filled" : "");
+          h += '<div class="st"><b style="color:var(--ink)">Airlines</b> (share of passengers)<br>' +
+            f.car.map(function (c) { return carrierName(c.code) + " " + c.share + "%"; }).join(" · ") +
+            "<br><span style=\"color:var(--muted)\">" + f.apsplit.map(function (p) { return p.pair.replace("-", "–") + " " + p.share + "%"; }).join(" · ") + "</span></div>";
+        } else if (V.kind === "seg") {
+          h += '<span class="n">' + fmtPax(f.pax) + "</span> passengers a day in 2024 (≈" + fmtYear(f.pax) + " a year)<br>" + fmt(f.mi) + " mi";
+          if (f.apsplit.length > 1) h += "<br><span style=\"color:var(--muted)\">" + f.apsplit.map(function (p) { return p.pair.replace("-", "–") + " " + p.share + "%"; }).join(" · ") + "</span>";
+          h += '<div class="st"><b style="color:var(--ink)">' + (f.gone ? "Not in the September 2026 schedules" : "Airlines in September 2026") + "</b><br>" + nsLines(f.ns, 4) + "</div>";
+        } else if (V.kind === "seats") {
+          if (hasVol(f)) {
+            var ch = f.prev ? Math.round((f.pax / f.prev - 1) * 100) : null;
+            h += '<span class="n">' + fmt(f.pax) + "</span> seats a day each way in 2024" + (ch !== null ? " (" + (ch > 0 ? "+" : "") + ch + "% vs 2023)" : "") +
+              "<br>" + fmt(f.mi) + " mi" +
+              '<div class="st"><b style="color:var(--ink)">Share of seats</b><br>' + f.car.map(function (c) { return carrierName(c.code) + " " + Math.round(c.share) + "%"; }).join(" · ") + "</div>";
+          } else {
+            h += fmt(f.mi) + " mi · outside the top 25, no published volume";
+          }
+          h += '<div class="st" style="color:var(--muted)">September 2026 schedules<br>' + nsLines(f.ns, 3) + "</div>";
+        } else {
+          h += fmt(f.mi) + " mi" + '<div class="st"><b style="color:var(--ink)">Airlines in September 2026</b><br>' + nsLines(f.ns, 4) + "</div>";
         }
-        h += "</div>";
         tip.innerHTML = h;
         tip.style.display = "block";
         moveTip(ev);
       }
       function showCityTip(ev, d) {
-        var c = d.c;
-        var all = flows.filter(function (f) { return f.rank <= state.top && (f.a === c.i || f.b === c.i); });
-        var gaps = all.filter(function (f) { return f.st !== 0; }).length;
-        tip.innerHTML = '<div class="t">' + c.city + ", " + c.st + "</div>Airports: " + c.aps.split(" ").join(", ") +
-          "<br>" + fmt(all.length) + " markets in the top " + fmt(state.top) + (gaps ? ", " + gaps + " without a nonstop" : "") +
-          '<div class="st" style="color:var(--muted)">Click to ' + (state.focus === c.i ? "show all cities" : "focus on this city") + "</div>";
+        var c = d.c, t = topValue();
+        var all = flows().filter(function (f) { return f.rank <= t && (f.a === c.i || f.b === c.i); });
+        var h = '<div class="t">' + c.city + ", " + c.st + "</div>Airports: " + c.aps.split(" ").join(", ") + "<br>";
+        if (V.kind === "od") {
+          var gaps = all.filter(function (f) { return f.st !== 0; }).length;
+          h += fmt(all.length) + " markets in the top " + fmt(state.top) + (gaps ? ", " + gaps + " without a nonstop" : "");
+        } else {
+          var withVol = all.filter(hasVol);
+          h += fmt(all.length) + " nonstop " + (all.length === 1 ? "route" : "routes");
+          if (V.kind === "seg") h += " · " + fmtPax(d3.sum(withVol, function (f) { return f.pax; })) + " passengers a day";
+        }
+        tip.innerHTML = h + '<div class="st" style="color:var(--muted)">Click to ' + (state.focus === c.i ? "show all cities" : "focus on this city") + "</div>";
         tip.style.display = "block";
         moveTip(ev);
       }
