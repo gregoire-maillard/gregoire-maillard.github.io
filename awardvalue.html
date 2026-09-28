@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Award value comparator</title>
+    <meta name="description" content="How many points Aeroplan, MileagePlus, Flying Blue and Etihad Guest ask for the same trips, and what that's worth in cents per point: a snapshot of public award prices and cash fares.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / breakage.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        --grid: #eeeeec;
+        /* one colour and one marker shape per programme (validated categorical set) */
+        --ac: #2a78d6;   /* Aeroplan: circle */
+        --ua: #eb6834;   /* MileagePlus: square */
+        --fb: #1baf7a;   /* Flying Blue: triangle */
+        --ey: #4a3aa7;   /* Etihad Guest: diamond */
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 6px; max-width: 780px; }
+      .crumbs { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+      .crumbs a { color: var(--muted); }
+      .crumbs a:hover { color: var(--link); }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+      .asof { display: inline-block; margin: 10px 8px 0 0; font-size: 12px; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+      .asof b { font-weight: 600; }
+
+      /* ── Controls ── */
+      .panel { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fff; margin: 22px 0 16px; }
+      .ctl-grid { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; align-items: center; }
+      .ctl-grid > label, .lbl { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip {
+        border: 1px solid var(--line); background: #fff; color: var(--text);
+        border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer;
+      }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .hint { font-size: 12px; color: var(--muted); margin-left: 4px; }
+      input.num, select.num {
+        font: inherit; font-size: 13px; color: var(--ink);
+        border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px; background: #fff;
+        width: 96px; font-variant-numeric: tabular-nums;
+      }
+      select.num { width: auto; }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 8px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile .nm { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink); }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; margin-top: 4px; }
+      .tile span.s { font-size: 12px; line-height: 1.4; display: block; margin-top: 2px; }
+
+      /* ── Sections & charts ── */
+      .sec { margin-top: 38px; }
+      .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px; }
+      .sec-head h3 { margin: 0; font-size: 17px; color: var(--ink); }
+      .sec-head span { color: var(--muted); font-size: 12.5px; }
+      .sec > p.lead { margin: 0 0 12px; max-width: 800px; font-size: 13.5px; line-height: 1.55; }
+      .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+      .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 10px; background: #fff; min-width: 0; }
+      .card h4 { margin: 0 0 2px; font-size: 14px; color: var(--ink); font-weight: 600; }
+      .card .sub { margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+      .chart { position: relative; width: 100%; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart .axis text { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .chart .axis path, .chart .axis line { stroke: #d9d9d6; }
+      .chart .grid line { stroke: var(--grid); }
+      .chart .grid path { display: none; }
+      .chart .rowlab { font-size: 12px; fill: var(--ink); }
+      .chart .rowlab.sm { font-size: 11px; fill: var(--muted); }
+      .chart .dlabel { font-size: 11.5px; fill: var(--text); paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+      .chart .mark { stroke: #fff; stroke-width: 1.5px; cursor: default; }
+      .chart .hit { fill: transparent; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); margin: 6px 0 0; align-items: center; }
+      svg.sw { vertical-align: -1px; margin-right: 5px; flex: none; }
+      .legend svg { vertical-align: -2px; margin-right: 5px; }
+      .legend i.ln { display: inline-block; width: 16px; height: 0; border-top: 2px dashed #9b93cf; margin-right: 5px; vertical-align: 3px; }
+      .legend i.wh { display: inline-block; width: 2px; height: 12px; background: #b9b8b3; margin: 0 7px 0 4px; vertical-align: -2px; }
+
+      .tip {
+        position: absolute; pointer-events: none; z-index: 5;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.5;
+        max-width: 300px; display: none;
+      }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+      .tip .r { display: flex; justify-content: space-between; gap: 14px; white-space: nowrap; }
+      .tip .r b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+      .tip .f { color: var(--muted); font-size: 11.5px; margin-top: 3px; white-space: normal; }
+      .tip .tot { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 3px; }
+
+      /* ── Table ── */
+      .tbl-wrap { overflow-x: auto; }
+      table.av { border-collapse: collapse; width: 100%; font-size: 12.5px; min-width: 760px; margin: 0; }
+      table.av th { text-align: right; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: bottom; }
+      table.av th:first-child, table.av td:first-child { text-align: left; }
+      table.av th .sw { vertical-align: -2px; margin-right: 4px; }
+      table.av td { padding: 7px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; vertical-align: top; }
+      table.av td b { color: var(--ink); font-weight: 600; font-size: 13px; }
+      table.av td small { display: block; color: var(--muted); font-size: 11.5px; }
+      table.av td.k { color: var(--ink); }
+      table.av td.na { color: #b2b1ac; }
+      table.av tr.med td { color: var(--ink); font-weight: 600; border-top: 1px solid var(--line); border-bottom: 0; }
+      table.av tbody tr:hover { background: var(--soft); }
+      .flag { color: var(--muted); font-size: 11px; }
+      .tbl-foot { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; max-width: 900px; }
+
+      /* ── Calculator ── */
+      .calc { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 18px; align-items: start; }
+      .calc-in { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: center; }
+      .calc-in label { font-size: 12.5px; color: var(--muted); }
+      .calc-out { font-size: 13px; }
+      .big { font-size: 32px; font-weight: 500; color: var(--ink); line-height: 1.1; font-variant-numeric: tabular-nums; margin: 2px 0 4px; }
+      .verdict { margin: 8px 0 0; font-size: 13px; line-height: 1.55; color: var(--text); }
+      .cmp { list-style: none; margin: 10px 0 0; padding: 0; }
+      .cmp li { display: grid; grid-template-columns: 112px 1fr 58px; gap: 8px; align-items: center; padding: 4px 0; font-size: 12.5px; color: var(--ink); }
+      .cmp li .bar { height: 10px; border-radius: 0 4px 4px 0; background: var(--c); min-width: 2px; }
+      .cmp li .track { position: relative; height: 10px; }
+      .cmp li .you { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 2px solid var(--ink); }
+      .cmp li b { font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+      .cmp li.me .bar { background: var(--ink); }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; line-height: 1.55; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method code, .fx { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; color: var(--ink); }
+      .method .fx { display: block; padding: 7px 10px; margin: 6px 0 10px; white-space: pre-wrap; line-height: 1.6; }
+
+      .loading { padding: 60px 20px; text-align: center; color: var(--muted); }
+
+      @media (max-width: 900px) {
+        .two, .calc { grid-template-columns: 1fr; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .ctl-grid { grid-template-columns: 1fr; gap: 4px 0; }
+        .ctl-grid > label { margin-top: 8px; }
+        .tile b { font-size: 20px; }
+        .big { font-size: 28px; }
+        .cmp li { grid-template-columns: 96px 1fr 52px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>What an airline point is worth when you spend it.</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Loyalty</div>
+        <h2>Award value comparator</h2>
+        <p>The same ten trips, priced in points by four programmes: Aeroplan, United MileagePlus, Flying Blue and Etihad Guest. Divide what the ticket would cost in cash by the points asked, after taxes, and you get the value of a point in cents. Two programmes publish charts; two price every flight dynamically.</p>
+        <span class="asof" id="asof">Prices as of <b>28 Sep 2026</b></span>
+        <p class="note-line">A snapshot of public prices: published award charts, cached award searches and cash fares, all read on one day. It uses no airline's internal data, and values move every day, so read it as an illustration of one moment, not a forecast.</p>
+      </div>
+
+      <div class="panel" id="controls">
+        <div class="ctl-grid">
+          <label>Cabin</label>
+          <div class="chips" id="cabin"></div>
+          <label>Award price used</label>
+          <div><div class="chips" id="basis"></div><div class="hint" id="basis-desc" style="margin:5px 0 0 0"></div></div>
+        </div>
+      </div>
+
+      <div class="tiles" id="tiles"><div class="loading">Loading…</div></div>
+
+      <section class="sec" aria-labelledby="h-dots">
+        <div class="sec-head"><h3 id="h-dots">Cents per point, trip by trip</h3><span id="dots-sub">One-way, US cents, after taxes and fees</span></div>
+        <div class="card">
+          <div class="chart" id="c-dots"></div>
+          <div class="legend" id="l-dots"></div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-tbl">
+        <div class="sec-head"><h3 id="h-tbl">The numbers behind the chart</h3><span>Points + taxes, and the resulting value</span></div>
+        <div class="tbl-wrap"><table class="av" id="tbl"></table></div>
+        <p class="tbl-foot" id="tbl-foot"></p>
+      </section>
+
+      <section class="sec" aria-labelledby="h-calc">
+        <div class="sec-head"><h3 id="h-calc">My trip</h3><span>Value a redemption you're looking at</span></div>
+        <div class="calc">
+          <div class="card">
+            <div class="calc-in">
+              <label for="in-pts">Points asked</label>
+              <div><input class="num" id="in-pts" type="number" min="1" step="500" inputmode="numeric" value="25000"></div>
+              <label for="in-tax">Taxes &amp; fees on the award</label>
+              <div><input class="num" id="in-tax" type="number" min="0" step="5" inputmode="decimal" value="85"></div>
+              <label for="in-cash">Cash price of the same flight</label>
+              <div><input class="num" id="in-cash" type="number" min="0" step="10" inputmode="decimal" value="420"></div>
+              <label for="in-cur">Currency</label>
+              <div><select class="num" id="in-cur"><option value="USD">US dollars</option><option value="CAD">Canadian dollars</option></select></div>
+            </div>
+          </div>
+          <div class="card calc-out" aria-live="polite">
+            <div class="lbl">Your redemption is worth</div>
+            <div class="big" id="calc-cpp">–</div>
+            <ul class="cmp" id="calc-cmp"></ul>
+            <p class="verdict" id="calc-verdict"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-dist">
+        <div class="sec-head"><h3 id="h-dist">Points needed against distance</h3><span>Chart-based vs dynamic pricing</span></div>
+        <p class="lead">A chart prices by distance band, so its points climb in steps and every date costs the same. Dynamic programmes price each flight: the grey whiskers show the range of lowest daily prices seen over two months, for the same trip.</p>
+        <div class="card">
+          <div class="chart" id="c-dist"></div>
+          <div class="legend" id="l-dist"></div>
+        </div>
+      </section>
+
+      <div class="method" id="how">
+        <h3>How it works</h3>
+
+        <h4>The formula</h4>
+        <span class="fx">cents per point = (cash fare − taxes and fees on the award) ÷ points × 100</span>
+        <p>The cash fare is what you would otherwise pay for the same trip. The award's own taxes and fees come off it, because you pay them either way. Each programme's median is the median over the trips it can price, for the cabin shown. Everything is one-way and in US cents; Canadian-dollar taxes are converted at the Bank of Canada rate of <span id="fx-rate">1.4168</span> CAD per USD (28 Sep 2026).</p>
+
+        <h4>Which price counts as "the" price</h4>
+        <ul>
+          <li><b>Aeroplan</b> (chart). Air Canada and its "select partners" (United, Etihad) are priced dynamically above a published "starting at" floor, and the chart also publishes the median members actually paid on routes to or from North America. <i>Typical</i> uses that median; <i>Lowest</i> uses the floor. Paris–Abu Dhabi has no published median, so both use the floor. Partner flights add the CAD 39 partner booking fee.</li>
+          <li><b>Etihad Guest</b> (chart). On Etihad-operated flights, the "Value" (Saver) price from Etihad's miles calculator, which is fixed per route. On Air Canada flights, the partner award chart by distance.</li>
+          <li><b>MileagePlus and Flying Blue</b> (dynamic). For every travel date between 29 Sep and 27 Nov 2026, the lowest cached price for that date; <i>Typical</i> is the median of those daily lowest prices and <i>Lowest</i> the minimum. Nonstop flights are used when they were seen on at least three dates, otherwise one-stop itineraries (flagged ¹ in the table).</li>
+          <li><b>Cash fares</b>. The cheapest nonstop one-way fare on Google Flights for travel on Tuesday 10 November 2026, taxes included, in the cabin shown, whichever airline sells it.</li>
+        </ul>
+
+        <h4>Sources</h4>
+        <ul id="how-sources">
+          <li>Air Canada, <a href="https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf" target="_blank" rel="noopener">Aeroplan Flight Reward Chart 2026-08</a> (PDF, last modified 19 Aug 2026), read 28 Sep 2026.</li>
+          <li>Etihad, <a href="https://www.etihad.com/en-ca/etihadguest/miles-calculator" target="_blank" rel="noopener">Etihad Guest miles calculator</a> ("Spend" tab, base tier) and <a href="https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada" target="_blank" rel="noopener">partner award chart</a>, read 28 Sep 2026.</li>
+          <li><a href="https://seats.aero" target="_blank" rel="noopener">seats.aero</a> cached award search results for MileagePlus, Flying Blue, and award taxes for all four programmes. Data courtesy of seats.aero; prices were last seen between 3 and 28 Sep 2026 and cover travel from 29 Sep to 27 Nov 2026. Per-series summary: <a href="assets/data/award-value-series.csv">award-value-series.csv</a>.</li>
+          <li><a href="https://www.google.com/travel/flights" target="_blank" rel="noopener">Google Flights</a> cash fares for 10 Nov 2026, read 28 Sep 2026 (each search is linked in the <a href="assets/data/award-value.json">dataset</a>).</li>
+          <li>Bank of Canada, <a href="https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/" target="_blank" rel="noopener">daily exchange rates</a>, USD/CAD for 28 Sep 2026.</li>
+          <li>Distances are great-circle miles from <a href="https://ourairports.com/data/" target="_blank" rel="noopener">OurAirports</a> coordinates.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>A snapshot. Dynamic prices, cached award space and cash fares all change daily; the chart programmes change their charts too (Aeroplan's partner chart last changed on 1 June 2026).</li>
+          <li>Cash fares are for one date and cheapest nonstop, which can be a low-cost carrier (Flair on Toronto–Vancouver) or a different airline from the one the award flies. One-way long-haul business fares are often priced well above half a return, which flatters the value of business awards.</li>
+          <li>A cache is not a live search. seats.aero shows what it last saw, and some trips or cabins had no award seats in the window: those cells are blank rather than guessed. Etihad Guest partner prices on Air Canada come from the chart, and seats were not always seen.</li>
+          <li>No status, card or promotion discounts: MileagePlus cardholders, Aeroplan elites and cardholders, and Flying Blue Promo Rewards can all pay fewer points. Flying Blue prices are the cheapest fare type found; since 8 Sep 2026 its cheapest "Light" awards exclude a checked bag.</li>
+          <li>Taxes come from the cached results; where a cabin had no observation the economy taxes are used as a proxy (noted in the dataset). The cents-per-point value ignores the points you would have earned on a cash ticket.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline. For why programmes price rewards the way they do, read <a href="/loyalty101.html#ch03">Loyalty 101: Burning</a>.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      var DATA_URL = "assets/data/award-value.json";
+      var PROGS = ["aeroplan", "united", "flyingblue", "etihad"];
+      var COLOR = { aeroplan: "#2a78d6", united: "#eb6834", flyingblue: "#1baf7a", etihad: "#4a3aa7" };
+      var SHAPE = { aeroplan: "circle", united: "square", flyingblue: "triangle", etihad: "diamond" };
+      var NAME = { aeroplan: "Aeroplan", united: "MileagePlus", flyingblue: "Flying Blue", etihad: "Etihad Guest" };
+      var CABIN = { Y: "Economy", J: "Business" };
+      var S = { cabin: "Y", basis: "typical" };
+      var D = null, tip = el("tip");
+
+      function el(id) { return document.getElementById(id); }
+      function fmtInt(n) { return Math.round(n).toLocaleString("en-US"); }
+      function fmtK(n) { return n >= 1000 ? (Math.round(n / 100) / 10).toLocaleString("en-US") + "k" : String(n); }
+      function fmtC(c) { return (Math.round(c * 100) / 100).toFixed(2) + "¢"; }
+      function money(v) { return "$" + Math.round(v).toLocaleString("en-US"); }
+      function median(a) { if (!a.length) return null; a = a.slice().sort(function (x, y) { return x - y; }); var n = a.length; return n % 2 ? a[(n - 1) / 2] : (a[n / 2 - 1] + a[n / 2]) / 2; }
+      function symPath(p, size) {
+        var t = { circle: d3.symbolCircle, square: d3.symbolSquare, triangle: d3.symbolTriangle, diamond: d3.symbolDiamond }[SHAPE[p]];
+        var s = SHAPE[p] === "triangle" ? size * 1.15 : SHAPE[p] === "diamond" ? size * 0.95 : size;
+        return d3.symbol().type(t).size(s)();
+      }
+      function swatch(p, size) {
+        return '<svg class="sw" width="12" height="12" viewBox="-6 -6 12 12" aria-hidden="true"><path d="' + symPath(p, size || 60) + '" fill="' + COLOR[p] + '"/></svg>';
+      }
+
+      // ───────────────────────────── derived values
+      function pts(a) { return S.basis === "typical" ? a.points : a.points_low; }
+      function cpp(a) { return S.basis === "typical" ? a.cpp : a.cpp_low; }
+      function rows(cabin) { return D.awards.filter(function (a) { return a.cabin === (cabin || S.cabin); }); }
+      function award(trip, p, cabin) { return D.awards.find(function (a) { return a.trip === trip && a.program === p && a.cabin === (cabin || S.cabin); }); }
+      function medianOf(p, cabin) { return median(rows(cabin).filter(function (a) { return a.program === p; }).map(cpp)); }
+      function trip(id) { return D.trips.find(function (t) { return t.id === id; }); }
+      function missingReason(tid, p) {
+        if (p === "etihad" && (tid === "EWR-SFO" || tid === "EWR-LHR")) return "Etihad Guest can't book United, and has no partner on this nonstop.";
+        if (p === "united" && /AUH/.test(tid)) return "Etihad isn't a United partner; no one-stop award was cached.";
+        return "No award seats in the cache for this cabin in the two-month window.";
+      }
+
+      // ───────────────────────────── tooltip
+      function showTip(html, evt) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var pageX = evt.pageX, pageY = evt.pageY, w = tip.offsetWidth, h = tip.offsetHeight;
+        var x = pageX + 14, y = pageY - h - 12;
+        if (x + w > window.scrollX + document.documentElement.clientWidth - 8) x = pageX - w - 14;
+        if (x < window.scrollX + 8) x = window.scrollX + 8;
+        if (y < window.scrollY + 8) y = pageY + 16;
+        tip.style.left = x + "px"; tip.style.top = y + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      function row(label, val, cls) { return '<div class="r' + (cls ? " " + cls : "") + '"><span>' + label + "</span><b>" + val + "</b></div>"; }
+      function awardTip(a) {
+        var t = trip(a.trip), cash = t.cash[a.cabin];
+        var fee = a.fees_usd ? row("Partner fee", money(a.fees_usd)) : "";
+        var basis = S.basis === "typical" ? a.points_basis : (a.pricing === "chart" ? "chart floor" : "lowest daily price seen");
+        return '<div class="t">' + swatch(a.program) + " " + NAME[a.program] + " · " + t.from + "–" + t.to + "</div>" +
+          row("Points", fmtInt(pts(a))) +
+          row("Award taxes", a.taxes_usd != null ? money(a.taxes_usd) : "not observed") + fee +
+          row("Cash fare (" + cash.carrier + ")", money(cash.usd)) +
+          row("Value", fmtC(cpp(a)), "tot") +
+          '<div class="f">' + (a.stops ? "One stop · " : "") + "Operated by " + a.operator + " · " + basis + (a.n_dates ? " (" + a.n_dates + " dates)" : "") + "</div>";
+      }
+
+      // ───────────────────────────── controls
+      function chips(host, opts, key, after) {
+        var h = el(host); h.innerHTML = "";
+        opts.forEach(function (o) {
+          var b = document.createElement("button"); b.type = "button"; b.className = "chip" + (S[key] === o[0] ? " on" : "");
+          b.textContent = o[1]; b.setAttribute("aria-pressed", S[key] === o[0]);
+          b.addEventListener("click", function () { S[key] = o[0]; chips(host, opts, key, after); after(); });
+          h.appendChild(b);
+        });
+      }
+      function renderAll() {
+        el("basis-desc").textContent = S.basis === "typical"
+          ? "What a member typically pays: the official median (Aeroplan), the fixed price (Etihad Guest), or the median of daily lowest prices (dynamic programmes)."
+          : "Best case: the chart's 'starting at' price, or the lowest price seen on any date in the window.";
+        renderTiles(); renderDots(); renderTable(); renderCalc(); renderDist();
+      }
+
+      // ───────────────────────────── tiles
+      function renderTiles() {
+        el("tiles").innerHTML = PROGS.map(function (p) {
+          var m = medianOf(p), n = rows().filter(function (a) { return a.program === p; }).length;
+          return '<div class="tile"><div class="nm">' + swatch(p) + NAME[p] + '</div><b>' + (m == null ? "–" : fmtC(m)) + '</b><span class="s">median, ' + n + " of " + D.trips.length + " trips · " + (D.programs[p].pricing === "chart" ? "chart" : "dynamic") + "</span></div>";
+        }).join("");
+      }
+
+      // ───────────────────────────── dot chart
+      function renderDots() {
+        var host = el("c-dots");
+        var W = Math.max(300, host.clientWidth || 600), narrow = W < 560;
+        var list = D.trips.slice().sort(function (a, b) { return a.miles - b.miles; });
+        var rowH = narrow ? 34 : 32, M = { top: 8, right: 16, bottom: 30, left: narrow ? 70 : 150 };
+        var H = M.top + M.bottom + rowH * (list.length + 1) + 10;
+        d3.select(host).selectAll("*").remove();
+        var svg = d3.select(host).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img")
+          .attr("aria-label", "Dot chart of cents per point by trip and programme, " + CABIN[S.cabin]);
+        var g = svg.append("g").attr("transform", "translate(" + M.left + "," + M.top + ")");
+        var iw = W - M.left - M.right, ih = rowH * (list.length + 1) + 10;
+        var data = rows(), maxV = d3.max(data, cpp) || 1;
+        var x = d3.scaleLinear().domain([0, Math.max(1, maxV) * 1.05]).nice().range([0, iw]);
+        g.append("g").attr("class", "grid").attr("transform", "translate(0," + ih + ")")
+          .call(d3.axisBottom(x).ticks(narrow ? 4 : 8).tickSize(-ih).tickFormat(""));
+        g.append("g").attr("class", "axis").attr("transform", "translate(0," + ih + ")")
+          .call(d3.axisBottom(x).ticks(narrow ? 4 : 8).tickSize(4).tickFormat(function (v) { return v + "¢"; }));
+        var off = { aeroplan: -7.5, united: -2.5, flyingblue: 2.5, etihad: 7.5 };
+        list.forEach(function (t, i) {
+          var cy = rowH * i + rowH / 2;
+          if (i % 2 === 0) g.append("rect").attr("x", -M.left + 4).attr("y", rowH * i).attr("width", iw + M.left - 4).attr("height", rowH).attr("fill", "#fafaf8");
+          g.append("text").attr("class", "rowlab").attr("x", -10).attr("y", cy - (narrow ? 0 : 1)).attr("dy", narrow ? "0.35em" : "-0.1em").attr("text-anchor", "end")
+            .text(t.from + "–" + t.to);
+          if (!narrow) g.append("text").attr("class", "rowlab sm").attr("x", -10).attr("y", cy).attr("dy", "1.05em").attr("text-anchor", "end").text(fmtInt(t.miles) + " mi");
+          PROGS.forEach(function (p) {
+            var a = award(t.id, p); if (!a) return;
+            var cx = x(cpp(a)), yy = cy + off[p];
+            g.append("path").attr("class", "mark").attr("d", symPath(p, 80)).attr("fill", COLOR[p]).attr("transform", "translate(" + cx + "," + yy + ")");
+            g.append("circle").attr("class", "hit").attr("cx", cx).attr("cy", yy).attr("r", 11)
+              .on("mousemove", function (e) { showTip(awardTip(a), e); }).on("mouseleave", hideTip)
+              .on("touchstart", function (e) { showTip(awardTip(a), e.touches ? e.touches[0] : e); }, { passive: true });
+          });
+        });
+        // median row
+        var my = rowH * list.length + 10 + rowH / 2;
+        g.append("line").attr("x1", -M.left + 4).attr("x2", iw).attr("y1", rowH * list.length + 5).attr("y2", rowH * list.length + 5).attr("stroke", "#d9d9d6");
+        g.append("text").attr("class", "rowlab").attr("x", -10).attr("y", my).attr("dy", "0.35em").attr("text-anchor", "end").attr("font-weight", 600).text("Median");
+        PROGS.forEach(function (p) {
+          var m = medianOf(p); if (m == null) return;
+          var cx = x(m), yy = my + off[p];
+          g.append("path").attr("class", "mark").attr("d", symPath(p, 120)).attr("fill", COLOR[p]).attr("transform", "translate(" + cx + "," + yy + ")");
+          g.append("circle").attr("class", "hit").attr("cx", cx).attr("cy", yy).attr("r", 12)
+            .on("mousemove", function (e) { showTip('<div class="t">' + swatch(p) + " " + NAME[p] + " median</div>" + row(CABIN[S.cabin], fmtC(m)) + '<div class="f">Median over the trips it can price.</div>', e); })
+            .on("mouseleave", hideTip);
+        });
+        el("dots-sub").textContent = CABIN[S.cabin] + ", one-way, US cents after taxes and fees";
+        el("l-dots").innerHTML = PROGS.map(function (p) { return "<span>" + swatch(p) + NAME[p] + "</span>"; }).join("");
+      }
+
+      // ───────────────────────────── table
+      function renderTable() {
+        var list = D.trips.slice().sort(function (a, b) { return a.miles - b.miles; });
+        var h = "<thead><tr><th>Trip</th><th>Cash fare</th>" + PROGS.map(function (p) { return "<th>" + swatch(p) + NAME[p] + "</th>"; }).join("") + "</tr></thead><tbody>";
+        list.forEach(function (t) {
+          var c = t.cash[S.cabin];
+          h += '<tr><td class="k">' + t.from + "–" + t.to + "<small>" + t.from_city + " – " + t.to_city + " · " + fmtInt(t.miles) + " mi</small></td>" +
+            '<td><a href="' + c.url + '" target="_blank" rel="noopener">' + money(c.usd) + "</a><small>" + c.carrier + "</small></td>";
+          PROGS.forEach(function (p) {
+            var a = award(t.id, p);
+            if (!a) { h += '<td class="na" title="' + missingReason(t.id, p) + '">–</td>'; return; }
+            var tx = a.taxes_usd != null ? " + " + money(a.taxes_usd + (a.fees_usd || 0)) : "";
+            h += "<td><b>" + fmtC(cpp(a)) + "</b><small>" + fmtK(pts(a)) + tx + (a.stops ? ' <span class="flag">¹</span>' : "") + "</small></td>";
+          });
+          h += "</tr>";
+        });
+        h += '<tr class="med"><td>Median</td><td></td>' + PROGS.map(function (p) { var m = medianOf(p); return "<td>" + (m == null ? "–" : fmtC(m)) + "</td>"; }).join("") + "</tr></tbody>";
+        el("tbl").innerHTML = h;
+        el("tbl-foot").innerHTML = "Points + award taxes and fees (USD) under each value. ¹ One-stop itinerary: no nonstop award was seen on at least three dates. – means the programme can't book the trip or no seats were cached; hover it for the reason. Cash fares link to the Google Flights search they come from.";
+      }
+
+      // ───────────────────────────── calculator
+      function renderCalc() {
+        var P = +el("in-pts").value, T = +el("in-tax").value || 0, C = +el("in-cash").value || 0, cur = el("in-cur").value;
+        var fx = cur === "CAD" ? D.meta.fx.usd_cad : 1, unit = cur === "CAD" ? "Canadian" : "US";
+        if (!(P > 0)) { el("calc-cpp").textContent = "–"; el("calc-verdict").textContent = "Enter the points the award asks for."; el("calc-cmp").innerHTML = ""; return; }
+        var v = (C - T) / P * 100;
+        el("calc-cpp").textContent = fmtC(v) + " per point";
+        var meds = PROGS.map(function (p) { var m = medianOf(p); return { p: p, v: m == null ? null : m * fx }; }).filter(function (d) { return d.v != null; });
+        var maxV = Math.max(v, d3.max(meds, function (d) { return d.v; }) || 1) * 1.08, pct = function (x) { return Math.max(0, x) / maxV * 100; };
+        el("calc-cmp").innerHTML = '<li class="me"><span>Your trip</span><div class="track"><div class="bar" style="width:' + pct(v) + '%"></div></div><b>' + fmtC(v) + "</b></li>" +
+          meds.map(function (d) {
+            return '<li style="--c:' + COLOR[d.p] + '"><span>' + swatch(d.p) + NAME[d.p] + '</span><div class="track"><div class="bar" style="width:' + pct(d.v) + '%"></div><div class="you" style="left:' + pct(v) + '%"></div></div><b>' + fmtC(d.v) + "</b></li>";
+          }).join("");
+        var above = meds.filter(function (d) { return v > d.v; }).map(function (d) { return NAME[d.p]; });
+        var txt;
+        if (v <= 0) txt = "The taxes cost as much as the ticket: paying cash is better.";
+        else if (above.length === meds.length) txt = "Better than the " + CABIN[S.cabin].toLowerCase() + " median of all four programmes on this page.";
+        else if (!above.length) txt = "Below the " + CABIN[S.cabin].toLowerCase() + " median of all four programmes on this page: paying cash, or a different trip, may be a better use of the points.";
+        else txt = "Above the " + CABIN[S.cabin].toLowerCase() + " median for " + above.join(", ").replace(/, ([^,]*)$/, " and $1") + ".";
+        el("calc-verdict").textContent = txt + " Medians in " + unit + " cents" + (cur === "CAD" ? " at " + D.meta.fx.usd_cad + " CAD per USD." : ".") + " Switch the cabin above to compare with business-class medians.";
+      }
+
+      // ───────────────────────────── points vs distance
+      function renderDist() {
+        var host = el("c-dist");
+        var W = Math.max(300, host.clientWidth || 600), narrow = W < 560;
+        var H = Math.max(260, Math.round(W * 0.48));
+        var M = { top: 14, right: narrow ? 12 : 20, bottom: 34, left: narrow ? 42 : 56 };
+        d3.select(host).selectAll("*").remove();
+        var svg = d3.select(host).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img")
+          .attr("aria-label", "Scatter of points needed against trip distance, " + CABIN[S.cabin]);
+        var g = svg.append("g").attr("transform", "translate(" + M.left + "," + M.top + ")");
+        var iw = W - M.left - M.right, ih = H - M.top - M.bottom;
+        var data = rows();
+        var yMax = d3.max(data, function (a) { return a.pricing === "dynamic" ? Math.max(a.points_high, pts(a)) : pts(a); }) || 1;
+        var x = d3.scaleLinear().domain([0, 7200]).range([0, iw]);
+        var y = d3.scaleLinear().domain([0, yMax * 1.06]).nice().range([ih, 0]);
+        g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(""));
+        g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickSize(4).tickFormat(function (v) { return v ? v / 1000 + "k" : "0"; }));
+        g.append("g").attr("class", "axis").attr("transform", "translate(0," + ih + ")")
+          .call(d3.axisBottom(x).ticks(narrow ? 4 : 7).tickSize(4).tickFormat(function (v) { return d3.format(",")(v); }));
+        g.append("text").attr("class", "dlabel").attr("x", iw).attr("y", ih + 30).attr("text-anchor", "end").text("Great-circle miles");
+        g.append("text").attr("class", "dlabel").attr("x", 4).attr("y", 4).attr("dy", "0.7em").text("Points, one-way");
+        // Etihad Guest partner chart: distance-only step line
+        var bands = [[0, 500, 6000, 20000], [500, 1000, 12000, 25000], [1000, 1500, 15000, 30000], [1500, 2000, 23000, 40000], [2000, 2500, 28000, 50000],
+                     [2500, 3000, 34000, 60000], [3000, 4000, 45000, 80000], [4000, 5000, 60000, 100000], [5000, 6000, 67000, 120000], [6000, 7200, 75000, 140000]];
+        var k = S.cabin === "Y" ? 2 : 3, pth = "";
+        bands.forEach(function (b, i) { pth += (i ? "L" : "M") + x(b[0]) + "," + y(b[k]) + "L" + x(b[1]) + "," + y(b[k]); });
+        g.append("path").attr("d", pth).attr("fill", "none").attr("stroke", "#9b93cf").attr("stroke-width", 1.5).attr("stroke-dasharray", "4 3");
+        var off = { aeroplan: -45, united: -15, flyingblue: 15, etihad: 45 };
+        data.forEach(function (a) {
+          var t = trip(a.trip), cx = x(t.miles + off[a.program] * (narrow ? 1.6 : 1)), cy = y(pts(a));
+          if (a.pricing === "dynamic" && a.points_high > a.points_low)
+            g.append("line").attr("x1", cx).attr("x2", cx).attr("y1", y(a.points_low)).attr("y2", y(a.points_high)).attr("stroke", "#b9b8b3").attr("stroke-width", 2).attr("stroke-linecap", "round");
+          g.append("path").attr("class", "mark").attr("d", symPath(a.program, 72)).attr("fill", COLOR[a.program]).attr("transform", "translate(" + cx + "," + cy + ")");
+          g.append("circle").attr("class", "hit").attr("cx", cx).attr("cy", cy).attr("r", 11)
+            .on("mousemove", function (e) {
+              var extra = a.pricing === "dynamic" ? row("Range seen", fmtInt(a.points_low) + "–" + fmtInt(a.points_high)) : row("Pricing", a.band || "chart");
+              showTip('<div class="t">' + swatch(a.program) + " " + NAME[a.program] + " · " + t.from + "–" + t.to + "</div>" + row("Distance", fmtInt(t.miles) + " mi") + row("Points", fmtInt(pts(a))) + extra, e);
+            })
+            .on("mouseleave", hideTip);
+        });
+        el("l-dist").innerHTML = PROGS.map(function (p) { return "<span>" + swatch(p) + NAME[p] + " (" + D.programs[p].pricing + ")</span>"; }).join("") +
+          '<span><i class="wh"></i>range of daily lowest prices (dynamic)</span><span><i class="ln"></i>Etihad Guest partner chart</span>';
+      }
+
+      // ───────────────────────────── boot
+      fetch(DATA_URL).then(function (r) { return r.json(); }).then(function (d) {
+        D = d;
+        el("fx-rate").textContent = d.meta.fx.usd_cad;
+        chips("cabin", [["Y", "Economy"], ["J", "Business"]], "cabin", renderAll);
+        chips("basis", [["typical", "Typical price"], ["low", "Lowest price"]], "basis", renderAll);
+        ["in-pts", "in-tax", "in-cash", "in-cur"].forEach(function (id) { el(id).addEventListener("input", renderCalc); el(id).addEventListener("change", renderCalc); });
+        renderAll();
+        var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { renderDots(); renderDist(); }, 150); });
+      }).catch(function () {
+        el("tiles").innerHTML = '<div class="loading">The data file couldn\'t be loaded.</div>';
+      });
+    });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2487 @@
+{
+ "meta": {
+  "title": "Award value comparator dataset",
+  "prices_as_of": "2026-09-28",
+  "award_travel_window": [
+   "2026-09-29",
+   "2026-11-27"
+  ],
+  "cash_travel_date": "2026-11-10",
+  "fx": {
+   "usd_cad": 1.4168,
+   "source": "Bank of Canada daily average, 2026-09-28",
+   "url": "https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"
+  },
+  "cpp": "(cash fare − award taxes − award fees) ÷ points × 100, in US cents",
+  "notes": "Chart programs: points = official median where published, else chart price. Dynamic programs: points = median of the lowest price per travel date (nonstop if seen on ≥3 dates, else one-stop). Every row carries its source."
+ },
+ "programs": {
+  "aeroplan": {
+   "name": "Aeroplan",
+   "airline": "Air Canada",
+   "pricing": "chart",
+   "note": "Chart with 'starting at' floors; Air Canada and select partners (United, Etihad) are priced dynamically above the floor, and the chart publishes the median members paid."
+  },
+  "united": {
+   "name": "MileagePlus",
+   "airline": "United",
+   "pricing": "dynamic",
+   "note": "No published chart; prices move with demand."
+  },
+  "flyingblue": {
+   "name": "Flying Blue",
+   "airline": "Air France-KLM",
+   "pricing": "dynamic",
+   "note": "Dynamic pricing with published 'from' levels; Light/Standard/Flex fares since 8 Sep 2026."
+  },
+  "etihad": {
+   "name": "Etihad Guest",
+   "airline": "Etihad",
+   "pricing": "chart",
+   "note": "Fixed 'Value' prices per route on Etihad flights; distance chart on partners."
+  }
+ },
+ "trips": [
+  {
+   "id": "YUL-YYZ",
+   "to": "YYZ",
+   "from_city": "Montréal",
+   "to_city": "Toronto",
+   "miles": 315,
+   "cash": {
+    "Y": {
+     "usd": 118,
+     "carrier": "WestJet",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20YYZ%20from%20YUL%20on%202026-11-10%20oneway%20nonstop&curr=USD&hl=en&gl=CA"
+    },
+    "J": {
+     "usd": 532,
+     "carrier": "Air Canada",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20YYZ%20from%20YUL%20on%202026-11-10%20oneway%20nonstop%20business%20class&curr=USD&hl=en&gl=CA"
+    }
+   },
+   "from": "YUL"
+  },
+  {
+   "id": "YYZ-YVR",
+   "to": "YVR",
+   "from_city": "Toronto",
+   "to_city": "Vancouver",
+   "miles": 2079,
+   "cash": {
+    "Y": {
+     "usd": 116,
+     "carrier": "Flair Airlines",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20YVR%20from%20YYZ%20on%202026-11-10%20oneway%20nonstop&curr=USD&hl=en&gl=CA"
+    },
+    "J": {
+     "usd": 674,
+     "carrier": "Air Canada",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20YVR%20from%20YYZ%20on%202026-11-10%20oneway%20nonstop%20business%20class&curr=USD&hl=en&gl=CA"
+    }
+   },
+   "from": "YYZ"
+  },
+  {
+   "id": "EWR-SFO",
+   "to": "SFO",
+   "from_city": "Newark",
+   "to_city": "San Francisco",
+   "miles": 2559,
+   "cash": {
+    "Y": {
+     "usd": 209,
+     "carrier": "United",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20SFO%20from%20EWR%20on%202026-11-10%20oneway%20nonstop&curr=USD&hl=en&gl=CA"
+    },
+    "J": {
+     "usd": 1811,
+     "carrier": "United",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20SFO%20from%20EWR%20on%202026-11-10%20oneway%20nonstop%20business%20class&curr=USD&hl=en&gl=CA"
+    }
+   },
+   "from": "EWR"
+  },
+  {
+   "id": "YUL-CDG",
+   "to": "CDG",
+   "from_city": "Montréal",
+   "to_city": "Paris",
+   "miles": 3433,
+   "cash": {
+    "Y": {
+     "usd": 410,
+     "carrier": "Air Transat",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20CDG%20from%20YUL%20on%202026-11-10%20oneway%20nonstop&curr=USD&hl=en&gl=CA"
+    },
+    "J": {
+     "usd": 5448,
+     "carrier": "Air France",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20CDG%20from%20YUL%20on%202026-11-10%20oneway%20nonstop%20business%20class&curr=USD&hl=en&gl=CA"
+    }
+   },
+   "from": "YUL"
+  },
+  {
+   "id": "YYZ-LHR",
+   "to": "LHR",
+   "from_city": "Toronto",
+   "to_city": "London",
+   "miles": 3546,
+   "cash": {
+    "Y": {
+     "usd": 338,
+     "carrier": "Air Canada",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20LHR%20from%20YYZ%20on%202026-11-10%20oneway%20nonstop&curr=USD&hl=en&gl=CA"
+    },
+    "J": {
+     "usd": 3970,
+     "carrier": "British Airways",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20LHR%20from%20YYZ%20on%202026-11-10%20oneway%20nonstop%20business%20class&curr=USD&hl=en&gl=CA"
+    }
+   },
+   "from": "YYZ"
+  },
+  {
+   "id": "EWR-LHR",
+   "to": "LHR",
+   "from_city": "Newark",
+   "to_city": "London",
+   "miles": 3456,
+   "cash": {
+    "Y": {
+     "usd": 295,
+     "carrier": "United",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20LHR%20from%20EWR%20on%202026-11-10%20oneway%20nonstop&curr=USD&hl=en&gl=CA"
+    },
+    "J": {
+     "usd": 2559,
+     "carrier": "British Airways",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20LHR%20from%20EWR%20on%202026-11-10%20oneway%20nonstop%20business%20class&curr=USD&hl=en&gl=CA"
+    }
+   },
+   "from": "EWR"
+  },
+  {
+   "id": "CDG-AUH",
+   "to": "AUH",
+   "from_city": "Paris",
+   "to_city": "Abu Dhabi",
+   "miles": 3263,
+   "cash": {
+    "Y": {
+     "usd": 678,
+     "carrier": "Etihad",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20AUH%20from%20CDG%20on%202026-11-10%20oneway%20nonstop&curr=USD&hl=en&gl=CA"
+    },
+    "J": {
+     "usd": 3533,
+     "carrier": "Etihad",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20AUH%20from%20CDG%20on%202026-11-10%20oneway%20nonstop%20business%20class&curr=USD&hl=en&gl=CA"
+    }
+   },
+   "from": "CDG"
+  },
+  {
+   "id": "YVR-NRT",
+   "to": "NRT",
+   "from_city": "Vancouver",
+   "to_city": "Tokyo",
+   "miles": 4662,
+   "cash": {
+    "Y": {
+     "usd": 834,
+     "carrier": "JAL",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20YVR%20on%202026-11-10%20oneway%20nonstop&curr=USD&hl=en&gl=CA"
+    },
+    "J": {
+     "usd": 3867,
+     "carrier": "JAL",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20YVR%20on%202026-11-10%20oneway%20nonstop%20business%20class&curr=USD&hl=en&gl=CA"
+    }
+   },
+   "from": "YVR"
+  },
+  {
+   "id": "JFK-AUH",
+   "to": "AUH",
+   "from_city": "New York",
+   "to_city": "Abu Dhabi",
+   "miles": 6854,
+   "cash": {
+    "Y": {
+     "usd": 734,
+     "carrier": "Etihad",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20AUH%20from%20JFK%20on%202026-11-10%20oneway%20nonstop&curr=USD&hl=en&gl=CA"
+    },
+    "J": {
+     "usd": 4903,
+     "carrier": "Etihad",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20AUH%20from%20JFK%20on%202026-11-10%20oneway%20nonstop%20business%20class&curr=USD&hl=en&gl=CA"
+    }
+   },
+   "from": "JFK"
+  },
+  {
+   "id": "YYZ-AUH",
+   "to": "AUH",
+   "from_city": "Toronto",
+   "to_city": "Abu Dhabi",
+   "miles": 6911,
+   "cash": {
+    "Y": {
+     "usd": 921,
+     "carrier": "Etihad",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20AUH%20from%20YYZ%20on%202026-11-10%20oneway%20nonstop&curr=USD&hl=en&gl=CA"
+    },
+    "J": {
+     "usd": 4223,
+     "carrier": "Etihad",
+     "url": "https://www.google.com/travel/flights?q=Flights%20to%20AUH%20from%20YYZ%20on%202026-11-10%20oneway%20nonstop%20business%20class&curr=USD&hl=en&gl=CA"
+    }
+   },
+   "from": "YYZ"
+  }
+ ],
+ "cash_source": {
+  "name": "Google Flights, cheapest nonstop one-way fare incl. taxes, travel 10 Nov 2026",
+  "read": "2026-09-28"
+ },
+ "awards": [
+  {
+   "trip": "YUL-YYZ",
+   "program": "aeroplan",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 13000,
+   "points_low": 6000,
+   "points_high": 25559,
+   "points_basis": "official median",
+   "band": "Within North America, 0–500 mi",
+   "taxes_usd": 40.13,
+   "taxes_native": [
+    56.86,
+    "CAD"
+   ],
+   "fees_usd": 0.0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 14147.0,
+    "min": 12652,
+    "max": 25559,
+    "n": 48
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ"
+   },
+   "cpp": 0.6,
+   "cpp_low": 1.3
+  },
+  {
+   "trip": "YUL-YYZ",
+   "program": "aeroplan",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 20000,
+   "points_low": 15000,
+   "points_high": 38473,
+   "points_basis": "official median",
+   "band": "Within North America, 0–500 mi",
+   "taxes_usd": 40.13,
+   "taxes_native": [
+    56.86,
+    "CAD"
+   ],
+   "fees_usd": 0.0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 17624.0,
+    "min": 17307,
+    "max": 38473,
+    "n": 48
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ"
+   },
+   "cpp": 2.46,
+   "cpp_low": 3.28
+  },
+  {
+   "trip": "YYZ-YVR",
+   "program": "aeroplan",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 17000,
+   "points_low": 12500,
+   "points_high": 42772,
+   "points_basis": "official median",
+   "band": "Within North America, 1,501–2,750 mi",
+   "taxes_usd": 39.45,
+   "taxes_native": [
+    55.89,
+    "CAD"
+   ],
+   "fees_usd": 0.0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 22609.0,
+    "min": 14720,
+    "max": 42772,
+    "n": 51
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR"
+   },
+   "cpp": 0.45,
+   "cpp_low": 0.61
+  },
+  {
+   "trip": "YYZ-YVR",
+   "program": "aeroplan",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 44700,
+   "points_low": 25000,
+   "points_high": 95430,
+   "points_basis": "official median",
+   "band": "Within North America, 1,501–2,750 mi",
+   "taxes_usd": 39.45,
+   "taxes_native": [
+    55.89,
+    "CAD"
+   ],
+   "fees_usd": 0.0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 59598.0,
+    "min": 47591,
+    "max": 95430,
+    "n": 38
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR"
+   },
+   "cpp": 1.42,
+   "cpp_low": 2.54
+  },
+  {
+   "trip": "EWR-SFO",
+   "program": "aeroplan",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "UA",
+   "stops": 0,
+   "points": 17000,
+   "points_low": 12500,
+   "points_high": 17500,
+   "points_basis": "official median",
+   "band": "Within North America, 1,501–2,750 mi",
+   "taxes_usd": 33.1,
+   "taxes_native": [
+    46.9,
+    "CAD"
+   ],
+   "fees_usd": 27.53,
+   "fees_note": "partner booking fee CAD 39",
+   "observed_dynamic": {
+    "median": 17500.0,
+    "min": 17500,
+    "max": 17500,
+    "n": 9
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=EWR&destinations=SFO"
+   },
+   "cpp": 0.87,
+   "cpp_low": 1.19
+  },
+  {
+   "trip": "EWR-SFO",
+   "program": "aeroplan",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "UA",
+   "stops": 0,
+   "points": 44700,
+   "points_low": 25000,
+   "points_high": null,
+   "points_basis": "official median",
+   "band": "Within North America, 1,501–2,750 mi",
+   "taxes_usd": 33.1,
+   "taxes_native": [
+    46.9,
+    "CAD"
+   ],
+   "fees_usd": 27.53,
+   "fees_note": "partner booking fee CAD 39",
+   "observed_dynamic": null,
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, economy taxes used as proxy",
+    "url": "https://seats.aero/search?origins=EWR&destinations=SFO"
+   },
+   "cpp": 3.92,
+   "cpp_low": 7.0
+  },
+  {
+   "trip": "YUL-CDG",
+   "program": "aeroplan",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 40800,
+   "points_low": 32500,
+   "points_high": 67667,
+   "points_basis": "official median",
+   "band": "North America–Atlantic, 0–4,000 mi",
+   "taxes_usd": 56.75,
+   "taxes_native": [
+    80.41,
+    "CAD"
+   ],
+   "fees_usd": 0.0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 55434.0,
+    "min": 34847,
+    "max": 67667,
+    "n": 25
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=YUL&destinations=CDG"
+   },
+   "cpp": 0.87,
+   "cpp_low": 1.09
+  },
+  {
+   "trip": "YUL-CDG",
+   "program": "aeroplan",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 133800,
+   "points_low": 60000,
+   "points_high": null,
+   "points_basis": "official median",
+   "band": "North America–Atlantic, 0–4,000 mi",
+   "taxes_usd": 56.75,
+   "taxes_native": [
+    80.41,
+    "CAD"
+   ],
+   "fees_usd": 0.0,
+   "fees_note": "",
+   "observed_dynamic": null,
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, economy taxes used as proxy",
+    "url": "https://seats.aero/search?origins=YUL&destinations=CDG"
+   },
+   "cpp": 4.03,
+   "cpp_low": 8.99
+  },
+  {
+   "trip": "YYZ-LHR",
+   "program": "aeroplan",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 40800,
+   "points_low": 32500,
+   "points_high": 67666,
+   "points_basis": "official median",
+   "band": "North America–Atlantic, 0–4,000 mi",
+   "taxes_usd": 56.2,
+   "taxes_native": [
+    79.62,
+    "CAD"
+   ],
+   "fees_usd": 0.0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 47641.0,
+    "min": 33890,
+    "max": 67666,
+    "n": 57
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR"
+   },
+   "cpp": 0.69,
+   "cpp_low": 0.87
+  },
+  {
+   "trip": "YYZ-LHR",
+   "program": "aeroplan",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 133800,
+   "points_low": 60000,
+   "points_high": null,
+   "points_basis": "official median",
+   "band": "North America–Atlantic, 0–4,000 mi",
+   "taxes_usd": 56.2,
+   "taxes_native": [
+    79.62,
+    "CAD"
+   ],
+   "fees_usd": 0.0,
+   "fees_note": "",
+   "observed_dynamic": null,
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, economy taxes used as proxy",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR"
+   },
+   "cpp": 2.93,
+   "cpp_low": 6.52
+  },
+  {
+   "trip": "EWR-LHR",
+   "program": "aeroplan",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "UA",
+   "stops": 0,
+   "points": 40800,
+   "points_low": 32500,
+   "points_high": 40000,
+   "points_basis": "official median",
+   "band": "North America–Atlantic, 0–4,000 mi",
+   "taxes_usd": 56.39,
+   "taxes_native": [
+    79.9,
+    "CAD"
+   ],
+   "fees_usd": 27.53,
+   "fees_note": "partner booking fee CAD 39",
+   "observed_dynamic": {
+    "median": 40000.0,
+    "min": 40000,
+    "max": 40000,
+    "n": 39
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=EWR&destinations=LHR"
+   },
+   "cpp": 0.52,
+   "cpp_low": 0.65
+  },
+  {
+   "trip": "EWR-LHR",
+   "program": "aeroplan",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "UA",
+   "stops": 0,
+   "points": 133800,
+   "points_low": 60000,
+   "points_high": null,
+   "points_basis": "official median",
+   "band": "North America–Atlantic, 0–4,000 mi",
+   "taxes_usd": 56.39,
+   "taxes_native": [
+    79.9,
+    "CAD"
+   ],
+   "fees_usd": 27.53,
+   "fees_note": "partner booking fee CAD 39",
+   "observed_dynamic": null,
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, economy taxes used as proxy",
+    "url": "https://seats.aero/search?origins=EWR&destinations=LHR"
+   },
+   "cpp": 1.85,
+   "cpp_low": 4.13
+  },
+  {
+   "trip": "CDG-AUH",
+   "program": "aeroplan",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 25000,
+   "points_low": 25000,
+   "points_high": 61000,
+   "points_basis": "chart 'starting at' (no median published outside North America)",
+   "band": "Within Atlantic, 2,001–4,000 mi",
+   "taxes_usd": 114.55,
+   "taxes_native": [
+    162.3,
+    "CAD"
+   ],
+   "fees_usd": 27.53,
+   "fees_note": "partner booking fee CAD 39",
+   "observed_dynamic": {
+    "median": 61000.0,
+    "min": 61000,
+    "max": 61000,
+    "n": 40
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=CDG&destinations=AUH"
+   },
+   "cpp": 2.14,
+   "cpp_low": 2.14
+  },
+  {
+   "trip": "CDG-AUH",
+   "program": "aeroplan",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 40000,
+   "points_low": 40000,
+   "points_high": 114300,
+   "points_basis": "chart 'starting at' (no median published outside North America)",
+   "band": "Within Atlantic, 2,001–4,000 mi",
+   "taxes_usd": 188.31,
+   "taxes_native": [
+    266.8,
+    "CAD"
+   ],
+   "fees_usd": 27.53,
+   "fees_note": "partner booking fee CAD 39",
+   "observed_dynamic": {
+    "median": 114300.0,
+    "min": 114300,
+    "max": 114300,
+    "n": 8
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=CDG&destinations=AUH"
+   },
+   "cpp": 8.29,
+   "cpp_low": 8.29
+  },
+  {
+   "trip": "YVR-NRT",
+   "program": "aeroplan",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 46800,
+   "points_low": 32500,
+   "points_high": 98220,
+   "points_basis": "official median",
+   "band": "North America–Pacific, 0–5,000 mi",
+   "taxes_usd": 42.82,
+   "taxes_native": [
+    60.67,
+    "CAD"
+   ],
+   "fees_usd": 0.0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 87575.0,
+    "min": 87575,
+    "max": 98220,
+    "n": 14
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=YVR&destinations=NRT"
+   },
+   "cpp": 1.69,
+   "cpp_low": 2.43
+  },
+  {
+   "trip": "YVR-NRT",
+   "program": "aeroplan",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 170700,
+   "points_low": 55000,
+   "points_high": null,
+   "points_basis": "official median",
+   "band": "North America–Pacific, 0–5,000 mi",
+   "taxes_usd": 42.82,
+   "taxes_native": [
+    60.67,
+    "CAD"
+   ],
+   "fees_usd": 0.0,
+   "fees_note": "",
+   "observed_dynamic": null,
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, economy taxes used as proxy",
+    "url": "https://seats.aero/search?origins=YVR&destinations=NRT"
+   },
+   "cpp": 2.24,
+   "cpp_low": 6.95
+  },
+  {
+   "trip": "JFK-AUH",
+   "program": "aeroplan",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 55000,
+   "points_low": 55000,
+   "points_high": 76800,
+   "points_basis": "official median",
+   "band": "North America–Atlantic, 6,001–8,000 mi",
+   "taxes_usd": 57.74,
+   "taxes_native": [
+    81.8,
+    "CAD"
+   ],
+   "fees_usd": 27.53,
+   "fees_note": "partner booking fee CAD 39",
+   "observed_dynamic": {
+    "median": 76800.0,
+    "min": 76800,
+    "max": 76800,
+    "n": 28
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=JFK&destinations=AUH"
+   },
+   "cpp": 1.18,
+   "cpp_low": 1.18
+  },
+  {
+   "trip": "JFK-AUH",
+   "program": "aeroplan",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 125100,
+   "points_low": 90000,
+   "points_high": null,
+   "points_basis": "official median",
+   "band": "North America–Atlantic, 6,001–8,000 mi",
+   "taxes_usd": 57.74,
+   "taxes_native": [
+    81.8,
+    "CAD"
+   ],
+   "fees_usd": 27.53,
+   "fees_note": "partner booking fee CAD 39",
+   "observed_dynamic": null,
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, economy taxes used as proxy",
+    "url": "https://seats.aero/search?origins=JFK&destinations=AUH"
+   },
+   "cpp": 3.85,
+   "cpp_low": 5.35
+  },
+  {
+   "trip": "YYZ-AUH",
+   "program": "aeroplan",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 55000,
+   "points_low": 55000,
+   "points_high": 77400,
+   "points_basis": "official median",
+   "band": "North America–Atlantic, 6,001–8,000 mi",
+   "taxes_usd": 85.06,
+   "taxes_native": [
+    120.52,
+    "CAD"
+   ],
+   "fees_usd": 27.53,
+   "fees_note": "partner booking fee CAD 39",
+   "observed_dynamic": {
+    "median": 77400.0,
+    "min": 77400,
+    "max": 77400,
+    "n": 34
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=AUH"
+   },
+   "cpp": 1.47,
+   "cpp_low": 1.47
+  },
+  {
+   "trip": "YYZ-AUH",
+   "program": "aeroplan",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 125100,
+   "points_low": 90000,
+   "points_high": 214900,
+   "points_basis": "official median",
+   "band": "North America–Atlantic, 6,001–8,000 mi",
+   "taxes_usd": 85.06,
+   "taxes_native": [
+    120.52,
+    "CAD"
+   ],
+   "fees_usd": 27.53,
+   "fees_note": "partner booking fee CAD 39",
+   "observed_dynamic": {
+    "median": 214900.0,
+    "min": 214900,
+    "max": 214900,
+    "n": 27
+   },
+   "source": {
+    "name": "Aeroplan Flight Reward Chart 2026-08 (PDF, last modified 2026-08-19)",
+    "url": "https://www.aircanada.com/content/dam/aircanada/loyalty-content/documents/flight-rewards-chart-en.pdf",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, same cabin",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=AUH"
+   },
+   "cpp": 3.29,
+   "cpp_low": 4.57
+  },
+  {
+   "trip": "YYZ-AUH",
+   "program": "etihad",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 60000,
+   "points_low": 60000,
+   "points_high": null,
+   "points_basis": "Value (Saver) fare, miles calculator",
+   "band": "Etihad-operated",
+   "taxes_usd": 247.8,
+   "taxes_native": [
+    247.8,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 60000.0,
+    "min": 60000,
+    "max": 60000,
+    "n": 57
+   },
+   "source": {
+    "name": "etihad.com miles calculator (Spend, base tier)",
+    "url": "https://www.etihad.com/en-ca/etihadguest/miles-calculator",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=AUH"
+   },
+   "cpp": 1.12,
+   "cpp_low": 1.12
+  },
+  {
+   "trip": "YYZ-AUH",
+   "program": "etihad",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 120000,
+   "points_low": 120000,
+   "points_high": null,
+   "points_basis": "Value (Saver) fare, miles calculator",
+   "band": "Etihad-operated",
+   "taxes_usd": 602.8,
+   "taxes_native": [
+    602.8,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 120000.0,
+    "min": 120000,
+    "max": 120000,
+    "n": 1
+   },
+   "source": {
+    "name": "etihad.com miles calculator (Spend, base tier)",
+    "url": "https://www.etihad.com/en-ca/etihadguest/miles-calculator",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=AUH"
+   },
+   "cpp": 3.02,
+   "cpp_low": 3.02
+  },
+  {
+   "trip": "CDG-AUH",
+   "program": "etihad",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 30000,
+   "points_low": 30000,
+   "points_high": null,
+   "points_basis": "Value (Saver) fare, miles calculator",
+   "band": "Etihad-operated",
+   "taxes_usd": 192.5,
+   "taxes_native": [
+    192.5,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 30000.0,
+    "min": 30000,
+    "max": 30000,
+    "n": 54
+   },
+   "source": {
+    "name": "etihad.com miles calculator (Spend, base tier)",
+    "url": "https://www.etihad.com/en-ca/etihadguest/miles-calculator",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=CDG&destinations=AUH"
+   },
+   "cpp": 1.62,
+   "cpp_low": 1.62
+  },
+  {
+   "trip": "CDG-AUH",
+   "program": "etihad",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 70000,
+   "points_low": 70000,
+   "points_high": null,
+   "points_basis": "Value (Saver) fare, miles calculator",
+   "band": "Etihad-operated",
+   "taxes_usd": 456.4,
+   "taxes_native": [
+    456.4,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 70000.0,
+    "min": 70000,
+    "max": 70000,
+    "n": 22
+   },
+   "source": {
+    "name": "etihad.com miles calculator (Spend, base tier)",
+    "url": "https://www.etihad.com/en-ca/etihadguest/miles-calculator",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=CDG&destinations=AUH"
+   },
+   "cpp": 4.4,
+   "cpp_low": 4.4
+  },
+  {
+   "trip": "JFK-AUH",
+   "program": "etihad",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 60000,
+   "points_low": 60000,
+   "points_high": null,
+   "points_basis": "Value (Saver) fare, miles calculator",
+   "band": "Etihad-operated",
+   "taxes_usd": 224.9,
+   "taxes_native": [
+    224.9,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 60000.0,
+    "min": 60000,
+    "max": 60000,
+    "n": 57
+   },
+   "source": {
+    "name": "etihad.com miles calculator (Spend, base tier)",
+    "url": "https://www.etihad.com/en-ca/etihadguest/miles-calculator",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=JFK&destinations=AUH"
+   },
+   "cpp": 0.85,
+   "cpp_low": 0.85
+  },
+  {
+   "trip": "JFK-AUH",
+   "program": "etihad",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "EY",
+   "stops": 0,
+   "points": 120000,
+   "points_low": 120000,
+   "points_high": null,
+   "points_basis": "Value (Saver) fare, miles calculator",
+   "band": "Etihad-operated",
+   "taxes_usd": 579.9,
+   "taxes_native": [
+    579.9,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "observed_dynamic": {
+    "median": 120000.0,
+    "min": 120000,
+    "max": 120000,
+    "n": 8
+   },
+   "source": {
+    "name": "etihad.com miles calculator (Spend, base tier)",
+    "url": "https://www.etihad.com/en-ca/etihadguest/miles-calculator",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=JFK&destinations=AUH"
+   },
+   "cpp": 3.6,
+   "cpp_low": 3.6
+  },
+  {
+   "trip": "YUL-YYZ",
+   "program": "etihad",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 6000,
+   "points_low": 6000,
+   "points_high": null,
+   "points_basis": "partner award chart",
+   "band": "Partner chart, 0–500 mi",
+   "taxes_usd": 66.7,
+   "taxes_native": [
+    66.7,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "seats_seen": true,
+   "observed_dynamic": {
+    "median": 5958.0,
+    "min": 5958,
+    "max": 5958,
+    "n": 59
+   },
+   "source": {
+    "name": "Etihad Guest partner award chart (Air Canada page)",
+    "url": "https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ"
+   },
+   "cpp": 0.85,
+   "cpp_low": 0.85
+  },
+  {
+   "trip": "YUL-YYZ",
+   "program": "etihad",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 20000,
+   "points_low": 20000,
+   "points_high": null,
+   "points_basis": "partner award chart",
+   "band": "Partner chart, 0–500 mi",
+   "taxes_usd": 94.8,
+   "taxes_native": [
+    94.8,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "seats_seen": true,
+   "observed_dynamic": {
+    "median": 19858.0,
+    "min": 19858,
+    "max": 19858,
+    "n": 51
+   },
+   "source": {
+    "name": "Etihad Guest partner award chart (Air Canada page)",
+    "url": "https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ"
+   },
+   "cpp": 2.19,
+   "cpp_low": 2.19
+  },
+  {
+   "trip": "YYZ-YVR",
+   "program": "etihad",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 28000,
+   "points_low": 28000,
+   "points_high": null,
+   "points_basis": "partner award chart",
+   "band": "Partner chart, 2,001–2,500 mi",
+   "taxes_usd": 104.83,
+   "taxes_native": [
+    104.83,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "seats_seen": true,
+   "observed_dynamic": {
+    "median": 27801.0,
+    "min": 27801,
+    "max": 27865,
+    "n": 3
+   },
+   "source": {
+    "name": "Etihad Guest partner award chart (Air Canada page)",
+    "url": "https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR"
+   },
+   "cpp": 0.04,
+   "cpp_low": 0.04
+  },
+  {
+   "trip": "YYZ-YVR",
+   "program": "etihad",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 50000,
+   "points_low": 50000,
+   "points_high": null,
+   "points_basis": "partner award chart",
+   "band": "Partner chart, 2,001–2,500 mi",
+   "taxes_usd": 104.83,
+   "taxes_native": [
+    104.83,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "seats_seen": false,
+   "observed_dynamic": null,
+   "source": {
+    "name": "Etihad Guest partner award chart (Air Canada page)",
+    "url": "https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache (economy taxes used as proxy)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR"
+   },
+   "cpp": 1.14,
+   "cpp_low": 1.14
+  },
+  {
+   "trip": "YUL-CDG",
+   "program": "etihad",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "AC/AF",
+   "stops": 0,
+   "points": 45000,
+   "points_low": 45000,
+   "points_high": null,
+   "points_basis": "partner award chart",
+   "band": "Partner chart, 3,001–4,000 mi",
+   "taxes_usd": 159.6,
+   "taxes_native": [
+    159.6,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "seats_seen": true,
+   "observed_dynamic": {
+    "median": 45000.0,
+    "min": 45000,
+    "max": 45000,
+    "n": 31
+   },
+   "source": {
+    "name": "Etihad Guest partner award chart (Air Canada page)",
+    "url": "https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=YUL&destinations=CDG"
+   },
+   "cpp": 0.56,
+   "cpp_low": 0.56
+  },
+  {
+   "trip": "YUL-CDG",
+   "program": "etihad",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "AC/AF",
+   "stops": 0,
+   "points": 80000,
+   "points_low": 80000,
+   "points_high": null,
+   "points_basis": "partner award chart",
+   "band": "Partner chart, 3,001–4,000 mi",
+   "taxes_usd": 159.6,
+   "taxes_native": [
+    159.6,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "seats_seen": false,
+   "observed_dynamic": null,
+   "source": {
+    "name": "Etihad Guest partner award chart (Air Canada page)",
+    "url": "https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache (economy taxes used as proxy)",
+    "url": "https://seats.aero/search?origins=YUL&destinations=CDG"
+   },
+   "cpp": 6.61,
+   "cpp_low": 6.61
+  },
+  {
+   "trip": "YYZ-LHR",
+   "program": "etihad",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 45000,
+   "points_low": 45000,
+   "points_high": null,
+   "points_basis": "partner award chart",
+   "band": "Partner chart, 3,001–4,000 mi",
+   "taxes_usd": 56.4,
+   "taxes_native": [
+    56.4,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "seats_seen": true,
+   "observed_dynamic": {
+    "median": 45000.0,
+    "min": 45000,
+    "max": 45000,
+    "n": 27
+   },
+   "source": {
+    "name": "Etihad Guest partner award chart (Air Canada page)",
+    "url": "https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR"
+   },
+   "cpp": 0.63,
+   "cpp_low": 0.63
+  },
+  {
+   "trip": "YYZ-LHR",
+   "program": "etihad",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 80000,
+   "points_low": 80000,
+   "points_high": null,
+   "points_basis": "partner award chart",
+   "band": "Partner chart, 3,001–4,000 mi",
+   "taxes_usd": 56.4,
+   "taxes_native": [
+    56.4,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "seats_seen": false,
+   "observed_dynamic": null,
+   "source": {
+    "name": "Etihad Guest partner award chart (Air Canada page)",
+    "url": "https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero, Etihad Guest cache (economy taxes used as proxy)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR"
+   },
+   "cpp": 4.89,
+   "cpp_low": 4.89
+  },
+  {
+   "trip": "YVR-NRT",
+   "program": "etihad",
+   "cabin": "Y",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 60000,
+   "points_low": 60000,
+   "points_high": null,
+   "points_basis": "partner award chart",
+   "band": "Partner chart, 4,001–5,000 mi",
+   "taxes_usd": null,
+   "taxes_native": null,
+   "fees_usd": 0,
+   "fees_note": "",
+   "seats_seen": false,
+   "observed_dynamic": null,
+   "source": {
+    "name": "Etihad Guest partner award chart (Air Canada page)",
+    "url": "https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada",
+    "read": "2026-09-28"
+   },
+   "tax_source": null,
+   "cpp": 1.39,
+   "cpp_low": 1.39
+  },
+  {
+   "trip": "YVR-NRT",
+   "program": "etihad",
+   "cabin": "J",
+   "pricing": "chart",
+   "operator": "AC",
+   "stops": 0,
+   "points": 100000,
+   "points_low": 100000,
+   "points_high": null,
+   "points_basis": "partner award chart",
+   "band": "Partner chart, 4,001–5,000 mi",
+   "taxes_usd": null,
+   "taxes_native": null,
+   "fees_usd": 0,
+   "fees_note": "",
+   "seats_seen": false,
+   "observed_dynamic": null,
+   "source": {
+    "name": "Etihad Guest partner award chart (Air Canada page)",
+    "url": "https://www.etihad.com/en/etihadguest/our-partners/airlines/air-canada",
+    "read": "2026-09-28"
+   },
+   "tax_source": null,
+   "cpp": 3.87,
+   "cpp_low": 3.87
+  },
+  {
+   "trip": "YUL-YYZ",
+   "program": "united",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "AC",
+   "stops": 0,
+   "points": 17500,
+   "points_low": 17500,
+   "points_high": 17500,
+   "points_basis": "median of daily lowest price over 46 travel dates",
+   "band": "",
+   "taxes_usd": 33.2,
+   "taxes_native": [
+    33.2,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 46,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-13"
+   ],
+   "observed": [
+    "2026-09-15",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ"
+   },
+   "cpp": 0.48,
+   "cpp_low": 0.48
+  },
+  {
+   "trip": "YUL-YYZ",
+   "program": "united",
+   "cabin": "J",
+   "pricing": "dynamic",
+   "operator": "AC,QK",
+   "stops": 0,
+   "points": 45000,
+   "points_low": 45000,
+   "points_high": 45000,
+   "points_basis": "median of daily lowest price over 39 travel dates",
+   "band": "",
+   "taxes_usd": 33.2,
+   "taxes_native": [
+    33.2,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 39,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-13"
+   ],
+   "observed": [
+    "2026-09-15",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ"
+   },
+   "cpp": 1.11,
+   "cpp_low": 1.11
+  },
+  {
+   "trip": "YUL-YYZ",
+   "program": "flyingblue",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "WS",
+   "stops": 0,
+   "points": 5000,
+   "points_low": 5000,
+   "points_high": 5000,
+   "points_basis": "median of daily lowest price over 45 travel dates",
+   "band": "",
+   "taxes_usd": 37.99,
+   "taxes_native": [
+    37.99,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 45,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-26"
+   ],
+   "observed": [
+    "2026-09-28",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ"
+   },
+   "cpp": 1.6,
+   "cpp_low": 1.6
+  },
+  {
+   "trip": "YUL-YYZ",
+   "program": "flyingblue",
+   "cabin": "J",
+   "pricing": "dynamic",
+   "operator": "DL",
+   "stops": 1,
+   "points": 29000,
+   "points_low": 28500,
+   "points_high": 34000,
+   "points_basis": "median of daily lowest price over 38 travel dates",
+   "band": "",
+   "taxes_usd": 84.65,
+   "taxes_native": [
+    84.65,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 38,
+   "travel_dates": [
+    "2026-10-18",
+    "2026-11-26"
+   ],
+   "observed": [
+    "2026-09-03",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YUL&destinations=YYZ"
+   },
+   "cpp": 1.54,
+   "cpp_low": 1.57
+  },
+  {
+   "trip": "YYZ-YVR",
+   "program": "united",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "AC",
+   "stops": 0,
+   "points": 22500,
+   "points_low": 22500,
+   "points_high": 22500,
+   "points_basis": "median of daily lowest price over 3 travel dates",
+   "band": "",
+   "taxes_usd": 32.2,
+   "taxes_native": [
+    32.2,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 3,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-06"
+   ],
+   "observed": [
+    "2026-09-24",
+    "2026-09-25"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR"
+   },
+   "cpp": 0.37,
+   "cpp_low": 0.37
+  },
+  {
+   "trip": "YYZ-YVR",
+   "program": "united",
+   "cabin": "J",
+   "pricing": "dynamic",
+   "operator": "AC",
+   "stops": 0,
+   "points": 65000,
+   "points_low": 65000,
+   "points_high": 65000,
+   "points_basis": "median of daily lowest price over 1 travel dates",
+   "band": "",
+   "taxes_usd": 32.2,
+   "taxes_native": [
+    32.2,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 1,
+   "travel_dates": [
+    "2026-11-06",
+    "2026-11-06"
+   ],
+   "observed": [
+    "2026-09-24",
+    "2026-09-24"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR"
+   },
+   "cpp": 0.99,
+   "cpp_low": 0.99
+  },
+  {
+   "trip": "YYZ-YVR",
+   "program": "flyingblue",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "WS",
+   "stops": 0,
+   "points": 19000,
+   "points_low": 19000,
+   "points_high": 19000,
+   "points_basis": "median of daily lowest price over 29 travel dates",
+   "band": "",
+   "taxes_usd": 51.68,
+   "taxes_native": [
+    51.68,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 29,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-18"
+   ],
+   "observed": [
+    "2026-09-22",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR"
+   },
+   "cpp": 0.34,
+   "cpp_low": 0.34
+  },
+  {
+   "trip": "YYZ-YVR",
+   "program": "flyingblue",
+   "cabin": "J",
+   "pricing": "dynamic",
+   "operator": "DL",
+   "stops": 1,
+   "points": 60000,
+   "points_low": 60000,
+   "points_high": 64500,
+   "points_basis": "median of daily lowest price over 9 travel dates",
+   "band": "",
+   "taxes_usd": 102.38,
+   "taxes_native": [
+    102.38,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 9,
+   "travel_dates": [
+    "2026-10-24",
+    "2026-11-03"
+   ],
+   "observed": [
+    "2026-09-18",
+    "2026-09-27"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=YVR"
+   },
+   "cpp": 0.95,
+   "cpp_low": 0.95
+  },
+  {
+   "trip": "EWR-SFO",
+   "program": "united",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "UA",
+   "stops": 0,
+   "points": 30900,
+   "points_low": 15000,
+   "points_high": 44500,
+   "points_basis": "median of daily lowest price over 42 travel dates",
+   "band": "",
+   "taxes_usd": 5.6,
+   "taxes_native": [
+    5.6,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 42,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-20"
+   ],
+   "observed": [
+    "2026-09-22",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=EWR&destinations=SFO",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=EWR&destinations=SFO"
+   },
+   "cpp": 0.66,
+   "cpp_low": 1.36
+  },
+  {
+   "trip": "EWR-SFO",
+   "program": "united",
+   "cabin": "J",
+   "pricing": "dynamic",
+   "operator": "UA",
+   "stops": 1,
+   "points": 80000,
+   "points_low": 80000,
+   "points_high": 100000,
+   "points_basis": "median of daily lowest price over 43 travel dates",
+   "band": "",
+   "taxes_usd": 5.6,
+   "taxes_native": [
+    5.6,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 43,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-19"
+   ],
+   "observed": [
+    "2026-09-24",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=EWR&destinations=SFO",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=EWR&destinations=SFO"
+   },
+   "cpp": 2.26,
+   "cpp_low": 2.26
+  },
+  {
+   "trip": "YUL-CDG",
+   "program": "united",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "AC",
+   "stops": 0,
+   "points": 44000,
+   "points_low": 44000,
+   "points_high": 44000,
+   "points_basis": "median of daily lowest price over 10 travel dates",
+   "band": "",
+   "taxes_usd": 57.5,
+   "taxes_native": [
+    57.5,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 10,
+   "travel_dates": [
+    "2026-10-12",
+    "2026-11-16"
+   ],
+   "observed": [
+    "2026-09-22",
+    "2026-09-27"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YUL&destinations=CDG",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YUL&destinations=CDG"
+   },
+   "cpp": 0.8,
+   "cpp_low": 0.8
+  },
+  {
+   "trip": "YUL-CDG",
+   "program": "united",
+   "cabin": "J",
+   "pricing": "dynamic",
+   "operator": "LX",
+   "stops": 1,
+   "points": 88000,
+   "points_low": 88000,
+   "points_high": 88000,
+   "points_basis": "median of daily lowest price over 5 travel dates",
+   "band": "",
+   "taxes_usd": 74.5,
+   "taxes_native": [
+    74.5,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 5,
+   "travel_dates": [
+    "2026-10-12",
+    "2026-11-17"
+   ],
+   "observed": [
+    "2026-09-22",
+    "2026-09-25"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YUL&destinations=CDG",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YUL&destinations=CDG"
+   },
+   "cpp": 6.11,
+   "cpp_low": 6.11
+  },
+  {
+   "trip": "YUL-CDG",
+   "program": "flyingblue",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "AF",
+   "stops": 0,
+   "points": 31500,
+   "points_low": 25000,
+   "points_high": 59000,
+   "points_basis": "median of daily lowest price over 29 travel dates",
+   "band": "",
+   "taxes_usd": 159.4,
+   "taxes_native": [
+    159.4,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 29,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-04"
+   ],
+   "observed": [
+    "2026-09-21",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YUL&destinations=CDG",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YUL&destinations=CDG"
+   },
+   "cpp": 0.8,
+   "cpp_low": 1.0
+  },
+  {
+   "trip": "YYZ-LHR",
+   "program": "united",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "AC",
+   "stops": 0,
+   "points": 44000,
+   "points_low": 44000,
+   "points_high": 44000,
+   "points_basis": "median of daily lowest price over 20 travel dates",
+   "band": "",
+   "taxes_usd": 56.7,
+   "taxes_native": [
+    56.7,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 20,
+   "travel_dates": [
+    "2026-10-04",
+    "2026-11-12"
+   ],
+   "observed": [
+    "2026-09-21",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR"
+   },
+   "cpp": 0.64,
+   "cpp_low": 0.64
+  },
+  {
+   "trip": "YYZ-LHR",
+   "program": "united",
+   "cabin": "J",
+   "pricing": "dynamic",
+   "operator": "LH,VL",
+   "stops": 1,
+   "points": 88000,
+   "points_low": 88000,
+   "points_high": 88000,
+   "points_basis": "median of daily lowest price over 4 travel dates",
+   "band": "",
+   "taxes_usd": 80.5,
+   "taxes_native": [
+    80.5,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 4,
+   "travel_dates": [
+    "2026-10-12",
+    "2026-11-04"
+   ],
+   "observed": [
+    "2026-09-21",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR"
+   },
+   "cpp": 4.42,
+   "cpp_low": 4.42
+  },
+  {
+   "trip": "YYZ-LHR",
+   "program": "flyingblue",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "VS",
+   "stops": 0,
+   "points": 23500,
+   "points_low": 23500,
+   "points_high": 24000,
+   "points_basis": "median of daily lowest price over 28 travel dates",
+   "band": "",
+   "taxes_usd": 113.3,
+   "taxes_native": [
+    113.3,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 28,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-14"
+   ],
+   "observed": [
+    "2026-09-24",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR"
+   },
+   "cpp": 0.96,
+   "cpp_low": 0.96
+  },
+  {
+   "trip": "YYZ-LHR",
+   "program": "flyingblue",
+   "cabin": "J",
+   "pricing": "dynamic",
+   "operator": "KL",
+   "stops": 1,
+   "points": 93500,
+   "points_low": 60000,
+   "points_high": 111000,
+   "points_basis": "median of daily lowest price over 24 travel dates",
+   "band": "",
+   "taxes_usd": 393.8,
+   "taxes_native": [
+    393.8,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 24,
+   "travel_dates": [
+    "2026-10-06",
+    "2026-11-14"
+   ],
+   "observed": [
+    "2026-09-24",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=LHR"
+   },
+   "cpp": 3.82,
+   "cpp_low": 5.96
+  },
+  {
+   "trip": "EWR-LHR",
+   "program": "united",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "UA",
+   "stops": 0,
+   "points": 40000,
+   "points_low": 40000,
+   "points_high": 51100,
+   "points_basis": "median of daily lowest price over 49 travel dates",
+   "band": "",
+   "taxes_usd": 5.6,
+   "taxes_native": [
+    5.6,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 49,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-25"
+   ],
+   "observed": [
+    "2026-09-27",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=EWR&destinations=LHR",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=EWR&destinations=LHR"
+   },
+   "cpp": 0.72,
+   "cpp_low": 0.72
+  },
+  {
+   "trip": "EWR-LHR",
+   "program": "united",
+   "cabin": "J",
+   "pricing": "dynamic",
+   "operator": "LO",
+   "stops": 1,
+   "points": 88000,
+   "points_low": 88000,
+   "points_high": 88000,
+   "points_basis": "median of daily lowest price over 3 travel dates",
+   "band": "",
+   "taxes_usd": 28.8,
+   "taxes_native": [
+    28.8,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 3,
+   "travel_dates": [
+    "2026-10-15",
+    "2026-11-16"
+   ],
+   "observed": [
+    "2026-09-27",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=EWR&destinations=LHR",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=EWR&destinations=LHR"
+   },
+   "cpp": 2.88,
+   "cpp_low": 2.88
+  },
+  {
+   "trip": "CDG-AUH",
+   "program": "flyingblue",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "EY",
+   "stops": 0,
+   "points": 26000,
+   "points_low": 26000,
+   "points_high": 26000,
+   "points_basis": "median of daily lowest price over 1 travel dates",
+   "band": "",
+   "taxes_usd": 163.0,
+   "taxes_native": [
+    163.0,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 1,
+   "travel_dates": [
+    "2026-11-06",
+    "2026-11-06"
+   ],
+   "observed": [
+    "2026-09-24",
+    "2026-09-24"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=CDG&destinations=AUH",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=CDG&destinations=AUH"
+   },
+   "cpp": 1.98,
+   "cpp_low": 1.98
+  },
+  {
+   "trip": "YVR-NRT",
+   "program": "united",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "UA",
+   "stops": 1,
+   "points": 55000,
+   "points_low": 55000,
+   "points_high": 60500,
+   "points_basis": "median of daily lowest price over 18 travel dates",
+   "band": "",
+   "taxes_usd": 66.83,
+   "taxes_native": [
+    66.83,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 18,
+   "travel_dates": [
+    "2026-10-02",
+    "2026-11-12"
+   ],
+   "observed": [
+    "2026-09-27",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YVR&destinations=NRT",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YVR&destinations=NRT"
+   },
+   "cpp": 1.39,
+   "cpp_low": 1.39
+  },
+  {
+   "trip": "YVR-NRT",
+   "program": "flyingblue",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "KL",
+   "stops": 1,
+   "points": 138500,
+   "points_low": 59500,
+   "points_high": 138500,
+   "points_basis": "median of daily lowest price over 3 travel dates",
+   "band": "",
+   "taxes_usd": 285.1,
+   "taxes_native": [
+    285.1,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 3,
+   "travel_dates": [
+    "2026-10-11",
+    "2026-11-24"
+   ],
+   "observed": [
+    "2026-09-28",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YVR&destinations=NRT",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YVR&destinations=NRT"
+   },
+   "cpp": 0.4,
+   "cpp_low": 0.92
+  },
+  {
+   "trip": "JFK-AUH",
+   "program": "flyingblue",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "EY,VS",
+   "stops": 1,
+   "points": 50500,
+   "points_low": 50000,
+   "points_high": 120500,
+   "points_basis": "median of daily lowest price over 24 travel dates",
+   "band": "",
+   "taxes_usd": 208.0,
+   "taxes_native": [
+    208.0,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 24,
+   "travel_dates": [
+    "2026-10-03",
+    "2026-11-21"
+   ],
+   "observed": [
+    "2026-09-25",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=JFK&destinations=AUH",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=JFK&destinations=AUH"
+   },
+   "cpp": 1.04,
+   "cpp_low": 1.05
+  },
+  {
+   "trip": "YYZ-AUH",
+   "program": "flyingblue",
+   "cabin": "Y",
+   "pricing": "dynamic",
+   "operator": "EY,SK",
+   "stops": 1,
+   "points": 55200,
+   "points_low": 48500,
+   "points_high": 56000,
+   "points_basis": "median of daily lowest price over 8 travel dates",
+   "band": "",
+   "taxes_usd": 153.3,
+   "taxes_native": [
+    153.3,
+    "USD"
+   ],
+   "fees_usd": 0,
+   "fees_note": "",
+   "n_dates": 8,
+   "travel_dates": [
+    "2026-09-29",
+    "2026-11-16"
+   ],
+   "observed": [
+    "2026-09-24",
+    "2026-09-28"
+   ],
+   "source": {
+    "name": "seats.aero cached award search",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=AUH",
+    "read": "2026-09-28"
+   },
+   "tax_source": {
+    "name": "seats.aero (same results)",
+    "url": "https://seats.aero/search?origins=YYZ&destinations=AUH"
+   },
+   "cpp": 1.39,
+   "cpp_low": 1.58
+  }
+ ]
+}
