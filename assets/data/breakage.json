@@ -1,0 +1,84 @@
+{
+  "updated": "2026-09-28",
+  "about": "Inputs for breakage.html. The presets and volumes describe a made-up loyalty programme and are illustrative assumptions, not any airline's data. The benchmarks are copied from published annual reports (amounts in millions of the reporting currency).",
+  "model": {
+    "horizonMonths": 180,
+    "defaultPreset": "typical",
+    "defaultExpiry": 18,
+    "expiryOptions": [12, 18, 24, 36, null],
+    "defaultValueCents": 1.0,
+    "defaultGrowthPct": 4,
+    "growthOptions": [0, 2, 4, 6, 8],
+    "monthlyPointsMillions": [800, 780, 980, 960, 1000, 1150, 1240, 1200, 980, 960, 900, 1050],
+    "scenarioYears": [2, 3, 4, 5],
+    "defaultScenarioYear": 3,
+    "revision": { "from": 18, "to": 15 },
+    "presets": {
+      "fast":    { "label": "Fast",    "desc": "Leisure-heavy base, low award thresholds, lots of cash-and-points.", "lambda": 8,  "k": 1.3,  "d": 0.15, "r": 0.5, "mu": 12 },
+      "typical": { "label": "Typical", "desc": "Mixed base; most engaged members redeem within two to three years.", "lambda": 20, "k": 1.15, "d": 0.22, "r": 0.5, "mu": 18 },
+      "slow":    { "label": "Slow",    "desc": "Many occasional members and aspirational long-haul awards.", "lambda": 32, "k": 1.1,  "d": 0.32, "r": 0.5, "mu": 30 }
+    }
+  },
+  "benchmarks": [
+    {
+      "airline": "Air Canada",
+      "programme": "Aeroplan",
+      "currency": "CAD",
+      "standard": "IFRS",
+      "line": "Aeroplan and other deferred revenues",
+      "fy2025": { "current": 1840, "noncurrent": 2779, "total": 4619 },
+      "fy2024": { "current": 1588, "noncurrent": 2952, "total": 4540 },
+      "rollforward2025": null,
+      "note": "Includes other deferred revenues, which are not broken out. No roll-forward of the balance is published.",
+      "expiry": "18 months without account activity; no expiry for Aeroplan co-brand cardholders and elite members",
+      "expiryUrl": "https://www.aircanada.com/us/en/aco/home/aeroplan/your-aeroplan/inactivity-policy.html",
+      "source": "Air Canada 2025 audited consolidated financial statements, statement of financial position (p. 9) and note 2E",
+      "sourceUrl": "https://content.presspage.com/uploads/3167/7a502a38-6982-4aae-b8b1-f03f91fe2a69/q42025aircanadaconsolidatedfinancialstatementsnotes-english.pdf?10000="
+    },
+    {
+      "airline": "United Airlines",
+      "programme": "MileagePlus",
+      "currency": "USD",
+      "standard": "US GAAP",
+      "line": "Frequent flyer deferred revenue",
+      "fy2025": { "current": 3721, "noncurrent": 4056, "total": 7777 },
+      "fy2024": { "current": 3403, "noncurrent": 4038, "total": 7441 },
+      "rollforward2025": { "opening": 7441, "earned": 3883, "redeemed": 3547, "closing": 7777 },
+      "note": "Redeemed = travel miles redeemed (3,414) + non-travel miles redeemed (133).",
+      "expiry": "Miles never expire (since August 2019)",
+      "expiryUrl": "https://ir.united.com/news-releases/news-release-details/united-airlines-announces-mileageplus-miles-never-expire",
+      "source": "United Airlines Holdings 2025 Form 10-K, consolidated balance sheet and frequent flyer deferred revenue roll-forward",
+      "sourceUrl": "https://ir.united.com/static-files/3325136f-9671-4f16-9ffa-bf8ba8449a88"
+    },
+    {
+      "airline": "Delta Air Lines",
+      "programme": "SkyMiles",
+      "currency": "USD",
+      "standard": "US GAAP",
+      "line": "Loyalty program deferred revenue",
+      "fy2025": { "current": 4876, "noncurrent": 4386, "total": 9262 },
+      "fy2024": { "current": 4314, "noncurrent": 4512, "total": 8826 },
+      "rollforward2025": { "opening": 8826, "earned": 4892, "redeemed": 4456, "closing": 9262 },
+      "note": "Redeemed = travel miles redeemed (4,237) + non-travel miles redeemed and other.",
+      "expiry": "Miles don't expire",
+      "expiryUrl": "https://www.delta.com/us/en/skymiles/how-to-use-miles/overview",
+      "source": "Delta Air Lines 2025 Form 10-K, consolidated balance sheet and loyalty program activity table",
+      "sourceUrl": "https://ir.delta.com/files/doc_financials/2025/q4/DAL-12-31-2025-10K-2-10-26-Filed.pdf"
+    },
+    {
+      "airline": "Air France-KLM",
+      "programme": "Flying Blue + BlueBiz",
+      "currency": "EUR",
+      "standard": "IFRS",
+      "line": "Frequent flyer programs",
+      "fy2025": { "current": 921, "noncurrent": 0, "total": 921 },
+      "fy2024": { "current": 906, "noncurrent": 0, "total": 906 },
+      "rollforward2025": { "opening": 831, "earned": 531, "redeemed": 507, "closing": 855, "scope": "Flying Blue only" },
+      "note": "Presented entirely as a current liability. Flying Blue 855 + BlueBiz 66 in 2025 (831 + 75 in 2024); the roll-forward covers Flying Blue only.",
+      "expiry": "Miles valid 2 years, extended by each qualifying activity",
+      "expiryUrl": "https://wwws.airfrance.fr/en/information/legal/edito-cg-flying-blue",
+      "source": "Air France-KLM Universal Registration Document 2025, consolidated balance sheet (p. 379) and note 33 (p. 452)",
+      "sourceUrl": "https://www.airfranceklm.com/sites/default/files/2026-03/urd-2025-veng.pdf"
+    }
+  ]
+}
