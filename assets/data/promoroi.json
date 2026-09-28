@@ -1,0 +1,35 @@
+{
+  "updated": "2026-09-28",
+  "note": "Illustrative assumptions. None of these figures describe a real airline or loyalty programme.",
+  "defaultPreset": "strong",
+  "defaultConfidence": 95,
+  "confidenceOptions": [90, 95, 99],
+  "defaultPower": 80,
+  "powerOptions": [80, 90],
+  "presets": {
+    "strong": {
+      "label": "Strong campaign",
+      "desc": "Double points offered to members who fly a few times a year. The offer clearly brings in extra trips: the uplift is significant and well above break-even.",
+      "nt": 200000, "nc": 20000,
+      "pc": 6.5, "pt": 8.5,
+      "margin": 120, "bonus": 2000, "cpp": 0.8, "fixed": 40000,
+      "preT": 6.8, "preC": 6.5
+    },
+    "subsidy": {
+      "label": "Mostly rewards trips that happen anyway",
+      "desc": "The same offer sent to frequent flyers who book often regardless. The uplift is real and even significant, but almost all the bonus pays for trips that would have happened anyway.",
+      "nt": 200000, "nc": 20000,
+      "pc": 18.0, "pt": 18.6,
+      "margin": 120, "bonus": 2000, "cpp": 0.8, "fixed": 40000,
+      "preT": 18.1, "preC": 18.0
+    },
+    "underpowered": {
+      "label": "Underpowered test",
+      "desc": "A holdout of only 1,000 members. The point estimate says the campaign roughly broke even, but the confidence interval runs from a loss to a large gain: the test can't tell.",
+      "nt": 50000, "nc": 1000,
+      "pc": 6.5, "pt": 7.8,
+      "margin": 120, "bonus": 2000, "cpp": 0.8, "fixed": 15000,
+      "preT": 6.6, "preC": 6.4
+    }
+  }
+}

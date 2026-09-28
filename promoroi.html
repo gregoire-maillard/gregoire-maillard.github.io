@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Promotion ROI calculator</title>
+    <meta name="description" content="Did the bonus-points campaign pay for itself? Incremental trips against a holdout, the cost of rewarding trips that would have happened anyway, ROI with confidence intervals, and how big a holdout you need.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / breakage.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* chart roles */
+        --margin: #2a78d6;       /* incremental margin, gains */
+        --subsidy: #eb6834;      /* bonus paid on trips that would have happened anyway */
+        --bonus-inc: #f4a784;    /* bonus paid on incremental trips */
+        --fixed: #a8a7a1;        /* fixed campaign costs */
+        --loss: #b23c0c;         /* negative net result */
+        --ci: #2a78d6;           /* confidence band (used with low opacity) */
+        --grid: #eeeeec;
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 6px; max-width: 780px; }
+      .crumbs { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+      .crumbs a { color: var(--muted); }
+      .crumbs a:hover { color: var(--link); }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Plain-language strip ── */
+      .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 22px 0 6px; }
+      .step { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: #fff; font-size: 13px; line-height: 1.5; }
+      .step b { display: block; color: var(--ink); font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+      .step .n { display: inline-block; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 11.5px; line-height: 20px; text-align: center; margin-right: 6px; vertical-align: 1px; }
+
+      /* ── Controls ── */
+      .panel { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fff; margin: 22px 0 16px; }
+      .ctl-grid { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; align-items: center; }
+      .ctl-grid > label, .lbl { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip {
+        border: 1px solid var(--line); background: #fff; color: var(--text);
+        border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer;
+      }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .hint { font-size: 12px; color: var(--muted); }
+      input.num {
+        font: inherit; font-size: 13px; color: var(--ink);
+        border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; background: #fff;
+        width: 76px; font-variant-numeric: tabular-nums;
+      }
+      input.num.bad { border-color: #e0a58b; background: #fff8f4; }
+      .fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 14px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+      .fgroup { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+      .fgroup h5 { margin: 0; font-size: 11.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+      .field { display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; color: var(--text); }
+      .field input { width: 100%; box-sizing: border-box; }
+      .field small { color: var(--muted); font-size: 11.5px; line-height: 1.35; }
+      details.did { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+      details.did summary { cursor: pointer; font-size: 13px; color: var(--ink); }
+      details.did summary span { color: var(--muted); font-size: 12px; }
+      .did-body { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 14px; margin: 10px 0 4px; align-items: end; }
+      .did-body .full { grid-column: 1 / -1; }
+      .check { display: inline-flex; gap: 7px; align-items: center; font-size: 13px; color: var(--ink); cursor: pointer; }
+      .linkbtn { border: 0; background: none; color: var(--link); font: inherit; font-size: 12.5px; cursor: pointer; padding: 0; }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 8px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .tile b.neg { color: var(--loss); }
+      .tile b.pos { color: var(--margin); }
+      .tile .k { font-size: 12px; color: var(--muted); display: block; margin-bottom: 3px; }
+      .tile span { font-size: 12px; line-height: 1.4; display: block; margin-top: 3px; }
+      .verdict { font-size: 13.5px; line-height: 1.55; max-width: 860px; margin: 10px 0 0; color: var(--ink); }
+
+      /* ── Sections & charts ── */
+      .sec { margin-top: 38px; }
+      .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px; }
+      .sec-head h3 { margin: 0; font-size: 17px; color: var(--ink); }
+      .sec-head span { color: var(--muted); font-size: 12.5px; }
+      .sec > p.lead { margin: 0 0 12px; max-width: 800px; font-size: 13.5px; line-height: 1.55; }
+      .two { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+      .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 10px; background: #fff; min-width: 0; }
+      .card h4 { margin: 0 0 2px; font-size: 14px; color: var(--ink); font-weight: 600; }
+      .card .sub { margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+      .chart { position: relative; width: 100%; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart .axis text { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .chart .axis path, .chart .axis line { stroke: #d9d9d6; }
+      .chart .grid line { stroke: var(--grid); }
+      .chart .grid path { display: none; }
+      .chart .dlabel { font-size: 11.5px; fill: var(--text); paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; font-variant-numeric: tabular-nums; }
+      .chart .dlabel.strong { fill: var(--ink); font-weight: 600; }
+      .chart .rlabel { font-size: 12px; fill: var(--ink); paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+      .chart .xhair { stroke: #bdbdb8; stroke-width: 1; pointer-events: none; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); margin: 6px 0 0; }
+      .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.ln { height: 0; border-radius: 0; border-top: 2px solid; width: 16px; vertical-align: 3px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+
+      .tip {
+        position: absolute; pointer-events: none; z-index: 5;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.5;
+        max-width: 300px; display: none; white-space: nowrap;
+      }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+      .tip .r { display: flex; justify-content: space-between; gap: 14px; }
+      .tip .r b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+      .tip .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+      .tip .tot { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 3px; }
+
+      /* ── Trip split ── */
+      .split { display: flex; height: 26px; border-radius: 5px; overflow: hidden; gap: 2px; margin: 10px 0 12px; }
+      .split div { height: 100%; }
+      .kv { list-style: none; margin: 0; padding: 0; font-size: 12.5px; }
+      .kv li { display: grid; grid-template-columns: 16px 1fr auto; gap: 6px; padding: 5px 0; border-top: 1px solid #f0f0f0; align-items: baseline; }
+      .kv li i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+      .kv li b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .kv li.sum { font-weight: 600; color: var(--ink); }
+      .kv li small { display: block; color: var(--muted); font-size: 11.5px; font-weight: 400; }
+
+      /* ── Test table ── */
+      .tbl-wrap { overflow-x: auto; }
+      table.tt { border-collapse: collapse; width: 100%; font-size: 12.5px; margin: 0; }
+      table.tt td:first-child { white-space: normal; }
+      table.tt th { text-align: right; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+      table.tt th:first-child, table.tt td:first-child { text-align: left; }
+      table.tt td { padding: 6px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.tt td.k { color: var(--ink); }
+      table.tt tr.total td { color: var(--ink); font-weight: 600; border-top: 1px solid var(--line); }
+      .explain { font-size: 13px; line-height: 1.55; margin: 0 0 8px; }
+
+      /* ── Power ── */
+      .pw-ctl { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; margin: 0 0 12px; font-size: 13px; }
+      .pw-ctl > label, .pw-ctl > span.lbl { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12.5px; }
+      .pw-tiles .tile b { font-size: 21px; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; line-height: 1.55; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method code, .fx { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; color: var(--ink); }
+      .method .fx { display: block; padding: 7px 10px; margin: 6px 0 10px; white-space: pre; line-height: 1.6; overflow-x: auto; }
+
+      .loading { padding: 60px 20px; text-align: center; color: var(--muted); grid-column: 1 / -1; }
+
+      @media (max-width: 900px) {
+        .two { grid-template-columns: 1fr; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .fields, .did-body { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .steps { grid-template-columns: 1fr; }
+        .ctl-grid { grid-template-columns: 1fr; gap: 4px 0; }
+        .ctl-grid > label { margin-top: 8px; }
+        .tile b { font-size: 20px; }
+        .pw-tiles .tile b { font-size: 18px; }
+      }
+      @media (max-width: 380px) {
+        .tiles { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>Did the bonus-points campaign pay for itself?</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Loyalty</div>
+        <h2>Promotion ROI calculator</h2>
+        <p>"Double points on flights booked this month" looks like a success when lots of members book. But many of them would have booked anyway, and they collect the bonus too. This calculator compares the members who got the offer with a random holdout who didn't, counts only the extra trips the offer caused, charges the campaign for every bonus it paid, and tells you whether the difference is real or just noise.</p>
+        <p class="note-line" id="note-line">Illustrative numbers: the presets are made up and don't describe any airline or programme. Enter your own figures to evaluate a real campaign.</p>
+      </div>
+
+      <div class="steps" aria-label="The logic in three steps">
+        <div class="step"><b><span class="n">1</span>Compare with a holdout</b>A random group that didn't get the offer shows what the target group would have done without it. The gap between the two trip rates is the uplift.</div>
+        <div class="step"><b><span class="n">2</span>Pay for every trip</b>The bonus goes to every qualifying trip, including the ones that would have happened anyway. That subsidy is usually most of the cost.</div>
+        <div class="step"><b><span class="n">3</span>Check the uplift is real</b>With a small holdout, a gap can appear by chance. The test and the confidence intervals say how much of the result you can trust.</div>
+      </div>
+
+      <div class="panel" id="controls">
+        <div class="ctl-grid">
+          <label>Preset</label>
+          <div><div class="chips" id="preset"></div><div class="hint" id="preset-desc" style="margin:5px 0 0 0"></div></div>
+          <label>Confidence level</label>
+          <div class="chips" id="conf"></div>
+        </div>
+        <div class="fields" id="fields"></div>
+        <details class="did" id="did">
+          <summary>Difference-in-differences <span id="did-sum">· optional, for when the holdout isn't a clean random split</span></summary>
+          <div class="did-body">
+            <label class="check full"><input type="checkbox" id="did-on"> Adjust for the trip rates before the campaign</label>
+            <label class="field">Target group, before<input class="num" id="preT" type="number" min="0" max="100" step="0.1" inputmode="decimal"><small>% booking in an equal window before</small></label>
+            <label class="field">Holdout, before<input class="num" id="preC" type="number" min="0" max="100" step="0.1" inputmode="decimal"><small>% booking in the same window</small></label>
+            <p class="hint full" style="margin:0">The uplift becomes (target during − target before) − (holdout during − holdout before), so a gap that already existed before the campaign isn't credited to it.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="tiles" id="tiles"><div class="loading">Loading…</div></div>
+      <p class="verdict" id="verdict"></p>
+
+      <section class="sec" aria-labelledby="h-wf">
+        <div class="sec-head"><h3 id="h-wf">Where the money goes</h3><span>From the bonus paid to the net result</span></div>
+        <div class="two">
+          <div class="card">
+            <h4>Campaign waterfall</h4>
+            <p class="sub">Costs step down from zero, the margin on the extra trips climbs back. The last bar is what the campaign made or lost.</p>
+            <div class="chart" id="c-wf"></div>
+          </div>
+          <div class="card">
+            <h4>The target group's trips</h4>
+            <p class="sub">Every qualifying trip earned the bonus. Only the incremental ones earned margin for the campaign.</p>
+            <div class="split" id="split"></div>
+            <ul class="kv" id="trips"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-roi">
+        <div class="sec-head"><h3 id="h-roi">ROI against uplift</h3><span>Same members, same bonus, different uplifts</span></div>
+        <div class="card">
+          <p class="sub" id="roi-sub"></p>
+          <div class="chart" id="c-roi"></div>
+          <div class="legend" id="l-roi"></div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-test">
+        <div class="sec-head"><h3 id="h-test">Is the uplift real?</h3><span id="test-head"></span></div>
+        <div class="two">
+          <div class="card">
+            <div class="tbl-wrap"><table class="tt" id="tt"></table></div>
+          </div>
+          <div class="card">
+            <h4>Reading the test</h4>
+            <p class="explain" id="test-explain"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-pw">
+        <div class="sec-head"><h3 id="h-pw">How big should the holdout be?</h3><span>Sample size and power, for the next test</span></div>
+        <p class="lead">A holdout needs to be big enough to tell a real uplift from noise. Choose the smallest uplift worth detecting (the break-even uplift is a natural choice: below it, the campaign doesn't pay) and how sure you want to be of catching it. The target group stays as entered above.</p>
+        <div class="pw-ctl">
+          <span class="lbl">Uplift to detect <span class="chips" id="pw-mode"></span></span>
+          <label><input class="num" id="pw-delta" type="number" min="0.01" max="50" step="0.05" inputmode="decimal"> pp</label>
+          <span class="lbl">Power <span class="chips" id="pw-power"></span></span>
+        </div>
+        <div class="tiles pw-tiles" id="pw-tiles"></div>
+        <div class="card" style="margin-top:12px">
+          <h4>Power by holdout size</h4>
+          <p class="sub" id="pw-sub"></p>
+          <div class="chart" id="c-pw"></div>
+          <div class="legend" id="l-pw"></div>
+        </div>
+      </section>
+
+      <div class="method" id="how">
+        <h3>How it works</h3>
+
+        <h4>The campaign economics</h4>
+        <p>Each member either books a qualifying trip during the campaign window or doesn't, so a trip rate is the share of members who book. <code>N</code> is the size of the target group, <code>p₁</code> its trip rate, <code>p₀</code> the holdout's, <code>m</code> the margin on an extra trip, <code>B</code> the bonus points per trip, <code>c</code> the cost of a point and <code>F</code> the fixed costs.</p>
+        <span class="fx">Uplift                     u = p₁ − p₀
+Incremental trips          ΔT = u × N
+Bonus cost per trip        b = B × c
+Campaign cost              C = p₁ × N × b + F        (every qualifying trip gets the bonus)
+  of which subsidy             p₀ × N × b            (trips that would have happened anyway)
+Incremental margin         M = ΔT × m
+ROI                        (M − C) / C
+Break-even uplift          u* = (p₀ × N × b + F) / (N × (m − b))</span>
+        <p>The break-even uplift holds the baseline <code>p₀</code> fixed and asks how many extra trips the same offer would need to pay for its bonus and fixed costs. It only exists if an extra trip earns more than its own bonus (<code>m &gt; b</code>); otherwise no uplift makes the campaign profitable. The ROI curve uses the same logic: moving along it, the target group's trip rate is <code>p₀ + u</code> and the bonus bill grows with it.</p>
+
+        <h4>The statistics</h4>
+        <p>Significance uses the two-proportion z-test with a pooled standard error, two-sided. Confidence intervals on the uplift use the unpooled (Wald) standard error.</p>
+        <span class="fx">Pooled rate                p̄ = (p₁N + p₀N₀) / (N + N₀)
+Test statistic             z = u / √( p̄(1 − p̄)(1/N + 1/N₀) ),   p-value = 2(1 − Φ(|z|))
+Standard error of u        SE = √( p₁(1 − p₁)/N + p₀(1 − p₀)/N₀ )
+Interval on u              u ± z₁₋α/₂ × SE
+Interval on ΔT             N × (u ± z₁₋α/₂ × SE)
+Interval on ROI            (N × m × u_low − C) / C  to  (N × m × u_high − C) / C</span>
+        <p>For the ROI interval, the cost is held at what the campaign actually paid: the number of qualifying trips in the target group is observed, so only the split between incremental and would-have-happened-anyway trips is uncertain.</p>
+        <p><b>Difference-in-differences.</b> When the switch is on, the uplift is <code>(p₁ − p₁,before) − (p₀ − p₀,before)</code> and the counterfactual rate for the target group becomes <code>p₁ − u</code>. Its standard error adds the four variances, and the test is a Wald test <code>z = u / SE</code>. This treats the before and during windows as independent samples; with the same members in both, the true standard error is usually smaller, so the interval is on the cautious side.</p>
+        <p>An ROI below −100% is possible: it means the target group booked less than the holdout, so the campaign lost margin on top of what it spent.</p>
+        <p><b>Sample size and power.</b> For an uplift <code>δ</code> on a baseline <code>p₀</code> with <code>p₁ = p₀ + δ</code>, a significance level α and a target group of <code>N</code> members, the power of a holdout of <code>N₀</code> members is</p>
+        <span class="fx">Power(N₀) = Φ( ( δ − z₁₋α/₂ × √( p̄(1 − p̄)(1/N + 1/N₀) ) ) / √( p₁(1 − p₁)/N + p₀(1 − p₀)/N₀ ) )</span>
+        <p>The calculator solves for the smallest <code>N₀</code> that reaches the chosen power (bisection), and for the smallest uplift the current holdout can detect. Power rises with the holdout but levels off: if even an infinite holdout isn't enough, the target group itself is too small. The holdout's own cost is the net result its members would have produced if they had received the offer: <code>N₀ × (u × m − (p₀ + u) × b)</code>, before fixed costs. When the campaign loses money on each member, that number is negative: the holdout saved money.</p>
+
+        <h4>Data and sources</h4>
+        <ul>
+          <li>All inputs are illustrative assumptions, set <span id="how-date">September 2026</span> and stored in <code>assets/data/promoroi.json</code>. The preset rates, margins and costs were chosen to look plausible, not estimated from any programme. The 2,000-point bonus and 0.8 cents per point echo the worked example in <a href="/loyalty101.html#ch09">Loyalty 101, chapter 09</a>.</li>
+          <li>NIST/SEMATECH, <a href="https://www.itl.nist.gov/div898/handbook/prc/section3/prc33.htm" target="_blank" rel="noopener">e-Handbook of Statistical Methods, 7.3.3: comparing two proportions</a> (accessed Sep 2026).</li>
+          <li>Kohavi, Tang &amp; Xu, <a href="https://experimentguide.com/" target="_blank" rel="noopener"><i>Trustworthy Online Controlled Experiments</i></a>, Cambridge University Press, 2020: holdouts, power and the pitfalls of A/B tests.</li>
+          <li><a href="https://en.wikipedia.org/wiki/Difference_in_differences" target="_blank" rel="noopener">Difference in differences</a>, including the parallel-trends assumption it rests on (accessed Sep 2026).</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>One trip per member: the trip rate is the share of members who book. If members can book several trips, the counts are larger and the variance is higher than a proportion test assumes; a test on trips per member (for example Poisson or a t-test on member-level counts) would be the right one.</li>
+          <li>The cost of a point is what it costs the airline to honour it. Points that are never redeemed cost nothing, so the figure should already be net of expected breakage. See the <a href="/breakage.html">breakage model</a>.</li>
+          <li>Margin per incremental trip is a single number. On a full flight an extra loyalty booking may displace a paying passenger, so the true margin depends on load factor and fare; on an empty seat it is close to the fare less variable costs.</li>
+          <li>No pull-forward or halo: trips moved from next month into the campaign window count as incremental, and effects after the window are ignored. Measure over a window long enough to see both, as <a href="/loyalty101.html#ch09">Loyalty 101</a> recommends.</li>
+          <li>One test on one outcome. Looking at many segments or stopping as soon as the result looks significant inflates false positives.</li>
+          <li>The normal approximation needs enough trips in each group, roughly ten or more on each side. With very small groups or rates, use an exact test.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline. For the business side of measuring promotions, read <a href="/loyalty101.html#ch09">Loyalty 101: Measuring Incrementality</a>.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      var DATA_URL = "assets/data/promoroi.json";
+      var css = getComputedStyle(document.documentElement);
+      function cv(n) { return css.getPropertyValue(n).trim(); }
+      var C = { margin: cv("--margin"), subsidy: cv("--subsidy"), bonusInc: cv("--bonus-inc"), fixed: cv("--fixed"), ink: cv("--ink"), loss: cv("--loss"), ci: cv("--ci") };
+      var tip = el("tip");
+      var cfg, S, R;
+
+      // Input fields, grouped. key -> state key; kind drives validation.
+      var GROUPS = [
+        { title: "Groups", fields: [
+          { key: "nt", label: "Target group", unit: "members", hint: "received the offer", min: 10, max: 1e9, step: 1000, kind: "int" },
+          { key: "nc", label: "Holdout", unit: "members", hint: "random, no offer", min: 10, max: 1e9, step: 500, kind: "int" }
+        ]},
+        { title: "Trip rates during the campaign", fields: [
+          { key: "pc", label: "Baseline (holdout)", unit: "%", hint: "share of members who booked a qualifying trip", min: 0.01, max: 99.9, step: 0.1, kind: "pct" },
+          { key: "pt", label: "Target group", unit: "%", hint: "same measure, members who got the offer", min: 0.01, max: 99.9, step: 0.1, kind: "pct" }
+        ]},
+        { title: "Value of a trip", fields: [
+          { key: "margin", label: "Margin per extra trip", unit: "$", hint: "fare less variable costs", min: 0, max: 1e5, step: 5, kind: "num" },
+          { key: "bonus", label: "Bonus points per trip", unit: "points", hint: "", min: 0, max: 1e7, step: 100, kind: "num" }
+        ]},
+        { title: "Costs", fields: [
+          { key: "cpp", label: "Cost per point", unit: "cents", hint: "to honour it, net of breakage", min: 0, max: 100, step: 0.05, kind: "num" },
+          { key: "fixed", label: "Fixed campaign costs", unit: "$", hint: "creative, email, set-up", min: 0, max: 1e9, step: 1000, kind: "num" }
+        ]}
+      ];
+
+      // ───────────────────────────── helpers
+      function el(id) { return document.getElementById(id); }
+      var nf0 = d3.format(",.0f");
+      function int(x) { return (x < -0.5 ? "−" : "") + nf0(Math.abs(Math.round(x))); }
+      function money(x) {
+        var a = Math.abs(x), s;
+        if (a >= 9.995e5) s = "$" + (a / 1e6).toFixed(a >= 1e8 ? 0 : 2) + "m";
+        else if (a >= 1e4) s = "$" + Math.round(a / 1e3) + "k";
+        else s = "$" + nf0(a);
+        return (x < 0 && s !== "$0" ? "−" : "") + s;
+      }
+      function signedMoney(x) { return (x > 0 ? "+" : "") + money(x); }
+      function pct(x, dp) { if (!isFinite(x)) return "n/a"; var s = Math.abs(x * 100).toFixed(dp == null ? 0 : dp); return (x < 0 && +s !== 0 ? "−" : "") + s + "%"; }
+      function signedPct(x, dp) { if (!isFinite(x)) return "n/a"; var s = pct(x, dp); return x > 0 && +Math.abs(x * 100).toFixed(dp == null ? 0 : dp) !== 0 ? "+" + s : s; }
+      function pp(x, dp) { var s = Math.abs(x * 100).toFixed(dp == null ? 2 : dp); return (x < 0 && +s !== 0 ? "−" : x > 0 ? "+" : "") + s + " pp"; }
+      function pvalFmt(p) { return p < 0.001 ? "p < 0.001" : "p = " + (p < 0.01 ? p.toFixed(3) : p.toFixed(2)); }
+      function zf(z) { return (z < 0 ? "−" : "") + Math.abs(z).toFixed(2); }
+      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+
+      // Standard normal CDF (erfc, Numerical Recipes, |error| < 1.2e-7) and inverse (Acklam).
+      function erfc(x) {
+        var z = Math.abs(x), t = 1 / (1 + 0.5 * z);
+        var r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+        return x >= 0 ? r : 2 - r;
+      }
+      function Phi(x) { return 0.5 * erfc(-x / Math.SQRT2); }
+      function PhiInv(p) {
+        var a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+        var b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+        var c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+        var d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+        var pl = 0.02425, q, r;
+        if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+        if (p > 1 - pl) { q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+        q = p - 0.5; r = q * q;
+        return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+      }
+      function vr(p, n) { return p * (1 - p) / n; }
+
+      // ───────────────────────────── the model
+      function compute() {
+        var N = S.nt, N0 = S.nc, p1 = S.pt / 100, p0 = S.pc / 100;
+        var m = S.margin, b = S.bonus * S.cpp / 100, F = S.fixed;
+        var alpha = 1 - S.conf / 100, zc = PhiInv(1 - alpha / 2);
+        var u, se, z, pooled = null;
+        if (S.did) {
+          var a1 = S.preT / 100, a0 = S.preC / 100;
+          u = (p1 - a1) - (p0 - a0);
+          se = Math.sqrt(vr(p1, N) + vr(a1, N) + vr(p0, N0) + vr(a0, N0));
+          z = se > 0 ? u / se : 0;
+        } else {
+          u = p1 - p0;
+          se = Math.sqrt(vr(p1, N) + vr(p0, N0));
+          var pbar = (p1 * N + p0 * N0) / (N + N0);
+          pooled = Math.sqrt(pbar * (1 - pbar) * (1 / N + 1 / N0));
+          z = pooled > 0 ? u / pooled : 0;
+        }
+        var pval = 2 * (1 - Phi(Math.abs(z)));
+        var base = clamp(p1 - u, 0, 1);                 // what the target group would have done without the offer
+        var trips = p1 * N, incr = u * N;
+        var anyway = Math.min(trips, Math.max(0, base * N));
+        var bonusAll = trips * b, subsidy = anyway * b, bonusIncr = Math.max(0, trips - anyway) * b;
+        var cost = bonusAll + F, marginInc = incr * m, net = marginInc - cost;
+        var roi = cost > 0 ? net / cost : NaN;
+        var uLo = u - zc * se, uHi = u + zc * se;
+        function roiFixed(uu) { return cost > 0 ? (uu * N * m - cost) / cost : NaN; }       // cost as actually paid
+        function roiCurve(uu) { var cc = (base + uu) * N * b + F; return cc > 0 ? (uu * N * m - cc) / cc : NaN; }   // what-if, baseline fixed
+        function costCurve(uu) { return (base + uu) * N * b + F; }
+        var be = m > b ? (base * N * b + F) / (N * (m - b)) : null;
+        if (be != null && base + be > 1) be = null;      // would need a trip rate above 100%
+        return {
+          N: N, N0: N0, p1: p1, p0: p0, m: m, b: b, F: F, alpha: alpha, zc: zc,
+          u: u, rel: base > 0 ? u / base : NaN, se: se, pooled: pooled, z: z, pval: pval, sig: pval < alpha,
+          base: base, trips: trips, incr: incr, anyway: anyway,
+          bonusAll: bonusAll, subsidy: subsidy, bonusIncr: bonusIncr, cost: cost, marginInc: marginInc, net: net, roi: roi,
+          uLo: uLo, uHi: uHi, incrLo: uLo * N, incrHi: uHi * N, roiLo: roiFixed(uLo), roiHi: roiFixed(uHi),
+          roiCurve: roiCurve, costCurve: costCurve, be: be,
+          costPerIncr: incr > 0 ? cost / incr : null,
+          points: trips * S.bonus
+        };
+      }
+
+      // Power of a two-sided two-proportion test to detect uplift d on baseline p0 (the far tail is ignored).
+      function power(N, N0, p0, d, zc) {
+        var p1 = clamp(p0 + d, 1e-6, 1 - 1e-6);
+        var pbar = (N * p1 + N0 * p0) / (N + N0);
+        var se0 = Math.sqrt(pbar * (1 - pbar) * (1 / N + 1 / N0));
+        var se1 = Math.sqrt(p1 * (1 - p1) / N + p0 * (1 - p0) / N0);
+        return se1 > 0 ? Phi((Math.abs(d) - zc * se0) / se1) : 1;
+      }
+      function requiredHoldout(N, p0, d, zc, target) {
+        if (power(N, 1e10, p0, d, zc) < target) return Infinity;
+        var lo = Math.log(2), hi = Math.log(1e10);
+        for (var i = 0; i < 80; i++) { var mid = (lo + hi) / 2; if (power(N, Math.exp(mid), p0, d, zc) >= target) hi = mid; else lo = mid; }
+        return Math.ceil(Math.exp(hi));
+      }
+      function mde(N, N0, p0, zc, target) {
+        var hi = 1 - p0 - 1e-6;
+        if (hi <= 0 || power(N, N0, p0, hi, zc) < target) return null;
+        var lo = 1e-7;
+        for (var i = 0; i < 80; i++) { var mid = (lo + hi) / 2; if (power(N, N0, p0, mid, zc) >= target) hi = mid; else lo = mid; }
+        return hi;
+      }
+      function equalSplit(p0, d, zc, target) {
+        var lo = Math.log(2), hi = Math.log(1e10);
+        if (power(1e10, 1e10, p0, d, zc) < target) return Infinity;
+        for (var i = 0; i < 80; i++) { var mid = (lo + hi) / 2, n = Math.exp(mid); if (power(n, n, p0, d, zc) >= target) hi = mid; else lo = mid; }
+        return Math.ceil(Math.exp(hi));
+      }
+
+      // ───────────────────────────── controls
+      function chipRow(host, items, current, onPick) {
+        host.innerHTML = "";
+        items.forEach(function (it) {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip" + (it.value === current ? " on" : "");
+          b.textContent = it.label; b.setAttribute("aria-pressed", it.value === current);
+          b.addEventListener("click", function () { onPick(it.value); });
+          host.appendChild(b);
+        });
+      }
+
+      function buildFields() {
+        var host = el("fields");
+        GROUPS.forEach(function (g) {
+          var box = document.createElement("div"); box.className = "fgroup";
+          box.innerHTML = "<h5>" + g.title + "</h5>";
+          g.fields.forEach(function (f) {
+            var l = document.createElement("label"); l.className = "field";
+            l.innerHTML = f.label + " <span class='hint'>(" + f.unit + ")</span>" +
+              '<input class="num" id="f-' + f.key + '" type="number" min="' + f.min + '" max="' + f.max + '" step="' + f.step + '" inputmode="' + (f.kind === "int" ? "numeric" : "decimal") + '">' +
+              (f.hint ? "<small>" + f.hint + "</small>" : "");
+            box.appendChild(l);
+            var inp = l.querySelector("input");
+            inp.addEventListener("input", function () {
+              var v = parseFloat(this.value);
+              var ok = isFinite(v) && v >= f.min && v <= f.max;
+              this.classList.toggle("bad", !ok);
+              if (!ok) return;
+              S[f.key] = f.kind === "int" ? Math.round(v) : v;
+              S.preset = null;
+              renderAll();
+            });
+          });
+          host.appendChild(box);
+        });
+        ["preT", "preC"].forEach(function (k) {
+          el(k).addEventListener("input", function () {
+            var v = parseFloat(this.value), ok = isFinite(v) && v > 0 && v < 100;
+            this.classList.toggle("bad", !ok);
+            if (!ok) return;
+            S[k] = v; S.preset = null; if (S.did) renderAll(); else buildControls();
+          });
+        });
+        el("did-on").addEventListener("change", function () { S.did = this.checked; renderAll(); });
+        el("pw-delta").addEventListener("input", function () {
+          var v = parseFloat(this.value), ok = isFinite(v) && v > 0 && v < 100;
+          this.classList.toggle("bad", !ok);
+          if (!ok) return;
+          S.pwMode = "custom"; S.pwDelta = v / 100; renderPower(R);
+        });
+      }
+
+      function fillFields() {
+        GROUPS.forEach(function (g) { g.fields.forEach(function (f) { var i = el("f-" + f.key); i.value = S[f.key]; i.classList.remove("bad"); }); });
+        el("preT").value = S.preT; el("preC").value = S.preC;
+        el("did-on").checked = S.did;
+      }
+
+      function buildControls() {
+        var P = cfg.presets;
+        chipRow(el("preset"), Object.keys(P).map(function (k) { return { value: k, label: P[k].label }; }), S.preset, function (k) {
+          var p = P[k];
+          ["nt", "nc", "pc", "pt", "margin", "bonus", "cpp", "fixed", "preT", "preC"].forEach(function (f) { S[f] = p[f]; });
+          S.preset = k; S.pwMode = "be";
+          fillFields(); renderAll();
+        });
+        el("preset-desc").textContent = S.preset ? P[S.preset].desc : "Custom figures. Pick a preset to reset all inputs.";
+        chipRow(el("conf"), cfg.confidenceOptions.map(function (c) { return { value: c, label: c + "%" }; }), S.conf, function (c) { S.conf = c; renderAll(); });
+        el("did-sum").textContent = S.did
+          ? "· on: before-campaign rates " + S.preT + "% (target) and " + S.preC + "% (holdout)"
+          : "· optional, for when the holdout isn't a clean random split";
+      }
+
+      // ───────────────────────────── tooltip
+      function showTip(html, evt) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var pageX = evt.pageX, pageY = evt.pageY, w = tip.offsetWidth, h = tip.offsetHeight;
+        var x = pageX + 14, y = pageY - h - 12;
+        if (x + w > window.scrollX + document.documentElement.clientWidth - 8) x = pageX - w - 14;
+        if (x < window.scrollX + 8) x = window.scrollX + 8;
+        if (y < window.scrollY + 8) y = pageY + 16;
+        tip.style.left = x + "px"; tip.style.top = y + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      function row(color, label, val, cls) {
+        return '<div class="r' + (cls ? " " + cls : "") + '"><span>' + (color ? '<i class="sw" style="background:' + color + '"></i>' : "") + label + "</span><b>" + val + "</b></div>";
+      }
+
+      function frame(host, heightRatio, minH, M) {
+        var W = Math.max(280, host.clientWidth || host.parentNode.clientWidth || 600);
+        var H = Math.max(minH || 200, Math.round(W * heightRatio));
+        var narrow = W < 520;
+        M = M || { top: 14, right: narrow ? 12 : 18, bottom: 34, left: narrow ? 46 : 56 };
+        d3.select(host).selectAll("*").remove();
+        var svg = d3.select(host).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img");
+        return { svg: svg, W: W, H: H, M: M, iw: W - M.left - M.right, ih: H - M.top - M.bottom, narrow: narrow,
+                 g: svg.append("g").attr("transform", "translate(" + M.left + "," + M.top + ")") };
+      }
+      function yAxis(f, y, fmt, n) {
+        f.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(n || 5).tickSize(-f.iw).tickFormat(""));
+        f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(n || 5).tickSize(0).tickPadding(6).tickFormat(fmt))
+          .select(".domain").remove();
+      }
+      function legend(host, items) {
+        el(host).innerHTML = items.map(function (it) {
+          var st = it.line ? "border-color:" + it.color : "background:" + it.color + (it.opacity ? ";opacity:" + it.opacity : "");
+          return '<span><i class="' + (it.line ? "ln" + (it.dash ? " dash" : "") : "") + '" style="' + st + '"></i>' + it.label + "</span>";
+        }).join("");
+      }
+      function axisMoney(v) { return v === 0 ? "0" : money(v); }
+
+      // ───────────────────────────── summary
+      function drawTiles(R) {
+        var conf = S.conf + "% CI ";
+        var t = [];
+        t.push('<div class="tile"><span class="k">Incremental trips</span><b class="' + (R.incr < 0 ? "neg" : "") + '">' + int(R.incr) + "</b><span>" + conf + int(R.incrLo) + " to " + int(R.incrHi) +
+          "<br>Uplift " + pp(R.u) + (isFinite(R.rel) ? " (" + signedPct(R.rel) + ")" : "") + "</span></div>");
+        t.push('<div class="tile"><span class="k">Campaign cost</span><b>' + money(R.cost) + "</b><span>" +
+          (R.bonusAll > 0 ? pct(R.subsidy / R.bonusAll) + " of the bonus went to trips that would have happened anyway" : "No bonus paid") + "</span></div>");
+        t.push('<div class="tile"><span class="k">ROI</span><b class="' + (R.roi < 0 ? "neg" : "pos") + '">' + signedPct(R.roi) + "</b><span>" + conf + signedPct(R.roiLo) + " to " + signedPct(R.roiHi) +
+          "<br>Net result " + signedMoney(R.net) + "</span></div>");
+        t.push('<div class="tile"><span class="k">Is the uplift significant?</span><b class="' + (R.sig ? "pos" : "") + '">' + (R.sig ? "Yes" : "No") + "</b><span>z = " + zf(R.z) + ", " + pvalFmt(R.pval) +
+          "<br>" + (S.did ? "Difference-in-differences, " : "Two-sided, ") + "at " + S.conf + "%</span></div>");
+        el("tiles").innerHTML = t.join("");
+
+        var beTxt = R.be == null
+          ? "Each extra trip earns less than its own bonus, so no uplift can make this campaign pay."
+          : "It needs an uplift of " + pp(R.be) + " to break even" + (R.base > 0 ? " (" + signedPct(R.be / R.base) + " on the baseline)" : "") + ".";
+        var v;
+        if (!R.sig && R.roiHi < 0) {
+          v = "The uplift isn't significant, and it doesn't matter much: even at the top of the " + S.conf + "% interval (" + pp(R.uHi) + ") the campaign loses money. " + beTxt;
+        } else if (!R.sig) {
+          v = "The test can't separate the uplift from noise: at " + S.conf + "% the true uplift could be anywhere from " + pp(R.uLo) + " to " + pp(R.uHi) + ", so the ROI could be anywhere from " + signedPct(R.roiLo) + " to " + signedPct(R.roiHi) + ". " + beTxt + " A bigger holdout would settle it (see below).";
+        } else if (R.roiLo > 0) {
+          v = "The campaign worked and paid for itself: the uplift is significant and even the low end of the interval is profitable. " + beTxt;
+        } else if (R.roiHi < 0) {
+          v = "The offer did change behaviour, but not enough to pay for itself: even the top of the interval loses money. " + beTxt + " Most of the bonus rewarded trips that would have happened anyway.";
+        } else {
+          v = "The uplift is real, but whether it paid is uncertain: the ROI interval runs from " + signedPct(R.roiLo) + " to " + signedPct(R.roiHi) + ". " + beTxt;
+        }
+        el("verdict").textContent = v;
+      }
+
+      // ───────────────────────────── waterfall
+      function drawWaterfall(R) {
+        var host = el("c-wf");
+        var rows = [
+          { k: "Bonus on trips that would have happened anyway", v: -R.subsidy, c: C.subsidy },
+          { k: "Bonus on incremental trips", v: -R.bonusIncr, c: C.bonusInc },
+          { k: "Fixed campaign costs", v: -R.F, c: C.fixed },
+          { k: "Total cost", v: -R.cost, c: C.ink, total: true },
+          { k: "Incremental margin", v: R.marginInc, c: R.marginInc >= 0 ? C.margin : C.loss },
+          { k: "Net result", v: R.net, c: R.net >= 0 ? C.margin : C.loss, total: true, strong: true }
+        ];
+        var run = 0;
+        rows.forEach(function (r) { if (r.total) { r.x0 = 0; r.x1 = r.v; } else { r.x0 = run; r.x1 = run + r.v; } run = r.x1; });
+        var rowH = 44, W = Math.max(280, host.clientWidth || 600);
+        var M = { top: 4, right: 14, bottom: 26, left: 8 };
+        var f = frame(host, 0, rows.length * rowH + M.top + M.bottom, M);
+        var ext = d3.extent(rows.reduce(function (a, r) { return a.concat([r.x0, r.x1]); }, [0]));
+        var x = d3.scaleLinear().domain(ext).nice(5).range([0, f.iw]);
+        f.g.append("g").attr("class", "grid").attr("transform", "translate(0," + (rows.length * rowH) + ")")
+          .call(d3.axisBottom(x).ticks(f.narrow ? 4 : 6).tickSize(-rows.length * rowH).tickFormat(""));
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + (rows.length * rowH) + ")")
+          .call(d3.axisBottom(x).ticks(f.narrow ? 4 : 6).tickSize(4).tickFormat(axisMoney)).select(".domain").remove();
+        f.g.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", 0).attr("y2", rows.length * rowH).attr("stroke", "#9a9a96");
+        var conn = f.g.append("g");
+        rows.forEach(function (r, i) {
+          var y0 = i * rowH, by = y0 + 20, bh = 16;
+          var lo = Math.min(r.x0, r.x1), hi = Math.max(r.x0, r.x1);
+          var g = f.g.append("g");
+          g.append("text").attr("class", "rlabel").attr("x", 0).attr("y", y0 + 13).style("font-weight", r.strong ? 600 : null).text(r.k);
+          g.append("rect").attr("x", x(lo)).attr("y", by).attr("width", Math.max(1, x(hi) - x(lo))).attr("height", bh).attr("rx", 3)
+            .attr("fill", r.c).attr("opacity", r.total && !r.strong ? 0.85 : 1);
+          var lbl = (r.v > 0 ? "+" : "") + money(r.v), tw = lbl.length * 6.6 + 8;
+          var right = x(hi) + 6 + tw <= f.iw;
+          g.append("text").attr("class", "dlabel" + (r.strong || r.total ? " strong" : "")).attr("y", by + 12)
+            .attr("x", right ? x(hi) + 6 : x(lo) - 6).attr("text-anchor", right ? "start" : "end").text(lbl);
+          if (i < rows.length - 1 && !rows[i + 1].total) {
+            conn.append("line").attr("x1", x(r.x1)).attr("x2", x(r.x1)).attr("y1", by + bh).attr("y2", by + rowH)
+              .attr("stroke", "#bdbdb8").attr("stroke-dasharray", "2 2");
+          }
+          g.append("rect").attr("x", 0).attr("y", y0).attr("width", f.iw).attr("height", rowH).attr("fill", "transparent")
+            .on("pointermove", function (evt) {
+              var h = '<div class="t">' + r.k + "</div>" + row(r.c, "Amount", signedMoney(r.v));
+              if (i === 0) h += row(null, "Trips", int(R.anyway)) + row(null, "Share of the bonus", pct(R.bonusAll > 0 ? R.subsidy / R.bonusAll : 0));
+              if (i === 1) h += row(null, "Trips", int(Math.max(0, R.incr)));
+              if (i === 4) h += row(null, "Incremental trips × margin", int(R.incr) + " × $" + nf0(R.m));
+              if (i === 5) h += row(null, "ROI", signedPct(R.roi), "tot");
+              showTip(h, evt);
+            })
+            .on("pointerleave", hideTip);
+        });
+      }
+
+      function drawTrips(R) {
+        var inc = Math.max(0, R.incr), any = R.anyway;
+        el("split").innerHTML = (any > 0 ? '<div style="flex:' + any + ';background:' + C.subsidy + '" title="Would have happened anyway"></div>' : "") +
+          (inc > 0 ? '<div style="flex:' + inc + ';background:' + C.margin + '" title="Incremental"></div>' : "");
+        var li = [
+          ["", "Qualifying trips in the target group", int(R.trips), "each earned " + nf0(S.bonus) + " bonus points", "sum"],
+          [C.subsidy, "Would have happened anyway", int(any), "the holdout's rate applied to the target group"],
+          [C.margin, "Incremental", int(R.incr), "caused by the offer"],
+          ["", "Bonus points issued", d3.format(",.3~s")(R.points).replace("G", "bn").replace("M", "m").replace("k", "k"), "worth " + money(R.bonusAll) + " at " + S.cpp + "¢ a point"],
+          ["", "Bonus cost per trip", "$" + R.b.toFixed(2), "against a margin of $" + nf0(R.m) + " per extra trip"],
+          ["", "Cost per incremental trip", R.costPerIncr == null ? "n/a" : "$" + nf0(R.costPerIncr), R.costPerIncr == null ? "no incremental trips" : (R.costPerIncr < R.m ? "below" : "above") + " the $" + nf0(R.m) + " margin, so the campaign " + (R.costPerIncr < R.m ? "pays" : "loses money"), "sum"]
+        ];
+        el("trips").innerHTML = li.map(function (r) {
+          return '<li class="' + (r[4] || "") + '"><i style="background:' + (r[0] || "transparent") + '"></i><span>' + r[1] + (r[3] ? "<small>" + r[3] + "</small>" : "") + "</span><b>" + r[2] + "</b></li>";
+        }).join("");
+      }
+
+      // ───────────────────────────── ROI vs uplift
+      function drawRoi(R) {
+        var host = el("c-roi"), f = frame(host, 0.42, 250);
+        var hiCand = [R.u * 1.8, R.uHi * 1.15, 0.005];
+        if (R.be != null) hiCand.push(R.be * 1.8);
+        var xmax = Math.min(d3.max(hiCand), 1 - R.base);
+        var xmin = Math.min(0, R.uLo * 1.15, R.u * 1.15);
+        xmin = Math.max(xmin, -R.base);
+        var pts = d3.range(0, 201).map(function (i) { var uu = xmin + (xmax - xmin) * i / 200; return [uu, R.roiCurve(uu)]; }).filter(function (d) { return isFinite(d[1]); });
+        var ylo = d3.min(pts, function (d) { return d[1]; }), yhi = d3.max(pts, function (d) { return d[1]; });
+        ylo = Math.min(ylo, 0, isFinite(R.roiLo) ? R.roiLo : 0); yhi = Math.max(yhi, 0.1);
+        ylo = Math.max(ylo, -1.05);
+        var x = d3.scaleLinear().domain([xmin, xmax]).range([0, f.iw]);
+        var y = d3.scaleLinear().domain([ylo, yhi]).nice(6).range([f.ih, 0]);
+        // loss region
+        f.g.append("rect").attr("x", 0).attr("width", f.iw).attr("y", y(0)).attr("height", Math.max(0, f.ih - y(0))).attr("fill", C.subsidy).attr("opacity", 0.06);
+        // CI band on uplift
+        var bx0 = x(clamp(R.uLo, xmin, xmax)), bx1 = x(clamp(R.uHi, xmin, xmax));
+        f.g.append("rect").attr("x", bx0).attr("width", Math.max(0, bx1 - bx0)).attr("y", 0).attr("height", f.ih).attr("fill", C.ci).attr("opacity", 0.09);
+        yAxis(f, y, function (v) { return (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(Math.round(v * 100)) + "%"; }, 6);
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")")
+          .call(d3.axisBottom(x).ticks(f.narrow ? 4 : 7).tickSize(4).tickFormat(function (v) { return (v > 0 ? "+" : v < 0 ? "−" : "") + d3.format(".3~f")(Math.abs(v * 100)); }));
+        f.g.append("text").attr("class", "dlabel").attr("x", f.iw).attr("y", f.ih + 30).attr("text-anchor", "end").text("uplift, percentage points");
+        f.g.append("line").attr("x1", 0).attr("x2", f.iw).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "#9a9a96");
+        var line = d3.line().x(function (d) { return x(d[0]); }).y(function (d) { return y(Math.max(d[1], y.domain()[0])); });
+        f.g.append("path").datum(pts).attr("d", line).attr("fill", "none").attr("stroke", C.margin).attr("stroke-width", 2.2);
+        if (R.be != null && R.be >= xmin && R.be <= xmax) {
+          f.g.append("line").attr("x1", x(R.be)).attr("x2", x(R.be)).attr("y1", 0).attr("y2", f.ih).attr("stroke", C.ink).attr("stroke-dasharray", "4 3");
+          f.g.append("circle").attr("cx", x(R.be)).attr("cy", y(0)).attr("r", 4).attr("fill", "#fff").attr("stroke", C.ink).attr("stroke-width", 1.5);
+          var beRight = x(R.be) < f.iw * 0.6;
+          f.g.append("text").attr("class", "dlabel strong").attr("x", x(R.be) + (beRight ? 6 : -6)).attr("y", 12).attr("text-anchor", beRight ? "start" : "end")
+            .text("Break-even " + pp(R.be));
+        }
+        var ox = x(clamp(R.u, xmin, xmax)), oy = y(Math.max(R.roi, y.domain()[0]));
+        f.g.append("circle").attr("cx", ox).attr("cy", oy).attr("r", 5.5).attr("fill", C.margin).attr("stroke", "#fff").attr("stroke-width", 2);
+        var oRight = ox < f.iw * 0.62, oBelow = oy < 40;
+        f.g.append("text").attr("class", "dlabel strong").attr("x", ox + (oRight ? 9 : -9)).attr("y", oy + (oBelow ? 18 : -9)).attr("text-anchor", oRight ? "start" : "end")
+          .text("This campaign: " + signedPct(R.roi));
+        // crosshair
+        var xh = f.g.append("line").attr("class", "xhair").attr("y1", 0).attr("y2", f.ih).style("display", "none");
+        var dot = f.g.append("circle").attr("r", 3.5).attr("fill", C.margin).style("display", "none");
+        f.g.append("rect").attr("width", f.iw).attr("height", f.ih).attr("fill", "transparent")
+          .on("pointermove", function (evt) {
+            var uu = x.invert(d3.pointer(evt, this)[0]), r = R.roiCurve(uu);
+            xh.attr("x1", x(uu)).attr("x2", x(uu)).style("display", null);
+            dot.attr("cx", x(uu)).attr("cy", y(Math.max(r, y.domain()[0]))).style("display", null);
+            showTip('<div class="t">Uplift ' + pp(uu) + "</div>" +
+              row(null, "Target trip rate", (100 * (R.base + uu)).toFixed(2) + "%") +
+              row(null, "Incremental trips", int(uu * R.N)) +
+              row(null, "Campaign cost", money(R.costCurve(uu))) +
+              row(null, "Incremental margin", money(uu * R.N * R.m)) +
+              row(C.margin, "ROI", signedPct(r), "tot"), evt);
+          })
+          .on("pointerleave", function () { xh.style("display", "none"); dot.style("display", "none"); hideTip(); });
+        legend("l-roi", [
+          { line: true, color: C.margin, label: "ROI if the uplift were…" },
+          { color: C.ci, opacity: 0.25, label: S.conf + "% confidence interval of the measured uplift" },
+          { line: true, dash: true, color: C.ink, label: "Break-even uplift" },
+          { color: C.subsidy, opacity: 0.2, label: "Loss" }
+        ]);
+        el("roi-sub").textContent = "Baseline held at " + (R.base * 100).toFixed(2) + "%: moving right, more members book, so the campaign earns more margin but also pays more bonus. ROI can never exceed " +
+          (R.b > 0 ? signedPct((R.m - R.b) / R.b) : "n/a") + ", the margin an extra trip earns over its own bonus.";
+      }
+
+      // ───────────────────────────── test table
+      function drawTest(R) {
+        var h = "<thead><tr><th>" + (S.did ? "Group and window" : "Group") + "</th><th>Members</th><th>Trips</th><th>Trip rate</th></tr></thead><tbody>";
+        function tr(k, n, p) { return "<tr><td class='k'>" + k + "</td><td>" + int(n) + "</td><td>" + int(n * p) + "</td><td>" + (p * 100).toFixed(2) + "%</td></tr>"; }
+        if (S.did) {
+          h += tr("Target, before", R.N, S.preT / 100) + tr("Target, during", R.N, R.p1) + tr("Holdout, before", R.N0, S.preC / 100) + tr("Holdout, during", R.N0, R.p0);
+        } else {
+          h += tr("Target (offer)", R.N, R.p1) + tr("Holdout (no offer)", R.N0, R.p0);
+        }
+        h += "<tr class='total'><td>Uplift</td><td colspan='2'>" + (isFinite(R.rel) ? signedPct(R.rel, 1) + " relative" : "") + "</td><td>" + pp(R.u) + "</td></tr>";
+        h += "<tr><td class='k'>Standard error" + (R.pooled != null ? " (pooled, for the test)" : "") + "</td><td colspan='3'>" + ((R.pooled != null ? R.pooled : R.se) * 100).toFixed(3) + " pp</td></tr>";
+        h += "<tr><td class='k'>z · p-value</td><td colspan='3'>" + zf(R.z) + " · " + (R.pval < 0.001 ? "< 0.001" : pvalFmt(R.pval).replace("p = ", "")) + "</td></tr>";
+        h += "<tr><td class='k'>" + S.conf + "% interval on the uplift</td><td colspan='3'>" + pp(R.uLo) + " to " + pp(R.uHi) + "</td></tr>";
+        h += "<tr><td class='k'>" + S.conf + "% interval on incremental trips</td><td colspan='3'>" + int(R.incrLo) + " to " + int(R.incrHi) + "</td></tr>";
+        h += "<tr><td class='k'>" + S.conf + "% interval on ROI</td><td colspan='3'>" + signedPct(R.roiLo) + " to " + signedPct(R.roiHi) + "</td></tr>";
+        el("tt").innerHTML = h + "</tbody>";
+        el("test-head").textContent = S.did ? "Difference-in-differences, Wald test" : "Two-proportion z-test, two-sided";
+
+        var e = "If the offer did nothing, a gap as large as " + pp(R.u) + " would show up by chance " +
+          (R.pval < 0.001 ? "less than 0.1% of the time" : "about " + (R.pval * 100 < 1 ? (R.pval * 100).toFixed(1) : Math.round(R.pval * 100)) + "% of the time") + ". ";
+        e += R.sig ? "That's below the " + Math.round(R.alpha * 100) + "% threshold, so the uplift is statistically significant. " : "That's above the " + Math.round(R.alpha * 100) + "% threshold, so the test can't rule out that the offer had no effect. ";
+        var holdShare = R.N0 / (R.N + R.N0);
+        e += "Most of the uncertainty comes from the " + (R.N0 < R.N ? "smaller" : "larger") + " group: the holdout is " + pct(holdShare) + " of the members tested. ";
+        if (R.sig && R.roiHi < 0) e += "Significant isn't the same as profitable: this offer changes behaviour, but the extra trips don't cover the bonus paid on all the others.";
+        else if (!R.sig) e += "Not significant doesn't mean the offer failed; it means this test is too small to tell.";
+        else e += "The interval on the ROI shows how much of the profit you can count on.";
+        el("test-explain").textContent = e;
+      }
+
+      // ───────────────────────────── power
+      function currentDelta(R) {
+        if (S.pwMode === "be") return R.be != null && R.be > 0 ? R.be : (R.u > 0 ? R.u : 0.005);
+        if (S.pwMode === "obs") return R.u > 0 ? R.u : 0.005;
+        return S.pwDelta;
+      }
+      function renderPower(R) {
+        var P = S.power / 100, d = currentDelta(R), p0 = clamp(R.base, 1e-4, 1 - 1e-4);
+        var modes = [{ value: "be", label: "Break-even" + (R.be != null && R.be > 0 ? " (" + (R.be * 100).toFixed(2) + ")" : "") },
+                     { value: "obs", label: "Measured" + (R.u > 0 ? " (" + (R.u * 100).toFixed(2) + ")" : "") },
+                     { value: "custom", label: "Custom" }];
+        chipRow(el("pw-mode"), modes, S.pwMode, function (v) { S.pwMode = v; if (v === "custom") S.pwDelta = d; renderPower(R); });
+        chipRow(el("pw-power"), cfg.powerOptions.map(function (p) { return { value: p, label: p + "%" }; }), S.power, function (p) { S.power = p; renderPower(R); });
+        if (document.activeElement !== el("pw-delta")) el("pw-delta").value = +(d * 100).toFixed(3);
+        S.pwDelta = d;
+
+        var need = requiredHoldout(R.N, p0, d, R.zc, P);
+        var curPow = power(R.N, R.N0, p0, d, R.zc);
+        var md = mde(R.N, R.N0, p0, R.zc, P);
+        var eq = equalSplit(p0, d, R.zc, P);
+        var perMember = R.u * R.m - (R.base + R.u) * R.b;
+        var holdCost = R.N0 * perMember;
+
+        var t = [];
+        t.push('<div class="tile"><span class="k">Holdout needed</span><b>' + (isFinite(need) ? int(need) : "Not reachable") + "</b><span>" +
+          (isFinite(need) ? "to detect " + pp(d) + " with " + S.power + "% power, " + pct(need / (need + R.N), 1) + " of members tested"
+                          : "the target group of " + int(R.N) + " is too small to detect " + pp(d) + " with " + S.power + "% power, whatever the holdout") + "</span></div>");
+        t.push('<div class="tile"><span class="k">Power of your test</span><b class="' + (curPow < P ? "neg" : "pos") + '">' + pct(curPow) + "</b><span>chance a holdout of " + int(R.N0) + " flags a true " + pp(d) + " uplift as significant</span></div>");
+        t.push('<div class="tile"><span class="k">Smallest uplift you can detect</span><b>' + (md == null ? "n/a" : pp(md)) + "</b><span>with this holdout, at " + S.power + "% power and " + S.conf + "% confidence" +
+          (md != null && R.be != null ? (md > R.be ? ", above break-even: a losing campaign could pass unnoticed" : ", below break-even: good enough to spot a campaign that doesn't pay") : "") + "</span></div>");
+        t.push('<div class="tile"><span class="k">' + (holdCost >= 0 ? "What the holdout cost" : "What the holdout saved") + '</span><b>' + money(Math.abs(holdCost)) + "</b><span>" +
+          (holdCost >= 0 ? "net result forgone by not sending the offer to " + int(R.N0) + " members, at the measured uplift"
+                         : "at the measured uplift, each member offered the bonus loses money, so holding " + int(R.N0) + " back saved it") + "</span></div>");
+        el("pw-tiles").innerHTML = t.join("");
+        el("pw-sub").textContent = "Chance of a significant result at " + S.conf + "% if the true uplift is " + pp(d) + ", for a target group of " + int(R.N) + " members and a baseline of " + (p0 * 100).toFixed(2) + "%." +
+          (isFinite(eq) ? " For comparison, a 50/50 split needs " + int(eq) + " members in each group." : "");
+        drawPower(R, d, P, need, curPow, p0);
+      }
+
+      function drawPower(R, d, P, need, curPow, p0) {
+        var host = el("c-pw"), f = frame(host, 0.36, 230);
+        var lo = Math.max(10, Math.min(R.N0, isFinite(need) ? need : R.N0) / 5);
+        var hi = Math.max(R.N * 2, R.N0 * 5, isFinite(need) ? need * 5 : 0);
+        lo = Math.pow(10, Math.floor(Math.log10(lo))); hi = Math.pow(10, Math.ceil(Math.log10(hi)));
+        var x = d3.scaleLog().domain([lo, hi]).range([0, f.iw]);
+        var y = d3.scaleLinear().domain([0, 1]).range([f.ih, 0]);
+        yAxis(f, y, function (v) { return Math.round(v * 100) + "%"; }, 5);
+        var ticks = x.ticks().filter(function (v) { return Math.abs(Math.log10(v) - Math.round(Math.log10(v))) < 1e-9; });
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")")
+          .call(d3.axisBottom(x).tickValues(ticks).tickSize(4).tickFormat(d3.format("~s")));
+        f.g.append("text").attr("class", "dlabel").attr("x", f.iw).attr("y", f.ih + 30).attr("text-anchor", "end").text("holdout members (log scale)");
+        var pts = d3.range(0, 161).map(function (i) { var n = lo * Math.pow(hi / lo, i / 160); return [n, power(R.N, n, p0, d, R.zc)]; });
+        f.g.append("line").attr("x1", 0).attr("x2", f.iw).attr("y1", y(P)).attr("y2", y(P)).attr("stroke", C.ink).attr("stroke-dasharray", "4 3");
+        f.g.append("text").attr("class", "dlabel").attr("x", 4).attr("y", y(P) - 5).text(S.power + "% power");
+        f.g.append("path").datum(pts).attr("d", d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return y(p[1]); }))
+          .attr("fill", "none").attr("stroke", C.margin).attr("stroke-width", 2.2);
+        if (isFinite(need) && need >= lo && need <= hi) {
+          f.g.append("circle").attr("cx", x(need)).attr("cy", y(P)).attr("r", 5).attr("fill", C.margin).attr("stroke", "#fff").attr("stroke-width", 2);
+          var nr = x(need) < f.iw * 0.7;
+          f.g.append("text").attr("class", "dlabel strong").attr("x", x(need) + (nr ? 8 : -8)).attr("y", y(P) + 16).attr("text-anchor", nr ? "start" : "end").text("Needed: " + int(need));
+        }
+        if (R.N0 >= lo && R.N0 <= hi) {
+          var cx = x(R.N0), cy = y(curPow);
+          f.g.append("circle").attr("cx", cx).attr("cy", cy).attr("r", 5).attr("fill", C.ink).attr("stroke", "#fff").attr("stroke-width", 2);
+          var cr = cx < f.iw * 0.7, up = Math.abs(cy - y(P)) < 24 ? (cy > y(P) ? 16 : -9) : -9;
+          if (cy < 20) up = 16;
+          f.g.append("text").attr("class", "dlabel strong").attr("x", cx + (cr ? 8 : -8)).attr("y", cy + up).attr("text-anchor", cr ? "start" : "end").text("Your holdout: " + pct(curPow));
+        }
+        var xh = f.g.append("line").attr("class", "xhair").attr("y1", 0).attr("y2", f.ih).style("display", "none");
+        f.g.append("rect").attr("width", f.iw).attr("height", f.ih).attr("fill", "transparent")
+          .on("pointermove", function (evt) {
+            var n = Math.round(x.invert(d3.pointer(evt, this)[0]));
+            xh.attr("x1", x(n)).attr("x2", x(n)).style("display", null);
+            showTip('<div class="t">Holdout of ' + int(n) + "</div>" + row(null, "Share of members tested", pct(n / (n + R.N), 1)) + row(C.margin, "Power", pct(power(R.N, n, p0, d, R.zc)), "tot"), evt);
+          })
+          .on("pointerleave", function () { xh.style("display", "none"); hideTip(); });
+        legend("l-pw", [
+          { line: true, color: C.margin, label: "Power to detect " + pp(d) },
+          { line: true, dash: true, color: C.ink, label: "Target power" },
+          { color: C.ink, label: "Your holdout" }
+        ]);
+      }
+
+      // ───────────────────────────── render
+      function renderAll() {
+        buildControls();
+        R = compute();
+        drawTiles(R);
+        drawWaterfall(R);
+        drawTrips(R);
+        drawRoi(R);
+        drawTest(R);
+        renderPower(R);
+      }
+
+      fetch(DATA_URL).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(function (d) {
+        cfg = d;
+        var p = cfg.presets[cfg.defaultPreset];
+        S = { preset: cfg.defaultPreset, conf: cfg.defaultConfidence, power: cfg.defaultPower, did: false, pwMode: "be", pwDelta: 0.01 };
+        ["nt", "nc", "pc", "pt", "margin", "bonus", "cpp", "fixed", "preT", "preC"].forEach(function (f) { S[f] = p[f]; });
+        if (cfg.note) el("note-line").textContent = cfg.note.replace(/\.$/, "") + ". Enter your own figures to evaluate a real campaign.";
+        if (cfg.updated) { var dt = new Date(cfg.updated + "T12:00:00Z"); el("how-date").textContent = dt.toLocaleString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }); }
+        buildFields();
+        fillFields();
+        renderAll();
+        var t;
+        S.w = document.documentElement.clientWidth;
+        window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(function () { var w = document.documentElement.clientWidth; if (w !== S.w) { S.w = w; renderAll(); } }, 150); });
+      }).catch(function (e) {
+        el("tiles").innerHTML = '<div class="loading">Couldn\'t load the model data (' + e.message + ').</div>';
+      });
+    });
+    </script>
+  </body>
+</html>
