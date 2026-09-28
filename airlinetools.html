@@ -122,13 +122,15 @@ main { padding-top: 48px; }
 .tool:hover .btn.dark { background: #000; }
 @media (max-width: 839px) { .tool { grid-column: 1 / -1; } }
 
-/* tools grouped by area: one column per area (thirds), its tools stacked underneath */
-.area { grid-column: span 4; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.area .tool + .tool { margin-top: 12px; }
-.area-h { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
-.area .tool .viz { height: 176px; }
-@media (max-width: 1099px) { .area { grid-column: span 6; } }
-@media (max-width: 839px) { .area { grid-column: 1 / -1; } }
+/* tools grouped by area: one row per area, its tools side by side (quarters, then thirds, halves, full) */
+.area { grid-column: 1 / -1; min-width: 0; }
+.area + .area { margin-top: 16px; }
+.area-h { margin-bottom: 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.area-row { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gutter); }
+.area .tool { grid-column: span 3; }
+.area .tool .viz { height: 144px; }
+@media (max-width: 1099px) { .area .tool { grid-column: span 4; } }
+@media (max-width: 599px)  { .area .tool { grid-column: 1 / -1; } }
 
 /* knowledge cards: thirds */
 .course { grid-column: span 4; padding: 24px; display: flex; flex-direction: column; gap: 12px; transition: box-shadow .2s, transform .2s; }
@@ -186,6 +188,7 @@ main { padding-top: 48px; }
 
       <div class="area">
         <h3 class="area-h">Network</h3>
+        <div class="area-row">
         <a class="panel tool" href="/airflows.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -216,10 +219,12 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the map<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
+        </div>
       </div>
 
       <div class="area">
         <h3 class="area-h">Fleet</h3>
+        <div class="area-row">
         <a class="panel tool" href="/fleettracker.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -252,10 +257,12 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the tracker<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
+        </div>
       </div>
 
       <div class="area">
         <h3 class="area-h">Revenue management</h3>
+        <div class="area-row">
         <a class="panel tool" href="/bookinglimits.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -360,10 +367,12 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
+        </div>
       </div>
 
       <div class="area">
         <h3 class="area-h">Loyalty</h3>
+        <div class="area-row">
         <a class="panel tool" href="/breakage.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -443,6 +452,7 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
+        </div>
       </div>
 
     </div>
