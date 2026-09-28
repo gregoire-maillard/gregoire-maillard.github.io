@@ -1,0 +1,58 @@
+{
+  "about": "Inputs for bidprice.html. An invented hub network at Montréal (YUL): two feeder legs in, two long-haul legs out, eight itineraries, three fare classes. Every fare, demand figure and capacity is an illustrative assumption, not any airline's data. Fares are one-way economy fares in Canadian dollars.",
+  "version": "2026-09-28",
+  "currency": "CAD",
+  "classes": ["Y", "M", "Q"],
+  "classNames": { "Y": "Flexible", "M": "Standard", "Q": "Discount" },
+  "arrival": { "Y": [5, 2], "M": [3, 3], "Q": [2, 5] },
+  "cv": 0.25,
+  "airports": {
+    "YQB": "Québec City",
+    "YOW": "Ottawa",
+    "YUL": "Montréal",
+    "CDG": "Paris",
+    "LHR": "London"
+  },
+  "legs": [
+    { "id": "YQB-YUL", "from": "YQB", "to": "YUL", "kind": "feeder" },
+    { "id": "YOW-YUL", "from": "YOW", "to": "YUL", "kind": "feeder" },
+    { "id": "YUL-CDG", "from": "YUL", "to": "CDG", "kind": "long-haul" },
+    { "id": "YUL-LHR", "from": "YUL", "to": "LHR", "kind": "long-haul" }
+  ],
+  "itins": [
+    { "id": "YQB-YUL", "from": "YQB", "to": "YUL", "legs": [0] },
+    { "id": "YOW-YUL", "from": "YOW", "to": "YUL", "legs": [1] },
+    { "id": "YUL-CDG", "from": "YUL", "to": "CDG", "legs": [2] },
+    { "id": "YUL-LHR", "from": "YUL", "to": "LHR", "legs": [3] },
+    { "id": "YQB-CDG", "from": "YQB", "to": "CDG", "legs": [0, 2] },
+    { "id": "YQB-LHR", "from": "YQB", "to": "LHR", "legs": [0, 3] },
+    { "id": "YOW-CDG", "from": "YOW", "to": "CDG", "legs": [1, 2] },
+    { "id": "YOW-LHR", "from": "YOW", "to": "LHR", "legs": [1, 3] }
+  ],
+  "presets": [
+    {
+      "key": "busy",
+      "label": "Busy hub",
+      "blurb": "Every leg is in demand. Connecting passengers pay less than the local long-haul fare in the same class, as they often do in markets where they could connect elsewhere.",
+      "caps": [90, 90, 190, 190],
+      "fare": [[330, 210, 120], [310, 195, 110], [1450, 820, 520], [1380, 790, 500], [1500, 620, 450], [1450, 600, 440], [1480, 610, 445], [1430, 590, 430]],
+      "mean": [[12, 20, 26], [10, 18, 24], [24, 50, 80], [22, 46, 76], [6, 14, 26], [5, 12, 22], [5, 12, 24], [4, 10, 20]]
+    },
+    {
+      "key": "flood",
+      "label": "Too much connecting traffic",
+      "blurb": "The long-haul flights are the bottleneck and the feeders have room. Lots of cheap connecting demand books in the same classes as local passengers, so leg-based control can't tell them apart and lets too many in.",
+      "caps": [150, 150, 180, 180],
+      "fare": [[330, 210, 120], [310, 195, 110], [1450, 820, 520], [1380, 790, 500], [1400, 560, 390], [1350, 540, 380], [1380, 550, 385], [1330, 530, 370]],
+      "mean": [[8, 12, 16], [7, 10, 14], [24, 56, 60], [22, 52, 56], [6, 30, 34], [5, 26, 30], [5, 28, 30], [4, 24, 26]]
+    },
+    {
+      "key": "feeders",
+      "label": "Full feeders, room on long-haul",
+      "blurb": "The small feeder aircraft are the bottleneck and the long-haul flights have spare seats. Leg-based control sees only a small prorated slice of a connecting fare on the feeder and turns away passengers worth far more to the network.",
+      "caps": [76, 76, 200, 200],
+      "fare": [[330, 210, 120], [310, 195, 110], [1450, 820, 520], [1380, 790, 500], [1500, 620, 450], [1450, 600, 440], [1480, 610, 445], [1430, 590, 430]],
+      "mean": [[16, 26, 30], [14, 24, 28], [18, 36, 50], [16, 32, 46], [6, 14, 26], [5, 12, 22], [5, 12, 24], [4, 10, 20]]
+    }
+  ]
+}

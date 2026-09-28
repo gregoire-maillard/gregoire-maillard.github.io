@@ -1,0 +1,1253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Network bid prices</title>
+    <meta name="description" content="A network revenue management demo: leg bid prices from a linear program, and a booking simulation comparing leg-based EMSR-b control with origin-destination bid-price control.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / bookinglimits.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* Controls: same validated categorical set as bookinglimits.html
+           (no control = FCFS orange, leg-based = EMSR-b blue, O&D = green) */
+        --p-none: #d9480f;
+        --p-leg: #2a7fb5;
+        --p-od: #3a8f5c;
+        --p-hind: #767676;
+        --local: #4a4a4a;
+        --conn: #b5b5b0;
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 800px; }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Pill switchers (same as airflows / bookinglimits) ── */
+      .switch { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 20px 0 6px; }
+      .views {
+        display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff;
+        flex-wrap: wrap; gap: 2px;
+      }
+      .views button {
+        border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text);
+        padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .preset-blurb { font-size: 13px; color: var(--text); margin: 8px 0 0; max-width: 820px; }
+
+      .btn {
+        font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff;
+        border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink);
+        display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+      }
+      .btn:hover { border-color: #cfcfcf; }
+      .btn.dark { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .btn:disabled { opacity: .45; cursor: default; }
+      select {
+        font: inherit; font-size: 12.5px; color: var(--ink); border: 1px solid var(--line); border-radius: 6px;
+        padding: 4px 6px; background: #fff;
+      }
+
+      /* ── Sections ── */
+      .sec { margin: 38px 0 0; }
+      .sec > h3 { font-size: 20px; margin: 0 0 6px; color: var(--ink); }
+      .sec > p.lead { margin: 0 0 14px; font-size: 13.5px; max-width: 820px; }
+      .block { margin: 0 0 28px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h4 { margin: 0; font-size: 15px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .block > p.lead { margin: 0 0 10px; font-size: 13px; max-width: 800px; }
+      .rm-link { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+      .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+
+      /* ── Network diagram ── */
+      .net { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+      .net svg { display: block; width: 100%; height: auto; }
+      .net svg text { font-family: inherit; }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table.res { border-collapse: collapse; width: 100%; font-size: 13px; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: bottom; }
+      table.res td { padding: 5px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res td.l, table.res th.l { text-align: left; }
+      table.res td.hl { color: var(--ink); font-weight: 600; }
+      table.res th.grp { text-align: center; color: var(--ink); font-weight: 600; border-bottom: 0; padding-bottom: 0; }
+      table.res tbody tr:hover td { background: var(--soft); }
+      table.res td.closed { color: #a8a8a8; }
+      table.res td.part { color: var(--ink); background: #f4f9f6; }
+      table.res .neg { color: #b4441a; }
+      table.res .pos { color: #2e7a4d; }
+      table.res tr.sum td { border-top: 1px solid var(--line); color: var(--ink); font-weight: 600; }
+      .tag { display: inline-block; font-size: 11px; line-height: 16px; padding: 0 6px; border-radius: 999px; background: var(--soft); color: var(--muted); margin-left: 6px; vertical-align: 1px; }
+      .tag.conn { background: #eeeeec; color: #555; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+      table.inp input[type=number] { width: 66px; }
+      table.inp td { padding-top: 3px; padding-bottom: 3px; }
+      input[type=number] {
+        font: inherit; font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right;
+        border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; background: #fff;
+        min-width: 0; box-sizing: border-box; width: 72px;
+      }
+      input[type=number]:focus { outline: 2px solid #9cc7df; outline-offset: 0; border-color: #9cc7df; }
+      input.bad { border-color: #d9480f; background: #fff6f2; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+      .warn { font-size: 12px; color: #9a3b0b; margin: 6px 0 0; }
+      .warn:empty { display: none; }
+      .status { font-size: 12px; color: var(--muted); }
+
+      /* ── Worked formulas (same as bookinglimits) ── */
+      .work {
+        background: rgb(40 122 158 / 5%); border-left: 2px solid #287a9e;
+        padding: 12px 16px; font-size: 13px; line-height: 1.75; color: #33434d; overflow-x: auto;
+      }
+      .work .lbl { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #155b7c; margin-bottom: 4px; }
+      .work var, .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+      .work b { color: var(--ink); font-weight: 600; }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 18px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile .k { font-size: 12px; display: flex; align-items: center; gap: 0; }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; margin-top: 4px; }
+      .tile span.s { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+
+      /* ── Controls row ── */
+      .ctl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 0 0 16px; font-size: 12.5px; color: var(--text); }
+      .ctl-row label { display: inline-flex; align-items: center; gap: 6px; }
+
+      /* ── Step-through ── */
+      .stepper { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px 16px 16px; }
+      .step-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+      .req { font-size: 17px; color: var(--ink); font-weight: 600; line-height: 1.35; }
+      .req small { font-size: 13px; font-weight: 400; color: var(--text); }
+      .req-meta { font-size: 12px; color: var(--muted); }
+      .decisions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 12px 0 12px; }
+      .dec { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px 11px; font-size: 12.5px; line-height: 1.5; color: var(--text); border-top: 3px solid var(--c); }
+      .dec h5 { margin: 0 0 4px; font-size: 12.5px; color: var(--ink); font-weight: 600; }
+      .dec .v { margin-top: 6px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+      .dec .v i { display: inline-block; width: 18px; height: 18px; border-radius: 50%; font-style: normal; font-size: 12px; line-height: 18px; text-align: center; color: #fff; background: var(--ink); }
+      .dec .v.no i { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+      .dec .ln { display: block; }
+      .dec .ln.bad { color: #9a3b0b; }
+      .dec b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      .step-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+      .step-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 12px 0 0; }
+      .step-nav input[type=range] { flex: 1 1 160px; min-width: 120px; accent-color: #222; }
+      table.seats td, table.seats th { padding: 4px 6px; }
+      .bar { display: inline-block; height: 6px; border-radius: 3px; background: #ececea; width: 54px; vertical-align: 1px; margin-left: 6px; position: relative; overflow: hidden; }
+      .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--c); border-radius: 3px; }
+
+      /* ── Charts ── */
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart svg text { font-family: inherit; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+
+      /* ── Tooltip ── */
+      .tip {
+        position: fixed; pointer-events: none; z-index: 20;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45;
+        max-width: 280px; display: none;
+      }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: center; gap: 7px; }
+      .tip .r i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+      .tip .r i.ln { height: 0; border-top: 2px solid; border-radius: 0; width: 12px; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 10px; }
+
+      .loading { font-size: 13px; color: var(--muted); padding: 30px 0; }
+      .err { font-size: 13px; color: #9a3b0b; background: #fff6f2; border: 1px solid #f3c9b5; border-radius: 8px; padding: 10px 12px; margin: 16px 0; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+
+      @media (max-width: 980px) {
+        .two, .step-grid { grid-template-columns: minmax(0, 1fr); }
+      }
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        .decisions { grid-template-columns: minmax(0, 1fr); }
+        .views button { padding: 6px 11px; font-size: 13px; }
+      }
+      @media (max-width: 480px) { .bar { display: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>Why airlines stopped controlling seats one flight at a time, and started pricing a seat by the whole journey it is part of.</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Network bid prices</h2>
+        <p>At a hub, one seat on a long-haul flight can go to a local passenger or to a passenger connecting from a smaller city, who also needs a seat on the feeder flight. Leg-based revenue management decides flight by flight and fare class by fare class, so it can't tell the two apart. Origin-destination (O&amp;D) control gives every flight a <b>bid price</b>, the value of its last seat across the whole network, and accepts a booking only if the fare covers the bid prices of every flight it uses. Below, a linear program works out those bid prices for a small hub at Montréal, then one stream of booking requests is run through three kinds of control. This is the hands-on companion to <a href="/rm101.html#ch06">RM 101, chapter 06</a>.</p>
+        <p class="note-line">The network, fares, demand and capacities are illustrative assumptions, not any airline's data.</p>
+      </div>
+
+      <div class="switch">
+        <div class="views" id="presets" role="group" aria-label="Scenario"></div>
+        <button class="btn" id="reset">Reset the scenario</button>
+      </div>
+      <p class="preset-blurb" id="preset-blurb"></p>
+
+      <div id="app"><p class="loading" id="loading">Loading the network and the LP solver…</p></div>
+
+      <div id="main" hidden>
+        <!-- ═══════════════════════════ THE LP ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-lp">
+          <h3 id="h-lp">1. The network and its bid prices</h3>
+          <p class="lead">The airline sells eight itineraries on four flights, each in three fare classes. The linear program decides how many passengers of each kind it would take if demand turned up exactly as forecast, and its shadow prices on the four seat limits are the bid prices. Edit any white cell and everything below updates.</p>
+
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>The hub</h4><span>Bid price and seats per flight at the opening of sales</span></div>
+              <div class="net" id="net-lp"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>Flights</h4><span>Capacity is editable</span></div>
+              <div class="tbl-wrap"><table class="res" id="leg-table"></table></div>
+              <p class="hint">Demand is the forecast of every local and connecting passenger who needs a seat on the flight. The bid price is the dual value of the flight's seat constraint. As a check, the last column re-solves the LP with one more seat on the flight: the revenue it adds should match the bid price.</p>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h4>LP inputs: fares and demand forecast</h4><span>Fare in CA$, one way · demand in passengers per departure</span></div>
+            <div class="tbl-wrap"><table class="res inp" id="inp-table"></table></div>
+            <p class="warn" id="inp-warn"></p>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h4>LP solution</h4><span id="lp-sub"></span></div>
+            <p class="lead">For each itinerary and class: passengers the LP accepts out of the forecast, and the <b>net contribution</b>, the fare minus the bid prices of the flights used. Positive means the booking is worth more than the seats it takes away from someone else, so it is open. Negative means closed. Zero is the marginal product, the one that sets the bid price.</p>
+            <div class="tbl-wrap"><table class="res" id="sol-table"></table></div>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h4>The model, with these numbers</h4></div>
+            <div class="work" id="lp-work"></div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ SIMULATION ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-sim">
+          <h3 id="h-sim">2. One booking stream, three controls</h3>
+          <p class="lead">Requests arrive one at a time, mostly discount fares early and flexible fares late, with some randomness. The same stream goes through <span class="sw" style="background:var(--p-none)"></span><b>no control</b> (sell while seats remain), <span class="sw" style="background:var(--p-leg)"></span><b>leg-based control</b> (EMSR-b booking limits on each flight, a connecting booking needs its class open on both) and <span class="sw" style="background:var(--p-od)"></span><b>O&amp;D bid-price control</b> (accept if the fare covers the sum of bid prices). Both controls re-optimise on the seats left and the demand still to come.</p>
+
+          <div class="ctl-row">
+            <label for="every">Re-optimise every
+              <select id="every">
+                <option value="1">request</option>
+                <option value="10" selected>10 requests</option>
+                <option value="25">25 requests</option>
+                <option value="50">50 requests</option>
+                <option value="100000">never (opening values only)</option>
+              </select>
+            </label>
+            <button class="btn" id="new-stream">New booking stream</button>
+            <span class="status" id="stream-note"></span>
+          </div>
+
+          <div class="tiles" id="tiles"></div>
+
+          <div class="block">
+            <div class="block-head"><h4>Step through the stream</h4><span>One request at a time, as the three controls see it</span></div>
+            <div class="stepper">
+              <div class="step-top">
+                <div class="req" id="req"></div>
+                <div class="req-meta" id="req-meta"></div>
+              </div>
+              <div class="decisions" id="decisions"></div>
+              <div class="step-grid">
+                <div class="net" id="net-step" style="border:0"></div>
+                <div>
+                  <div class="tbl-wrap"><table class="res seats" id="seat-table"></table></div>
+                </div>
+              </div>
+              <div class="step-nav">
+                <button class="btn" id="s-first" aria-label="Back to the start">⏮</button>
+                <button class="btn" id="s-prev">◀ Back</button>
+                <button class="btn dark" id="s-next">Next ▶</button>
+                <button class="btn" id="s-play">Play</button>
+                <button class="btn" id="s-diff" title="Jump to the next request where leg-based and O&amp;D control disagree">Next disagreement</button>
+                <button class="btn" id="s-last" aria-label="Jump to the end">⏭</button>
+                <input type="range" id="s-range" min="0" max="1" value="0" aria-label="Request number">
+              </div>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h4>Bid prices as seats sell</h4><span>O&amp;D control, CA$ per seat</span></div>
+            <div class="chart" id="ch-bp"></div>
+          </div>
+
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>Load factor by flight</h4><span>End of the booking window</span></div>
+              <div class="chart" id="ch-lf"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>Who got the seats</h4><span>Local and connecting passengers per flight type</span></div>
+              <div class="chart" id="ch-mix"></div>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h4>Results for this stream</h4><span id="res-sub"></span></div>
+            <div class="tbl-wrap"><table class="res" id="res-table"></table></div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ MONTE CARLO ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-mc">
+          <h3 id="h-mc">3. Is it luck? 100 booking streams</h3>
+          <p class="lead">One stream can flatter either control. The same comparison on 100 streams drawn from the same forecast shows how often, and by how much, O&amp;D control beats leg-based control.</p>
+          <div class="two">
+            <div class="block">
+              <div class="tbl-wrap"><table class="res" id="mc-table"></table></div>
+              <p class="status" id="mc-status" style="margin-top:8px"></p>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>O&amp;D gain over leg-based, stream by stream</h4><span id="mc-avg">% of revenue</span></div>
+              <div class="chart" id="ch-mc"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>The network</h4>
+        <p>An invented airline with a hub at Montréal (YUL): two feeder flights in from Québec City (YQB) and Ottawa (YOW), two long-haul flights out to Paris (CDG) and London (LHR), one direction and one departure day, economy cabin only. That gives eight itineraries: four local (one flight) and four connecting (a feeder plus a long-haul flight), each sold in three fare classes, Y (flexible), M (standard) and Q (discount). Fares, forecasts and capacities come from <a href="assets/data/bidprice.json">bidprice.json</a> and are illustrative assumptions.</p>
+
+        <h4>The linear program and the bid prices</h4>
+        <p>Let <var>j</var> be a product (an itinerary in a class) with fare <var>f</var><sub>j</sub> and expected demand <var>d</var><sub>j</sub>, and <var>c</var><sub>l</sub> the seats on flight <var>l</var>. The deterministic LP (Williamson, 1992) is: maximise Σ<sub>j</sub> <var>f</var><sub>j</sub> <var>x</var><sub>j</sub> subject to Σ<sub>j uses l</sub> <var>x</var><sub>j</sub> ≤ <var>c</var><sub>l</sub> for every flight and 0 ≤ <var>x</var><sub>j</sub> ≤ <var>d</var><sub>j</sub>. The bid price <var>π</var><sub>l</sub> of flight <var>l</var> is the dual value of its seat constraint: how much the optimal revenue would rise with one more seat on it. A request for product <var>j</var> is accepted if <var>f</var><sub>j</sub> ≥ Σ<sub>l in j</sub> <var>π</var><sub>l</sub> and a seat is left on every flight it uses. The sum of the bid prices is the <b>displacement cost</b> of the booking, the revenue it is expected to push out of the network. The LP is solved in your browser by <a href="https://www.gnu.org/software/glpk/" target="_blank" rel="noopener">GLPK</a>, compiled to WebAssembly by <a href="https://github.com/jvail/glpk.js" target="_blank" rel="noopener">glpk.js</a> 5.0.0, which returns the duals of the simplex solution directly.</p>
+
+        <h4>The booking stream</h4>
+        <p>Each product's demand for one departure is a Poisson draw whose mean is itself random (a gamma factor with a 25% coefficient of variation), so the variance is <var>d</var> + (0.25 <var>d</var>)<sup>2</sup>. Each request then gets a booking time between 0 (sales open) and 1 (departure) from a beta distribution that depends on the class: Beta(2, 5) for Q, Beta(3, 3) for M and Beta(5, 2) for Y, so discount requests come mostly early and flexible ones mostly late, with overlap. Requests are processed in time order. The generator is seeded, so the page opens on the same stream every time; "New booking stream" changes the seed.</p>
+
+        <h4>The three controls</h4>
+        <ul>
+          <li><b>No control:</b> accept while there is a seat on every flight the itinerary uses.</li>
+          <li><b>Leg-based EMSR-b:</b> each flight runs its own three-class EMSR-b, as on the <a href="/bookinglimits.html">booking limits</a> page. A flight's class demand is the demand of every local and connecting product in that class using the flight. A connecting fare is split between its two flights in proportion to the local fares of the same class (so YQB–CDG in M credits 210 / (210 + 820) of its fare to YQB–YUL), and the class fare on a flight is the demand-weighted average of the fares it is credited. Protection levels are nested: class <var>k</var> is open while the seats left exceed the seats protected for the classes above it. A connecting booking needs its class open on both flights.</li>
+          <li><b>O&amp;D bid price:</b> the LP above, re-solved with the seats left and the expected demand still to come.</li>
+        </ul>
+        <p>Both controls re-optimise at the same points: at the first request and then every <var>N</var> requests. The expected demand still to come for product <var>j</var> at time <var>t</var> is <var>d</var><sub>j</sub> · (1 − <var>F</var><sub>k</sub>(<var>t</var>)), where <var>F</var><sub>k</sub> is the beta distribution of its class. <b>Perfect hindsight</b> is the same LP solved once on the demand that actually turned up, the most any control could have earned from that stream. Its solution is always in whole passengers because every itinerary uses at most one feeder and one long-haul flight, which makes the constraint matrix totally unimodular.</p>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>Williamson, E. L. (1992), <a href="https://dspace.mit.edu/handle/1721.1/68123" target="_blank" rel="noopener">Airline network seat inventory control: methodologies and revenue impacts</a>, PhD thesis, MIT. The deterministic LP and its bid prices; in her simulations network control gained nothing over good leg-based control below an average load factor of about 85%, and on the order of 2–4% above it (checked September 2026).</li>
+          <li>Talluri, K. and van Ryzin, G. (1998), "An analysis of bid-price controls for network revenue management", <a href="https://doi.org/10.1287/mnsc.44.11.1577" target="_blank" rel="noopener">Management Science 44(11)</a>.</li>
+          <li>Talluri, K. and van Ryzin, G. (2004), <a href="https://link.springer.com/book/10.1007/b139000" target="_blank" rel="noopener">The Theory and Practice of Revenue Management</a>, Springer, chapter 3 (network capacity control).</li>
+          <li>Belobaba, P. (1992), "Optimal vs. heuristic methods for nested seat allocation", AGIFORS Reservations and Yield Management Study Group (EMSR-b).</li>
+          <li>Solver: <a href="https://github.com/jvail/glpk.js" target="_blank" rel="noopener">glpk.js 5.0.0</a> (GPL-3.0), loaded from jsDelivr; charts with <a href="https://d3js.org" target="_blank" rel="noopener">D3</a> 7.9.0.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>The LP uses expected demand only, so its bid prices ignore uncertainty. They tend to come out as round steps equal to some product's fare, and they drop to zero on any flight the forecast doesn't fill. Real systems use stochastic or dynamic-programming bid prices, and turn bid prices into availability with virtual nesting or DAVN (<a href="/rm101.html#ch06">RM 101, chapter 06</a>).</li>
+          <li>When a flight is exactly full in the LP solution the dual can be any value in a range; the solver returns one of them. The "+1 seat" check in the flight table shows the revenue from an extra seat, which can differ from the dual in that case.</li>
+          <li>Demand in each product is independent of what is open: passengers never buy down to a cheaper class or switch itinerary (<a href="/rm101.html#ch05">RM 101, chapter 05</a>). No cancellations, no-shows, overbooking or groups.</li>
+          <li>Leg-based control here is a fair but simple version: real airlines add rules such as closing connecting fares on busy long-haul flights by hand, which this page doesn't model. Proration by local fares is one of several conventions; mileage-based proration credits even less to the feeder.</li>
+          <li>One direction, one day, one cabin. A real hub has hundreds of flights, return trips and several banks of connections, and the gain from O&amp;D control is usually a few percent of revenue rather than the larger gaps in the extreme scenarios.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script type="module">
+    import GLPK from "https://cdn.jsdelivr.net/npm/glpk.js@5.0.0/dist/index.js";
+
+// Network bid-price engine: LP, EMSR-b per leg, booking stream, three controls.
+// Pure functions; the LP solver is injected (async solveLP(lpModel) -> {z, x, dual}).
+var BPE = (function () {
+  "use strict";
+
+  // ---------- random ----------
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function gaussFactory(rng) {
+    var spare = null;
+    return function () {
+      if (spare !== null) { var s = spare; spare = null; return s; }
+      var u, v, q;
+      do { u = rng() * 2 - 1; v = rng() * 2 - 1; q = u * u + v * v; } while (q === 0 || q >= 1);
+      var m = Math.sqrt(-2 * Math.log(q) / q);
+      spare = v * m; return u * m;
+    };
+  }
+  // Gamma(k, 1) for k >= 1 (Marsaglia-Tsang)
+  function gamma(rng, g, k) {
+    var d = k - 1 / 3, c = 1 / Math.sqrt(9 * d);
+    for (;;) {
+      var x, v;
+      do { x = g(); v = 1 + c * x; } while (v <= 0);
+      v = v * v * v;
+      var u = rng();
+      if (u < 1 - 0.0331 * x * x * x * x) return d * v;
+      if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+    }
+  }
+  function poisson(rng, g, lam) {
+    if (lam <= 0) return 0;
+    if (lam > 40) return Math.max(0, Math.round(lam + Math.sqrt(lam) * g()));
+    var L = Math.exp(-lam), k = 0, p = 1;
+    do { k++; p *= rng(); } while (p > L);
+    return k - 1;
+  }
+  // Beta(a, b) with integer a, b: the a-th smallest of a+b-1 uniforms
+  function betaInt(rng, a, b) {
+    var n = a + b - 1, u = [];
+    for (var i = 0; i < n; i++) u.push(rng());
+    u.sort(function (x, y) { return x - y; });
+    return u[a - 1];
+  }
+  // Regularised incomplete beta for integer a, b
+  function betaCdf(x, a, b) {
+    if (x <= 0) return 0; if (x >= 1) return 1;
+    var n = a + b - 1, s = 0, c = 1;
+    // sum_{j=a}^{n} C(n,j) x^j (1-x)^(n-j)
+    for (var j = 0; j <= n; j++) {
+      if (j > 0) c = c * (n - j + 1) / j;
+      if (j >= a) s += c * Math.pow(x, j) * Math.pow(1 - x, n - j);
+    }
+    return s;
+  }
+  // Inverse standard normal (Acklam)
+  function normInv(p) {
+    if (p <= 0) return -Infinity; if (p >= 1) return Infinity;
+    var a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+    var b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+    var c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+    var d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+    var pl = 0.02425, q, r;
+    if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+    if (p > 1 - pl) { q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+    q = p - 0.5; r = q * q;
+    return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+  }
+
+  // ---------- network helpers ----------
+  // net: { legs:[{id, from, to, cap}], itins:[{id, from, to, legs:[legIndex...]}], classes:["Y","M","Q"],
+  //        fare:[[...per class] per itin], mean:[[...]], arrival:{Y:[a,b],...}, cv }
+  function products(net) {
+    var out = [];
+    net.itins.forEach(function (it, i) {
+      net.classes.forEach(function (c, k) { out.push({ i: i, k: k, key: it.id + "-" + c }); });
+    });
+    return out;
+  }
+  function localItinOfLeg(net, l) {
+    for (var i = 0; i < net.itins.length; i++) if (net.itins[i].legs.length === 1 && net.itins[i].legs[0] === l) return i;
+    return -1;
+  }
+  // share of itinerary i's class-k fare credited to leg l (proration by local fares of the same class)
+  function prorate(net, i, k) {
+    var legs = net.itins[i].legs;
+    if (legs.length === 1) return [1];
+    var w = legs.map(function (l) { var li = localItinOfLeg(net, l); return li >= 0 ? net.fare[li][k] : 1; });
+    var s = w.reduce(function (a, b) { return a + b; }, 0);
+    return w.map(function (x) { return x / s; });
+  }
+  function remainingShare(net, k, t) {
+    var ab = net.arrival[net.classes[k]];
+    return 1 - betaCdf(t, ab[0], ab[1]);
+  }
+  function sigmaOf(net, m) { return Math.sqrt(m + net.cv * net.cv * m * m); }
+
+  // ---------- LP ----------
+  // demand[i][k]: upper bound; cap[l]
+  function buildLP(net, cap, demand) {
+    var vars = [], rows = net.legs.map(function (L, l) { return { name: "leg" + l, vars: [], bnds: { type: 3, ub: Math.max(0, cap[l]), lb: 0 } }; });
+    var bounds = [];
+    net.itins.forEach(function (it, i) {
+      net.classes.forEach(function (c, k) {
+        var name = "x" + i + "_" + k;
+        vars.push({ name: name, coef: net.fare[i][k] });
+        bounds.push({ name: name, type: 4, lb: 0, ub: Math.max(0, demand[i][k]) }); // GLP_DB = 4
+        it.legs.forEach(function (l) { rows[l].vars.push({ name: name, coef: 1 }); });
+      });
+    });
+    // GLP_UP = 3, GLP_MAX = 2
+    return { name: "network", objective: { direction: 2, name: "revenue", vars: vars }, subjectTo: rows, bounds: bounds };
+  }
+  function readLP(net, res) {
+    var x = net.itins.map(function (it, i) { return net.classes.map(function (c, k) { return res.vars["x" + i + "_" + k] || 0; }); });
+    var bp = net.legs.map(function (L, l) { var d = res.dual ? res.dual["leg" + l] : 0; return Math.abs(d) < 1e-7 ? 0 : d; });
+    return { z: res.z, x: x, bp: bp };
+  }
+  async function solveNetwork(net, cap, demand, solveLP) {
+    var res = await solveLP(buildLP(net, cap, demand));
+    return readLP(net, res);
+  }
+
+  // ---------- EMSR-b per leg ----------
+  // returns per leg: { fares:[per class], mu:[], sd:[], prot:[y1..y_{n-1}] } where prot[j] protects classes 0..j
+  function emsrLeg(net, l, remCap, demand) {
+    var n = net.classes.length, fares = [], mu = [], v = [];
+    for (var k = 0; k < n; k++) {
+      var fs = 0, ms = 0, vs = 0, fsStatic = 0, msStatic = 0;
+      net.itins.forEach(function (it, i) {
+        var pos = it.legs.indexOf(l); if (pos < 0) return;
+        var share = prorate(net, i, k)[pos], f = net.fare[i][k] * share, m = demand[i][k];
+        fs += f * m; ms += m; vs += sigmaOf(net, m) * sigmaOf(net, m);
+        fsStatic += f * net.mean[i][k]; msStatic += net.mean[i][k];
+      });
+      fares.push(ms > 1e-9 ? fs / ms : (msStatic > 0 ? fsStatic / msStatic : 0));
+      mu.push(ms); v.push(vs);
+    }
+    var prot = [], prev = 0;
+    for (var j = 0; j < n - 1; j++) {
+      var M = 0, V = 0, F = 0;
+      for (var q = 0; q <= j; q++) { M += mu[q]; V += v[q]; F += fares[q] * mu[q]; }
+      var y;
+      if (M <= 1e-9) y = 0;
+      else {
+        var fbar = F / M, ratio = fares[j + 1] / fbar;
+        if (ratio >= 1) y = 0;
+        else y = M + Math.sqrt(V) * normInv(1 - ratio);
+      }
+      y = Math.round(Math.max(0, Math.min(remCap, y)));
+      y = Math.max(y, prev); prev = y;
+      prot.push(y);
+    }
+    return { fares: fares, mu: mu, sd: v.map(Math.sqrt), prot: prot };
+  }
+
+  // ---------- booking stream ----------
+  function makeStream(net, seed) {
+    var rng = mulberry32(seed), g = gaussFactory(rng), k = 1 / (net.cv * net.cv), reqs = [];
+    var counts = net.itins.map(function () { return net.classes.map(function () { return 0; }); });
+    net.itins.forEach(function (it, i) {
+      net.classes.forEach(function (c, kk) {
+        var lam = net.mean[i][kk] * (net.cv > 0 ? gamma(rng, g, k) / k : 1);
+        var nreq = poisson(rng, g, lam);
+        counts[i][kk] = nreq;
+        var ab = net.arrival[c];
+        for (var r = 0; r < nreq; r++) reqs.push({ t: betaInt(rng, ab[0], ab[1]), i: i, k: kk });
+      });
+    });
+    reqs.sort(function (a, b) { return a.t - b.t; });
+    return { reqs: reqs, counts: counts };
+  }
+
+  // ---------- simulation ----------
+  // every: re-optimise every N requests. Returns full trace for step-through.
+  async function simulate(net, stream, every, solveLP, opts) {
+    opts = opts || {};
+    var nL = net.legs.length, nC = net.classes.length;
+    var pol = ["none", "leg", "od"];
+    var st = {};
+    pol.forEach(function (p) {
+      st[p] = { rem: net.legs.map(function (L) { return L.cap; }), rev: 0, sold: net.itins.map(function () { return net.classes.map(function () { return 0; }); }),
+        legLocal: net.legs.map(function () { return 0; }), legConn: net.legs.map(function () { return 0; }), dec: [] };
+    });
+    var bpNow = null, emsrNow = null, bpHist = [], emsrHist = [];
+    function remDemand(t) {
+      return net.itins.map(function (it, i) { return net.classes.map(function (c, k) { return net.mean[i][k] * remainingShare(net, k, t); }); });
+    }
+    async function reopt(idx, t) {
+      var dem = remDemand(t);
+      var sol = await solveNetwork(net, st.od.rem, dem, solveLP);
+      bpNow = sol.bp; bpHist.push({ idx: idx, t: t, bp: sol.bp.slice(), rem: st.od.rem.slice(), z: sol.z });
+      emsrNow = net.legs.map(function (L, l) { return emsrLeg(net, l, st.leg.rem[l], dem); });
+      emsrHist.push({ idx: idx, t: t, legs: emsrNow });
+    }
+    for (var r = 0; r < stream.reqs.length; r++) {
+      var q = stream.reqs[r];
+      if (r % every === 0) await reopt(r, q.t);
+      var it = net.itins[q.i], fare = net.fare[q.i][q.k], conn = it.legs.length > 1;
+      var d = { r: r };
+      // none
+      var okN = it.legs.every(function (l) { return st.none.rem[l] >= 1; });
+      d.none = okN;
+      // leg-based: class open on every leg (nested: remaining > protection for higher classes)
+      var legInfo = it.legs.map(function (l) {
+        var e = emsrNow[l], protHigher = q.k === 0 ? 0 : e.prot[q.k - 1];
+        return { l: l, rem: st.leg.rem[l], prot: protHigher, open: st.leg.rem[l] >= 1 && st.leg.rem[l] > protHigher };
+      });
+      d.leg = legInfo.every(function (x) { return x.open; });
+      d.legInfo = legInfo;
+      // O&D bid price
+      var bps = it.legs.map(function (l) { return bpNow[l]; }), bpSum = bps.reduce(function (a, b) { return a + b; }, 0);
+      var seats = it.legs.every(function (l) { return st.od.rem[l] >= 1; });
+      d.od = seats && fare >= bpSum - 1e-6;
+      d.bps = bps; d.bpSum = bpSum; d.odSeats = seats;
+      pol.forEach(function (p) {
+        if (!d[p]) return;
+        var s = st[p]; s.rev += fare; s.sold[q.i][q.k]++;
+        it.legs.forEach(function (l) { s.rem[l]--; if (conn) s.legConn[l]++; else s.legLocal[l]++; });
+      });
+      d.remAfter = { none: st.none.rem.slice(), leg: st.leg.rem.slice(), od: st.od.rem.slice() };
+      d.revAfter = { none: st.none.rev, leg: st.leg.rev, od: st.od.rev };
+      if (!opts.light) st.none.dec.push(d);
+    }
+    // hindsight: LP on realised demand
+    var hind = await solveNetwork(net, net.legs.map(function (L) { return L.cap; }), stream.counts, solveLP);
+    var summary = {};
+    pol.forEach(function (p) {
+      var s = st[p];
+      summary[p] = { rev: s.rev, sold: s.sold, legLocal: s.legLocal, legConn: s.legConn,
+        lf: net.legs.map(function (L, l) { return L.cap ? (L.cap - s.rem[l]) / L.cap : 0; }) };
+    });
+    summary.hind = { rev: hind.z, x: hind.x };
+    return { summary: summary, trace: st.none.dec, bpHist: bpHist, emsrHist: emsrHist };
+  }
+
+  return { mulberry32: mulberry32, makeStream: makeStream, simulate: simulate, solveNetwork: solveNetwork, buildLP: buildLP,
+    emsrLeg: emsrLeg, prorate: prorate, remainingShare: remainingShare, products: products, betaCdf: betaCdf, sigmaOf: sigmaOf };
+})();
+
+
+    (async function () {
+      "use strict";
+      var DATA_URL = "assets/data/bidprice.json";
+      var POL = [
+        { key: "none", name: "No control", c: "var(--p-none)", hex: "#d9480f" },
+        { key: "leg", name: "Leg-based EMSR-b", c: "var(--p-leg)", hex: "#2a7fb5" },
+        { key: "od", name: "O&D bid price", c: "var(--p-od)", hex: "#3a8f5c" }
+      ];
+      var MC_N = 100;
+
+      var $ = function (id) { return document.getElementById(id); };
+      var nf0 = new Intl.NumberFormat("en-CA", { maximumFractionDigits: 0 });
+      var nf1 = new Intl.NumberFormat("en-CA", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      function money(v) { return (v < 0 ? "−$" : "$") + nf0.format(Math.abs(Math.round(v))); }
+      function signedMoney(v) { var r = Math.round(v); return (r > 0 ? "+$" : r < 0 ? "−$" : "$") + nf0.format(Math.abs(r)); }
+      function pct(v) { return nf1.format(v * 100) + "%"; }
+      function signedPct(v) { var s = nf1.format(Math.abs(v * 100)); return (v >= 0.0005 ? "+" : v <= -0.0005 ? "−" : "") + s + "%"; }
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+      function dash(id) { return id.replace("-", "–"); }
+
+      var data, glpk;
+      try {
+        var res = await Promise.all([fetch(DATA_URL).then(function (r) { if (!r.ok) throw new Error("data " + r.status); return r.json(); }), GLPK()]);
+        data = res[0]; glpk = res[1];
+      } catch (e) {
+        $("loading").outerHTML = '<p class="err">Couldn\'t load the network or the LP solver (' + esc(e.message || e) + '). Check your connection and reload the page.</p>';
+        return;
+      }
+      if (typeof d3 === "undefined") { $("loading").outerHTML = '<p class="err">Couldn\'t load the chart library. Reload the page.</p>'; return; }
+
+      var solveLP = function (lp) {
+        return glpk.solve(lp, { msglev: glpk.GLP_MSG_OFF, presol: false }).then(function (r) { return r.result; });
+      };
+
+      // ---------- state ----------
+      var S = { preset: data.presets[0].key, net: null, every: 10, seed: 1, lp: null, marg: null, sim: null, step: 0, token: 0, playing: null, mc: null };
+
+      function buildNet(p) {
+        return {
+          classes: data.classes.slice(), cv: data.cv, arrival: data.arrival,
+          legs: data.legs.map(function (L, l) { return { id: L.id, from: L.from, to: L.to, kind: L.kind, cap: p.caps[l] }; }),
+          itins: data.itins.map(function (it) { return { id: it.id, from: it.from, to: it.to, legs: it.legs.slice() }; }),
+          fare: p.fare.map(function (r) { return r.slice(); }),
+          mean: p.mean.map(function (r) { return r.slice(); })
+        };
+      }
+      function presetObj() { return data.presets.find(function (p) { return p.key === S.preset; }); }
+      function itinLabel(it) { return it.legs.length > 1 ? it.from + "–" + it.to + " via YUL" : dash(it.id); }
+      function legNames(it) { return it.legs.map(function (l) { return dash(S.net.legs[l].id); }).join(" + "); }
+
+      // ---------- presets ----------
+      function renderPresets() {
+        $("presets").innerHTML = data.presets.map(function (p) {
+          return '<button data-p="' + p.key + '"' + (p.key === S.preset ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + esc(p.label) + '</button>';
+        }).join("");
+        $("preset-blurb").textContent = presetObj().blurb;
+      }
+      $("presets").addEventListener("click", function (e) {
+        var b = e.target.closest("button"); if (!b) return;
+        S.preset = b.dataset.p; S.net = buildNet(presetObj()); S.seed = 1;
+        renderPresets(); renderInputs(); recompute();
+      });
+      $("reset").addEventListener("click", function () {
+        S.net = buildNet(presetObj()); S.seed = 1; S.every = 10; $("every").value = "10";
+        renderInputs(); recompute();
+      });
+
+      // ---------- editable inputs ----------
+      function renderInputs() {
+        var net = S.net;
+        // flights table (capacity input + computed cells)
+        var h = '<thead><tr><th>Flight</th><th>Seats</th><th>Demand</th><th>LP sold</th><th>Bid price</th><th title="LP revenue gained with one more seat on the flight">+1 seat</th></tr></thead><tbody>';
+        net.legs.forEach(function (L, l) {
+          h += '<tr><td class="hl">' + dash(L.id) + '<span class="tag">' + L.kind + '</span></td>' +
+            '<td><input type="number" min="1" max="600" step="1" value="' + L.cap + '" data-cap="' + l + '" aria-label="Seats on ' + dash(L.id) + '" style="width:62px"></td>' +
+            '<td id="lg-d' + l + '"></td><td id="lg-x' + l + '"></td><td class="hl" id="lg-bp' + l + '"></td><td id="lg-m' + l + '"></td></tr>';
+        });
+        $("leg-table").innerHTML = h + "</tbody>";
+
+        // fares and demand
+        h = '<thead><tr><th rowspan="2">Itinerary</th><th rowspan="2" class="l">Flights used</th>';
+        net.classes.forEach(function (c) { h += '<th colspan="2" class="grp">' + c + ' · ' + data.classNames[c] + '</th>'; });
+        h += '</tr><tr>';
+        net.classes.forEach(function () { h += '<th>Fare</th><th>Demand</th>'; });
+        h += '</tr></thead><tbody>';
+        net.itins.forEach(function (it, i) {
+          h += '<tr><td class="hl">' + itinLabel(it) + (it.legs.length > 1 ? '<span class="tag conn">connecting</span>' : '<span class="tag">local</span>') + '</td><td class="l">' + legNames(it) + '</td>';
+          net.classes.forEach(function (c, k) {
+            h += '<td><input type="number" min="1" max="20000" step="10" value="' + net.fare[i][k] + '" data-i="' + i + '" data-k="' + k + '" data-f="fare" aria-label="' + it.id + ' ' + c + ' fare"></td>' +
+              '<td><input type="number" min="0" max="500" step="1" value="' + net.mean[i][k] + '" data-i="' + i + '" data-k="' + k + '" data-f="mean" aria-label="' + it.id + ' ' + c + ' demand" style="width:56px"></td>';
+          });
+          h += '</tr>';
+        });
+        $("inp-table").innerHTML = h + '</tbody>';
+        checkWarn();
+      }
+      var debounce = null;
+      function onEdit(e) {
+        var t = e.target; if (t.tagName !== "INPUT") return;
+        var v = parseFloat(t.value), ok = isFinite(v);
+        if (t.dataset.cap !== undefined) {
+          ok = ok && v >= 1 && v <= 600 && Math.round(v) === v;
+          if (ok) S.net.legs[+t.dataset.cap].cap = v;
+        } else if (t.dataset.f === "fare") {
+          ok = ok && v >= 1 && v <= 20000;
+          if (ok) S.net.fare[+t.dataset.i][+t.dataset.k] = v;
+        } else if (t.dataset.f === "mean") {
+          ok = ok && v >= 0 && v <= 500;
+          if (ok) S.net.mean[+t.dataset.i][+t.dataset.k] = v;
+        }
+        t.classList.toggle("bad", !ok);
+        if (!ok) return;
+        checkWarn();
+        clearTimeout(debounce); debounce = setTimeout(recompute, 350);
+      }
+      $("leg-table").addEventListener("input", onEdit);
+      $("inp-table").addEventListener("input", onEdit);
+      function checkWarn() {
+        var bad = S.net.itins.filter(function (it, i) { var f = S.net.fare[i]; return !(f[0] >= f[1] && f[1] >= f[2]); });
+        $("inp-warn").textContent = bad.length ? "Fares should fall from Y to M to Q on every itinerary; EMSR-b assumes it. Check " + bad.map(function (it) { return it.id; }).join(", ") + "." : "";
+      }
+
+      // ---------- LP rendering ----------
+      function renderLP() {
+        var net = S.net, lp = S.lp;
+        net.legs.forEach(function (L, l) {
+          var dem = 0, x = 0;
+          net.itins.forEach(function (it, i) { if (it.legs.indexOf(l) >= 0) net.classes.forEach(function (c, k) { dem += net.mean[i][k]; x += lp.x[i][k]; }); });
+          $("lg-d" + l).textContent = nf0.format(dem);
+          $("lg-x" + l).textContent = nf0.format(x);
+          $("lg-bp" + l).textContent = money(lp.bp[l]);
+          $("lg-m" + l).textContent = S.marg ? money(S.marg[l]) : "…";
+        });
+        // solution table
+        var h = '<thead><tr><th rowspan="2">Itinerary</th>';
+        net.classes.forEach(function (c) { h += '<th colspan="2" class="grp">' + c + '</th>'; });
+        h += '<th rowspan="2">Bid prices used</th></tr><tr>';
+        net.classes.forEach(function () { h += '<th>Accept</th><th>Net</th>'; });
+        h += '</tr></thead><tbody>';
+        net.itins.forEach(function (it, i) {
+          var bpSum = it.legs.reduce(function (a, l) { return a + lp.bp[l]; }, 0);
+          h += '<tr><td class="hl">' + itinLabel(it) + '</td>';
+          net.classes.forEach(function (c, k) {
+            var x = lp.x[i][k], d = net.mean[i][k], net_ = net.fare[i][k] - bpSum;
+            var cls = d <= 0 ? "" : x < 1e-6 ? "closed" : x < d - 1e-6 ? "part" : "";
+            h += '<td class="' + cls + '">' + nf1.format(x) + ' / ' + nf0.format(d) + '</td><td class="' + cls + '"><span class="' + (Math.round(net_) < 0 ? "neg" : Math.round(net_) > 0 ? "pos" : "") + '">' + signedMoney(net_) + '</span></td>';
+          });
+          h += '<td>' + it.legs.map(function (l) { return money(lp.bp[l]); }).join(" + ") + '</td></tr>';
+        });
+        var tot = 0; net.itins.forEach(function (it, i) { net.classes.forEach(function (c, k) { tot += lp.x[i][k]; }); });
+        h += '<tr class="sum"><td>Total</td><td colspan="6" class="l" style="text-align:left">' + nf0.format(tot) + ' passengers, ' + money(lp.z) + ' of revenue</td><td></td></tr>';
+        $("sol-table").innerHTML = h + '</tbody>';
+        $("lp-sub").textContent = "LP revenue " + money(lp.z);
+
+        // worked example: first connecting itinerary, class M (the classic case)
+        var i = 4, k = 1, it = net.itins[i], bps = it.legs.map(function (l) { return lp.bp[l]; }), sum = bps[0] + bps[1];
+        var f = net.fare[i][k], local = net.itins.map(function (x, j) { return j; }).filter(function (j) { return net.itins[j].legs.length === 1 && net.itins[j].legs[0] === it.legs[1]; })[0];
+        var fl = net.fare[local][k], blBp = lp.bp[it.legs[1]];
+        var w = '<div class="lbl">The LP</div>' +
+          'maximise Σ <var>f</var><sub>j</sub> <var>x</var><sub>j</sub> over the 24 products, subject to, for each flight, the passengers using it ≤ its seats (e.g. every product on ' + dash(net.legs[2].id) + ' together ≤ <b>' + net.legs[2].cap + '</b>), and 0 ≤ <var>x</var><sub>j</sub> ≤ forecast demand.<br>' +
+          '<div class="lbl" style="margin-top:10px">One booking decision</div>' +
+          '<b>' + itinLabel(it) + '</b>, class ' + net.classes[k] + ', fare <b>' + money(f) + '</b>. It uses ' + legNames(it) + ', whose bid prices add up to ' + money(bps[0]) + ' + ' + money(bps[1]) + ' = <b>' + money(sum) + '</b>. ' +
+          'Net contribution ' + money(f) + ' − ' + money(sum) + ' = <b>' + signedMoney(f - sum) + '</b> → <b>' + (f >= sum - 1e-6 ? "open" : "closed") + '</b>.<br>' +
+          'A local ' + dash(net.itins[local].id) + ' passenger in the same class pays <b>' + money(fl) + '</b> against a bid price of ' + money(blBp) + ' → <b>' + signedMoney(fl - blBp) + '</b>, ' + (fl >= blBp - 1e-6 ? "open" : "closed") + '. ' +
+          'Leg-based control sees the same class ' + net.classes[k] + ' on ' + dash(net.legs[it.legs[1]].id) + ' for both passengers, so it opens or closes them together.';
+        $("lp-work").innerHTML = w;
+      }
+
+      // ---------- network diagram ----------
+      // opts: { bp:[], rem:[], cap:[], highlight:{legs:[], ok:bool} }
+      function drawNet(el, opts) {
+        var W = Math.max(300, Math.min(640, el.clientWidth || 560)), H = W < 420 ? 280 : 290;
+        var px = W < 420 ? 34 : 60, cx = W / 2;
+        var pos = { YQB: [px, 58], YOW: [px, H - 58], YUL: [cx, H / 2], CDG: [W - px, 58], LHR: [W - px, H - 58] };
+        var net = S.net, hi = opts.highlight;
+        var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="Hub network diagram">';
+        s += '<defs><marker id="ah-' + el.id + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9" fill="none" stroke="#9a9a9a" stroke-width="1.6"/></marker>' +
+          '<marker id="ahh-' + el.id + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9" fill="none" stroke="#222" stroke-width="1.6"/></marker></defs>';
+        net.legs.forEach(function (L, l) {
+          var a = pos[L.from], b = pos[L.to], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy), ux = dx / len, uy = dy / len;
+          var x1 = a[0] + ux * 17, y1 = a[1] + uy * 17, x2 = b[0] - ux * 19, y2 = b[1] - uy * 19;
+          var on = hi && hi.legs.indexOf(l) >= 0;
+          var fill = opts.cap ? 1 - opts.rem[l] / opts.cap[l] : 0;
+          s += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + (on ? "#222" : "#b9b9b9") + '" stroke-width="' + (on ? 3 : 1.5) + '"' + (on && !hi.ok ? ' stroke-dasharray="6 4"' : '') + ' marker-end="url(#' + (on ? "ahh-" : "ah-") + el.id + ')"/>';
+          var mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, up = (l === 0 || l === 2);
+          var ty = up ? my - (W < 420 ? 40 : 32) : my + (W < 420 ? 46 : 38);
+          var anchor = "middle";
+          s += '<g font-size="12" text-anchor="' + anchor + '">' +
+            '<text x="' + mx + '" y="' + ty + '" fill="#767676">' + dash(L.id) + '</text>' +
+            '<text x="' + mx + '" y="' + (ty + 15) + '" fill="#222" font-weight="600">' + money(opts.bp[l]) + '<tspan fill="#767676" font-weight="400"> · ' + nf0.format(opts.rem[l]) + ' left</tspan></text></g>';
+          // seat gauge
+          if (opts.cap) {
+            var gw = 56, gx = mx - gw / 2, gy = up ? ty - 18 : ty + 22;
+            s += '<rect x="' + gx + '" y="' + gy + '" width="' + gw + '" height="4" rx="2" fill="#ececea"/><rect x="' + gx + '" y="' + gy + '" width="' + (gw * Math.max(0, Math.min(1, fill))) + '" height="4" rx="2" fill="#3a8f5c"/>';
+          }
+        });
+        Object.keys(pos).forEach(function (code) {
+          var p = pos[code], hub = code === "YUL";
+          var on = hi && hi.codes.indexOf(code) >= 0;
+          s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (hub ? 17 : 15) + '" fill="' + (hub ? "#222" : "#fff") + '" stroke="' + (on || hub ? "#222" : "#9a9a9a") + '" stroke-width="' + (on ? 2.5 : 1.5) + '"/>' +
+            '<text x="' + p[0] + '" y="' + (p[1] + 4) + '" text-anchor="middle" font-size="10.5" font-weight="600" fill="' + (hub ? "#fff" : "#222") + '">' + code + '</text>';
+          var nm = data.airports[code], ly = p[1] + (p[1] < H / 2 ? -22 : 30);
+          if (hub) ly = p[1] + 34;
+          s += '<text x="' + p[0] + '" y="' + ly + '" text-anchor="middle" font-size="11" fill="#767676">' + esc(nm) + '</text>';
+        });
+        s += '</svg>';
+        el.innerHTML = s;
+      }
+
+      // ---------- tooltip ----------
+      var tip = $("tip");
+      function showTip(html, ev) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var x = ev.clientX + 14, y = ev.clientY + 14, r = tip.getBoundingClientRect();
+        if (x + r.width > window.innerWidth - 8) x = ev.clientX - r.width - 14;
+        if (y + r.height > window.innerHeight - 8) y = ev.clientY - r.height - 14;
+        tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+
+      // ---------- simulation rendering ----------
+      function renderTiles() {
+        var s = S.sim.summary, leg = s.leg.rev, od = s.od.rev, none = s.none.rev, h = s.hind.rev;
+        var t = [
+          { c: "var(--p-od)", k: "O&amp;D bid price", v: money(od), s: signedPct(leg ? od / leg - 1 : 0) + " vs leg-based" },
+          { c: "var(--p-leg)", k: "Leg-based EMSR-b", v: money(leg), s: signedPct(none ? leg / none - 1 : 0) + " vs no control" },
+          { c: "var(--p-none)", k: "No control", v: money(none), s: "first come, first served" },
+          { c: "var(--p-hind)", k: "Perfect hindsight", v: money(h), s: "O&amp;D earns " + pct(h ? od / h : 0) + " of it" }
+        ];
+        $("tiles").innerHTML = t.map(function (x) { return '<div class="tile"><span class="k"><span class="sw" style="background:' + x.c + '"></span>' + x.k + '</span><b>' + x.v + '</b><span class="s">' + x.s + '</span></div>'; }).join("");
+        $("stream-note").textContent = "Stream #" + S.seed + " · " + nf0.format(S.sim.trace.length) + " requests";
+      }
+
+      function stateAt(p) {
+        var net = S.net, caps = net.legs.map(function (L) { return L.cap; });
+        if (p === 0) return { rem: { none: caps.slice(), leg: caps.slice(), od: caps.slice() }, rev: { none: 0, leg: 0, od: 0 } };
+        var d = S.sim.trace[p - 1];
+        return { rem: d.remAfter, rev: d.revAfter };
+      }
+      function bpAt(idx) {
+        var h = S.sim.bpHist, cur = h[0];
+        for (var j = 0; j < h.length && h[j].idx <= idx; j++) cur = h[j];
+        return cur;
+      }
+
+      function renderStep() {
+        var net = S.net, n = S.sim.trace.length, p = Math.max(0, Math.min(n, S.step));
+        S.step = p;
+        $("s-range").max = n; $("s-range").value = p;
+        $("s-prev").disabled = $("s-first").disabled = p === 0;
+        $("s-next").disabled = $("s-last").disabled = p === n;
+        var st = stateAt(p), dec = p > 0 ? S.sim.trace[p - 1] : null, req = p > 0 ? S.sim.reqs[p - 1] : null;
+        var caps = net.legs.map(function (L) { return L.cap; });
+        var bpState = bpAt(p > 0 ? p - 1 : 0);
+        if (!dec) {
+          $("req").innerHTML = 'Sales open <small>· press Next to process the first request</small>';
+          $("req-meta").textContent = nf0.format(n) + " requests in this stream";
+          $("decisions").innerHTML = POL.map(function (P) { return '<div class="dec" style="--c:' + P.c + '"><h5>' + esc(P.name) + '</h5>Waiting for the first request.</div>'; }).join("");
+          drawNet($("net-step"), { bp: bpState.bp, rem: st.rem.od, cap: caps, highlight: null });
+        } else {
+          var it = net.itins[req.i], cls = net.classes[req.k], fare = net.fare[req.i][req.k];
+          $("req").innerHTML = 'Request ' + nf0.format(p) + ': ' + itinLabel(it) + ', ' + cls + ' class, ' + money(fare) + ' <small>· ' + (it.legs.length > 1 ? "connecting" : "local") + '</small>';
+          $("req-meta").textContent = "Booking window " + Math.round(req.t * 100) + "% elapsed";
+          var prevRem = stateAt(p - 1).rem;
+          // no control
+          var noneTxt = it.legs.map(function (l) {
+            var r = prevRem.none[l];
+            return '<span class="ln' + (r < 1 ? " bad" : "") + '">' + dash(net.legs[l].id) + ': <b>' + r + '</b> seat' + (r === 1 ? "" : "s") + ' left</span>';
+          }).join("");
+          // leg-based
+          var legTxt = dec.legInfo.map(function (x) {
+            var name = dash(net.legs[x.l].id);
+            if (x.rem < 1) return '<span class="ln bad">' + name + ' is full</span>';
+            var protTxt = req.k === 0 ? "" : ", " + x.prot + " kept for " + net.classes.slice(0, req.k).join("/");
+            return '<span class="ln' + (x.open ? "" : " bad") + '">' + cls + ' ' + (x.open ? "open" : "closed") + ' on ' + name + ': <b>' + x.rem + '</b> left' + protTxt + '</span>';
+          }).join("");
+          // O&D
+          var odTxt;
+          var fullLeg = it.legs.filter(function (l) { return prevRem.od[l] < 1; });
+          if (fullLeg.length) odTxt = '<span class="ln bad">' + dash(net.legs[fullLeg[0]].id) + ' is full</span>';
+          else odTxt = '<span class="ln">Fare <b>' + money(fare) + '</b> vs bid price' + (dec.bps.length > 1 ? "s " : " ") + dec.bps.map(function (b) { return '<b>' + money(b) + '</b>'; }).join(" + ") + (dec.bps.length > 1 ? ' = <b>' + money(dec.bpSum) + '</b>' : '') + '</span>' +
+            '<span class="ln' + (dec.od ? "" : " bad") + '">Net contribution ' + signedMoney(fare - dec.bpSum) + '</span>';
+          var parts = { none: noneTxt, leg: legTxt, od: odTxt };
+          $("decisions").innerHTML = POL.map(function (P) {
+            var ok = dec[P.key];
+            return '<div class="dec" style="--c:' + P.c + '"><h5>' + esc(P.name) + '</h5>' + parts[P.key] + '<div class="v' + (ok ? "" : " no") + '"><i>' + (ok ? "✓" : "✕") + '</i>' + (ok ? "Accept" : "Reject") + '</div></div>';
+          }).join("");
+          var codes = [it.from, "YUL", it.to];
+          drawNet($("net-step"), { bp: bpState.bp, rem: st.rem.od, cap: caps, highlight: { legs: it.legs, codes: codes, ok: dec.od } });
+        }
+        // seats table
+        var h = '<thead><tr><th>Seats left</th>' + POL.map(function (P) { return '<th><span class="sw" style="background:' + P.c + '"></span>' + (P.key === "none" ? "None" : P.key === "leg" ? "Leg" : "O&amp;D") + '</th>'; }).join("") + '</tr></thead><tbody>';
+        net.legs.forEach(function (L, l) {
+          h += '<tr><td>' + dash(L.id) + '</td>' + POL.map(function (P) { var r = st.rem[P.key][l]; return '<td>' + r + '<span class="bar" style="--c:' + P.c + '"><i style="width:' + (100 * (1 - r / L.cap)) + '%"></i></span></td>'; }).join("") + '</tr>';
+        });
+        h += '<tr class="sum"><td>Revenue</td>' + POL.map(function (P) { return '<td>' + money(st.rev[P.key]) + '</td>'; }).join("") + '</tr></tbody>';
+        $("seat-table").innerHTML = h;
+        moveBpMarker();
+      }
+
+      function stopPlay() { if (S.playing) { clearInterval(S.playing); S.playing = null; $("s-play").textContent = "Play"; } }
+      $("s-first").addEventListener("click", function () { stopPlay(); S.step = 0; renderStep(); });
+      $("s-prev").addEventListener("click", function () { stopPlay(); S.step--; renderStep(); });
+      $("s-next").addEventListener("click", function () { stopPlay(); S.step++; renderStep(); });
+      $("s-last").addEventListener("click", function () { stopPlay(); S.step = S.sim.trace.length; renderStep(); });
+      $("s-range").addEventListener("input", function () { stopPlay(); S.step = +this.value; renderStep(); });
+      $("s-diff").addEventListener("click", function () {
+        stopPlay();
+        var tr = S.sim.trace;
+        for (var r = S.step; r < tr.length; r++) if (tr[r].leg !== tr[r].od) { S.step = r + 1; renderStep(); return; }
+        S.step = tr.length; renderStep();
+      });
+      $("s-play").addEventListener("click", function () {
+        if (S.playing) { stopPlay(); return; }
+        if (S.step >= S.sim.trace.length) S.step = 0;
+        this.textContent = "Pause";
+        S.playing = setInterval(function () {
+          if (S.step >= S.sim.trace.length) { stopPlay(); return; }
+          S.step++; renderStep();
+        }, 140);
+      });
+
+      // ---------- charts ----------
+      var bpChart = null;
+      function renderBpChart() {
+        var el = $("ch-bp"), W = Math.max(300, el.clientWidth - 12), H = W < 500 ? 220 : 250;
+        var m = { t: 12, r: 12, b: 30, l: 50 };
+        var n = S.sim.trace.length, hist = S.sim.bpHist, net = S.net;
+        var styles = [{ c: "#222", d: "5 4" }, { c: "#8a8a8a", d: "5 4" }, { c: "#222", d: null }, { c: "#8a8a8a", d: null }];
+        var maxBp = d3.max(hist, function (h) { return d3.max(h.bp); }) || 1;
+        var x = d3.scaleLinear().domain([0, Math.max(1, n)]).range([m.l, W - m.r]);
+        var y = d3.scaleLinear().domain([0, maxBp * 1.08]).nice().range([H - m.b, m.t]);
+        var svg = d3.select(el).html("").append("svg").attr("viewBox", "0 0 " + W + " " + H);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 500 ? 4 : 8).tickFormat(d3.format(",d")));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return "$" + d3.format(",")(v); }));
+        svg.append("text").attr("x", W - m.r).attr("y", H - 2).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("request number");
+        net.legs.forEach(function (L, l) {
+          var pts = [];
+          hist.forEach(function (h, j) { var x1 = j + 1 < hist.length ? hist[j + 1].idx : n; pts.push([h.idx, h.bp[l]], [x1, h.bp[l]]); });
+          svg.append("path").attr("fill", "none").attr("stroke", styles[l].c).attr("stroke-width", 2).attr("stroke-dasharray", styles[l].d)
+            .attr("stroke-linejoin", "round").attr("d", d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return y(p[1]); })(pts));
+        });
+        // direct labels just above each line at the opening of sales, pushed apart upwards
+        var starts = net.legs.map(function (L, l) { return { l: l, y: y(hist[0].bp[l]) - 5 }; }).sort(function (a, b) { return b.y - a.y; });
+        for (var i = 1; i < starts.length; i++) if (starts[i - 1].y - starts[i].y < 13) starts[i].y = starts[i - 1].y - 13;
+        if (W >= 500) starts.forEach(function (e) {
+          svg.append("text").attr("x", x(0) + 6).attr("y", e.y).attr("font-size", 11).attr("fill", "#595959")
+            .attr("stroke", "#fff").attr("stroke-width", 3).attr("paint-order", "stroke").text(dash(net.legs[e.l].id));
+        });
+        var marker = svg.append("line").attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-width", 1).attr("stroke-dasharray", "2 3");
+        var hover = svg.append("line").attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#bdbdbd").style("display", "none");
+        svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+          .on("pointermove", function (ev) {
+            var mx = d3.pointer(ev)[0], r = Math.max(0, Math.min(n, Math.round(x.invert(mx)))), h = bpAt(Math.max(0, r - 1));
+            hover.style("display", null).attr("x1", x(r)).attr("x2", x(r));
+            showTip('<div class="t">Request ' + nf0.format(r) + ' · bid prices set at request ' + nf0.format(h.idx + 1) + '</div>' +
+              net.legs.map(function (L, l) { return '<div class="r"><i class="ln" style="border-top-color:' + styles[l].c + (styles[l].d ? ';border-top-style:dashed' : '') + '"></i>' + dash(L.id) + '<b>' + money(h.bp[l]) + '</b></div>'; }).join("") +
+              '<div class="t" style="margin-top:4px">Click to step to this request</div>', ev);
+          })
+          .on("pointerleave", function () { hover.style("display", "none"); hideTip(); })
+          .on("click", function (ev) { stopPlay(); S.step = Math.max(0, Math.min(n, Math.round(x.invert(d3.pointer(ev)[0])))); renderStep(); });
+        d3.select(el).append("div").attr("class", "legend").html(net.legs.map(function (L, l) { return '<span><i class="ln' + (styles[l].d ? " dash" : "") + '" style="border-top-color:' + styles[l].c + '"></i>' + dash(L.id) + '</span>'; }).join("") + '<span><i class="ln dash" style="border-top-color:#222;width:10px;border-top-width:1px"></i>current request</span>');
+        bpChart = { x: x, marker: marker };
+        moveBpMarker();
+      }
+      function moveBpMarker() { if (bpChart) bpChart.marker.attr("x1", bpChart.x(S.step)).attr("x2", bpChart.x(S.step)); }
+
+      function renderLfChart() {
+        var el = $("ch-lf"), W = Math.max(280, el.clientWidth - 12), H = 230, m = { t: 12, r: 8, b: 30, l: 40 };
+        var net = S.net, s = S.sim.summary;
+        var x0 = d3.scaleBand().domain(net.legs.map(function (L) { return L.id; })).range([m.l, W - m.r]).paddingInner(0.22).paddingOuter(0.08);
+        var x1 = d3.scaleBand().domain(POL.map(function (P) { return P.key; })).range([0, x0.bandwidth()]).padding(0.08);
+        var y = d3.scaleLinear().domain([0, 1]).range([H - m.b, m.t]);
+        var svg = d3.select(el).html("").append("svg").attr("viewBox", "0 0 " + W + " " + H);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x0).tickFormat(dash));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(".0%")));
+        net.legs.forEach(function (L, l) {
+          POL.forEach(function (P) {
+            var v = s[P.key].lf[l], bx = x0(L.id) + x1(P.key), bw = x1.bandwidth(), top = y(v), base = y(0), r = Math.min(4, bw / 2, base - top);
+            var path = "M" + bx + "," + base + "V" + (top + r) + "Q" + bx + "," + top + " " + (bx + r) + "," + top + "H" + (bx + bw - r) + "Q" + (bx + bw) + "," + top + " " + (bx + bw) + "," + (top + r) + "V" + base + "Z";
+            svg.append("path").attr("d", v > 0 ? path : "").attr("fill", P.hex);
+            svg.append("rect").attr("x", bx - 1).attr("y", m.t).attr("width", bw + 2).attr("height", H - m.t - m.b).attr("fill", "transparent")
+              .on("pointermove", function (ev) {
+                showTip('<div class="t">' + dash(L.id) + ' · ' + L.cap + ' seats</div><div class="r"><i style="background:' + P.hex + '"></i>' + esc(P.name) + '<b>' + pct(v) + '</b></div>' +
+                  '<div class="r"><i></i>Local / connecting<b>' + s[P.key].legLocal[l] + ' / ' + s[P.key].legConn[l] + '</b></div>', ev);
+              }).on("pointerleave", hideTip);
+          });
+        });
+        d3.select(el).append("div").attr("class", "legend").html(POL.map(function (P) { return '<span><i style="background:' + P.hex + '"></i>' + esc(P.name) + '</span>'; }).join(""));
+      }
+
+      function renderMixChart() {
+        var el = $("ch-mix"), W = Math.max(280, el.clientWidth - 12), net = S.net, s = S.sim.summary;
+        var groups = [{ name: "Long-haul flights", legs: [2, 3] }, { name: "Feeder flights", legs: [0, 1] }];
+        var rowH = 20, gap = 6, gh = 18, m = { l: 118, r: 44, t: 4 };
+        var H = m.t + groups.length * (gh + POL.length * (rowH + gap) + 10);
+        var maxV = 0;
+        groups.forEach(function (g) { g.cap = g.legs.reduce(function (a, l) { return a + net.legs[l].cap; }, 0); maxV = Math.max(maxV, g.cap); });
+        var x = d3.scaleLinear().domain([0, maxV]).range([m.l, W - m.r]);
+        var svg = d3.select(el).html("").append("svg").attr("viewBox", "0 0 " + W + " " + H);
+        var yy = m.t;
+        groups.forEach(function (g) {
+          svg.append("text").attr("x", 0).attr("y", yy + 12).attr("font-size", 12).attr("font-weight", 600).attr("fill", "#222").text(g.name + " · " + nf0.format(g.cap) + " seats");
+          yy += gh;
+          POL.forEach(function (P) {
+            var loc = g.legs.reduce(function (a, l) { return a + s[P.key].legLocal[l]; }, 0), con = g.legs.reduce(function (a, l) { return a + s[P.key].legConn[l]; }, 0);
+            svg.append("text").attr("x", 0).attr("y", yy + 14).attr("font-size", 11.5).attr("fill", "#595959").text(P.name);
+            svg.append("rect").attr("x", m.l - 10).attr("y", yy + 5).attr("width", 6).attr("height", 10).attr("rx", 1.5).attr("fill", P.hex);
+            svg.append("rect").attr("x", x(0)).attr("y", yy).attr("width", x(g.cap) - x(0)).attr("height", rowH).attr("rx", 4).attr("fill", "#f3f3f1");
+            var wl = x(loc) - x(0), wc = x(loc + con) - x(loc);
+            if (wl > 0) svg.append("rect").attr("x", x(0)).attr("y", yy).attr("width", wl).attr("height", rowH).attr("rx", 4).attr("fill", "#4a4a4a");
+            if (wc > 2) svg.append("rect").attr("x", x(loc) + (wl > 0 ? 2 : 0)).attr("y", yy).attr("width", wc - (wl > 0 ? 2 : 0)).attr("height", rowH).attr("rx", 4).attr("fill", "#b5b5b0");
+            if (wl > 26) svg.append("text").attr("x", x(0) + 6).attr("y", yy + 14).attr("font-size", 11).attr("fill", "#fff").text(loc);
+            svg.append("text").attr("x", x(loc + con) + 5).attr("y", yy + 14).attr("font-size", 11).attr("fill", "#595959").text(con);
+            svg.append("rect").attr("x", 0).attr("y", yy).attr("width", W).attr("height", rowH).attr("fill", "transparent")
+              .on("pointermove", function (ev) {
+                showTip('<div class="t">' + g.name + ' · ' + esc(P.name) + '</div><div class="r"><i style="background:#4a4a4a"></i>Local passengers<b>' + loc + '</b></div><div class="r"><i style="background:#b5b5b0"></i>Connecting passengers<b>' + con + '</b></div><div class="r"><i></i>Empty seats<b>' + (g.cap - loc - con) + '</b></div>', ev);
+              }).on("pointerleave", hideTip);
+            yy += rowH + gap;
+          });
+          yy += 10;
+        });
+        d3.select(el).append("div").attr("class", "legend").html('<span><i style="background:#4a4a4a"></i>Local passengers</span><span><i style="background:#b5b5b0"></i>Connecting passengers (number at the end)</span>');
+      }
+
+      function renderResTable() {
+        var net = S.net, s = S.sim.summary;
+        var h = '<thead><tr><th>Control</th><th>Revenue</th><th>Passengers</th><th>Local</th><th>Connecting</th><th>Avg fare</th>' + net.legs.map(function (L) { return '<th>LF ' + dash(L.id) + '</th>'; }).join("") + '</tr></thead><tbody>';
+        POL.forEach(function (P) {
+          var x = s[P.key], loc = 0, con = 0;
+          net.itins.forEach(function (it, i) { var n = x.sold[i].reduce(function (a, b) { return a + b; }, 0); if (it.legs.length > 1) con += n; else loc += n; });
+          h += '<tr><td class="hl"><span class="sw" style="background:' + P.c + '"></span>' + esc(P.name) + '</td><td class="hl">' + money(x.rev) + '</td><td>' + (loc + con) + '</td><td>' + loc + '</td><td>' + con + '</td><td>' + money((loc + con) ? x.rev / (loc + con) : 0) + '</td>' +
+            x.lf.map(function (v) { return '<td>' + pct(v) + '</td>'; }).join("") + '</tr>';
+        });
+        var hx = s.hind.x, hl = 0, hc = 0;
+        net.itins.forEach(function (it, i) { var n = hx[i].reduce(function (a, b) { return a + b; }, 0); if (it.legs.length > 1) hc += n; else hl += n; });
+        var hlf = net.legs.map(function (L, l) { var u = 0; net.itins.forEach(function (it, i) { if (it.legs.indexOf(l) >= 0) u += hx[i].reduce(function (a, b) { return a + b; }, 0); }); return u / L.cap; });
+        h += '<tr><td><span class="sw" style="background:var(--p-hind)"></span>Perfect hindsight</td><td>' + money(s.hind.rev) + '</td><td>' + nf0.format(hl + hc) + '</td><td>' + nf0.format(hl) + '</td><td>' + nf0.format(hc) + '</td><td>' + money((hl + hc) ? s.hind.rev / (hl + hc) : 0) + '</td>' + hlf.map(function (v) { return '<td>' + pct(v) + '</td>'; }).join("") + '</tr>';
+        $("res-table").innerHTML = h + '</tbody>';
+        var dem = S.sim.reqs.length;
+        $("res-sub").textContent = nf0.format(dem) + " requests, stream #" + S.seed;
+      }
+
+      // ---------- Monte Carlo ----------
+      function renderMC(mc, done) {
+        var n = mc.rows.length, net = S.net;
+        if (!n) { $("mc-table").innerHTML = ""; $("ch-mc").innerHTML = ""; return; }
+        var avg = function (f) { return d3.mean(mc.rows, f); };
+        var leg = avg(function (r) { return r.leg; });
+        var lines = [
+          { P: POL[2], rev: avg(function (r) { return r.od; }), lf: avg(function (r) { return r.odLf; }), conn: avg(function (r) { return r.odConn; }) },
+          { P: POL[1], rev: leg, lf: avg(function (r) { return r.legLf; }), conn: avg(function (r) { return r.legConn; }) },
+          { P: POL[0], rev: avg(function (r) { return r.none; }), lf: avg(function (r) { return r.noneLf; }), conn: avg(function (r) { return r.noneConn; }) },
+          { P: { name: "Perfect hindsight", c: "var(--p-hind)" }, rev: avg(function (r) { return r.hind; }), lf: null, conn: null }
+        ];
+        var h = '<thead><tr><th>Average over ' + n + ' streams</th><th>Revenue</th><th>vs leg-based</th><th>Load factor</th><th>Connecting pax</th></tr></thead><tbody>';
+        lines.forEach(function (x) {
+          h += '<tr><td class="hl"><span class="sw" style="background:' + x.P.c + '"></span>' + esc(x.P.name) + '</td><td class="hl">' + money(x.rev) + '</td><td>' + signedPct(x.rev / leg - 1) + '</td><td>' + (x.lf == null ? "" : pct(x.lf)) + '</td><td>' + (x.conn == null ? "" : nf0.format(x.conn)) + '</td></tr>';
+        });
+        $("mc-table").innerHTML = h + '</tbody>';
+        var wins = mc.rows.filter(function (r) { return r.od > r.leg + 0.5; }).length, ties = mc.rows.filter(function (r) { return Math.abs(r.od - r.leg) <= 0.5; }).length;
+        $("mc-status").textContent = (done ? "" : "Running… ") + "O&D control earned more than leg-based control in " + wins + " of " + n + " streams" + (ties ? " (" + ties + " tied)" : "") + ". The streams are #1 to #" + n + (S.seed <= n ? ", so they include stream #" + S.seed + " above." : ".");
+        // histogram
+        var el = $("ch-mc"), W = Math.max(280, el.clientWidth - 12), H = 200, m = { t: 12, r: 10, b: 30, l: 34 };
+        var g = mc.rows.map(function (r) { return r.leg ? (r.od / r.leg - 1) * 100 : 0; });
+        var lo = Math.min(-1, d3.min(g)), hi = Math.max(1, d3.max(g));
+        var x = d3.scaleLinear().domain([lo, hi]).nice(12).range([m.l, W - m.r]);
+        var bins = d3.bin().domain(x.domain()).thresholds(x.ticks(18))(g);
+        var y = d3.scaleLinear().domain([0, d3.max(bins, function (b) { return b.length; }) || 1]).nice().range([H - m.b, m.t]);
+        var svg = d3.select(el).html("").append("svg").attr("viewBox", "0 0 " + W + " " + H);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(4).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 420 ? 5 : 9).tickFormat(function (v) { return (v > 0 ? "+" : "") + v + "%"; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(4).tickFormat(d3.format("d")));
+        bins.forEach(function (b) {
+          if (!b.length) return;
+          var bx = x(b.x0) + 1, bw = Math.max(1, x(b.x1) - x(b.x0) - 2), top = y(b.length), base = y(0), r = Math.min(3, bw / 2, base - top);
+          var neg = b.x1 <= 0;
+          svg.append("path").attr("fill", neg ? "#b5b5b0" : "#3a8f5c").attr("d", "M" + bx + "," + base + "V" + (top + r) + "Q" + bx + "," + top + " " + (bx + r) + "," + top + "H" + (bx + bw - r) + "Q" + (bx + bw) + "," + top + " " + (bx + bw) + "," + (top + r) + "V" + base + "Z");
+          svg.append("rect").attr("x", bx - 1).attr("y", m.t).attr("width", bw + 2).attr("height", H - m.t - m.b).attr("fill", "transparent")
+            .on("pointermove", function (ev) { showTip('<div class="t">O&amp;D vs leg-based: ' + nf1.format(b.x0) + '% to ' + nf1.format(b.x1) + '%</div><div class="r"><i style="background:' + (neg ? "#b5b5b0" : "#3a8f5c") + '"></i>Streams<b>' + b.length + '</b></div>', ev); })
+            .on("pointerleave", hideTip);
+        });
+        svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-width", 1);
+        $("mc-avg").textContent = "% of revenue · average " + signedPct(d3.mean(g) / 100);
+      }
+
+      async function runMC(token) {
+        var net = S.net, every = S.every, mc = { rows: [] };
+        S.mc = mc;
+        var lfAvg = function (x) { return d3.mean(x.lf); };
+        var conn = function (x) { return x.legConn[0] + x.legConn[1]; };
+        for (var sd = 1; sd <= MC_N; sd++) {
+          if (token !== S.token) return;
+          var st = BPE.makeStream(net, sd), r = await BPE.simulate(net, st, every, solveLP, { light: true });
+          if (token !== S.token) return;
+          var s = r.summary;
+          mc.rows.push({ none: s.none.rev, leg: s.leg.rev, od: s.od.rev, hind: s.hind.rev, noneLf: lfAvg(s.none), legLf: lfAvg(s.leg), odLf: lfAvg(s.od), noneConn: conn(s.none), legConn: conn(s.leg), odConn: conn(s.od) });
+          if (sd % 10 === 0 || sd === MC_N) { renderMC(mc, sd === MC_N); await new Promise(function (res) { setTimeout(res, 0); }); }
+        }
+      }
+
+      // ---------- main recompute ----------
+      function marginalChecks(token) {
+        var net = S.net, caps = net.legs.map(function (L) { return L.cap; });
+        return Promise.all(net.legs.map(function (L, l) {
+          var c2 = caps.slice(); c2[l] += 1;
+          return BPE.solveNetwork(net, c2, net.mean, solveLP).then(function (r) { return r.z; });
+        })).then(function (zs) { if (token === S.token) S.marg = zs.map(function (z) { return z - S.lp.z; }); });
+      }
+
+      async function simulateStream(token, keepStep) {
+        var net = S.net, st = BPE.makeStream(net, S.seed);
+        var r = await BPE.simulate(net, st, S.every, solveLP);
+        if (token !== S.token) return false;
+        r.reqs = st.reqs; S.sim = r;
+        if (!keepStep) {
+          // open on the first request (after the first few) where leg-based and O&D control disagree
+          var tr = r.trace, first = 0;
+          for (var i = 12; i < tr.length; i++) if (tr[i].leg !== tr[i].od) { first = i + 1; break; }
+          S.step = first;
+        } else S.step = Math.min(S.step, r.trace.length);
+        renderTiles(); renderStep(); renderBpChart(); renderLfChart(); renderMixChart(); renderResTable();
+        return true;
+      }
+
+      async function recompute() {
+        stopPlay();
+        var token = ++S.token;
+        try {
+          S.marg = null;
+          var lp = await BPE.solveNetwork(S.net, S.net.legs.map(function (L) { return L.cap; }), S.net.mean, solveLP);
+          if (token !== S.token) return;
+          S.lp = lp;
+          $("loading") && $("loading").remove();
+          $("main").hidden = false;
+          renderLP();
+          drawNet($("net-lp"), { bp: lp.bp, rem: S.net.legs.map(function (L) { return L.cap; }), cap: null, highlight: null });
+          await marginalChecks(token);
+          if (token !== S.token) return;
+          renderLP();
+          if (!(await simulateStream(token, false))) return;
+          $("mc-status").textContent = "Running…";
+          await runMC(token);
+        } catch (e) {
+          console.error(e);
+          if (token === S.token) $("mc-status").textContent = "Something went wrong: " + (e.message || e);
+        }
+      }
+
+      $("every").addEventListener("change", async function () {
+        S.every = +this.value; stopPlay();
+        var token = ++S.token;
+        if (await simulateStream(token, false)) { $("mc-status").textContent = "Running…"; await runMC(token); }
+      });
+      $("new-stream").addEventListener("click", async function () {
+        S.seed += 1; stopPlay();
+        var token = ++S.token;
+        await simulateStream(token, false);
+        // the Monte Carlo doesn't depend on the stream shown, only update its note
+        if (S.mc && S.mc.rows.length === MC_N) renderMC(S.mc, true);
+      });
+
+      var rt = null, lastW = window.innerWidth;
+      window.addEventListener("resize", function () {
+        if (window.innerWidth === lastW) return; lastW = window.innerWidth;
+        clearTimeout(rt); rt = setTimeout(function () {
+          if (!S.sim) return;
+          drawNet($("net-lp"), { bp: S.lp.bp, rem: S.net.legs.map(function (L) { return L.cap; }), cap: null, highlight: null });
+          renderStep(); renderBpChart(); renderLfChart(); renderMixChart();
+          if (S.mc && S.mc.rows.length) renderMC(S.mc, S.mc.rows.length === MC_N);
+        }, 200);
+      });
+
+      S.net = buildNet(presetObj());
+      renderPresets(); renderInputs();
+      recompute();
+    })();
+    </script>
+  </body>
+</html>
