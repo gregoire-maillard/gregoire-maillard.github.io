@@ -1,0 +1,923 @@
+<!doctype html>
+<html>
+  <head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Airline Commercial 101</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <style>
+      /* ── Sidebar nav ── */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .chapter-nav {
+        margin-top: 4px;
+        font-size: 0.82em;
+        line-height: 1.8;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+      }
+      .chapter-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
+
+      /* ── Callout / example boxes ── */
+      .callout {
+        background: #f4f8fd;
+        border-left: 3px solid #267CB9;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #2a3a4a;
+        line-height: 1.7;
+      }
+      .callout-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .example {
+        background: #fafafa;
+        border: 1px solid #e4e4e4;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #444;
+        line-height: 1.7;
+      }
+      .example-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #888;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Reference table ── */
+      .rm-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86em;
+        margin: 16px 0;
+      }
+      .rm-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: left;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .rm-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        vertical-align: top;
+      }
+      .rm-table tr:last-child td { border-bottom: none; }
+
+      section h3 { margin-top: 22px; }
+      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; }
+
+      /* ── Data tables ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+        margin: 16px 0;
+      }
+      .data-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: center;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .data-table th:first-child { text-align: left; }
+      .data-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .data-table td:first-child { text-align: left; }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table tr.total td { background: #f7f7f7; font-weight: bold; border-top: 2px solid #ddd; }
+      .data-table tr.highlight td { background: #fef6d6; font-weight: bold; }
+
+      /* ── Formula block ── */
+      .formula {
+        background: #f9f7ff;
+        border-left: 3px solid #7c6fcd;
+        padding: 14px 20px;
+        margin: 18px 0;
+        text-align: center;
+        overflow-x: auto;
+      }
+      .formula-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7c6fcd;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+      .formula .note {
+        font-size: 0.82em;
+        color: #666;
+        margin-top: 8px;
+        text-align: left;
+        font-style: italic;
+      }
+
+      /* ── Chart container ── */
+      .chart-wrap {
+        margin: 20px 0;
+        background: #fff;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        padding: 12px 8px 6px;
+      }
+      .chart-wrap svg { display: block; width: 100%; height: auto; }
+      .chart-caption {
+        font-size: 0.78em;
+        color: #888;
+        text-align: center;
+        margin-top: 4px;
+        font-style: italic;
+      }
+    </style>
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+
+      <!-- ── Sidebar ── -->
+      <header>
+        <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+        <img src="/assets/img/commercial_main.png" alt="Airline commercial" onerror="this.style.display='none'" />
+        <p><i>Me, trying to sell you a seat.</i> <br><hr/>
+        A beginner's guide to how airlines turn seats into revenue: pricing, distribution, sales, e-commerce, payment, partnerships and marketing.</p>
+
+        <hr/>
+        <nav class="chapter-nav" id="toc">
+          <a href="#ch00"><span class="ch-n">00</span> Why Commercial?</a>
+          <a href="#ch01"><span class="ch-n">01</span> Product &amp; Pricing</a>
+          <a href="#ch02"><span class="ch-n">02</span> How a Ticket Gets Sold</a>
+          <a href="#ch03"><span class="ch-n">03</span> Channels &amp; the Cost of Sale</a>
+          <a href="#ch04"><span class="ch-n">04</span> NDC &amp; Modern Retailing</a>
+          <a href="#ch05"><span class="ch-n">05</span> Sales</a>
+          <a href="#ch06"><span class="ch-n">06</span> E-commerce</a>
+          <a href="#ch07"><span class="ch-n">07</span> Ancillaries &amp; Merchandising</a>
+          <a href="#ch08"><span class="ch-n">08</span> Payment &amp; Settlement</a>
+          <a href="#ch09"><span class="ch-n">09</span> Interline, Codeshare &amp; Alliances</a>
+          <a href="#ch10"><span class="ch-n">10</span> Marketing &amp; Brand</a>
+          <a href="#ch11"><span class="ch-n">11</span> After the Sale</a>
+          <a href="#ch12"><span class="ch-n">12</span> Measuring the Commercial Engine</a>
+          <a href="#ch13"><span class="ch-n">13</span> What's Next</a>
+        </nav>
+      </header>
+
+      <!-- ── Content ── -->
+      <section>
+
+        <h2>Airline Commercial 101</h2>
+        <p>At most airlines, "Commercial" is the name for everything between a seat existing and a customer paying for it: what the product is, how it is priced, where it is sold, who sells it, how the money comes in, and what happens when the customer needs something afterwards. <a href="/np101.html">NP 101</a> covers which seats exist, <a href="/rm101.html">RM 101</a> how many to sell at each price, and <a href="/loyalty101.html">Loyalty 101</a> why customers come back. This page covers the rest of the machine, in the same spirit: the key ideas, a few worked examples, and as little jargon as I can get away with. It describes the industry in general, not how any particular airline does things, and every number in the examples is made up for illustration.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 00 ── -->
+        <h3 id="ch00">Chapter 00: Why Commercial?</h3>
+
+        <p>An airline can have the best network, the smartest RM system and the most generous loyalty program in its market and still lose money, if its fares are not visible where customers shop, if every sale costs too much to make, or if the cash arrives late and leaks away in fees and fraud. Commercial is the function that makes sure the revenue the planners and RM analysts imagine actually shows up in the bank.</p>
+
+        <p>It is also where the airline meets everyone else. Commercial teams negotiate with global distribution systems, travel agencies, corporate buyers, banks, card networks and partner airlines. Much of the job is about those relationships and who captures how much of each fare along the way.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 178" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The commercial chain: product, price, distribution, selling and marketing, payment, and servicing" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs><marker id="mA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#999"/></marker></defs>
+<rect x="20" y="20" width="150" height="48" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="95.0" y="41.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">1. Product</text>
+<text x="95.0" y="57.0" text-anchor="middle" font-size="11" fill="#888888">what we sell</text>
+<rect x="185" y="20" width="150" height="48" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="260.0" y="41.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">2. Price</text>
+<text x="260.0" y="57.0" text-anchor="middle" font-size="11" fill="#888888">how much</text>
+<rect x="350" y="20" width="150" height="48" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="425.0" y="41.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">3. Distribute</text>
+<text x="425.0" y="57.0" text-anchor="middle" font-size="11" fill="#888888">where it is sold</text>
+<rect x="350" y="110" width="150" height="48" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="425.0" y="131.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">4. Sell &amp; market</text>
+<text x="425.0" y="147.0" text-anchor="middle" font-size="11" fill="#888888">who buys, and why</text>
+<rect x="185" y="110" width="150" height="48" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="260.0" y="131.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">5. Get paid</text>
+<text x="260.0" y="147.0" text-anchor="middle" font-size="11" fill="#888888">cash and settlement</text>
+<rect x="20" y="110" width="150" height="48" rx="5" fill="#f9f7ff" stroke="#7c6fcd" stroke-width="1.3"/>
+<text x="95.0" y="131.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">6. Serve</text>
+<text x="95.0" y="147.0" text-anchor="middle" font-size="11" fill="#888888">after the sale</text>
+<line x1="172" y1="44.0" x2="182" y2="44.0" stroke="#999" stroke-width="1.4" marker-end="url(#mA)"/>
+<line x1="337" y1="44.0" x2="347" y2="44.0" stroke="#999" stroke-width="1.4" marker-end="url(#mA)"/>
+<line x1="425.0" y1="70" x2="425.0" y2="107" stroke="#999" stroke-width="1.4" marker-end="url(#mA)"/>
+<line x1="348" y1="134.0" x2="338" y2="134.0" stroke="#999" stroke-width="1.4" marker-end="url(#mA)"/>
+<line x1="183" y1="134.0" x2="173" y2="134.0" stroke="#999" stroke-width="1.4" marker-end="url(#mA)"/>
+</svg>
+          <div class="chart-caption">The commercial chain. Each chapter of this page sits somewhere along it.</div>
+        </div>
+
+        <h4>Who does what</h4>
+
+        <p>Organization charts differ a lot between airlines, but most commercial divisions contain some version of the following teams, often reporting to a Chief Commercial Officer:</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Team</th><th>Main question</th><th>Chapter</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Network planning</strong></td><td>Where do we fly, when, with what?</td><td><a href="/np101.html">NP 101</a></td></tr>
+            <tr><td><strong>Pricing</strong></td><td>What fares and rules do we publish?</td><td>01</td></tr>
+            <tr><td><strong>Revenue management</strong></td><td>Which of those fares are open right now?</td><td><a href="/rm101.html">RM 101</a></td></tr>
+            <tr><td><strong>Distribution</strong></td><td>Through which channels, at what cost?</td><td>02–04</td></tr>
+            <tr><td><strong>Sales</strong></td><td>Which corporate clients and agencies do we win?</td><td>05</td></tr>
+            <tr><td><strong>E-commerce &amp; digital</strong></td><td>How well does our own website and app sell?</td><td>06–07</td></tr>
+            <tr><td><strong>Payments</strong></td><td>How do we collect cash cheaply and safely?</td><td>08</td></tr>
+            <tr><td><strong>Alliances &amp; partnerships</strong></td><td>Whose flights do we sell, and who sells ours?</td><td>09</td></tr>
+            <tr><td><strong>Marketing &amp; loyalty</strong></td><td>Why should anyone choose us?</td><td>10, <a href="/loyalty101.html">Loyalty 101</a></td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">The core tension</div>
+          Be everywhere customers shop, or keep sales where they are cheapest. Every channel that brings in extra customers also takes a share of the fare. Most commercial decisions trade reach against cost, and control against convenience.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 01 ── -->
+        <h3 id="ch01">Chapter 01: Product &amp; Pricing</h3>
+
+        <p>Before anything can be sold, it has to be defined. The physical product is the flight: a schedule, an aircraft, a cabin. The commercial product is what the customer buys on top: which cabin, which conditions, which extras. And before anything can be sold, the price has to exist somewhere a seller can find it.</p>
+
+        <h4>Pricing is not RM</h4>
+
+        <p>The two are often confused, and they work together closely, but they answer different questions. <strong>Pricing</strong> decides the menu: the fare levels on each route, and the rules attached to each one. <strong>RM</strong> decides, flight by flight and day by day, which items on that menu are available. Pricing analysts watch competitors, file new fares and run sales; RM analysts manage the opening and closing of fare classes (<a href="/rm101.html#ch01">RM 101, Chapter 01</a>). A fare that pricing never filed cannot be sold, however much RM would like to open it.</p>
+
+        <h4>Fare filing and ATPCO</h4>
+
+        <p>Most published airline fares travel through one company: ATPCO, the Airline Tariff Publishing Company, founded in 1965 and owned by a group of airlines. Airlines file their fares and rules with ATPCO, which distributes them to the global distribution systems, airline reservation systems and online agencies that need to price tickets. It supplies the overwhelming majority of the industry's intermediated fare data, and handles millions of fare changes every day.</p>
+
+        <p>A filed fare is not just a price. It is a price plus a set of rules, organized in numbered <strong>categories</strong> that every pricing engine understands:</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Category</th><th>What it controls</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Cat 3</strong> Seasonality</td><td>When travel is allowed</td><td>Valid for travel 1 Nov to 15 Dec</td></tr>
+            <tr><td><strong>Cat 5</strong> Advance reservations</td><td>How early you must book</td><td>Book at least 14 days before departure</td></tr>
+            <tr><td><strong>Cat 6 / 7</strong> Minimum / maximum stay</td><td>Length of the trip</td><td>Saturday night stay required</td></tr>
+            <tr><td><strong>Cat 11</strong> Blackout dates</td><td>Dates the fare cannot be used</td><td>Not valid over the holidays</td></tr>
+            <tr><td><strong>Cat 16</strong> Penalties</td><td>Changes and refunds</td><td>Changes for a fee, non-refundable</td></tr>
+            <tr><td><strong>Cat 35</strong> Negotiated fares</td><td>Private fares for specific agencies or clients</td><td>Corporate or tour-operator fares</td></tr>
+          </tbody>
+        </table>
+
+        <p>These rules are the price fences of <a href="/rm101.html#ch01">RM 101, Chapter 01</a>, written in a machine-readable form. They are also why airline pricing is so hard to change quickly: a new product idea has to be expressed in a rule language designed decades ago, and every system downstream has to interpret it the same way.</p>
+
+        <h4>Branded fares</h4>
+
+        <p>Over the last fifteen years most airlines moved from selling a list of fare classes to selling a small number of <strong>fare families</strong>, each with a name and a clear bundle of what is included. The customer no longer compares Q to M; they compare "Basic" to "Standard" to "Flex".</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Fare family</th><th>Typical content</th><th>Aimed at</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Basic</strong></td><td>Seat only, no changes, seat assigned at check-in, carry-on only</td><td>Price-driven leisure</td></tr>
+            <tr><td><strong>Standard</strong></td><td>Seat selection, changes for a fee, one checked bag on some routes</td><td>The mainstream traveler</td></tr>
+            <tr><td><strong>Flex</strong></td><td>Free changes, refundable or partially refundable, extra loyalty earn</td><td>Business and uncertain plans</td></tr>
+            <tr><td><strong>Premium cabins</strong></td><td>Different seat, lounge, priority services</td><td>Comfort and status</td></tr>
+          </tbody>
+        </table>
+
+        <p>Branded fares do two things at once. They make the choice easier to understand, and they turn the price gap between families into a clear upsell: "for $40 more, you get a bag and a seat". A well-designed family ladder can move a meaningful share of customers one step up, which is revenue that no RM control alone would have captured.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 02 ── -->
+        <h3 id="ch02">Chapter 02: How a Ticket Gets Sold</h3>
+
+        <p>Airline distribution was built for a world of travel agents, and the architecture still shows it. Understanding it starts with one system.</p>
+
+        <h4>From Sabre to the GDS</h4>
+
+        <p>In the 1950s, making an airline reservation involved index cards, phone calls and a lot of manual counting. American Airlines and IBM set out to fix that, and the resulting system, SABRE, was fully operational by 1964. It kept track of seat inventory in real time and was one of the first large commercial uses of computers anywhere. Other airlines built their own reservation systems, and in 1976 SABRE was installed in a travel agency for the first time. Agents could now see and book airline inventory directly.</p>
+
+        <p>Those airline-owned systems grew into <strong>global distribution systems</strong> (GDS): shared marketplaces that connect hundreds of airlines to hundreds of thousands of travel agents. Today three dominate: Amadeus (founded in 1987 by four European airlines), Sabre, and Travelport. The airlines that created them eventually sold them, and the GDSs became independent, powerful intermediaries in their own right.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Distribution architecture: the airline files fares through ATPCO and sells indirectly through a GDS to agencies, or directly on its own website and app" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs><marker id="mB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#999"/></marker></defs>
+<rect x="10" y="20" width="130" height="200" rx="6" fill="#fafafa" stroke="#ddd"/>
+<text x="75" y="38" text-anchor="middle" font-size="12.5" font-weight="700" fill="#333333">Airline</text>
+<rect x="22" y="50" width="106" height="40" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="75.0" y="74.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Schedules</text>
+<rect x="22" y="100" width="106" height="40" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="75.0" y="124.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Fares &amp; rules</text>
+<rect x="22" y="150" width="106" height="40" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="75.0" y="174.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Seat inventory</text>
+<rect x="175" y="60" width="90" height="36" rx="5" fill="#fff" stroke="#888888" stroke-width="1.3"/>
+<text x="220.0" y="82.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">ATPCO</text>
+<text x="220" y="54" text-anchor="middle" font-size="10" fill="#888888">fare publisher</text>
+<line x1="128" y1="120" x2="173" y2="84" stroke="#999" stroke-width="1.2" marker-end="url(#mB)"/>
+<rect x="190" y="120" width="90" height="70" rx="5" fill="#f9f7ff" stroke="#7c6fcd" stroke-width="1.3"/>
+<text x="235.0" y="152.0" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">GDS</text>
+<text x="235.0" y="168.0" text-anchor="middle" font-size="11" fill="#888888">or aggregator</text>
+<line x1="265" y1="96" x2="250" y2="118" stroke="#999" stroke-width="1.2" marker-end="url(#mB)"/>
+<line x1="128" y1="70" x2="188" y2="135" stroke="#999" stroke-width="1.2" marker-end="url(#mB)"/>
+<line x1="128" y1="170" x2="188" y2="165" stroke="#999" stroke-width="1.2" marker-end="url(#mB)"/>
+<line x1="188" y1="178" x2="130" y2="182" stroke="#999" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#mB)"/>
+<text x="160" y="205" text-anchor="middle" font-size="9.5" fill="#888888">bookings</text>
+<rect x="315" y="40" width="100" height="46" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="365.0" y="60.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">TMC</text>
+<text x="365.0" y="76.0" text-anchor="middle" font-size="11" fill="#888888">corporate travel</text>
+<line x1="282" y1="155" x2="313" y2="63" stroke="#999" stroke-width="1.2" marker-end="url(#mB)"/>
+<line x1="417" y1="63" x2="443" y2="140" stroke="#999" stroke-width="1.2" marker-end="url(#mB)"/>
+<rect x="315" y="102" width="100" height="46" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="365.0" y="122.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">OTA</text>
+<text x="365.0" y="138.0" text-anchor="middle" font-size="11" fill="#888888">online agency</text>
+<line x1="282" y1="155" x2="313" y2="125" stroke="#999" stroke-width="1.2" marker-end="url(#mB)"/>
+<line x1="417" y1="125" x2="443" y2="140" stroke="#999" stroke-width="1.2" marker-end="url(#mB)"/>
+<rect x="315" y="164" width="100" height="46" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="365.0" y="184.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Travel agent</text>
+<text x="365.0" y="200.0" text-anchor="middle" font-size="11" fill="#888888">retail, groups</text>
+<line x1="282" y1="155" x2="313" y2="187" stroke="#999" stroke-width="1.2" marker-end="url(#mB)"/>
+<line x1="417" y1="187" x2="443" y2="140" stroke="#999" stroke-width="1.2" marker-end="url(#mB)"/>
+<rect x="445" y="115" width="65" height="50" rx="5" fill="#fff" stroke="#333333" stroke-width="1.3"/>
+<text x="477.5" y="144.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Traveler</text>
+<rect x="190" y="245" width="120" height="40" rx="5" fill="#eef8f6" stroke="#2a9d8f" stroke-width="1.3"/>
+<text x="250.0" y="269.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">airline.com / app</text>
+<path d="M75 220 L75 265 L188 265" fill="none" stroke="#2a9d8f" stroke-width="1.5" marker-end="url(#mB)"/>
+<path d="M312 265 L478 265 L478 167" fill="none" stroke="#2a9d8f" stroke-width="1.5" marker-end="url(#mB)"/>
+<text x="395" y="258" text-anchor="middle" font-size="10.5" fill="#2a9d8f">direct channel</text>
+<text x="470" y="200" text-anchor="middle" font-size="10" fill="#888888">metasearch</text>
+<text x="470" y="212" text-anchor="middle" font-size="10" fill="#888888">refers either way</text>
+<text x="365" y="228" text-anchor="middle" font-size="10.5" fill="#7c6fcd">indirect channel</text>
+</svg>
+          <div class="chart-caption">The two main paths from an airline to a traveler. Most airlines use both.</div>
+        </div>
+
+        <h4>What happens in a booking</h4>
+
+        <p>Selling a ticket through a GDS involves four separate steps, each handled by a different piece of the system:</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Step</th><th>What happens</th><th>Where the data comes from</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Schedule</strong></td><td>Which flights exist between two cities</td><td>The airline's published schedule</td></tr>
+            <tr><td><strong>Availability</strong></td><td>Which booking classes are open on each flight</td><td>The airline's inventory, driven by RM</td></tr>
+            <tr><td><strong>Pricing</strong></td><td>Which fare applies to that itinerary and those classes</td><td>Fares and rules filed via ATPCO</td></tr>
+            <tr><td><strong>Booking &amp; ticketing</strong></td><td>A reservation (PNR) is created, then a ticket is issued against it</td><td>The airline's reservation system and the GDS</td></tr>
+          </tbody>
+        </table>
+
+        <p>The <strong>PNR</strong> (Passenger Name Record) holds who is traveling, on which flights, with what contact details. The <strong>ticket</strong> is the separate financial document that proves the passenger has paid and entitles them to fly. Paper tickets disappeared when IATA moved the industry to 100% electronic ticketing on 1 June 2008; IATA estimated the switch saved the industry about $3 billion.</p>
+
+        <div class="callout">
+          <div class="callout-label">Why it matters</div>
+          Because schedule, availability and price come from different places and are only combined at the moment of sale, the airline has limited control over how its product is presented in an agency. The GDS decides what the screen shows, how flights are sorted, and what extras (if any) can be sold alongside the ticket. That lack of control is a big part of why airlines pushed for NDC (Chapter 04).
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 03 ── -->
+        <h3 id="ch03">Chapter 03: Channels &amp; the Cost of Sale</h3>
+
+        <p>A <strong>channel</strong> is a path through which a ticket gets sold. Each one reaches a different kind of customer and takes a different cut of the fare.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Channel</th><th>Who uses it</th><th>Trade-off</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Airline website &amp; app</strong></td><td>Loyal and price-aware customers</td><td><span style="color:#2a9d8f">+</span> Cheapest, full control, customer data<br><span style="color:#c0752a">−</span> Only reaches people who come to you</td></tr>
+            <tr><td><strong>Metasearch</strong></td><td>Comparison shoppers (Google Flights, Skyscanner, Kayak)</td><td><span style="color:#2a9d8f">+</span> Huge reach, sends traffic to your site<br><span style="color:#c0752a">−</span> Pay per click or per booking; you compete side by side</td></tr>
+            <tr><td><strong>Online travel agency (OTA)</strong></td><td>Leisure travelers shopping across airlines and hotels</td><td><span style="color:#2a9d8f">+</span> Reach, especially in markets where you are small<br><span style="color:#c0752a">−</span> GDS fees and incentives; the OTA owns the customer relationship</td></tr>
+            <tr><td><strong>Travel management company (TMC)</strong></td><td>Corporate travelers</td><td><span style="color:#2a9d8f">+</span> Access to managed business travel, high yields<br><span style="color:#c0752a">−</span> Most expensive path; dependent on corporate deals</td></tr>
+            <tr><td><strong>Traditional agency</strong></td><td>Groups, complex trips, markets with low online use</td><td><span style="color:#2a9d8f">+</span> Reach and service for complex bookings<br><span style="color:#c0752a">−</span> Cost and limited merchandising</td></tr>
+            <tr><td><strong>Contact centre &amp; airport</strong></td><td>Changes, complex cases, last-minute sales</td><td><span style="color:#2a9d8f">+</span> Service<br><span style="color:#c0752a">−</span> Expensive per transaction</td></tr>
+          </tbody>
+        </table>
+
+        <h4>What a sale costs</h4>
+
+        <p>The <strong>cost of sale</strong> is everything the airline pays to turn a customer's intent into cash: GDS or aggregator fees, agency commissions and incentives, metasearch referral fees, payment costs, and its own technology. It varies enormously by channel.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustrative cost of sale per 400-dollar ticket by channel, from 12 dollars on the airline website to 28 dollars through a travel management company via a GDS" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<rect x="10" y="12" width="10" height="10" fill="#7c6fcd"/><text x="25" y="21" font-size="11" fill="#333333">GDS / aggregator / referral fee</text>
+<rect x="265" y="12" width="10" height="10" fill="#c0752a"/><text x="280" y="21" font-size="11" fill="#333333">Agency commission or incentive</text>
+<rect x="10" y="28" width="10" height="10" fill="#267CB9"/><text x="25" y="37" font-size="11" fill="#333333">Payment</text>
+<rect x="265" y="28" width="10" height="10" fill="#2a9d8f"/><text x="280" y="37" font-size="11" fill="#333333">Airline technology</text>
+<line x1="150.0" y1="42" x2="150.0" y2="208" stroke="#f0f0f0"/>
+<text x="150.0" y="226" text-anchor="middle" font-size="10.5" fill="#888888">$0</text>
+<line x1="206.7" y1="42" x2="206.7" y2="208" stroke="#f0f0f0"/>
+<text x="206.7" y="226" text-anchor="middle" font-size="10.5" fill="#888888">$5</text>
+<line x1="263.3" y1="42" x2="263.3" y2="208" stroke="#f0f0f0"/>
+<text x="263.3" y="226" text-anchor="middle" font-size="10.5" fill="#888888">$10</text>
+<line x1="320.0" y1="42" x2="320.0" y2="208" stroke="#f0f0f0"/>
+<text x="320.0" y="226" text-anchor="middle" font-size="10.5" fill="#888888">$15</text>
+<line x1="376.7" y1="42" x2="376.7" y2="208" stroke="#f0f0f0"/>
+<text x="376.7" y="226" text-anchor="middle" font-size="10.5" fill="#888888">$20</text>
+<line x1="433.3" y1="42" x2="433.3" y2="208" stroke="#f0f0f0"/>
+<text x="433.3" y="226" text-anchor="middle" font-size="10.5" fill="#888888">$25</text>
+<line x1="490.0" y1="42" x2="490.0" y2="208" stroke="#f0f0f0"/>
+<text x="490.0" y="226" text-anchor="middle" font-size="10.5" fill="#888888">$30</text>
+<text x="142" y="61.0" text-anchor="end" font-size="11.5" fill="#333333">Direct: website</text>
+<rect x="150.0" y="46" width="89.7" height="22" fill="#267CB9"/>
+<rect x="240.7" y="46" width="44.3" height="22" fill="#2a9d8f"/>
+<text x="291.0" y="61.0" font-size="11" font-weight="600" fill="#333333">$12</text>
+<text x="142" y="95.0" text-anchor="end" font-size="11.5" fill="#333333">Direct via metasearch</text>
+<rect x="150.0" y="80" width="67.0" height="22" fill="#7c6fcd"/>
+<rect x="218.0" y="80" width="89.7" height="22" fill="#267CB9"/>
+<rect x="308.7" y="80" width="44.3" height="22" fill="#2a9d8f"/>
+<text x="359.0" y="95.0" font-size="11" font-weight="600" fill="#333333">$18</text>
+<text x="142" y="129.0" text-anchor="end" font-size="11.5" fill="#333333">Agency via NDC</text>
+<rect x="150.0" y="114" width="44.3" height="22" fill="#7c6fcd"/>
+<rect x="195.3" y="114" width="67.0" height="22" fill="#c0752a"/>
+<rect x="263.3" y="114" width="89.7" height="22" fill="#267CB9"/>
+<rect x="354.0" y="114" width="33.0" height="22" fill="#2a9d8f"/>
+<text x="393.0" y="129.0" font-size="11" font-weight="600" fill="#333333">$21</text>
+<text x="142" y="163.0" text-anchor="end" font-size="11.5" fill="#333333">OTA via GDS</text>
+<rect x="150.0" y="148" width="112.3" height="22" fill="#7c6fcd"/>
+<rect x="263.3" y="148" width="67.0" height="22" fill="#c0752a"/>
+<rect x="331.3" y="148" width="89.7" height="22" fill="#267CB9"/>
+<rect x="422.0" y="148" width="21.7" height="22" fill="#2a9d8f"/>
+<text x="449.7" y="163.0" font-size="11" font-weight="600" fill="#333333">$26</text>
+<text x="142" y="197.0" text-anchor="end" font-size="11.5" fill="#333333">TMC via GDS</text>
+<rect x="150.0" y="182" width="112.3" height="22" fill="#7c6fcd"/>
+<rect x="263.3" y="182" width="89.7" height="22" fill="#c0752a"/>
+<rect x="354.0" y="182" width="89.7" height="22" fill="#267CB9"/>
+<rect x="444.7" y="182" width="21.7" height="22" fill="#2a9d8f"/>
+<text x="472.3" y="197.0" font-size="11" font-weight="600" fill="#333333">$28</text>
+<text x="320.0" y="246" text-anchor="middle" font-size="11" fill="#888888">Cost of sale per $400 ticket (illustrative)</text>
+</svg>
+          <div class="chart-caption">Illustrative orders of magnitude only. Real fees depend on contracts, markets and ticket values, and are rarely public.</div>
+        </div>
+
+        <p>A few dollars per ticket sounds small until it is multiplied by tens of millions of passengers. Moving five percent of a large airline's sales from its most expensive channel to its cheapest can be worth tens of millions a year, with no change to the product at all.</p>
+
+        <h4>A short history of airlines fighting back</h4>
+
+        <p>For decades, airlines paid travel agents a commission on every ticket, typically a percentage of the fare. As online booking grew, carriers cut and capped those commissions, and in March 2002 Delta eliminated base commissions for tickets sold in the United States and Canada, and most other large US carriers soon followed. Agencies moved to charging service fees to their clients and to earning incentives from airlines for hitting volume targets instead.</p>
+
+        <p>The next battle was over GDS fees. On 1 September 2015, the Lufthansa Group began adding a €16 Distribution Cost Charge to tickets booked through a GDS, while its own websites, airport counters and its direct agency portal were exempt. It was a public signal that the airline wanted agencies to move to direct connections, and several other airline groups have since introduced their own surcharges or content differences between channels.</p>
+
+        <div class="example">
+          <div class="example-label">Why an airline doesn't just go direct-only</div>
+          If distribution through agencies is so expensive, why not sell only on your own website? Because the customers who book through agencies are often the most valuable. Corporate travelers booking through a TMC typically fly on higher fares, book late, and fly often. An airline that disappears from agency screens in a big corporate market saves on distribution cost and loses far more in revenue. The goal is almost never to kill a channel; it is to pay each channel what it is actually worth.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 04 ── -->
+        <h3 id="ch04">Chapter 04: NDC &amp; Modern Retailing</h3>
+
+        <p>The GDS model has one deep limitation: the airline does not build the offer. The agency screen assembles it from filed fares, published availability and schedules. That makes it hard to sell anything that doesn't fit the old structure: a bundle, a dynamic price, a personalized offer, a seat with a picture of what you're buying.</p>
+
+        <h4>The New Distribution Capability</h4>
+
+        <p>IATA adopted Resolution 787 in October 2012, launching the <strong>New Distribution Capability</strong> (NDC). NDC is a data standard that lets an agency, or an aggregator acting for many agencies, ask the airline directly for an offer. Instead of the channel constructing the price from filed components, the airline's own system responds with a complete, priced offer: flights, fare, bundle and ancillaries, possibly tailored to who is asking.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th></th><th>Traditional GDS (EDIFACT)</th><th>NDC</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Who builds the offer</strong></td><td>The GDS, from filed fares and availability</td><td>The airline, in real time</td></tr>
+            <tr><td><strong>Ancillaries</strong></td><td>Limited, often sold separately</td><td>Part of the offer</td></tr>
+            <tr><td><strong>Rich content</strong></td><td>Text codes</td><td>Descriptions, images, product attributes</td></tr>
+            <tr><td><strong>Pricing</strong></td><td>Limited to filed fare levels</td><td>Can be continuous or personalized</td></tr>
+            <tr><td><strong>Record</strong></td><td>PNR plus ticket plus separate documents</td><td>Moving towards a single Order</td></tr>
+          </tbody>
+        </table>
+
+        <h4>From offers to orders</h4>
+
+        <p>NDC fixes how the product is offered. The next step fixes how it is recorded. Today a single trip can generate a PNR, a ticket, and several electronic miscellaneous documents (EMDs) for bags and seats, each processed by different systems. IATA's <strong>ONE Order</strong> program aims to replace all of them with a single customer order, the way any online retailer records a purchase. The broader move is often called <strong>Offers and Orders</strong>, or modern airline retailing, and it is the plumbing that the total offer optimization of <a href="/rm101.html#ch08">RM 101, Chapter 08</a> needs.</p>
+
+        <div class="callout">
+          <div class="callout-label">Why it is taking so long</div>
+          NDC changes the economics and the workflow of every agency, GDS and airline system at once. Agencies have to connect to many airlines instead of one GDS, servicing (changes, refunds, disruptions) is harder to standardize than booking, and the old system still works. Adoption has grown steadily, but most airlines will run both worlds side by side for years.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 05 ── -->
+        <h3 id="ch05">Chapter 05: Sales</h3>
+
+        <p>Sales is the part of Commercial that deals with the customers who don't book one ticket at a time: corporations, travel agencies, tour operators, groups. It is a relationship business built on negotiated deals, and it is where a large share of high-yield revenue comes from.</p>
+
+        <h4>Corporate sales</h4>
+
+        <p>A large company may spend tens of millions a year on air travel. Its travel manager negotiates with airlines for discounts, waived fees or other benefits in exchange for directing a share of its travel to them. A typical corporate deal says: we will give you a discount on these routes and these fare families, as long as you give us at least a given share of your travel in those markets. The airline's side of the question is always the same: is the discount paying for extra traffic, or am I discounting travel I would have got anyway? That is the incrementality problem from <a href="/loyalty101.html#ch09">Loyalty 101, Chapter 09</a>, in a different setting.</p>
+
+        <h4>Fair share</h4>
+
+        <p>To judge whether a client or a market is performing, airlines compare the share of traffic they actually get against the share they "should" get given their schedule. The expected share comes from a <strong>Quality of Service Index</strong> (QSI), a model that scores each airline's itineraries by frequency, nonstop versus connection, departure times, elapsed time and aircraft.</p>
+
+        <div class="formula">
+          <div class="formula-label">Fair share index</div>
+          \[\text{FSI} = \frac{\text{actual passenger share}}{\text{QSI share}}\]
+          <div class="note">Above 1: the airline wins more than its schedule suggests (strong brand, sales effort, loyalty). Below 1: it is underperforming its product.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">Reading a corporate account</div>
+          In a market between two cities, our schedule earns a QSI share of 45%. Across all travelers, we carry 44% of passengers, a fair share index of about 0.98: in line with our product.<br><br>
+          A large corporate client, based at our end of the route, flies 6,000 trips a year in that market, and only 1,500 of them with us: 25%, a fair share index of 0.56. The gap between 25% and 45% is 1,200 trips a year. That is the size of the opportunity a sales manager brings to the negotiation, and it tells the pricing team how big a discount could be worth offering.
+        </div>
+
+        <h4>Agencies, tour operators and GSAs</h4>
+
+        <p>Airlines sign incentive agreements with major agencies and TMCs, paying bonuses for growing their share or hitting revenue targets. Tour operators buy seats, often in blocks, to package with hotels. In markets where an airline has no local office, it often appoints a <strong>General Sales Agent</strong> (GSA) to represent and sell it for a commission. And the <strong>point of sale</strong>, the country where a ticket is sold, matters: the same flight can be priced differently in Toronto and in Paris, because the competition and the customer are different in each.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 06 ── -->
+        <h3 id="ch06">Chapter 06: E-commerce</h3>
+
+        <p>The airline's own website and app are its cheapest and most controllable channel, and for many airlines the largest. They are also a retail business with its own discipline: traffic, conversion, basket size, and the constant tuning of an online store.</p>
+
+        <h4>Look-to-book and the funnel</h4>
+
+        <p>Airline shopping is extremely search-heavy. Customers search many dates and routes before buying, and machines search even more on behalf of metasearch and agency sites. The ratio of searches to bookings, the <strong>look-to-book ratio</strong>, can easily run into the hundreds or thousands across all channels, and every search costs computing power. On the airline's own site, the path from search to booking is a funnel where every step loses people.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustrative booking funnel: one million searches lead to eighteen thousand bookings, a conversion rate of 1.8 percent" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<text x="162" y="31.0" text-anchor="end" font-size="11.5" fill="#333333">Flight searches</text>
+<rect x="170" y="14" width="280.0" height="26" fill="#267CB9" fill-opacity="1.0"/>
+<text x="456.0" y="31.0" font-size="11" fill="#333333">1,000,000<tspan fill="#888888"></tspan></text>
+<text x="162" y="65.0" text-anchor="end" font-size="11.5" fill="#333333">Viewed a result</text>
+<rect x="170" y="48" width="117.6" height="26" fill="#267CB9" fill-opacity="0.9"/>
+<text x="293.6" y="65.0" font-size="11" fill="#333333">420,000<tspan fill="#888888">  (42%)</tspan></text>
+<text x="162" y="99.0" text-anchor="end" font-size="11.5" fill="#333333">Selected a fare</text>
+<rect x="170" y="82" width="36.4" height="26" fill="#267CB9" fill-opacity="0.8"/>
+<text x="212.4" y="99.0" font-size="11" fill="#333333">130,000<tspan fill="#888888">  (31%)</tspan></text>
+<text x="162" y="133.0" text-anchor="end" font-size="11.5" fill="#333333">Entered passenger details</text>
+<rect x="170" y="116" width="13.4" height="26" fill="#267CB9" fill-opacity="0.7"/>
+<text x="189.4" y="133.0" font-size="11" fill="#333333">48,000<tspan fill="#888888">  (37%)</tspan></text>
+<text x="162" y="167.0" text-anchor="end" font-size="11.5" fill="#333333">Reached payment</text>
+<rect x="170" y="150" width="7.3" height="26" fill="#267CB9" fill-opacity="0.6"/>
+<text x="183.3" y="167.0" font-size="11" fill="#333333">26,000<tspan fill="#888888">  (54%)</tspan></text>
+<text x="162" y="201.0" text-anchor="end" font-size="11.5" fill="#333333">Booked</text>
+<rect x="170" y="184" width="5.0" height="26" fill="#7c6fcd" fill-opacity="1"/>
+<text x="181.0" y="201.0" font-size="11" fill="#333333">18,000<tspan fill="#888888">  (69%)</tspan></text>
+</svg>
+          <div class="chart-caption">An illustrative month on an airline website: 1.8% of searches turn into a booking, a look-to-book ratio of about 55 to 1. Percentages are step-to-step conversion.</div>
+        </div>
+
+        <p>Each drop-off is a question. Did people leave the results page because the price was wrong, or because the page was slow? Did they abandon at payment because their card was declined or because a surprise fee appeared? E-commerce teams answer these with analytics and <strong>A/B tests</strong>: show half the visitors one version of a page and half another, and measure which converts better.</p>
+
+        <div class="example">
+          <div class="example-label">Small percentages, big money</div>
+          If this site takes $500 per booking, the month above is worth $9 million. Lifting conversion at the payment step from 69% to 72%, for example by accepting a popular local payment method, adds about 720 bookings, or roughly $360,000 a month, with no extra traffic.
+        </div>
+
+        <h4>Getting traffic</h4>
+
+        <p>Visitors reach the site through a mix of paths: typing the airline's name, search engine results (paid and unpaid), metasearch referrals, emails, and the app. Each path has a cost, and the mix matters. A customer who opens the app directly costs almost nothing to acquire; one who clicks a metasearch ad costs a referral fee every time. The loyalty program (<a href="/loyalty101.html">Loyalty 101</a>) is one of the most powerful tools for pulling customers into the cheapest paths, because members have a reason to log in and book direct.</p>
+
+        <h4>Personalization</h4>
+
+        <p>Direct channels know more about the customer than any other channel: whether they are logged in, their status, their past trips, what they searched yesterday. That knowledge can shape what they see: which fare family is highlighted, which ancillary is offered first, which destination appears on the homepage. Done well, it makes the store easier to use and raises revenue. Done badly, it feels intrusive or unfair, which is why most airlines are careful to personalize the offer and the presentation long before they touch the price.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 07 ── -->
+        <h3 id="ch07">Chapter 07: Ancillaries &amp; Merchandising</h3>
+
+        <p>Ancillary revenue is everything an airline sells beyond the base fare: bags, seats, priority boarding, lounge access, Wi-Fi, upgrades, and commissions on hotels, cars and insurance. CarTrawler and IdeaWorksCompany projected airline ancillary revenue at $148.4 billion worldwide for 2024, up from about $118 billion in 2023. <a href="/rm101.html#ch08">RM 101, Chapter 08</a> tells the story of unbundling; here the focus is on how the selling works.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Type</th><th>Examples</th><th>Commercial logic</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Unbundled services</strong></td><td>Checked bags, seat selection, changes</td><td>Charge those who value it; keep the headline fare low</td></tr>
+            <tr><td><strong>Upsell</strong></td><td>Fare family step-up, extra legroom, paid upgrade</td><td>Sell a better version of what they are already buying</td></tr>
+            <tr><td><strong>Convenience</strong></td><td>Priority boarding, fast track, lounge pass, Wi-Fi</td><td>Sell time and comfort at the moment it matters</td></tr>
+            <tr><td><strong>Third party</strong></td><td>Hotels, cars, insurance, transfers</td><td>Earn a commission on the rest of the trip</td></tr>
+            <tr><td><strong>Loyalty</strong></td><td>Points purchases, co-brand card sign-ups</td><td>See <a href="/loyalty101.html">Loyalty 101</a></td></tr>
+          </tbody>
+        </table>
+
+        <h4>Merchandising: when and how to offer</h4>
+
+        <p>Selling ancillaries is less about the price list and more about the moment. The same seat upgrade sells very differently when offered during booking, in a pre-trip email, at check-in, or at the gate. Merchandising teams design that sequence, decide which offers appear together, and increasingly price them dynamically: an extra-legroom seat on a nearly full long-haul flight is worth more than the same seat on a half-empty short one.</p>
+
+        <p>In the indirect channel, ancillaries have historically been hard to sell because the GDS could not display them well; that is one of the strongest arguments for NDC. Behind the scenes, most are still recorded as EMDs, electronic miscellaneous documents that sit alongside the ticket.</p>
+
+        <div class="callout">
+          <div class="callout-label">The trust line</div>
+          Ancillaries work when the customer feels they chose them. Fees that appear late in the funnel, are hard to find, or feel like a penalty damage the brand and increasingly attract regulators. The best merchandising is transparent about what is included from the first search result.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 08 ── -->
+        <h3 id="ch08">Chapter 08: Payment &amp; Settlement</h3>
+
+        <p>Payment is the least glamorous part of Commercial and one of the most expensive. Every sale has to be collected, in dozens of currencies and payment methods, often months before the airline delivers anything, and the cost of getting it wrong shows up as fees, fraud and failed bookings.</p>
+
+        <h4>How a card payment works</h4>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Card payment flow: authorization goes from the customer through the airline, acquirer and card network to the issuer; funds settle back days later, minus fees" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs><marker id="mE" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#999"/></marker></defs>
+<rect x="10" y="70" width="85" height="50" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="52.5" y="92.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Customer</text>
+<text x="52.5" y="108.0" text-anchor="middle" font-size="11" fill="#888888">cardholder</text>
+<rect x="115" y="70" width="85" height="50" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="157.5" y="92.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Airline</text>
+<text x="157.5" y="108.0" text-anchor="middle" font-size="11" fill="#888888">merchant</text>
+<rect x="220" y="70" width="85" height="50" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="262.5" y="92.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Acquirer</text>
+<text x="262.5" y="108.0" text-anchor="middle" font-size="11" fill="#888888">airline's bank</text>
+<rect x="325" y="70" width="85" height="50" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="367.5" y="92.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Card network</text>
+<text x="367.5" y="108.0" text-anchor="middle" font-size="11" fill="#888888">the scheme</text>
+<rect x="430" y="70" width="85" height="50" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="472.5" y="92.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Issuer</text>
+<text x="472.5" y="108.0" text-anchor="middle" font-size="11" fill="#888888">card's bank</text>
+<line x1="97" y1="84" x2="112" y2="84" stroke="#267CB9" stroke-width="1.4" marker-end="url(#mE)"/>
+<line x1="113" y1="106" x2="98" y2="106" stroke="#2a9d8f" stroke-width="1.4" marker-end="url(#mE)"/>
+<line x1="202" y1="84" x2="217" y2="84" stroke="#267CB9" stroke-width="1.4" marker-end="url(#mE)"/>
+<line x1="218" y1="106" x2="203" y2="106" stroke="#2a9d8f" stroke-width="1.4" marker-end="url(#mE)"/>
+<line x1="307" y1="84" x2="322" y2="84" stroke="#267CB9" stroke-width="1.4" marker-end="url(#mE)"/>
+<line x1="323" y1="106" x2="308" y2="106" stroke="#2a9d8f" stroke-width="1.4" marker-end="url(#mE)"/>
+<line x1="412" y1="84" x2="427" y2="84" stroke="#267CB9" stroke-width="1.4" marker-end="url(#mE)"/>
+<line x1="428" y1="106" x2="413" y2="106" stroke="#2a9d8f" stroke-width="1.4" marker-end="url(#mE)"/>
+<text x="260" y="40" text-anchor="middle" font-size="11.5" fill="#267CB9">1. Authorization request: is the card valid, are funds available?</text>
+<text x="260" y="56" text-anchor="middle" font-size="10.5" fill="#888888">(seconds, while the customer waits)</text>
+<text x="260" y="148" text-anchor="middle" font-size="11.5" fill="#2a9d8f">2. Approval, then settlement of funds back to the airline</text>
+<text x="260" y="164" text-anchor="middle" font-size="10.5" fill="#888888">(days later, minus interchange, network and acquirer fees)</text>
+<text x="260" y="194" text-anchor="middle" font-size="10.5" fill="#c0752a">3. The customer flies weeks or months later; the risk of a refund or chargeback lasts until then</text>
+</svg>
+          <div class="chart-caption">A card payment on the airline's own website, simplified.</div>
+        </div>
+
+        <p>When a customer pays by card on the airline's site, the airline is the <strong>merchant</strong>. Its bank, the <strong>acquirer</strong>, sends the request through the card network to the customer's bank, the <strong>issuer</strong>, which approves or declines it. Each party takes a share: the issuer's interchange fee, the network's scheme fees, and the acquirer's margin, together often called the merchant discount rate. Premium and corporate cards, and cards issued in another country than where the sale happens, usually cost more to accept.</p>
+
+        <div class="example">
+          <div class="example-label">The cost of taking $1,000</div>
+          A customer pays $1,000 with a premium card issued abroad. The combined fees come to 2.4%, or $24. The airline also pays a fraud screening fee of $0.30 and loses about $2 on currency conversion. Its net receipt is about $974, and the money arrives a few days later. Across a large airline's annual sales, a fraction of a percentage point on acceptance costs is worth many millions.
+        </div>
+
+        <h4>What makes airline payments special</h4>
+
+        <p><strong>Sell now, deliver later.</strong> An airline takes the customer's money weeks or months before the flight. If the airline stops flying before then, the card issuer may have to refund the customer. That is why card acquirers treat airlines as high-risk merchants and may hold back part of the cash until the flights have flown, especially when the airline is financially weak.</p>
+
+        <p><strong>Fraud.</strong> Airline tickets are an attractive target for stolen cards: they are valuable, easy to resell and consumed quickly. Airlines screen transactions with risk scoring, and use strong customer authentication (such as 3-D Secure) where regulation requires it or the risk is high. Every rule that blocks a fraudster also blocks some genuine customers, so fraud teams tune a trade-off between losses and lost sales.</p>
+
+        <p><strong>Chargebacks.</strong> A customer can dispute a card transaction with their bank. The airline then has to prove the service was delivered, or refund. Flight disruptions can trigger waves of them.</p>
+
+        <p><strong>Local payment methods.</strong> Cards are not how everyone pays. Bank transfers, digital wallets and national schemes dominate in many countries, and "buy now, pay later" has become common for leisure travel. Supporting the methods customers expect in each point of sale is one of the simplest ways to raise conversion.</p>
+
+        <h4>Agency sales: BSP and ARC</h4>
+
+        <p>When a travel agency sells a ticket, the money usually flows through a settlement system rather than a card network. In most of the world it is IATA's <strong>Billing and Settlement Plan</strong> (BSP), and in the United States the Airlines Reporting Corporation (<strong>ARC</strong>). The agency reports its sales for a period, the system nets out what each agency owes each airline (minus any commissions), and settles it in one payment. It spares thousands of agencies and airlines from invoicing each other individually, and it is one of the quiet pieces of infrastructure that makes indirect distribution possible.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 09 ── -->
+        <h3 id="ch09">Chapter 09: Interline, Codeshare &amp; Alliances</h3>
+
+        <p><a href="/np101.html#ch09">NP 101, Chapter 09</a> explains the partnership ladder from a network point of view: interline, codeshare, alliance, joint venture. The commercial questions are different: who sells the seat, who gets which part of the fare, and how the customer experiences a trip on two airlines as one.</p>
+
+        <h4>Interline and prorate</h4>
+
+        <p>On an <strong>interline</strong> itinerary, one airline sells a ticket that includes a flight on another. The customer pays one fare, and the airlines then have to split it. That split is called <strong>proration</strong>. The default rules, set through IATA, share the fare in proportion to each segment's weight, which is based on distance but adjusted so that short sectors get somewhat more than their pure mileage share. Partners often override the default with bilateral <strong>special prorate agreements</strong> (SPAs).</p>
+
+        <div class="example">
+          <div class="example-label">Splitting a fare</div>
+          A customer buys an $800 ticket from city A to city C, connecting at B. The first flight (A–B, 500 km) is ours; the long flight (B–C, 3,500 km) is our partner's.<br><br>
+          Straight mileage prorate: A–B gets 500 / 4,000 = 12.5%, or $100. B–C gets $700.<br>
+          With weighted prorate factors that give short sectors more, A–B might get $160 and B–C $640.<br><br>
+          Our $160 has to cover the cost of carrying the passenger on a flight whose local fares might average $180. Whether this partnership traffic is worth accepting is the same displacement question as in <a href="/rm101.html#ch06">RM 101, Chapter 06</a>: it depends on what else that seat could have sold for.
+        </div>
+
+        <h4>Codeshare</h4>
+
+        <p>On a <strong>codeshare</strong> flight, one airline operates the aircraft (the <em>operating carrier</em>) and one or more partners sell seats on it under their own flight numbers (the <em>marketing carriers</em>). For the marketing carrier, it adds destinations to its shop window without flying there; for the operating carrier, it adds sales power in the partner's home market. Commercially, codeshares come in two main flavours: <strong>free-sale</strong>, where the marketing carrier sells from the operator's inventory and the revenue is shared by prorate, and <strong>block space</strong>, where the marketing carrier buys a fixed number of seats and takes the risk of selling them.</p>
+
+        <h4>Alliances and joint ventures</h4>
+
+        <p>An alliance adds a common customer promise: reciprocal loyalty earning and status recognition, lounge access, through check-in, coordinated connections. A <strong>joint venture</strong> goes further. On a defined set of routes, usually long-haul corridors, partners plan capacity together, price and sell each other's flights as if they were one airline, and share the combined revenue or profit according to a formula. Because that is close to a merger, it usually needs antitrust immunity from competition regulators. The commercial payoff is that the partners stop competing with each other on the corridor, and every sales team sells the whole joint network.</p>
+
+        <div class="callout">
+          <div class="callout-label">Metal neutrality</div>
+          Inside a well-functioning joint venture, the partners are "metal neutral": each sales team is indifferent to whose aircraft the customer flies on, because the revenue is pooled. Without that, a salesperson always has an incentive to push their own airline's flights even when a partner's schedule suits the customer better.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 10 ── -->
+        <h3 id="ch10">Chapter 10: Marketing &amp; Brand</h3>
+
+        <p>Airline marketing works on two time horizons. <strong>Brand</strong> marketing is slow: it shapes what people think of the airline, which matters every time they choose between two similar flights at similar prices. <strong>Performance</strong> marketing is fast: search ads, metasearch bids, social campaigns and emails that aim to produce a booking this week, measured by what they cost per booking.</p>
+
+        <h4>Brand and positioning</h4>
+
+        <p>Airlines position themselves along a few dimensions: price (low-cost versus full-service), network (the national carrier, the hub of choice), and experience (premium cabins, service, reliability). A strong brand earns a <strong>price premium</strong>: customers are willing to pay a little more, or to accept a slightly worse schedule, to fly with you. It shows up in the fair share index of Chapter 05 as a share above what the schedule alone would predict.</p>
+
+        <h4>Performance marketing and attribution</h4>
+
+        <p>The hard problem in performance marketing is <strong>attribution</strong>: when a customer saw a social ad, clicked a search ad a week later, and finally booked from an email, which one caused the booking? Simple rules (credit the last click) overvalue channels that catch customers who were already about to buy. Better approaches run controlled experiments, turning a campaign off in some regions or for a random group of customers and measuring the difference. It is the same incrementality logic as in loyalty and corporate sales, and it is the only reliable way to know which marketing dollars actually work.</p>
+
+        <h4>CRM and loyalty</h4>
+
+        <p>Customer relationship management (CRM) uses what the airline knows about its customers to talk to them one by one: a reminder when a fare to a city they searched drops, an upgrade offer before a long flight, a win-back campaign for someone who stopped flying. The loyalty program is the backbone of it, because it is the reason customers identify themselves. <a href="/loyalty101.html#ch08">Loyalty 101, Chapter 08</a> covers segmentation and lifetime value in more depth.</p>
+
+        <h4>The airline as a media company</h4>
+
+        <p>A newer idea is to sell access to the airline's audience to other brands. In June 2024 United launched Kinective Media, which it described as the airline industry's first media network, using its app, website and seatback screens to show targeted advertising. The logic is the same as retail media at big retailers: travelers are a valuable audience, and the airline knows a lot about where they are going.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 11 ── -->
+        <h3 id="ch11">Chapter 11: After the Sale</h3>
+
+        <p>For most retailers, the sale is the end of the transaction. For an airline it is the start: between booking and flying, customers change dates, add bags, ask for refunds, and, when things go wrong, need to be rebooked. How well the airline handles this <strong>servicing</strong> shapes whether the customer comes back, and it costs real money.</p>
+
+        <h4>Voluntary changes</h4>
+
+        <p>When a customer changes their trip, the new itinerary has to be repriced under the rules of the original fare (Cat 16 in Chapter 01), any difference collected or refunded, and the ticket reissued. It is one of the most complex operations in airline IT, especially for tickets sold by agencies, and one of the reasons servicing is the hardest part of NDC to get right.</p>
+
+        <h4>Disruptions</h4>
+
+        <p>When a flight is cancelled or badly delayed, the airline has to reaccommodate every affected passenger, ideally automatically, before they reach a counter. The commercial side of this is about priorities (who gets the last seats on the next flight: the connecting business traveler, the family, the top-tier member?), about cost (hotels, meals, rebooking on other airlines), and about regulation.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Region</th><th>Framework</th><th>Main idea</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>European Union</strong></td><td>Regulation (EC) 261/2004</td><td>Care, rerouting or refund, plus fixed compensation for long delays and cancellations within the airline's control</td></tr>
+            <tr><td><strong>Canada</strong></td><td>Air Passenger Protection Regulations (in force in phases in 2019, since amended)</td><td>Similar obligations, with compensation that depends on the airline's size and the length of the delay</td></tr>
+            <tr><td><strong>United States</strong></td><td>DOT consumer rules</td><td>Focus on refunds when flights are cancelled or significantly changed</td></tr>
+          </tbody>
+        </table>
+
+        <p>These rules turn disruption into a direct cost line, which is why commercial and operations teams increasingly work together on recovery (see <a href="/or101.html#ch09">OR 101, Chapter 09</a>).</p>
+
+        <h4>Self-service</h4>
+
+        <p>Every change handled in the app instead of by a contact centre agent saves money and, usually, frustrates the customer less. Much of an airline's digital investment goes into making changes, refunds, rebooking and seat selection work without a human, and into giving agents better tools for the cases that still need one.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 12 ── -->
+        <h3 id="ch12">Chapter 12: Measuring the Commercial Engine</h3>
+
+        <p>Commercial performance is tracked with a handful of metrics that every airline uses in some form. The unit metrics of <a href="/np101.html#ch02">NP 101, Chapter 02</a> measure how well the network earns; the ones below add how well it sells.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Metric</th><th>Definition</th><th>What it tells you</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>PRASM / RASK</strong></td><td>Passenger revenue per available seat mile (or km)</td><td>Overall commercial productivity of the capacity</td></tr>
+            <tr><td><strong>Yield</strong></td><td>Revenue per revenue passenger mile</td><td>Average price paid, adjusted for distance</td></tr>
+            <tr><td><strong>Load factor</strong></td><td>Share of seats filled</td><td>Volume; combined with yield it gives PRASM</td></tr>
+            <tr><td><strong>Fair share index</strong></td><td>Actual share / QSI share</td><td>Commercial strength beyond the schedule</td></tr>
+            <tr><td><strong>Ancillary revenue per passenger</strong></td><td>Ancillary revenue / passengers</td><td>Merchandising performance</td></tr>
+            <tr><td><strong>Direct share</strong></td><td>Share of revenue sold through own channels</td><td>Channel strategy and loyalty engagement</td></tr>
+            <tr><td><strong>Cost of sale</strong></td><td>Distribution + payment + commission costs / revenue</td><td>How much of each dollar reaches the airline</td></tr>
+            <tr><td><strong>Conversion rate</strong></td><td>Bookings / sessions or searches</td><td>E-commerce performance</td></tr>
+            <tr><td><strong>NPS</strong></td><td>Share of promoters minus share of detractors</td><td>Whether customers would recommend you</td></tr>
+          </tbody>
+        </table>
+
+        <div class="formula">
+          <div class="formula-label">The unit revenue identity</div>
+          \[\text{PRASM} = \frac{\text{Passenger revenue}}{\text{ASM}} = \underbrace{\frac{\text{Revenue}}{\text{RPM}}}_{\text{yield}} \times \underbrace{\frac{\text{RPM}}{\text{ASM}}}_{\text{load factor}}\]
+          <div class="note">Every movement in unit revenue comes from price, from volume, or from both. Commercial reviews usually start by splitting a change in PRASM into those two parts.</div>
+        </div>
+
+        <div class="formula">
+          <div class="formula-label">Net revenue</div>
+          \[\text{Net revenue} = \text{Gross revenue} \times (1 - \text{cost of sale \%})\]
+          <div class="note">Two channels with the same gross revenue can deliver very different net revenue. Channel decisions should be made on net, not gross.</div>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 13 ── -->
+        <h3 id="ch13">Chapter 13: What's Next</h3>
+
+        <p>Airline commercial is in the middle of the biggest change in how it sells since the GDS. A few directions stand out.</p>
+
+        <h4>Airlines as retailers</h4>
+
+        <p>Offers and orders, dynamic pricing and rich content all push in the same direction: airlines building and selling their own products the way other retailers do, instead of filing components for others to assemble. The technology is arriving slowly, but the destination is clear, and it changes the job of every commercial team. Pricing, RM and merchandising start to look like one function.</p>
+
+        <h4>Personalization, carefully</h4>
+
+        <p>Airlines know more about their customers than almost any retailer, and they will use it more: tailored bundles, relevant ancillaries, better servicing. The limits are trust and regulation. Personalizing the offer is widely accepted; personalizing the price is not, and the industry is feeling its way along that line.</p>
+
+        <h4>AI in the shopping journey</h4>
+
+        <p>Customers are starting to plan and book trips through AI assistants rather than search boxes. If an assistant, not a person, compares the options, the airline's product has to be described in data that a machine can read and compare, and distribution may shift once again to whoever controls that assistant.</p>
+
+        <h4>Payments without cards</h4>
+
+        <p>Account-to-account payments, digital wallets and local instant payment schemes are growing fast. For airlines, they can mean lower acceptance costs and faster cash, if they can be offered without adding friction.</p>
+
+        <p>Anyway, that's the overview. If something here was unclear or you want to go deeper on any chapter, feel free to reach out. I find this stuff genuinely fascinating, and I'm always happy to talk about it.</p>
+
+        <p><hr/></p>
+
+        <h4>Sources for the historical facts</h4>
+
+        <p><small>
+          ATPCO: <a href="https://en.wikipedia.org/wiki/ATPCO">Wikipedia, ATPCO</a>.<br>
+          SABRE: <a href="https://www.computerhistory.org/revolution/mainframe-computers/7/176/702">Computer History Museum, SABRE</a>; <a href="https://en.wikipedia.org/wiki/Sabre_Corporation">Wikipedia, Sabre Corporation</a>.<br>
+          Amadeus: <a href="https://en.wikipedia.org/wiki/Amadeus_IT_Group">Wikipedia, Amadeus IT Group</a>.<br>
+          100% e-ticketing: <a href="https://en.wikipedia.org/wiki/Electronic_ticket">Wikipedia, Electronic ticket</a>.<br>
+          Delta and agent commissions: <a href="https://money.cnn.com/2002/03/15/news/companies/delta/">CNN Money, "Delta halts travel agent commissions"</a>, March 2002.<br>
+          Lufthansa Group Distribution Cost Charge: <a href="https://www.travelweekly.com/Travel-News/Airline-News/Lufthansa-to-charge-fee-for-GDS-bookings">Travel Weekly, "Lufthansa to add surcharge for GDS bookings"</a>, 2015.<br>
+          NDC and Resolution 787: <a href="https://www.iata.org/en/programs/airline-distribution/retailing/ndc/">IATA, Distribution with Offers &amp; Orders</a>.<br>
+          Ancillary revenue: <a href="https://ideaworkscompany.com/airline-ancillary-revenue-skyrockets-to-148-4-billion-worldwide-for-2024-press-release/">IdeaWorksCompany and CarTrawler, 2024 worldwide estimate</a>.<br>
+          Kinective Media: <a href="https://united.mediaroom.com/2024-06-07-United-Launches-Airline-Industrys-First-Media-Network">United Airlines press release</a>, June 2024.<br>
+          Canadian passenger rights: <a href="https://otc-cta.gc.ca/eng/air-passenger-protection-regulations">Canadian Transportation Agency, Air Passenger Protection Regulations</a>.
+        </small></p>
+
+      </section>
+
+      <footer>
+      </footer>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+      // ── Active sidebar highlight on scroll ──
+      const chapters = document.querySelectorAll('h3[id]');
+      const navLinks = document.querySelectorAll('#toc a');
+
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px' });
+
+      chapters.forEach(ch => obs.observe(ch));
+    </script>
+  </body>
+</html>
