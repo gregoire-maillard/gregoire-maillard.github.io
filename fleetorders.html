@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Fleet orders &amp; backlog</title>
+    <meta name="description" content="What each airline has on order from Airbus and Boeing, when it's arriving, how old its fleet is, and what it could look like in 2030.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / acfleet.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        --airbus: #2a7fb5;
+        --airbus-l: #9cc3dd;
+        --boeing: #d9480f;
+        --other: #b3b8bf;
+        --warn-ink: #7a5a1f;
+        --warn-bg: #fffaf1;
+        --warn-line: #f0dcb8;
+      }
+
+      .top-bar { padding: 18px 30px 14px; border-bottom: 1px solid var(--line); background: #fff; }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content { max-width: 1280px; margin: 0 auto; padding: 26px 30px 60px; }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .stamp { color: var(--muted); font-size: 12px; margin-top: 8px; }
+      .loading { padding: 80px 20px; text-align: center; color: var(--muted); }
+
+      /* ── Airline switcher ── */
+      .switch { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 22px 0 0; }
+      .views { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff; flex-wrap: wrap; gap: 2px; }
+      .views button { border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .switch select, .ctl select {
+        font: inherit; font-size: 13px; color: var(--ink); border: 1px solid var(--line); border-radius: 6px;
+        padding: 6px 9px; background: #fff; max-width: 100%;
+      }
+      .switch select.on { border-color: var(--ink); }
+
+      .airline-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 22px 0 0; }
+      .airline-head h3 { margin: 0; font-size: 20px; color: var(--ink); }
+      .airline-head .where { color: var(--muted); font-size: 13px; }
+      .airline-head a.live { font-size: 13px; margin-left: auto; }
+      .tag { display: inline-block; font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; color: var(--muted); vertical-align: 2px; }
+
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: var(--warn-ink); background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 8px; padding: 8px 12px; max-width: 900px; line-height: 1.5; }
+      .note-line:empty { display: none; }
+      .note-line p { margin: 0; }
+      .note-line p + p { margin-top: 4px; }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 18px 0 16px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile b { display: block; font-size: 26px; font-weight: 500; color: var(--ink); line-height: 1.1; font-variant-numeric: tabular-nums; }
+      .tile b.na { font-size: 16px; color: var(--muted); font-weight: 400; line-height: 1.6; }
+      .tile span { font-size: 12px; }
+      .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; background: var(--c); margin-right: 5px; vertical-align: 0; }
+
+      /* ── Controls ── */
+      .controls { display: flex; flex-wrap: wrap; gap: 12px 26px; align-items: center; padding: 10px 14px; margin: 0 0 16px;
+        border: 1px solid var(--line); border-radius: 8px; background: var(--soft); }
+      .controls:empty { display: none; }
+      .ctl { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); flex-wrap: wrap; }
+      .ctl b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; min-width: 36px; }
+      .ctl input[type=number] { font: inherit; font-size: 13px; width: 58px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: #fff; }
+      .ctl input[type=range] { width: 160px; accent-color: var(--ink); }
+      .ctl small { color: var(--muted); font-size: 11.5px; flex-basis: 100%; }
+
+      /* ── Panels & charts ── */
+      .panels { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+      .panel { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px 12px; background: #fff; min-width: 0; }
+      .panel h4 { margin: 0 0 2px; font-size: 14.5px; color: var(--ink); }
+      .panel .sub { color: var(--muted); font-size: 12px; margin: 0 0 10px; line-height: 1.45; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart .empty { color: var(--muted); font-size: 12.5px; padding: 18px 0; }
+      .chart text { font-family: inherit; }
+      .chart .lab { font-size: 12px; fill: #333; }
+      .chart .lab.link { cursor: pointer; }
+      .chart .lab.link:hover { fill: var(--link); text-decoration: underline; }
+      .chart .lab.dim { fill: var(--muted); font-style: italic; }
+      .chart .val { font-size: 11.5px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .chart .axis text { font-size: 11px; fill: var(--muted); }
+      .chart .axis path { display: none; }
+      .chart .axis line { stroke: #eee; }
+      .chart .nodata { fill: url(#hatch); }
+      .chart .hit { fill: transparent; cursor: default; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11.5px; color: var(--text); margin-top: 8px; }
+      .legend .hatch { display: inline-block; width: 12px; height: 9px; margin-right: 5px; background: repeating-linear-gradient(135deg, #e3e3e3 0 2px, #fff 2px 5px); border: 1px solid #e3e3e3; vertical-align: -1px; }
+
+      .tip { position: fixed; pointer-events: none; z-index: 20; background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08); padding: 9px 12px; font-size: 12.5px; color: var(--text); line-height: 1.45; max-width: 300px; display: none; }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13.5px; }
+      .tip table { border-collapse: collapse; margin-top: 4px; }
+      .tip td { padding: 1px 0; }
+      .tip td.n { text-align: right; padding-left: 14px; color: var(--ink); font-variant-numeric: tabular-nums; }
+      .tip .st { margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11.5px; }
+
+      /* ── Table ── */
+      .table-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 26px 0 8px; flex-wrap: wrap; }
+      .table-head h4 { margin: 0; font-size: 15px; color: var(--ink); }
+      .table-head span { color: var(--muted); font-size: 12px; }
+      .tbl-wrap { overflow-x: auto; border-top: 1px solid var(--line); }
+      table.fleet { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 640px; }
+      table.fleet th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+      table.fleet td { padding: 7px 10px; border-bottom: 1px solid #f1f1f1; color: var(--text); }
+      table.fleet td.num, table.fleet th.num { text-align: right; font-variant-numeric: tabular-nums; }
+      table.fleet td.type { color: var(--ink); white-space: nowrap; }
+      table.fleet td.type small { color: var(--muted); font-size: 11px; margin-left: 4px; }
+      table.fleet td.up { color: #1f6f43; }
+      table.fleet td.down { color: #b23c0c; }
+      table.fleet td.big { color: var(--ink); font-weight: 600; }
+      table.fleet tfoot td { border-top: 1px solid var(--line); border-bottom: 0; color: var(--ink); font-weight: 600; }
+      table.fleet tbody tr:hover { background: var(--soft); }
+      .group { margin-top: 22px; }
+      .group ul { list-style: none; margin: 0; padding: 0; }
+      .group li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 7px 0; border-top: 1px solid #f0f0f0; font-size: 13px; }
+      .group li .nm { color: var(--ink); }
+      .group li .nm small { display: block; color: var(--muted); font-size: 11.5px; }
+      .group li .px { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+      .section-title { margin: 46px 0 0; padding-top: 22px; border-top: 1px solid var(--line); }
+      .section-title h3 { margin: 0 0 4px; font-size: 20px; color: var(--ink); }
+      .section-title p { margin: 0; max-width: 780px; }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+      .chip { border: 1px solid var(--line); background: #fff; color: var(--text); border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer; }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .split { height: 14px; display: flex; border-radius: 4px; overflow: hidden; margin: 8px 0 4px; gap: 2px; }
+      .split div { height: 100%; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method p { margin: 0 0 8px; }
+      .method .formula { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; color: var(--ink); overflow-x: auto; white-space: nowrap; }
+
+      @media (max-width: 980px) {
+        .panels { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 22px; }
+        .views { display: flex; border-radius: 10px; width: 100%; }
+        .views button { flex: 1 1 auto; border-radius: 8px; padding: 6px 8px; }
+        .switch select { width: 100%; }
+        .airline-head a.live { margin-left: 0; flex-basis: 100%; }
+        .ctl input[type=range] { width: 100%; flex: 1 1 140px; }
+        /* Table becomes one card per aircraft type */
+        .tbl-wrap { overflow: visible; }
+        table.fleet { min-width: 0; }
+        table.fleet thead { display: none; }
+        table.fleet, table.fleet tbody, table.fleet tfoot, table.fleet tr, table.fleet td { display: block; width: 100%; box-sizing: border-box; }
+        table.fleet tr { padding: 8px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; }
+        table.fleet td { border: 0; padding: 2px 0; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+        table.fleet td.type { grid-column: 1 / -1; }
+        table.fleet td::before { content: attr(data-label); color: var(--muted); font-size: 12px; font-weight: 400; }
+        table.fleet td.type { font-weight: 600; padding-bottom: 4px; }
+        table.fleet td.type::before { content: none; }
+        table.fleet tfoot td { border: 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>Who has ordered what from Airbus and Boeing, and what will their fleets look like?</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Fleet orders &amp; backlog</h2>
+        <p>What each airline has on order from Airbus and Boeing, how many it has taken each year, and how old its fleet is. Change the retirement age or the delivery pace to see what the fleet could look like in 2030.</p>
+        <div class="stamp" id="stamp"></div>
+      </div>
+
+      <div id="app"><div class="loading">Loading order books…</div></div>
+
+      <div class="method">
+        <h3>How it works</h3>
+        <p><b>Order books.</b> Airbus publishes a monthly <a id="m-airbus" href="https://www.airbus.com/en/products-services/commercial-aircraft/orders-and-deliveries" target="_blank" rel="noopener">Orders &amp; Deliveries workbook</a>. Its <i>Worldwide</i> sheet gives, for every customer and every aircraft type, the number ordered, delivered and in operation since the programme began. What's still to come is <i>ordered − delivered</i>. Boeing publishes its <a id="m-boeing" href="https://www.boeing.com/commercial#orders-deliveries" target="_blank" rel="noopener">Commercial Orders &amp; Deliveries</a> as a Tableau dashboard whose data can be exported: unfilled orders and deliveries by customer, model series, order year and delivery year. Boeing reports the 737 MAX and 777X per customer as one series, so this page does the same; the global view splits them by variant using Boeing's own minor-model table. Boeing's figures are unfilled orders before the ASC 606 accounting adjustment, so they're somewhat higher than the backlog in Boeing's financial statements. The two files spell customers differently ("UNITED AIRLINES" and "United Airlines", legal suffixes, a few different names), so names are normalised and matched before the two are added up.</p>
+        <p><b>Lessors and undisclosed customers.</b> About a third of the world's airliners are leased. Lessors such as AerCap, SMBC or Avolon order in their own name and place the aircraft with airlines later, so those aircraft only count for the airline once they're delivered, and only on the Airbus side, where deliveries are listed as "LESSOR (AIRLINE)". Both manufacturers also hold several hundred orders for customers that haven't been named. So an airline's order book here is what it has ordered directly, which can be much less than what it will actually receive. The page says so rather than guessing which lessor aircraft will go where.</p>
+        <p><b>Deliveries by year.</b> Boeing's export has every delivery by year, back to the 1950s; the chart starts in 2016. Airbus's monthly workbook only lists deliveries by customer for the current year. Earlier years are in Airbus's annual archives, which the update script reads when they are available; years with no Airbus data are shaded. Neither manufacturer publishes future delivery dates by customer.</p>
+        <p><b>Fleet and age.</b> Air Canada: every aircraft registered to Air Canada and Air Canada Rouge in <a href="https://wwwapps.tc.gc.ca/saf-sec-sur/2/ccarcs-riacc/" target="_blank" rel="noopener">Transport Canada's Canadian Civil Aircraft Register</a>, with its date of manufacture. Air Canada Express is flown by Jazz under contract and is left out. United: the <a href="https://www.faa.gov/licenses_certificates/aircraft_certification/aircraft_registry/releasable_aircraft_download" target="_blank" rel="noopener">FAA aircraft registry</a>, taking aircraft registered to United Airlines plus leased ones (registered to bank trustees) that the <a href="fleettracker.html#UA">fleet tracker</a> has seen flying as United, and leaving out United Express. Age is measured from the middle of the year of manufacture. Air France and Etihad have no public register with years of manufacture: their Airbus fleet is Airbus's "in operation" count, their 787s are the aircraft Boeing delivered to them, and other Boeing and Embraer types are the aircraft the fleet tracker has seen flying so far, which is a lower bound. Their average age and retirements are left blank.</p>
+        <p><b>2030 projection.</b> For each aircraft family:</p>
+        <p class="formula">fleet 2030 = fleet today + share × order book − aircraft at least R years old by the end of 2030</p>
+        <p>R is the retirement age you choose (default 25 years, a common planning assumption for narrowbodies). The share of today's order book delivered by the end of 2030 defaults to the industry's current pace: Airbus and Boeing together delivered <span id="m-pace">about 1,400 aircraft</span> last year, and at that rate roughly <span id="m-share">a third</span> of the backlog arrives by 2030. The same share is applied to every airline and type. The projection is an illustration built on these assumptions, not any airline's fleet plan.</p>
+        <p><b>Limitations.</b> Real delivery slots differ a lot between customers and types (a new customer may wait until the 2030s, a launch customer gets the first slots); airlines publish their own delivery schedules in annual reports, which this page doesn't use. Leased aircraft arriving or leaving, orders converted between variants, cancellations and deferrals aren't modelled, and airlines don't retire aircraft at a fixed age. Types are grouped into families, so "737 MAX" covers the -8, -9 and -10.</p>
+        <p><b>Data.</b> <span id="m-dates">Airbus and Boeing figures are for the latest published month.</span> The data is refreshed monthly by a script (<a href="https://github.com/gregoire-maillard/gregoire-maillard.github.io/tree/main/scripts/fleet-orders" target="_blank" rel="noopener">scripts/fleet-orders</a>).</p>
+        <p>For how airlines decide what to order and when, see <a href="np101.html#ch08">Network Planning 101, chapter 8: Fleet Planning</a>.</p>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      // ───────────────────────────── config
+      var LOCAL_URL = "assets/data/fleet-orders.json";
+      // Refreshed monthly by .github/workflows/fleet-orders.yml on its own branch (no Pages rebuild)
+      var LIVE_URL = "https://raw.githubusercontent.com/gregoire-maillard/gregoire-maillard.github.io/fleet-orders-data/fleet-orders.json";
+      var FOCUS = ["AC", "UA", "AF", "EY"];
+      var SHORT = { AC: "Air Canada", UA: "United", AF: "Air France", EY: "Etihad" };
+      var HIST_FROM = 2016;
+      var PROJ_YEAR = 2030;
+
+      var D, byId = {}, famIdx = {}, state = { sel: "AC", retAge: 25, share: 0.35, topMode: "all" };
+      var fmt = function (n) { return Math.round(n).toLocaleString("en-US"); };
+      var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+      var maker = function (f) { return /^A\d/.test(f) ? "Airbus" : /^(717|737|747|757|767|777|787|MD|BBJ|Boeing)/.test(f) ? "Boeing" : "Other"; };
+      var color = function (m) { return m === "Airbus" ? "var(--airbus)" : m === "Boeing" ? "var(--boeing)" : "var(--other)"; };
+      var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      var monthLabel = function (iso) { if (!iso) return "?"; var p = iso.split("-"); return MONTHS[+p[1] - 1] + " " + p[0]; };
+      var dayLabel = function (iso) { if (!iso) return "?"; var p = iso.split("-"); return +p[2] + " " + MONTHS[+p[1] - 1] + " " + p[0]; };
+
+      // ───────────────────────────── load (newest of the published branch and the copy in the repo)
+      function getJSON(url) { return fetch(url, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+      function stampOf(d) { return d ? [d.sources.airbus.asOf || "", d.sources.boeing.asOf || "", d.generated || ""].join("|") : ""; }
+      Promise.all([getJSON(LOCAL_URL).catch(function () { return null; }), getJSON(LIVE_URL).catch(function () { return null; })]).then(function (res) {
+        var d = res[0], live = res[1];
+        if (live && live.customers && stampOf(live) > stampOf(d)) d = live;
+        if (!d) { document.getElementById("app").innerHTML = '<div class="loading">The data could not be loaded. Try again later.</div>'; return; }
+        init(d);
+      });
+
+      function init(d) {
+        D = d;
+        D.families.forEach(function (f, i) { famIdx[f] = i; });
+        D.customers.forEach(function (c) { byId[c.id] = c; });
+        // default delivery pace: last full year's deliveries, carried to the end of 2030
+        var sa = D.sources.airbus, sb = D.sources.boeing;
+        var asOf = new Date((sa.asOf || sb.asOf) + "T00:00:00Z");
+        var years = (Date.UTC(PROJ_YEAR, 11, 31) - asOf) / (365.25 * 864e5);
+        var pace = ((sa.lastYear && sa.lastYear.deliveries) || 0) + ((sb.lastYear && sb.lastYear.deliveries) || 0);
+        var backlog = (sa.backlog || 0) + (sb.unfilled || 0);
+        if (pace && backlog) state.share = Math.min(1, Math.round(pace * years / backlog * 20) / 20);
+        state.defaultShare = state.share;
+        state.pace = pace; state.years = years; state.rawShare = pace * years / backlog;
+        document.getElementById("m-pace").textContent = fmt(pace) + " aircraft in " + ((sa.lastYear && sa.lastYear.year) || "the last full year");
+        document.getElementById("m-share").textContent = Math.round(state.rawShare * 100) + "% (rounded to " + Math.round(state.share * 100) + "%)";
+        var hy = (sa.historyYears || []).map(function (x) { return x.year; });
+        document.getElementById("m-dates").textContent = "Airbus: workbook to " + dayLabel(sa.asOf) + (sa.stale ? " (the latest refresh failed)" : "") +
+          ", Airbus deliveries by customer for " + (hy.length ? hy.join(", ") : "no year yet") +
+          ". Boeing: data to " + dayLabel(sb.asOf) + (sb.stale ? " (the latest refresh failed)" : "") + ". " +
+          FOCUS.filter(function (k) { return D.fleets[k]; }).map(function (k) { var f = D.fleets[k]; return SHORT[k] + " fleet: " + (f.age ? f.source.replace(/ \(.*\)/, "") + ", " + dayLabel(f.asOf) : "Airbus workbook and fleet tracker, " + dayLabel(f.trackerAsOf || f.asOf)); }).join("; ") + ".";
+        if (sa.url) document.getElementById("m-airbus").href = sa.page || sa.url;
+        document.getElementById("stamp").textContent = "Airbus to " + monthLabel(sa.asOf) + " · Boeing to " + monthLabel(sb.asOf) + " · updated monthly";
+
+        buildShell();
+        readHash();
+        window.addEventListener("hashchange", function () { readHash(); });
+        var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(renderAll, 150); });
+      }
+
+      // ───────────────────────────── helpers on a customer
+      function backlogByFam(c) {
+        var o = {};
+        Object.keys(c.a || {}).forEach(function (f) { var v = c.a[f], n = Math.max(0, v[0] - v[1]); if (n) o[f] = (o[f] || 0) + n; });
+        Object.keys(c.b || {}).forEach(function (f) { var n = c.b[f][0]; if (n) o[f] = (o[f] || 0) + n; });
+        return o;
+      }
+      function sumA(c) { return Object.keys(c.a || {}).reduce(function (s, f) { return s + Math.max(0, c.a[f][0] - c.a[f][1]); }, 0); }
+      function sumB(c) { return Object.keys(c.b || {}).reduce(function (s, f) { return s + c.b[f][0]; }, 0); }
+      function sortFams(list) { return list.sort(function (a, b) { return (famIdx[a] == null ? 999 : famIdx[a]) - (famIdx[b] == null ? 999 : famIdx[b]); }); }
+      function selCustomer() { return FOCUS.indexOf(state.sel) >= 0 ? byId[D.focus[state.sel].id] : byId[state.sel]; }
+      function focusCode() { return FOCUS.indexOf(state.sel) >= 0 ? state.sel : null; }
+
+      // ───────────────────────────── shell
+      function buildShell() {
+        var app = document.getElementById("app");
+        var others = D.customers.filter(function (c) { return FOCUS.every(function (k) { return D.focus[k].id !== c.id; }); });
+        others.sort(function (a, b) { return a.n.localeCompare(b.n); });
+        var groups = { airline: [], lessor: [], other: [] };
+        others.forEach(function (c) { (c.u || /^Governments/.test(c.n) ? groups.other : c.l ? groups.lessor : groups.airline).push(c); });
+        var opt = function (c) { return '<option value="' + esc(c.id) + '">' + esc(c.n) + " (" + fmt(sumA(c) + sumB(c)) + ")</option>"; };
+        app.innerHTML =
+          '<div class="switch">' +
+            '<div class="views" id="views" role="tablist" aria-label="Airline">' +
+              FOCUS.map(function (k) { return '<button type="button" data-k="' + k + '">' + SHORT[k] + "</button>"; }).join("") +
+            "</div>" +
+            '<select id="other" aria-label="Another customer"><option value="">Another customer…</option>' +
+              '<optgroup label="Airlines">' + groups.airline.map(opt).join("") + "</optgroup>" +
+              '<optgroup label="Lessors">' + groups.lessor.map(opt).join("") + "</optgroup>" +
+              '<optgroup label="Undisclosed and other">' + groups.other.map(opt).join("") + "</optgroup>" +
+            "</select>" +
+          "</div>" +
+          '<div class="airline-head" id="head"></div>' +
+          '<div class="note-line" id="note"></div>' +
+          '<div class="tiles" id="tiles"></div>' +
+          '<div class="controls" id="controls"></div>' +
+          '<div class="panels">' +
+            '<div class="panel"><h4>On order, by type</h4><p class="sub" id="bk-sub"></p><div class="chart" id="bk"></div></div>' +
+            '<div class="panel"><h4>Deliveries by year</h4><p class="sub" id="dl-sub"></p><div class="chart" id="dl"></div><div class="legend" id="dl-legend"></div></div>' +
+          "</div>" +
+          '<div id="proj"></div>' +
+          '<div class="section-title"><h3>The global order book</h3><p>Every customer of Airbus and Boeing, lessors included. Click a customer to see its order book above.</p></div>' +
+          '<div class="tiles" id="g-tiles"></div>' +
+          '<div class="panels">' +
+            '<div class="panel"><h4>Top 20 customers by order book</h4><p class="sub">Aircraft still to be delivered.</p>' +
+              '<div class="chips" id="top-mode"><button type="button" class="chip" data-m="all">All customers</button><button type="button" class="chip" data-m="airlines">Airlines only</button></div>' +
+              '<div class="chart" id="top"></div><div class="legend"><span><i class="sw" style="--c:var(--airbus)"></i>Airbus</span><span><i class="sw" style="--c:var(--boeing)"></i>Boeing</span></div></div>' +
+            '<div class="panel"><h4>Biggest order books by type</h4><p class="sub">All customers. Hover a bar for the split by variant where the manufacturer gives one.</p><div class="chart" id="types"></div></div>' +
+          "</div>";
+
+        document.getElementById("views").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) go(b.dataset.k); });
+        document.getElementById("other").addEventListener("change", function (e) { if (e.target.value) go("c/" + e.target.value); });
+        document.getElementById("top-mode").addEventListener("click", function (e) {
+          var b = e.target.closest("button"); if (!b) return; state.topMode = b.dataset.m; renderGlobal();
+        });
+      }
+      function go(h) { if (location.hash.slice(1) !== h) location.hash = h; else readHash(); }
+      function readHash() {
+        var h = decodeURIComponent(location.hash.slice(1));
+        if (FOCUS.indexOf(h) >= 0) state.sel = h;
+        else if (h.indexOf("c/") === 0 && byId[h.slice(2)]) {
+          var id = h.slice(2), k = FOCUS.filter(function (f) { return D.focus[f].id === id; })[0];
+          state.sel = k || id;
+        } else state.sel = state.sel || "AC";
+        renderAll();
+      }
+      function renderAll() { renderAirline(); renderGlobal(); }
+
+      // ───────────────────────────── airline view
+      function renderAirline() {
+        var code = focusCode(), c = selCustomer();
+        document.querySelectorAll("#views button").forEach(function (b) { b.classList.toggle("on", b.dataset.k === code); });
+        var sel = document.getElementById("other"); sel.value = code ? "" : state.sel; sel.classList.toggle("on", !code);
+        if (!c) { document.getElementById("head").innerHTML = "<h3>No data</h3>"; return; }
+
+        var bl = backlogByFam(c), a = sumA(c), b = sumB(c);
+        var fleet = code ? D.fleets[code] : null;
+        var name = code ? D.focus[code].name : c.n;
+        document.getElementById("head").innerHTML = "<h3>" + esc(name) + "</h3>" +
+          '<span class="where">' + esc([c.c, c.r].filter(function (x) { return x && x !== "Other" && x !== "Undisclosed"; }).join(" · ")) + "</span>" +
+          (c.l ? ' <span class="tag">Lessor</span>' : "") +
+          (code ? '<a class="live" href="fleettracker.html#' + code + '">See the fleet live on the fleet tracker →</a>' : "");
+
+        // notes: lessors, undisclosed, missing ages, stale data
+        var notes = [];
+        var yr = +(D.sources.airbus.asOf || "").slice(0, 4);
+        var via = 0; Object.keys((c.hA || {})[yr] || {}).forEach(function (f) { via += c.hA[yr][f][1]; });
+        if (c.u) notes.push("These are orders for customers the manufacturer hasn't named yet. Some will turn out to be airlines on this list, some lessors.");
+        else if (c.l) notes.push(esc(c.n) + " is a lessor: it orders aircraft in its own name and places them with airlines, which only show up as the aircraft are delivered.");
+        else notes.push("Only aircraft ordered in the airline's own name are counted. Aircraft that lessors have on order for " + esc(name) + " aren't assigned to it until they're delivered, so the real pipeline is larger." +
+          (via ? " In " + yr + " so far, " + via + " Airbus aircraft reached " + esc(name) + " through lessors." : ""));
+        if (code === "AF") notes.push("Air France-KLM places most new orders at group level (the A350s especially), which Airbus lists separately from Air France. See the group below.");
+        if (fleet && !fleet.age) notes.push("Age is missing for " + esc(name) + ": " + esc(fleet.scope) + " The 2030 projection below only adds deliveries.");
+        if (fleet && fleet.stale) notes.push("The fleet list couldn't be refreshed this month; it's from " + dayLabel(fleet.asOf) + ".");
+        document.getElementById("note").innerHTML = notes.map(function (n) { return "<p>" + n + "</p>"; }).join("");
+
+        // tiles
+        var proj = code && fleet ? project(c, fleet) : null;
+        var tiles = [];
+        tiles.push(tile(fmt(a + b), "on order · " + '<i class="sw" style="--c:var(--airbus)"></i>Airbus ' + fmt(a) + ' · <i class="sw" style="--c:var(--boeing)"></i>Boeing ' + fmt(b)));
+        if (proj) {
+          tiles.push(tile(fmt(proj.total.cur), "aircraft in the fleet today" + (fleet.age ? "" : " (partly a lower bound)")));
+          tiles.push(proj.total.age != null ? tile(proj.total.age.toFixed(1) + " yrs", "average age") : tile("Not available", "average age: no public register", true));
+          var diff = proj.total.p2030 - proj.total.cur;
+          tiles.push(tile(fmt(proj.total.p2030), "fleet in " + PROJ_YEAR + " (" + (diff >= 0 ? "+" : "−") + fmt(Math.abs(diff)) + ", projection)"));
+        } else {
+          var opr = Object.keys(c.a || {}).reduce(function (s, f) { return s + c.a[f][2]; }, 0);
+          var ytd = 0; Object.keys((c.h || {})[yr] || {}).forEach(function (f) { ytd += c.h[yr][f][0] + c.h[yr][f][1]; });
+          var top = Object.keys(bl).sort(function (x, y) { return bl[y] - bl[x]; })[0];
+          tiles.push(tile(opr ? fmt(opr) : "—", "Airbus aircraft in operation (Airbus's count)"));
+          tiles.push(tile(fmt(ytd), "delivered in " + yr + " so far"));
+          tiles.push(top ? tile(fmt(bl[top]), "largest order: " + esc(top)) : tile("—", "nothing on order"));
+        }
+        document.getElementById("tiles").innerHTML = tiles.join("");
+
+        // controls (projection only)
+        var ctl = document.getElementById("controls");
+        if (proj) {
+          if (!ctl.dataset.built) {
+            ctl.innerHTML =
+              '<label class="ctl" for="ret">Retire aircraft that reach <input id="ret" type="number" min="10" max="45" step="1" value="' + state.retAge + '"> years by the end of ' + PROJ_YEAR + "</label>" +
+              '<label class="ctl" for="share">Share of today\'s order book delivered by the end of ' + PROJ_YEAR + ' <input id="share" type="range" min="0" max="100" step="5" value="' + Math.round(state.share * 100) + '"> <b id="share-v"></b>' +
+              '<small id="share-note"></small></label>';
+            ctl.dataset.built = "1";
+            document.getElementById("ret").addEventListener("input", function (e) { var v = +e.target.value; if (v >= 10 && v <= 45) { state.retAge = v; renderAirline(); } });
+            document.getElementById("share").addEventListener("input", function (e) { state.share = +e.target.value / 100; renderAirline(); });
+          }
+          document.getElementById("ret").parentNode.style.display = fleet.age ? "" : "none";
+          document.getElementById("share-v").textContent = Math.round(state.share * 100) + "%";
+          document.getElementById("share-note").textContent = "Default " + Math.round(state.defaultShare * 100) + "%: Airbus and Boeing delivered " + fmt(state.pace) +
+            " aircraft last year; at that pace about " + Math.round(state.rawShare * 100) + "% of today's backlog is delivered by " + PROJ_YEAR + ".";
+          ctl.style.display = "";
+        } else ctl.style.display = "none";
+
+        // charts
+        var n = Object.keys(bl).length;
+        document.getElementById("bk-sub").textContent = n ? fmt(a + b) + " aircraft still to be delivered, as of " + monthLabel(D.sources.airbus.asOf) + "." : "Nothing on order in the airline's own name.";
+        barChart(document.getElementById("bk"), sortFams(Object.keys(bl)).map(function (f) { return { label: f, value: bl[f], maker: maker(f), tip: bkTip(c, f) }; }), { empty: "No aircraft on order." });
+        deliveriesChart(c);
+        renderProjection(c, code, fleet, proj);
+      }
+      function tile(big, small, na) { return '<div class="tile"><b' + (na ? ' class="na"' : "") + ">" + big + "</b><span>" + small + "</span></div>"; }
+      function bkTip(c, f) {
+        var rows = [];
+        if (c.a && c.a[f]) { var v = c.a[f]; rows.push(["Ordered from Airbus", v[0]], ["Delivered", v[1]]); if (v[2]) rows.push(["In operation", v[2]]); }
+        if (c.b && c.b[f]) { rows.push(["Boeing unfilled orders", c.b[f][0]], ["Delivered by Boeing", c.b[f][1]]); }
+        return '<div class="t">' + esc(f) + "</div><table>" + rows.map(function (r) { return "<tr><td>" + r[0] + '</td><td class="n">' + fmt(r[1]) + "</td></tr>"; }).join("") + "</table>";
+      }
+
+      // ───────────────────────────── projection
+      function project(c, fleet) {
+        var asOf = new Date(fleet.asOf + "T00:00:00Z"), now = asOf.getUTCFullYear() + (asOf - Date.UTC(asOf.getUTCFullYear(), 0, 1)) / (365.25 * 864e5);
+        var bl = backlogByFam(c), cut = PROJ_YEAR - state.retAge;
+        var fams = sortFams(Object.keys(Object.assign({}, fleet.byFam, bl)));
+        var rows = [], T = { cur: 0, bl: 0, del: 0, ret: 0, p2030: 0, ageSum: 0, ageN: 0 };
+        fams.forEach(function (f) {
+          var fb = fleet.byFam[f] || { n: 0, y: {} }, cur = fb.n, ageSum = 0, ageN = 0, ret = 0;
+          Object.keys(fb.y || {}).forEach(function (y) { var k = fb.y[y]; ageSum += (now - (+y + 0.5)) * k; ageN += k; if (+y <= cut) ret += k; });
+          var del = Math.round((bl[f] || 0) * state.share);
+          var r = { fam: f, cur: cur, age: ageN ? ageSum / ageN : null, bl: bl[f] || 0, del: del, ret: fleet.age ? ret : null, src: fleet.src ? fleet.src[f] : null };
+          r.p2030 = cur + del - (fleet.age ? ret : 0);
+          rows.push(r);
+          T.cur += cur; T.bl += r.bl; T.del += del; T.ret += ret; T.p2030 += r.p2030; T.ageSum += ageSum; T.ageN += ageN;
+        });
+        T.age = fleet.age && T.ageN ? T.ageSum / T.ageN : null;
+        if (!fleet.age) T.ret = null;
+        return { rows: rows, total: T };
+      }
+      function renderProjection(c, code, fleet, proj) {
+        var el = document.getElementById("proj");
+        if (!proj) {
+          el.innerHTML = '<p class="stamp" style="margin-top:18px">The fleet, its age and the ' + PROJ_YEAR + " projection are shown for the four airlines followed by the fleet tracker: " +
+            FOCUS.map(function (k) { return '<a href="#' + k + '">' + SHORT[k] + "</a>"; }).join(", ") + ".</p>";
+          return;
+        }
+        var SRC = { airbus: "Airbus count", boeing: "delivered by Boeing", tracker: "seen by tracker" };
+        var th = '<tr><th>Type</th><th class="num">In fleet</th>' + (fleet.age ? '<th class="num">Avg age</th>' : "") + '<th class="num">On order</th><th class="num">Delivered by ' + PROJ_YEAR + '*</th>' +
+          (fleet.age ? '<th class="num">Retired by ' + PROJ_YEAR + "</th>" : "") + '<th class="num">Fleet ' + PROJ_YEAR + "</th></tr>";
+        var dash = '<span style="color:#bbb">—</span>';
+        var row = function (r, foot) {
+          var d = r.p2030 - r.cur;
+          return "<tr>" +
+            '<td class="type" data-label="">' + (foot ? "Total" : esc(r.fam) + (r.src && !fleet.age ? "<small>" + SRC[r.src] + "</small>" : "")) + "</td>" +
+            '<td class="num" data-label="In fleet">' + (r.cur ? fmt(r.cur) : dash) + "</td>" +
+            (fleet.age ? '<td class="num" data-label="Avg age">' + (r.age != null ? r.age.toFixed(1) : dash) + "</td>" : "") +
+            '<td class="num" data-label="On order">' + (r.bl ? fmt(r.bl) : dash) + "</td>" +
+            '<td class="num' + (r.del ? " up" : "") + '" data-label="Delivered by ' + PROJ_YEAR + '">' + (r.del ? "+" + fmt(r.del) : dash) + "</td>" +
+            (fleet.age ? '<td class="num' + (r.ret ? " down" : "") + '" data-label="Retired by ' + PROJ_YEAR + '">' + (r.ret ? "−" + fmt(r.ret) : dash) + "</td>" : "") +
+            '<td class="num big" data-label="Fleet ' + PROJ_YEAR + '"><span>' + fmt(r.p2030) + (d && !foot ? ' <small style="color:var(--muted);font-weight:400">(' + (d > 0 ? "+" : "−") + fmt(Math.abs(d)) + ")</small>" : "") + "</span></td></tr>";
+        };
+        var t = proj.total;
+        var html = '<div class="table-head"><h4>Fleet today and in ' + PROJ_YEAR + '</h4><span>' + esc(fleet.source) + (fleet.asOf ? ", " + dayLabel(fleet.asOf) : "") + "</span></div>" +
+          '<div class="tbl-wrap"><table class="fleet"><thead>' + th + "</thead><tbody>" + proj.rows.map(function (r) { return row(r); }).join("") + "</tbody>" +
+          "<tfoot>" + row({ cur: t.cur, age: t.age, bl: t.bl, del: t.del, ret: t.ret, p2030: t.p2030 }, true) + "</tfoot></table></div>" +
+          '<p class="stamp">* ' + Math.round(state.share * 100) + "% of today's order book, rounded per type. Retired: aircraft built in or before " + (PROJ_YEAR - state.retAge) +
+          " (" + state.retAge + " years old or more by the end of " + PROJ_YEAR + "). " + (fleet.age ? "" : "Retirements aren't modelled for this airline. ") + esc(fleet.scope) +
+          (fleet.leased ? " Includes " + fleet.leased + " leased aircraft registered to trustees." : "") + " An illustration, not the airline's plan.</p>";
+
+        // Air France-KLM group context
+        var g = (D.focus[code].group || []).map(function (id) { return byId[id]; }).filter(Boolean);
+        if (g.length) {
+          html += '<div class="group panel"><h4>Air France-KLM group context</h4><p class="sub">Orders placed by the group or its other airlines. Click one to see its order book.</p><ul>' +
+            g.map(function (x) {
+              var b2 = backlogByFam(x), tot = sumA(x) + sumB(x);
+              var parts = sortFams(Object.keys(b2)).map(function (f) { return b2[f] + " " + f; }).join(", ");
+              return '<li><span class="nm"><a href="#c/' + encodeURIComponent(x.id) + '">' + esc(x.n) + "</a><small>" + (parts || "nothing on order") + '</small></span><span class="px">' + fmt(tot) + " on order</span></li>";
+            }).join("") + "</ul></div>";
+        }
+        el.innerHTML = html;
+      }
+
+      // ───────────────────────────── deliveries by year
+      function deliveriesChart(c) {
+        var el = document.getElementById("dl");
+        var sa = D.sources.airbus, cur = +(sa.asOf || D.sources.boeing.asOf).slice(0, 4);
+        var covered = {}; (sa.historyYears || []).forEach(function (x) { covered[x.year] = true; });
+        var years = []; for (var y = HIST_FROM; y <= cur; y++) years.push(y);
+        var data = years.map(function (y) {
+          var m = (c.h || {})[y] || {}, A = 0, AV = 0, B = 0, rows = [];
+          sortFams(Object.keys(m)).forEach(function (f) {
+            var v = m[f], mk = maker(f);
+            if (mk === "Airbus") { A += v[0]; AV += v[1]; } else B += v[0] + v[1];
+            rows.push([f, v[0] + v[1], v[1]]);
+          });
+          return { y: y, A: A, AV: AV, B: B, rows: rows, noA: !covered[y] };
+        });
+        var anyA = Object.keys(covered).length;
+        document.getElementById("dl-sub").textContent = "Boeing from " + HIST_FROM + ", Airbus " + (anyA ? "for " + Object.keys(covered).join(", ") : "not available") + ". " + cur + " is year to date.";
+        document.getElementById("dl-legend").innerHTML =
+          '<span><i class="sw" style="--c:var(--airbus)"></i>Airbus</span><span><i class="sw" style="--c:var(--airbus-l)"></i>Airbus, via a lessor</span>' +
+          '<span><i class="sw" style="--c:var(--boeing)"></i>Boeing</span><span><i class="hatch"></i>No Airbus data by customer</span>';
+        var W = Math.max(280, el.clientWidth || 500), H = 210, m = { t: 10, r: 6, b: 22, l: 30 };
+        var x = d3.scaleBand().domain(years).range([m.l, W - m.r]).paddingInner(0.22).paddingOuter(0.05);
+        var max = d3.max(data, function (d) { return d.A + d.AV + d.B; }) || 1;
+        var yS = d3.scaleLinear().domain([0, max]).nice(4).range([H - m.b, m.t]);
+        el.innerHTML = "";
+        var svg = d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img").attr("aria-label", "Deliveries by year");
+        var defs = svg.append("defs").append("pattern").attr("id", "hatch").attr("width", 5).attr("height", 5).attr("patternUnits", "userSpaceOnUse").attr("patternTransform", "rotate(45)");
+        defs.append("rect").attr("width", 5).attr("height", 5).attr("fill", "#fff");
+        defs.append("line").attr("x1", 0).attr("y1", 0).attr("x2", 0).attr("y2", 5).attr("stroke", "#e3e3e3").attr("stroke-width", 2);
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)")
+          .call(d3.axisLeft(yS).ticks(4).tickSize(-(W - m.l - m.r)).tickFormat(d3.format("~s")))
+          .call(function (g) { g.selectAll("text").attr("x", -6); });
+        svg.append("g").selectAll("rect").data(data.filter(function (d) { return d.noA; })).join("rect").attr("class", "nodata")
+          .attr("x", function (d) { return x(d.y); }).attr("width", x.bandwidth()).attr("y", m.t).attr("height", H - m.b - m.t);
+        var every = W < 420 ? 3 : W < 600 ? 2 : 1;
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")")
+          .call(d3.axisBottom(x).tickSize(0).tickPadding(6).tickFormat(function (y) { return (y - HIST_FROM) % every && y !== cur ? "" : y === cur ? y + "*" : "’" + String(y).slice(2); }));
+        var seg = function (d) {
+          var base = H - m.b, out = [];
+          [["A", "var(--airbus)"], ["AV", "var(--airbus-l)"], ["B", "var(--boeing)"]].forEach(function (s) {
+            var v = d[s[0]]; if (!v) return;
+            var h = base - yS(v); out.push({ y: base - h, h: h, c: s[1] }); base -= h;
+          });
+          return out;
+        };
+        var g = svg.append("g").selectAll("g").data(data).join("g");
+        g.each(function (d) {
+          var parts = seg(d), sel = d3.select(this);
+          parts.forEach(function (p, i) {
+            var top = i === parts.length - 1, hh = Math.max(0, p.h - (i ? 1.5 : 0));
+            sel.append("path").attr("fill", p.c).attr("d", roundedTop(x(d.y), p.y, x.bandwidth(), hh, top ? Math.min(3, hh) : 0));
+          });
+        });
+        g.append("rect").attr("class", "hit").attr("x", function (d) { return x(d.y) - 2; }).attr("width", x.bandwidth() + 4).attr("y", m.t).attr("height", H - m.b - m.t)
+          .on("mouseenter mousemove", function (ev, d) {
+            var h = '<div class="t">' + d.y + (d.y === cur ? " (to " + monthLabel(D.sources.airbus.asOf) + ")" : "") + "</div>";
+            h += d.rows.length ? "<table>" + d.rows.map(function (r) { return "<tr><td>" + esc(r[0]) + (r[2] ? " <span style=\"color:var(--muted)\">(" + r[2] + " via lessor)</span>" : "") + '</td><td class="n">' + fmt(r[1]) + "</td></tr>"; }).join("") + "</table>" : "No deliveries";
+            if (d.noA) h += '<div class="st">Airbus deliveries by customer aren\'t available for this year.</div>';
+            showTip(ev, h);
+          }).on("mouseleave", hideTip);
+      }
+      function roundedTop(x, y, w, h, r) {
+        if (h <= 0) return "";
+        r = Math.min(r, w / 2, h);
+        return "M" + x + "," + (y + h) + "V" + (y + r) + "Q" + x + "," + y + " " + (x + r) + "," + y + "H" + (x + w - r) + "Q" + (x + w) + "," + y + " " + (x + w) + "," + (y + r) + "V" + (y + h) + "Z";
+      }
+
+      // ───────────────────────────── horizontal bars (single or stacked Airbus/Boeing)
+      // items: {label, value, maker, tip} or {label, parts:[{v,c}], tip, id, dim}
+      function barChart(el, items, opt) {
+        opt = opt || {};
+        el.innerHTML = "";
+        if (!items.length) { el.innerHTML = '<div class="empty">' + (opt.empty || "No data") + "</div>"; return; }
+        var W = Math.max(280, el.clientWidth || 500), row = 24, m = { t: 2, r: 44, b: 2 };
+        var labW = Math.min(opt.labW || 120, Math.round(W * 0.42));
+        var H = m.t + m.b + items.length * row;
+        var tot = function (d) { return d.parts ? d3.sum(d.parts, function (p) { return p.v; }) : d.value; };
+        var x = d3.scaleLinear().domain([0, d3.max(items, tot) || 1]).range([0, W - labW - m.r - 8]);
+        var svg = d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + H);
+        var g = svg.selectAll("g").data(items).join("g").attr("transform", function (d, i) { return "translate(0," + (m.t + i * row) + ")"; });
+        g.append("text").attr("class", function (d) { return "lab" + (d.onClick ? " link" : "") + (d.dim ? " dim" : ""); }).attr("x", labW).attr("y", row / 2 + 4).attr("text-anchor", "end")
+          .text(function (d) { return truncate(d.label, labW); }).on("click", function (ev, d) { if (d.onClick) d.onClick(); })
+          .append("title").text(function (d) { return d.label; });
+        g.each(function (d) {
+          var sel = d3.select(this), x0 = labW + 8, parts = d.parts || [{ v: d.value, c: color(d.maker) }];
+          parts = parts.filter(function (p) { return p.v > 0; });
+          parts.forEach(function (p, i) {
+            var w = Math.max(1, x(p.v) - (i ? 2 : 0)), last = i === parts.length - 1;
+            sel.append("path").attr("fill", p.c).attr("d", roundedRight(x0 + (i ? 2 : 0), 5, w, row - 10, last ? 3 : 0));
+            x0 += x(p.v);
+          });
+          sel.append("text").attr("class", "val").attr("x", x0 + 6).attr("y", row / 2 + 4).text(fmt(tot(d)));
+        });
+        g.append("rect").attr("class", "hit").attr("x", 0).attr("y", 0).attr("width", W).attr("height", row)
+          .style("cursor", function (d) { return d.onClick ? "pointer" : null; })
+          .on("click", function (ev, d) { if (d.onClick) d.onClick(); })
+          .on("mouseenter mousemove", function (ev, d) { if (d.tip) showTip(ev, d.tip); }).on("mouseleave", hideTip);
+      }
+      function roundedRight(x, y, w, h, r) {
+        r = Math.min(r, w, h / 2);
+        return "M" + x + "," + y + "H" + (x + w - r) + "Q" + (x + w) + "," + y + " " + (x + w) + "," + (y + r) + "V" + (y + h - r) + "Q" + (x + w) + "," + (y + h) + " " + (x + w - r) + "," + (y + h) + "H" + x + "Z";
+      }
+      function truncate(s, px) { var max = Math.floor(px / 6.4); return s.length > max ? s.slice(0, max - 1) + "…" : s; }
+
+      // ───────────────────────────── global view
+      function renderGlobal() {
+        var sa = D.sources.airbus, sb = D.sources.boeing;
+        var A = sa.backlog != null ? sa.backlog : d3.sum(D.customers, sumA), B = sb.unfilled != null ? sb.unfilled : d3.sum(D.customers, sumB);
+        var yrsA = sa.lastYear ? A / sa.lastYear.deliveries : null, yrsB = sb.lastYear ? B / sb.lastYear.deliveries : null;
+        var lessorShare = d3.sum(D.customers.filter(function (c) { return c.l; }), function (c) { return sumA(c) + sumB(c); }) / (A + B);
+        var undisclosed = d3.sum(D.customers.filter(function (c) { return c.u; }), function (c) { return sumA(c) + sumB(c); });
+        document.getElementById("g-tiles").innerHTML =
+          tile(fmt(A + B), "aircraft on order worldwide" + '<div class="split"><div style="flex:' + A + ';background:var(--airbus)"></div><div style="flex:' + B + ';background:var(--boeing)"></div></div>' +
+            Math.round(A / (A + B) * 100) + "% Airbus · " + Math.round(B / (A + B) * 100) + "% Boeing") +
+          tile(fmt(A), '<i class="sw" style="--c:var(--airbus)"></i>Airbus backlog' + (yrsA ? " · " + yrsA.toFixed(1) + " years at the " + sa.lastYear.year + " delivery rate" : "")) +
+          tile(fmt(B), '<i class="sw" style="--c:var(--boeing)"></i>Boeing unfilled orders' + (yrsB ? " · " + yrsB.toFixed(1) + " years at the " + sb.lastYear.year + " delivery rate" : "")) +
+          tile(Math.round(lessorShare * 100) + "%", "of the order book sits with lessors, and " + fmt(undisclosed) + " aircraft with undisclosed customers");
+
+        document.querySelectorAll("#top-mode .chip").forEach(function (b) { b.classList.toggle("on", b.dataset.m === state.topMode); });
+        var list = D.customers.filter(function (c) { return state.topMode === "all" || (!c.l && !c.u && !/^Governments/.test(c.n)); })
+          .map(function (c) { return { c: c, a: sumA(c), b: sumB(c) }; })
+          .sort(function (x, y) { return (y.a + y.b) - (x.a + x.b); }).slice(0, 20);
+        barChart(document.getElementById("top"), list.map(function (d) {
+          var c = d.c, isSel = selCustomer() === c;
+          var bl = backlogByFam(c), top = sortFams(Object.keys(bl)).sort(function (p, q) { return bl[q] - bl[p]; }).slice(0, 5);
+          return {
+            label: c.n + (c.l ? " (lessor)" : ""), dim: !!c.u, parts: [{ v: d.a, c: "var(--airbus)" }, { v: d.b, c: "var(--boeing)" }],
+            onClick: function () { var k = FOCUS.filter(function (f) { return D.focus[f].id === c.id; })[0]; go(k || "c/" + c.id); window.scrollTo({ top: document.getElementById("app").offsetTop - 10, behavior: "smooth" }); },
+            tip: '<div class="t">' + esc(c.n) + (isSel ? " (shown above)" : "") + "</div>" + esc([c.c, c.l ? "lessor" : ""].filter(Boolean).join(" · ")) +
+              "<table><tr><td>Airbus</td><td class=\"n\">" + fmt(d.a) + "</td></tr><tr><td>Boeing</td><td class=\"n\">" + fmt(d.b) + "</td></tr></table>" +
+              '<div class="st">' + top.map(function (f) { return fmt(bl[f]) + " " + esc(f); }).join(", ") + "<br>Click to see its order book</div>"
+          };
+        }), { labW: 190 });
+
+        // order books by family
+        var fam = {};
+        D.customers.forEach(function (c) { var b2 = backlogByFam(c); Object.keys(b2).forEach(function (f) { fam[f] = (fam[f] || 0) + b2[f]; }); });
+        var tops = Object.keys(fam).filter(function (f) { return maker(f) !== "Other"; }).sort(function (p, q) { return fam[q] - fam[p]; }).slice(0, 14);
+        barChart(document.getElementById("types"), tops.map(function (f) {
+          var split = D.minor && D.minor[f] ? Object.keys(D.minor[f]).filter(function (k) { return D.minor[f][k]; }).sort(function (p, q) { return D.minor[f][q] - D.minor[f][p]; }) : [];
+          var custs = D.customers.map(function (c) { return [c, backlogByFam(c)[f] || 0]; }).filter(function (x) { return x[1]; }).sort(function (p, q) { return q[1] - p[1]; });
+          return {
+            label: f, value: fam[f], maker: maker(f),
+            tip: '<div class="t">' + esc(f) + " · " + maker(f) + "</div>" + fmt(fam[f]) + " on order from " + custs.length + (custs.length === 1 ? " customer" : " customers") +
+              (split.length > 1 ? "<table>" + split.map(function (k) { return "<tr><td>" + esc(k) + '</td><td class="n">' + fmt(D.minor[f][k]) + "</td></tr>"; }).join("") + "</table>" : "") +
+              '<div class="st">Largest: ' + custs.slice(0, 3).map(function (x) { return esc(x[0].n) + " " + fmt(x[1]); }).join(", ") + "</div>"
+          };
+        }), { labW: 90 });
+      }
+
+      // ───────────────────────────── tooltip
+      var tip = document.getElementById("tip");
+      function showTip(ev, html) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var x = ev.clientX + 14, y = ev.clientY + 14, tw = tip.offsetWidth, th = tip.offsetHeight;
+        if (x + tw > window.innerWidth - 8) x = Math.max(8, ev.clientX - tw - 14);
+        if (y + th > window.innerHeight - 8) y = Math.max(8, ev.clientY - th - 14);
+        tip.style.left = x + "px"; tip.style.top = y + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      document.addEventListener("touchstart", function (e) { if (!e.target.closest(".chart")) hideTip(); }, { passive: true });
+      window.addEventListener("scroll", hideTip, { passive: true });
+    });
+    </script>
+  </body>
+</html>

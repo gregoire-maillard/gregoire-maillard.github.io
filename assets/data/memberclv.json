@@ -1,0 +1,35 @@
+{
+  "updated": "2026-09-28",
+  "note": "Illustrative assumptions. The programme is made up: none of these figures describe a real airline or loyalty programme.",
+  "tiers": [
+    { "key": "base",     "label": "Base",     "members": 4500, "flightMargin": 70,   "flightPts": 1500,  "cardUptake": 5,  "cardPts": 15000, "partnerPts": 400,  "benefits": 0 },
+    { "key": "silver",   "label": "Silver",   "members": 300,  "flightMargin": 450,  "flightPts": 9000,  "cardUptake": 20, "cardPts": 22000, "partnerPts": 1000, "benefits": 60 },
+    { "key": "gold",     "label": "Gold",     "members": 140,  "flightMargin": 950,  "flightPts": 20000, "cardUptake": 30, "cardPts": 30000, "partnerPts": 1500, "benefits": 200 },
+    { "key": "platinum", "label": "Platinum", "members": 50,   "flightMargin": 1800, "flightPts": 38000, "cardUptake": 38, "cardPts": 40000, "partnerPts": 2000, "benefits": 450 },
+    { "key": "diamond",  "label": "Diamond",  "members": 10,   "flightMargin": 3400, "flightPts": 70000, "cardUptake": 45, "cardPts": 50000, "partnerPts": 2500, "benefits": 1200 }
+  ],
+  "states": ["Base", "Silver", "Gold", "Platinum", "Diamond", "Lapsed"],
+  "transitionsPct": [
+    [70, 5,  1,  0,  0,  24],
+    [30, 45, 10, 2,  0,  13],
+    [10, 20, 50, 12, 1,  7],
+    [5,  5,  18, 55, 12, 5],
+    [3,  2,  5,  15, 72, 3],
+    [4,  0,  0,  0,  0,  96]
+  ],
+  "points": {
+    "bankCents": 1.2,
+    "partnerCents": 1.0,
+    "costCents": 0.7,
+    "redeemedPct": 85
+  },
+  "defaultDiscountPct": 10,
+  "discountOptions": [6, 8, 10, 12, 15],
+  "defaultHorizon": 10,
+  "horizonOptions": [5, 10, 15, 20],
+  "tornado": { "swings": [10, 20, 30], "defaultSwing": 20 },
+  "scenarios": {
+    "retention": { "tier": 2, "points": 3 },
+    "card": { "tier": -1, "points": 5 }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "about": "Inputs for unconstraining.html. The booking history is synthetic and generated in the browser from these parameters; demand levels, booking curve, booking limits, fares and recapture rates are illustrative assumptions, not any airline's data. Seat counts are real published cabin configurations, with their sources.",
+  "version": "2026-09-28",
+  "model": {
+    "departures": 120,
+    "seed": 20260928,
+    "dcps": [120, 90, 60, 45, 30, 21, 14, 7, 3, 1, 0],
+    "curve": { "leisureShare": 0.6, "leisureScale": 25, "businessMean": 8, "maxLead": 180 },
+    "limitRange": [0.6, 1.0],
+    "tau": 0.5,
+    "sweepReps": 40
+  },
+  "defaults": {
+    "mean": 150,
+    "cvPct": 30,
+    "capacity": 200,
+    "dist": "normal",
+    "fare": 250,
+    "recapturePct": 20,
+    "aircraft": "737-8"
+  },
+  "aircraft": [
+    {
+      "type": "E175",
+      "name": "Embraer E175",
+      "seats": 76,
+      "cabins": "12 first / 16 premium economy / 48 economy",
+      "operator": "Horizon & SkyWest for Alaska",
+      "source": "Alaska Air Group, current fleet",
+      "url": "https://news.alaskaair.com/current-fleet/",
+      "checked": "2026-09-28"
+    },
+    {
+      "type": "A220-300",
+      "name": "Airbus A220-300",
+      "seats": 130,
+      "cabins": "12 first / 43 premium economy / 75 economy",
+      "operator": "Delta Air Lines",
+      "source": "Delta, Airbus A220-300 seat map and specs",
+      "url": "https://www.delta.com/us/en/aircraft/airbus/a220-300",
+      "checked": "2026-09-28"
+    },
+    {
+      "type": "737-8",
+      "name": "Boeing 737-8",
+      "seats": 159,
+      "cabins": "12 first / 36 premium economy / 111 economy",
+      "operator": "Alaska Airlines",
+      "source": "Alaska Air Group, current fleet",
+      "url": "https://news.alaskaair.com/current-fleet/",
+      "checked": "2026-09-28"
+    },
+    {
+      "type": "A321neo",
+      "name": "Airbus A321neo",
+      "seats": 189,
+      "cabins": "16 first / 44 premium economy / 129 economy",
+      "operator": "Hawaiian Airlines",
+      "source": "Alaska Air Group, current fleet",
+      "url": "https://news.alaskaair.com/current-fleet/",
+      "checked": "2026-09-28"
+    },
+    {
+      "type": "787-9",
+      "name": "Boeing 787-9",
+      "seats": 300,
+      "cabins": "34 business / 79 premium economy / 187 economy",
+      "operator": "Hawaiian Airlines",
+      "source": "Alaska Air Group, current fleet",
+      "url": "https://news.alaskaair.com/current-fleet/",
+      "checked": "2026-09-28"
+    }
+  ]
+}

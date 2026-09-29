@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Member lifetime value</title>
+    <meta name="description" content="What a loyalty member is worth over time, by tier: annual margin from flying, the co-brand card and partners, tier migration as a Markov chain, and the levers that move lifetime value.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / breakage.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        --grid: #eeeeec;
+        /* margin components (categorical, validated for colour-vision deficiency) */
+        --flight: #2a78d6;
+        --card: #1f9e89;
+        --partner: #8a5cc9;
+        --redeem: #eb6834;
+        --benefit: #c2378f;
+        /* effect on value (diverging) */
+        --gain: #2a78d6;
+        --loss: #eb6834;
+        /* tiers (sequential, light to dark) */
+        --t0: #c6dbf5; --t1: #8dbbef; --t2: #4f93e3; --t3: #2a6fc4; --t4: #123f7a; --t5: #e2e1dc;
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 6px; max-width: 780px; }
+      .crumbs { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+      .crumbs a { color: var(--muted); }
+      .crumbs a:hover { color: var(--link); }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Plain-language strip ── */
+      .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 22px 0 6px; }
+      .step { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: #fff; font-size: 13px; line-height: 1.5; }
+      .step b { display: block; color: var(--ink); font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+      .step .n { display: inline-block; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 11.5px; line-height: 20px; text-align: center; margin-right: 6px; vertical-align: 1px; }
+
+      /* ── Controls ── */
+      .panel { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fff; margin: 22px 0 16px; }
+      .ctl-grid { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; align-items: center; }
+      .ctl-grid > label, .lbl { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip {
+        border: 1px solid var(--line); background: #fff; color: var(--text);
+        border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer;
+      }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .hint { font-size: 12px; color: var(--muted); margin-left: 4px; }
+      input.num, select.num {
+        font: inherit; font-size: 13px; color: var(--ink);
+        border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px; background: #fff;
+        width: 76px; font-variant-numeric: tabular-nums;
+      }
+      select.num { width: auto; }
+      details.vol { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+      details.vol summary { cursor: pointer; font-size: 13px; color: var(--ink); }
+      details.vol summary span { color: var(--muted); font-size: 12px; }
+      .vol-body { margin: 10px 0 4px; }
+      .vol-foot { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 12.5px; margin-top: 8px; }
+      .linkbtn { border: 0; background: none; color: var(--link); font: inherit; font-size: 12.5px; cursor: pointer; padding: 0; }
+      .pts-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px 12px; margin-top: 10px; }
+      .pts-grid label { display: flex; flex-direction: column; gap: 3px; font-size: 11.5px; color: var(--muted); }
+      .pts-grid input { width: 100%; box-sizing: border-box; }
+
+      /* editable tables */
+      table.ed { border-collapse: collapse; font-size: 12.5px; margin: 0; }
+      table.ed th { font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 5px 6px; text-align: right; vertical-align: bottom; line-height: 1.3; }
+      table.ed th:first-child, table.ed td:first-child { text-align: left; }
+      table.ed td { padding: 3px 6px; text-align: right; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+      table.ed td.k { color: var(--ink); }
+      table.ed input.num { width: 72px; text-align: right; }
+      table.ed td.calc { color: var(--ink); font-weight: 600; }
+      table.ed td.diag { color: var(--ink); font-weight: 600; background: var(--soft); border-radius: 6px; }
+      table.ed td.bad { color: #b23c0c; }
+      table.mx input.num { width: 56px; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 8px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .tile span { font-size: 12px; line-height: 1.4; display: block; margin-top: 2px; }
+
+      /* ── Sections & charts ── */
+      .sec { margin-top: 38px; }
+      .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px; }
+      .sec-head h3 { margin: 0; font-size: 17px; color: var(--ink); }
+      .sec-head span { color: var(--muted); font-size: 12.5px; }
+      .sec > p.lead { margin: 0 0 12px; max-width: 800px; font-size: 13.5px; line-height: 1.55; }
+      .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+      .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 10px; background: #fff; min-width: 0; }
+      .card h4 { margin: 0 0 2px; font-size: 14px; color: var(--ink); font-weight: 600; }
+      .card .sub { margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+      .chart { position: relative; width: 100%; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart .axis text { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .chart .axis path, .chart .axis line { stroke: #d9d9d6; }
+      .chart .axis.cat text { fill: var(--ink); font-size: 12px; }
+      .chart .grid line { stroke: var(--grid); }
+      .chart .grid path { display: none; }
+      .chart .dlabel { font-size: 11.5px; fill: var(--text); paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; font-variant-numeric: tabular-nums; }
+      .chart .dlabel.strong { fill: var(--ink); font-weight: 600; }
+      .chart .xhair { stroke: #8a8986; stroke-width: 1; pointer-events: none; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); margin: 6px 0 0; }
+      .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.tick { width: 3px; height: 13px; border-radius: 1px; vertical-align: -2px; }
+
+      .multi { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+      .multi .card { padding: 10px 10px 6px; }
+      .multi h5 { margin: 0; font-size: 13px; color: var(--ink); font-weight: 600; }
+      .multi .sub { margin: 1px 0 6px; font-size: 11.5px; color: var(--muted); line-height: 1.4; min-height: 32px; }
+
+      .tip {
+        position: absolute; pointer-events: none; z-index: 5;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.5;
+        max-width: 300px; display: none; white-space: nowrap;
+      }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+      .tip .r { display: flex; justify-content: space-between; gap: 14px; }
+      .tip .r b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+      .tip .sw { width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: 0; }
+      .tip .tot { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 3px; }
+      .tip .r b.bold, .tip .tot b { font-weight: 600; }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table.rf { border-collapse: collapse; width: 100%; font-size: 12.5px; margin: 0; }
+      table.rf th { text-align: right; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: bottom; }
+      table.rf th:first-child, table.rf td:first-child { text-align: left; }
+      table.rf td { padding: 6px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 12.5px; }
+      table.rf td.k { color: var(--ink); }
+      table.rf tr.total td { color: var(--ink); font-weight: 600; border-top: 1px solid var(--line); border-bottom: 0; }
+      table.rf tr.hl td { background: #f3f7fd; }
+      table.rf tbody tr:hover { background: var(--soft); }
+      table.rf .neg { color: #b23c0c; }
+      table.rf .pos { color: #1c5cab; }
+
+      /* ── Scenario controls ── */
+      .scen-ctl { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 0 0 12px; font-size: 13px; }
+      .scen-ctl label { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12.5px; }
+      .scen-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 14px; }
+      .scen-tiles .tile b { font-size: 21px; }
+      .explain { font-size: 13px; line-height: 1.55; max-width: 820px; margin: 12px 0 0; }
+      .warn { font-size: 12.5px; color: #7a5a1f; margin: 6px 0 0; }
+      .warn:empty { display: none; }
+      .rowctl { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 10px; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 860px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; line-height: 1.55; }
+      .method ul, .method ol { padding-left: 18px; margin: 0 0 8px; }
+      .method code, .fx { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; color: var(--ink); }
+      .method .fx { display: block; padding: 7px 10px; margin: 6px 0 10px; white-space: pre-wrap; line-height: 1.6; overflow-x: auto; }
+      .method table.rf { font-size: 12px; }
+      .method table.rf td, .method table.rf th { padding: 5px 7px; font-size: 12px; }
+
+      .loading { padding: 60px 20px; text-align: center; color: var(--muted); }
+
+      @media (max-width: 1000px) { .multi { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+      @media (max-width: 900px) {
+        .two { grid-template-columns: 1fr; }
+        .tiles, .scen-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .steps { grid-template-columns: 1fr; }
+        .ctl-grid { grid-template-columns: 1fr; gap: 4px 0; }
+        .ctl-grid > label { margin-top: 8px; }
+        .pts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .multi { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .tile b { font-size: 20px; }
+        .scen-tiles .tile b { font-size: 18px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>What a loyalty member is worth over time, tier by tier.</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Loyalty</div>
+        <h2>Member lifetime value</h2>
+        <p>A Gold member is worth more than a Base member this year, but the real question is what they are worth over the whole relationship: members move up and down the tiers, and some stop flying altogether. This calculator adds up the margin a member brings each year, follows where members of each tier go next, and discounts it all back to today.</p>
+        <p class="note-line">Illustrative numbers: the programme, its tiers and every figure on this page are made up and don't describe any airline.</p>
+      </div>
+
+      <div class="steps" aria-label="The model in three steps">
+        <div class="step"><b><span class="n">1</span>A year of margin per tier</b>What a member's flying earns, plus what the bank and partners pay for the points they give out, minus the cost of the awards members redeem and of their status benefits.</div>
+        <div class="step"><b><span class="n">2</span>Where members go next year</b>Each year a member can stay in their tier, move up, drop down, or lapse. A transition matrix holds those odds, and the same odds apply every year.</div>
+        <div class="step"><b><span class="n">3</span>Add it up and discount</b>Lifetime value is the expected margin in each future year, weighted by where the member is likely to be, discounted to today and summed over the horizon.</div>
+      </div>
+
+      <div class="panel" id="controls">
+        <div class="ctl-grid">
+          <label>Discount rate</label>
+          <div class="chips" id="disc"></div>
+          <label>Horizon</label>
+          <div class="chips" id="hor"></div>
+        </div>
+
+        <details class="vol" id="d-tiers">
+          <summary>Tier economics <span id="tiers-sum"></span></summary>
+          <div class="vol-body">
+            <div class="tbl-wrap"><table class="ed" id="t-tiers"></table></div>
+            <div class="pts-grid" id="pts"></div>
+            <div class="vol-foot"><span class="hint" style="margin:0">Per member and per year. Points are the member's yearly earn; the page prices them with the four values above.</span></div>
+          </div>
+        </details>
+
+        <details class="vol" id="d-mx">
+          <summary>Yearly tier transitions <span id="mx-sum"></span></summary>
+          <div class="vol-body">
+            <div class="tbl-wrap"><table class="ed mx" id="t-mx"></table></div>
+            <p class="warn" id="mx-warn"></p>
+            <div class="vol-foot"><span class="hint" style="margin:0">Share of members in each row's tier who end the next year in each column's tier, in %. The shaded cell (stay in the same tier) is whatever is left, so each row adds up to 100.</span></div>
+          </div>
+        </details>
+
+        <div class="vol-foot"><button type="button" class="linkbtn" id="reset">Reset every assumption to the default</button></div>
+      </div>
+
+      <div class="tiles" id="tiles"><div class="loading">Loading…</div></div>
+
+      <section class="sec" aria-labelledby="h-clv">
+        <div class="sec-head"><h3 id="h-clv">What a member is worth, by starting tier</h3><span id="clv-span"></span></div>
+        <div class="two">
+          <div class="card">
+            <h4>Lifetime value and where it comes from</h4>
+            <p class="sub" id="clv-sub"></p>
+            <div class="chart" id="c-clv"></div>
+            <div class="legend" id="l-clv"></div>
+          </div>
+          <div class="card">
+            <h4>One year versus a lifetime</h4>
+            <p class="sub">Annual margin is one year in the tier. Lifetime value follows the member as they move between tiers or lapse.</p>
+            <div class="tbl-wrap"><table class="rf" id="t-sum"></table></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-path">
+        <div class="sec-head"><h3 id="h-path">Where members go</h3><span>Expected tier mix, year by year, for a member starting in each tier</span></div>
+        <div class="multi" id="c-paths"></div>
+        <div class="legend" id="l-paths"></div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-tor">
+        <div class="sec-head"><h3 id="h-tor">What moves lifetime value most</h3><span>Each lever moved on its own, the others held at the settings above</span></div>
+        <div class="rowctl">
+          <span class="lbl">Value of</span><div class="chips" id="tor-sel"></div>
+        </div>
+        <div class="rowctl">
+          <span class="lbl">Move each lever by</span><div class="chips" id="tor-swing"></div>
+        </div>
+        <div class="card">
+          <h4 id="tor-title"></h4>
+          <p class="sub" id="tor-sub"></p>
+          <div class="chart" id="c-tor"></div>
+          <div class="legend" id="l-tor"></div>
+        </div>
+        <p class="explain" id="tor-explain"></p>
+      </section>
+
+      <section class="sec" aria-labelledby="h-ret">
+        <div class="sec-head"><h3 id="h-ret">Scenario: keep more members in a tier</h3><span>Value created across the member base</span></div>
+        <p class="lead">Suppose a retention effort (a softer landing, a targeted offer, better service recovery) cuts the share of one tier's members who lapse each year. The members it keeps behave like the tier's other members who stay: most remain, some move up or down. Members who start elsewhere also gain when they pass through that tier.</p>
+        <div class="scen-ctl">
+          <label>Tier <select class="num" id="ret-tier"></select></label>
+          <label>Retention up by <input class="num" id="ret-pts" type="number" min="0" max="30" step="0.5" inputmode="decimal"> points</label>
+        </div>
+        <p class="warn" id="ret-warn"></p>
+        <div class="tiles scen-tiles" id="ret-tiles"></div>
+        <div class="tbl-wrap"><table class="rf" id="ret-tbl"></table></div>
+        <p class="explain" id="ret-explain"></p>
+      </section>
+
+      <section class="sec" aria-labelledby="h-card">
+        <div class="sec-head"><h3 id="h-card">Scenario: more members take the co-brand card</h3><span>Value created across the member base</span></div>
+        <p class="lead">Suppose a card campaign converts some members into cardholders. Each extra cardholder brings the bank's payment for the points they earn on the card, and costs the awards those points are eventually redeemed for. The model assumes the card changes nothing else: the member flies and lapses exactly as before.</p>
+        <div class="scen-ctl">
+          <label>Members in <select class="num" id="card-tier"></select></label>
+          <label>Converted <input class="num" id="card-pts" type="number" min="0" max="50" step="0.5" inputmode="decimal"> % of members</label>
+        </div>
+        <p class="warn" id="card-warn"></p>
+        <div class="tiles scen-tiles" id="card-tiles"></div>
+        <div class="tbl-wrap"><table class="rf" id="card-tbl"></table></div>
+        <p class="explain" id="card-explain"></p>
+      </section>
+
+      <div class="method" id="how">
+        <h3>How it works</h3>
+
+        <h4>Annual margin per tier</h4>
+        <p>Every member of a tier is treated as the tier's average member. Their yearly margin is the contribution of their paid flying, plus what the bank pays for the points they earn on the co-brand card (for the share of the tier holding it), plus what partners pay for the points they earn with them, minus the cost of honouring the points they will redeem and the cost of their status benefits.</p>
+        <span class="fx">m(k) = F(k) + u(k) × C(k) × p_bank + Q(k) × p_partner
+       − [ E(k) + u(k) × C(k) + Q(k) ] × ρ × c
+       − B(k)
+
+F  flight margin ($/year)          E  points earned from flying
+u  share of members with the card   C  card points per cardholder
+Q  points earned with partners      B  benefit cost ($/year)
+p  price paid per point (bank, partners)
+ρ  share of points eventually redeemed    c  cost of honouring a redeemed point</span>
+        <p>Redemption cost is booked in the year the points are earned, for the share expected to be redeemed: the timing of the awards themselves is ignored, which is close enough for a lifetime total. The <a href="/breakage.html">breakage model</a> follows that timing in detail. The default prices come from the illustrative example in <a href="/loyalty101.html#ch07">Loyalty 101, chapter 07</a>: the bank pays 1.2¢ a point and honouring one costs the airline about 0.7¢.</p>
+
+        <h4>Tier migration as a Markov chain</h4>
+        <p>The states are the five tiers plus <i>Lapsed</i>, a member who no longer flies or earns and brings no margin. <code>P(i, j)</code> is the probability that a member in state <code>i</code> this year is in state <code>j</code> next year. A member's position after <code>t</code> years is a probability over the states, found by applying the matrix once per year, starting from certainty in the starting tier <code>s</code>:</p>
+        <span class="fx">π₁ = e(s)        (1 in the starting tier, 0 elsewhere)
+π(t+1) = π(t) × P</span>
+        <p><b>Retention</b> of a tier is <code>1 − P(k, Lapsed)</code>: the share of its members still active a year later, whatever tier they land in. A lapsed member can come back through the <i>Lapsed → Base</i> cell.</p>
+
+        <h4>Lifetime value</h4>
+        <p>Lifetime value from starting tier <code>s</code> is the expected margin in each year, discounted at rate <code>d</code> and summed over a horizon of <code>N</code> years. Year 1 is the current year and counts in full, as in <a href="/loyalty101.html#ch08">Loyalty 101, chapter 08</a>.</p>
+        <span class="fx">CLV(s) = Σ_{t=1..N}  π(t) · m  /  (1 + d)^(t−1)
+
+in matrix form, for every starting tier at once:
+CLV = Σ_{t=0..N−1} (P / (1+d))^t · m        →  (I − P/(1+d))⁻¹ · m   as N → ∞</span>
+        <p>The member base value is <code>Σ members(s) × CLV(s)</code>. The scenarios compute it twice, with and without the change, and report the difference. The tornado chart moves one lever at a time by the chosen percentage: retention through the lapse rate (a 20% lower lapse rate turns 7% into 5.6%), card uptake by its share, and flight margin, redemption cost and benefit cost by their amounts.</p>
+
+        <h4>Worked example</h4>
+        <div class="rowctl"><span class="lbl">Starting tier</span><div class="chips" id="ex-sel"></div></div>
+        <div id="ex"></div>
+
+        <h4>Where the default numbers come from</h4>
+        <p>All the defaults are assumptions, chosen to look plausible for a large network airline and stored in <code>assets/data/memberclv.json</code>. The five-tier pyramid (5 million members, 90% of them Base) and the margins reflect the pattern described in <a href="/loyalty101.html#ch06">Loyalty 101, chapter 06</a>: a small share of members brings a large share of the money, and the top tiers cost the most to serve. The transition matrix has the usual shape: high tiers are sticky, most members who lose status drop one tier rather than to the bottom, and a quarter of Base members stop being active each year. The card economics follow <a href="/loyalty101.html#ch07">chapter 07</a>; for a sense of scale, Delta reported that American Express paid it $8.2 billion in 2025 under their co-brand agreement.</p>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>Phillip E. Pfeifer and Robert L. Carraway, <a href="https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1520-6653(200021)14:2%3C43::AID-DIR4%3E3.0.CO;2-H" target="_blank" rel="noopener">“Modeling customer relationships as Markov chains”</a>, Journal of Interactive Marketing 14(2), 2000, pp. 43–55: the Markov chain formulation of lifetime value used here.</li>
+          <li>Delta Air Lines, <a href="https://ir.delta.com/news/news-details/2026/Delta-Air-Lines-Announces-December-Quarter-and-Full-Year-2025-Financial-Results/default.aspx" target="_blank" rel="noopener">December quarter and full year 2025 financial results</a>, 13 January 2026: “American Express remuneration in 2025 grew 11 percent to $8.2 billion”. Checked 28 September 2026.</li>
+          <li><a href="/loyalty101.html#ch07">Loyalty 101, chapter 07</a> (price and cost of a point) and <a href="/loyalty101.html#ch08">chapter 08</a> (the one-tier lifetime value formula).</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>Every input is an illustrative assumption, not an estimate for any real programme.</li>
+          <li>Averages per tier. Real members of the same tier differ a lot (a Gold member who flies twice a month versus one who just scraped in), and the value of an individual member needs a model of that member.</li>
+          <li>The chain has no memory and doesn't age: next year depends only on this year's tier, with the same odds every year. Real programmes have multi-year status, soft landings and lifetime tiers, and members' travel changes with their careers.</li>
+          <li>Flight margin is the whole contribution of the member's flying, not only the part the programme causes. This is the value <i>of</i> a member, not the value the programme <i>creates</i>: many of these trips would happen without it. Measuring that takes a holdout, as in <a href="/loyalty101.html#ch09">chapter 09</a> and the <a href="/promoroi.html">promotion ROI calculator</a>.</li>
+          <li>Card uptake is a share of each tier. In the card scenario the extra cardholders don't fly more or lapse less, which is conservative if the card builds loyalty and optimistic if people who take it would have been loyal anyway (chapter 07 discusses which way the arrow points). When one tier is targeted, a converted member holds the card while in that tier, not after moving.</li>
+          <li>The member base is closed: no new members join. The scenario values are before the cost of the retention effort or the card campaign; compare them with the break-even amounts shown.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline. For the business side of segmentation and lifetime value, read <a href="/loyalty101.html#ch08">Loyalty 101: Segmentation &amp; Customer Lifetime Value</a>.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      var DATA_URL = "assets/data/memberclv.json";
+      var NT = 5, LAPSED = 5, NS = 6;
+      var css = getComputedStyle(document.documentElement);
+      function cv(n) { return css.getPropertyValue(n).trim(); }
+      var TC = [cv("--t0"), cv("--t1"), cv("--t2"), cv("--t3"), cv("--t4"), cv("--t5")];
+      var COMP = [
+        { k: "flight",  label: "Flight margin",   color: cv("--flight"),  sign: 1 },
+        { k: "card",    label: "Co-brand card",   color: cv("--card"),    sign: 1 },
+        { k: "partner", label: "Partners",        color: cv("--partner"), sign: 1 },
+        { k: "redeem",  label: "Redemption cost", color: cv("--redeem"),  sign: -1 },
+        { k: "benefit", label: "Benefit cost",    color: cv("--benefit"), sign: -1 }
+      ];
+      var GAIN = cv("--gain"), LOSS = cv("--loss");
+      var tip = document.getElementById("tip");
+      var cfg, S, R;
+
+      // ───────────────────────────── helpers
+      function el(id) { return document.getElementById(id); }
+      function clone(o) { return JSON.parse(JSON.stringify(o)); }
+      function grp(x) { return Math.round(Math.abs(x)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+      function usd(x) { return (x <= -0.5 ? "−" : "") + "$" + grp(x); }
+      function signedUsd(x) { return (x >= 0.5 ? "+" : "") + usd(x); }
+      function big(x) {
+        var a = Math.abs(x), s = x < 0 ? "−" : "";
+        if (a >= 1e9) return s + "$" + (a / 1e9).toFixed(a >= 1e10 ? 1 : 2) + "bn";
+        if (a >= 1e6) return s + "$" + (a / 1e6).toFixed(a >= 1e8 ? 0 : 1) + "m";
+        if (a >= 1e3) return s + "$" + Math.round(a / 1e3) + "k";
+        return usd(x);
+      }
+      function signedBig(x) { return (x > 0 ? "+" : "") + big(x); }
+      function pct(x, dp) { return (x * 100).toFixed(dp == null ? 0 : dp) + "%"; }
+      function num(x) { return grp(x); }
+      function cents(x) { return (+x).toFixed(x * 10 % 1 ? 2 : 1) + "¢"; }
+      function members(k) { return S.tiers[k].members * 1000; }
+      function totalMembers() { var s = 0; for (var k = 0; k < NT; k++) s += members(k); return s; }
+      function fmtMembers(n) { return n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + "m" : Math.round(n / 1e3) + "k"; }
+
+      // ───────────────────────────── the model
+      // Transition matrix from the % table: the diagonal is the remainder of each row.
+      function baseMatrix() {
+        var P = [], bad = [];
+        for (var i = 0; i < NS; i++) {
+          var row = S.T[i].map(function (v) { return Math.max(0, +v || 0) / 100; }), off = 0;
+          for (var j = 0; j < NS; j++) if (j !== i) off += row[j];
+          if (off > 1) { bad.push(i); for (var j2 = 0; j2 < NS; j2++) row[j2] = j2 === i ? 0 : row[j2] / off; }
+          else row[i] = 1 - off;
+          P.push(row);
+        }
+        return { P: P, bad: bad };
+      }
+
+      // Set tier k's lapse probability to L, spreading the change over the other destinations in proportion.
+      function setLapse(row, k, L) {
+        var L0 = row[LAPSED], stay = 1 - L0;
+        L = Math.max(0, Math.min(1, L));
+        if (stay <= 1e-12) { row[k] += row[LAPSED] - L; row[LAPSED] = L; return; }
+        var f = (1 - L) / stay;
+        for (var j = 0; j < NS; j++) if (j !== LAPSED) row[j] *= f;
+        row[LAPSED] = L;
+      }
+
+      function margins(o) {
+        var p = S.pts, comp = {};
+        COMP.forEach(function (c) { comp[c.k] = new Float64Array(NS); });
+        var m = new Float64Array(NS), up = new Float64Array(NS);
+        for (var k = 0; k < NT; k++) {
+          var t = S.tiers[k];
+          var u = t.cardUptake * (o.uptakeMult || 1) + ((o.upTier === -1 || o.upTier === k) ? (o.upAdd || 0) : 0);
+          u = Math.max(0, Math.min(100, u)) / 100; up[k] = u;
+          var cost = p.costCents * (o.costMult || 1);
+          comp.flight[k] = t.flightMargin * (o.flightMult || 1);
+          comp.card[k] = u * t.cardPts * p.bankCents / 100;
+          comp.partner[k] = t.partnerPts * p.partnerCents / 100;
+          comp.redeem[k] = (t.flightPts + u * t.cardPts + t.partnerPts) * p.redeemedPct / 100 * cost / 100;
+          comp.benefit[k] = t.benefits * (o.benMult || 1);
+          m[k] = comp.flight[k] + comp.card[k] + comp.partner[k] - comp.redeem[k] - comp.benefit[k];
+        }
+        return { m: m, comp: comp, uptake: up };
+      }
+
+      // opts: lapseMult, lapseTier + lapseDelta, uptakeMult, upTier + upAdd, flightMult, costMult, benMult
+      function run(o) {
+        o = o || {};
+        var B = baseMatrix(), P = B.P.map(function (r) { return r.slice(); });
+        for (var k = 0; k < NT; k++) {
+          if (o.lapseMult != null) setLapse(P[k], k, P[k][LAPSED] * o.lapseMult);
+          if (o.lapseTier === k) setLapse(P[k], k, P[k][LAPSED] - o.lapseDelta);
+        }
+        var M = margins(o), N = S.horizon, disc = 1 / (1 + S.disc / 100);
+        function value(vec) {           // Σ_t disc^t P^t vec
+          var w = Float64Array.from(vec), acc = new Float64Array(NS), f = 1;
+          for (var t = 0; t < N; t++) {
+            for (var i = 0; i < NS; i++) acc[i] += f * w[i];
+            var nw = new Float64Array(NS);
+            for (var i2 = 0; i2 < NS; i2++) { var s = 0; for (var j = 0; j < NS; j++) s += P[i2][j] * w[j]; nw[i2] = s; }
+            w = nw; f *= disc;
+          }
+          return acc;
+        }
+        var clv = value(M.m), clvComp = {};
+        COMP.forEach(function (c) { clvComp[c.k] = value(M.comp[c.k]); });
+        var paths = [];
+        for (var s0 = 0; s0 < NS; s0++) {
+          var pi = new Float64Array(NS); pi[s0] = 1; var seq = [];
+          for (var t = 0; t < N; t++) {
+            seq.push(Float64Array.from(pi));
+            var np = new Float64Array(NS);
+            for (var i3 = 0; i3 < NS; i3++) for (var j3 = 0; j3 < NS; j3++) np[j3] += pi[i3] * P[i3][j3];
+            pi = np;
+          }
+          seq.push(pi);                // position after N years (for "still active")
+          paths.push(seq);
+        }
+        var base = 0;
+        for (var k2 = 0; k2 < NT; k2++) base += members(k2) * clv[k2];
+        return { P: P, bad: B.bad, m: M.m, comp: M.comp, uptake: M.uptake, clv: clv, clvComp: clvComp, paths: paths,
+                 baseValue: base, avg: base / totalMembers(), disc: disc };
+      }
+      function valueOf(r, sel) { return sel < 0 ? r.avg : r.clv[sel]; }
+
+      // ───────────────────────────── controls
+      function chipRow(host, items, current, onPick) {
+        host.innerHTML = "";
+        items.forEach(function (it) {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip" + (it.value === current ? " on" : "");
+          b.textContent = it.label; b.setAttribute("aria-pressed", it.value === current);
+          b.addEventListener("click", function () { onPick(it.value); });
+          host.appendChild(b);
+        });
+      }
+      function tierLabel(k) { return k < 0 ? "All tiers" : cfg.states[k]; }
+
+      var TIER_COLS = [
+        { k: "members",      label: "Members<br>(thousands)", step: 10 },
+        { k: "flightMargin", label: "Flight margin<br>($/year)", step: 10 },
+        { k: "flightPts",    label: "Points from<br>flying", step: 500 },
+        { k: "cardUptake",   label: "Card holders<br>(% of tier)", step: 1, max: 100 },
+        { k: "cardPts",      label: "Card points<br>per holder", step: 1000 },
+        { k: "partnerPts",   label: "Partner<br>points", step: 100 },
+        { k: "benefits",     label: "Benefit cost<br>($/year)", step: 10 }
+      ];
+      var PTS_FIELDS = [
+        { k: "bankCents",    label: "Bank pays per point (¢)", step: 0.1 },
+        { k: "partnerCents", label: "Partners pay per point (¢)", step: 0.1 },
+        { k: "costCents",    label: "Cost of a redeemed point (¢)", step: 0.1 },
+        { k: "redeemedPct",  label: "Share of points redeemed (%)", step: 1, max: 100 }
+      ];
+
+      function numInput(value, step, max, aria, onVal) {
+        var inp = document.createElement("input");
+        inp.className = "num"; inp.type = "number"; inp.min = 0; inp.step = step; if (max) inp.max = max;
+        inp.inputMode = "decimal"; inp.value = value; inp.setAttribute("aria-label", aria);
+        inp.addEventListener("input", function () {
+          var v = parseFloat(this.value);
+          if (isFinite(v) && v >= 0 && (!max || v <= max)) onVal(v);
+        });
+        return inp;
+      }
+
+      function buildEditors() {
+        // tier economics
+        var t = el("t-tiers"); t.innerHTML = "";
+        var h = "<thead><tr><th>Tier</th>" + TIER_COLS.map(function (c) { return "<th>" + c.label + "</th>"; }).join("") + "<th>Annual<br>margin</th></tr></thead>";
+        t.innerHTML = h + "<tbody></tbody>";
+        var tb = t.querySelector("tbody");
+        S.tiers.forEach(function (tier, k) {
+          var tr = document.createElement("tr");
+          tr.innerHTML = "<td class='k'><i class='sw' style='background:" + TC[k] + "'></i>" + tier.label + "</td>";
+          TIER_COLS.forEach(function (c) {
+            var td = document.createElement("td");
+            td.appendChild(numInput(tier[c.k], c.step, c.max, tier.label + ", " + c.label.replace("<br>", " "), function (v) { S.tiers[k][c.k] = v; renderAll(); }));
+            tr.appendChild(td);
+          });
+          var tdm = document.createElement("td"); tdm.className = "calc"; tdm.id = "m-" + k; tr.appendChild(tdm);
+          tb.appendChild(tr);
+        });
+        var pg = el("pts"); pg.innerHTML = "";
+        PTS_FIELDS.forEach(function (f) {
+          var l = document.createElement("label"); l.textContent = f.label;
+          l.appendChild(numInput(S.pts[f.k], f.step, f.max, f.label, function (v) { S.pts[f.k] = v; renderAll(); }));
+          pg.appendChild(l);
+        });
+        // transition matrix
+        var mx = el("t-mx");
+        mx.innerHTML = "<thead><tr><th>From \\ to</th>" + cfg.states.map(function (s) { return "<th>" + s + "</th>"; }).join("") + "<th>Retention</th></tr></thead><tbody></tbody>";
+        var mb = mx.querySelector("tbody");
+        cfg.states.forEach(function (from, i) {
+          var tr = document.createElement("tr");
+          tr.innerHTML = "<td class='k'><i class='sw' style='background:" + TC[i] + "'></i>" + from + "</td>";
+          cfg.states.forEach(function (to, j) {
+            var td = document.createElement("td");
+            if (i === j) { td.className = "diag"; td.id = "mx-" + i; }
+            else td.appendChild(numInput(S.T[i][j], 1, 100, from + " to " + to + ", %", function (v) { S.T[i][j] = v; renderAll(); }));
+            tr.appendChild(td);
+          });
+          var tdr = document.createElement("td"); tdr.className = "calc"; tdr.id = "ret-" + i; tr.appendChild(tdr);
+          mb.appendChild(tr);
+        });
+      }
+
+      function updateEditors() {
+        for (var k = 0; k < NT; k++) el("m-" + k).textContent = usd(R.m[k]);
+        var n = 0; for (var k1 = 0; k1 < NT; k1++) n += members(k1);
+        el("tiers-sum").textContent = "· " + fmtMembers(n) + " members, annual margin from " + usd(R.m[0]) + " (Base) to " + usd(R.m[4]) + " (Diamond)";
+        var B = baseMatrix();
+        for (var i = 0; i < NS; i++) {
+          var d = el("mx-" + i);
+          d.textContent = (B.P[i][i] * 100).toFixed(1).replace(/\.0$/, "");
+          d.classList.toggle("bad", B.bad.indexOf(i) >= 0);
+          el("ret-" + i).textContent = i < NT ? pct(1 - B.P[i][LAPSED], 1).replace(".0%", "%") : "";
+        }
+        el("mx-warn").textContent = B.bad.length ? "The moves out of " + B.bad.map(function (i) { return cfg.states[i]; }).join(", ") + " add up to more than 100%. They are scaled down to 100% and nobody stays in the tier." : "";
+        el("mx-sum").textContent = "· retention from " + pct(1 - B.P[0][LAPSED]) + " (Base) to " + pct(1 - B.P[4][LAPSED]) + " (Diamond)";
+      }
+
+      function initControls() {
+        buildEditors();
+        el("reset").addEventListener("click", function () {
+          S.tiers = clone(cfg.tiers); S.T = clone(cfg.transitionsPct); S.pts = clone(cfg.points);
+          S.disc = cfg.defaultDiscountPct; S.horizon = cfg.defaultHorizon;
+          buildEditors(); renderAll();
+        });
+        [["ret-tier", false], ["card-tier", true]].forEach(function (a) {
+          var s = el(a[0]);
+          if (a[1]) { var o0 = document.createElement("option"); o0.value = -1; o0.textContent = "All tiers"; s.appendChild(o0); }
+          for (var k = 0; k < NT; k++) { var o = document.createElement("option"); o.value = k; o.textContent = cfg.states[k]; s.appendChild(o); }
+        });
+        el("ret-tier").value = S.retTier; el("ret-pts").value = S.retPts;
+        el("card-tier").value = S.cardTier; el("card-pts").value = S.cardPts;
+        el("ret-tier").addEventListener("change", function () { S.retTier = +this.value; renderRetention(); });
+        el("card-tier").addEventListener("change", function () { S.cardTier = +this.value; renderCard(); });
+        el("ret-pts").addEventListener("input", function () { var v = parseFloat(this.value); if (isFinite(v) && v >= 0 && v <= 100) { S.retPts = v; renderRetention(); } });
+        el("card-pts").addEventListener("input", function () { var v = parseFloat(this.value); if (isFinite(v) && v >= 0 && v <= 100) { S.cardPts = v; renderCard(); } });
+      }
+
+      function buildChips() {
+        chipRow(el("disc"), cfg.discountOptions.map(function (d) { return { value: d, label: d + "%" }; }), S.disc, function (v) { S.disc = v; renderAll(); });
+        chipRow(el("hor"), cfg.horizonOptions.map(function (n) { return { value: n, label: n + " years" }; }), S.horizon, function (v) { S.horizon = v; renderAll(); });
+        var sel = [{ value: -1, label: "Average member" }].concat(d3.range(NT).map(function (k) { return { value: k, label: cfg.states[k] }; }));
+        chipRow(el("tor-sel"), sel, S.torSel, function (v) { S.torSel = v; drawTornado(); });
+        chipRow(el("tor-swing"), cfg.tornado.swings.map(function (s) { return { value: s, label: "±" + s + "%" }; }), S.swing, function (v) { S.swing = v; drawTornado(); });
+        chipRow(el("ex-sel"), d3.range(NT).map(function (k) { return { value: k, label: cfg.states[k] }; }), S.exTier, function (v) { S.exTier = v; drawExample(); });
+      }
+
+      // ───────────────────────────── tooltip
+      function showTip(html, evt) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var pageX = evt.pageX, pageY = evt.pageY, w = tip.offsetWidth, h = tip.offsetHeight;
+        var x = pageX + 14, y = pageY - h - 12;
+        if (x + w > window.scrollX + document.documentElement.clientWidth - 8) x = pageX - w - 14;
+        if (x < window.scrollX + 8) x = window.scrollX + 8;
+        if (y < window.scrollY + 8) y = pageY + 16;
+        tip.style.left = x + "px"; tip.style.top = y + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      function row(color, label, val, cls) {
+        return '<div class="r' + (cls ? " " + cls : "") + '"><span>' + (color ? '<i class="sw" style="background:' + color + '"></i>' : "") + label + "</span><b>" + val + "</b></div>";
+      }
+
+      // ───────────────────────────── chart scaffolding
+      function frame(host, heightRatio, minH, M) {
+        var W = Math.max(240, host.clientWidth || host.parentNode.clientWidth || 600);
+        var H = Math.max(minH || 200, Math.round(W * heightRatio));
+        var narrow = W < 520;
+        M = M || { top: 12, right: narrow ? 10 : 16, bottom: 26, left: narrow ? 44 : 54 };
+        d3.select(host).selectAll("*").remove();
+        var svg = d3.select(host).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img");
+        return { svg: svg, W: W, H: H, M: M, iw: W - M.left - M.right, ih: H - M.top - M.bottom, narrow: narrow,
+                 g: svg.append("g").attr("transform", "translate(" + M.left + "," + M.top + ")") };
+      }
+      function fmtAxis(v) {
+        var a = Math.abs(v), s = v < 0 ? "−" : "";
+        if (a === 0) return "0";
+        if (a >= 1e3) return s + "$" + d3.format(",")(Math.round(a / 100) / 10) + "k";
+        return s + "$" + Math.round(a);
+      }
+      function legend(host, items) {
+        el(host).innerHTML = items.map(function (it) {
+          return '<span><i class="' + (it.tick ? "tick" : "") + '" style="background:' + it.color + '"></i>' + it.label + "</span>";
+        }).join("");
+      }
+      function tiles(hostId, items) {
+        el(hostId).innerHTML = items.map(function (t) { return '<div class="tile"><b>' + t[0] + "</b><span>" + t[1] + "</span></div>"; }).join("");
+      }
+      function roundedRight(x, y, w, h, r) {    // bar whose far end is rounded (w may be negative)
+        if (Math.abs(w) < 0.5) return "";
+        r = Math.min(r, h / 2, Math.abs(w));
+        if (w > 0) return "M" + x + "," + y + "H" + (x + w - r) + "Q" + (x + w) + "," + y + " " + (x + w) + "," + (y + r) + "V" + (y + h - r) + "Q" + (x + w) + "," + (y + h) + " " + (x + w - r) + "," + (y + h) + "H" + x + "Z";
+        var e = x + w;
+        return "M" + x + "," + y + "H" + (e + r) + "Q" + e + "," + y + " " + e + "," + (y + r) + "V" + (y + h - r) + "Q" + e + "," + (y + h) + " " + (e + r) + "," + (y + h) + "H" + x + "Z";
+      }
+
+      // ───────────────────────────── tiles & summary
+      function drawTiles() {
+        var eliteM = 0, eliteV = 0;
+        for (var k = 1; k < NT; k++) { eliteM += members(k); eliteV += members(k) * R.clv[k]; }
+        tiles("tiles", [
+          [usd(R.avg), "Lifetime value of the average member, over " + S.horizon + " years at " + S.disc + "%"],
+          [usd(R.clv[4]), "A member starting in Diamond: " + (R.clv[4] / R.clv[0]).toFixed(0) + "× a Base member (" + usd(R.clv[0]) + ")"],
+          [big(R.baseValue), "Value of today's " + fmtMembers(totalMembers()) + " members over the horizon, with no new members joining"],
+          [pct(eliteV / R.baseValue), "Of that value sits with elite members, " + pct(eliteM / totalMembers(), 0) + " of the member base"]
+        ]);
+      }
+
+      function drawSummary() {
+        var rows = d3.range(NT).map(function (k) {
+          return "<tr><td class='k'><i class='sw' style='background:" + TC[k] + "'></i>" + cfg.states[k] + "</td><td>" + fmtMembers(members(k)) + "</td><td>" + usd(R.m[k]) +
+            "</td><td>" + pct(1 - R.P[k][LAPSED]) + "</td><td class='k'>" + usd(R.clv[k]) + "</td><td>" + (R.m[k] > 0 ? (R.clv[k] / R.m[k]).toFixed(1) + "×" : "–") +
+            "</td><td>" + pct(members(k) * R.clv[k] / R.baseValue) + "</td></tr>";
+        });
+        el("t-sum").innerHTML = "<thead><tr><th>Tier</th><th>Members</th><th>Annual<br>margin</th><th>Retention</th><th>Lifetime<br>value</th><th>Years of<br>margin</th><th>Share of<br>base value</th></tr></thead><tbody>" + rows.join("") +
+          "<tr class='total'><td>All</td><td>" + fmtMembers(totalMembers()) + "</td><td></td><td></td><td>" + usd(R.avg) + "</td><td></td><td>" + big(R.baseValue) + "</td></tr></tbody>";
+        el("clv-span").textContent = S.horizon + " years · " + S.disc + "% discount rate";
+        el("clv-sub").textContent = "Discounted margin over " + S.horizon + " years for a member starting in each tier. Revenue streams to the right, costs to the left; the black mark is the net lifetime value.";
+      }
+
+      // ───────────────────────────── CLV by starting tier (diverging stacked bars)
+      function drawCLV() {
+        var host = el("c-clv"), narrow = host.clientWidth < 520;
+        var f = frame(host, 0.62, 250, { top: 8, right: narrow ? 50 : 64, bottom: 26, left: narrow ? 58 : 66 });
+        var rows = d3.range(NT), lo = 0, hi = 0;
+        rows.forEach(function (s) {
+          var p = 0, n = 0;
+          COMP.forEach(function (c) { if (c.sign > 0) p += R.clvComp[c.k][s]; else n += R.clvComp[c.k][s]; });
+          hi = Math.max(hi, p); lo = Math.min(lo, -n);
+        });
+        var x = d3.scaleLinear().domain([lo * 1.04, hi * 1.02]).nice(5).range([0, f.iw]);
+        var y = d3.scaleBand().domain(rows).range([0, f.ih]).paddingInner(0.3).paddingOuter(0.1);
+        f.g.append("g").attr("class", "grid").attr("transform", "translate(0," + f.ih + ")").call(d3.axisBottom(x).ticks(narrow ? 4 : 6).tickSize(-f.ih).tickFormat(""));
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")").call(d3.axisBottom(x).ticks(narrow ? 4 : 6).tickSize(0).tickPadding(8).tickFormat(fmtAxis)).select(".domain").remove();
+        f.g.append("g").attr("class", "axis cat").call(d3.axisLeft(y).tickSize(0).tickPadding(8).tickFormat(function (k) { return cfg.states[k]; })).select(".domain").remove();
+        f.g.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", 0).attr("y2", f.ih).attr("stroke", "#bdbdb8");
+        var bh = y.bandwidth();
+        rows.forEach(function (s) {
+          var y0 = y(s), accP = 0, accN = 0;
+          var pos = COMP.filter(function (c) { return c.sign > 0; }), neg = COMP.filter(function (c) { return c.sign < 0; });
+          pos.forEach(function (c, i) {
+            var v = R.clvComp[c.k][s], x0 = x(accP), x1 = x(accP + v); accP += v;
+            if (i === pos.length - 1) f.g.append("path").attr("d", roundedRight(x0, y0, x1 - x0, bh, 4)).attr("fill", c.color);
+            else f.g.append("rect").attr("x", x0).attr("y", y0).attr("width", Math.max(0, x1 - x0 - 2)).attr("height", bh).attr("fill", c.color);
+          });
+          neg.forEach(function (c, i) {
+            var v = R.clvComp[c.k][s], x0 = x(-accN), x1 = x(-accN - v); accN += v;
+            if (i === neg.length - 1) f.g.append("path").attr("d", roundedRight(x0, y0, x1 - x0, bh, 4)).attr("fill", c.color);
+            else f.g.append("rect").attr("x", x1 + 2).attr("y", y0).attr("width", Math.max(0, x0 - x1 - 2)).attr("height", bh).attr("fill", c.color);
+          });
+          var net = R.clv[s];
+          f.g.append("rect").attr("x", x(net) - 1.5).attr("y", y0 - 3).attr("width", 3).attr("height", bh + 6).attr("rx", 1).attr("fill", "#222").attr("stroke", "#fff").attr("stroke-width", 1);
+          f.g.append("text").attr("class", "dlabel strong").attr("x", x(accP) + 6).attr("y", y0 + bh / 2 + 4).text(usd(net));
+          f.g.append("rect").attr("x", -f.M.left).attr("y", y0 - (y.step() - bh) / 2).attr("width", f.W).attr("height", y.step()).attr("fill", "transparent")
+            .on("pointermove", function (evt) {
+              var h = '<div class="t">Starting in ' + cfg.states[s] + "</div>";
+              COMP.forEach(function (c) { h += row(c.color, c.label, (c.sign < 0 ? "−" : "") + usd(R.clvComp[c.k][s])); });
+              h += row(null, "Lifetime value", usd(net), "tot");
+              h += row(null, "Annual margin in the tier", usd(R.m[s]));
+              showTip(h, evt);
+            })
+            .on("pointerleave", hideTip);
+        });
+        legend("l-clv", COMP.map(function (c) { return { color: c.color, label: c.label }; }).concat([{ tick: true, color: "#222", label: "Net lifetime value" }]));
+      }
+
+      // ───────────────────────────── tier paths (small multiples)
+      function drawPaths() {
+        var host = el("c-paths"); host.innerHTML = "";
+        var N = S.horizon, order = [4, 3, 2, 1, 0, 5];     // bottom → top
+        d3.range(NT).forEach(function (s) {
+          var card = document.createElement("div"); card.className = "card";
+          var still = 1 - R.paths[s][N][LAPSED], same = R.paths[s][N][s];
+          card.innerHTML = "<h5>Starting in " + cfg.states[s] + "</h5><p class='sub'>Lifetime value " + usd(R.clv[s]) + " · after " + N + " years, " + pct(still) + " still active, " + pct(same) + " in " + cfg.states[s] + "</p><div class='chart'></div>";
+          host.appendChild(card);
+          var ch = card.querySelector(".chart");
+          var f = frame(ch, 0.82, 150, { top: 4, right: 6, bottom: 20, left: 32 });
+          var data = R.paths[s].slice(0, N).map(function (pi, t) { var o = { t: t + 1 }; for (var i = 0; i < NS; i++) o[i] = pi[i]; return o; });
+          var x = d3.scaleLinear().domain([1, Math.max(2, N)]).range([0, f.iw]);
+          var y = d3.scaleLinear().domain([0, 1]).range([f.ih, 0]);
+          var stack = d3.stack().keys(order)(data);
+          f.g.selectAll("path.band").data(stack).enter().append("path")
+            .attr("d", d3.area().x(function (d) { return x(d.data.t); }).y0(function (d) { return y(d[0]); }).y1(function (d) { return y(d[1]); }))
+            .attr("fill", function (d) { return TC[d.key]; }).attr("stroke", "#fff").attr("stroke-width", 1);
+          var ticks = N <= 5 ? d3.range(1, N + 1) : [1, Math.round(N / 2), N];
+          f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")").call(d3.axisBottom(x).tickValues(ticks).tickSize(3).tickFormat(function (t) { return "Y" + t; }));
+          f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickValues([0, .5, 1]).tickSize(0).tickPadding(4).tickFormat(function (v) { return Math.round(v * 100) + "%"; })).select(".domain").remove();
+          var xh = f.g.append("line").attr("class", "xhair").attr("y1", 0).attr("y2", f.ih).style("display", "none");
+          f.g.append("rect").attr("width", f.iw).attr("height", f.ih).attr("fill", "transparent")
+            .on("pointermove", function (evt) {
+              var t = Math.max(1, Math.min(N, Math.round(x.invert(d3.pointer(evt, this)[0])))), pi = R.paths[s][t - 1];
+              xh.attr("x1", x(t)).attr("x2", x(t)).style("display", null);
+              var h = '<div class="t">Year ' + t + ", started in " + cfg.states[s] + "</div>", em = 0;
+              [5, 0, 1, 2, 3, 4].forEach(function (j) { if (pi[j] > 0.0005) h += row(TC[j], cfg.states[j], pct(pi[j], 1)); em += pi[j] * R.m[j]; });
+              h += row(null, "Expected margin that year", usd(em), "tot");
+              showTip(h, evt);
+            })
+            .on("pointerleave", function () { xh.style("display", "none"); hideTip(); });
+        });
+        legend("l-paths", [5, 0, 1, 2, 3, 4].map(function (j) { return { color: TC[j], label: cfg.states[j] }; }));
+      }
+
+      // ───────────────────────────── tornado
+      function levers(sw) {
+        return [
+          { label: "Retention", lo: { lapseMult: 1 + sw }, hi: { lapseMult: 1 - sw }, loTxt: "lapse rate +" + S.swing + "%", hiTxt: "lapse rate −" + S.swing + "%" },
+          { label: "Card uptake", lo: { uptakeMult: 1 - sw }, hi: { uptakeMult: 1 + sw }, loTxt: "cardholder share −" + S.swing + "%", hiTxt: "cardholder share +" + S.swing + "%" },
+          { label: "Flight margin", lo: { flightMult: 1 - sw }, hi: { flightMult: 1 + sw }, loTxt: "flight margin −" + S.swing + "%", hiTxt: "flight margin +" + S.swing + "%" },
+          { label: "Redemption cost", lo: { costMult: 1 + sw }, hi: { costMult: 1 - sw }, loTxt: "cost per point +" + S.swing + "%", hiTxt: "cost per point −" + S.swing + "%" },
+          { label: "Benefit cost", lo: { benMult: 1 + sw }, hi: { benMult: 1 - sw }, loTxt: "benefit cost +" + S.swing + "%", hiTxt: "benefit cost −" + S.swing + "%" }
+        ];
+      }
+
+      function drawTornado() {
+        buildChips();
+        var sel = S.torSel, base = valueOf(R, sel), sw = S.swing / 100;
+        var L = levers(sw).map(function (l) {
+          l.rLo = run(l.lo); l.rHi = run(l.hi);
+          l.worse = valueOf(l.rLo, sel); l.better = valueOf(l.rHi, sel); l.range = Math.abs(l.better - l.worse); return l;
+        }).sort(function (a, b) { return b.range - a.range; });
+        var host = el("c-tor"), narrow = host.clientWidth < 520;
+        var f = frame(host, 0.3, 240, { top: 22, right: narrow ? 8 : 16, bottom: 26, left: narrow ? 104 : 124 });
+        var lo = d3.min(L, function (l) { return Math.min(l.worse, l.better); }), hi = d3.max(L, function (l) { return Math.max(l.worse, l.better); });
+        var pad = (hi - lo) * (narrow ? 0.34 : 0.24) + 1;
+        var x = d3.scaleLinear().domain([lo - pad, hi + pad]).range([0, f.iw]);
+        var y = d3.scaleBand().domain(d3.range(L.length)).range([0, f.ih]).paddingInner(0.34).paddingOuter(0.1);
+        f.g.append("g").attr("class", "grid").attr("transform", "translate(0," + f.ih + ")").call(d3.axisBottom(x).ticks(narrow ? 3 : 5).tickSize(-f.ih).tickFormat(""));
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")").call(d3.axisBottom(x).ticks(narrow ? 3 : 5).tickSize(0).tickPadding(8).tickFormat(fmtAxis)).select(".domain").remove();
+        f.g.append("g").attr("class", "axis cat").call(d3.axisLeft(y).tickSize(0).tickPadding(10).tickFormat(function (i) { return L[i].label; })).select(".domain").remove();
+        var bh = y.bandwidth();
+        L.forEach(function (l, i) {
+          var y0 = y(i);
+          [["worse", LOSS], ["better", GAIN]].forEach(function (p) {
+            var v = l[p[0]], color = v >= base ? GAIN : LOSS;
+            f.g.append("path").attr("d", roundedRight(x(base), y0, x(v) - x(base), bh, 4)).attr("fill", color);
+            var d = v - base, right = d >= 0;
+            f.g.append("text").attr("class", "dlabel").attr("x", x(v) + (right ? 5 : -5)).attr("y", y0 + bh / 2 + 4).attr("text-anchor", right ? "start" : "end")
+              .text(signedUsd(d));
+          });
+          f.g.append("rect").attr("x", -f.M.left).attr("y", y0 - (y.step() - bh) / 2).attr("width", f.W).attr("height", y.step()).attr("fill", "transparent")
+            .on("pointermove", function (evt) {
+              showTip('<div class="t">' + l.label + "</div>" + row(LOSS, l.loTxt, usd(l.worse) + " (" + signedUsd(l.worse - base) + ")") +
+                row(GAIN, l.hiTxt, usd(l.better) + " (" + signedUsd(l.better - base) + ")") + row(null, "At the current settings", usd(base), "tot"), evt);
+            })
+            .on("pointerleave", hideTip);
+        });
+        f.g.append("line").attr("x1", x(base)).attr("x2", x(base)).attr("y1", -6).attr("y2", f.ih).attr("stroke", "#222").attr("stroke-width", 1.2);
+        f.g.append("text").attr("class", "dlabel strong").attr("x", x(base)).attr("y", -10).attr("text-anchor", "middle").text(usd(base));
+        var who = sel < 0 ? "the average member" : "a member starting in " + cfg.states[sel];
+        el("tor-title").textContent = "Lifetime value of " + who + ", each lever ±" + S.swing + "%";
+        el("tor-sub").textContent = "Bars start at today's value (" + usd(base) + "). Retention moves through the lapse rate; costs count as better when they fall.";
+        legend("l-tor", [{ color: GAIN, label: "Value gained" }, { color: LOSS, label: "Value lost" }]);
+        var top = L[0], second = L[1];
+        // biggest lever for each starting tier, grouped into runs of consecutive tiers
+        var best = d3.range(NT).map(function (k) {
+          var b = null, br = -1;
+          L.forEach(function (l) { var r = Math.abs(l.rHi.clv[k] - l.rLo.clv[k]); if (r > br) { br = r; b = l.label; } });
+          return b;
+        });
+        var groups = [];
+        best.forEach(function (b, k) { var g = groups[groups.length - 1]; if (g && g.label === b) g.to = k; else groups.push({ label: b, from: k, to: k }); });
+        var byTier = groups.length === 1 ? groups[0].label + " is the biggest lever whatever the starting tier." :
+          "By starting tier, the biggest lever is " + groups.map(function (g) {
+            return g.label.toLowerCase() + " for " + (g.from === g.to ? cfg.states[g.from] : cfg.states[g.from] + " to " + cfg.states[g.to]);
+          }).join(" and ") + ".";
+        el("tor-explain").innerHTML = "<b>Reading it:</b> for " + who + ", " + top.label.toLowerCase() + " moves lifetime value most (" + usd(top.range) + " between the two ends), then " + second.label.toLowerCase() + " (" + usd(second.range) + "). " +
+          (top.label === "Retention" || second.label === "Retention" ? "Retention compounds: a member kept one more year also brings every later year in which they would have stayed, so a small change in the lapse rate carries a lot of weight. " : "") +
+          byTier;
+      }
+
+      // ───────────────────────────── scenarios
+      function scenarioTable(hostId, R1, highlight) {
+        var tot0 = 0, tot1 = 0;
+        var rows = d3.range(NT).map(function (s) {
+          var n = members(s), d = R1.clv[s] - R.clv[s]; tot0 += n * R.clv[s]; tot1 += n * R1.clv[s];
+          return "<tr" + (highlight(s) ? " class='hl'" : "") + "><td class='k'><i class='sw' style='background:" + TC[s] + "'></i>" + cfg.states[s] + "</td><td>" + fmtMembers(n) + "</td><td>" + usd(R.clv[s]) + "</td><td>" + usd(R1.clv[s]) +
+            "</td><td class='" + (d > 0.5 ? "pos" : d < -0.5 ? "neg" : "") + "'>" + signedUsd(d) + "</td><td class='k'>" + signedBig(n * d) + "</td></tr>";
+        });
+        el(hostId).innerHTML = "<thead><tr><th>Starting tier</th><th>Members</th><th>Lifetime value<br>today</th><th>With the change</th><th>Change<br>per member</th><th>Value created</th></tr></thead><tbody>" + rows.join("") +
+          "<tr class='total'><td>All members</td><td>" + fmtMembers(totalMembers()) + "</td><td>" + big(tot0) + "</td><td>" + big(tot1) + "</td><td>" + signedUsd((tot1 - tot0) / totalMembers()) + "</td><td>" + signedBig(tot1 - tot0) + "</td></tr></tbody>";
+        return tot1 - tot0;
+      }
+
+      function renderRetention() {
+        var k = S.retTier, X = S.retPts / 100, L0 = R.P[k][LAPSED], L1 = Math.max(0, L0 - X);
+        el("ret-warn").textContent = X > L0 + 1e-9 ? cfg.states[k] + " only loses " + pct(L0, 1) + " of its members a year, so retention can rise by " + (L0 * 100).toFixed(1) + " points at most. The scenario uses that." : "";
+        var R1 = run({ lapseTier: k, lapseDelta: X });
+        var created = scenarioTable("ret-tbl", R1, function (s) { return s === k; });
+        var nk = members(k), kept = nk * (L0 - L1);
+        var own = nk * (R1.clv[k] - R.clv[k]);
+        tiles("ret-tiles", [
+          [signedBig(created), "Value created across all " + fmtMembers(totalMembers()) + " members over " + S.horizon + " years"],
+          [pct(1 - L0, 1) + " → " + pct(1 - L1, 1), "Retention of " + cfg.states[k] + " members, per year"],
+          [usd(created / nk), "Break-even budget per " + cfg.states[k] + " member today, spent once, for the effort to pay off"],
+          [pct(created > 0 ? own / created : 0), "Of the value comes from members starting in " + cfg.states[k] + "; the rest from members passing through"]
+        ]);
+        el("ret-explain").innerHTML = "<b>Reading it:</b> in the first year about " + grp(Math.round(kept / 100) * 100) + " " + cfg.states[k] + " members who would have lapsed stay active. " +
+          "Each one kept brings the tier's margin (" + usd(R.m[k]) + " a year) for as long as they stay, and keeps the chance of moving up. " +
+          "The value created, " + big(created) + ", is before the cost of the effort itself: it is worth doing if it costs less than " + usd(created / nk) + " per " + cfg.states[k] + " member.";
+      }
+
+      function renderCard() {
+        var k = S.cardTier, Y = S.cardPts, tiersIn = k < 0 ? d3.range(NT) : [k];
+        var capped = tiersIn.filter(function (t) { return S.tiers[t].cardUptake + Y > 100; });
+        el("card-warn").textContent = capped.length ? "Card uptake can't pass 100%: capped for " + capped.map(function (t) { return cfg.states[t]; }).join(", ") + "." : "";
+        var R1 = run({ upTier: k, upAdd: Y });
+        var created = scenarioTable("card-tbl", R1, function (s) { return tiersIn.indexOf(s) >= 0; });
+        var conv = 0; tiersIn.forEach(function (t) { conv += members(t) * (Math.min(100, S.tiers[t].cardUptake + Y) - S.tiers[t].cardUptake) / 100; });
+        var yr = 0; tiersIn.forEach(function (t) { var tt = S.tiers[t]; yr += tt.cardPts * (S.pts.bankCents - S.pts.redeemedPct / 100 * S.pts.costCents) / 100 * members(t); });
+        var ref = tiersIn.length === 1 ? tiersIn[0] : 0, tr = S.tiers[ref];
+        var perHolder = tr.cardPts * (S.pts.bankCents - S.pts.redeemedPct / 100 * S.pts.costCents) / 100;
+        tiles("card-tiles", [
+          [signedBig(created), "Value created across all members over " + S.horizon + " years"],
+          [fmtMembers(conv), "Members converted into cardholders"],
+          [conv > 0 ? usd(created / conv) : "–", "Value per converted member: the most a campaign could spend to win one"],
+          [usd(perHolder), "Net card margin per " + cfg.states[ref] + " cardholder per year: " + num(tr.cardPts) + " points × (" + cents(S.pts.bankCents) + " − " + S.pts.redeemedPct + "% × " + cents(S.pts.costCents) + ")"]
+        ]);
+        el("card-explain").innerHTML = "<b>Reading it:</b> the bank pays " + cents(S.pts.bankCents) + " for each point a cardholder earns, and the airline expects to spend " + S.pts.redeemedPct + "% × " + cents(S.pts.costCents) + " = " +
+          cents(S.pts.redeemedPct / 100 * S.pts.costCents) + " honouring it, so every card point leaves a margin whether or not the member flies. The value lasts as long as the member stays active" +
+          (k < 0 ? "." : ", and in this model only while they stay in " + cfg.states[k] + ". Converting in all tiers avoids that limitation.") +
+          " If cardholders also fly more or lapse less because of the card, the true value is higher; if the campaign mostly reaches members who were loyal anyway, it is the card margin alone.";
+      }
+
+      // ───────────────────────────── worked example
+      function drawExample() {
+        buildChips();
+        var k = S.exTier, t = S.tiers[k], p = S.pts, u = R.uptake[k], c = R.comp, N = S.horizon, d = S.disc / 100;
+        var ptsTot = t.flightPts + u * t.cardPts + t.partnerPts;
+        var fx1 = "m(" + t.label + ") = F + u × C × p_bank + Q × p_partner − (E + u × C + Q) × ρ × c − B\n" +
+          "  = $" + num(t.flightMargin) + " + " + pct(u, 0) + " × " + num(t.cardPts) + " × " + cents(p.bankCents) + " + " + num(t.partnerPts) + " × " + cents(p.partnerCents) +
+          " − (" + num(t.flightPts) + " + " + pct(u, 0) + " × " + num(t.cardPts) + " + " + num(t.partnerPts) + ") × " + p.redeemedPct + "% × " + cents(p.costCents) + " − $" + num(t.benefits) + "\n" +
+          "  = " + usd(c.flight[k]) + " + " + usd(c.card[k]) + " + " + usd(c.partner[k]) + " − " + usd(c.redeem[k]) + " − " + usd(c.benefit[k]) + "\n" +
+          "  = " + usd(R.m[k]) + " a year";
+        var mrow = "m = (" + d3.range(NS).map(function (j) { return usd(R.m[j]).replace("$", ""); }).join(", ") + ")   for (" + cfg.states.join(", ") + ")";
+        var head = "<thead><tr><th>Year t</th>" + cfg.states.map(function (s) { return "<th>" + s + "</th>"; }).join("") + "<th>Expected margin<br>π(t) · m</th><th>Discount<br>1/(1+d)^(t−1)</th><th>Present<br>value</th></tr></thead>";
+        var rows = [], total = 0, first = [];
+        for (var yr = 1; yr <= N; yr++) {
+          var pi = R.paths[k][yr - 1], em = 0;
+          for (var j = 0; j < NS; j++) em += pi[j] * R.m[j];
+          var df = Math.pow(1 + d, -(yr - 1)), pv = em * df; total += pv;
+          if (yr <= 3) first.push({ em: em, yr: yr });
+          rows.push("<tr><td class='k'>" + yr + "</td>" + d3.range(NS).map(function (j) { return "<td>" + pct(pi[j], 1) + "</td>"; }).join("") + "<td>" + usd(em) + "</td><td>" + df.toFixed(3) + "</td><td class='k'>" + usd(pv) + "</td></tr>");
+        }
+        var tbl = "<div class='tbl-wrap'><table class='rf'>" + head + "<tbody>" + rows.join("") + "<tr class='total'><td>Total</td><td colspan='" + (NS + 2) + "'></td><td>" + usd(total) + "</td></tr></tbody></table></div>";
+        var r1 = R.P[k];
+        var fx2 = "π(1) = e(" + t.label + ")    π(2) = row " + t.label + " of P = (" + r1.map(function (v) { return pct(v, 1); }).join(", ") + ")\n" +
+          "CLV(" + t.label + ") = " + first.map(function (f) { return f.yr === 1 ? usd(f.em) : usd(f.em) + " / " + (1 + d).toFixed(2) + (f.yr > 2 ? "^" + (f.yr - 1) : ""); }).join(" + ") + " + … (to year " + N + ")\n" +
+          "            = " + usd(total);
+        var r = 0.8, m = 200, d0 = 0.1, inf = m * (1 + d0) / (1 + d0 - r), fin = m * (1 - Math.pow(r / (1 + d0), N)) / (1 - r / (1 + d0));
+        el("ex").innerHTML =
+          "<p><b>1. Annual margin.</b> With the current settings, a " + t.label + " member's year looks like this:</p><span class='fx'>" + fx1 + "</span>" +
+          "<p>Doing the same for every state gives the margin vector (Lapsed brings nothing):</p><span class='fx'>" + mrow + "</span>" +
+          "<p><b>2. Where the member is each year.</b> Start with certainty in " + t.label + " and apply the transition matrix once a year. Each row below is π(t); the expected margin is π(t) · m, then discounted at " + S.disc + "%.</p>" + tbl +
+          "<span class='fx'>" + fx2 + "</span>" +
+          "<p><b>3. Check against Loyalty 101.</b> With a single tier, a $200 margin, 80% retention, no way back from Lapsed and a 10% discount rate, the chain reduces to the formula in <a href='/loyalty101.html#ch08'>chapter 08</a>:</p>" +
+          "<span class='fx'>infinite horizon:  200 × 1.1 / (1.1 − 0.8) = " + usd(inf) + "\n" + N + " years:          200 × (1 − (0.8/1.1)^" + N + ") / (1 − 0.8/1.1) = " + usd(fin) + "</span>";
+      }
+
+      // ───────────────────────────── render
+      function renderAll() {
+        R = run({});
+        buildChips();
+        updateEditors();
+        drawTiles();
+        drawSummary();
+        drawCLV();
+        drawPaths();
+        drawTornado();
+        renderRetention();
+        renderCard();
+        drawExample();
+      }
+
+      fetch(DATA_URL).then(function (r) { return r.json(); }).then(function (d) {
+        cfg = d;
+        S = {
+          tiers: clone(cfg.tiers), T: clone(cfg.transitionsPct), pts: clone(cfg.points),
+          disc: cfg.defaultDiscountPct, horizon: cfg.defaultHorizon,
+          torSel: -1, swing: cfg.tornado.defaultSwing, exTier: 2,
+          retTier: cfg.scenarios.retention.tier, retPts: cfg.scenarios.retention.points,
+          cardTier: cfg.scenarios.card.tier, cardPts: cfg.scenarios.card.points
+        };
+        initControls();
+        renderAll();
+        var t;
+        window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(function () { var w = document.documentElement.clientWidth; if (w !== S.w) { S.w = w; renderAll(); } }, 150); });
+        S.w = document.documentElement.clientWidth;
+      }).catch(function (e) {
+        el("tiles").innerHTML = '<div class="loading">Couldn\'t load the model data (' + e.message + ').</div>';
+      });
+    });
+    </script>
+  </body>
+</html>

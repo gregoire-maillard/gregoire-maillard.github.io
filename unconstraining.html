@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Demand unconstraining</title>
+    <meta name="description" content="Recorded bookings understate demand whenever a flight or fare class closes. Five ways to recover the true demand, compared on a synthetic history, and what the recovered demand says about spill, recapture and aircraft size.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / bookingcurve.html / bookinglimits.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* Methods (validated as a categorical set; naive is the neutral baseline) */
+        --m-naive: #8a8f98;
+        --m-mi: #eb6834;
+        --m-bcp: #1baf7a;
+        --m-em: #2a78d6;
+        --m-pd: #4a3aa7;
+        --spill: #d9480f;
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .crumb { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+      .crumb a { color: var(--muted); }
+      .crumb a:hover { color: var(--link); }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+      .load-err { margin: 18px 0; font-size: 13px; color: #9a3b0b; background: #fff6f2; border: 1px solid #f3c9b5; border-radius: 8px; padding: 10px 14px; }
+      .load-err:empty { display: none; }
+
+      /* ── Parts ── */
+      .part { margin-top: 34px; }
+      .part-head { border-top: 1px solid var(--line); padding-top: 22px; margin-bottom: 4px; }
+      .part-head .kicker { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+      .part-head h3 { margin: 2px 0 6px; font-size: 20px; color: var(--ink); }
+      .part-head p { margin: 0; max-width: 800px; }
+
+      /* ── Controls (sliders) ── */
+      .controls { display: grid; grid-template-columns: auto minmax(0, 340px) auto; gap: 10px 14px; align-items: center; margin: 20px 0 8px; max-width: 760px; }
+      .controls .lbl { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .controls .val { font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .controls .val small { color: var(--muted); font-size: 12px; }
+      .controls .wide { grid-column: 2 / 4; }
+      input[type=range] { width: 100%; margin: 0; accent-color: var(--ink); height: 24px; }
+      input[type=range]:disabled { opacity: .35; }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+      .chip {
+        border: 1px solid var(--line); background: #fff; color: var(--text);
+        border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer; min-height: 30px;
+      }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .chip i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+      .seed { font-size: 12px; color: var(--muted); margin-left: 4px; }
+
+      /* ── Result tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 18px 0 22px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .tile span { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+      .tile span span { display: inline; margin: 0; }
+      .tile .neg { color: #9a3b0b; }
+
+      .block { margin: 0 0 30px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h3 { margin: 0; font-size: 16px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .block > p.lead { margin: 0 0 10px; font-size: 13px; max-width: 800px; }
+      .block .chips { margin: 0 0 10px; }
+      .block .chips .lbl { font-size: 12px; color: var(--muted); margin-right: 2px; }
+      .summary { font-size: 13px; margin: 10px 0 0; max-width: 900px; line-height: 1.55; }
+      .summary b { color: var(--ink); font-weight: 600; }
+
+      /* ── Charts ── */
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart .plot svg { display: block; touch-action: pan-y; }
+      .chart svg text { font-family: inherit; }
+      .chart h4 { margin: 4px 8px 0; font-size: 13px; color: var(--ink); }
+      .chart .sub { margin: 0 8px 4px; font-size: 12px; color: var(--muted); }
+      .axis text { font-size: 10.5px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .axis line { stroke: #cfcfcf; }
+      .axis .axis-title { font-size: 11px; fill: var(--muted); }
+      .grid line { stroke: #f0f0f0; }
+      .zero { stroke: #bdbdbd; stroke-width: 1; }
+      .end-labs text { font-size: 11.5px; fill: var(--text); font-variant-numeric: tabular-nums; }
+      .end-labs text.b { fill: var(--ink); font-weight: 600; }
+      .hover-rule { stroke: #bdbdbd; stroke-width: 1; pointer-events: none; }
+      .hit-area { fill: transparent; cursor: pointer; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 11.5px; color: var(--text); padding: 6px 8px 6px; border-top: 1px solid var(--line); margin-top: 4px; line-height: 1.5; }
+      .legend span { white-space: nowrap; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .legend i.ln.dot { border-top-style: dotted; }
+      .legend i.ring { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--ink); background: #fff; }
+      .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+      .two.wide-left { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
+
+      .tip {
+        position: absolute; pointer-events: none; z-index: 5;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.5;
+        min-width: 180px; max-width: 270px; display: none;
+      }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+      .tip .n { color: var(--ink); font-variant-numeric: tabular-nums; }
+      .tip .mu { color: var(--muted); }
+      .tip .row { display: flex; align-items: center; gap: 6px; }
+      .tip .row i { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+      .tip .row .n { margin-left: auto; padding-left: 10px; }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; }
+      table.res { border-collapse: collapse; width: 100%; font-size: 13px; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+      table.res td { padding: 6px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res td.win { background: rgb(40 122 158 / 11%); color: var(--ink); font-weight: 600; }
+      table.res tr.truth td { color: var(--ink); border-bottom: 1px solid #cfcfcf; }
+      table.res tr.sel td { background: #eef5fa; color: var(--ink); }
+      table.res tbody tr:hover td { background: var(--soft); }
+      table.res td .sw { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+      table.res td.src { text-align: left; font-size: 12px; }
+      table.res .sm { display: none; }
+      .card { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 10px 14px 12px; }
+      .card h4 { margin: 0 0 6px; font-size: 13px; color: var(--ink); }
+
+      /* ── Part 2 layout: inputs rail + results ── */
+      .stage { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 24px; align-items: start; margin-top: 18px; }
+      .inputs { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px 16px 16px; position: sticky; top: 14px; }
+      .inputs h3 { margin: 16px 0 8px; font-size: 13px; color: var(--ink); font-weight: 600; }
+      .inputs h3:first-child { margin-top: 0; }
+      .field { display: grid; grid-template-columns: 1fr 96px; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 12.5px; }
+      .field label { color: var(--text); line-height: 1.3; }
+      .field small { display: block; color: var(--muted); font-size: 11px; }
+      input[type=number], select.sel {
+        font: inherit; font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums;
+        border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; background: #fff;
+        width: 100%; min-width: 0; box-sizing: border-box;
+      }
+      input[type=number]:focus, select.sel:focus { outline: 2px solid #9cc7df; outline-offset: 0; border-color: #9cc7df; }
+      .btn {
+        font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff;
+        border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink); min-height: 30px;
+      }
+      .btn:hover { border-color: #cfcfcf; }
+      .btn[disabled] { color: var(--muted); cursor: default; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+      .link-state { font-size: 11.5px; color: var(--muted); margin: 6px 0 0; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+      .method .f { display: block; margin: 6px 0 10px; padding: 8px 12px; background: rgb(40 122 158 / 5%); border-left: 2px solid #287a9e; color: #33434d; overflow-x: auto; white-space: nowrap; }
+
+      @media (max-width: 980px) {
+        .stage, .two, .two.wide-left { grid-template-columns: minmax(0, 1fr); }
+        .inputs { position: static; }
+      }
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .controls { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; }
+        .controls .lbl { grid-column: 1 / -1; margin-top: 8px; }
+        .controls .wide { grid-column: 1 / -1; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        table.res th, table.res td { padding: 6px 5px; font-size: 12px; }
+        table.res .lg { display: none; }
+        table.res .sm { display: inline; }
+        .method .f { white-space: normal; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>How airlines recover the demand they never saw, and what it is worth.</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumb"><a href="/airlinetools.html">Airline tools</a> · Revenue management</div>
+        <h2>Demand unconstraining</h2>
+        <p>An airline only records the bookings it accepted. Once a flight or a fare class closes, every later request disappears from the data, so on the busiest departures the history shows the booking limit, not the demand. Forecasts built on that history come out too low, and fleet decisions built on those forecasts put too few seats where they are needed. This page generates a booking history where the true demand is known, runs five classic ways of recovering it, then turns the recovered demand into spill, recapture and the case for a bigger aircraft. The theory is in <a href="/rm101.html#ch02">Revenue Management 101, Chapter 02</a>.</p>
+        <p class="note-line">Illustrative numbers: the booking history is synthetic, generated in your browser from a fixed seed, and the fares and recapture rates are assumptions. Only the aircraft seat counts are real (published cabin layouts). None of it comes from an airline's data.</p>
+        <p class="load-err" id="load-err"></p>
+      </div>
+
+      <!-- ───────────── Part 1 ───────────── -->
+      <section class="part" aria-labelledby="p1-h">
+        <div class="part-head">
+          <div class="kicker">Part 1</div>
+          <h3 id="p1-h">Recovering demand from censored bookings</h3>
+          <p><span id="n-dep">120</span> departures of one daily flight. Each has a true demand, drawn from the distribution you set, and a booking limit between 60% and 100% of capacity. Requests arrive along a booking curve; once a departure's bookings reach its limit it closes, and the data collection point (DCP) where it was first seen closed is recorded.</p>
+        </div>
+
+        <div class="controls" id="p1-controls">
+          <label class="lbl" for="in-mu">Mean demand</label>
+          <input type="range" id="in-mu" min="60" max="300" step="5">
+          <span class="val" id="v-mu"></span>
+
+          <label class="lbl" for="in-cv">Variability</label>
+          <input type="range" id="in-cv" min="5" max="50" step="1">
+          <span class="val" id="v-cv"></span>
+
+          <label class="lbl" for="in-cap">Capacity</label>
+          <input type="range" id="in-cap" min="60" max="360" step="5">
+          <span class="val" id="v-cap"></span>
+
+          <span class="lbl">Demand model</span>
+          <div class="chips wide" id="in-dist" role="group" aria-label="Demand model"></div>
+
+          <span class="lbl">History</span>
+          <div class="chips wide"><button type="button" class="btn" id="reseed">Draw a new history</button><span class="seed" id="seed-lab"></span></div>
+        </div>
+
+        <div class="tiles" id="p1-tiles"></div>
+
+        <div class="block">
+          <div class="block-head"><h3>The history: what was recorded, and what was lost</h3><span>Tap a departure to open it below</span></div>
+          <div class="chips" id="show" role="group" aria-label="Estimate shown"></div>
+          <div class="chart" id="hist-wrap">
+            <div class="plot" id="hist-chart"></div>
+            <div class="legend" id="hist-legend"></div>
+            <div class="tip" id="hist-tip"></div>
+          </div>
+        </div>
+
+        <div class="block two wide-left">
+          <div class="chart" id="one-wrap">
+            <h4 id="one-title"></h4>
+            <p class="sub" id="one-sub"></p>
+            <div class="plot" id="one-chart"></div>
+            <div class="legend" id="one-legend"></div>
+            <div class="tip" id="one-tip"></div>
+          </div>
+          <div class="card">
+            <h4>Five estimates against the truth</h4>
+            <div class="tbl-wrap">
+              <table class="res">
+                <thead>
+                  <tr><th>Method</th><th>Mean</th><th><span class="lg">Error</span><span class="sm">Err.</span></th><th><span class="lg">Std dev</span><span class="sm">SD</span></th><th><span class="lg">Error</span><span class="sm">Err.</span></th><th><span class="lg">Miss per closed dep.</span><span class="sm">Miss</span></th></tr>
+                </thead>
+                <tbody id="est-body"></tbody>
+              </table>
+            </div>
+            <p class="summary" id="est-summary"></p>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="block-head"><h3>How each method holds up as more departures close</h3><span id="sweep-note"></span></div>
+          <p class="lead">For each share of closed departures, the booking limits are tightened until exactly that share of departures hits its limit, on <span id="sweep-reps">40</span> fresh histories with your mean and variability. The chart shows the average error of each method against the true value.</p>
+          <div class="chips" id="metric" role="group" aria-label="Error measure"></div>
+          <div class="chart" id="sweep-wrap">
+            <div class="plot" id="sweep-chart"></div>
+            <div class="legend" id="sweep-legend"></div>
+            <div class="tip" id="sweep-tip"></div>
+          </div>
+          <p class="summary" id="sweep-summary"></p>
+        </div>
+      </section>
+
+      <!-- ───────────── Part 2 ───────────── -->
+      <section class="part" aria-labelledby="p2-h">
+        <div class="part-head">
+          <div class="kicker">Part 2</div>
+          <h3 id="p2-h">Spill, recapture and aircraft size</h3>
+          <p>With the demand unconstrained, the question turns around: for a flight with this demand, how many passengers will a given aircraft carry, how many will it turn away, and how much of that comes back on the airline's other flights? The normal spill formula answers it, and running it across real seat counts shows where a bigger aircraft stops paying for itself.</p>
+        </div>
+
+        <div class="stage">
+          <div class="inputs">
+            <h3>Unconstrained demand per departure</h3>
+            <div class="field"><label for="p2-mu">Mean<small>passengers</small></label><input type="number" id="p2-mu" min="1" max="1000" step="1"></div>
+            <div class="field"><label for="p2-sd">Standard deviation<small>passengers</small></label><input type="number" id="p2-sd" min="0" max="500" step="1"></div>
+            <button type="button" class="btn" id="p2-link">Use Part 1's EM estimate</button>
+            <p class="link-state" id="p2-link-state"></p>
+
+            <h3>Aircraft</h3>
+            <div class="field" style="grid-template-columns: 1fr"><select class="sel" id="p2-ac" aria-label="Aircraft"></select></div>
+
+            <h3>Revenue <span style="font-weight:400;color:var(--muted)">(illustrative)</span></h3>
+            <div class="field"><label for="p2-fare">Average fare<small>per passenger, $</small></label><input type="number" id="p2-fare" min="0" max="5000" step="10"></div>
+            <div class="field"><label for="p2-rec">Recapture rate<small>% of spilled passengers</small></label><input type="number" id="p2-rec" min="0" max="100" step="1"></div>
+            <p class="hint">Recapture is the share of turned-away passengers who book another flight of the same airline instead of going to a competitor.</p>
+          </div>
+
+          <div>
+            <div class="tiles" id="p2-tiles" style="margin-top:0"></div>
+            <div class="block two">
+              <div class="chart" id="sp-wrap">
+                <h4>Passengers and spill by aircraft size</h4>
+                <p class="sub">Per departure, for the demand you set</p>
+                <div class="plot" id="sp-chart"></div>
+                <div class="legend" id="sp-legend"></div>
+                <div class="tip" id="sp-tip"></div>
+              </div>
+              <div class="chart" id="rv-wrap">
+                <h4>Revenue per departure by aircraft size</h4>
+                <p class="sub">Including recaptured passengers, at the fare you set</p>
+                <div class="plot" id="rv-chart"></div>
+                <div class="legend" id="rv-legend"></div>
+                <div class="tip" id="rv-tip"></div>
+              </div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h3>Real aircraft, side by side</h3><span>Seat counts from published cabin layouts</span></div>
+              <div class="tbl-wrap">
+                <table class="res">
+                  <thead>
+                    <tr><th>Aircraft</th><th>Seats</th><th><span class="lg">Passengers</span><span class="sm">Pax</span></th><th><span class="lg">Load factor</span><span class="sm">LF</span></th><th>Spill</th><th><span class="lg">Spill rate</span><span class="sm">Rate</span></th><th><span class="lg">Revenue kept</span><span class="sm">Revenue</span></th><th><span class="lg">Gain vs smaller</span><span class="sm">Gain</span></th><th style="text-align:left">Layout source</th></tr>
+                  </thead>
+                  <tbody id="ac-body"></tbody>
+                </table>
+              </div>
+              <p class="summary" id="ac-summary"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>Why bookings are censored</h4>
+        <p>A booking record is what the airline sold, not what customers asked for. While a flight or fare class is open, every request that fits becomes a booking. Once its bookings reach the booking limit, later requests are turned away and leave no trace in the data (or at best a search log that is hard to tie to one flight). Statisticians call the resulting observation <b>censored</b>: for a closed departure you know demand was <em>at least</em> the limit, not what it was. Averaging those numbers as if they were demand biases the forecast down. A lower forecast protects fewer seats for later passengers or plans fewer seats in the first place, the flight closes earlier, and next season's data is censored even more. <a href="/rm101.html#ch02">Revenue Management 101, Chapter 02</a> calls this the unconstraining problem.</p>
+
+        <h4>The synthetic history</h4>
+        <p>Each of the <span class="n-dep">120</span> departures gets a true demand <var>D</var>, drawn either from a normal distribution with the mean and variability you choose (variability is the standard deviation as a share of the mean, rounded to whole passengers and floored at zero) or from a Poisson distribution, whose standard deviation is fixed at √mean. Its booking limit <var>L</var> is drawn uniformly between 60% and 100% of capacity: on some days revenue management holds back more seats for later, higher fares, and the seats open to this demand change. Each request arrives a random number of days before departure: 60% follow a leisure pattern (gamma distribution, mean 50 days) and 40% a business pattern (exponential, mean 8 days), with no request earlier than 180 days out. Bookings are observed at DCPs 120, 90, 60, 45, 30, 21, 14, 7, 3, 1 and 0 days before departure. If <var>D</var> ≥ <var>L</var>, the departure closes: its recorded bookings are <var>L</var> and the closure DCP is the first snapshot at which bookings had reached <var>L</var>. The history is generated from seed <span id="seed-2">20260928</span>; the same seed with the same mean and variability always gives the same true demand, whatever the capacity, so the capacity slider only changes what gets recorded.</p>
+
+        <h4>The five methods</h4>
+        <p>Notation: <var>x<sub>j</sub></var> is the recorded final bookings of departure <var>j</var>; <var>L<sub>j</sub></var> its limit; <var>μ</var> and <var>σ</var> the mean and standard deviation being estimated; <var>φ</var> and <var>Φ</var> the standard normal density and distribution function.</p>
+        <ul>
+          <li><b>Naive</b> takes the recorded bookings as demand. It is what a system does if it ignores closures.</li>
+          <li><b>Mean imputation</b> (Weatherford and Pölt's "naive #3") replaces each closed observation by the average of the open departures when that average is higher: <span class="f"><var>x̂<sub>j</sub></var> = max(<var>L<sub>j</sub></var>, mean of open departures)</span> It rarely changes anything on flight-level data. The departures that stayed open are the ones with low demand, so their average sits below almost every limit that was hit; the method only helps when some limits are well below typical demand.</li>
+          <li><b>Booking-curve projection</b> uses the time of closure. From the departures that stayed open it estimates <var>f<sub>k</sub></var>, the share of final bookings usually in by DCP <var>k</var>. A departure that closed by DCP <var>k</var> had <var>L<sub>j</sub></var> bookings by then, so its demand is projected as <span class="f"><var>x̂<sub>j</sub></var> = <var>L<sub>j</sub></var> / <var>f<sub>k</sub></var></span> Because the closure happened some time before the DCP at which it was seen, this errs slightly low. It is the only method here that uses the booking curve, which is why it is the most accurate one departure by departure.</li>
+          <li><b>Expectation-maximisation (EM)</b> assumes demand is normal and finds the <var>μ</var>, <var>σ</var> that best explain both the open observations and the fact that the closed ones exceeded their limits. It alternates two steps until they stop moving. E-step, for each closed departure with <var>z</var> = (<var>L<sub>j</sub></var> − <var>μ</var>) / <var>σ</var> and <var>h</var> = <var>φ</var>(<var>z</var>) / (1 − <var>Φ</var>(<var>z</var>)): <span class="f">E[<var>D</var> | <var>D</var> ≥ <var>L<sub>j</sub></var>] = <var>μ</var> + <var>σh</var> &nbsp;&nbsp; E[<var>D</var>² | <var>D</var> ≥ <var>L<sub>j</sub></var>] = <var>μ</var>² + <var>σ</var>² + <var>σ</var>(<var>L<sub>j</sub></var> + <var>μ</var>)<var>h</var></span> M-step: the new <var>μ</var> is the average of the open observations and the conditional means; the new <var>σ</var>² is the average of the squares and conditional second moments, minus <var>μ</var>². This is the maximum-likelihood estimate for censored normal data (Dempster, Laird and Rubin, 1977).</li>
+          <li><b>Projection detruncation</b> (Hopperstad, at Boeing) also iterates, but replaces each closed observation by a single point: the value that splits the demand above the limit in the ratio <var>τ</var> = 0.5, that is the median of the tail rather than its mean: <span class="f"><var>x̂<sub>j</sub></var> = <var>μ</var> + <var>σ</var> Φ<sup>−1</sup>(1 − <var>τ</var>(1 − <var>Φ</var>(<var>z</var>)))</span> then recomputes <var>μ</var> and <var>σ</var> from the completed sample and repeats. The tail median is below the tail mean, and single imputed points carry no spread, so each round shrinks <var>σ</var> a little; the bias grows with the share of closed departures. A smaller <var>τ</var> offsets it.</li>
+        </ul>
+        <p>The table's "miss per closed departure" is the average absolute gap between a method's estimate for a closed departure and its true demand (for EM, the estimate is the conditional mean above). The sweep repeats everything on 40 new histories per level, with common random numbers across levels, so the lines differ only because more departures close.</p>
+
+        <h4>Spill and recapture</h4>
+        <p>For a flight with unconstrained demand <var>D</var> ~ Normal(<var>μ</var>, <var>σ</var>) and <var>C</var> seats, with <var>z</var> = (<var>C</var> − <var>μ</var>) / <var>σ</var>, the expected number of passengers turned away is</p>
+        <span class="f">Spill(<var>C</var>) = E[max(<var>D</var> − <var>C</var>, 0)] = <var>σ</var> [<var>φ</var>(<var>z</var>) − <var>z</var>(1 − <var>Φ</var>(<var>z</var>))]</span>
+        <p>Expected passengers are <var>μ</var> − Spill(<var>C</var>), the load factor is that divided by <var>C</var>, and the spill rate is Spill(<var>C</var>) / <var>μ</var>. A share <var>r</var> of spilled passengers is recaptured on the airline's other flights, so the revenue the airline keeps is fare × (passengers + <var>r</var> × spill) and the revenue lost is fare × (1 − <var>r</var>) × spill. One more seat is worth fare × (1 − <var>r</var>) × P(<var>D</var> &gt; <var>C</var>) per departure: the chance the flight is full is the only time the extra seat sells. That value falls quickly past mean demand, which is why the gain from each step up in aircraft size shrinks. Upgauging pays off when the bigger aircraft's extra trip cost is below the "gain vs smaller" in the table; trip costs are not modelled here.</p>
+
+        <h4>From unconstrained demand to forecasts and fleet assignment</h4>
+        <p>Unconstraining sits at the start of both chains. In revenue management, the unconstrained history (by fare class, by DCP) is what the forecaster learns from; the forecasts then set the protection levels and booking limits of <a href="/bookinglimits.html">EMSR-b</a> or the bid prices of <a href="/bidprice.html">network control</a>, and the <a href="/bookingcurve.html">pickup forecasts</a> assume their history is demand. Skip the step and the system under-protects, closes low fares on the wrong days and keeps censoring its own data. In network planning, fleet assignment compares, for every flight, the cost of each aircraft type with the revenue it would lose to spill: exactly the calculation in Part 2, with recapture reducing the loss (<a href="/np101.html#ch05">Network Planning 101, Chapter 05</a>). Feed it recorded bookings instead of unconstrained demand and the busiest flights look like they fit on the aircraft they already have, so the model never upgauges them.</p>
+
+        <h4>Sources</h4>
+        <p>Methods: L. Weatherford and S. Pölt, <a href="https://link.springer.com/article/10.1057/palgrave.rpm.5170027" target="_blank" rel="noopener">"Better unconstraining of airline demand data in revenue management systems for improved forecast accuracy and greater revenues"</a>, <i>Journal of Revenue and Pricing Management</i> 1(3), 2002, which compares the naive, mean imputation, booking profile, projection detruncation and EM methods; P. Guo, B. Xiao and J. Li, <a href="https://www.hindawi.com/journals/aor/2012/270910/" target="_blank" rel="noopener">"Unconstraining methods in revenue management systems: research overview and prospects"</a>, <i>Advances in Operations Research</i>, 2012 (open access), which finds EM the most accurate and robust; K. Talluri and G. van Ryzin, <a href="https://link.springer.com/book/10.1007/b139000" target="_blank" rel="noopener"><i>The Theory and Practice of Revenue Management</i></a> (Springer, 2004), chapter 9. Spill: M. Z. F. Li and T. H. Oum, <a href="https://www.sciencedirect.com/science/article/abs/pii/S0377221799001940" target="_blank" rel="noopener">"Airline spill analysis – beyond the normal demand"</a>, <i>European Journal of Operational Research</i> 125(1), 2000. Seat counts (checked 28 September 2026, stored in <a href="assets/data/unconstraining.json">unconstraining.json</a>): <a href="https://news.alaskaair.com/current-fleet/" target="_blank" rel="noopener">Alaska Air Group current fleet</a> for the E175 (76 seats, Horizon and SkyWest), 737-8 (159, Alaska), A321neo (189, Hawaiian) and 787-9 (300, Hawaiian), page dated 27 August 2025; <a href="https://www.delta.com/us/en/aircraft/airbus/a220-300" target="_blank" rel="noopener">Delta's A220-300 page</a> (130 seats).</p>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>The demand history, booking curve, booking limits, fares and recapture rates are illustrative assumptions, not estimates from any airline.</li>
+          <li>Demand in the history is identically distributed across departures: no seasonality, day-of-week pattern or trend. Real unconstraining works on groups of comparable departures, often by fare class and DCP, with far fewer observations per group.</li>
+          <li>Turned-away requests vanish here. In reality some buy up to an open higher fare or move to another flight (sell-up and recapture), which unconstraining at the fare-class level has to separate from true demand for the closed class.</li>
+          <li>EM and projection detruncation assume normal demand; the spill formula does too. It is a good approximation for demand of a hundred or more; for small numbers, or skewed demand, Li and Oum show the normal spill model can be off.</li>
+          <li>The spill model treats one flight's total demand against total seats. The seat counts include premium cabins, and a real comparison would spill by cabin. Trip costs, crew, airport slots and the rest of the fleet assignment are left out.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    // ───────────────────────────── Unconstraining engine (pure functions, no DOM)
+    // Synthetic censored booking history, five unconstraining methods, a sweep over the share of
+    // closed departures, and the normal spill formula. Everything is seeded and reproducible.
+    var UC = (function () {
+      "use strict";
+
+      var DCPS = [120, 90, 60, 45, 30, 21, 14, 7, 3, 1, 0];
+      var NK = DCPS.length;
+      // Booking lead time (days before departure a request arrives): a leisure/business mixture.
+      // Overwritten from assets/data/unconstraining.json when the page loads.
+      var CURVE = { leisureShare: 0.6, leisureScale: 25, businessMean: 8, maxLead: 180 };
+      var LIMIT = [0.85, 1.0];   // each departure's booking limit, as a share of capacity
+      var TAU = 0.5;             // projection detruncation parameter (0.5 = conditional median)
+
+      function configure(o) {
+        if (!o) return;
+        if (o.curve) CURVE = o.curve;
+        if (o.limitRange) LIMIT = o.limitRange;
+        if (o.tau) TAU = o.tau;
+        if (o.dcps) { DCPS = o.dcps; NK = DCPS.length; }
+      }
+
+      // ── random numbers: mulberry32
+      function rng(seed) {
+        var a = seed >>> 0;
+        return function () {
+          a = (a + 0x6D2B79F5) | 0;
+          var t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      function gauss(r) { var u = 1 - r(), v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+      function poisSmall(l, r) { var L = Math.exp(-l), k = 0, p = 1; do { k++; p *= r(); } while (p > L); return k - 1; }
+      // exact Poisson for any mean: a sum of Poisson draws with means <= 25
+      function pois(l, r) { var k = 0; while (l > 25) { k += poisSmall(25, r); l -= 25; } return k + (l > 0 ? poisSmall(l, r) : 0); }
+      function lead(r) {
+        for (;;) {
+          var t = r() < CURVE.leisureShare
+            ? -CURVE.leisureScale * (Math.log(1 - r()) + Math.log(1 - r()))   // gamma, shape 2
+            : -CURVE.businessMean * Math.log(1 - r());                        // exponential
+          if (t <= CURVE.maxLead) return t;
+        }
+      }
+      // Expected share of final demand that has arrived by DCP d (lead time >= d)
+      function shareBy(d) {
+        function S(x) {
+          var a = x / CURVE.leisureScale;
+          return CURVE.leisureShare * Math.exp(-a) * (1 + a) + (1 - CURVE.leisureShare) * Math.exp(-x / CURVE.businessMean);
+        }
+        var M = S(CURVE.maxLead);
+        return (S(d) - M) / (1 - M);
+      }
+
+      // ── normal distribution (Hart / West double-precision tail, Acklam inverse + one Halley step)
+      function phi(z) { return Math.exp(-0.5 * z * z) / 2.5066282746310002; }
+      function Q(x) {           // upper tail, 1 - Phi(x), accurate far out
+        var a = Math.abs(x), c;
+        if (a > 37) c = 0;
+        else {
+          var e = Math.exp(-a * a / 2), b;
+          if (a < 7.07106781186547) {
+            b = 3.52624965998911e-2 * a + 0.700383064443688; b = b * a + 6.37396220353165; b = b * a + 33.912866078383;
+            b = b * a + 112.079291497871; b = b * a + 221.213596169931; b = b * a + 220.206867912376;
+            c = e * b;
+            b = 8.83883476483184e-2 * a + 1.75566716318264; b = b * a + 16.064177579207; b = b * a + 86.7807322029461;
+            b = b * a + 296.564248779674; b = b * a + 637.333633378831; b = b * a + 793.826512519948; b = b * a + 440.413735824752;
+            c = c / b;
+          } else {
+            b = a + 0.65; b = a + 4 / b; b = a + 3 / b; b = a + 2 / b; b = a + 1 / b;
+            c = e / b / 2.506628274631;
+          }
+        }
+        return x > 0 ? c : 1 - c;
+      }
+      function Phi(x) { return 1 - Q(x); }
+      function PhiInv(p) {
+        p = Math.min(Math.max(p, 1e-15), 1 - 1e-15);
+        var a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+        var b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+        var c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+        var d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+        var q, r, x;
+        if (p < 0.02425) {
+          q = Math.sqrt(-2 * Math.log(p));
+          x = (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+        } else if (p > 1 - 0.02425) {
+          q = Math.sqrt(-2 * Math.log(1 - p));
+          x = -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+        } else {
+          q = p - 0.5; r = q * q;
+          x = (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+        }
+        var e = Phi(x) - p, u = e * 2.5066282746310002 * Math.exp(x * x / 2);
+        return x - u / (1 + x * u / 2);
+      }
+      // Mills ratio phi(z) / (1 - Phi(z)), stable for large z
+      function mills(z) { var t = Q(z); return t > 1e-300 ? phi(z) / t : z + 1 / z; }
+
+      // ── one departure: true demand D arrives over the booking window; the class closes once L are sold
+      // t[k] = requests that arrived at least DCPS[k] days before departure (DCPS is decreasing)
+      function trueCum(r, D) {
+        var t = new Int32Array(NK);
+        for (var i = 0; i < D; i++) {
+          var x = lead(r);
+          for (var k = NK - 1; k >= 0; k--) { if (x >= DCPS[k]) t[k]++; else break; }
+        }
+        return t;
+      }
+      function censor(dep, L) {
+        var b = new Int32Array(NK), kc = -1;
+        for (var k = 0; k < NK; k++) {
+          b[k] = Math.min(dep.t[k], L);
+          if (kc < 0 && dep.t[k] >= L) kc = k;
+        }
+        dep.L = L; dep.b = b; dep.closed = dep.D >= L; dep.kc = dep.closed ? kc : -1; dep.x = b[NK - 1];
+        return dep;
+      }
+      function drawDemand(r, p) {
+        if (p.dist === "poisson") return pois(p.mu, r);
+        return Math.max(0, Math.round(p.mu + p.sd * gauss(r)));
+      }
+
+      // Booking history: n departures of one flight. Same seed + same mean/variability = same true demand,
+      // whatever the capacity, so moving the capacity slider only changes what gets recorded.
+      function history(p, seed, n) {
+        var r = rng(seed), deps = [];
+        for (var j = 0; j < n; j++) {
+          var z = gauss(r), u = LIMIT[0] + (LIMIT[1] - LIMIT[0]) * r();
+          var D = p.dist === "poisson" ? pois(p.mu, rng(seed * 31 + j * 7919 + 1)) : Math.max(0, Math.round(p.mu + p.sd * z));
+          var dep = { j: j, D: D, u: u, t: trueCum(rng(seed * 17 + j * 104729 + 3), D) };
+          deps.push(censor(dep, Math.max(1, Math.round(p.cap * u))));
+        }
+        return deps;
+      }
+
+      function meanSd(v) {
+        var n = v.length, m = 0, s = 0, i;
+        for (i = 0; i < n; i++) m += v[i];
+        m /= n;
+        for (i = 0; i < n; i++) s += (v[i] - m) * (v[i] - m);
+        return { mu: m, sd: Math.sqrt(s / n) };
+      }
+
+      var METHODS = [
+        { id: "naive", name: "Naive (bookings as recorded)", short: "Naive" },
+        { id: "mi", name: "Mean imputation", short: "Mean imputation" },
+        { id: "bcp", name: "Booking-curve projection", short: "Booking curve" },
+        { id: "em", name: "Expectation-maximisation (EM)", short: "EM" },
+        { id: "pd", name: "Projection detruncation", short: "Projection detr." }
+      ];
+
+      // Run every method on one censored history. Each returns a per-departure estimate and mean / std dev.
+      function estimate(deps) {
+        var n = deps.length, j, k, it;
+        var x = deps.map(function (d) { return d.x; });
+        var open = deps.filter(function (d) { return !d.closed; });
+        var nClosed = n - open.length;
+        var out = { nClosed: nClosed, nOpen: open.length, ok: open.length >= 3 };
+        function pack(est, ms) { var s = ms || meanSd(est); return { est: est, mu: s.mu, sd: s.sd }; }
+
+        // 1. Naive
+        var base = meanSd(x);
+        out.naive = pack(x.slice(), base);
+
+        // 2. Mean imputation: a closed departure gets at least the average of the departures that stayed open
+        var mOpen = open.length ? meanSd(open.map(function (d) { return d.x; })).mu : base.mu;
+        out.mOpen = mOpen;
+        out.mi = pack(deps.map(function (d) { return d.closed ? Math.max(d.x, mOpen) : d.x; }));
+
+        // 3. Booking-curve projection: bookings at closure / share of demand usually in by that DCP
+        var f = new Float64Array(NK), sx = 0;
+        var src = open.length ? open : deps;
+        src.forEach(function (d) { sx += d.x; for (k = 0; k < NK; k++) f[k] += d.b[k]; });
+        for (k = 0; k < NK; k++) f[k] = sx > 0 ? f[k] / sx : shareBy(DCPS[k]);
+        out.curve = f;
+        out.bcp = pack(deps.map(function (d) {
+          if (!d.closed) return d.x;
+          return Math.max(d.L, d.L / Math.max(f[d.kc], 0.02));
+        }));
+
+        // 4. EM for censored normal data
+        var mu = base.mu, sd = Math.max(base.sd, 1), h;
+        for (it = 0; it < 1000; it++) {
+          var s1 = 0, s2 = 0;
+          for (j = 0; j < n; j++) {
+            var d = deps[j];
+            if (!d.closed) { s1 += d.x; s2 += d.x * d.x; }
+            else {
+              h = mills((d.L - mu) / sd);
+              s1 += mu + sd * h;
+              s2 += mu * mu + sd * sd + sd * (d.L + mu) * h;
+            }
+          }
+          var mu2 = s1 / n, sd2 = Math.sqrt(Math.max(s2 / n - mu2 * mu2, 0.25));
+          var done = Math.abs(mu2 - mu) < 1e-7 && Math.abs(sd2 - sd) < 1e-7;
+          mu = mu2; sd = sd2;
+          if (done || !isFinite(mu)) break;
+        }
+        out.emIter = it;
+        out.em = pack(deps.map(function (d) { return d.closed ? mu + sd * mills((d.L - mu) / sd) : d.x; }), { mu: mu, sd: sd });
+
+        // 5. Projection detruncation (Hopperstad): replace each closed value by the point that splits the
+        //    tail above its limit in the ratio tau, re-estimate mean and std dev, repeat
+        mu = base.mu; sd = Math.max(base.sd, 1);
+        var est = x.slice();
+        for (it = 0; it < 1000; it++) {
+          for (j = 0; j < n; j++) {
+            var dd = deps[j];
+            if (dd.closed) est[j] = Math.max(dd.L, mu + sd * PhiInv(1 - TAU * Q((dd.L - mu) / sd)));
+          }
+          var ms = meanSd(est), sdn = Math.max(ms.sd, 0.5);
+          var fin = Math.abs(ms.mu - mu) < 1e-7 && Math.abs(sdn - sd) < 1e-7;
+          mu = ms.mu; sd = sdn;
+          if (fin || !isFinite(mu)) break;
+        }
+        out.pdIter = it;
+        out.pd = pack(est);
+
+        // Errors on closed departures, per method
+        METHODS.forEach(function (m) {
+          var e = 0;
+          deps.forEach(function (d, i) { if (d.closed) e += Math.abs(out[m.id].est[i] - d.D); });
+          out[m.id].maeClosed = nClosed ? e / nClosed : 0;
+        });
+        return out;
+      }
+
+      // ── How each method degrades as more departures close. For every level, the booking limits are
+      //    scaled so that exactly that share of departures hits its limit (same demand draws across levels).
+      var LEVELS = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
+      function sweep(p, seed, reps, n) {
+        var res = { levels: LEVELS, reps: reps, n: n, mu: {}, sd: {}, mae: {} };
+        METHODS.forEach(function (m) {
+          res.mu[m.id] = LEVELS.map(function () { return 0; });
+          res.sd[m.id] = LEVELS.map(function () { return 0; });
+          res.mae[m.id] = LEVELS.map(function () { return 0; });
+        });
+        for (var rep = 0; rep < reps; rep++) {
+          var r = rng(seed + 1000003 * (rep + 1)), base = [];
+          for (var j = 0; j < n; j++) {
+            var D = drawDemand(r, p), u = LIMIT[0] + (LIMIT[1] - LIMIT[0]) * r();
+            base.push({ j: j, D: D, u: u, t: trueCum(r, D) });
+          }
+          var truth = meanSd(base.map(function (d) { return d.D; }));
+          var ratios = base.map(function (d) { return d.D / d.u; }).sort(function (a, b) { return b - a; });
+          LEVELS.forEach(function (q, li) {
+            var s = ratios[Math.max(0, Math.round(q * n) - 1)];
+            var deps = base.map(function (d) {
+              return censor({ j: d.j, D: d.D, u: d.u, t: d.t }, Math.max(1, Math.ceil(s * d.u - 1e-9)));
+            });
+            var E = estimate(deps);
+            METHODS.forEach(function (m) {
+              res.mu[m.id][li] += 100 * (E[m.id].mu - truth.mu) / truth.mu / reps;
+              res.sd[m.id][li] += 100 * (E[m.id].sd - truth.sd) / Math.max(truth.sd, 1e-9) / reps;
+              res.mae[m.id][li] += 100 * E[m.id].maeClosed / truth.mu / reps;
+            });
+          });
+        }
+        return res;
+      }
+
+      // ── Spill: expected demand above capacity for normal demand
+      function spill(mu, sd, C) {
+        if (sd <= 0) return Math.max(mu - C, 0);
+        var z = (C - mu) / sd;
+        return Math.max(0, sd * (phi(z) - z * Q(z)));
+      }
+      function spillStats(mu, sd, C, recapture, fare) {
+        var sp = spill(mu, sd, C), pax = Math.max(0, mu - sp);
+        return {
+          C: C, spill: sp, pax: pax, lf: pax / C, spillRate: mu > 0 ? sp / mu : 0,
+          pFull: sd > 0 ? Q((C - mu) / sd) : (mu > C ? 1 : 0),
+          recaptured: recapture * sp, lost: (1 - recapture) * sp,
+          revFlight: fare * pax, revKept: fare * (pax + recapture * sp), revLost: fare * (1 - recapture) * sp,
+          seatValue: fare * (1 - recapture) * (sd > 0 ? Q((C - mu) / sd) : (mu > C ? 1 : 0))
+        };
+      }
+
+      return {
+        configure: configure, DCPS: function () { return DCPS; }, METHODS: METHODS, LEVELS: LEVELS,
+        rng: rng, history: history, estimate: estimate, sweep: sweep, meanSd: meanSd,
+        spill: spill, spillStats: spillStats, shareBy: shareBy, Phi: Phi, Q: Q, PhiInv: PhiInv, mills: mills,
+        limitRange: function () { return LIMIT; }, tau: function () { return TAU; }
+      };
+    })();
+    if (typeof module !== "undefined") module.exports = UC;
+    </script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var DATA_URL = "assets/data/unconstraining.json";
+      var COL = { naive: "#8a8f98", mi: "#eb6834", bcp: "#1baf7a", em: "#2a78d6", pd: "#4a3aa7" };
+      var M = UC.METHODS;
+      var f0 = d3.format(",.0f"), f1 = d3.format(",.1f");
+      function $(id) { return document.getElementById(id); }
+      function money(v) { return "$" + f0(v); }
+      function pctS(v, dp) { var s = (dp ? d3.format("." + dp + "f") : d3.format(".0f"))(Math.abs(v)); return (v > 0.05 ? "+" : v < -0.05 ? "−" : "±") + s + "%"; }
+      function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); }
+      function debounce(fn, ms) { var t; return function () { clearTimeout(t); t = setTimeout(fn, ms); }; }
+
+      fetch(DATA_URL).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(start)
+        .catch(function (e) {
+          $("load-err").textContent = "The page's data file (" + DATA_URL + ") could not be loaded, so nothing can be drawn. " + e.message;
+        });
+
+      function start(DATA) {
+        UC.configure(DATA.model);
+        var DCPS = UC.DCPS(), NK = DCPS.length;
+        var N = DATA.model.departures, REPS = DATA.model.sweepReps, DEF = DATA.defaults, AC = DATA.aircraft;
+        var LIM = UC.limitRange();
+        document.querySelectorAll(".n-dep").forEach(function (el) { el.textContent = N; });
+        $("n-dep").textContent = N; $("sweep-reps").textContent = REPS;
+
+        var st = { mu: DEF.mean, cv: DEF.cvPct, cap: DEF.capacity, dist: DEF.dist, seed: DATA.model.seed, show: "em", sel: null, metric: "mu" };
+        var p2 = { mu: 0, sd: 0, ac: DEF.aircraft, fare: DEF.fare, rec: DEF.recapturePct, linked: true };
+        var H, E, T, SW = null;
+
+        // ───────────────────────────── helpers shared by the charts
+        function tip(el, html, px, py, wrap) {
+          el.innerHTML = html; el.style.display = "block";
+          var W = wrap.clientWidth, tw = el.offsetWidth, th = el.offsetHeight;
+          var left = px + 14; if (left + tw > W - 4) left = px - tw - 14; if (left < 4) left = 4;
+          var top = py - th - 10; if (top < 4) top = Math.min(py + 14, wrap.clientHeight - th - 4);
+          el.style.left = left + "px"; el.style.top = Math.max(4, top) + "px";
+        }
+        function gridY(g, y, x0, x1, n, fmt) {
+          var gg = g.append("g").attr("class", "grid"), ax = g.append("g").attr("class", "axis");
+          y.ticks(n).forEach(function (v) {
+            gg.append("line").attr("x1", x0).attr("x2", x1).attr("y1", y(v)).attr("y2", y(v));
+            ax.append("text").attr("x", x0 - 6).attr("y", y(v) + 3.5).attr("text-anchor", "end").text(fmt ? fmt(v) : f0(v));
+          });
+        }
+        function spread(labs, lo, hi, gap) {
+          labs.sort(function (a, b) { return a.y - b.y; });
+          for (var i = 1; i < labs.length; i++) labs[i].y = Math.max(labs[i].y, labs[i - 1].y + gap);
+          var n = labs.length; if (n && labs[n - 1].y > hi) labs[n - 1].y = hi;
+          for (i = n - 2; i >= 0; i--) labs[i].y = Math.min(labs[i].y, labs[i + 1].y - gap);
+          if (n && labs[0].y < lo) { var sh = lo - labs[0].y; labs.forEach(function (l) { l.y += sh; }); }
+          return labs;
+        }
+        function svgIn(holder, w, h, label) {
+          holder.innerHTML = "";
+          return d3.select(holder).append("svg").attr("viewBox", "0 0 " + w + " " + h).attr("width", w).attr("height", h)
+            .attr("role", "img").attr("aria-label", label);
+        }
+        function chips(el, items, isOn, onClick) {
+          el.innerHTML = "";
+          items.forEach(function (it) {
+            if (it.label) { var s = document.createElement("span"); s.className = "lbl"; s.textContent = it.label; el.appendChild(s); return; }
+            var b = document.createElement("button");
+            b.type = "button"; b.className = "chip" + (isOn(it.v) ? " on" : "");
+            b.innerHTML = (it.c ? '<i style="background:' + it.c + '"></i>' : "") + it.t;
+            b.setAttribute("aria-pressed", isOn(it.v) ? "true" : "false");
+            b.addEventListener("click", function () { onClick(it.v); });
+            el.appendChild(b);
+          });
+        }
+
+        // ───────────────────────────── Part 1 controls
+        var inMu = $("in-mu"), inCv = $("in-cv"), inCap = $("in-cap");
+        inMu.value = st.mu; inCv.value = st.cv; inCap.value = st.cap;
+        function sdOf() { return st.dist === "poisson" ? Math.sqrt(st.mu) : st.mu * st.cv / 100; }
+        function labels() {
+          $("v-mu").innerHTML = st.mu + " <small>passengers</small>";
+          $("v-cv").innerHTML = st.dist === "poisson"
+            ? "√mean <small>± " + f1(sdOf()) + "</small>"
+            : st.cv + "% <small>± " + f0(sdOf()) + " passengers</small>";
+          $("v-cap").innerHTML = st.cap + " <small>seats · limits " + Math.round(st.cap * LIM[0]) + "–" + Math.round(st.cap * LIM[1]) + "</small>";
+          inCv.disabled = st.dist === "poisson";
+          $("seed-lab").textContent = "seed " + st.seed;
+          $("seed-2").textContent = DATA.model.seed;
+        }
+        function drawControls() {
+          chips($("in-dist"), [{ v: "normal", t: "Normal" }, { v: "poisson", t: "Poisson" }],
+            function (v) { return v === st.dist; }, function (v) { st.dist = v; drawControls(); runAll(); });
+          chips($("show"), [{ label: "Estimate shown" }].concat(M.slice(1).map(function (m) { return { v: m.id, t: m.short, c: COL[m.id] }; })),
+            function (v) { return v === st.show; }, function (v) { st.show = v; drawControls(); renderHist(); });
+          chips($("metric"), [{ v: "mu", t: "Error in mean demand" }, { v: "sd", t: "Error in std dev" }, { v: "mae", t: "Miss per closed departure" }],
+            function (v) { return v === st.metric; }, function (v) { st.metric = v; drawControls(); renderSweep(); });
+          labels();
+        }
+        var sweepLater = debounce(function () { SW = UC.sweep({ mu: st.mu, sd: sdOf(), dist: st.dist }, st.seed, REPS, N); renderSweep(); }, 220);
+        inMu.addEventListener("input", function () { st.mu = +inMu.value; runAll(); });
+        inCv.addEventListener("input", function () { st.cv = +inCv.value; runAll(); });
+        inCap.addEventListener("input", function () { st.cap = +inCap.value; runP1(); });
+        $("reseed").addEventListener("click", function () { st.seed = (st.seed * 1103515245 + 12345) % 2147483647; st.sel = null; runAll(); });
+
+        function runP1() {
+          labels();
+          H = UC.history({ mu: st.mu, sd: sdOf(), cap: st.cap, dist: st.dist }, st.seed, N);
+          E = UC.estimate(H);
+          T = UC.meanSd(H.map(function (d) { return d.D; }));
+          if (st.sel === null || st.sel >= N || (!H[st.sel].closed && E.nClosed)) st.sel = pickDefault();
+          renderTiles(); renderHist(); renderOne(); renderTable();
+          if (p2.linked) syncP2();
+        }
+        function runAll() {
+          runP1();
+          $("sweep-note").textContent = "Recomputing…";
+          sweepLater();
+        }
+        // A closed departure that closed mid-window makes the best first example
+        function pickDefault() {
+          var best = null, bs = 1e9;
+          H.forEach(function (d, i) { if (d.closed) { var ex = d.D - d.L, s = Math.abs(DCPS[d.kc] - 14) + (ex < 10 || ex > 45 ? 20 : 0); if (s < bs) { bs = s; best = i; } } });
+          return best === null ? 0 : best;
+        }
+
+        // ───────────────────────────── Part 1 tiles
+        function renderTiles() {
+          var share = E.nClosed / N, nv = E.naive.mu, em = E.em.mu;
+          var html = "";
+          html += '<div class="tile"><b>' + E.nClosed + ' <span style="display:inline;font-size:14px;color:var(--muted)">of ' + N + '</span></b><span>departures closed (' + Math.round(100 * share) + '%): their recorded bookings are the limit</span></div>';
+          html += '<div class="tile"><b>' + f1(T.mu) + '</b><span>true mean demand (± ' + f0(T.sd) + '), known here and never in real life</span></div>';
+          html += '<div class="tile"><b>' + f1(nv) + '</b><span>mean of recorded bookings, <span class="neg">' + pctS(100 * (nv - T.mu) / T.mu, 1) + '</span> vs the truth</span></div>';
+          html += '<div class="tile"><b>' + (E.ok ? f1(em) : "n/a") + '</b><span>' + (E.ok ? 'EM estimate of mean demand, ' + pctS(100 * (em - T.mu) / T.mu, 1) + ' vs the truth' : 'EM needs at least 3 departures that stayed open') + '</span></div>';
+          $("p1-tiles").innerHTML = html;
+        }
+
+        // ───────────────────────────── Part 1 history chart
+        function renderHist() {
+          var wrap = $("hist-wrap"), holder = $("hist-chart"), tipEl = $("hist-tip");
+          var w = holder.clientWidth, sm = w < 560, h = sm ? 250 : 310, ml = 40, mr = 10, mt = 12, mb = 38;
+          var est = E[st.show].est, okM = E.ok || st.show === "mi";
+          var ymax = d3.max(H, function (d, i) { return Math.max(d.D, d.L, okM ? est[i] : 0); });
+          var x = d3.scaleBand().domain(d3.range(N)).range([ml, w - mr]).paddingInner(sm ? 0.15 : 0.25);
+          var y = d3.scaleLinear().domain([0, ymax * 1.04]).nice().range([h - mb, mt]);
+          var bw = x.bandwidth(), svg = svgIn(holder, w, h, "Recorded bookings, booking limits and true demand for each departure");
+          gridY(svg, y, ml, w - mr, 5);
+          var ax = svg.append("g").attr("class", "axis");
+          [0, 19, 39, 59, 79, 99, 119].filter(function (i) { return i < N; }).forEach(function (i) {
+            ax.append("text").attr("x", x(i) + bw / 2).attr("y", h - mb + 15).attr("text-anchor", "middle").text(i + 1);
+          });
+          ax.append("text").attr("class", "axis-title").attr("x", w - mr).attr("y", h - mb + 31).attr("text-anchor", "end").text("Departure, oldest to newest →");
+          ax.append("text").attr("class", "axis-title").attr("x", ml - 34).attr("y", mt - 2).attr("text-anchor", "start").text("");
+
+          if (st.sel !== null) svg.append("rect").attr("x", x(st.sel) - 1.5).attr("width", bw + 3).attr("y", mt).attr("height", h - mb - mt).attr("fill", "#eef5fa");
+          var g = svg.append("g");
+          H.forEach(function (d, i) {
+            var cx = x(i) + bw / 2;
+            g.append("rect").attr("x", x(i)).attr("width", bw).attr("y", y(d.x)).attr("height", Math.max(0, y(0) - y(d.x)))
+              .attr("fill", d.closed ? "#8c96a3" : "#d3d8de").attr("rx", bw > 5 ? 1.5 : 0);
+            g.append("line").attr("x1", x(i) - (bw > 4 ? 1 : 0)).attr("x2", x(i) + bw + (bw > 4 ? 1 : 0)).attr("y1", y(d.L)).attr("y2", y(d.L))
+              .attr("stroke", d.closed ? "#222" : "#a9b0b8").attr("stroke-width", d.closed ? 1.6 : 1);
+            if (d.closed && d.D > d.L) {
+              g.append("line").attr("x1", cx).attr("x2", cx).attr("y1", y(d.L)).attr("y2", y(d.D)).attr("stroke", "#9a9a9a").attr("stroke-dasharray", "2 2");
+            }
+            if (d.closed) {
+              if (okM) g.append("line").attr("x1", x(i) - 1).attr("x2", x(i) + bw + 1).attr("y1", y(est[i])).attr("y2", y(est[i]))
+                .attr("stroke", COL[st.show]).attr("stroke-width", 2.5).attr("stroke-linecap", "round");
+              g.append("circle").attr("cx", cx).attr("cy", y(d.D)).attr("r", sm ? 2 : 2.6).attr("fill", "#fff").attr("stroke", "#222").attr("stroke-width", 1.3);
+            }
+          });
+          var m = M.filter(function (mm) { return mm.id === st.show; })[0];
+          $("hist-legend").innerHTML =
+            '<span><i style="background:#d3d8de"></i>Recorded, stayed open (= true demand)</span>' +
+            '<span><i style="background:#8c96a3"></i>Recorded, closed at its limit</span>' +
+            '<span><i class="ln" style="border-color:#222"></i>Booking limit</span>' +
+            '<span><i class="ring"></i>True demand of a closed departure (hidden in real life)</span>' +
+            '<span><i class="ln" style="border-color:' + COL[st.show] + ';border-top-width:3px"></i>' + m.name + ' estimate</span>';
+
+          svg.append("rect").attr("class", "hit-area").attr("x", ml).attr("y", mt).attr("width", w - ml - mr).attr("height", h - mb - mt)
+            .on("pointermove", function (ev) {
+              var p = d3.pointer(ev, this), i = Math.max(0, Math.min(N - 1, Math.floor((p[0] - ml) / x.step())));
+              var d = H[i], s = '<div class="t">Departure ' + (i + 1) + (d.closed ? " · closed" : " · stayed open") + '</div>';
+              s += 'Booking limit <span class="n">' + d.L + '</span><br>Recorded bookings <span class="n">' + d.x + '</span><br>';
+              if (d.closed) {
+                s += 'Closed by <span class="n">' + (DCPS[d.kc] === 0 ? "departure day" : DCPS[d.kc] + " days out") + '</span><br>';
+                s += 'True demand <span class="n">' + d.D + '</span> <span class="mu">(' + (d.D - d.L) + ' lost)</span><br>';
+                if (okM) s += m.short + ' estimate <span class="n">' + f0(est[i]) + '</span>';
+              } else s += '<span class="mu">Never hit its limit, so this is its true demand.</span>';
+              var wp = d3.pointer(ev, wrap); tip(tipEl, s, wp[0], wp[1], wrap);
+            })
+            .on("pointerleave", function () { tipEl.style.display = "none"; })
+            .on("click", function (ev) {
+              var p = d3.pointer(ev, this), i = Math.max(0, Math.min(N - 1, Math.floor((p[0] - ml) / x.step())));
+              st.sel = i; renderHist(); renderOne();
+            });
+        }
+
+        // ───────────────────────────── Part 1 one-departure chart
+        function renderOne() {
+          var wrap = $("one-wrap"), holder = $("one-chart"), tipEl = $("one-tip");
+          var d = H[st.sel], i = st.sel, f = E.curve;
+          var w = holder.clientWidth, sm = w < 480, h = sm ? 250 : 280, ml = 40, mr = sm ? 12 : 128, mt = 14, mb = 40;
+          var x = d3.scalePow().exponent(0.5).domain([120, 0]).range([ml, w - mr]);
+          var ends = [];
+          if (d.closed && E.ok) {
+            ["em", "pd", "bcp"].forEach(function (id) { ends.push({ id: id, v: E[id].est[i] }); });
+            if (E.mi.est[i] > d.x + 1e-9) ends.push({ id: "mi", v: E.mi.est[i] });
+          }
+          var ymax = d3.max([d.D, d.L].concat(ends.map(function (e) { return e.v; })));
+          var y = d3.scaleLinear().domain([0, ymax * 1.08]).nice().range([h - mb, mt]);
+          var svg = svgIn(holder, w, h, "Booking curve of departure " + (i + 1));
+          gridY(svg, y, ml, w - mr, 4);
+          var ax = svg.append("g").attr("class", "axis");
+          (sm ? [120, 60, 30, 14, 7, 3, 0] : DCPS).forEach(function (t) {
+            ax.append("text").attr("x", x(t)).attr("y", h - mb + 15).attr("text-anchor", "middle").text(t);
+          });
+          ax.append("text").attr("class", "axis-title").attr("x", x(0)).attr("y", h - mb + 31).attr("text-anchor", "end").text("Days before departure →");
+          var line = d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return y(p[1]); });
+
+          // booking limit
+          svg.append("line").attr("x1", ml).attr("x2", x(0)).attr("y1", y(d.L)).attr("y2", y(d.L)).attr("stroke", "#222").attr("stroke-width", 1).attr("stroke-dasharray", "5 4");
+          svg.append("text").attr("x", ml + 4).attr("y", y(d.L) - 5).attr("class", "axis-title").style("font-size", "11px").attr("fill", "#595959").text("Booking limit " + d.L);
+          // closure
+          if (d.closed) {
+            var xc = x(DCPS[d.kc]);
+            svg.append("line").attr("x1", xc).attr("x2", xc).attr("y1", mt).attr("y2", h - mb).attr("stroke", "#9a9a9a").attr("stroke-dasharray", "3 3");
+            svg.append("text").attr("x", xc - 4).attr("y", h - mb - 6).attr("text-anchor", "end").style("font-size", "11px").attr("fill", "#767676").text("Seen closed");
+          }
+          // true demand (dotted) and recorded bookings (solid)
+          svg.append("path").attr("d", line(DCPS.map(function (t, k) { return [t, d.t[k]]; }))).attr("fill", "none").attr("stroke", "#222").attr("stroke-width", 1.8).attr("stroke-dasharray", "1.5 3").attr("stroke-linecap", "round");
+          // booking-curve projection from the closure DCP
+          if (d.closed && E.ok && f[d.kc] > 0) {
+            var pts = []; for (var k = d.kc; k < NK; k++) pts.push([DCPS[k], d.L * f[k] / Math.max(f[d.kc], 0.02)]);
+            svg.append("path").attr("d", line(pts)).attr("fill", "none").attr("stroke", COL.bcp).attr("stroke-width", 2).attr("stroke-dasharray", "6 4");
+          }
+          svg.append("path").attr("d", line(DCPS.map(function (t, k) { return [t, d.b[k]]; }))).attr("fill", "none").attr("stroke", "#222").attr("stroke-width", 2.6).attr("stroke-linejoin", "round");
+          svg.append("circle").attr("cx", x(0)).attr("cy", y(d.D)).attr("r", 4.5).attr("fill", "#fff").attr("stroke", "#222").attr("stroke-width", 1.8);
+          ends.forEach(function (e) {
+            svg.append("circle").attr("cx", x(0)).attr("cy", y(e.v)).attr("r", 4).attr("fill", COL[e.id]).attr("stroke", "#fff").attr("stroke-width", 1.5);
+          });
+          if (!sm) {
+            var labs = ends.map(function (e) { return { y: y(e.v), t: M.filter(function (m) { return m.id === e.id; })[0].short + " " + f0(e.v) }; });
+            labs.push({ y: y(d.D), t: "True demand " + d.D, b: true });
+            if (!d.closed) labs = [{ y: y(d.D), t: "True = recorded " + d.D, b: true }];
+            spread(labs, mt + 4, h - mb - 4, 14);
+            var gl = svg.append("g").attr("class", "end-labs");
+            labs.forEach(function (l) { gl.append("text").attr("x", x(0) + 10).attr("y", l.y + 4).attr("class", l.b ? "b" : null).text(l.t); });
+          }
+          $("one-title").textContent = "Departure " + (i + 1) + (d.closed ? ": closed, seen at " + (DCPS[d.kc] === 0 ? "departure" : DCPS[d.kc] + " days out") : ": stayed open");
+          $("one-sub").textContent = d.closed
+            ? "Limit " + d.L + " · recorded " + d.x + " · true demand " + d.D + " (" + (d.D - d.L) + " turned away)"
+            : "Limit " + d.L + " · recorded " + d.x + " · nothing was turned away";
+          var lg = '<span><i class="ln" style="border-color:#222;border-top-width:3px"></i>Recorded bookings</span>' +
+            '<span><i class="ln dot" style="border-color:#222"></i>True demand arriving</span>';
+          if (d.closed && E.ok) lg += '<span><i class="ln dash" style="border-color:' + COL.bcp + '"></i>Booking-curve projection</span>' +
+            ends.filter(function (e) { return e.id !== "bcp"; }).map(function (e) { return '<span><i style="background:' + COL[e.id] + ';border-radius:50%;width:9px;height:9px"></i>' + M.filter(function (m) { return m.id === e.id; })[0].short + '</span>'; }).join("");
+          $("one-legend").innerHTML = lg;
+
+          svg.append("rect").attr("class", "hit-area").style("cursor", "crosshair").attr("x", ml - 6).attr("y", mt).attr("width", x(0) - ml + 12).attr("height", h - mb - mt)
+            .on("pointermove", function (ev) {
+              var p = d3.pointer(ev, this), bk = 0, bd = 1e9;
+              DCPS.forEach(function (t, k) { var dd = Math.abs(x(t) - p[0]); if (dd < bd) { bd = dd; bk = k; } });
+              var t = DCPS[bk], s = '<div class="t">' + (t === 0 ? "Departure day" : t + " days before") + '</div>';
+              s += 'Recorded <span class="n">' + d.b[bk] + '</span><br>True demand so far <span class="n">' + d.t[bk] + '</span><br>';
+              s += '<span class="mu">Share usually in by now: ' + Math.round(100 * f[bk]) + '%</span>';
+              var wp = d3.pointer(ev, wrap); tip(tipEl, s, wp[0], wp[1], wrap);
+            })
+            .on("pointerleave", function () { tipEl.style.display = "none"; });
+        }
+
+        // ───────────────────────────── Part 1 table
+        function renderTable() {
+          var rows = '<tr class="truth"><td>True demand <span class="mu" style="color:var(--muted)">(hidden)</span></td><td>' + f1(T.mu) + '</td><td></td><td>' + f1(T.sd) + '</td><td></td><td></td></tr>';
+          var errs = M.map(function (m) {
+            var ok = E.ok || m.id === "naive" || m.id === "mi";
+            return { ok: ok, eMu: 100 * (E[m.id].mu - T.mu) / T.mu, eSd: 100 * (E[m.id].sd - T.sd) / T.sd, mae: E[m.id].maeClosed };
+          });
+          function best(key) { var b = -1, bv = 1e9; errs.forEach(function (e, i) { if (e.ok && Math.abs(e[key]) < bv - 1e-9) { bv = Math.abs(e[key]); b = i; } }); return b; }
+          var bMu = best("eMu"), bSd = best("eSd"), bMae = E.nClosed ? best("mae") : -1;
+          M.forEach(function (m, i) {
+            var e = errs[i];
+            if (!e.ok) { rows += '<tr><td><span class="sw" style="background:' + COL[m.id] + '"></span>' + m.short + '</td><td colspan="5" style="text-align:left">needs at least 3 open departures</td></tr>'; return; }
+            rows += '<tr><td><span class="sw" style="background:' + COL[m.id] + '"></span>' + m.short + '</td>' +
+              '<td>' + f1(E[m.id].mu) + '</td><td class="' + (i === bMu ? "win" : "") + '">' + pctS(e.eMu, 1) + '</td>' +
+              '<td>' + f1(E[m.id].sd) + '</td><td class="' + (i === bSd ? "win" : "") + '">' + pctS(e.eSd, 1) + '</td>' +
+              '<td class="' + (i === bMae ? "win" : "") + '">' + (E.nClosed ? f1(e.mae) : "–") + '</td></tr>';
+          });
+          $("est-body").innerHTML = rows;
+          var raised = H.filter(function (d, j) { return d.closed && E.mi.est[j] > d.x + 1e-9; }).length;
+          var s = "";
+          if (!E.nClosed) s = "No departure reached its limit, so every method returns the recorded bookings. Lower the capacity to create closures.";
+          else {
+            s = Math.abs(errs[0].eMu) < 1
+              ? "With only " + E.nClosed + " closed departure" + (E.nClosed > 1 ? "s" : "") + ", recorded bookings are close to demand (" + pctS(errs[0].eMu, 1) + " on the mean). Lower the capacity to see the bias grow. "
+              : "Recorded bookings understate mean demand by <b>" + f0(Math.abs(errs[0].eMu)) + "%</b> and its spread by <b>" + f0(Math.abs(errs[0].eSd)) + "%</b>. ";
+            if (E.ok) s += "EM comes within " + f1(Math.abs(errs[3].eMu)) + "% on the mean and " + f1(Math.abs(errs[3].eSd)) + "% on the spread; booking-curve projection is the closest departure by departure (" + f1(errs[2].mae) + " passengers off on average) because it is the only method that uses when each departure closed. ";
+            s += "Mean imputation changed " + raised + " of " + E.nClosed + " closed departures: the departures that stayed open were the quiet ones, and their average (" + f0(E.mOpen) + ") is below " + (raised ? "most of the limits that were hit." : "every limit that was hit.");
+          }
+          $("est-summary").innerHTML = s;
+        }
+
+        // ───────────────────────────── Part 1 sweep chart
+        var METRIC = {
+          mu: { t: "Error in estimated mean demand", f: function (v, dp) { return pctS(v, dp); } },
+          sd: { t: "Error in estimated standard deviation", f: function (v, dp) { return pctS(v, dp); } },
+          mae: { t: "Average miss on a closed departure, % of mean demand", f: function (v, dp) { return d3.format("." + (dp || 0) + "f")(v) + "%"; } }
+        };
+        function renderSweep() {
+          if (!SW) return;
+          $("sweep-note").textContent = REPS + " histories × " + N + " departures per point";
+          var wrap = $("sweep-wrap"), holder = $("sweep-chart"), tipEl = $("sweep-tip");
+          var w = holder.clientWidth, sm = w < 560, h = sm ? 280 : 330, ml = 46, mr = sm ? 14 : 150, mt = 16, mb = 42;
+          var data = SW[st.metric], L = SW.levels;
+          var all = []; M.forEach(function (m) { all = all.concat(data[m.id]); });
+          var lo = Math.min(0, d3.min(all)), hi = Math.max(0, d3.max(all));
+          var pad = (hi - lo) * 0.06 || 1;
+          var x = d3.scaleLinear().domain([L[0], L[L.length - 1]]).range([ml, w - mr]);
+          var y = d3.scaleLinear().domain([lo - pad, hi + pad]).nice().range([h - mb, mt]);
+          var svg = svgIn(holder, w, h, METRIC[st.metric].t + " by share of closed departures");
+          gridY(svg, y, ml, w - mr, 6, function (v) { return st.metric === "mae" ? v + "%" : (v > 0 ? "+" : "") + v + "%"; });
+          svg.append("line").attr("class", "zero").attr("x1", ml).attr("x2", w - mr).attr("y1", y(0)).attr("y2", y(0));
+          var ax = svg.append("g").attr("class", "axis");
+          L.forEach(function (q) { ax.append("text").attr("x", x(q)).attr("y", h - mb + 16).attr("text-anchor", "middle").text(Math.round(q * 100) + "%"); });
+          ax.append("text").attr("class", "axis-title").attr("x", w - mr).attr("y", h - mb + 32).attr("text-anchor", "end").text("Share of departures that closed →");
+          var line = d3.line().x(function (v, k) { return x(L[k]); }).y(function (v) { return y(v); });
+          var order = ["naive", "mi", "bcp", "pd", "em"];
+          order.forEach(function (id) {
+            svg.append("path").attr("d", line(data[id])).attr("fill", "none").attr("stroke", COL[id])
+              .attr("stroke-width", id === "em" ? 2.6 : 2).attr("stroke-dasharray", id === "mi" ? "5 4" : null).attr("stroke-linejoin", "round");
+            if (id !== "mi") data[id].forEach(function (v, k) {
+              svg.append("circle").attr("cx", x(L[k])).attr("cy", y(v)).attr("r", 3.2).attr("fill", COL[id]).attr("stroke", "#fff").attr("stroke-width", 1.5);
+            });
+          });
+          if (!sm) {
+            var last = L.length - 1, labs = [];
+            var mergeMi = Math.abs(data.mi[last] - data.naive[last]) < (y.domain()[1] - y.domain()[0]) * 0.03;
+            M.forEach(function (m) {
+              if (mergeMi && m.id === "mi") return;
+              var name = mergeMi && m.id === "naive" ? "Naive = mean imp." : m.short;
+              labs.push({ y: y(data[m.id][last]), t: name + " " + METRIC[st.metric].f(data[m.id][last]), b: m.id === "em" });
+            });
+            spread(labs, mt + 4, h - mb - 4, 14);
+            var gl = svg.append("g").attr("class", "end-labs");
+            labs.forEach(function (l) { gl.append("text").attr("x", x(L[last]) + 10).attr("y", l.y + 4).attr("class", l.b ? "b" : null).text(l.t); });
+          }
+          $("sweep-legend").innerHTML = M.map(function (m) {
+            return '<span><i class="ln' + (m.id === "mi" ? " dash" : "") + '" style="border-color:' + COL[m.id] + '"></i>' + m.name + '</span>';
+          }).join("");
+
+          var rule = svg.append("line").attr("class", "hover-rule").attr("y1", mt).attr("y2", h - mb).style("display", "none");
+          svg.append("rect").attr("class", "hit-area").style("cursor", "crosshair").attr("x", ml - 12).attr("y", mt).attr("width", w - mr - ml + 24).attr("height", h - mb - mt)
+            .on("pointermove", function (ev) {
+              var p = d3.pointer(ev, this), k = 0, bd = 1e9;
+              L.forEach(function (q, kk) { var dd = Math.abs(x(q) - p[0]); if (dd < bd) { bd = dd; k = kk; } });
+              rule.attr("x1", x(L[k])).attr("x2", x(L[k])).style("display", null);
+              var rows = M.map(function (m) { return { m: m, v: data[m.id][k] }; }).sort(function (a, b) { return Math.abs(a.v) - Math.abs(b.v); });
+              var s = '<div class="t">' + Math.round(L[k] * 100) + '% of departures closed</div><div class="mu" style="margin-bottom:3px">' + METRIC[st.metric].t + '</div>';
+              rows.forEach(function (r) { s += '<div class="row"><i style="background:' + COL[r.m.id] + '"></i>' + r.m.short + '<span class="n">' + METRIC[st.metric].f(r.v, 1) + '</span></div>'; });
+              var wp = d3.pointer(ev, wrap); tip(tipEl, s, wp[0], wp[1], wrap);
+            })
+            .on("pointerleave", function () { rule.style("display", "none"); tipEl.style.display = "none"; });
+
+          var k5 = L.indexOf(0.5), k8 = L.length - 1, D = SW.mu;
+          $("sweep-summary").innerHTML = "With half the departures closed, recorded bookings understate mean demand by <b>" + f0(Math.abs(D.naive[k5])) + "%</b>, and by " + f0(Math.abs(D.naive[k8])) + "% at 80%. " +
+            "EM stays within " + f1(d3.max(D.em, function (v) { return Math.abs(v); })) + "% at every level; projection detruncation drifts to " + pctS(D.pd[k8]) + " at 80% because it imputes the median of the tail and its spread shrinks with every round; booking-curve projection holds at " + pctS(D.bcp[k8]) + ". " +
+            (st.dist === "poisson" ? "Poisson demand is far less variable than airline demand usually is, so every method, naive included, looks better than it would in practice." : "");
+        }
+
+        // ───────────────────────────── Part 2
+        var sel = $("p2-ac");
+        AC.forEach(function (a) { var o = document.createElement("option"); o.value = a.type; o.textContent = a.name + " · " + a.seats + " seats"; sel.appendChild(o); });
+        sel.value = p2.ac;
+        $("p2-fare").value = p2.fare; $("p2-rec").value = p2.rec;
+        function syncP2() {
+          if (!E.ok) return;
+          p2.mu = Math.round(E.em.mu); p2.sd = Math.round(E.em.sd); p2.linked = true;
+          $("p2-mu").value = p2.mu; $("p2-sd").value = p2.sd;
+          renderP2();
+        }
+        function readP2() {
+          var mu = +$("p2-mu").value, sd = +$("p2-sd").value, fare = +$("p2-fare").value, rec = +$("p2-rec").value;
+          if (isFinite(mu) && mu > 0) p2.mu = mu;
+          if (isFinite(sd) && sd >= 0) p2.sd = sd;
+          if (isFinite(fare) && fare >= 0) p2.fare = fare;
+          if (isFinite(rec)) p2.rec = Math.max(0, Math.min(100, rec));
+          p2.ac = sel.value;
+        }
+        ["p2-mu", "p2-sd"].forEach(function (id) { $(id).addEventListener("input", function () { p2.linked = false; readP2(); renderP2(); }); });
+        ["p2-fare", "p2-rec"].forEach(function (id) { $(id).addEventListener("input", function () { readP2(); renderP2(); }); });
+        sel.addEventListener("change", function () { readP2(); renderP2(); });
+        $("p2-link").addEventListener("click", function () { syncP2(); });
+
+        function renderP2() {
+          var r = p2.rec / 100, a = AC.filter(function (q) { return q.type === p2.ac; })[0];
+          var S = UC.spillStats(p2.mu, p2.sd, a.seats, r, p2.fare);
+          $("p2-link-state").textContent = p2.linked
+            ? "Linked to Part 1: EM estimated " + f0(E.em.mu) + " ± " + f0(E.em.sd) + " from the censored history."
+            : "Your own values. Part 1's EM estimate is " + (E.ok ? f0(E.em.mu) + " ± " + f0(E.em.sd) : "not available") + ".";
+          $("p2-link").disabled = !E.ok || (p2.linked && Math.round(E.em.mu) === p2.mu);
+          var html = "";
+          html += '<div class="tile"><b>' + f1(S.pax) + '</b><span>expected passengers on the ' + a.type + ', load factor ' + Math.round(100 * S.lf) + '% of ' + a.seats + ' seats</span></div>';
+          html += '<div class="tile"><b>' + f1(S.spill) + '</b><span>expected spill: ' + d3.format(".1f")(100 * S.spillRate) + '% of demand turned away; full on ' + Math.round(100 * S.pFull) + '% of departures</span></div>';
+          html += '<div class="tile"><b>' + f1(S.recaptured) + '</b><span>of them recaptured on the airline\'s other flights (' + p2.rec + '%)</span></div>';
+          html += '<div class="tile"><b>' + money(S.revLost) + '</b><span>revenue lost per departure after recapture</span></div>';
+          $("p2-tiles").innerHTML = html;
+          renderSpillCharts();
+          renderAcTable();
+        }
+
+        function acScale(w, ml, mr) {
+          var maxC = Math.max(320, d3.max(AC, function (a) { return a.seats; }) + 20, p2.mu + 3 * p2.sd);
+          return d3.scaleLinear().domain([40, maxC]).range([ml, w - mr]);
+        }
+        function curve(fn, x) { var pts = [], d = x.domain(); for (var c = d[0]; c <= d[1]; c += 2) pts.push([c, fn(c)]); return pts; }
+        function acMarks(svg, x, y, h, mt, mb, fnList, sm) {
+          AC.forEach(function (a, i) {
+            var on = a.type === p2.ac, cx = x(a.seats);
+            svg.append("line").attr("x1", cx).attr("x2", cx).attr("y1", mt + 14).attr("y2", h - mb).attr("stroke", on ? "#222" : "#d6d6d6").attr("stroke-width", on ? 1.2 : 1).attr("stroke-dasharray", on ? null : "2 3");
+            svg.append("text").attr("x", cx).attr("y", mt + 8 + (sm && i % 2 ? 11 : 0)).attr("text-anchor", "middle")
+              .style("font-size", "10.5px").style("font-weight", on ? 600 : 400).attr("fill", on ? "#222" : "#767676").text(a.type);
+            fnList.forEach(function (fl) {
+              svg.append("circle").attr("cx", cx).attr("cy", y(fl.fn(a.seats))).attr("r", on ? 5 : 3.8).attr("fill", fl.c).attr("stroke", "#fff").attr("stroke-width", 1.5);
+            });
+          });
+        }
+        function acHover(svg, x, ml, mr, w, mt, h, mb, wrap, tipEl, html) {
+          var rule = svg.append("line").attr("class", "hover-rule").attr("y1", mt).attr("y2", h - mb).style("display", "none");
+          svg.append("rect").attr("class", "hit-area").style("cursor", "crosshair").attr("x", ml).attr("y", mt).attr("width", w - ml - mr).attr("height", h - mb - mt)
+            .on("pointermove", function (ev) {
+              var p = d3.pointer(ev, this), c = Math.round(x.invert(p[0]));
+              var near = AC.filter(function (a) { return Math.abs(x(a.seats) - p[0]) < 10; })[0];
+              if (near) c = near.seats;
+              rule.attr("x1", x(c)).attr("x2", x(c)).style("display", null);
+              var wp = d3.pointer(ev, wrap); tip(tipEl, html(c, near), wp[0], wp[1], wrap);
+            })
+            .on("pointerleave", function () { rule.style("display", "none"); tipEl.style.display = "none"; });
+        }
+
+        function renderSpillCharts() {
+          var r = p2.rec / 100;
+          // A: passengers and spill
+          (function () {
+            var wrap = $("sp-wrap"), holder = $("sp-chart"), tipEl = $("sp-tip");
+            var w = holder.clientWidth, sm = w < 420, h = sm ? 240 : 270, ml = 40, mr = 12, mt = 14, mb = 38;
+            var x = acScale(w, ml, mr);
+            var y = d3.scaleLinear().domain([0, Math.max(p2.mu, 10) * 1.12]).nice().range([h - mb, mt]);
+            var svg = svgIn(holder, w, h, "Expected passengers and spill by number of seats");
+            gridY(svg, y, ml, w - mr, 5);
+            var ax = svg.append("g").attr("class", "axis");
+            x.ticks(sm ? 4 : 6).forEach(function (t) { ax.append("text").attr("x", x(t)).attr("y", h - mb + 15).attr("text-anchor", "middle").text(t); });
+            ax.append("text").attr("class", "axis-title").attr("x", w - mr).attr("y", h - mb + 31).attr("text-anchor", "end").text("Seats →");
+            svg.append("line").attr("x1", ml).attr("x2", w - mr).attr("y1", y(p2.mu)).attr("y2", y(p2.mu)).attr("stroke", "#9a9a9a").attr("stroke-dasharray", "4 4");
+            var line = d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return y(p[1]); });
+            function pax(c) { return p2.mu - UC.spill(p2.mu, p2.sd, c); }
+            function sp(c) { return UC.spill(p2.mu, p2.sd, c); }
+            svg.append("path").attr("d", line(curve(pax, x))).attr("fill", "none").attr("stroke", "#222").attr("stroke-width", 2);
+            svg.append("path").attr("d", line(curve(sp, x))).attr("fill", "none").attr("stroke", "#d9480f").attr("stroke-width", 2);
+            acMarks(svg, x, y, h, mt, mb, [{ fn: pax, c: "#222" }, { fn: sp, c: "#d9480f" }], sm);
+            $("sp-legend").innerHTML = '<span><i class="ln" style="border-color:#222"></i>Expected passengers</span><span><i class="ln" style="border-color:#d9480f"></i>Expected spill</span><span><i class="ln dash" style="border-color:#9a9a9a"></i>Mean demand</span>';
+            acHover(svg, x, ml, mr, w, mt, h, mb, wrap, tipEl, function (c, a) {
+              var S = UC.spillStats(p2.mu, p2.sd, c, r, p2.fare);
+              return '<div class="t">' + (a ? a.name + " · " : "") + c + ' seats</div>Passengers <span class="n">' + f1(S.pax) + '</span> <span class="mu">(LF ' + Math.round(100 * S.lf) + '%)</span><br>Spill <span class="n">' + f1(S.spill) + '</span> <span class="mu">(' + d3.format(".1f")(100 * S.spillRate) + '% of demand)</span>';
+            });
+          })();
+          // B: revenue
+          (function () {
+            var wrap = $("rv-wrap"), holder = $("rv-chart"), tipEl = $("rv-tip");
+            var w = holder.clientWidth, sm = w < 420, h = sm ? 240 : 270, ml = 52, mr = 12, mt = 14, mb = 38;
+            var x = acScale(w, ml, mr), ceil = p2.fare * p2.mu;
+            var y = d3.scaleLinear().domain([0, Math.max(ceil, 1) * 1.1]).nice().range([h - mb, mt]);
+            var svg = svgIn(holder, w, h, "Revenue per departure by number of seats");
+            gridY(svg, y, ml, w - mr, 5, function (v) { return v >= 1000 ? "$" + d3.format(",.0f")(v / 1000) + "k" : "$" + v; });
+            var ax = svg.append("g").attr("class", "axis");
+            x.ticks(sm ? 4 : 6).forEach(function (t) { ax.append("text").attr("x", x(t)).attr("y", h - mb + 15).attr("text-anchor", "middle").text(t); });
+            ax.append("text").attr("class", "axis-title").attr("x", w - mr).attr("y", h - mb + 31).attr("text-anchor", "end").text("Seats →");
+            svg.append("line").attr("x1", ml).attr("x2", w - mr).attr("y1", y(ceil)).attr("y2", y(ceil)).attr("stroke", "#9a9a9a").attr("stroke-dasharray", "4 4");
+            var line = d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return y(p[1]); });
+            function kept(c) { return UC.spillStats(p2.mu, p2.sd, c, r, p2.fare).revKept; }
+            function flown(c) { return UC.spillStats(p2.mu, p2.sd, c, r, p2.fare).revFlight; }
+            svg.append("path").attr("d", line(curve(flown, x))).attr("fill", "none").attr("stroke", "#8FA9F2").attr("stroke-width", 2).attr("stroke-dasharray", "5 4");
+            svg.append("path").attr("d", line(curve(kept, x))).attr("fill", "none").attr("stroke", "#2a78d6").attr("stroke-width", 2.4);
+            acMarks(svg, x, y, h, mt, mb, [{ fn: kept, c: "#2a78d6" }], sm);
+            $("rv-legend").innerHTML = '<span><i class="ln" style="border-color:#2a78d6"></i>Revenue kept by the airline</span><span><i class="ln dash" style="border-color:#8FA9F2"></i>On this flight only</span><span><i class="ln dash" style="border-color:#9a9a9a"></i>If all demand were carried</span>';
+            acHover(svg, x, ml, mr, w, mt, h, mb, wrap, tipEl, function (c, a) {
+              var S = UC.spillStats(p2.mu, p2.sd, c, r, p2.fare);
+              return '<div class="t">' + (a ? a.name + " · " : "") + c + ' seats</div>Revenue kept <span class="n">' + money(S.revKept) + '</span><br>Lost to competitors <span class="n">' + money(S.revLost) + '</span><br><span class="mu">One more seat is worth ' + money(S.seatValue) + '</span>';
+            });
+          })();
+        }
+
+        function renderAcTable() {
+          var r = p2.rec / 100, prev = null, rows = "", steps = [];
+          AC.forEach(function (a) {
+            var S = UC.spillStats(p2.mu, p2.sd, a.seats, r, p2.fare);
+            var gain = prev ? S.revKept - prev.S.revKept : null;
+            if (prev) steps.push({ from: prev.a, to: a, gain: gain, dPax: S.pax + r * S.spill - (prev.S.pax + r * prev.S.spill) });
+            rows += '<tr class="' + (a.type === p2.ac ? "sel" : "") + '"><td>' + a.type + '</td><td>' + a.seats + '</td><td>' + f1(S.pax) + '</td><td>' + Math.round(100 * S.lf) + '%</td><td>' + f1(S.spill) + '</td><td>' + d3.format(".1f")(100 * S.spillRate) + '%</td><td>' + money(S.revKept) + '</td><td>' + (gain === null ? "–" : "+" + money(gain)) + '</td>' +
+              '<td class="src"><a href="' + a.url + '" target="_blank" rel="noopener" title="' + esc(a.cabins) + '">' + esc(a.operator) + '</a></td></tr>';
+            prev = { a: a, S: S };
+          });
+          $("ac-body").innerHTML = rows;
+          var a = AC.filter(function (q) { return q.type === p2.ac; })[0], S = UC.spillStats(p2.mu, p2.sd, a.seats, r, p2.fare);
+          var big = steps.slice().sort(function (p, q) { return q.gain - p.gain; })[0];
+          var s = "The biggest step is <b>" + big.from.type + " → " + big.to.type + "</b>: +" + money(big.gain) + " per departure. ";
+          var nextStep = steps.filter(function (q) { return q.from.type === p2.ac; })[0];
+          if (nextStep) s += "From the " + a.type + ", moving up to the " + nextStep.to.type + " adds " + f1(nextStep.dPax) + " passengers and <b>" + money(nextStep.gain) + "</b> per departure: it pays off only if the bigger aircraft costs less than that much more per trip. ";
+          s += "On the " + a.type + ", one more seat would be worth about " + money(S.seatValue) + " per departure (fare × (1 − recapture) × the " + Math.round(100 * S.pFull) + "% chance the flight is full).";
+          $("ac-summary").innerHTML = s;
+        }
+
+        // ───────────────────────────── go
+        drawControls();
+        runP1();
+        p2.linked = true; syncP2();
+        if (!E.ok) { p2.mu = st.mu; p2.sd = Math.round(sdOf()); $("p2-mu").value = p2.mu; $("p2-sd").value = p2.sd; renderP2(); }
+        SW = UC.sweep({ mu: st.mu, sd: sdOf(), dist: st.dist }, st.seed, REPS, N); renderSweep();
+
+        var lastW = window.innerWidth;
+        window.addEventListener("resize", debounce(function () {
+          if (window.innerWidth === lastW) return; lastW = window.innerWidth;
+          renderHist(); renderOne(); renderSweep(); renderSpillCharts();
+        }, 150));
+      }
+    });
+    </script>
+  </body>
+</html>

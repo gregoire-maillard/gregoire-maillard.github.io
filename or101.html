@@ -1,0 +1,989 @@
+<!doctype html>
+<html>
+  <head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Airline Operations Research 101</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <style>
+      /* ── Sidebar nav ── */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .chapter-nav {
+        margin-top: 4px;
+        font-size: 0.82em;
+        line-height: 1.8;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+      }
+      .chapter-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
+
+      /* ── Callout / example boxes ── */
+      .callout {
+        background: #f4f8fd;
+        border-left: 3px solid #267CB9;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #2a3a4a;
+        line-height: 1.7;
+      }
+      .callout-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .example {
+        background: #fafafa;
+        border: 1px solid #e4e4e4;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #444;
+        line-height: 1.7;
+      }
+      .example-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #888;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Reference table ── */
+      .rm-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86em;
+        margin: 16px 0;
+      }
+      .rm-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: left;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .rm-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        vertical-align: top;
+      }
+      .rm-table tr:last-child td { border-bottom: none; }
+
+      section h3 { margin-top: 22px; }
+      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; }
+
+      /* ── Data tables ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+        margin: 16px 0;
+      }
+      .data-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: center;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .data-table th:first-child { text-align: left; }
+      .data-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .data-table td:first-child { text-align: left; }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table tr.total td { background: #f7f7f7; font-weight: bold; border-top: 2px solid #ddd; }
+      .data-table tr.highlight td { background: #fef6d6; font-weight: bold; }
+
+      /* ── Formula block ── */
+      .formula {
+        background: #f9f7ff;
+        border-left: 3px solid #7c6fcd;
+        padding: 14px 20px;
+        margin: 18px 0;
+        text-align: center;
+        overflow-x: auto;
+      }
+      .formula-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7c6fcd;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+      .formula .note {
+        font-size: 0.82em;
+        color: #666;
+        margin-top: 8px;
+        text-align: left;
+        font-style: italic;
+      }
+
+      /* ── Chart container ── */
+      .chart-wrap {
+        margin: 20px 0;
+        background: #fff;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        padding: 12px 8px 6px;
+      }
+      .chart-wrap svg { display: block; width: 100%; height: auto; }
+      .chart-caption {
+        font-size: 0.78em;
+        color: #888;
+        text-align: center;
+        margin-top: 4px;
+        font-style: italic;
+      }
+    </style>
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+
+      <!-- ── Sidebar ── -->
+      <header>
+        <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+        <img src="/assets/img/or_main.png" alt="Airline operations research" onerror="this.style.display='none'" />
+        <p><i>Me, waiting for the solver to close the gap.</i> <br><hr/>
+        A beginner's guide to operations research in airlines, covering the models behind fleets, crews, schedules and prices.</p>
+
+        <hr/>
+        <nav class="chapter-nav" id="toc">
+          <a href="#ch00"><span class="ch-n">00</span> Why Operations Research?</a>
+          <a href="#ch01"><span class="ch-n">01</span> Linear Programming</a>
+          <a href="#ch02"><span class="ch-n">02</span> Duality &amp; Shadow Prices</a>
+          <a href="#ch03"><span class="ch-n">03</span> Integer Programming</a>
+          <a href="#ch04"><span class="ch-n">04</span> Networks &amp; Time-Space Graphs</a>
+          <a href="#ch05"><span class="ch-n">05</span> Fleet Assignment</a>
+          <a href="#ch06"><span class="ch-n">06</span> Aircraft Routing</a>
+          <a href="#ch07"><span class="ch-n">07</span> Crew Pairing</a>
+          <a href="#ch08"><span class="ch-n">08</span> Crew Rostering</a>
+          <a href="#ch09"><span class="ch-n">09</span> Disruption Recovery</a>
+          <a href="#ch10"><span class="ch-n">10</span> Optimizing Under Uncertainty</a>
+          <a href="#ch11"><span class="ch-n">11</span> OR Meets RM</a>
+          <a href="#ch12"><span class="ch-n">12</span> What's Next</a>
+        </nav>
+      </header>
+
+      <!-- ── Content ── -->
+      <section>
+
+        <h2>Airline Operations Research 101</h2>
+        <p>Operations research (OR) is the discipline of turning a decision into a mathematical model and letting an algorithm find the best answer. Airlines are one of its oldest and heaviest users: almost every plan an airline publishes, from which aircraft flies which flight to which pilot sits in which seat, has been through an optimization model at some point. This page is my attempt to explain the main models in the same spirit as <a href="/rm101.html">RM 101</a>, <a href="/loyalty101.html">Loyalty 101</a> and <a href="/np101.html">NP 101</a>, with one difference: here the math is the subject, so I write the models out properly. Every model is introduced in plain language first, so you can skip the formulas and still follow. It describes the industry in general, not how any particular airline does things, and every number in the examples is made up for illustration.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 00 ── -->
+        <h3 id="ch00">Chapter 00: Why Operations Research?</h3>
+
+        <p>An airline is a machine with an absurd number of moving parts that all have to line up. A single flight needs an aircraft of the right type, at the right airport, with enough hours left before its next maintenance check; two pilots qualified on that type who are legal to work that day; a cabin crew of the right size; a gate, a slot, fuel and a catering load. Multiply that by a few thousand flights a day and every decision starts to depend on every other one. Humans are good at spotting what a plan should look like. They are not good at choosing the best of the billions of plans that satisfy every rule. That is the job of OR.</p>
+
+        <p>The stakes are large because the costs are large. Crew is typically one of an airline's biggest cost lines, usually second only to fuel, and aircraft ownership is not far behind. A crew schedule that is one percent more efficient, or a fleet plan that puts the right-sized aircraft on a few dozen more flights, is worth tens of millions a year at a large carrier. Very few other analytical functions can point at a number like that.</p>
+
+        <h4>Where it came from</h4>
+
+        <p>OR was born in Britain during the Second World War, when teams of scientists were asked to help the military use radar, convoys and bombers more effectively. After the war the methods moved into industry. George Dantzig published the simplex method for linear programming in 1947, and it quickly became the workhorse of the field.</p>
+
+        <p>Airlines took to it early. In 1961 a group of airline OR practitioners formed AGIFORS, the Airline Group of the International Federation of Operational Research Societies, which still meets every year. American Airlines built one of the largest in-house OR groups of any company, and its crew-pairing optimizer, TRIP, was reported to save more than $20 million a year by the early 1990s. The models in this page have been refined for sixty years, and they remain some of the largest optimization problems solved routinely anywhere in industry.</p>
+
+        <h4>The planning sequence</h4>
+
+        <p>Because the full problem is far too big to solve in one piece, airlines break it into a sequence of smaller ones. Each step takes the output of the previous step as fixed and optimizes the next layer. The schedule decides which flights exist; fleet assignment decides which aircraft type flies each one; routing decides which physical aircraft; crew pairing builds anonymous multi-day trips for crews; rostering assigns those trips to named people. On the day, recovery repairs whatever the weather broke.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The airline planning sequence: schedule design, fleet assignment, aircraft routing, crew pairing, crew rostering, then recovery on the day of operation" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs><marker id="arr0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#999"/></marker></defs>
+<rect x="20" y="40" width="150" height="44" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="95.0" y="59" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">1. Schedule design</text>
+<text x="95.0" y="75" text-anchor="middle" font-size="11" fill="#888888">12–6 months</text>
+<rect x="185" y="40" width="150" height="44" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="260.0" y="59" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">2. Fleet assignment</text>
+<text x="260.0" y="75" text-anchor="middle" font-size="11" fill="#888888">6–3 months</text>
+<rect x="350" y="40" width="150" height="44" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="425.0" y="59" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">3. Aircraft routing</text>
+<text x="425.0" y="75" text-anchor="middle" font-size="11" fill="#888888">months, then daily</text>
+<rect x="350" y="120" width="150" height="44" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="425.0" y="139" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">4. Crew pairing</text>
+<text x="425.0" y="155" text-anchor="middle" font-size="11" fill="#888888">3–1 months</text>
+<rect x="185" y="120" width="150" height="44" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="260.0" y="139" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">5. Crew rostering</text>
+<text x="260.0" y="155" text-anchor="middle" font-size="11" fill="#888888">~1 month</text>
+<rect x="20" y="120" width="150" height="44" rx="5" fill="#f9f7ff" stroke="#7c6fcd" stroke-width="1.3"/>
+<text x="95.0" y="139" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">6. Recovery</text>
+<text x="95.0" y="155" text-anchor="middle" font-size="11" fill="#888888">hours</text>
+<line x1="172" y1="62.0" x2="182" y2="62.0" stroke="#999" stroke-width="1.4" marker-end="url(#arr0)"/>
+<line x1="337" y1="62.0" x2="347" y2="62.0" stroke="#999" stroke-width="1.4" marker-end="url(#arr0)"/>
+<line x1="425.0" y1="86" x2="425.0" y2="117" stroke="#999" stroke-width="1.4" marker-end="url(#arr0)"/>
+<line x1="348" y1="142.0" x2="338" y2="142.0" stroke="#999" stroke-width="1.4" marker-end="url(#arr0)"/>
+<line x1="183" y1="142.0" x2="173" y2="142.0" stroke="#999" stroke-width="1.4" marker-end="url(#arr0)"/>
+<text x="20" y="22" font-size="11" fill="#888888">Planning (months ahead, cost minimization on a known schedule)</text>
+<text x="20" y="182" font-size="11" fill="#888888">Execution (day of operation, repair the plan when reality diverges)</text>
+</svg>
+          <div class="chart-caption">Each step fixes the output of the one before. Horizons are indicative and vary a lot by airline.</div>
+        </div>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Step</th><th>Question</th><th>Typical model</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Schedule design</strong></td><td>Which flights, at what times?</td><td>Network design with passenger flows (see <a href="/np101.html#ch04">NP 101</a>)</td></tr>
+            <tr><td><strong>Fleet assignment</strong></td><td>Which aircraft type on each flight?</td><td>Multicommodity flow on a time-space network</td></tr>
+            <tr><td><strong>Aircraft routing</strong></td><td>Which tail number, respecting maintenance?</td><td>Set partitioning over aircraft routes</td></tr>
+            <tr><td><strong>Crew pairing</strong></td><td>Which legs are chained into legal multi-day trips?</td><td>Set partitioning with column generation</td></tr>
+            <tr><td><strong>Crew rostering</strong></td><td>Which person flies which trip?</td><td>Generalized set partitioning, seniority bidding</td></tr>
+            <tr><td><strong>Recovery</strong></td><td>How to repair the plan after a disruption?</td><td>Fast MIPs and heuristics on a short horizon</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">The price of decomposition</div>
+          Solving the steps one at a time is a practical necessity, but it is not free. A fleet assignment that looks optimal on its own may leave the crew planners with an awkward set of flights to connect. Much of the research of the last thirty years has been about integrating neighbouring steps (fleet with routing, routing with crew) without making the problem unsolvable. Chapter 12 comes back to this.
+        </div>
+
+        <p>Before the airline models, the next four chapters build the toolkit they all rely on: linear programs, their duals, integer programs and network flows.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 01 ── -->
+        <h3 id="ch01">Chapter 01: Linear Programming</h3>
+
+        <p>Every optimization model has the same three ingredients. <strong>Decision variables</strong> are the things you control. An <strong>objective</strong> is the number you want to make as large or as small as possible. <strong>Constraints</strong> are the rules any acceptable answer has to respect. A linear program (LP) is the special case where the objective and every constraint are linear in the variables: no products of variables, no squares, no "if" statements.</p>
+
+        <div class="formula">
+          <div class="formula-label">Linear program, standard form</div>
+          \[\max_{x}\; c^\top x \quad \text{s.t.} \quad Ax \le b, \quad x \ge 0\]
+          <div class="note">\(x \in \mathbb{R}^n\) are the decision variables, \(c\) the objective coefficients, and each row of \(A x \le b\) is one constraint. Any LP can be rewritten in this form.</div>
+        </div>
+
+        <p>Linearity sounds restrictive, and it is, but it buys something enormous: LPs with millions of variables can be solved to proven optimality in seconds or minutes. A surprising share of real problems are linear, or close enough that a linear model gives the right answer.</p>
+
+        <h4>A two-route example</h4>
+
+        <p>A small airline has a fixed pool of aircraft hours and crew hours each week and must decide how many round trips to fly on two routes. Route A is a short sector; route B is longer and more profitable per trip, but also hungrier for resources.</p>
+
+        <table class="data-table">
+          <thead>
+            <tr><th>Per weekly round trip</th><th>Route A</th><th>Route B</th><th>Available per week</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Contribution ($k)</td><td>5</td><td>12</td><td></td></tr>
+            <tr><td>Aircraft block hours</td><td>4</td><td>12</td><td>240</td></tr>
+            <tr><td>Crew duty hours</td><td>6</td><td>12</td><td>300</td></tr>
+            <tr><td>Market cap (round trips)</td><td>max 40</td><td>none</td><td></td></tr>
+          </tbody>
+        </table>
+
+        <div class="formula">
+          <div class="formula-label">The two-route LP</div>
+          \[\begin{aligned}
+          \max_{x_A,\,x_B}\quad &amp; 5x_A + 12x_B \\
+          \text{s.t.}\quad &amp; 4x_A + 12x_B \le 240 &amp;&amp; \text{(aircraft hours)}\\
+          &amp; 6x_A + 12x_B \le 300 &amp;&amp; \text{(crew hours)}\\
+          &amp; x_A \le 40 &amp;&amp; \text{(market)}\\
+          &amp; x_A,\, x_B \ge 0
+          \end{aligned}\]
+        </div>
+
+        <p>With two variables, we can draw it. Every constraint is a straight line that cuts the plane in half; the points that satisfy all of them form the <strong>feasible region</strong>, a polygon. The objective is a family of parallel lines of equal profit. Pushing that line as far as it will go while still touching the polygon gives the optimum.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Feasible region of the two-route example, bounded by aircraft hours, crew hours and the market cap, with the optimum at 30 and 10 round trips" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<line x1="52.0" y1="18" x2="52.0" y2="262" stroke="#f0f0f0"/>
+<text x="52.0" y="278" text-anchor="middle" font-size="11" fill="#888888">0</text>
+<line x1="126.0" y1="18" x2="126.0" y2="262" stroke="#f0f0f0"/>
+<text x="126.0" y="278" text-anchor="middle" font-size="11" fill="#888888">10</text>
+<line x1="200.0" y1="18" x2="200.0" y2="262" stroke="#f0f0f0"/>
+<text x="200.0" y="278" text-anchor="middle" font-size="11" fill="#888888">20</text>
+<line x1="274.0" y1="18" x2="274.0" y2="262" stroke="#f0f0f0"/>
+<text x="274.0" y="278" text-anchor="middle" font-size="11" fill="#888888">30</text>
+<line x1="348.0" y1="18" x2="348.0" y2="262" stroke="#f0f0f0"/>
+<text x="348.0" y="278" text-anchor="middle" font-size="11" fill="#888888">40</text>
+<line x1="422.0" y1="18" x2="422.0" y2="262" stroke="#f0f0f0"/>
+<text x="422.0" y="278" text-anchor="middle" font-size="11" fill="#888888">50</text>
+<line x1="496.0" y1="18" x2="496.0" y2="262" stroke="#f0f0f0"/>
+<text x="496.0" y="278" text-anchor="middle" font-size="11" fill="#888888">60</text>
+<line x1="52" y1="262.0" x2="496" y2="262.0" stroke="#f0f0f0"/>
+<text x="44" y="266.0" text-anchor="end" font-size="11" fill="#888888">0</text>
+<line x1="52" y1="221.3" x2="496" y2="221.3" stroke="#f0f0f0"/>
+<text x="44" y="225.3" text-anchor="end" font-size="11" fill="#888888">5</text>
+<line x1="52" y1="180.7" x2="496" y2="180.7" stroke="#f0f0f0"/>
+<text x="44" y="184.7" text-anchor="end" font-size="11" fill="#888888">10</text>
+<line x1="52" y1="140.0" x2="496" y2="140.0" stroke="#f0f0f0"/>
+<text x="44" y="144.0" text-anchor="end" font-size="11" fill="#888888">15</text>
+<line x1="52" y1="99.3" x2="496" y2="99.3" stroke="#f0f0f0"/>
+<text x="44" y="103.3" text-anchor="end" font-size="11" fill="#888888">20</text>
+<line x1="52" y1="58.7" x2="496" y2="58.7" stroke="#f0f0f0"/>
+<text x="44" y="62.7" text-anchor="end" font-size="11" fill="#888888">25</text>
+<line x1="52" y1="18.0" x2="496" y2="18.0" stroke="#f0f0f0"/>
+<text x="44" y="22.0" text-anchor="end" font-size="11" fill="#888888">30</text>
+<line x1="52" y1="262" x2="496" y2="262" stroke="#999"/><line x1="52" y1="18" x2="52" y2="262" stroke="#999"/>
+<text x="274.0" y="298" text-anchor="middle" font-size="12" fill="#333333">x<tspan baseline-shift="sub" font-size="9">A</tspan>: weekly round trips on route A</text>
+<text x="14" y="140.0" text-anchor="middle" font-size="12" fill="#333333" transform="rotate(-90 14 140.0)">x<tspan baseline-shift="sub" font-size="9">B</tspan>: weekly round trips on route B</text>
+<polygon points="52.0,262.0 348.0,262.0 348.0,221.3 274.0,180.7 52.0,99.3" fill="#267CB9" fill-opacity="0.12" stroke="none"/>
+<line x1="52.0" y1="99.3" x2="496.0" y2="262.0" stroke="#267CB9" stroke-width="1.8"/>
+<text x="381.3" y="205.88" font-size="11" fill="#267CB9" text-anchor="start">aircraft hours ≤ 240</text>
+<line x1="52.0" y1="58.7" x2="422.0" y2="262.0" stroke="#2a9d8f" stroke-width="1.8"/>
+<text x="74.2" y="48.906666666666666" font-size="11" fill="#2a9d8f" text-anchor="start">crew hours ≤ 300</text>
+<line x1="348.0" y1="262.0" x2="348.0" y2="34.3" stroke="#c0752a" stroke-width="1.8"/>
+<text x="353.91999999999996" y="42.400000000000006" font-size="11" fill="#c0752a" text-anchor="start">market: x<tspan baseline-shift="sub" font-size="9">A</tspan> ≤ 40</text>
+<line x1="140.8" y1="119.7" x2="451.6" y2="262.0" stroke="#7c6fcd" stroke-width="1.6" stroke-dasharray="6 4"/>
+<text x="148.2" y="105.84" font-size="11" fill="#7c6fcd">profit = 270</text>
+<circle cx="52.0" cy="262.0" r="3.2" fill="#fff" stroke="#333333" stroke-width="1.2"/>
+<circle cx="348.0" cy="262.0" r="3.2" fill="#fff" stroke="#333333" stroke-width="1.2"/>
+<circle cx="348.0" cy="221.3" r="3.2" fill="#fff" stroke="#333333" stroke-width="1.2"/>
+<circle cx="274.0" cy="180.7" r="3.2" fill="#fff" stroke="#333333" stroke-width="1.2"/>
+<circle cx="52.0" cy="99.3" r="3.2" fill="#fff" stroke="#333333" stroke-width="1.2"/>
+<circle cx="274.0" cy="180.7" r="6" fill="#7c6fcd"/>
+<text x="264.0" y="200.7" font-size="11.5" font-weight="600" fill="#333333" text-anchor="end">optimum (30, 10)</text>
+<text x="140.8" y="213.2" font-size="12" fill="#267CB9" font-style="italic">feasible region</text>
+</svg>
+          <div class="chart-caption">The dashed line of equal profit touches the feasible region last at the corner where the aircraft and crew constraints meet.</div>
+        </div>
+
+        <p>The best plan is 30 round trips on route A and 10 on route B, for a weekly contribution of $270k. Notice where it sits: at a <strong>corner</strong> of the polygon, where two constraints are tight at the same time. That is not a coincidence.</p>
+
+        <h4>Why corners, and what simplex does</h4>
+
+        <p>The fundamental theorem of linear programming says that if an LP has an optimal solution, at least one optimal solution is at a corner (a <em>vertex</em>) of the feasible region. Intuitively: if you are in the middle of an edge, sliding one way or the other along it never makes things worse, so you can always slide to an end.</p>
+
+        <p>That turns an infinite search into a finite one. The simplex method starts at one corner and repeatedly moves along an edge to a neighbouring corner with a better objective, stopping when no neighbour improves. In our example it might go from \((0,0)\) to \((40,0)\) worth 200, then \((40,5)\) worth 260, then \((30,10)\) worth 270, where both remaining neighbours are worse. In the worst case the number of steps can grow exponentially, but in practice simplex is astonishingly fast, and modern solvers pair it with <strong>interior-point methods</strong> that cut through the middle of the region instead of walking along its edges.</p>
+
+        <div class="example">
+          <div class="example-label">Checking the corners by hand</div>
+          The five corners of the feasible region and their contributions: \((0,0)\) → 0; \((40,0)\) → 200; \((40,5)\) → 260; \((30,10)\) → 270; \((0,20)\) → 240. The best corner is \((30,10)\). The market cap of 40 is not reached, so it plays no role in the answer.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 02 ── -->
+        <h3 id="ch02">Chapter 02: Duality &amp; Shadow Prices</h3>
+
+        <p>Solving the two-route LP tells us what to do. Its dual tells us something almost more useful: what each scarce resource is worth. If the airline could buy one more aircraft hour per week, how much should it be willing to pay? That question has an exact answer, and it comes for free with the solution.</p>
+
+        <h4>The dual problem</h4>
+
+        <p>Every LP, the <em>primal</em>, has a twin called the <em>dual</em>. Where the primal has one variable per activity and one constraint per resource, the dual has one variable per resource and one constraint per activity. The dual variable \(y_i\) can be read as a price on resource \(i\).</p>
+
+        <div class="formula">
+          <div class="formula-label">Primal and dual</div>
+          \[\text{(P)}\;\; \max_{x \ge 0}\; c^\top x \;\;\text{s.t.}\;\; Ax \le b
+          \qquad\qquad
+          \text{(D)}\;\; \min_{y \ge 0}\; b^\top y \;\;\text{s.t.}\;\; A^\top y \ge c\]
+          <div class="note">The dual asks: what is the cheapest way to price the resources so that no activity looks profitable after paying for what it consumes?</div>
+        </div>
+
+        <p>Two results tie them together. <strong>Weak duality</strong>: any feasible dual solution gives an upper bound on the primal, \(c^\top x \le b^\top y\). <strong>Strong duality</strong>: at the optimum the two are equal. And <strong>complementary slackness</strong> says that a resource with spare capacity at the optimum has a price of zero, and an activity that is used has its full value exactly paid for by the resources it consumes.</p>
+
+        <div class="example">
+          <div class="example-label">The dual of the two-route example</div>
+          Let \(y_1, y_2, y_3\) be the prices of an aircraft hour, a crew hour and a unit of route A market. The market cap is not binding, so \(y_3 = 0\). Both routes are flown, so each must exactly pay for itself:<br><br>
+          Route A: \(4y_1 + 6y_2 = 5\)<br>
+          Route B: \(12y_1 + 12y_2 = 12\)<br><br>
+          Solving gives \(y_1 = 0.5\) and \(y_2 = 0.5\): an aircraft hour and a crew hour are each worth $500 a week at the margin. Check strong duality: \(240 \times 0.5 + 300 \times 0.5 = 270\), exactly the primal optimum.
+        </div>
+
+        <h4>Shadow prices in practice</h4>
+
+        <p>The optimal dual values are called <strong>shadow prices</strong>. They answer "what if" questions without re-solving anything: one extra aircraft hour adds $500 of contribution; ten fewer crew hours cost $5,000. They also tell you where to look. A shadow price of zero on the market cap says that lobbying for more slots on route A is pointless right now, however attractive the route seems.</p>
+
+        <p>Two caveats. Shadow prices are marginal: they hold only over a range, after which a different set of constraints becomes binding and the prices jump. And in integer programs, which is most of what follows, duals are no longer exact. They remain a very useful approximation, and the next paragraph is the reason every RM analyst should care about them.</p>
+
+        <div class="callout">
+          <div class="callout-label">This is where bid prices come from</div>
+          The network bid prices of <a href="/rm101.html#ch06">RM 101, Chapter 06</a> are exactly this idea. Write an LP that allocates expected demand to itineraries subject to seat capacity on each leg; the shadow price of each leg's capacity constraint is that leg's bid price. Chapter 11 writes the model out, and the <a href="/bidprice.html">network bid price demo</a> lets you play with it.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 03 ── -->
+        <h3 id="ch03">Chapter 03: Integer Programming</h3>
+
+        <p>The two-route LP happened to give whole numbers. Usually it does not. And many airline decisions are inherently indivisible: you cannot lease half an aircraft, assign 0.4 of a fleet to a flight, or roster a pilot to 70% of a trip. When some variables must be integers, the model becomes a <strong>mixed-integer program</strong> (MIP), and everything gets harder.</p>
+
+        <div class="formula">
+          <div class="formula-label">Mixed-integer program</div>
+          \[\max_{x}\; c^\top x \quad \text{s.t.} \quad Ax \le b, \quad x \ge 0, \quad x_j \in \mathbb{Z} \;\; \forall j \in I\]
+          <div class="note">\(I\) is the set of variables that must take integer values. Binary variables, \(x_j \in \{0,1\}\), are the most common special case: yes/no decisions.</div>
+        </div>
+
+        <h4>Why not just round?</h4>
+
+        <p>The obvious shortcut is to solve the LP and round the answer. It fails in two ways: the rounded point may break a constraint, or it may be feasible but far from the best integer solution. A small example shows both.</p>
+
+        <div class="example">
+          <div class="example-label">Leasing aircraft for the summer</div>
+          An airline can wet-lease widebodies (\(W\)) and narrowbodies (\(N\)) for the summer. Each widebody contributes $5M and needs 3 crew sets; each narrowbody contributes $3M and needs 1 crew set. There are 11 crew sets and 6 parking positions.<br><br>
+          \(\max\; 5W + 3N \;\;\text{s.t.}\;\; 3W + N \le 11,\;\; W + N \le 6,\;\; W, N \in \mathbb{Z}_{\ge 0}\)<br><br>
+          The LP relaxation says \(W = 2.5,\; N = 3.5\), worth $23M.<br>
+          Round to nearest, \((3, 4)\): needs 13 crew sets. Infeasible.<br>
+          Round down, \((2, 3)\): feasible, worth $19M.<br>
+          The true integer optimum is \((2, 4)\), worth $22M. Rounding down left $3M on the table.
+        </div>
+
+        <h4>Branch and bound</h4>
+
+        <p>The standard exact method, introduced by Ailsa Land and Alison Doig in 1960, is <strong>branch and bound</strong>. Solve the LP relaxation. If a variable that should be an integer is fractional, say \(W = 2.5\), split the problem in two: one branch adds \(W \le 2\), the other \(W \ge 3\). Neither branch loses any integer solution, but both exclude the fractional point. Solve each branch's LP, and keep going.</p>
+
+        <p>The "bound" part is what makes it practical. The LP value of a branch is an upper bound on any integer solution inside it. Once you have found a good integer solution (the <strong>incumbent</strong>), any branch whose bound is no better can be discarded without being explored.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Branch-and-bound tree: the root LP gives 2.5 and 3.5; branching on W gives an integer solution worth 22 and a pruned branch worth 21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs><marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#999"/></marker></defs>
+<rect x="155.0" y="10" width="210" height="50" rx="5" fill="#f9f7ff" stroke="#7c6fcd" stroke-width="1.3"/>
+<text x="260" y="30" text-anchor="middle" font-size="11.5" font-weight="600" fill="#333333">Root: LP relaxation</text>
+<text x="260" y="46" text-anchor="middle" font-size="11.5" font-weight="400" fill="#333333">W = 2.5,  N = 3.5,  z = 23</text>
+<line x1="230" y1="60" x2="130" y2="118" stroke="#999" stroke-width="1.3" marker-end="url(#arr2)"/>
+<line x1="290" y1="60" x2="390" y2="118" stroke="#999" stroke-width="1.3" marker-end="url(#arr2)"/>
+<text x="160" y="92" font-size="12" font-weight="600" fill="#267CB9" text-anchor="end">W ≤ 2</text>
+<text x="360" y="92" font-size="12" font-weight="600" fill="#c0752a">W ≥ 3</text>
+<rect x="20.0" y="120" width="220" height="66" rx="5" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="130" y="140" text-anchor="middle" font-size="11.5" font-weight="400" fill="#333333">W = 2,  N = 4,  z = 22</text>
+<text x="130" y="156" text-anchor="middle" font-size="11.5" font-weight="600" fill="#267CB9">integer → new incumbent</text>
+<text x="130" y="172" text-anchor="middle" font-size="11.5" font-weight="400" fill="#333333"></text>
+<rect x="280.0" y="120" width="220" height="66" rx="5" fill="#fdf6ef" stroke="#c0752a" stroke-width="1.3"/>
+<text x="390" y="140" text-anchor="middle" font-size="11.5" font-weight="400" fill="#333333">W = 3,  N = 2,  z = 21</text>
+<text x="390" y="156" text-anchor="middle" font-size="11.5" font-weight="600" fill="#c0752a">bound 21 < incumbent 22</text>
+<text x="390" y="172" text-anchor="middle" font-size="11.5" font-weight="400" fill="#c0752a">→ prune</text>
+</svg>
+          <div class="chart-caption">Branch and bound on the leasing example. The right branch cannot beat 22, so it is pruned, and \((2,4)\) is proven optimal.</div>
+        </div>
+
+        <h4>Bounds, gaps and why formulation matters</h4>
+
+        <p>At any moment a solver holds two numbers: the value of the best integer solution found so far, and the best bound still open in the tree. The difference, the <strong>MIP gap</strong>, measures how far from optimal the incumbent could possibly be. Real airline models are often stopped at a gap of a fraction of a percent rather than solved to zero.</p>
+
+        <p>How fast the gap closes depends mostly on how tight the LP relaxation is. Two formulations with exactly the same integer solutions can have very different relaxations, and the tighter one can be solved orders of magnitude faster. Modern solvers add <strong>cutting planes</strong>, extra constraints that shave off fractional corners without removing any integer point, and combine them with branching into branch-and-cut. When a model has too many variables to write down at all, as in crew pairing, branching is combined with column generation into branch-and-price (Chapter 07).</p>
+
+        <div class="formula">
+          <div class="formula-label">Logic with binaries: a fixed cost</div>
+          \[x_r \le M z_r, \qquad z_r \in \{0,1\}, \qquad \text{cost} = F z_r + v\,x_r\]
+          <div class="note">To model a route that costs \(F\) to open (a station, a crew base, a lease) plus \(v\) per flight, flights \(x_r\) are only allowed if \(z_r = 1\). \(M\) should be the smallest valid upper bound on \(x_r\): a needlessly large "big-M" makes the relaxation weak.</div>
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 04 ── -->
+        <h3 id="ch04">Chapter 04: Networks &amp; Time-Space Graphs</h3>
+
+        <p>Some integer programs are secretly easy. If the constraints describe a flow of goods through a network, where each node's inflow must equal its outflow, the LP relaxation always has an integer optimal solution when capacities and supplies are integers. You solve an LP and get whole numbers for free. The technical reason is that the constraint matrix of a network is <strong>totally unimodular</strong>: every square submatrix has determinant 0, 1 or −1, which forces every corner of the feasible region to be integer.</p>
+
+        <div class="formula">
+          <div class="formula-label">Minimum-cost flow</div>
+          \[\min_{f}\; \sum_{(i,j) \in \mathcal{A}} c_{ij} f_{ij}
+          \quad\text{s.t.}\quad
+          \sum_{j} f_{ji} - \sum_{j} f_{ij} = d_i \;\;\forall i \in \mathcal{N},
+          \qquad 0 \le f_{ij} \le u_{ij}\]
+          <div class="note">\(f_{ij}\) is the flow on arc \((i,j)\), \(c_{ij}\) its unit cost, \(u_{ij}\) its capacity, and \(d_i\) the net demand at node \(i\). Shortest path, assignment and transportation problems are all special cases.</div>
+        </div>
+
+        <h4>The time-space network</h4>
+
+        <p>The trick that makes network flows so useful for airlines is to put time into the graph. In a <strong>time-space network</strong>, each node is an airport at a moment in time: a departure or an arrival event. Two kinds of arcs connect them. <strong>Flight arcs</strong> go from a departure node at one airport to an arrival node at another. <strong>Ground arcs</strong> link consecutive events at the same airport and carry the aircraft that are sitting on the ground in between. A final wrap-around arc links the last node of the day back to the first, because tomorrow's schedule repeats today's.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Time-space network for one day: eight flights between a hub and two stations, ground arcs labelled with the number of aircraft on the ground; two aircraft cross the count line at the hub" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs><marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#267CB9"/></marker></defs>
+<line x1="84.0" y1="36" x2="84.0" y2="214" stroke="#f0f0f0"/>
+<text x="84.0" y="232" text-anchor="middle" font-size="11" fill="#888888">06:00</text>
+<line x1="154.0" y1="36" x2="154.0" y2="214" stroke="#f0f0f0"/>
+<text x="154.0" y="232" text-anchor="middle" font-size="11" fill="#888888">09:00</text>
+<line x1="224.0" y1="36" x2="224.0" y2="214" stroke="#f0f0f0"/>
+<text x="224.0" y="232" text-anchor="middle" font-size="11" fill="#888888">12:00</text>
+<line x1="294.0" y1="36" x2="294.0" y2="214" stroke="#f0f0f0"/>
+<text x="294.0" y="232" text-anchor="middle" font-size="11" fill="#888888">15:00</text>
+<line x1="364.0" y1="36" x2="364.0" y2="214" stroke="#f0f0f0"/>
+<text x="364.0" y="232" text-anchor="middle" font-size="11" fill="#888888">18:00</text>
+<line x1="434.0" y1="36" x2="434.0" y2="214" stroke="#f0f0f0"/>
+<text x="434.0" y="232" text-anchor="middle" font-size="11" fill="#888888">21:00</text>
+<line x1="504.0" y1="36" x2="504.0" y2="214" stroke="#f0f0f0"/>
+<text x="504.0" y="232" text-anchor="middle" font-size="11" fill="#888888">24:00</text>
+<line x1="92.2" y1="30" x2="92.2" y2="214" stroke="#7c6fcd" stroke-width="1.4" stroke-dasharray="4 3"/>
+<text x="96.2" y="28" font-size="11" fill="#7c6fcd">count line</text>
+<text x="72" y="64" text-anchor="end" font-size="12.5" font-weight="600" fill="#333333">Station A</text>
+<line x1="84.0" y1="60" x2="142.3" y2="60" stroke="#dddddd" stroke-width="1.0"/>
+<line x1="142.3" y1="60" x2="159.8" y2="60" stroke="#999" stroke-width="2.3"/>
+<text x="151.1" y="53" text-anchor="middle" font-size="10.5" fill="#888888">1</text>
+<line x1="159.8" y1="60" x2="259.0" y2="60" stroke="#dddddd" stroke-width="1.0"/>
+<line x1="259.0" y1="60" x2="282.3" y2="60" stroke="#999" stroke-width="2.3"/>
+<text x="270.7" y="53" text-anchor="middle" font-size="10.5" fill="#888888">1</text>
+<line x1="282.3" y1="60" x2="504.0" y2="60" stroke="#dddddd" stroke-width="1.0"/>
+<text x="72" y="134" text-anchor="end" font-size="12.5" font-weight="600" fill="#333333">Hub</text>
+<line x1="84.0" y1="130" x2="107.3" y2="130" stroke="#999" stroke-width="3.6"/>
+<text x="95.7" y="146" text-anchor="middle" font-size="10.5" fill="#888888">2</text>
+<line x1="107.3" y1="130" x2="130.7" y2="130" stroke="#999" stroke-width="2.3"/>
+<text x="119.0" y="146" text-anchor="middle" font-size="10.5" fill="#888888">1</text>
+<line x1="130.7" y1="130" x2="194.8" y2="130" stroke="#dddddd" stroke-width="1.0"/>
+<text x="162.8" y="146" text-anchor="middle" font-size="10.5" fill="#bbbbbb">0</text>
+<line x1="194.8" y1="130" x2="224.0" y2="130" stroke="#999" stroke-width="2.3"/>
+<text x="209.4" y="146" text-anchor="middle" font-size="10.5" fill="#888888">1</text>
+<line x1="224.0" y1="130" x2="247.3" y2="130" stroke="#dddddd" stroke-width="1.0"/>
+<text x="235.7" y="146" text-anchor="middle" font-size="10.5" fill="#bbbbbb">0</text>
+<line x1="247.3" y1="130" x2="317.3" y2="130" stroke="#999" stroke-width="2.3"/>
+<text x="282.3" y="146" text-anchor="middle" font-size="10.5" fill="#888888">1</text>
+<line x1="317.3" y1="130" x2="340.7" y2="130" stroke="#999" stroke-width="3.6"/>
+<text x="329.0" y="146" text-anchor="middle" font-size="10.5" fill="#888888">2</text>
+<line x1="340.7" y1="130" x2="457.3" y2="130" stroke="#999" stroke-width="2.3"/>
+<text x="399.0" y="146" text-anchor="middle" font-size="10.5" fill="#888888">1</text>
+<line x1="457.3" y1="130" x2="504.0" y2="130" stroke="#999" stroke-width="3.6"/>
+<text x="480.7" y="146" text-anchor="middle" font-size="10.5" fill="#888888">2</text>
+<text x="72" y="204" text-anchor="end" font-size="12.5" font-weight="600" fill="#333333">Station B</text>
+<line x1="84.0" y1="200" x2="177.3" y2="200" stroke="#dddddd" stroke-width="1.0"/>
+<line x1="177.3" y1="200" x2="200.7" y2="200" stroke="#999" stroke-width="2.3"/>
+<text x="189.0" y="216" text-anchor="middle" font-size="10.5" fill="#888888">1</text>
+<line x1="200.7" y1="200" x2="387.3" y2="200" stroke="#dddddd" stroke-width="1.0"/>
+<line x1="387.3" y1="200" x2="410.7" y2="200" stroke="#999" stroke-width="2.3"/>
+<text x="399.0" y="216" text-anchor="middle" font-size="10.5" fill="#888888">1</text>
+<line x1="410.7" y1="200" x2="504.0" y2="200" stroke="#dddddd" stroke-width="1.0"/>
+<line x1="107.3" y1="130" x2="142.3" y2="60" stroke="#267CB9" stroke-width="1.6" marker-end="url(#arr3)"/>
+<line x1="159.8" y1="60" x2="194.8" y2="130" stroke="#267CB9" stroke-width="1.6" marker-end="url(#arr3)"/>
+<line x1="130.7" y1="130" x2="177.3" y2="200" stroke="#267CB9" stroke-width="1.6" marker-end="url(#arr3)"/>
+<line x1="200.7" y1="200" x2="247.3" y2="130" stroke="#267CB9" stroke-width="1.6" marker-end="url(#arr3)"/>
+<line x1="224.0" y1="130" x2="259.0" y2="60" stroke="#267CB9" stroke-width="1.6" marker-end="url(#arr3)"/>
+<line x1="282.3" y1="60" x2="317.3" y2="130" stroke="#267CB9" stroke-width="1.6" marker-end="url(#arr3)"/>
+<line x1="340.7" y1="130" x2="387.3" y2="200" stroke="#267CB9" stroke-width="1.6" marker-end="url(#arr3)"/>
+<line x1="410.7" y1="200" x2="457.3" y2="130" stroke="#267CB9" stroke-width="1.6" marker-end="url(#arr3)"/>
+<circle cx="282.3" cy="60" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="194.8" cy="130" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="457.3" cy="130" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="224.0" cy="130" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="410.7" cy="200" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="177.3" cy="200" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="259.0" cy="60" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="317.3" cy="130" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="387.3" cy="200" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="130.7" cy="130" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="159.8" cy="60" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="340.7" cy="130" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="107.3" cy="130" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="247.3" cy="130" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="142.3" cy="60" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+<circle cx="200.7" cy="200" r="3" fill="#fff" stroke="#333333" stroke-width="1.1"/>
+</svg>
+          <div class="chart-caption">One day, three airports, eight flights. Numbers on the ground arcs count the aircraft on the ground. Two aircraft cross the count line at the hub, so this schedule needs two aircraft.</div>
+        </div>
+
+        <p>An aircraft is now a unit of flow, and flow conservation at every node says exactly what it should: an aircraft that arrives must either wait on the ground or leave on a flight. To count how many aircraft the schedule needs, draw a vertical <strong>count line</strong> at any moment, typically the quietest time of night, and add up the flow on every arc that crosses it. In the picture, the two aircraft parked overnight at the hub are the whole fleet this schedule needs.</p>
+
+        <p>This picture is the foundation of the next two chapters. If every flight must be flown by exactly one of several aircraft types, each type becomes its own flow through the same network, and the problem becomes a <strong>multicommodity flow</strong>. That breaks total unimodularity, so integrality is no longer free, but the network structure keeps the LP relaxation tight enough to solve very large instances.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 05 ── -->
+        <h3 id="ch05">Chapter 05: Fleet Assignment</h3>
+
+        <p>Once the schedule is set, every flight needs an aircraft type. Put a 300-seat aircraft on a flight with 150 passengers and you burn fuel and ownership cost to fly empty seats. Put a 150-seater on a flight with 250 passengers and you <strong>spill</strong> 100 of them to competitors, or to other flights. <a href="/np101.html#ch05">NP 101, Chapter 05</a> explains the trade-off in words; here is the model that airlines actually solve. The version below is the classic one from Hane, Barnhart, Johnson, Marsten, Nemhauser and Sigismondi (1995), and variations of it are still at the heart of most commercial fleeting tools.</p>
+
+        <h4>The Fleet Assignment Model (FAM)</h4>
+
+        <div class="formula">
+          <div class="formula-label">Sets and data</div>
+          \[\begin{aligned}
+          &amp;\mathcal{L}: \text{flight legs}, \qquad \mathcal{K}: \text{fleet types}, \qquad \mathcal{N}^k: \text{time-space nodes for fleet } k\\
+          &amp;S_k: \text{aircraft available of type } k, \qquad c_{ik}: \text{cost of flying leg } i \text{ with type } k\\
+          &amp;\mathcal{O}(n), \mathcal{I}(n): \text{legs departing from / arriving at node } n\\
+          &amp;n^-, n^+: \text{ground arcs entering / leaving node } n, \qquad \mathcal{C}^k: \text{arcs crossing the count line}
+          \end{aligned}\]
+        </div>
+
+        <div class="formula">
+          <div class="formula-label">FAM</div>
+          \[\begin{aligned}
+          \min\quad &amp; \sum_{i \in \mathcal{L}} \sum_{k \in \mathcal{K}} c_{ik}\, x_{ik}\\
+          \text{s.t.}\quad &amp; \sum_{k \in \mathcal{K}} x_{ik} = 1 &amp;&amp; \forall i \in \mathcal{L} &amp;&amp; \text{(cover)}\\
+          &amp; \sum_{i \in \mathcal{I}(n)} x_{ik} + y_{n^-} - \sum_{i \in \mathcal{O}(n)} x_{ik} - y_{n^+} = 0 &amp;&amp; \forall k,\; n \in \mathcal{N}^k &amp;&amp; \text{(balance)}\\
+          &amp; \sum_{i \in \mathcal{C}^k} x_{ik} + \sum_{g \in \mathcal{C}^k} y_{g} \le S_k &amp;&amp; \forall k \in \mathcal{K} &amp;&amp; \text{(count)}\\
+          &amp; x_{ik} \in \{0,1\}, \quad y_g \ge 0
+          \end{aligned}\]
+          <div class="note">\(x_{ik} = 1\) if leg \(i\) is flown by fleet \(k\); \(y_g\) is the number of type-\(k\) aircraft on ground arc \(g\). Cover: every leg gets exactly one type. Balance: aircraft of each type are conserved at every node. Count: no type uses more aircraft than it has.</div>
+        </div>
+
+        <h4>Where the cost comes from</h4>
+
+        <p>All the commercial intelligence sits in \(c_{ik}\). It is usually built as operating cost plus expected spill cost:</p>
+
+        <div class="formula">
+          <div class="formula-label">Leg-fleet cost</div>
+          \[c_{ik} = \text{OpCost}_{ik} + \bar{r}_i \cdot \mathbb{E}\big[(D_i - Q_k)^+\big]\]
+          <div class="note">\(D_i\) is the random unconstrained demand on leg \(i\), \(Q_k\) the seat count of fleet \(k\), and \(\bar{r}_i\) the average revenue of a spilled passenger. \((\cdot)^+\) means "the positive part": only demand above capacity is spilled.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">One leg, two fleets</div>
+          Leg demand is roughly normal with mean 160 and standard deviation 30. Average fare $250.<br><br>
+          150-seat type: operating cost $18,000. Expected spill ≈ 17.6 passengers → $4,400. Total $22,400.<br>
+          190-seat type: operating cost $21,500. Expected spill ≈ 2.5 passengers → $625. Total $22,125.<br><br>
+          The bigger aircraft wins by about $275 on this leg, but only if the network has a 190-seater free at that time and place. FAM makes that call for every leg simultaneously.
+        </div>
+
+        <h4>Beyond the leg: passenger flows</h4>
+
+        <p>The spill formula above treats each leg independently, which is the same mistake leg-based RM makes (<a href="/rm101.html#ch06">RM 101, Chapter 06</a>). A connecting passenger spilled from a small first leg is also lost on the second leg. Extensions such as the Itinerary-Based Fleet Assignment Model (IFAM) add passenger-flow variables per itinerary, with recapture onto alternative flights, so the model sees the network revenue of a fleeting decision. They are bigger and harder to solve, and they are one of the clearest places where network planning and revenue management use the same math.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 06 ── -->
+        <h3 id="ch06">Chapter 06: Aircraft Routing</h3>
+
+        <p>Fleet assignment says "an A320 flies this leg". It does not say which A320. Aircraft routing, also called maintenance routing or, closer to the day, <strong>tail assignment</strong>, gives each physical aircraft (identified by its tail number) a sequence of flights. The FAM solution guarantees that the flow of aircraft balances; routing turns that flow into actual lines of flying that individual aircraft can follow.</p>
+
+        <h4>The maintenance constraint</h4>
+
+        <p>What makes routing more than bookkeeping is maintenance. Aircraft need frequent routine checks, which have to happen at a station with the right hangar and staff, usually overnight. A route that keeps an aircraft away from maintenance-capable stations for too long is illegal, however efficient it looks. Other considerations pile on: some tails have specific equipment or restrictions, some routes need an aircraft cleared for long overwater flights, and planned heavy checks take tails out of service entirely.</p>
+
+        <h4>A string-based model</h4>
+
+        <p>A common approach enumerates <strong>strings</strong>: sequences of connected flights that begin and end at a maintenance station and respect the maximum time between checks. The model then picks a set of strings that covers every flight exactly once and can be flown with the aircraft available.</p>
+
+        <div class="formula">
+          <div class="formula-label">Aircraft routing as set partitioning</div>
+          \[\begin{aligned}
+          \min\quad &amp; \sum_{s \in \mathcal{S}} c_s\, z_s\\
+          \text{s.t.}\quad &amp; \sum_{s \in \mathcal{S}} a_{is}\, z_s = 1 &amp;&amp; \forall i \in \mathcal{L}\\
+          &amp; \text{flow balance of strings at each station,} \quad \sum_{s \text{ in use at count time}} z_s + \text{ground} \le S\\
+          &amp; z_s \in \{0,1\}
+          \end{aligned}\]
+          <div class="note">\(a_{is} = 1\) if string \(s\) contains leg \(i\). The number of possible strings is enormous, so they are generated on demand, with the same technique used for crew pairing in the next chapter.</div>
+        </div>
+
+        <p>Close to departure, tail assignment becomes an operational tool: it is re-solved as aircraft go unserviceable, maintenance slots move and flights are swapped. Some airlines also solve fleet assignment and routing together, since a fleeting that cannot be routed legally is not a real plan.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 07 ── -->
+        <h3 id="ch07">Chapter 07: Crew Pairing</h3>
+
+        <p>Crew pairing is the problem that made airline OR famous. A <strong>pairing</strong> is a sequence of duty periods, separated by rest, that starts and ends at the same crew base: fly out on Monday, layover in one city, fly on Tuesday, layover in another, return home on Wednesday. Pairings are anonymous; no person is attached yet. The goal is to cover every flight in the schedule with the cheapest set of legal pairings.</p>
+
+        <h4>What makes a pairing legal, and what it costs</h4>
+
+        <p>Legality is a thicket of rules from aviation regulators and labour agreements: maximum flight time and duty time per day, minimum rest between duties, minimum and maximum connection times, limits on the number of landings, maximum days away from base. Cost is just as intricate. Crews are often paid the maximum of several quantities, such as actual flying time, a guaranteed minimum per duty, or a fraction of time away from base, plus hotel and per-diem costs for layovers. Much of the cost is "unproductive": time sitting between flights, overnight layovers, and <strong>deadheads</strong>, where a crew rides as passengers to reposition.</p>
+
+        <h4>The set partitioning model</h4>
+
+        <div class="formula">
+          <div class="formula-label">Crew pairing</div>
+          \[\min \sum_{p \in \mathcal{P}} c_p\, x_p
+          \quad\text{s.t.}\quad
+          \sum_{p \in \mathcal{P}} a_{ip}\, x_p = 1 \;\;\forall i \in \mathcal{L},
+          \qquad x_p \in \{0,1\}\]
+          <div class="note">\(\mathcal{P}\) is the set of all legal pairings, \(c_p\) the cost of pairing \(p\), and \(a_{ip} = 1\) if pairing \(p\) covers leg \(i\). Each flight is covered exactly once. Allowing deadheads turns the equality into \(\ge 1\), with a cost for each extra coverage.</div>
+        </div>
+
+        <p>The model is almost embarrassingly simple to write. The difficulty is \(\mathcal{P}\): for a large airline the number of legal pairings runs into the billions and beyond. Nobody can enumerate them, let alone put them all in a solver.</p>
+
+        <div class="example">
+          <div class="example-label">A tiny instance, and a fractional trap</div>
+          A hub H serves three stations A, B and C, with one round trip each: six legs. Six candidate pairings:<br><br>
+          \(P_1\) = round trip to A, \(P_2\) = round trip to B, \(P_3\) = round trip to C, each costing 4.<br>
+          \(P_4\) = A and B trips in one duty, \(P_5\) = B and C, \(P_6\) = A and C, each costing 6.<br><br>
+          Best integer solution: one double trip plus the remaining single, for example \(P_5 + P_1\), cost 10.<br>
+          LP relaxation: \(x_4 = x_5 = x_6 = 0.5\), which covers every leg exactly once "on average", cost 9.<br><br>
+          The relaxation is fractional because the three double pairings form an odd cycle. Branch-and-bound must close this gap, and in real instances there are millions of such structures.
+        </div>
+
+        <h4>Column generation</h4>
+
+        <p>The way out is to never write down \(\mathcal{P}\) at all. <strong>Column generation</strong>, whose roots go back to Dantzig and Wolfe (1960) and Gilmore and Gomory (1961), solves the LP relaxation with only a small subset of pairings, the <em>restricted master problem</em>. Its dual gives a price \(\pi_i\) for covering each leg. A second problem, the <strong>pricing problem</strong>, then searches the space of legal pairings for one whose cost is less than the value of the legs it covers:</p>
+
+        <div class="formula">
+          <div class="formula-label">Reduced cost of a pairing</div>
+          \[\bar{c}_p \;=\; c_p - \sum_{i \in \mathcal{L}} a_{ip}\, \pi_i\]
+          <div class="note">If some legal pairing has \(\bar{c}_p &lt; 0\), adding it to the master will improve the LP. If none exists, the master LP is optimal over all of \(\mathcal{P}\), even though almost all of \(\mathcal{P}\) was never generated.</div>
+        </div>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Column generation loop: the restricted master LP sends dual prices to the pricing problem, which returns new pairings with negative reduced cost" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<defs><marker id="arr4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#999"/></marker></defs>
+<rect x="20" y="45" width="185" height="70" rx="6" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.3"/>
+<text x="112" y="72" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">Restricted master LP</text>
+<text x="112" y="92" text-anchor="middle" font-size="11" fill="#888888">set partitioning over the</text>
+<text x="112" y="106" text-anchor="middle" font-size="11" fill="#888888">pairings found so far</text>
+<rect x="315" y="45" width="185" height="70" rx="6" fill="#f9f7ff" stroke="#7c6fcd" stroke-width="1.3"/>
+<text x="407" y="72" text-anchor="middle" font-size="12.5" font-weight="600" fill="#333333">Pricing problem</text>
+<text x="407" y="92" text-anchor="middle" font-size="11" fill="#888888">shortest path with resource</text>
+<text x="407" y="106" text-anchor="middle" font-size="11" fill="#888888">limits on a duty network</text>
+<path d="M205 62 C 250 30, 270 30, 313 62" fill="none" stroke="#999" stroke-width="1.4" marker-end="url(#arr4)"/>
+<path d="M315 100 C 270 132, 250 132, 207 100" fill="none" stroke="#999" stroke-width="1.4" marker-end="url(#arr4)"/>
+<text x="260" y="26" text-anchor="middle" font-size="11.5" fill="#333333">dual prices π for every leg</text>
+<text x="260" y="148" text-anchor="middle" font-size="11.5" fill="#333333">new pairings with negative reduced cost</text>
+<text x="260" y="164" text-anchor="middle" font-size="11" fill="#888888">stop when none exists: the LP is optimal over all pairings</text>
+</svg>
+          <div class="chart-caption">The two problems take turns until no improving pairing exists.</div>
+        </div>
+
+        <p>The pricing problem is a <strong>resource-constrained shortest path</strong> on a network whose nodes are duties or flights and whose resources track duty time, flying time, landings and days away. It is still hard, but it is far smaller than enumerating everything, and it can be solved with dynamic programming. When the column generation LP is embedded inside branch and bound, re-generating columns at every node of the tree, the method is called <strong>branch-and-price</strong>. It is the standard exact approach for large crew-pairing problems.</p>
+
+        <div class="example">
+          <div class="example-label">One round of column generation</div>
+          Start the tiny instance with only \(P_1, P_2, P_3\). The master LP must use all three: cost 12. One valid set of leg duals is \(\pi_i = 2\) for every leg.<br><br>
+          Pricing: \(P_4\) covers four legs, so \(\bar{c}_4 = 6 - 4 \times 2 = -2 &lt; 0\). Add it.<br>
+          The master now finds a cheaper cover and drops to 10. \(P_5\) and \(P_6\) still price out negative; once they join, the LP reaches its optimum of 9, and branching finishes the job at 10.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 08 ── -->
+        <h3 id="ch08">Chapter 08: Crew Rostering</h3>
+
+        <p>Pairings are anonymous. Rostering turns them into monthly schedules for named pilots and flight attendants, adding everything the pairing step ignored: each person's vacation, training, medical checks, previous month's carry-over, days off requirements and qualifications. Where pairing is mostly about cost, rostering is also about fairness and quality of life, and in many airlines it is governed by seniority.</p>
+
+        <h4>Three ways to build rosters</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Approach</th><th>How it works</th><th>Optimization question</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Bidlines</strong></td><td>Anonymous monthly lines are built, then crew bid for whole lines in seniority order</td><td>Build lines that are efficient and attractive</td></tr>
+            <tr><td><strong>Preferential bidding</strong></td><td>Crew state preferences (days off, destinations, trip lengths); the system builds personal rosters respecting seniority</td><td>Satisfy preferences lexicographically by seniority</td></tr>
+            <tr><td><strong>Rostering</strong></td><td>The airline assigns rosters to balance workload and fairness, with requests as soft constraints</td><td>Minimize cost and unfairness, maximize requests granted</td></tr>
+          </tbody>
+        </table>
+
+        <h4>A generalized set partitioning model</h4>
+
+        <div class="formula">
+          <div class="formula-label">Crew rostering</div>
+          \[\begin{aligned}
+          \min\quad &amp; \sum_{e \in \mathcal{E}} \sum_{r \in \mathcal{R}_e} c_{er}\, x_{er}\\
+          \text{s.t.}\quad &amp; \sum_{r \in \mathcal{R}_e} x_{er} = 1 &amp;&amp; \forall e \in \mathcal{E} &amp;&amp; \text{(one roster per person)}\\
+          &amp; \sum_{e \in \mathcal{E}} \sum_{r \in \mathcal{R}_e} a_{pr}\, x_{er} = n_p &amp;&amp; \forall p &amp;&amp; \text{(each pairing gets its full crew)}\\
+          &amp; x_{er} \in \{0,1\}
+          \end{aligned}\]
+          <div class="note">\(\mathcal{E}\) is the set of crew members, \(\mathcal{R}_e\) the legal monthly rosters for member \(e\), \(n_p\) the number of crew pairing \(p\) needs in that rank, and \(c_{er}\) a cost that can encode pay, preference violations or unfairness.</div>
+        </div>
+
+        <p>The structure is the same as crew pairing, one level up, and so is the solution method: rosters are generated by column generation, with a pricing problem per crew member. Seniority adds a twist. In preferential bidding, the most senior person must get the best roster the rules allow before the second person is considered, which is typically solved as a sequence of optimizations, one seniority level at a time, each fixing what the one before achieved.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 09 ── -->
+        <h3 id="ch09">Chapter 09: Disruption Recovery</h3>
+
+        <p>Every plan in the previous chapters is optimized for a world where everything runs on time. Then a snowstorm closes a hub for six hours, an aircraft goes unserviceable, or a crew times out. The plan is broken, and the airline has to repair it within minutes, not weeks. This is the domain of the Operations Control Centre (OCC), and OR tools increasingly sit inside it.</p>
+
+        <h4>Three layers of recovery</h4>
+
+        <p>Recovery usually runs in the same order as planning. <strong>Aircraft recovery</strong> decides which flights to delay, cancel or swap between tails so that the remaining aircraft can fly a feasible schedule. <strong>Crew recovery</strong> repairs the pairings and rosters that the new aircraft plan broke, using reserve crew, deadheads and swaps while respecting every legality rule. <strong>Passenger recovery</strong> rebooks disrupted passengers onto the new schedule.</p>
+
+        <div class="formula">
+          <div class="formula-label">Aircraft recovery, stylized</div>
+          \[\min \;\; \sum_{i \in \mathcal{L}} \Big( \kappa_i\, \text{cancel}_i + \sum_{d \in \mathcal{D}} \delta_{id}\, \text{delay}_{id} \Big) + \sum_{\text{swaps}} \sigma\, \text{swap}\]
+          <div class="note">Subject to each flight being either cancelled or flown with exactly one delay option \(d\), aircraft flow balance on a time-space network rebuilt from the current state, and each aircraft ending the recovery window where tomorrow's plan needs it. \(\kappa_i\), \(\delta_{id}\) and \(\sigma\) put a price on cancellations, delays and swaps.</div>
+        </div>
+
+        <p>The hard part is time. A model that finds the perfect answer in two hours is useless when the controller needs a decision in ten minutes. Recovery models therefore limit the horizon (a day or two), limit the options (a handful of delay steps per flight), and lean on heuristics that find good answers fast.</p>
+
+        <div class="example">
+          <div class="example-label">When it pays off</div>
+          Continental Airlines built a crew-recovery system called CrewSolver in the late 1990s. In the paper describing it, Continental estimated that the system saved about $40 million in 2001 during major disruptions alone, the most dramatic being the complete shutdown and restart of US airspace after September 11. Recovery is where OR most visibly earns its keep, because the alternative is a room of experienced controllers working the problem by hand.
+        </div>
+
+        <h4>The integration problem, again</h4>
+
+        <p>Solving aircraft, crew and passengers sequentially is fast, but a "cheap" aircraft solution that strands three crews is not cheap. Integrated recovery models that consider all three at once are an active area, and they face the same tension as integrated planning: better answers, bigger models, less time to solve them.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 10 ── -->
+        <h3 id="ch10">Chapter 10: Optimizing Under Uncertainty</h3>
+
+        <p>Every model so far has treated its inputs as known: demand, block times, crew availability. None of them are. There are two broad ways to take uncertainty seriously: plan for many possible futures at once, or make the plan less sensitive to which future happens.</p>
+
+        <h4>Stochastic programming</h4>
+
+        <p>A <strong>two-stage stochastic program</strong> splits decisions into those made now, before uncertainty resolves, and those made later, once it has. The first-stage decisions are optimized against the expected cost of the best reaction to each possible outcome.</p>
+
+        <div class="formula">
+          <div class="formula-label">Two-stage stochastic program</div>
+          \[\min_{x \in X}\; c^\top x + \mathbb{E}_{\xi}\big[\,Q(x, \xi)\,\big],
+          \qquad
+          Q(x, \xi) = \min_{y \ge 0} \big\{\, q_\xi^\top y \;:\; W y \ge h_\xi - T_\xi\, x \,\big\}\]
+          <div class="note">\(x\) is decided now (say, a fleet assignment), \(\xi\) is the random outcome (the demand that actually shows up), and \(y\) is the best recourse given both (reaccommodating passengers, swapping aircraft). The expectation is usually approximated with a finite set of sampled scenarios.</div>
+        </div>
+
+        <p>The appeal is that the model values flexibility. A fleeting that looks slightly more expensive on average demand may win clearly once you account for the spill it avoids in high-demand scenarios. The cost is size: each scenario adds a copy of the second-stage problem.</p>
+
+        <h4>Robust planning</h4>
+
+        <p>A different approach is to build plans that break less. Typical examples: <strong>buffers</strong> in block times and turn times where delays are likely; crew pairings that keep a crew on the same aircraft through a connection, so a late inbound does not also delay a different flight; and aircraft routings that leave spare tails at the hubs. Robust optimization formalizes this by protecting against the worst case in an uncertainty set, rather than the average case.</p>
+
+        <div class="callout">
+          <div class="callout-label">The price of robustness</div>
+          Slack costs money every day, and pays back only on bad days. A schedule that is optimal on paper and fragile in practice can easily lose more in delay and recovery costs than it saved in planning. The honest way to compare them is to simulate the operation, not to compare the plans' objective values.
+        </div>
+
+        <h4>Simulation</h4>
+
+        <p>When the question is "how does this plan behave?" rather than "what is the best plan?", <strong>Monte Carlo simulation</strong> is often the right tool: draw thousands of random days, run the plan through each, and look at the distribution of outcomes. The <a href="/bookinglimits.html">booking-limit simulator</a> does exactly this on the revenue side, testing EMSR-b against first come, first served on 2,000 simulated flights.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 11 ── -->
+        <h3 id="ch11">Chapter 11: OR Meets RM</h3>
+
+        <p>Revenue management is, underneath, a set of OR models. <a href="/rm101.html">RM 101</a> explains them through their intuition; this chapter shows the optimization problems behind three of its central ideas.</p>
+
+        <h4>Littlewood as a newsvendor</h4>
+
+        <p>Littlewood's rule (<a href="/rm101.html#ch03">RM 101, Chapter 03</a>) is an instance of one of the oldest models in OR, the <strong>newsvendor</strong>: choose a quantity before uncertain demand is known, balancing the cost of having too much against the cost of having too little. The optimal quantity sits at the <strong>critical fractile</strong> of the demand distribution.</p>
+
+        <div class="formula">
+          <div class="formula-label">Newsvendor and Littlewood</div>
+          \[P(D \ge y^*) = \frac{c_o}{c_u + c_o}
+          \qquad\longleftrightarrow\qquad
+          P(D_H \ge y^*) = \frac{f_L}{f_H}\]
+          <div class="note">\(c_u\) is the cost of protecting one seat too few, \(c_o\) the cost of one too many. In the two-fare case, protecting one too few costs \(f_H - f_L\) and one too many costs \(f_L\), so \(c_o/(c_u + c_o) = f_L/f_H\).</div>
+        </div>
+
+        <h4>Dynamic programming on a single leg</h4>
+
+        <p>The exact single-leg problem is a <strong>dynamic program</strong>. Divide the booking window into periods small enough that at most one request arrives in each. Let \(V_t(x)\) be the expected revenue-to-go with \(t\) periods left and \(x\) seats left. In each period a request for fare class \(j\) arrives with probability \(\lambda_j\):</p>
+
+        <div class="formula">
+          <div class="formula-label">Bellman equation</div>
+          \[V_t(x) = \sum_{j} \lambda_j \max\Big\{ f_j + V_{t-1}(x-1),\; V_{t-1}(x) \Big\} + \Big(1 - \sum_j \lambda_j\Big) V_{t-1}(x)\]
+          <div class="note">With \(V_0(x) = 0\) and \(V_t(0) = 0\). Accept class \(j\) if and only if \(f_j \ge V_{t-1}(x) - V_{t-1}(x-1)\): the fare must beat the expected value of the seat it consumes.</div>
+        </div>
+
+        <p>That right-hand side, \(\Delta V_{t-1}(x) = V_{t-1}(x) - V_{t-1}(x-1)\), is the bid price, now derived exactly rather than approximated. The catch is dimension: on a network, \(x\) becomes a vector of seats remaining on every leg, and the number of states explodes. That is why networks use the approximation below.</p>
+
+        <h4>The deterministic LP and network bid prices</h4>
+
+        <div class="formula">
+          <div class="formula-label">Deterministic linear program (DLP)</div>
+          \[\max_{y}\; \sum_{j \in \mathcal{J}} f_j\, y_j
+          \quad\text{s.t.}\quad
+          \sum_{j \in \mathcal{J}} a_{lj}\, y_j \le C_l \;\;\forall l \in \mathcal{L} \;\; [\pi_l],
+          \qquad 0 \le y_j \le \mathbb{E}[D_j]\]
+          <div class="note">\(\mathcal{J}\) is the set of itinerary-fare products, \(y_j\) the number of seats allocated to product \(j\), \(a_{lj} = 1\) if product \(j\) uses leg \(l\), and \(C_l\) the remaining capacity on leg \(l\). \(\pi_l\) is the dual of leg \(l\)'s capacity constraint.</div>
+        </div>
+
+        <p>The DLP replaces random demand with its mean, which makes it an LP that can be solved for a whole network in seconds. Its duals \(\pi_l\) are the network bid prices, and the control rule follows directly from Chapter 02: accept product \(j\) if its fare covers the shadow value of the capacity it uses.</p>
+
+        <div class="formula">
+          <div class="formula-label">Bid-price control</div>
+          \[\text{accept } j \iff f_j \;\ge\; \sum_{l \in \mathcal{L}} a_{lj}\, \pi_l\]
+        </div>
+
+        <p>That one line is the whole of O&amp;D control in <a href="/rm101.html#ch06">RM 101, Chapter 06</a>. The <a href="/bidprice.html">network bid price demo</a> solves a small version of it around a hub, and the <a href="/buydown.html">buy-down simulator</a> shows what happens when the demand fed into models like these is itself biased by the controls. In practice the DLP is refined in many ways (re-solving frequently, randomizing demand, adding choice behaviour), but the DP-and-LP pair is the backbone of network RM.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 12 ── -->
+        <h3 id="ch12">Chapter 12: What's Next</h3>
+
+        <p>The core models of airline OR are decades old, but the field is far from finished. A few directions stand out.</p>
+
+        <h4>Integration</h4>
+
+        <p>Computing power and solver technology have improved enough that steps once solved separately can increasingly be solved together: fleet assignment with routing, routing with crew pairing, schedule design with fleet assignment and passenger flows. Each integration removes a source of sub-optimality that Chapter 00 described. The same push is happening in recovery, where integrated aircraft, crew and passenger models are moving from research papers towards operations control.</p>
+
+        <h4>Machine learning meets optimization</h4>
+
+        <p>OR and machine learning are converging from both sides. Learned models provide better inputs: forecasts of demand, block times, delay propagation and no-shows that feed the optimization. They also speed up the solvers themselves, for example by learning which variable to branch on, which columns are worth generating, or what a good starting solution looks like for a problem the airline solves every day with small changes. The optimization still guarantees feasibility and legality; the learning makes it faster and better informed.</p>
+
+        <h4>Faster solvers, and more of them</h4>
+
+        <p>Commercial MIP solvers have become dramatically faster over the last three decades, and strong open-source options now exist too. First-order methods that run on GPUs are starting to solve very large LPs that were out of reach before. For airlines, faster solvers mean shorter planning cycles, more what-if scenarios, and re-optimization closer to the day of operation.</p>
+
+        <h4>Robustness as a first-class objective</h4>
+
+        <p>The last few years made resilience expensive to ignore. Planning models are increasingly judged on how the plan performs in simulated operations, not just on its planned cost. I expect the line between planning and recovery to keep blurring, with plans built from the start to be easy to repair.</p>
+
+        <p>Anyway, that's the overview. If something here was unclear or you want to go deeper on any chapter, feel free to reach out. I find this stuff genuinely fascinating, and I'm always happy to talk about it.</p>
+
+        <p><hr/></p>
+
+        <h4>Sources for the historical facts</h4>
+
+        <p><small>
+          OR origins and the simplex method: <a href="https://en.wikipedia.org/wiki/Operations_research">Wikipedia, Operations research</a>.<br>
+          AGIFORS (1961) and American Airlines' OR history: <a href="https://www.informs.org/Explore/History-of-O.R.-Excellence/Non-Academic-Institutions/American-Airlines">INFORMS, History of O.R. Excellence: American Airlines</a>.<br>
+          TRIP: Anbil et al., <a href="https://pubsonline.informs.org/doi/10.1287/inte.21.1.62">"Recent Advances in Crew-Pairing Optimization at American Airlines"</a>, <em>Interfaces</em> 21(1), 1991.<br>
+          Fleet assignment: Hane et al., <a href="https://link.springer.com/article/10.1007/BF01585938">"The fleet assignment problem: Solving a large-scale integer program"</a>, <em>Mathematical Programming</em> 70, 1995.<br>
+          CrewSolver: Yu et al., <a href="https://ideas.repec.org/a/inm/orinte/v33y2003i1p5-22.html">"A New Era for Crew Recovery at Continental Airlines"</a>, <em>Interfaces</em> 33(1), 2003.<br>
+          Branch and bound: Land and Doig, "An automatic method of solving discrete programming problems", <em>Econometrica</em> 28(3), 1960.
+        </small></p>
+
+      </section>
+
+      <footer>
+      </footer>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+      // ── Active sidebar highlight on scroll ──
+      const chapters = document.querySelectorAll('h3[id]');
+      const navLinks = document.querySelectorAll('#toc a');
+
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px' });
+
+      chapters.forEach(ch => obs.observe(ch));
+    </script>
+  </body>
+</html>
