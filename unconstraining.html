@@ -43,15 +43,6 @@
         --spill: #d9480f;
       }
 
-      .top-bar {
-        padding: 18px 30px 14px;
-        border-bottom: 1px solid var(--line);
-        background: #fff;
-      }
-      .top-bar h1 { margin: 0 0 6px; }
-      .top-bar h1 a { color: var(--ink); text-decoration: none; }
-      .top-bar h1 a:hover { color: var(--link); }
-      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
 
       .content {
         max-width: 1180px;
@@ -201,7 +192,6 @@
         .inputs { position: static; }
       }
       @media (max-width: 720px) {
-        .top-bar { padding: 14px 16px 12px; }
         .content { padding: 18px 16px 40px; }
         .controls { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; }
         .controls .lbl { grid-column: 1 / -1; margin-top: 8px; }
@@ -214,17 +204,63 @@
         .method .f { white-space: normal; }
       }
     </style>
+
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+    </style>
+    <style>
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+    </style>
   </head>
   <body>
-    <div class="top-bar">
-      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
-      <p>How airlines recover the demand they never saw, and what it is worth.</p>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>12</b> tools · <b>6</b> courses</span>
+      </div>
     </div>
 
     <div class="content">
       <div class="intro">
         <div class="crumb"><a href="/airlinetools.html">Airline tools</a> · Revenue management</div>
         <h2>Demand unconstraining</h2>
+        <p class="lede">How airlines recover the demand they never saw, and what it is worth.</p>
         <p>An airline only records the bookings it accepted. Once a flight or a fare class closes, every later request disappears from the data, so on the busiest departures the history shows the booking limit, not the demand. Forecasts built on that history come out too low, and fleet decisions built on those forecasts put too few seats where they are needed. This page generates a booking history where the true demand is known, runs five classic ways of recovering it, then turns the recovered demand into spill, recapture and the case for a bigger aircraft. The theory is in <a href="/rm101.html#ch02">Revenue Management 101, Chapter 02</a>.</p>
         <p class="note-line">Illustrative numbers: the booking history is synthetic, generated in your browser from a fixed seed, and the fares and recapture rates are assumptions. Only the aircraft seat counts are real (published cabin layouts). None of it comes from an airline's data.</p>
         <p class="load-err" id="load-err"></p>

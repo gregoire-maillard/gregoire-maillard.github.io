@@ -173,7 +173,14 @@ select.field {
 /* ───────── header ───────── */
 .hdr { position: sticky; top: 0; z-index: 60; background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); box-shadow: 0 1px 0 var(--hair), inset 0 -1px 0 rgb(255 255 255 / .6); }
 .hdr .wrap { height: var(--hdr); display: flex; align-items: center; gap: 24px; }
-.switcher { position: relative; margin-left: -12px; }
+.home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: var(--r-cell); white-space: nowrap; }
+.home:hover { background: var(--wash); }
+.home .mk { width: 24px; height: 24px; border-radius: 7px; background: var(--ink); display: grid; place-items: center; }
+.home .mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+.hdr-sep { width: 1px; height: 24px; background: var(--hair); margin-inline: -8px; flex: none; }
+@media (max-width: 1099px) { .home .home-t { display: none; } }
+@media (max-width: 599px) { .hdr-sep, .live .tm { display: none; } header.hdr .wrap { gap: 8px; } .sw { padding: 0 4px 0 8px; } }
+.switcher { position: relative; }
 .sw { height: var(--ctl); padding: 0 8px 0 12px; border: 0; border-radius: var(--r-cell); background: none; display: flex; align-items: center; gap: 8px; }
 .sw:hover, .sw[aria-expanded="true"] { background: var(--wash); }
 .sw img, .menu img { display: block; flex: none; }
@@ -553,6 +560,8 @@ html.show-grid .gridlines { display: block; }
 
 <header class="hdr">
   <div class="wrap">
+    <a class="home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="mk"><i></i></span><span class="home-t">Grégoire Maillard</span></a>
+    <span class="hdr-sep" aria-hidden="true"></span>
     <div class="switcher">
       <button class="sw" id="swBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="swMenu"></button>
       <div class="menu" id="swMenu" role="menu" hidden></div>
