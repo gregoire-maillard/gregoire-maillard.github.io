@@ -1,0 +1,1057 @@
+<!doctype html>
+<html>
+  <head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Airline Impact Evaluation 101</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <style>
+      /* ── Sidebar nav ── */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100vh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .chapter-nav {
+        margin-top: 4px;
+        font-size: 0.82em;
+        line-height: 1.8;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+      }
+      .chapter-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
+
+      /* ── Callout / example boxes ── */
+      .callout {
+        background: #f4f8fd;
+        border-left: 3px solid #267CB9;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #2a3a4a;
+        line-height: 1.7;
+      }
+      .callout-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .example {
+        background: #fafafa;
+        border: 1px solid #e4e4e4;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #444;
+        line-height: 1.7;
+      }
+      .example-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #888;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Reference table ── */
+      .rm-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86em;
+        margin: 16px 0;
+      }
+      .rm-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: left;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .rm-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        vertical-align: top;
+      }
+      .rm-table tr:last-child td { border-bottom: none; }
+
+      section h3 { margin-top: 22px; }
+      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; }
+
+      /* ── Data tables ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+        margin: 16px 0;
+      }
+      .data-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: center;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .data-table th:first-child { text-align: left; }
+      .data-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .data-table td:first-child { text-align: left; }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table tr.total td { background: #f7f7f7; font-weight: bold; border-top: 2px solid #ddd; }
+      .data-table tr.highlight td { background: #fef6d6; font-weight: bold; }
+
+      /* ── Formula block ── */
+      .formula {
+        background: #f9f7ff;
+        border-left: 3px solid #7c6fcd;
+        padding: 14px 20px;
+        margin: 18px 0;
+        text-align: center;
+        overflow-x: auto;
+      }
+      .formula-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7c6fcd;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+      .formula .note {
+        font-size: 0.82em;
+        color: #666;
+        margin-top: 8px;
+        text-align: left;
+        font-style: italic;
+      }
+
+      /* ── Chart container ── */
+      .chart-wrap {
+        margin: 20px 0;
+        background: #fff;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        padding: 12px 8px 6px;
+      }
+      .chart-wrap svg { display: block; width: 100%; height: auto; }
+      .chart-caption {
+        font-size: 0.78em;
+        color: #888;
+        text-align: center;
+        margin-top: 4px;
+        font-style: italic;
+      }
+      /* ── Interactive simulations ── */
+      .sim {
+        border: 1px solid #e4e4e4;
+        border-top: 3px solid #2a9d8f;
+        border-radius: 4px;
+        margin: 22px 0;
+        padding: 12px 16px 12px;
+        background: #fff;
+      }
+      .sim-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #2a9d8f;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+      .sim-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 8px 22px;
+        margin: 6px 0 10px;
+        font-size: 0.8em;
+        color: #555;
+      }
+      .sim-controls label { flex: 1 1 150px; min-width: 140px; display: block; }
+      .sim-controls label .v { font-weight: bold; color: #267CB9; margin-left: 4px; }
+      .sim-controls input[type=range] { display: block; width: 100%; margin: 4px 0 0; accent-color: #267CB9; }
+      .sim button {
+        font-size: 0.95em;
+        padding: 5px 12px;
+        border: 1px solid #267CB9;
+        background: #f4f8fd;
+        color: #267CB9;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .sim button:hover { background: #267CB9; color: #fff; }
+      .sim svg { display: block; width: 100%; height: auto; }
+      .sim-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .sim-stats div {
+        background: #fafafa;
+        border: 1px solid #eee;
+        border-radius: 3px;
+        padding: 6px 9px;
+        font-size: 0.76em;
+        color: #777;
+        line-height: 1.35;
+      }
+      .sim-stats b { display: block; font-size: 1.3em; margin-bottom: 1px; }
+      .sim-note { font-size: 0.78em; color: #888; font-style: italic; margin-top: 8px; line-height: 1.5; }
+    </style>
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+
+      <!-- ── Sidebar ── -->
+      <header>
+        <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+        <img src="/assets/img/impact_main.png" alt="Impact evaluation" onerror="this.style.display='none'" />
+        <p><i>Me, asking "compared to what?"</i> <br><hr/>
+        A beginner's guide to measuring what actually worked in RM and loyalty, with simulations you can play with.</p>
+
+        <hr/>
+        <nav class="chapter-nav" id="toc">
+          <a href="#ch00"><span class="ch-n">00</span> Why Impact Evaluation?</a>
+          <a href="#ch01"><span class="ch-n">01</span> The Counterfactual</a>
+          <a href="#ch02"><span class="ch-n">02</span> Randomized Experiments</a>
+          <a href="#ch03"><span class="ch-n">03</span> Noise &amp; Confidence</a>
+          <a href="#ch04"><span class="ch-n">04</span> Power &amp; Sample Size</a>
+          <a href="#ch05"><span class="ch-n">05</span> Variance Reduction</a>
+          <a href="#ch06"><span class="ch-n">06</span> Experiments in RM</a>
+          <a href="#ch07"><span class="ch-n">07</span> Difference-in-Differences</a>
+          <a href="#ch08"><span class="ch-n">08</span> Synthetic Control</a>
+          <a href="#ch09"><span class="ch-n">09</span> Regression Discontinuity</a>
+          <a href="#ch10"><span class="ch-n">10</span> Matching &amp; Propensity Scores</a>
+          <a href="#ch11"><span class="ch-n">11</span> Who Responds: Uplift</a>
+          <a href="#ch12"><span class="ch-n">12</span> Traps</a>
+          <a href="#ch13"><span class="ch-n">13</span> From Estimate to Decision</a>
+        </nav>
+      </header>
+
+      <!-- ── Content ── -->
+      <section>
+
+        <h2>Airline Impact Evaluation 101</h2>
+        <p>Every airline changes things all the time: a new forecasting model, a bonus-points campaign, a new status tier, a price test. And after every change someone asks: did it work? Answering that honestly is harder than it looks, and most of the numbers that circulate in companies after a launch are wrong in a predictable direction. This page covers the statistics of answering it well, applied to the two areas I know best, <a href="/rm101.html">revenue management</a> and <a href="/loyalty101.html">loyalty</a>. It goes deeper than the short chapter on incrementality in <a href="/loyalty101.html#ch09">Loyalty 101</a>, and most chapters come with a simulation you can play with: every result is generated in your browser from made-up data, so you can see the methods succeed and fail.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 00 ── -->
+        <h3 id="ch00">Chapter 00: Why Impact Evaluation?</h3>
+
+        <p>Three claims I have heard versions of many times:</p>
+
+        <div class="example">
+          <div class="example-label">Three claims that sound convincing</div>
+          <strong>"The campaign worked: members who got the bonus offer booked 40% more than those who didn't."</strong> But the offer was sent to active members, who book more anyway.<br><br>
+          <strong>"The new forecaster added 4% revenue: revenue per seat is up 4% since it went live."</strong> But the whole market was up 3% that season.<br><br>
+          <strong>"Gold members spend three times more than Silver members, so status drives spend."</strong> But people become Gold because they already spend a lot.
+        </div>
+
+        <p>Each claim compares two numbers and attributes the difference to one cause. Each time, something else could explain most of the gap. Impact evaluation is the discipline of isolating the part of a change that was actually caused by what you did, and of saying how sure you are about it.</p>
+
+        <p>In airlines this matters more than in many industries, for three reasons. The baseline moves constantly: seasonality, competitors, fuel prices and economic cycles all shift demand from month to month. The effects we care about are small: a good RM change might add 1 or 2 percent to revenue, a good loyalty campaign a fraction of a percentage point to booking rates. And the costs of being wrong are asymmetric: a campaign that pays points to customers who would have flown anyway can look like a success for years.</p>
+
+        <div class="callout">
+          <div class="callout-label">The one question</div>
+          Every method in this page is an answer to the same question: <em>compared to what?</em> The effect of anything is the difference between what happened and what would have happened without it. The second half of that sentence is never observed. It has to be estimated, and the quality of that estimate is the quality of the evaluation.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 01 ── -->
+        <h3 id="ch01">Chapter 01: The Counterfactual</h3>
+
+        <p>The cleanest way to think about causal effects is the <strong>potential outcomes</strong> framework. For each member \(i\), imagine two versions of the future: \(Y_i(1)\), what they would spend if they receive the offer, and \(Y_i(0)\), what they would spend if they don't. The effect of the offer on that member is the difference.</p>
+
+        <div class="formula">
+          <div class="formula-label">Individual and average effects</div>
+          \[\tau_i = Y_i(1) - Y_i(0) \qquad\qquad \text{ATE} = \mathbb{E}\big[Y(1) - Y(0)\big] \qquad\qquad \text{ATT} = \mathbb{E}\big[Y(1) - Y(0) \mid T = 1\big]\]
+          <div class="note">ATE is the average treatment effect over everyone; ATT the average effect on those who were actually treated. For a campaign sent to a chosen segment, the ATT is usually the number you want.</div>
+        </div>
+
+        <p>The <strong>fundamental problem of causal inference</strong> is that we only ever see one of the two outcomes for each member. A member either got the offer or didn't. So any comparison between groups compares different people, and the question is whether those people are comparable.</p>
+
+        <h4>Where naive comparisons go wrong</h4>
+
+        <p>The simple comparison, average outcome of the treated minus average outcome of the untreated, can be split exactly into two parts:</p>
+
+        <div class="formula">
+          <div class="formula-label">Naive difference = effect + selection bias</div>
+          \[\underbrace{\mathbb{E}[Y \mid T{=}1] - \mathbb{E}[Y \mid T{=}0]}_{\text{what you observe}}
+          \;=\;
+          \underbrace{\mathbb{E}[Y(1) - Y(0) \mid T{=}1]}_{\text{ATT}}
+          \;+\;
+          \underbrace{\mathbb{E}[Y(0) \mid T{=}1] - \mathbb{E}[Y(0) \mid T{=}0]}_{\text{selection bias}}\]
+          <div class="note">The selection bias term asks: without any treatment, would the treated group have behaved differently from the untreated group anyway?</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">The bonus offer, decomposed</div>
+          An offer was sent to members who flew at least twice last year. They booked at 12% during the campaign; everyone else booked at 4%. The naive "effect" is +8 points.<br><br>
+          But frequent members book more anyway. Had they not received the offer, they would have booked at 10.5%. So the effect on them (the ATT) is 12 − 10.5 = 1.5 points, and selection bias is 10.5 − 4 = 6.5 points. Most of the naive number is selection bias, and nothing in the observed data reveals it.
+        </div>
+
+        <p>Every method in the rest of this page is a strategy to make the selection bias term zero, or to estimate and remove it. Randomization makes it zero by design. The quasi-experimental methods of Chapters 07 to 10 make it small under assumptions that have to be argued for.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 02 ── -->
+        <h3 id="ch02">Chapter 02: Randomized Experiments</h3>
+
+        <p>If a coin decides who gets the offer, then the treated and untreated groups are, on average, identical in everything: past spend, tier, home city, age, mood. Anything that differs between them afterwards is either the offer or chance. The selection bias term disappears, and the simple difference in means becomes an unbiased estimate of the effect. That is why randomized experiments, also called A/B tests or holdout tests, are the gold standard.</p>
+
+        <h4>Designing an experiment</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Decision</th><th>Question to answer</th><th>Loyalty example</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Unit</strong></td><td>What gets randomized?</td><td>Members</td></tr>
+            <tr><td><strong>Population</strong></td><td>Who is eligible?</td><td>Members active in the last 24 months</td></tr>
+            <tr><td><strong>Split</strong></td><td>How many in each group?</td><td>90% offer, 10% holdout</td></tr>
+            <tr><td><strong>Primary metric</strong></td><td>What single number decides success?</td><td>Incremental revenue per member net of points cost</td></tr>
+            <tr><td><strong>Window</strong></td><td>How long do we measure?</td><td>Campaign period plus 60 days, to catch pull-forward</td></tr>
+            <tr><td><strong>Sample size</strong></td><td>Is the test big enough to see the effect we care about?</td><td>Chapter 04</td></tr>
+          </tbody>
+        </table>
+
+        <p>Two rules make the difference between an experiment and a story. First, <strong>decide the primary metric and the analysis before looking at results</strong>; with enough metrics and segments, something will always look significant (Chapter 12). Second, <strong>analyze everyone as randomized</strong>: members in the offer group who never opened the email still count in the offer group. Dropping them would bring selection bias straight back, because the members who open emails are not like the ones who don't. This is called an intention-to-treat analysis.</p>
+
+        <div class="callout">
+          <div class="callout-label">A quick sanity check</div>
+          If you planned a 90/10 split and ended up with 88/12, something in the assignment or the data pipeline is broken. This <em>sample ratio mismatch</em> is one of the most common reasons experiment results are wrong, and it takes one line of code to check.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 03 ── -->
+        <h3 id="ch03">Chapter 03: Noise &amp; Confidence</h3>
+
+        <p>Randomization removes bias, but not chance. Even if the offer did nothing, the two groups would not book at exactly the same rate, because each member's decision is a bit random. Statistics is the tool for telling a real effect from that noise.</p>
+
+        <h4>The difference in means and its standard error</h4>
+
+        <div class="formula">
+          <div class="formula-label">Estimate and standard error</div>
+          \[\hat{\tau} = \bar{Y}_T - \bar{Y}_C \qquad\qquad \text{SE}(\hat{\tau}) = \sqrt{\frac{s_T^2}{n_T} + \frac{s_C^2}{n_C}} \qquad\qquad \text{95\% CI} = \hat{\tau} \pm 1.96\,\text{SE}\]
+          <div class="note">\(s^2\) is the variance of the outcome within each group. For a booking rate \(p\), \(s^2 = p(1-p)\). The standard error shrinks with the square root of the sample: four times the members, half the noise.</div>
+        </div>
+
+        <p>A 95% confidence interval is a range built by a procedure that captures the true effect in 95% of experiments. The <strong>p-value</strong> answers a narrower question: if the true effect were zero, how often would we see an estimate at least this far from zero? A p-value below 0.05 is the usual (and arbitrary) threshold for calling a result "statistically significant". Neither number tells you whether the effect is big enough to matter; that is a business question.</p>
+
+        <p>The best way to build intuition is to run the same experiment many times. The simulation below does exactly that: 200 identical loyalty experiments, each comparing an offer group with a holdout, each giving a slightly different answer.</p>
+
+        <div class="sim">
+          <div class="sim-label">Simulation · 200 identical experiments</div>
+          <div class="sim-controls">
+            <label>Baseline booking rate <span class="v" id="ab-pv"></span><input type="range" id="ab-p" min="2" max="20" step="0.5" value="6.5"></label>
+            <label>True lift from the offer <span class="v" id="ab-lv"></span><input type="range" id="ab-l" min="0" max="3" step="0.1" value="0.5"></label>
+            <label>Members per group <span class="v" id="ab-nv"></span><input type="range" id="ab-n" min="0" max="6" step="1" value="3"></label>
+            <button id="ab-go" type="button">Run again</button>
+          </div>
+          <svg id="ab-svg" role="img" aria-label="Histogram of estimated lifts across 200 simulated experiments"></svg>
+          <div class="sim-stats" id="ab-stats"></div>
+          <div class="sim-note">Each bar counts experiments that produced that estimate. With 10,000 members per group and a true lift of half a point, the estimates scatter widely and many experiments miss the effect. Move the sample size up and watch the spread tighten.</div>
+        </div>
+
+        <p>Two things to notice. The estimates are centred on the truth: randomization works. But any single experiment can be far off, and with small samples a real effect is often missed entirely. A non-significant result in an underpowered test does not mean "no effect"; it means "we couldn't tell".</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 04 ── -->
+        <h3 id="ch04">Chapter 04: Power &amp; Sample Size</h3>
+
+        <p>The <strong>power</strong> of an experiment is the probability that it detects an effect of a given size, if that effect is real. The standard target is 80%. Before running a test, you should know the smallest effect worth detecting, the <strong>minimum detectable effect</strong> (MDE), and whether your sample can see it.</p>
+
+        <div class="formula">
+          <div class="formula-label">Members per group for a difference in rates</div>
+          \[n \;=\; \frac{\left(z_{1-\alpha/2} + z_{1-\beta}\right)^2 \,\big[p_0(1-p_0) + p_1(1-p_1)\big]}{(p_1 - p_0)^2}\]
+          <div class="note">\(p_0\) is the baseline rate, \(p_1 = p_0 + \text{MDE}\), \(z_{1-\alpha/2} = 1.96\) for a 5% significance level and \(z_{1-\beta} = 0.84\) for 80% power. Halving the MDE quadruples the sample.</div>
+        </div>
+
+        <div class="sim">
+          <div class="sim-label">Calculator · how big does the test need to be?</div>
+          <div class="sim-controls">
+            <label>Baseline booking rate <span class="v" id="pw-pv"></span><input type="range" id="pw-p" min="1" max="30" step="0.5" value="6.5"></label>
+            <label>Smallest lift worth detecting <span class="v" id="pw-dv"></span><input type="range" id="pw-d" min="0.1" max="3" step="0.1" value="0.5"></label>
+          </div>
+          <svg id="pw-svg" role="img" aria-label="Power as a function of the number of members per group"></svg>
+          <div class="sim-stats" id="pw-stats"></div>
+        </div>
+
+        <h4>Why revenue is harder than bookings</h4>
+
+        <p>Booking rates are well-behaved. Revenue is not: most members spend nothing in a given month, and a few spend thousands. That long tail makes the variance, and therefore the required sample, much larger for revenue metrics than for conversion metrics. Common remedies: measure over a longer window, cap extreme values (winsorize) before analysis, analyze bookings and revenue per booking separately, and use the variance reduction of the next chapter.</p>
+
+        <h4>In RM, the unit is the problem</h4>
+
+        <p>A loyalty test can have a million members. An RM test often has only a few hundred flights, or a few dozen markets, and each one is noisy. Power calculations there are usually sobering, and they are the main reason RM teams need designs like switchbacks and the methods in Chapters 06 and 07.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 05 ── -->
+        <h3 id="ch05">Chapter 05: Variance Reduction</h3>
+
+        <p>Much of the noise in an experiment comes from differences between members that existed before the test began: some spend a lot every year, some very little. Since we know what each member spent before the test, we can remove that predictable part of the variation and look at what is left. The effect estimate stays unbiased, and the noise falls, sometimes a lot.</p>
+
+        <p>The most widely used version is <strong>CUPED</strong> (Controlled-experiment Using Pre-Experiment Data), developed at Microsoft and now standard in online experimentation:</p>
+
+        <div class="formula">
+          <div class="formula-label">CUPED adjustment</div>
+          \[\tilde{Y}_i = Y_i - \theta\,(X_i - \bar{X}) \qquad \theta = \frac{\operatorname{Cov}(X, Y)}{\operatorname{Var}(X)} \qquad \operatorname{Var}(\tilde{Y}) = \operatorname{Var}(Y)\,(1 - \rho^2)\]
+          <div class="note">\(X_i\) is a pre-experiment covariate, typically the same metric in the months before the test, and \(\rho\) its correlation with the outcome. Because \(X\) was fixed before randomization, it cannot be affected by the treatment, so the adjustment does not bias the estimate. Estimate the effect on \(\tilde{Y}\) exactly as before.</div>
+        </div>
+
+        <div class="sim">
+          <div class="sim-label">Simulation · CUPED on 150 revenue experiments</div>
+          <div class="sim-controls">
+            <label>How well past spend predicts future spend (ρ) <span class="v" id="cu-rv"></span><input type="range" id="cu-r" min="0" max="0.9" step="0.05" value="0.7"></label>
+            <label>True effect on spend per member <span class="v" id="cu-tv"></span><input type="range" id="cu-t" min="0" max="30" step="1" value="10"></label>
+            <button id="cu-go" type="button">Run again</button>
+          </div>
+          <svg id="cu-svg" role="img" aria-label="Overlaid histograms of simple and CUPED-adjusted effect estimates"></svg>
+          <div class="sim-stats" id="cu-stats"></div>
+          <div class="sim-note">Each experiment has 5,000 members per group with skewed, lognormal spend averaging about $370. Both methods are centred on the truth; CUPED is just much tighter when past spend predicts future spend.</div>
+        </div>
+
+        <p>The same idea can be applied with several covariates at once through a regression of the outcome on the treatment indicator plus pre-period variables. Another option is <strong>stratification</strong>: randomize separately within groups (tier, region, spend band), which guarantees the groups are balanced on those variables from the start.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 06 ── -->
+        <h3 id="ch06">Chapter 06: Experiments in RM</h3>
+
+        <p>RM is harder to test than loyalty. A loyalty offer can be sent to one member and not another. An RM decision, such as which fare classes are open on a flight, applies to everyone who searches that flight, and the customers who see one flight can easily book another. That creates two problems.</p>
+
+        <h4>Problem one: what to randomize</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Unit</th><th>How it works</th><th>Watch out for</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Flight-departure</strong></td><td>Each future departure is assigned to the new or old method</td><td>Customers moving between treated and control flights on the same route</td></tr>
+            <tr><td><strong>Market (O&amp;D or route)</strong></td><td>All flights in a market get the same method</td><td>Few units, so low power; connecting traffic links markets</td></tr>
+            <tr><td><strong>Switchback (time)</strong></td><td>The whole system alternates between methods by day or week</td><td>Carry-over: bookings for a flight accumulate over weeks, across both regimes</td></tr>
+            <tr><td><strong>Customer or session</strong></td><td>Different shoppers see different prices or offers</td><td>Fairness and regulation; only feasible for some decisions such as ancillary offers</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Problem two: interference</h4>
+
+        <p>The key assumption behind a clean experiment is that one unit's treatment doesn't affect another unit's outcome (statisticians call it SUTVA). In RM that often fails. If the treated flight is cheaper, some of its extra passengers come from the control flight an hour later on the same route. The treated flight looks great, the control flight looks weak, and the comparison between them exaggerates the effect. Rolled out everywhere, there is no control flight left to steal from.</p>
+
+        <div class="sim">
+          <div class="sim-label">Simulation · a fare sale tested flight by flight</div>
+          <div class="sim-controls">
+            <label>Share of the sale's extra passengers who would otherwise have taken a control flight <span class="v" id="if-sv"></span><input type="range" id="if-s" min="0" max="100" step="5" value="50"></label>
+          </div>
+          <svg id="if-svg" role="img" aria-label="Bar chart comparing the flight-level A/B estimate with the true effect of rolling out the fare sale"></svg>
+          <div class="sim-stats" id="if-stats"></div>
+          <div class="sim-note">Setup: each flight normally carries 100 passengers at $200. Treated flights cut the fare 10% and gain 15 passengers. With enough cannibalization, a test that shows a double-digit gain hides a rollout that loses money.</div>
+        </div>
+
+        <p>Remedies: randomize at a level where customers rarely cross between groups (markets rather than flights), use switchback designs, or measure the control group's loss explicitly and include it. When none of that is possible, RM teams fall back on the quasi-experimental methods that follow.</p>
+
+        <div class="callout">
+          <div class="callout-label">Revenue opportunity models</div>
+          RM systems often report a <em>revenue opportunity</em> metric: where actual revenue falls between a no-control benchmark (first come, first served) and a perfect-hindsight optimum. It is a useful health check, but it is not an impact evaluation: both benchmarks are computed from a model of demand, so it inherits that model's mistakes. It complements experiments rather than replacing them. The <a href="/bookinglimits.html">booking-limit simulator</a> shows the same comparison on simulated flights, where the truth is known.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 07 ── -->
+        <h3 id="ch07">Chapter 07: Difference-in-Differences</h3>
+
+        <p>Sometimes a change is rolled out to one part of the business and not another, without randomization: a new forecaster goes live on transatlantic routes first, a new earn structure launches in one country. The treated and untreated groups differ, so comparing them directly is biased. Comparing the treated group before and after is also biased, because other things changed at the same time. <strong>Difference-in-differences</strong> (DiD) combines the two comparisons so that each removes the other's bias.</p>
+
+        <div class="formula">
+          <div class="formula-label">Difference-in-differences</div>
+          \[\hat{\tau}_{\text{DiD}} = \big(\bar{Y}_{T,\text{after}} - \bar{Y}_{T,\text{before}}\big) - \big(\bar{Y}_{C,\text{after}} - \bar{Y}_{C,\text{before}}\big)\]
+          <div class="note">The change in the comparison group estimates what would have happened to the treated group without the treatment. The key assumption is <strong>parallel trends</strong>: absent the treatment, both groups would have moved together.</div>
+        </div>
+
+        <p>Parallel trends cannot be proven, but it can be checked partially: if the two groups moved together for a long time before the change, it is more believable that they would have kept doing so. Plotting both series, and estimating "effects" in the pre-period where there should be none, is the standard test.</p>
+
+        <div class="sim">
+          <div class="sim-label">Simulation · a new forecaster on one set of routes</div>
+          <div class="sim-controls">
+            <label>True effect (index points) <span class="v" id="dd-ev"></span><input type="range" id="dd-e" min="0" max="10" step="0.5" value="4"></label>
+            <label>Extra trend on treated routes <span class="v" id="dd-gv"></span><input type="range" id="dd-g" min="-0.5" max="0.5" step="0.05" value="0"></label>
+            <label>Noise <span class="v" id="dd-nv"></span><input type="range" id="dd-n" min="0" max="3" step="0.25" value="1"></label>
+            <button id="dd-go" type="button">New draw</button>
+          </div>
+          <svg id="dd-svg" role="img" aria-label="Monthly revenue index for treated and comparison routes, before and after the launch"></svg>
+          <div class="sim-stats" id="dd-stats"></div>
+          <div class="sim-note">Both groups share seasonality, a growth trend and a market-wide boost of 3 points from month 13. The before/after comparison credits the forecaster with all of it. Give the treated routes their own trend and watch DiD go wrong too: that is what a violation of parallel trends looks like.</div>
+        </div>
+
+        <p>In practice DiD is run as a regression with group and time fixed effects, which handles many groups and periods and gives proper standard errors (clustered by group). One modern caution: when different groups adopt the change at different times (staggered rollouts), the simple two-way fixed effects regression can give misleading answers, and newer estimators designed for staggered adoption should be used instead.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 08 ── -->
+        <h3 id="ch08">Chapter 08: Synthetic Control</h3>
+
+        <p>DiD needs a comparison group that moves in parallel with the treated one. Often no single group does. <strong>Synthetic control</strong> builds one: a weighted average of untreated units chosen so that, before the change, it tracks the treated unit as closely as possible.</p>
+
+        <div class="formula">
+          <div class="formula-label">Synthetic control</div>
+          \[\hat{Y}_{1t}(0) = \sum_{j=2}^{J+1} w_j\, Y_{jt}, \qquad w_j \ge 0, \quad \sum_j w_j = 1\]
+          <div class="note">Unit 1 is treated; units 2 to \(J+1\) form the "donor pool". Weights are chosen to match the treated unit's pre-period path. After the change, the gap between the treated unit and its synthetic twin is the estimated effect.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">A new co-brand card in one country</div>
+          An airline launches a co-brand credit card in one country and wants to know how much it lifted member revenue there. No other country is a good match on its own. A synthetic control might combine 50% of country B, 30% of country C and 20% of country D, because that blend reproduced the treated country's monthly revenue closely for three years before the launch. After the launch, the treated country pulls away from its synthetic twin by 4%. That gap is the estimate.
+        </div>
+
+        <p>Inference works differently from a normal experiment. The usual approach is a <strong>placebo test</strong>: pretend each donor country was treated, build its own synthetic control, and see how large its fake "effect" is. If the real country's gap is larger than almost all the placebo gaps, the effect is unlikely to be chance. In RM and network work, the simpler cousin of this idea, <strong>matched markets</strong>, is common: pair each treated market with an untreated market that looked similar before, and apply DiD to the pairs.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 09 ── -->
+        <h3 id="ch09">Chapter 09: Regression Discontinuity</h3>
+
+        <p>Loyalty programs are full of thresholds: 25,000 points for Silver, 50,000 for Gold, a certain spend for the next tier. Thresholds are a gift to anyone evaluating impact. A member who finished the year with 50,200 points and one who finished with 49,800 are almost identical: same kind of traveler, same habits, one extra flight between them. But one becomes Gold and the other doesn't. Comparing members just above and just below the line is close to a randomized experiment. That is <strong>regression discontinuity</strong> (RD).</p>
+
+        <div class="formula">
+          <div class="formula-label">Sharp regression discontinuity</div>
+          \[\hat{\tau}_{\text{RD}} = \lim_{x \downarrow c} \mathbb{E}[Y \mid X = x] \;-\; \lim_{x \uparrow c} \mathbb{E}[Y \mid X = x]\]
+          <div class="note">\(X\) is the running variable (qualifying points), \(c\) the threshold. In practice, fit a line on each side using only members within a <em>bandwidth</em> \(h\) of the threshold, and measure the jump between the two lines at \(c\).</div>
+        </div>
+
+        <div class="sim">
+          <div class="sim-label">Simulation · does Gold status change next year's spend?</div>
+          <div class="sim-controls">
+            <label>True effect of Gold on next-year spend <span class="v" id="rd-tv"></span><input type="range" id="rd-t" min="0" max="800" step="50" value="400"></label>
+            <label>Bandwidth around the threshold <span class="v" id="rd-hv"></span><input type="range" id="rd-h" min="2" max="20" step="1" value="6"></label>
+            <button id="rd-go" type="button">New draw</button>
+          </div>
+          <svg id="rd-svg" role="img" aria-label="Next-year spend by qualifying points, with separate lines fitted below and above the Gold threshold"></svg>
+          <div class="sim-stats" id="rd-stats"></div>
+          <div class="sim-note">4,000 members, dots are averages per 1,000 points. The naive Gold vs non-Gold comparison mostly measures that Gold members fly more. A narrow bandwidth is less biased but noisier; widen it and the straight lines start missing the curvature, pulling the estimate away from the truth.</div>
+        </div>
+
+        <h4>When RD breaks</h4>
+
+        <p>The design relies on members not being able to place themselves precisely on one side of the line. Airline status is a well-known exception: members close to a threshold take extra flights, sometimes just for the points (the famous "mileage runs"). Those who make the effort are not like those who don't, so the members just above the line are no longer comparable to those just below. The warning sign is <strong>bunching</strong>: an unusual pile of members just above the threshold and a gap just below. Checking the density of the running variable around the cutoff (a McCrary test) should be the first step of any RD analysis on loyalty data.</p>
+
+        <p>When crossing the threshold only raises the probability of treatment rather than guaranteeing it (for example, status that must be claimed), the method becomes a <strong>fuzzy RD</strong>: the jump in the outcome is divided by the jump in the probability of treatment.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 10 ── -->
+        <h3 id="ch10">Chapter 10: Matching &amp; Propensity Scores</h3>
+
+        <p>When there is no experiment, no rollout to exploit and no threshold, the remaining option is to compare treated and untreated units that look alike on everything we can observe. If two members have the same tier, tenure, spend history, home airport and trip patterns, and one has the co-brand card while the other doesn't, perhaps the difference in their behavior is the card.</p>
+
+        <div class="formula">
+          <div class="formula-label">Propensity score and inverse probability weighting</div>
+          \[e(x) = P(T = 1 \mid X = x) \qquad\qquad \hat{\tau}_{\text{IPW}} = \frac{1}{n}\sum_i \left[\frac{T_i Y_i}{\hat{e}(X_i)} - \frac{(1-T_i)\,Y_i}{1-\hat{e}(X_i)}\right]\]
+          <div class="note">The propensity score \(e(x)\) summarizes all the observed characteristics in one number: the probability of being treated. Members with the same score can be compared, either by matching them or by weighting each one by the inverse of its probability of receiving the treatment it received.</div>
+        </div>
+
+        <p>All of this rests on one assumption, <strong>unconfoundedness</strong>: once we account for the observed variables, who got treated is as good as random. In loyalty, that is often a stretch. Members who sign up for a co-brand card may be planning a big trip, have just changed jobs, or simply like the airline more, and none of that is in the data. Matching removes the bias you can see and leaves the bias you can't.</p>
+
+        <div class="callout">
+          <div class="callout-label">How to use it honestly</div>
+          Check overlap: if some treated members have no comparable untreated members, no method can estimate their effect. Check balance after matching: the groups should look alike on every observed variable. And run a sensitivity analysis: how strong would an unobserved factor have to be to explain the whole effect? If the answer is "not very", the result is fragile.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 11 ── -->
+        <h3 id="ch11">Chapter 11: Who Responds: Uplift</h3>
+
+        <p>An average effect hides a lot. A bonus-points offer might raise booking rates by 1 point on average, but by 4 points among occasional travelers and by nothing among top-tier members who were going to fly anyway. The effect conditional on member characteristics is the <strong>conditional average treatment effect</strong>:</p>
+
+        <div class="formula">
+          <div class="formula-label">Conditional average treatment effect</div>
+          \[\tau(x) = \mathbb{E}\big[Y(1) - Y(0) \mid X = x\big]\]
+        </div>
+
+        <p>Marketers often sort customers into four groups based on how they respond:</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Group</th><th>Without the offer</th><th>With the offer</th><th>What to do</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Persuadables</strong></td><td>Don't book</td><td>Book</td><td>Target them: this is where the lift is</td></tr>
+            <tr><td><strong>Sure things</strong></td><td>Book</td><td>Book</td><td>Don't pay them: the offer is pure cost</td></tr>
+            <tr><td><strong>Lost causes</strong></td><td>Don't book</td><td>Don't book</td><td>Don't bother</td></tr>
+            <tr><td><strong>Sleeping dogs</strong></td><td>Book</td><td>Don't book</td><td>Avoid: the contact backfires</td></tr>
+          </tbody>
+        </table>
+
+        <p>The trap is that the usual targeting model predicts who will book (propensity), which mostly finds sure things. <strong>Uplift modeling</strong> predicts who will book <em>because of</em> the offer. The simplest version trains two models on experiment data, one on the treated group and one on the control group, and targets members where the predicted difference is largest. Uplift models need randomized data to learn from, which is one more reason to keep holdouts in every campaign.</p>
+
+        <p>Uplift models are evaluated with a <strong>Qini curve</strong>: rank members by predicted uplift, and plot the cumulative incremental bookings captured as you target more of them. A good model captures most of the lift in the first few deciles; a random ranking gives a straight line.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 12 ── -->
+        <h3 id="ch12">Chapter 12: Traps</h3>
+
+        <p>Most bad impact numbers are not caused by exotic statistics. They come from a handful of recurring traps.</p>
+
+        <h4>Regression to the mean</h4>
+
+        <p>Members selected because their spend was unusually low last quarter will, on average, spend more next quarter anyway, because part of what made last quarter low was bad luck that won't repeat. A "win-back" campaign aimed at them will look successful with no effect at all. The only protection is a randomized holdout drawn from the same targeted group.</p>
+
+        <div class="sim">
+          <div class="sim-label">Simulation · a win-back email to the bottom 10%</div>
+          <div class="sim-controls">
+            <label>Share of spend variation that is luck <span class="v" id="rm-wv"></span><input type="range" id="rm-w" min="0.1" max="0.8" step="0.05" value="0.5"></label>
+            <label>True effect of the email per member <span class="v" id="rm-tv"></span><input type="range" id="rm-t" min="0" max="150" step="10" value="0"></label>
+            <button id="rm-go" type="button">New draw</button>
+          </div>
+          <svg id="rm-svg" role="img" aria-label="Bar chart comparing the before-after change, the holdout comparison and the true effect of a win-back email"></svg>
+          <div class="sim-stats" id="rm-stats"></div>
+          <div class="sim-note">20,000 members; the email goes to the lowest-spending 10% last quarter, half of whom are randomly held out. With a true effect of zero, the before/after comparison still shows a large "lift".</div>
+        </div>
+
+        <h4>The rest of the list</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Trap</th><th>What happens</th><th>Defence</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Peeking</strong></td><td>Checking results daily and stopping when significant inflates false positives far beyond 5%</td><td>Fix the duration in advance, or use sequential testing methods built for it</td></tr>
+            <tr><td><strong>Many metrics, many segments</strong></td><td>Test 20 things and one will be "significant" by chance</td><td>One primary metric; correct for multiple comparisons; treat segment findings as hypotheses</td></tr>
+            <tr><td><strong>Pull-forward</strong></td><td>A promotion moves bookings earlier instead of creating new ones</td><td>Measure over a window that includes the weeks after the campaign</td></tr>
+            <tr><td><strong>Novelty effects</strong></td><td>A new feature gets attention because it's new, then fades</td><td>Run long enough; look at the effect over time</td></tr>
+            <tr><td><strong>Wrong metric</strong></td><td>Bookings rise, but revenue per booking or margin falls; points cost is ignored</td><td>Measure net value: incremental margin minus program cost</td></tr>
+            <tr><td><strong>Simpson's paradox</strong></td><td>Yield rises in every cabin, but falls overall because the mix shifted to economy</td><td>Look at both the total and the components</td></tr>
+            <tr><td><strong>Winner's curse</strong></td><td>The winning variant's estimate is inflated, because it won partly by luck</td><td>Expect smaller effects on rollout; confirm with a holdout</td></tr>
+          </tbody>
+        </table>
+
+        <p><hr/></p>
+
+        <!-- ── CH 13 ── -->
+        <h3 id="ch13">Chapter 13: From Estimate to Decision</h3>
+
+        <p>An impact estimate is an input to a decision, not the decision itself. Turning one into the other means converting the effect into money, accounting for costs, and being honest about uncertainty.</p>
+
+        <div class="formula">
+          <div class="formula-label">Net incremental value of a loyalty campaign</div>
+          \[\text{Net value} = \underbrace{\Delta\text{bookings} \times \text{margin per booking}}_{\text{incremental margin}} \;-\; \underbrace{\text{points issued} \times \text{cost per point}}_{\text{all of it, not just on incremental bookings}} \;-\; \text{fixed costs}\]
+          <div class="note">Points paid to sure things are a cost with no return. The <a href="/promoroi.html">promotion ROI calculator</a> works through this for a bonus campaign, with a confidence band around the result.</div>
+        </div>
+
+        <p>Carry the confidence interval all the way through. A campaign whose lift is somewhere between 0.2 and 1.8 points may be clearly profitable at the top of that range and clearly unprofitable at the bottom. Saying so, rather than reporting only the middle, is what makes an analysis trustworthy.</p>
+
+        <h4>Choosing a method</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Situation</th><th>Method</th><th>Key assumption</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>You control who gets it</td><td>Randomized experiment (02–05)</td><td>Randomization done right, no interference</td></tr>
+            <tr><td>Units interact (RM)</td><td>Cluster or switchback experiment (06)</td><td>Clusters contain the interference</td></tr>
+            <tr><td>Rolled out to some groups first</td><td>Difference-in-differences (07)</td><td>Parallel trends</td></tr>
+            <tr><td>One treated unit, many untreated</td><td>Synthetic control (08)</td><td>Pre-period fit carries forward</td></tr>
+            <tr><td>Treatment given above a threshold</td><td>Regression discontinuity (09)</td><td>No precise sorting around the cutoff</td></tr>
+            <tr><td>Nothing else available</td><td>Matching / propensity scores (10)</td><td>No unobserved confounders</td></tr>
+          </tbody>
+        </table>
+
+        <h4>What's next</h4>
+
+        <p>The direction of travel is towards evaluation that is built in rather than bolted on. Permanent holdouts in the loyalty program, where a small random share of members never receives promotions, measure the long-run value of the whole marketing effort. Machine learning methods estimate heterogeneous effects from experiment data at scale. And in pricing and merchandising, <strong>bandit algorithms</strong> blur the line between testing and optimizing: they shift traffic towards the better option as evidence accumulates, trading a little statistical cleanliness for less revenue lost to the losing variant.</p>
+
+        <p>Anyway, that's the overview. If something here was unclear or you want to go deeper on any chapter, feel free to reach out. I find this stuff genuinely fascinating, and I'm always happy to talk about it.</p>
+
+        <p><hr/></p>
+
+        <h4>Further reading</h4>
+
+        <p><small>
+          Potential outcomes and the core methods: Angrist and Pischke, <em>Mostly Harmless Econometrics</em>, Princeton University Press, 2009; Cunningham, <a href="https://mixtape.scunning.com/"><em>Causal Inference: The Mixtape</em></a>, free online.<br>
+          Online experiments and CUPED: Deng, Xu, Kohavi and Walker, <a href="https://dl.acm.org/doi/10.1145/2433396.2433413">"Improving the sensitivity of online controlled experiments by utilizing pre-experiment data"</a>, WSDM 2013; Kohavi, Tang and Xu, <em>Trustworthy Online Controlled Experiments</em>, Cambridge University Press, 2020.<br>
+          Synthetic control: Abadie, Diamond and Hainmueller, "Synthetic Control Methods for Comparative Case Studies", <em>Journal of the American Statistical Association</em> 105(490), 2010.
+        </small></p>
+
+      </section>
+
+      <footer>
+      </footer>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+      // ── Active sidebar highlight on scroll ──
+      const chapters = document.querySelectorAll('h3[id]');
+      const navLinks = document.querySelectorAll('#toc a');
+
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px' });
+
+      chapters.forEach(ch => obs.observe(ch));
+    </script>
+    <script>
+    (function () {
+      // ── Small toolkit: random numbers, stats, SVG charts ──
+      const NS = 'http://www.w3.org/2000/svg';
+      const C = { blue: '#267CB9', pur: '#7c6fcd', teal: '#2a9d8f', ora: '#c0752a', grey: '#888', ink: '#333', light: '#b7c9da' };
+      const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+      const $ = id => document.getElementById(id);
+
+      function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+      function gauss(r) { let u = 0; while (u === 0) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }
+      function mean(a) { let s = 0; for (const x of a) s += x; return s / a.length; }
+      function sd(a) { const m = mean(a); let s = 0; for (const x of a) s += (x - m) * (x - m); return Math.sqrt(s / (a.length - 1)); }
+      function Phi(z) { // standard normal CDF (Abramowitz-Stegun 7.1.26)
+        const t = 1 / (1 + 0.3275911 * Math.abs(z) / Math.SQRT2);
+        const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-z * z / 2);
+        return z >= 0 ? 0.5 * (1 + y) : 0.5 * (1 - y);
+      }
+      function binom(n, p, r) { const m = n * p, s = Math.sqrt(n * p * (1 - p)); return Math.min(n, Math.max(0, Math.round(m + s * gauss(r)))); }
+      const fmt = (v, d) => v.toLocaleString('en-US', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
+      const sgn = (v, d, u) => (v >= 0 ? '+' : '−') + fmt(Math.abs(v), d) + (u || '');
+      const money = v => (v >= 0 ? '+$' : '−$') + fmt(Math.abs(v));
+
+      function mk(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+      function txt(p, x, y, s, a) { const t = mk('text', Object.assign({ x, y, 'font-size': 11, fill: C.grey }, a || {}), p); t.textContent = s; return t; }
+      function niceTicks(lo, hi, n) {
+        const step0 = (hi - lo) / n, mag = Math.pow(10, Math.floor(Math.log10(step0))), err = step0 / mag;
+        const step = (err >= 7.5 ? 10 : err >= 3.5 ? 5 : err >= 1.5 ? 2 : 1) * mag, out = [];
+        for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(+v.toFixed(10));
+        return out;
+      }
+      function frame(svg, o) {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        svg.setAttribute('viewBox', `0 0 ${o.W} ${o.H}`); svg.setAttribute('font-family', FONT);
+        const m = o.m;
+        const sx = v => m.l + (v - o.x[0]) / (o.x[1] - o.x[0]) * (o.W - m.l - m.r);
+        const sy = v => o.H - m.b - (v - o.y[0]) / (o.y[1] - o.y[0]) * (o.H - m.t - m.b);
+        (o.yticks || niceTicks(o.y[0], o.y[1], 5)).forEach(v => {
+          mk('line', { x1: m.l, x2: o.W - m.r, y1: sy(v), y2: sy(v), stroke: '#f0f0f0' }, svg);
+          txt(svg, m.l - 6, sy(v) + 4, o.yfmt ? o.yfmt(v) : v, { 'text-anchor': 'end' });
+        });
+        (o.xticks || niceTicks(o.x[0], o.x[1], 6)).forEach(v => txt(svg, sx(v), o.H - m.b + 15, o.xfmt ? o.xfmt(v) : v, { 'text-anchor': 'middle' }));
+        mk('line', { x1: m.l, x2: o.W - m.r, y1: o.H - m.b, y2: o.H - m.b, stroke: '#999' }, svg);
+        if (o.xlab) txt(svg, (m.l + o.W - m.r) / 2, o.H - 4, o.xlab, { 'text-anchor': 'middle', fill: C.ink, 'font-size': 11.5 });
+        if (o.ylab) { const cy = (m.t + o.H - m.b) / 2; txt(svg, 12, cy, o.ylab, { 'text-anchor': 'middle', fill: C.ink, 'font-size': 11.5, transform: `rotate(-90 12 ${cy})` }); }
+        return { sx, sy };
+      }
+      function vline(svg, f, o, x, color, label, row) {
+        mk('line', { x1: f.sx(x), x2: f.sx(x), y1: o.m.t, y2: o.H - o.m.b, stroke: color, 'stroke-width': 1.6, 'stroke-dasharray': '5 3' }, svg);
+        if (label) {
+          const right = f.sx(x) < o.W * 0.7;
+          txt(svg, f.sx(x) + (right ? 5 : -5), o.m.t + 10 + 14 * (row || 0), label, { fill: color, 'font-weight': 600, 'text-anchor': right ? 'start' : 'end' });
+        }
+      }
+      function hist(svg, sets, o) {
+        const bins = o.bins || 36, w = (o.x[1] - o.x[0]) / bins; let maxc = 1;
+        const counts = sets.map(s => { const c = new Array(bins).fill(0); s.v.forEach(x => { let i = Math.floor((x - o.x[0]) / w); i = Math.max(0, Math.min(bins - 1, i)); c[i]++; }); maxc = Math.max(maxc, ...c); return c; });
+        o.y = [0, maxc * 1.15]; o.yticks = [];
+        const f = frame(svg, o);
+        counts.forEach((c, k) => c.forEach((n, i) => {
+          if (n) mk('rect', { x: f.sx(o.x[0] + i * w) + 0.5, y: f.sy(n), width: Math.max(f.sx(o.x[0] + w) - f.sx(o.x[0]) - 1, 1), height: f.sy(0) - f.sy(n), fill: sets[k].color, 'fill-opacity': sets.length > 1 ? 0.55 : 0.85 }, svg);
+        }));
+        return f;
+      }
+      function legend(svg, items, x, y) {
+        items.forEach((it, i) => {
+          const yy = y + i * 15;
+          if (it.line) mk('line', { x1: x, x2: x + 16, y1: yy - 4, y2: yy - 4, stroke: it.color, 'stroke-width': 2.2, 'stroke-dasharray': it.dash || '' }, svg);
+          else mk('rect', { x, y: yy - 9, width: 11, height: 11, fill: it.color, 'fill-opacity': it.op || 0.8 }, svg);
+          txt(svg, x + 21, yy, it.label, { fill: C.ink });
+        });
+      }
+      function bars(svg, items, o) {
+        const W = o.W || 520, rowH = 34, L = o.L || 190, R = 60, T = 10, H = T + items.length * rowH + 16;
+        let lo = Math.min(0, ...items.map(i => i.v)), hi = Math.max(0, ...items.map(i => i.v));
+        const pad = (hi - lo) * 0.12 || 1; lo -= lo < 0 ? pad : 0; hi += pad;
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('font-family', FONT);
+        const sx = v => L + (v - lo) / (hi - lo) * (W - L - R);
+        mk('line', { x1: sx(0), x2: sx(0), y1: T - 4, y2: H - 12, stroke: '#999' }, svg);
+        items.forEach((it, i) => {
+          const y = T + i * rowH;
+          txt(svg, L - 8, y + 17, it.label, { 'text-anchor': 'end', fill: C.ink, 'font-size': 11.5 });
+          const x0 = sx(Math.min(0, it.v)), x1 = sx(Math.max(0, it.v));
+          mk('rect', { x: x0, y: y + 4, width: Math.max(x1 - x0, 1.5), height: 20, fill: it.color }, svg);
+          txt(svg, x1 + 5, y + 18, it.text, { 'text-anchor': 'start', fill: C.ink, 'font-weight': 600, 'font-size': 11.5 });
+        });
+      }
+      function stats(id, arr) { $(id).innerHTML = arr.map(a => `<div><b style="color:${a[2] || C.ink}">${a[1]}</b>${a[0]}</div>`).join(''); }
+      function bind(ids, fn) { ids.forEach(id => $(id).addEventListener('input', fn)); }
+      function show(id, s) { $(id).textContent = s; }
+
+      // ── S1: many A/B tests ──
+      const AB_N = [1000, 2000, 5000, 10000, 20000, 50000, 100000];
+      let abSeed = 11;
+      function runAB() {
+        const p0 = +$('ab-p').value / 100, lift = +$('ab-l').value / 100, n = AB_N[+$('ab-n').value], p1 = p0 + lift;
+        show('ab-pv', fmt(p0 * 100, 1) + '%'); show('ab-lv', '+' + fmt(lift * 100, 1) + ' pts'); show('ab-nv', fmt(n));
+        const r = mulberry32(abSeed), R = 200, est = []; let detect = 0, wrong = 0;
+        for (let k = 0; k < R; k++) {
+          const a = binom(n, p0, r) / n, b = binom(n, p1, r) / n, d = b - a;
+          const se = Math.sqrt(a * (1 - a) / n + b * (1 - b) / n);
+          est.push(d * 100);
+          if (d > 1.96 * se) detect++; if (d < -1.96 * se) wrong++;
+        }
+        const seT = Math.sqrt(p0 * (1 - p0) / n + p1 * (1 - p1) / n) * 100, t = lift * 100;
+        const o = { W: 520, H: 230, m: { l: 20, r: 20, t: 14, b: 38 }, x: [Math.min(0, t) - 4 * seT, Math.max(0, t) + 4 * seT], xfmt: v => (v > 0 ? '+' : '') + v, xlab: 'Estimated lift in booking rate (percentage points), one bar per experiment' };
+        const svg = $('ab-svg'), f = hist(svg, [{ v: est, color: C.blue }], o);
+        vline(svg, f, o, 0, C.grey, 'no effect', 0);
+        if (t > 0) vline(svg, f, o, t, C.pur, 'true lift', 1);
+        stats('ab-stats', [
+          ['experiments that detect the lift', fmt(detect / R * 100) + '%', C.teal],
+          ['typical 95% confidence interval', '± ' + fmt(1.96 * seT, 2) + ' pts'],
+          ['average estimate (truth ' + fmt(t, 1) + ')', sgn(mean(est), 2, ' pts')],
+          ['significant in the wrong direction', fmt(wrong / R * 100) + '%', wrong ? C.ora : C.ink]
+        ]);
+      }
+
+      // ── S2: power ──
+      function runPow() {
+        const p0 = +$('pw-p').value / 100, d = +$('pw-d').value / 100, p1 = p0 + d;
+        show('pw-pv', fmt(p0 * 100, 1) + '%'); show('pw-dv', '+' + fmt(d * 100, 1) + ' pts');
+        const v = p0 * (1 - p0) + p1 * (1 - p1), n80 = Math.ceil(Math.pow(1.96 + 0.8416, 2) * v / (d * d));
+        const pow = n => Phi(d / Math.sqrt(v / n) - 1.96);
+        const o = { W: 520, H: 230, m: { l: 44, r: 20, t: 14, b: 38 }, x: [2, 6], y: [0, 1], xticks: [2, 3, 4, 5, 6], xfmt: v => ({ 2: '100', 3: '1k', 4: '10k', 5: '100k', 6: '1M' })[v], yticks: [0, 0.2, 0.4, 0.6, 0.8, 1], yfmt: v => fmt(v * 100) + '%', xlab: 'Members per group (log scale)' };
+        const svg = $('pw-svg'), f = frame(svg, o);
+        mk('line', { x1: f.sx(2), x2: f.sx(6), y1: f.sy(0.8), y2: f.sy(0.8), stroke: C.ora, 'stroke-dasharray': '4 3' }, svg);
+        txt(svg, f.sx(2) + 4, f.sy(0.8) - 5, '80% power', { fill: C.ora });
+        let dstr = ''; for (let x = 2; x <= 6.0001; x += 0.02) dstr += (dstr ? 'L' : 'M') + f.sx(x).toFixed(1) + ' ' + f.sy(pow(Math.pow(10, x))).toFixed(1);
+        mk('path', { d: dstr, fill: 'none', stroke: C.blue, 'stroke-width': 2.2 }, svg);
+        const lx = Math.log10(n80);
+        if (lx <= 6) { mk('circle', { cx: f.sx(lx), cy: f.sy(0.8), r: 5, fill: C.pur }, svg); }
+        stats('pw-stats', [
+          ['members per group for 80% power', n80 > 1e7 ? '> 10M' : fmt(n80), C.teal],
+          ['members in the whole test', n80 > 1e7 ? '> 20M' : fmt(2 * n80)],
+          ['power with 10,000 per group', fmt(pow(10000) * 100) + '%'],
+          ['power with 100,000 per group', fmt(pow(100000) * 100) + '%']
+        ]);
+      }
+
+      // ── S3: CUPED ──
+      let cuSeed = 21;
+      function runCU() {
+        const rho = +$('cu-r').value, tau = +$('cu-t').value, n = 5000, R = 150;
+        show('cu-rv', fmt(rho, 2)); show('cu-tv', '$' + fmt(tau));
+        const r = mulberry32(cuSeed), s = Math.sqrt(1 - rho * rho), mu = 5.5, sig = 0.9;
+        const naive = [], cup = [];
+        const x = new Float64Array(2 * n), y = new Float64Array(2 * n);
+        for (let k = 0; k < R; k++) {
+          for (let i = 0; i < 2 * n; i++) {
+            const z1 = gauss(r), z2 = gauss(r);
+            x[i] = Math.exp(mu + sig * z1);
+            y[i] = Math.exp(mu + sig * (rho * z1 + s * z2)) + (i >= n ? tau : 0);
+          }
+          let mx = 0, my = 0; for (let i = 0; i < 2 * n; i++) { mx += x[i]; my += y[i]; } mx /= 2 * n; my /= 2 * n;
+          let cxy = 0, vx = 0; for (let i = 0; i < 2 * n; i++) { cxy += (x[i] - mx) * (y[i] - my); vx += (x[i] - mx) * (x[i] - mx); }
+          const th = cxy / vx;
+          let yc = 0, yt = 0, xc = 0, xt = 0;
+          for (let i = 0; i < n; i++) { yc += y[i]; xc += x[i]; } for (let i = n; i < 2 * n; i++) { yt += y[i]; xt += x[i]; }
+          yc /= n; yt /= n; xc /= n; xt /= n;
+          naive.push(yt - yc); cup.push((yt - yc) - th * (xt - xc));
+        }
+        const sn = sd(naive), sc = sd(cup);
+        const lo = Math.min(0, tau) - 4 * sn, hi = Math.max(0, tau) + 4 * sn;
+        const o = { W: 520, H: 240, m: { l: 20, r: 20, t: 14, b: 38 }, x: [lo, hi], xfmt: v => (v < 0 ? '−$' : '$') + fmt(Math.abs(v)), xlab: 'Estimated effect on spend per member, one estimate per experiment' };
+        const svg = $('cu-svg'), f = hist(svg, [{ v: naive, color: C.light }, { v: cup, color: C.teal }], o);
+        vline(svg, f, o, tau, C.pur, 'true effect', 0);
+        legend(svg, [{ label: 'simple difference', color: C.light, op: 0.9 }, { label: 'CUPED-adjusted', color: C.teal }], 26, 26);
+        const pn = naive.filter(v => v > 1.96 * sn).length / R, pc = cup.filter(v => v > 1.96 * sc).length / R;
+        stats('cu-stats', [
+          ['spread of simple estimates (SE)', '$' + fmt(sn, 1)],
+          ['spread with CUPED (SE)', '$' + fmt(sc, 1), C.teal],
+          ['variance removed', fmt((1 - sc * sc / (sn * sn)) * 100) + '%', C.teal],
+          ['detection rate: simple → CUPED', fmt(pn * 100) + '% → ' + fmt(pc * 100) + '%']
+        ]);
+      }
+
+      // ── S4: interference in an RM test ──
+      function runIF() {
+        const s = +$('if-s').value / 100; show('if-sv', fmt(s * 100) + '%');
+        const base = 100 * 200, treated = 115 * 180, control = 200 * (100 - 15 * s), rollout = 180 * (100 + 15 * (1 - s));
+        const naive = (treated / control - 1) * 100, truth = (rollout / base - 1) * 100;
+        bars($('if-svg'), [
+          { label: 'A/B test by flight says', v: naive, color: C.light, text: sgn(naive, 1, '%') },
+          { label: 'Rolling it out actually gives', v: truth, color: truth >= 0 ? C.teal : C.ora, text: sgn(truth, 1, '%') }
+        ], { L: 190 });
+        stats('if-stats', [
+          ['treated flight revenue', '$' + fmt(treated)],
+          ['control flight revenue', '$' + fmt(control), s > 0 ? C.ora : C.ink],
+          ['revenue per flight after rollout', '$' + fmt(rollout)],
+          ['error of the flight-level test', sgn(naive - truth, 1, ' pts'), C.ora]
+        ]);
+      }
+
+      // ── S5: difference-in-differences ──
+      let ddSeed = 31;
+      function runDD() {
+        const eff = +$('dd-e').value, gap = +$('dd-g').value, noise = +$('dd-n').value;
+        show('dd-ev', '+' + fmt(eff, 1)); show('dd-gv', sgn(gap, 2, '/mo')); show('dd-nv', fmt(noise, 1));
+        const r = mulberry32(ddSeed), T = [], Cc = [];
+        for (let t = 1; t <= 24; t++) {
+          const season = 4 * Math.sin(2 * Math.PI * (t - 3) / 12), shock = t >= 13 ? 3 : 0;
+          Cc.push(100 + 0.3 * t + season + shock + noise * gauss(r));
+          T.push(108 + (0.3 + gap) * t + season + shock + (t >= 13 ? eff : 0) + noise * gauss(r));
+        }
+        const pre = a => mean(a.slice(0, 12)), post = a => mean(a.slice(12));
+        const ba = post(T) - pre(T), cs = post(T) - post(Cc), did = (post(T) - pre(T)) - (post(Cc) - pre(Cc));
+        const all = T.concat(Cc), lo = Math.floor(Math.min(...all) - 3), hi = Math.ceil(Math.max(...all) + 3);
+        const o = { W: 520, H: 250, m: { l: 40, r: 16, t: 30, b: 38 }, x: [0.5, 24.5], y: [lo, hi], xticks: [1, 6, 12, 18, 24], xfmt: v => 'M' + v, xlab: 'Month (new forecaster goes live on the treated routes in month 13)' };
+        const svg = $('dd-svg'), f = frame(svg, o);
+        mk('rect', { x: f.sx(12.5), y: o.m.t, width: f.sx(24.5) - f.sx(12.5), height: o.H - o.m.b - o.m.t, fill: '#f4f8fd' }, svg);
+        [[Cc, C.grey], [T, C.blue]].forEach(([a, col]) => {
+          mk('path', { d: a.map((v, i) => (i ? 'L' : 'M') + f.sx(i + 1).toFixed(1) + ' ' + f.sy(v).toFixed(1)).join(''), fill: 'none', stroke: col, 'stroke-width': 2 }, svg);
+        });
+        legend(svg, [{ label: 'treated routes', color: C.blue, line: true }, { label: 'comparison routes', color: C.grey, line: true }], 50, 16);
+        txt(svg, f.sx(24.3), o.m.t + 14, 'after launch', { 'text-anchor': 'end', fill: C.blue });
+        stats('dd-stats', [
+          ['true effect', sgn(eff, 1), C.pur],
+          ['before vs after (treated only)', sgn(ba, 1), Math.abs(ba - eff) > 1 ? C.ora : C.ink],
+          ['treated vs comparison (after only)', sgn(cs, 1), Math.abs(cs - eff) > 1 ? C.ora : C.ink],
+          ['difference-in-differences', sgn(did, 1), Math.abs(did - eff) > 1 ? C.ora : C.teal]
+        ]);
+      }
+
+      // ── S6: regression discontinuity at a status threshold ──
+      let rdSeed = 41;
+      function ols(xs, ys) {
+        const n = xs.length, mx = mean(xs), my = mean(ys); let sxy = 0, sxx = 0;
+        for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) * (xs[i] - mx); }
+        const b = sxy / sxx, a = my - b * mx; let rss = 0;
+        for (let i = 0; i < n; i++) { const e = ys[i] - a - b * xs[i]; rss += e * e; }
+        const s2 = rss / (n - 2), seA = Math.sqrt(s2 * (1 / n + mx * mx / sxx));
+        return { a, b, seA };
+      }
+      function runRD() {
+        const tau = +$('rd-t').value, h = +$('rd-h').value;
+        show('rd-tv', '$' + fmt(tau)); show('rd-hv', '± ' + fmt(h) + 'k');
+        const r = mulberry32(rdSeed), N = 4000, xs = [], ys = [];
+        for (let i = 0; i < N; i++) {
+          const x = 30 + 40 * r(), d = x - 50;
+          xs.push(x); ys.push(2000 + 45 * d + 1.2 * d * d + (x >= 50 ? tau : 0) + 700 * gauss(r));
+        }
+        const L = { x: [], y: [] }, Rr = { x: [], y: [] };
+        xs.forEach((x, i) => { if (x < 50 && x >= 50 - h) { L.x.push(x - 50); L.y.push(ys[i]); } if (x >= 50 && x < 50 + h) { Rr.x.push(x - 50); Rr.y.push(ys[i]); } });
+        const fl = ols(L.x, L.y), fr = ols(Rr.x, Rr.y), est = fr.a - fl.a, se = Math.sqrt(fl.seA * fl.seA + fr.seA * fr.seA);
+        const gold = ys.filter((_, i) => xs[i] >= 50), non = ys.filter((_, i) => xs[i] < 50), naive = mean(gold) - mean(non);
+        // binned means
+        const bins = []; for (let b = 30; b < 70; b++) { const v = ys.filter((_, i) => xs[i] >= b && xs[i] < b + 1); bins.push([b + 0.5, mean(v)]); }
+        const o = { W: 520, H: 260, m: { l: 52, r: 16, t: 14, b: 38 }, x: [30, 70], y: [0, 5000], xfmt: v => v + 'k', yfmt: v => '$' + fmt(v / 1000, v % 1000 ? 1 : 0) + 'k', xlab: 'Status-qualifying points earned this year (Gold from 50k)' };
+        const svg = $('rd-svg'), f = frame(svg, o);
+        mk('rect', { x: f.sx(50 - h), y: o.m.t, width: f.sx(50 + h) - f.sx(50 - h), height: o.H - o.m.b - o.m.t, fill: '#f9f7ff' }, svg);
+        vline(svg, f, o, 50, C.pur, '', 0);
+        bins.forEach(([x, y]) => mk('circle', { cx: f.sx(x), cy: f.sy(Math.max(0, Math.min(5000, y))), r: 3.2, fill: x < 50 ? C.grey : C.blue }, svg));
+        mk('line', { x1: f.sx(50 - h), y1: f.sy(fl.a - fl.b * h), x2: f.sx(50), y2: f.sy(fl.a), stroke: C.grey, 'stroke-width': 2.2 }, svg);
+        mk('line', { x1: f.sx(50), y1: f.sy(fr.a), x2: f.sx(50 + h), y2: f.sy(fr.a + fr.b * h), stroke: C.blue, 'stroke-width': 2.2 }, svg);
+        txt(svg, f.sx(50) + 5, o.m.t + 10, 'Gold threshold', { fill: C.pur, 'font-weight': 600 });
+        stats('rd-stats', [
+          ['true effect of Gold', '$' + fmt(tau), C.pur],
+          ['jump at the threshold (95% CI)', money(est) + ' ± ' + fmt(1.96 * se), Math.abs(est - tau) > 1.96 * se ? C.ora : C.teal],
+          ['all Gold vs all non-Gold', money(naive), C.ora],
+          ['members used in the estimate', fmt(L.x.length + Rr.x.length)]
+        ]);
+      }
+
+      // ── S7: regression to the mean ──
+      let rmSeed = 51;
+      function runRM() {
+        const w = +$('rm-w').value, tau = +$('rm-t').value;
+        show('rm-wv', fmt(w * 100) + '%'); show('rm-tv', '$' + fmt(tau));
+        const r = mulberry32(rmSeed), N = 20000, sp = 500 * Math.sqrt(1 - w), st = 500 * Math.sqrt(w);
+        const q1 = [], perm = [];
+        for (let i = 0; i < N; i++) { const p = 1000 + sp * gauss(r); perm.push(p); q1.push(p + st * gauss(r)); }
+        const cut = q1.slice().sort((a, b) => a - b)[Math.floor(N * 0.1)];
+        const emailed = [], hold = [];
+        for (let i = 0; i < N; i++) if (q1[i] < cut) {
+          const email = r() < 0.5, q2 = perm[i] + st * gauss(r) + (email ? tau : 0);
+          (email ? emailed : hold).push([q1[i], q2]);
+        }
+        const ba = mean(emailed.map(v => v[1] - v[0])), ho = mean(emailed.map(v => v[1])) - mean(hold.map(v => v[1]));
+        bars($('rm-svg'), [
+          { label: 'Before vs after, emailed group', v: ba, color: C.light, text: money(ba) },
+          { label: 'Emailed vs random holdout', v: ho, color: C.teal, text: money(ho) },
+          { label: 'True effect of the email', v: tau, color: C.pur, text: money(tau) }
+        ], { L: 200 });
+        stats('rm-stats', [
+          ['targeted members (bottom 10%)', fmt(emailed.length + hold.length)],
+          ['their average spend last quarter', '$' + fmt(mean(emailed.concat(hold).map(v => v[0])))],
+          ['everyone\'s average spend', '$' + fmt(mean(q1))],
+          ['apparent lift with no control group', money(ba - tau), C.ora]
+        ]);
+      }
+
+      // ── Wire everything up ──
+      bind(['ab-p', 'ab-l', 'ab-n'], runAB); $('ab-go').addEventListener('click', () => { abSeed++; runAB(); });
+      bind(['pw-p', 'pw-d'], runPow);
+      let cuT; bind(['cu-r', 'cu-t'], () => { clearTimeout(cuT); cuT = setTimeout(runCU, 60); }); $('cu-go').addEventListener('click', () => { cuSeed++; runCU(); });
+      bind(['if-s'], runIF);
+      bind(['dd-e', 'dd-g', 'dd-n'], runDD); $('dd-go').addEventListener('click', () => { ddSeed++; runDD(); });
+      bind(['rd-t', 'rd-h'], runRD); $('rd-go').addEventListener('click', () => { rdSeed++; runRD(); });
+      bind(['rm-w', 'rm-t'], runRM); $('rm-go').addEventListener('click', () => { rmSeed++; runRM(); });
+      runAB(); runPow(); runCU(); runIF(); runDD(); runRD(); runRM();
+    })();
+    </script>
+  </body>
+</html>
