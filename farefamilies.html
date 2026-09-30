@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Fare family designer</title>
+    <meta name="description" content="Design branded fare families such as Basic, Standard and Flex, and see which synthetic customers pick which family, what they pay, and how much buy-down the ladder invites.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / buydown.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* Fare families are ordered, so they share one blue ramp, light to dark.
+           "Basic + extras" is Basic's colour with a hatch; no purchase is grey. */
+        --f0: #B4C6F7;
+        --f1: #7A97EE;
+        --f2: #3B63E0;
+        --f3: #1A3591;
+        --nobuy: #dcdfe4;
+        --best: #3a8f5c;
+      }
+
+      .top-bar {
+        padding: 18px 30px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+      .top-bar h1 { margin: 0 0 6px; }
+      .top-bar h1 a { color: var(--ink); text-decoration: none; }
+      .top-bar h1 a:hover { color: var(--link); }
+      .top-bar p { margin: 0; color: var(--text); font-size: 0.92em; line-height: 1.5; }
+
+      .content {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Pill switcher (same as bookinglimits / airflows / buydown) ── */
+      .views {
+        display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff;
+        flex-wrap: wrap; gap: 2px;
+      }
+      .views button {
+        border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text);
+        padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .views.small button { font-size: 12.5px; padding: 4px 11px; }
+
+      /* ── Layout: inputs rail + results ── */
+      .stage {
+        display: grid;
+        grid-template-columns: 290px minmax(0, 1fr);
+        gap: 26px;
+        align-items: start;
+        margin-top: 22px;
+      }
+      .inputs {
+        border: 1px solid var(--line); border-radius: 8px; background: #fff;
+        padding: 14px 16px 16px;
+        position: sticky; top: 14px;
+      }
+      .inputs h3 { margin: 18px 0 10px; font-size: 13px; color: var(--ink); font-weight: 600; }
+      .inputs h3:first-child { margin-top: 0; }
+      .slider { margin: 0 0 16px; }
+      .slider .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 12.5px; }
+      .slider label { color: var(--ink); font-weight: 500; }
+      .slider output { color: var(--ink); font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+      .slider input[type=range] { width: 100%; margin: 8px 0 2px; accent-color: #222; cursor: pointer; }
+      .slider .ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 4px 0 0; }
+      .preset-note { margin-top: 8px; }
+      .btn {
+        font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff;
+        border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink);
+      }
+      .btn:hover { border-color: #cfcfcf; }
+      .btn:disabled { color: #b5b5b5; cursor: default; border-color: var(--line); }
+
+      /* ── Result tiles ── */
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin: 0 0 18px;
+      }
+      .tile {
+        border: 1px solid var(--line); border-radius: 8px; background: #fff;
+        padding: 12px 14px; color: var(--text);
+      }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .tile span { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+
+      .block { margin: 0 0 30px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h3 { margin: 0; font-size: 16px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .lead { margin: 0 0 10px; font-size: 13px; max-width: 760px; }
+      .rm-link { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+
+      /* ── Fare family editor ── */
+      .fam-wrap { border: 1px solid var(--line); border-radius: 8px; background: #fff; overflow-x: auto; }
+      table.fam { border-collapse: collapse; width: 100%; font-size: 12.5px; min-width: 420px; }
+      table.fam th, table.fam td { padding: 5px 6px; border-bottom: 1px solid #f0f0f0; text-align: center; vertical-align: middle; }
+      table.fam tbody tr:last-child th, table.fam tbody tr:last-child td { border-bottom: 0; }
+      table.fam thead th { vertical-align: top; padding-top: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+      table.fam th.attr { text-align: left; font-weight: 500; color: var(--ink); white-space: nowrap; padding-left: 12px; width: 1%; }
+      table.fam th.attr small { display: block; font-weight: 400; color: var(--muted); font-size: 11px; }
+      .fh { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+      .fh .sw { width: 100%; max-width: 110px; height: 6px; border-radius: 3px; }
+      .fh input.nm {
+        width: 100%; max-width: 110px; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); text-align: center;
+        border: 1px solid transparent; border-radius: 5px; padding: 2px 4px; background: transparent;
+      }
+      .fh input.nm:hover, .fh input.nm:focus { border-color: var(--line); background: #fff; }
+      .fh .pr { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+      .fh .pr b { color: var(--ink); font-weight: 600; }
+      .stepbox { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; color: var(--muted); }
+      .stepbox input {
+        width: 58px; font: inherit; font-size: 12.5px; color: var(--ink); font-variant-numeric: tabular-nums;
+        border: 1px solid var(--line); border-radius: 5px; padding: 3px 5px; text-align: right;
+      }
+      .stepbox.base { height: 26px; line-height: 26px; }
+      button.lv {
+        font: inherit; font-size: 12px; min-width: 64px; padding: 4px 8px; border-radius: 6px; cursor: pointer;
+        border: 1px solid var(--line); background: #fff; color: #9a9a9a;
+      }
+      button.lv:hover { border-color: #bdbdbd; }
+      button.lv.part { background: #eef2fd; border-color: #c9d6fa; color: #1c3a9e; }
+      button.lv.full { background: #222; border-color: #222; color: #fff; }
+      .fam-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 10px 0 0; }
+      .fam-actions .hint { margin: 0; }
+
+      /* ── Charts ── */
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart svg text { font-family: inherit; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+
+      .mixbar { padding: 12px 10px 4px; }
+      table.data { border-collapse: collapse; width: 100%; font-size: 12.5px; margin-top: 10px; }
+      table.data th, table.data td { padding: 5px 8px; border-bottom: 1px solid #f0f0f0; text-align: right; font-variant-numeric: tabular-nums; }
+      table.data th:first-child, table.data td:first-child { text-align: left; }
+      table.data thead th { color: var(--muted); font-weight: 500; font-size: 11.5px; border-bottom: 1px solid var(--line); }
+      table.data td .sq { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+      table.data tr.sub td { color: var(--muted); }
+      .tbl-wrap { overflow-x: auto; }
+
+      .switch-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; font-size: 12.5px; color: var(--muted); }
+
+      /* ── Segments ── */
+      .segs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+      .seg { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; }
+      .seg h4 { margin: 0; font-size: 14px; color: var(--ink); display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+      .seg h4 span { font-size: 12px; font-weight: 400; color: var(--muted); white-space: nowrap; }
+      .seg .blurb { font-size: 12px; color: var(--muted); margin: 2px 0 8px; line-height: 1.45; }
+      .seg .bar { margin: 0 0 8px; }
+      .seg ul { list-style: none; padding: 0; margin: 0; font-size: 12.5px; }
+      .seg li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 6px; padding: 3px 0; line-height: 1.4; }
+      .seg li .mk { font-weight: 700; text-align: center; }
+      .seg li .mk.y { color: var(--best); }
+      .seg li .mk.n { color: #b54a3c; }
+      .seg li .mk.x { color: var(--muted); }
+      .seg li b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      .seg .top { font-size: 12.5px; color: var(--text); margin: 0 0 6px; }
+      .seg .top b { color: var(--ink); }
+
+      table.heat { border-collapse: separate; border-spacing: 2px; width: 100%; font-size: 12px; margin-top: 4px; }
+      table.heat th { font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 4px 4px; text-align: center; }
+      table.heat th.rh { text-align: left; color: var(--ink); font-size: 12px; white-space: nowrap; padding-right: 8px; }
+      table.heat td { text-align: center; padding: 6px 4px; border-radius: 4px; font-variant-numeric: tabular-nums; color: var(--ink); }
+      table.heat td.dk { color: #fff; }
+
+      .prose { max-width: 780px; font-size: 14px; }
+      .prose p { margin: 0 0 10px; }
+
+      /* ── Tooltip ── */
+      .tip {
+        position: fixed; pointer-events: none; z-index: 20;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45;
+        max-width: 280px; display: none;
+      }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: center; gap: 7px; justify-content: space-between; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+      .method .eq { padding-left: 14px; }
+      .method table.data { font-size: 12px; }
+
+      .err { color: #b54a3c; font-size: 13px; }
+
+      @media (max-width: 980px) {
+        .stage { grid-template-columns: minmax(0, 1fr); }
+        .inputs { position: static; }
+      }
+      @media (max-width: 760px) {
+        .segs { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        .top-bar { padding: 14px 16px 12px; }
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        button.lv { min-width: 0; width: 100%; padding: 4px 4px; }
+        table.fam { min-width: 0; }
+        table.fam th.attr { padding-left: 8px; }
+        .fh input.nm { font-size: 12px; }
+        .stepbox input { width: 48px; }
+        table.data .opt { display: none; }
+        table.data th, table.data td { padding: 5px 5px; font-size: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1><a href="https://gregoiremaillard.com">Grégoire Maillard</a></h1>
+      <p>Build a ladder of branded fares and watch which customers climb it.</p>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Fare family designer</h2>
+        <p>Most airlines now sell economy as a few branded fares shown side by side, something like Basic, Standard and Flex. Each family is a bundle: a checked bag, a chosen seat, the right to change or refund, loyalty earning. Design the bundles and the price steps between them, and see what 2,000 synthetic shoppers choose, what each passenger brings in, and how many who would have paid for more still take Basic.</p>
+        <p class="note-line">Customers, their willingness to pay and every price on this page are illustrative assumptions, not any airline's data. The airline presets copy only what each family includes, from the airlines' public pages (dated under "How it works").</p>
+      </div>
+
+      <div class="stage">
+        <aside class="inputs" aria-label="Designer inputs">
+          <h3>Start from</h3>
+          <div class="views small" id="presets" role="group" aria-label="Preset fare families"></div>
+          <p class="hint preset-note" id="preset-note"></p>
+
+          <h3>Prices</h3>
+          <div class="slider">
+            <div class="row"><label for="in-basic">Basic fare</label><output id="out-basic" for="in-basic"></output></div>
+            <input id="in-basic" type="range" min="100" max="320" step="5">
+            <p class="hint">One way, for a flight of about two hours. Other families are priced as a step above it.</p>
+          </div>
+          <div class="slider">
+            <div class="row"><label for="in-bag">Checked bag, à la carte</label><output id="out-bag" for="in-bag"></output></div>
+            <input id="in-bag" type="range" min="0" max="90" step="5">
+          </div>
+          <div class="slider">
+            <div class="row"><label for="in-seat">Seat selection, à la carte</label><output id="out-seat" for="in-seat"></output></div>
+            <input id="in-seat" type="range" min="0" max="50" step="1">
+            <p class="hint">Customers in a family without a bag or a seat can buy them separately when they're worth more than the fee.</p>
+          </div>
+
+          <h3>Customers</h3>
+          <div class="slider">
+            <div class="row"><label for="in-mu">Choice randomness</label><output id="out-mu" for="in-mu"></output></div>
+            <input id="in-mu" type="range" min="5" max="60" step="1">
+            <div class="ends"><span>Always the best deal</span><span>Noisy</span></div>
+            <p class="hint">The logit scale: roughly how many dollars of value a customer can misjudge or ignore. Lower means more customers pick exactly the option with the highest value minus price.</p>
+          </div>
+
+          <div style="margin-top:14px"><button class="btn" id="reset">Reset the example</button></div>
+        </aside>
+
+        <div class="results">
+          <div class="tiles" id="tiles"></div>
+
+          <div class="block">
+            <div class="block-head"><h3>Your fare families</h3><span>Click a cell to change what a family includes</span></div>
+            <div class="fam-wrap"><table class="fam" id="fam"></table></div>
+            <div class="fam-actions">
+              <button class="btn" id="add">Add a family</button>
+              <button class="btn" id="remove">Remove the last one</button>
+              <p class="hint">Two to four families. The step is what each one costs above Basic.</p>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h3>Family mix</h3><span id="mix-sub"></span></div>
+            <p class="lead" id="mix-lead"></p>
+            <div class="chart"><div class="mixbar" id="ch-mix"></div><div class="legend" id="lg-mix"></div></div>
+            <div class="tbl-wrap"><table class="data" id="tb-mix"></table></div>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h3 id="rev-title">Revenue as the step to Standard changes</h3><span>per 100 shoppers, fare plus ancillaries</span></div>
+            <p class="lead" id="rev-lead"></p>
+            <div class="chart" id="ch-rev"></div>
+            <div class="legend" id="lg-rev" style="padding-left:2px"></div>
+            <div class="switch-row" style="margin-top:6px"><button class="btn" id="use-best">Use the best step</button><span id="best-note"></span></div>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h3>Who picks what, and why</h3><span>share of each segment's shoppers</span></div>
+            <p class="lead">Each bar is one segment's shoppers, including those who don't buy. Under it, each step up the ladder: what it's worth to the segment's typical customer against what it costs, and the share of the segment for whom it's worth it. A bag or seat included in a family is never worth more than its à la carte fee to someone who would buy it anyway.</p>
+            <div class="segs" id="segs"></div>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h3>What each segment values</h3><span>average value, dollars per one-way trip</span></div>
+            <p class="lead">The inputs behind the choices. A family sells when the value it adds for enough customers is more than its step; à la carte extras sell when they're worth more than their fee.</p>
+            <div class="chart" style="padding:8px 10px"><div class="tbl-wrap"><table class="heat" id="heat"></table></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+      <div class="method" id="how">
+        <h3>How it works</h3>
+
+        <h4>Customers</h4>
+        <p><span id="how-n">2,000</span> synthetic shoppers for one market, drawn once from a fixed random seed (<span id="how-seed"></span>) and stored in <a href="/assets/data/farefamilies.json">farefamilies.json</a>, so the page gives the same answer every time. Each belongs to one of four segments. Each customer has a willingness to pay <var>W</var> for a bare Basic seat on this flight rather than their next-best option (another airline, another day, not travelling), and a value <var>v</var><sub>a</sub> for each attribute <var>a</var> at its full level. Both are lognormal around the segment's median, <var>W</var> with a log-standard deviation of 0.3 and the attribute values with <span id="how-vsd"></span>:</p>
+        <div class="tbl-wrap"><table class="data" id="tb-seg"></table></div>
+        <p>Loyal elites put almost no value on bags, seats and priority because their status usually gives them those already; what a fare adds for them is status credit. The travel policy of the business segment doesn't allow Basic fares.</p>
+
+        <h4>Families and levels</h4>
+        <p>A family includes each attribute at a level <var>ℓ</var> between 0 and 1: included (1) or not (0), with two in-between levels. Changes <em>with a fee</em> count as 0.4 of free changes. <em>Reduced</em> points and status count as 0.5 of full earning: Air Canada's Basic earns points but no Status Qualifying Credits, and United's Basic Economy earns miles and PQP but no Premier qualifying flights.</p>
+
+        <h4>Choice</h4>
+        <p>For customer <var>i</var> and family <var>f</var> priced <var>p</var><sub>f</sub>, the surplus is</p>
+        <p class="eq"><var>S</var><sub>if</sub> = <var>W</var><sub>i</sub> + Σ<sub>a</sub> <var>v</var><sub>ia</sub> <var>ℓ</var><sub>fa</sub> − <var>p</var><sub>f</sub> + Σ<sub>e ∈ {bag, seat}</sub> max(0, <var>v</var><sub>ie</sub>(1 − <var>ℓ</var><sub>fe</sub>) − <var>c</var><sub>e</sub>),</p>
+        <p>where <var>c</var><sub>e</sub> is the à la carte price: a customer buys a bag or a seat separately when the family doesn't include it and it's worth more than its fee. Not buying has a surplus of 0. The customer then picks with a multinomial logit:</p>
+        <p class="eq"><var>P</var><sub>i</sub>(<var>f</var>) = exp(<var>S</var><sub>if</sub> / <var>μ</var>) / (1 + Σ<sub>g</sub> exp(<var>S</var><sub>ig</sub> / <var>μ</var>)),</p>
+        <p>with <var>μ</var> the randomness slider. As <var>μ</var> falls, everyone takes the option with the highest value minus price. Results add up these probabilities over all customers rather than drawing one choice each, so the charts move smoothly. Basic bought with a bag or a seat on top is shown as "Basic + extras".</p>
+
+        <h4>What the tiles measure</h4>
+        <ul>
+          <li><b>Revenue per passenger</b>: expected fares plus à la carte fees, divided by expected passengers. <b>Per 100 shoppers</b> also counts those who don't buy, which is what the step chart maximises: a higher step can raise revenue per passenger while losing passengers.</li>
+          <li><b>Upsell rate</b>: passengers in any family above Basic, as a share of all passengers.</li>
+          <li><b>Buy-down</b>: passengers who take Basic although they would have bought a higher family had Basic not been on sale (their surplus for it is positive). It's the price of offering Basic at all, and it's shown as a share of all passengers and of Basic passengers.</li>
+        </ul>
+
+        <h4>The step chart</h4>
+        <p>The chart re-runs the model for every step between Basic and the second family from $0 up to the third family's step (or $250), in $5 increments, holding everything else fixed, and marks the step with the most revenue per 100 shoppers. It's a one-dimensional search: the other steps and prices aren't re-optimised along the way.</p>
+
+        <h4>Presets and sources</h4>
+        <p>The presets take what each airline's economy families include from its public pages. Prices, the Basic fare and the à la carte fees in every preset are illustrative, and all presets run on this page's synthetic short-haul customers, so they show how each ladder <em>design</em> would sell here, not what it earns for the airline.</p>
+        <ul id="sources"></ul>
+        <p>The segment structure (price-driven leisure, travellers who need bags, managed business travel, frequent flyers) follows the usual description of branded fares in the literature, for example Fiig, T., Isler, K., Hopperstad, C. and Belobaba, P. (2010), "Optimization of mixed fare structures: Theory and applications", <a href="https://doi.org/10.1057/rpm.2009.18" target="_blank" rel="noopener">Journal of Revenue and Pricing Management 9(1–2), 152–170</a>, and Train, K. (2009), <a href="https://eml.berkeley.edu/books/choice2.html" target="_blank" rel="noopener">Discrete Choice Methods with Simulation</a>, 2nd edition, Cambridge University Press (the logit model, chapter 3).</p>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>Every family is always on sale. Real airlines close cheap booking classes as the flight fills, which changes the mix a lot; that side is on the <a href="/bookinglimits.html">booking limits</a> and <a href="/buydown.html">buy-down</a> pages.</li>
+          <li>No competitor on screen. The "not buying" option stands for every alternative at once, so the model can't show a rival matching or undercutting a step.</li>
+          <li>The logit treats all options as equally different from each other (independence of irrelevant alternatives): adding a family that's almost a copy of another one takes share from every option, not mostly from its twin.</li>
+          <li>Attribute values are drawn independently of each other and of willingness to pay. Real customers who value refunds also tend to value changes, and richer customers value most things more.</li>
+          <li>Points cost money. Here, loyalty earning is free for the airline; in reality every point issued is a liability (see the <a href="/breakage.html">breakage</a> page), so full earning in a cheap family has a cost this page leaves out.</li>
+          <li>Only bags and seats are sold à la carte. The carry-on, changes, refunds and status can only be had in a family. Change fees and partial earning are simplified to one level each, and nobody actually changes or cancels.</li>
+          <li>One market and one flight, with no connections, no groups, no corporate discounts and no loyalty tiers inside the elite segment.</li>
+        </ul>
+        <p>Fences and branded fares in <a href="/rm101.html#ch01">Revenue Management 101, chapter 01</a>; buy-down and forecasting when customers pick the cheapest fare in <a href="/rm101.html#ch05">chapter 05</a>; ancillaries and offers in <a href="/rm101.html#ch08">chapter 08</a>; and the seat-control side in the <a href="/buydown.html">buy-down simulator</a>. This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+
+      var DATA_URL = "assets/data/farefamilies.json";
+      var COLORS = ["var(--f0)", "var(--f1)", "var(--f2)", "var(--f3)"];
+      var HEX = ["#B4C6F7", "#7A97EE", "#3B63E0", "#1A3591"];
+      var NOBUY = "#dcdfe4";
+
+      var D, A, NA, BAG, SEAT, SEGS;
+      var state = null;
+      var tip = document.getElementById("tip");
+
+      function $(id) { return document.getElementById(id); }
+      function money(x) { return "$" + Math.round(x).toLocaleString("en-US"); }
+      function pct(x) { return (Math.round(x * 1000) / 10).toFixed(Math.abs(x) < 0.1 ? 1 : 0) + "%"; }
+      function pct0(x) { return Math.round(x * 100) + "%"; }
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+      function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+      // ═════════════════════════════════════════ model
+      // Returns expected choices and revenue over all customers.
+      function evaluate(cfg, mu, keepDetail) {
+        var F = cfg.families.length;
+        var price = cfg.families.map(function (f) { return cfg.basic + f.step; });
+        var lv = cfg.families.map(function (f) { return f.attrs.map(function (l, a) { return A[a].levels[l]; }); });
+        var out = {
+          shoppers: 0, pax: 0, fare: 0, anc: 0, nobuy: 0,
+          share: new Array(F + 1).fill(0),        // index F = Basic + extras
+          rev: new Array(F + 1).fill(0),
+          ancBy: new Array(F + 1).fill(0),
+          bdBasic: 0, bdYes: 0, seg: []
+        };
+        SEGS.forEach(function () { out.seg.push({ n: 0, nobuy: 0, share: new Array(F + 1).fill(0), gains: [] }); });
+        var S = new Float64Array(F), anc = new Float64Array(F), ex = new Uint8Array(F), e = new Float64Array(F);
+        var cs = D.customers;
+        for (var ci = 0; ci < cs.length; ci++) {
+          var c = cs[ci], sg = c[0], W = c[1];
+          var maxS = 0, f, k;
+          for (f = 0; f < F; f++) {
+            if (f === 0 && SEGS[sg].noBasic) { S[f] = -Infinity; anc[f] = 0; ex[f] = 0; continue; }
+            var u = W - price[f], a = 0, x = 0;
+            for (k = 0; k < NA; k++) u += c[2 + k] * lv[f][k];
+            if (lv[f][BAG] < 1) { var gb = c[2 + BAG] * (1 - lv[f][BAG]) - cfg.bag; if (gb > 0) { u += gb; a += cfg.bag; x = 1; } }
+            if (lv[f][SEAT] < 1) { var gs = c[2 + SEAT] * (1 - lv[f][SEAT]) - cfg.seat; if (gs > 0) { u += gs; a += cfg.seat; x = 1; } }
+            S[f] = u; anc[f] = a; ex[f] = x;
+            if (u > maxS) maxS = u;
+          }
+          var den = Math.exp(-maxS / mu);
+          for (f = 0; f < F; f++) { e[f] = Math.exp((S[f] - maxS) / mu); den += e[f]; }
+          var sgo = out.seg[sg];
+          sgo.n++; out.shoppers++;
+          var pn = Math.exp(-maxS / mu) / den;
+          out.nobuy += pn; sgo.nobuy += pn;
+          for (f = 0; f < F; f++) {
+            var p = e[f] / den;
+            if (!(p > 0)) continue;
+            var idx = (f === 0 && ex[0]) ? F : f;
+            out.share[idx] += p; sgo.share[idx] += p;
+            out.rev[idx] += p * (price[f] + anc[f]); out.ancBy[idx] += p * anc[f];
+            out.pax += p; out.fare += p * price[f]; out.anc += p * anc[f];
+          }
+          var p0 = e[0] / den;
+          if (p0 > 0) {
+            var hi = -Infinity;
+            for (f = 1; f < F; f++) if (S[f] > hi) hi = S[f];
+            out.bdBasic += p0;
+            if (hi >= 0) out.bdYes += p0;
+          }
+          if (keepDetail) {
+            // value gained by each step up the ladder, for the segment view
+            var g = [];
+            for (f = 1; f < F; f++) {
+              var lo = S[f - 1] + price[f - 1], up = S[f] + price[f];
+              g.push(isFinite(lo) ? up - lo : null);
+            }
+            sgo.gains.push(g);
+            if (!sgo.bagGain) sgo.bagGain = []; if (!sgo.seatGain) sgo.seatGain = [];
+            sgo.bagGain.push(c[2 + BAG]); sgo.seatGain.push(c[2 + SEAT]);
+          }
+        }
+        out.revTotal = out.fare + out.anc;
+        return out;
+      }
+
+      function stepRange(cfg) {
+        var hi = cfg.families.length > 2 ? cfg.families[2].step : 250;
+        return Math.max(20, Math.min(400, Math.ceil(hi / 5) * 5));
+      }
+
+      function curve(cfg, mu) {
+        var hi = stepRange(cfg), pts = [];
+        for (var st = 0; st <= hi; st += 5) {
+          var fam = cfg.families.map(function (f, i) { return i === 1 ? { name: f.name, step: st, attrs: f.attrs } : f; });
+          var r = evaluate({ basic: cfg.basic, bag: cfg.bag, seat: cfg.seat, families: fam }, mu);
+          pts.push({
+            step: st,
+            rev: 100 * r.revTotal / r.shoppers,
+            fare: 100 * r.fare / r.shoppers,
+            anc: 100 * r.anc / r.shoppers,
+            pax: 100 * r.pax / r.shoppers,
+            up1: r.share[1] / r.pax
+          });
+        }
+        return pts;
+      }
+
+      // ═════════════════════════════════════════ state & inputs
+      function fromPreset(key) {
+        var p = D.presets.filter(function (q) { return q.key === key; })[0];
+        return {
+          preset: key,
+          basic: p.basic, bag: p.bag, seat: p.seat, mu: 25,
+          families: clone(p.families)
+        };
+      }
+
+      function familyNames() { return state.families.map(function (f) { return f.name || "Family"; }); }
+
+      function buildPresets() {
+        var box = $("presets");
+        box.innerHTML = D.presets.map(function (p) {
+          return '<button data-k="' + p.key + '" aria-pressed="false">' + esc(p.label) + "</button>";
+        }).join("");
+        box.addEventListener("click", function (ev) {
+          var b = ev.target.closest("button"); if (!b) return;
+          var mu = state ? state.mu : 25;
+          state = fromPreset(b.getAttribute("data-k"));
+          state.mu = mu;
+          syncInputs(); renderEditor(); update();
+        });
+      }
+
+      function markPreset() {
+        [].forEach.call($("presets").querySelectorAll("button"), function (b) {
+          var on = b.getAttribute("data-k") === state.preset;
+          b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+        var p = D.presets.filter(function (q) { return q.key === state.preset; })[0];
+        var note = p ? p.note + (p.checked ? " Attributes checked " + fmtDate(p.checked) + "; prices illustrative." : "") : "Edited: no longer matches a preset.";
+        $("preset-note").textContent = note;
+      }
+
+      function fmtDate(iso) {
+        var d = new Date(iso + "T12:00:00Z");
+        return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+      }
+
+      function edited() { state.preset = null; }
+
+      var sliders = [
+        { id: "basic", fmt: money }, { id: "bag", fmt: money }, { id: "seat", fmt: money },
+        { id: "mu", fmt: function (v) { return "$" + v; } }
+      ];
+      function syncInputs() {
+        sliders.forEach(function (s) {
+          $("in-" + s.id).value = state[s.id];
+          $("out-" + s.id).textContent = s.fmt(state[s.id]);
+        });
+      }
+      sliders.forEach(function (s) {
+        var el = $("in-" + s.id);
+        el.addEventListener("input", function () {
+          state[s.id] = +el.value;
+          $("out-" + s.id).textContent = s.fmt(state[s.id]);
+          if (s.id !== "mu") edited();
+          renderEditorPrices();
+          schedule();
+        });
+      });
+
+      // ═════════════════════════════════════════ fare family editor
+      function renderEditor() {
+        var F = state.families.length;
+        var h = "<thead><tr><th class='attr'></th>";
+        state.families.forEach(function (f, i) {
+          h += "<th><div class='fh'><span class='sw' style='background:" + COLORS[i] + "'></span>" +
+            "<input class='nm' data-i='" + i + "' value='" + esc(f.name) + "' aria-label='Name of family " + (i + 1) + "' maxlength='16'>" +
+            "<span class='pr' data-pr='" + i + "'></span>" +
+            (i === 0 ? "<span class='stepbox base'>base fare</span>"
+                     : "<label class='stepbox'>+$<input type='number' min='0' max='600' step='5' data-st='" + i + "' value='" + f.step + "' aria-label='Price step of " + esc(f.name) + " above Basic'></label>") +
+            "</div></th>";
+        });
+        h += "</tr></thead><tbody>";
+        A.forEach(function (a, ai) {
+          h += "<tr><th class='attr' scope='row'>" + esc(a.label) + (a.key === "change" ? "<small>fee or free</small>" : a.key === "status" ? "<small>reduced or full</small>" : "") + "</th>";
+          state.families.forEach(function (f, i) { h += "<td>" + cellButton(i, ai) + "</td>"; });
+          h += "</tr>";
+        });
+        h += "</tbody>";
+        $("fam").innerHTML = h;
+        $("add").disabled = F >= 4;
+        $("remove").disabled = F <= 2;
+        renderEditorPrices();
+      }
+
+      function cellButton(i, ai) {
+        var a = A[ai], l = state.families[i].attrs[ai], top = a.levels.length - 1;
+        var cls = l === 0 ? "" : l === top ? "full" : "part";
+        return "<button class='lv " + cls + "' data-i='" + i + "' data-a='" + ai + "' aria-label='" +
+          esc(state.families[i].name + ", " + a.label + ": " + levelWord(a, l)) + ". Click to change.'>" + esc(a.names[l]) + "</button>";
+      }
+      function levelWord(a, l) { return l === 0 ? "not included" : a.names[l] === "✓" ? "included" : a.names[l]; }
+
+      function renderEditorPrices() {
+        [].forEach.call($("fam").querySelectorAll("[data-pr]"), function (el) {
+          var i = +el.getAttribute("data-pr");
+          el.innerHTML = "<b>" + money(state.basic + state.families[i].step) + "</b>";
+        });
+      }
+
+      $("fam").addEventListener("click", function (ev) {
+        var b = ev.target.closest("button.lv"); if (!b) return;
+        var i = +b.getAttribute("data-i"), ai = +b.getAttribute("data-a");
+        var n = A[ai].levels.length;
+        state.families[i].attrs[ai] = (state.families[i].attrs[ai] + 1) % n;
+        b.outerHTML = cellButton(i, ai);
+        var nb = $("fam").querySelector("button.lv[data-i='" + i + "'][data-a='" + ai + "']");
+        if (nb) nb.focus();
+        edited(); schedule();
+      });
+      $("fam").addEventListener("input", function (ev) {
+        var t = ev.target;
+        if (t.hasAttribute("data-st")) {
+          var v = Math.max(0, Math.min(600, Math.round(+t.value || 0)));
+          state.families[+t.getAttribute("data-st")].step = v;
+          renderEditorPrices(); edited(); schedule();
+        } else if (t.classList.contains("nm")) {
+          state.families[+t.getAttribute("data-i")].name = t.value.trim() || ("Family " + (+t.getAttribute("data-i") + 1));
+          edited(); schedule();
+        }
+      });
+      $("add").addEventListener("click", function () {
+        var F = state.families.length; if (F >= 4) return;
+        var last = state.families[F - 1];
+        var used = familyNames();
+        var nm = ["Flex", "Premium", "Plus"].filter(function (n) { return used.indexOf(n) < 0; })[0] || ("Family " + (F + 1));
+        state.families.push({ name: nm, step: last.step + 80, attrs: A.map(function (a, ai) { return a.levels.length - 1 > last.attrs[ai] && (a.key === "refund" || a.key === "prio") ? a.levels.length - 1 : last.attrs[ai]; }) });
+        edited(); renderEditor(); update();
+      });
+      $("remove").addEventListener("click", function () {
+        if (state.families.length <= 2) return;
+        state.families.pop(); edited(); renderEditor(); update();
+      });
+      $("reset").addEventListener("click", function () { state = fromPreset("example"); syncInputs(); renderEditor(); update(); });
+
+      var pending = 0;
+      function schedule() {
+        if (pending) return;
+        pending = requestAnimationFrame(function () { pending = 0; update(); });
+      }
+
+      // ═════════════════════════════════════════ tooltip
+      function showTip(ev, html) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var w = tip.offsetWidth, h = tip.offsetHeight;
+        var x = ev.clientX + 14, y = ev.clientY + 14;
+        if (x + w > window.innerWidth - 8) x = ev.clientX - w - 14;
+        if (y + h > window.innerHeight - 8) y = ev.clientY - h - 14;
+        tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+
+      // ═════════════════════════════════════════ render
+      function colorOf(i, F) { return i === F ? HEX[0] : HEX[i]; }
+      function labelOf(i, F) { return i === F ? state.families[0].name + " + extras" : state.families[i].name; }
+      // Order in stacked bars: Basic, Basic + extras, then the higher families.
+      function order(F) { var o = [0, F]; for (var i = 1; i < F; i++) o.push(i); return o; }
+
+      var HATCH_ID = 0;
+      function hatchDefs(svg) {
+        var id = "hatch" + (HATCH_ID++);
+        var p = svg.append("defs").append("pattern").attr("id", id).attr("patternUnits", "userSpaceOnUse")
+          .attr("width", 6).attr("height", 6).attr("patternTransform", "rotate(45)");
+        p.append("rect").attr("width", 6).attr("height", 6).attr("fill", HEX[0]);
+        p.append("line").attr("x1", 0).attr("y1", 0).attr("x2", 0).attr("y2", 6).attr("stroke", "#fff").attr("stroke-width", 2.4);
+        return "url(#" + id + ")";
+      }
+
+      // A 100% bar of segments [{key, label, v, color}] into a container.
+      function stackBar(el, parts, height, total, tipTitle) {
+        el.innerHTML = "";
+        var W = Math.max(260, el.clientWidth || 600), H = height;
+        var svg = d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img")
+          .attr("aria-label", tipTitle + ": " + parts.map(function (p) { return p.label + " " + pct0(p.v / total); }).join(", "));
+        var hatch = hatchDefs(svg);
+        var x = 0, gap = 2;
+        parts.forEach(function (p) {
+          var w = W * p.v / total;
+          if (w < 0.5) return;
+          var g = svg.append("g");
+          g.append("rect").attr("x", x).attr("y", 0).attr("width", Math.max(0.5, w - gap)).attr("height", H).attr("rx", 3)
+            .attr("fill", p.hatch ? hatch : p.color);
+          var share = p.v / total;
+          if (w > 38) {
+            if (p.hatch) g.append("rect").attr("x", x + 3).attr("y", H / 2 - 9).attr("width", 34).attr("height", 18).attr("rx", 4).attr("fill", "#fff").attr("opacity", 0.9);
+            g.append("text").attr("x", x + 7).attr("y", H / 2 + 4).attr("font-size", 12).attr("font-weight", 600)
+              .attr("fill", p.dark ? "#fff" : "#222").attr("pointer-events", "none").text(pct0(share));
+          }
+          g.append("rect").attr("x", x).attr("y", -4).attr("width", w).attr("height", H + 8).attr("fill", "transparent")
+            .on("mousemove", function (ev) {
+              showTip(ev, "<div class='t'>" + esc(tipTitle) + "</div><div class='r'><span>" + esc(p.label) + "</span><b>" + pct(share) + "</b></div>" + (p.extra || ""));
+            })
+            .on("mouseleave", hideTip);
+          x += w;
+        });
+      }
+
+      function update() {
+        if (!state) return;
+        markPreset();
+        var F = state.families.length;
+        var r = evaluate(state, state.mu, true);
+        var names = familyNames();
+        var o = order(F);
+
+        // ── tiles
+        var revPax = r.revTotal / r.pax;
+        var basicPax = r.share[0] + r.share[F];
+        var upsell = (r.pax - basicPax) / r.pax;
+        var bd = r.bdYes / r.pax;
+        $("tiles").innerHTML =
+          "<div class='tile'><b>" + money(revPax) + "</b><span>revenue per passenger: " + money(r.fare / r.pax) + " fare, " + money(r.anc / r.pax) + " extras</span></div>" +
+          "<div class='tile'><b>" + money(100 * r.revTotal / r.shoppers) + "</b><span>per 100 shoppers; " + Math.round(100 * r.pax / r.shoppers) + " of them buy</span></div>" +
+          "<div class='tile'><b>" + pct0(upsell) + "</b><span>upsell rate: passengers in a family above " + esc(names[0]) + "</span></div>" +
+          "<div class='tile'><b>" + pct0(bd) + "</b><span>buy-down: passengers in " + esc(names[0]) + " who'd have paid for more (" + pct0(r.bdBasic ? r.bdYes / r.bdBasic : 0) + " of " + esc(names[0]) + ")</span></div>";
+
+        // ── family mix
+        var parts = o.map(function (i) {
+          return { i: i, label: labelOf(i, F), v: r.share[i], color: colorOf(i, F), hatch: i === F, dark: i >= 2 && i !== F,
+            extra: "<div class='r'><span>Revenue per passenger</span><b>" + (r.share[i] > 1e-9 ? money(r.rev[i] / r.share[i]) : "–") + "</b></div>" };
+        });
+        stackBar($("ch-mix"), parts, 34, r.pax, "Share of passengers");
+        $("lg-mix").innerHTML = parts.map(function (p) {
+          return "<span><i style='background:" + (p.hatch ? "repeating-linear-gradient(45deg," + HEX[0] + " 0 3px,#fff 3px 5px)" : p.color) + "'></i>" + esc(p.label) + "</span>";
+        }).join("");
+        $("mix-sub").textContent = Math.round(100 * r.pax / r.shoppers) + " of every 100 shoppers buy";
+        var topI = o.slice().sort(function (a, b) { return r.share[b] - r.share[a]; })[0];
+        $("mix-lead").textContent = labelOf(topI, F) + " is the most popular choice, with " + pct0(r.share[topI] / r.pax) + " of passengers. " +
+          pct0(r.share[F] / Math.max(1e-9, basicPax)) + " of " + names[0] + " passengers add a bag or a seat à la carte, and " +
+          pct0(r.nobuy / r.shoppers) + " of shoppers don't buy at all.";
+        var tb = "<thead><tr><th>Option</th><th>Price</th><th>Passengers</th><th class='opt'>Extras per pax</th><th>Revenue per pax</th><th>Share of revenue</th></tr></thead><tbody>";
+        o.forEach(function (i) {
+          var s = r.share[i], fi = i === F ? 0 : i;
+          tb += "<tr><td><span class='sq' style='background:" + (i === F ? "repeating-linear-gradient(45deg," + HEX[0] + " 0 3px,#fff 3px 5px)" : colorOf(i, F)) + "'></span>" + esc(labelOf(i, F)) + "</td>" +
+            "<td>" + money(state.basic + state.families[fi].step) + "</td>" +
+            "<td>" + pct(s / r.pax) + "</td>" +
+            "<td class='opt'>" + (s > 1e-9 ? money(r.ancBy[i] / s) : "–") + "</td>" +
+            "<td>" + (s > 1e-9 ? money(r.rev[i] / s) : "–") + "</td>" +
+            "<td>" + pct(r.rev[i] / r.revTotal) + "</td></tr>";
+        });
+        tb += "<tr class='sub'><td>No purchase</td><td></td><td>" + pct(r.nobuy / r.shoppers) + "</td><td class='opt'></td><td></td><td></td></tr></tbody>";
+        $("tb-mix").innerHTML = tb;
+
+        // ── revenue vs step
+        renderCurve(r);
+
+        // ── segments
+        renderSegments(r);
+        renderHeat();
+      }
+
+      var lastBest = null;
+      function renderCurve(r) {
+        var el = $("ch-rev"); el.innerHTML = "";
+        var F = state.families.length, names = familyNames();
+        var pts = curve(state, state.mu);
+        var best = pts.reduce(function (a, b) { return b.rev > a.rev ? b : a; });
+        lastBest = best;
+        var cur = { step: state.families[1].step, rev: 100 * r.revTotal / r.shoppers };
+        $("rev-title").textContent = "Revenue as the step from " + names[0] + " to " + names[1] + " changes";
+        var gain = best.rev - cur.rev;
+        $("rev-lead").textContent = "Each point re-runs the whole model with a different price for " + names[1] + ", everything else unchanged. " +
+          (Math.abs(best.step - cur.step) < 5 || gain < 1
+            ? "The current step of " + money(cur.step) + " is already at the best point on this curve."
+            : "The best step is " + money(best.step) + " (" + money(best.rev) + " per 100 shoppers), " + money(gain) + " more than the current " + money(cur.step) + ". " +
+              (best.step > cur.step ? "A wider gap sells fewer " + names[1] + " fares but at a better price, and pushes some customers into " + (F > 2 ? names[2] + " or " : "") + names[0] + "." :
+               "A narrower gap moves enough " + names[0] + " customers up to more than make up for the lower price."));
+        $("best-note").textContent = "Best: " + money(best.step) + " above " + names[0] + ", " + money(best.rev) + " per 100 shoppers" + (F > 2 ? " (" + names[2] + " held at +" + money(state.families[2].step) + ")" : "");
+        $("use-best").disabled = Math.abs(best.step - cur.step) < 1;
+
+        var W = Math.max(300, el.clientWidth - 12 || 640), H = W < 480 ? 230 : 260;
+        var m = { t: 16, r: 18, b: 34, l: 58 };
+        var svg = d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img")
+          .attr("aria-label", "Revenue per 100 shoppers against the price step of " + names[1] + ". Best step " + money(best.step) + ".");
+        var x = d3.scaleLinear().domain([0, pts[pts.length - 1].step]).range([m.l, W - m.r]);
+        var lo = d3.min(pts, function (p) { return p.rev; }), hi = d3.max(pts, function (p) { return p.rev; });
+        var pad = Math.max(50, (hi - lo) * 0.12);
+        var y = d3.scaleLinear().domain([lo - pad, hi + pad]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)")
+          .call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")")
+          .call(d3.axisBottom(x).ticks(W < 480 ? 5 : 8).tickFormat(function (d) { return "+$" + d; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)")
+          .call(d3.axisLeft(y).ticks(5).tickFormat(function (d) { return "$" + d3.format(",")(d); }));
+        svg.append("text").attr("x", W - m.r).attr("y", H - 4).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676")
+          .text("price step of " + names[1] + " above " + names[0]);
+
+        var line = d3.line().x(function (p) { return x(p.step); }).y(function (p) { return y(p.rev); }).curve(d3.curveMonotoneX);
+        svg.append("path").datum(pts).attr("d", line).attr("fill", "none").attr("stroke", "#2a7fb5").attr("stroke-width", 2).attr("stroke-linejoin", "round");
+
+        // current step
+        svg.append("line").attr("x1", x(cur.step)).attr("x2", x(cur.step)).attr("y1", m.t).attr("y2", H - m.b)
+          .attr("stroke", "#222").attr("stroke-dasharray", "3 4").attr("stroke-width", 1);
+        svg.append("circle").attr("cx", x(cur.step)).attr("cy", y(cur.rev)).attr("r", 4.5).attr("fill", "#fff").attr("stroke", "#222").attr("stroke-width", 2);
+        // best step
+        svg.append("circle").attr("cx", x(best.step)).attr("cy", y(best.rev)).attr("r", 5.5).attr("fill", "var(--best)").attr("stroke", "#fff").attr("stroke-width", 2);
+        var bx = x(best.step), anchor = bx > W - 120 ? "end" : bx < m.l + 60 ? "start" : "middle";
+        svg.append("text").attr("x", bx + (anchor === "end" ? -8 : anchor === "start" ? 8 : 0)).attr("y", y(best.rev) - 11)
+          .attr("text-anchor", anchor).attr("font-size", 12).attr("font-weight", 600).attr("fill", "#222")
+          .text("Best: +" + money(best.step));
+
+        // hover layer
+        var hl = svg.append("line").attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#bbb").attr("stroke-width", 1).style("display", "none");
+        var hd = svg.append("circle").attr("r", 4).attr("fill", "#2a7fb5").attr("stroke", "#fff").attr("stroke-width", 1.5).style("display", "none");
+        svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+          .on("mousemove", function (ev) {
+            var pt = d3.pointer(ev, this);
+            var s = x.invert(pt[0]);
+            var p = pts[Math.max(0, Math.min(pts.length - 1, Math.round(s / 5)))];
+            hl.attr("x1", x(p.step)).attr("x2", x(p.step)).style("display", null);
+            hd.attr("cx", x(p.step)).attr("cy", y(p.rev)).style("display", null);
+            showTip(ev, "<div class='t'>" + esc(names[1]) + " at +" + money(p.step) + " (" + money(state.basic + p.step) + ")</div>" +
+              "<div class='r'><span>Revenue per 100 shoppers</span><b>" + money(p.rev) + "</b></div>" +
+              "<div class='r'><span>of which fares</span><b>" + money(p.fare) + "</b></div>" +
+              "<div class='r'><span>of which extras</span><b>" + money(p.anc) + "</b></div>" +
+              "<div class='r'><span>Passengers</span><b>" + p.pax.toFixed(1) + "</b></div>" +
+              "<div class='r'><span>" + esc(names[1]) + " share</span><b>" + pct(p.up1) + "</b></div>");
+          })
+          .on("mouseleave", function () { hl.style("display", "none"); hd.style("display", "none"); hideTip(); });
+
+        $("lg-rev").innerHTML = "<span><i class='ln' style='border-color:#2a7fb5'></i>Revenue per 100 shoppers</span>" +
+          "<span><i class='dot' style='background:#fff;border:2px solid #222;width:7px;height:7px'></i>Current step</span>" +
+          "<span><i class='dot' style='background:var(--best)'></i>Best step</span>";
+      }
+      $("use-best").addEventListener("click", function () {
+        if (!lastBest) return;
+        state.families[1].step = lastBest.step;
+        edited(); renderEditor(); update();
+      });
+
+      function median(arr) {
+        var a = arr.filter(function (v) { return v !== null && isFinite(v); }).sort(function (p, q) { return p - q; });
+        if (!a.length) return null;
+        var k = Math.floor(a.length / 2);
+        return a.length % 2 ? a[k] : (a[k - 1] + a[k]) / 2;
+      }
+
+      function renderSegments(r) {
+        var F = state.families.length, names = familyNames(), o = order(F);
+        var box = $("segs"); box.innerHTML = "";
+        SEGS.forEach(function (sg, si) {
+          var S = r.seg[si];
+          var card = document.createElement("div"); card.className = "seg";
+          var n = S.n;
+          var buyers = n - S.nobuy;
+          var topI = o.slice().sort(function (a, b) { return S.share[b] - S.share[a]; })[0];
+          var html = "<h4>" + esc(sg.label) + "<span>" + pct0(n / r.shoppers) + " of shoppers</span></h4>" +
+            "<p class='blurb'>" + esc(sg.blurb) + "</p><div class='bar'></div>" +
+            "<p class='top'>Most pick <b>" + esc(labelOf(topI, F)) + "</b> (" + pct0(S.share[topI] / n) + "); " + pct0(S.nobuy / n) + " don't buy.</p><ul>";
+          // step-by-step reasons
+          for (var f = 1; f < F; f++) {
+            var dp = state.families[f].step - state.families[f - 1].step;
+            var g = S.gains.map(function (row) { return row[f - 1]; });
+            if (sg.noBasic && f === 1) {
+              html += "<li><span class='mk x'>–</span><span>" + esc(names[0]) + " isn't allowed by their travel policy, so " + esc(names[1]) + " is their cheapest option.</span></li>";
+              continue;
+            }
+            var med = median(g);
+            var worth = g.filter(function (v) { return v !== null && v > dp; }).length / Math.max(1, g.length);
+            var yes = med !== null && med > dp;
+            html += "<li><span class='mk " + (yes ? "y" : "n") + "'>" + (yes ? "✓" : "✗") + "</span><span>" + esc(names[f - 1]) + " → " + esc(names[f]) + ": worth <b>" + money(med) +
+              "</b> to the typical customer, costs " + (dp >= 0 ? "" : "−") + "<b>" + money(Math.abs(dp)) + "</b> more; worth it for " + pct0(worth) + "</span></li>";
+          }
+          // à la carte, only where the cheapest allowed family lacks it
+          var base = sg.noBasic ? 1 : 0;
+          if (base < F) {
+            var bf = state.families[base];
+            [["bag", BAG, state.bag, S.bagGain], ["seat", SEAT, state.seat, S.seatGain]].forEach(function (t) {
+              var lvl = A[t[1]].levels[bf.attrs[t[1]]];
+              if (lvl >= 1) return;
+              var vals = t[3].map(function (v) { return v * (1 - lvl); });
+              var med = median(vals), share = vals.filter(function (v) { return v > t[2]; }).length / vals.length;
+              var yes = med > t[2];
+              html += "<li><span class='mk " + (yes ? "y" : "n") + "'>" + (yes ? "✓" : "✗") + "</span><span>" + (t[0] === "bag" ? "Checked bag" : "Seat selection") + " à la carte with " + esc(bf.name) + ": worth <b>" + money(med) +
+                "</b>, costs <b>" + money(t[2]) + "</b>; worth it for " + pct0(share) + "</span></li>";
+            });
+          }
+          html += "</ul>";
+          card.innerHTML = html;
+          box.appendChild(card);
+          var parts = o.map(function (i) { return { label: labelOf(i, F), v: S.share[i], color: colorOf(i, F), hatch: i === F, dark: i >= 2 && i !== F }; });
+          parts.push({ label: "No purchase", v: S.nobuy, color: NOBUY });
+          stackBar(card.querySelector(".bar"), parts, 26, n, sg.label + ", share of shoppers");
+        });
+      }
+
+      var heatSums = null, heatMode = null;
+      function renderHeat() {
+        if (!heatSums) {
+          heatSums = SEGS.map(function () { return { n: 0, v: new Array(NA).fill(0), w: 0 }; });
+          D.customers.forEach(function (c) {
+            var s = heatSums[c[0]]; s.n++; s.w += c[1];
+            for (var k = 0; k < NA; k++) s.v[k] += c[2 + k];
+          });
+        }
+        var el = $("heat");
+        var narrow = (el.parentNode.clientWidth || 600) < 560;
+        var mode = narrow ? "t" : "w";
+        if (mode === heatMode) return;
+        heatMode = mode;
+        var sums = heatSums, max = 0;
+        sums.forEach(function (s) { for (var k = 0; k < NA; k++) max = Math.max(max, s.v[k] / s.n); });
+        var col = d3.scaleSequential(d3.interpolateRgb("#f2f5fd", "#1C3A9E")).domain([0, max]);
+        function cell(si, k) {
+          var s = sums[si], v = s.v[k] / s.n;
+          return "<td style='background:" + col(v) + "' class='" + (v > max * 0.55 ? "dk" : "") + "' title='" + esc(SEGS[si].label + ", " + A[k].label + ": " + money(v)) + "'>" + money(v) + "</td>";
+        }
+        function wcell(si) { return "<td style='background:#f7f7f7'>" + money(sums[si].w / sums[si].n) + "</td>"; }
+        var h;
+        if (!narrow) {
+          h = "<thead><tr><th></th><th>Willing to pay for a bare seat</th>" + A.map(function (a) { return "<th>" + esc(a.short) + "</th>"; }).join("") + "</tr></thead><tbody>";
+          sums.forEach(function (s, si) {
+            h += "<tr><th class='rh'>" + esc(SEGS[si].label) + "</th>" + wcell(si);
+            for (var k = 0; k < NA; k++) h += cell(si, k);
+            h += "</tr>";
+          });
+        } else {
+          h = "<thead><tr><th></th>" + SEGS.map(function (g) { return "<th>" + esc(g.short || g.label) + "</th>"; }).join("") + "</tr></thead><tbody>";
+          h += "<tr><th class='rh'>Bare seat</th>" + SEGS.map(function (g, si) { return wcell(si); }).join("") + "</tr>";
+          A.forEach(function (a, k) {
+            h += "<tr><th class='rh'>" + esc(a.short) + "</th>" + SEGS.map(function (g, si) { return cell(si, k); }).join("") + "</tr>";
+          });
+        }
+        el.innerHTML = h + "</tbody>";
+      }
+
+      // ═════════════════════════════════════════ how it works tables
+      function renderMethod() {
+        $("how-n").textContent = D.meta.n.toLocaleString("en-US");
+        $("how-seed").textContent = D.meta.seed;
+        $("how-vsd").textContent = "a log-standard deviation of " + D.meta.valueSd;
+        var t = "<thead><tr><th>Segment</th><th>Share</th><th>Median <i>W</i></th>" + A.map(function (a) { return "<th>" + esc(a.short) + "</th>"; }).join("") + "</tr></thead><tbody>";
+        SEGS.forEach(function (s) {
+          t += "<tr><td>" + esc(s.label) + (s.noBasic ? " *" : "") + "</td><td>" + pct0(s.share) + "</td><td>" + money(s.wtp) + "</td>" +
+            A.map(function (a) { return "<td>" + money(s.values[a.key]) + "</td>"; }).join("") + "</tr>";
+        });
+        t += "</tbody>";
+        $("tb-seg").innerHTML = t;
+        var li = "";
+        D.presets.forEach(function (p) {
+          (p.sources || []).forEach(function (s) {
+            li += "<li>" + esc(p.label) + ": <a href='" + esc(s.url) + "' target='_blank' rel='noopener'>" + esc(s.label) + "</a>, " + esc(s.date) + ".</li>";
+          });
+        });
+        li += "<li>À la carte fees in the presets are round illustrative numbers near the published ones at the time of checking: a first checked bag was CA$35–42 each way on Air Canada within Canada and from $45 prepaid on United in the US.</li>";
+        $("sources").innerHTML = li;
+      }
+
+      // ═════════════════════════════════════════ boot
+      fetch(DATA_URL).then(function (res) {
+        if (!res.ok) throw new Error(res.status);
+        return res.json();
+      }).then(function (data) {
+        D = data; A = D.attrs; NA = A.length; SEGS = D.segments;
+        BAG = A.map(function (a) { return a.key; }).indexOf("bag");
+        SEAT = A.map(function (a) { return a.key; }).indexOf("seat");
+        buildPresets();
+        state = fromPreset("example");
+        syncInputs(); renderEditor(); renderMethod(); update();
+        var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(update, 150); });
+      }).catch(function (e) {
+        $("tiles").innerHTML = "<p class='err'>The customer data couldn't be loaded (" + esc(e.message || e) + "). Try reloading the page.</p>";
+      });
+    });
+    </script>
+  </body>
+</html>

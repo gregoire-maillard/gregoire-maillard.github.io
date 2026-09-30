@@ -1,0 +1,23 @@
+{
+  "about": "Inputs for continuouspricing.html. One invented economy cabin on one flight, sold over a 180-day booking period. Every fare, demand figure and willingness-to-pay parameter is an illustrative assumption, not any airline's data. Fares are one-way, in US dollars, on the same $130 to $620 range as bookinglimits.html and buydown.html.",
+  "version": "2026-09-29",
+  "currency": "USD",
+  "seats": 150,
+  "horizonDays": 180,
+  "dcps": [180, 120, 90, 60, 45, 30, 21, 14, 7, 3, 0],
+  "arrivals": {
+    "shape": "exponential booking curve: shoppers per day proportional to exp(-t / scaleDays), t = days before departure",
+    "scaleDays": 55,
+    "departureCV": 0.25
+  },
+  "wtp": {
+    "shape": "lognormal",
+    "medianAtOpening": 160,
+    "sigma": 0.5,
+    "shift": "median(t) = medianAtOpening * rise ^ (((180 - t) / 180) ^ 3)"
+  },
+  "simulation": { "departures": 2000, "seed": 1, "priceStepHours": 6 },
+  "defaults": { "demand": 1.6, "rise": 2.6, "n": 6, "spacing": "pct", "lo": 130, "hi": 620, "bounded": false },
+  "classChoices": [6, 10, 26],
+  "sweep": [3, 4, 5, 6, 8, 10, 13, 16, 20, 26]
+}

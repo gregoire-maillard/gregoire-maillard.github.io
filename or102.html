@@ -1,0 +1,819 @@
+<!doctype html>
+<html>
+  <head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Airline Operations Research 102</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <style>
+      /* ── Sidebar nav ── */
+      header {
+        display: flex !important;
+        flex-direction: column !important;
+        height: calc(100dvh - 64px - 4rem) !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .chapter-nav {
+        margin-top: 4px;
+        font-size: 0.82em;
+        line-height: 1.8;
+        flex: 1 1 0;
+        overflow-y: auto;
+        min-height: 0;
+      }
+      .chapter-nav a {
+        display: block;
+        color: #555;
+        text-decoration: none;
+        padding-left: 6px;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
+      .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
+      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
+
+      /* ── Callout / example boxes ── */
+      .callout {
+        background: #f4f8fd;
+        border-left: 3px solid #267CB9;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #2a3a4a;
+        line-height: 1.7;
+      }
+      .callout-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .example {
+        background: #fafafa;
+        border: 1px solid #e4e4e4;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #444;
+        line-height: 1.7;
+      }
+      .example-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #888;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Reference table ── */
+      .rm-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86em;
+        margin: 16px 0;
+      }
+      .rm-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: left;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .rm-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        vertical-align: top;
+      }
+      .rm-table tr:last-child td { border-bottom: none; }
+
+      section h3 { margin-top: 22px; }
+      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; }
+
+      /* ── Data tables ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+        margin: 16px 0;
+      }
+      .data-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: center;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .data-table th:first-child { text-align: left; }
+      .data-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .data-table td:first-child { text-align: left; }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table tr.total td { background: #f7f7f7; font-weight: bold; border-top: 2px solid #ddd; }
+      .data-table tr.highlight td { background: #fef6d6; font-weight: bold; }
+
+      /* ── Formula block ── */
+      .formula {
+        background: #f9f7ff;
+        border-left: 3px solid #7c6fcd;
+        padding: 14px 20px;
+        margin: 18px 0;
+        text-align: center;
+        overflow-x: auto;
+      }
+      .formula-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7c6fcd;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+      .formula .note {
+        font-size: 0.82em;
+        color: #666;
+        margin-top: 8px;
+        text-align: left;
+        font-style: italic;
+      }
+
+      /* ── Chart container ── */
+      .chart-wrap {
+        margin: 20px 0;
+        background: #fff;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        padding: 12px 8px 6px;
+      }
+      .chart-wrap svg { display: block; width: 100%; height: auto; }
+      .chart-caption {
+        font-size: 0.78em;
+        color: #888;
+        text-align: center;
+        margin-top: 4px;
+        font-style: italic;
+      }
+    </style>
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+    </style>
+    <style>
+      /* the sticky left rail now sits below the 64px site bar */
+      @media (min-width: 60.001rem) {
+        .wrapper > header { top: calc(64px + 2rem) !important; max-height: calc(100dvh - 64px - 4rem) !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge" aria-current="page">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>12</b> tools · <b>7</b> courses</span>
+      </div>
+    </div>
+    <div class="wrapper">
+
+      <!-- ── Sidebar ── -->
+      <header>
+        <img src="/assets/img/or102_main.png" alt="Airline operations research literature" onerror="this.style.display='none'" />
+        <p><i>Me, three coffees into the AGIFORS program.</i> <br><hr/>
+        A reader's guide to airline operations research: where each topic stands, the papers everyone cites, and how to read a new one critically.</p>
+
+        <hr/>
+        <nav class="chapter-nav" id="toc">
+          <a href="#ch00"><span class="ch-n">00</span> How the Research Works</a>
+          <a href="#ch01"><span class="ch-n">01</span> Anatomy of a Paper</a>
+          <a href="#ch02"><span class="ch-n">02</span> A Glossary of Methods</a>
+          <a href="#ch03"><span class="ch-n">03</span> Schedule Design &amp; Fleeting</a>
+          <a href="#ch04"><span class="ch-n">04</span> Crew Scheduling</a>
+          <a href="#ch05"><span class="ch-n">05</span> Robustness &amp; Recovery</a>
+          <a href="#ch06"><span class="ch-n">06</span> RM: From Classes to Choice</a>
+          <a href="#ch07"><span class="ch-n">07</span> RM: Pricing, Offers &amp; Simulation</a>
+          <a href="#ch08"><span class="ch-n">08</span> Machine Learning Meets OR</a>
+          <a href="#ch09"><span class="ch-n">09</span> Judging a Result</a>
+          <a href="#ch10"><span class="ch-n">10</span> A Reading Plan</a>
+          <a href="#ch11"><span class="ch-n">11</span> Open Problems</a>
+        </nav>
+      </header>
+
+      <!-- ── Content ── -->
+      <section>
+
+        <h2>Airline Operations Research 102: Reading the Research</h2>
+        <p><a href="/or101.html">OR 101</a> explains the classic models: linear and integer programs, fleet assignment, crew pairing, recovery, bid prices. This page is the sequel for anyone who wants to follow where those models are going. For each area it gives the handful of papers everyone builds on, what the current research is trying to solve, and the vocabulary you need to follow a talk at the AGIFORS symposium or a paper in <em>Transportation Science</em>. It ends with a checklist for reading a new result critically and a reading plan. It assumes you are comfortable with OR 101 and <a href="/rm101.html">RM 101</a>, and it describes the literature, not how any particular airline works.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 00 ── -->
+        <h3 id="ch00">Chapter 00: How the Research Works</h3>
+
+        <p>Airline OR is unusual among research fields because a large share of it is done by, or with, the people who use it. Three groups produce most of it, and knowing who wrote a paper tells you a lot about how to read it.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Who</th><th>Strength</th><th>Read with</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Universities</strong><br><small>journal papers, theses</small></td><td>Rigor, new methods, public benchmarks</td><td>Attention to how realistic the instances and assumptions are</td></tr>
+            <tr><td><strong>Airlines</strong><br><small>symposium talks, practice papers</small></td><td>Real data, real constraints, implementation lessons</td><td>Awareness that details are often withheld and results rarely replicated</td></tr>
+            <tr><td><strong>Vendors</strong><br><small>talks, white papers, some journal papers</small></td><td>Scale, engineering, deployment across many airlines</td><td>Healthy skepticism of headline gains</td></tr>
+          </tbody>
+        </table>
+
+        <p>A few academic centres have shaped the field for decades. MIT (the International Center for Air Transportation, and the PODS revenue management consortium) is the historic home of airline RM and schedule planning research. GERAD in Montréal is the reference for crew scheduling and column generation; its GENCOL solver was commercialized by AD OPT. Georgia Tech, Columbia, Cornell and several European universities (among them Warwick, Augsburg and DTU) are regular contributors, and many vendors, including Sabre, Amadeus, PROS, Jeppesen and Lufthansa Systems, have their own research teams.</p>
+
+        <h4>AGIFORS</h4>
+
+        <p>AGIFORS, the Airline Group of the International Federation of Operational Research Societies, has been the meeting place of this community since 1961. Its annual <strong>symposium</strong>, typically held in September or October, is the main event. Throughout the year, <strong>study groups</strong> meet on specific areas:</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Study group</th><th>Covers</th><th>This page</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Revenue Management and Distribution</strong></td><td>Forecasting, optimization, pricing, offers, NDC</td><td>Chapters 06–07</td></tr>
+            <tr><td><strong>Scheduling and Strategic Planning</strong></td><td>Network and schedule design, fleet planning and assignment</td><td>Chapter 03</td></tr>
+            <tr><td><strong>Crew Management</strong></td><td>Pairing, rostering, crew operations</td><td>Chapter 04</td></tr>
+            <tr><td><strong>Airline Operations</strong></td><td>Operations control, recovery, robustness</td><td>Chapter 05</td></tr>
+            <tr><td><strong>Aircraft Maintenance Operations</strong></td><td>Maintenance planning and routing</td><td>Chapters 03 and 05</td></tr>
+          </tbody>
+        </table>
+
+        <p>Most AGIFORS material is <strong>presentations, not papers</strong>: slides from practitioners describing a problem their airline solved, a project in progress, or a vendor's new approach. They are invaluable because they show what is actually deployed, but they are not peer-reviewed and often leave out the details you would need to reproduce a result. The <strong>Anna Valicek Award</strong> recognizes graduate student research in airline OR, and its finalists are a good window into what the academic side is working on.</p>
+
+        <h4>Sixty years in one picture</h4>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 403" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Timeline of landmark results in airline operations research, from AGIFORS in 1961 to classless revenue management engines in 2025" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<circle cx="16" cy="12" r="4.5" fill="#267CB9"/><text x="26" y="16" font-size="11.5" fill="#333333">Planning, crew and operations</text>
+<circle cx="236" cy="12" r="4.5" fill="#7c6fcd"/><text x="246" y="16" font-size="11.5" fill="#333333">Revenue management and pricing</text>
+<line x1="150" y1="28" x2="150" y2="397" stroke="#ddd" stroke-width="2"/>
+<text x="136" y="42" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">1961</text>
+<circle cx="150" cy="38" r="4.5" fill="#267CB9"/>
+<text x="164" y="42" font-size="11.5" fill="#333333">AGIFORS founded</text>
+<text x="136" y="61" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">1972</text>
+<circle cx="150" cy="57" r="4.5" fill="#7c6fcd"/>
+<text x="164" y="61" font-size="11.5" fill="#333333">Littlewood's rule for two fare classes</text>
+<text x="136" y="80" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">1989</text>
+<circle cx="150" cy="76" r="4.5" fill="#7c6fcd"/>
+<text x="164" y="80" font-size="11.5" fill="#333333">EMSR protection levels</text>
+<text x="136" y="99" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">1991</text>
+<circle cx="150" cy="95" r="4.5" fill="#267CB9"/>
+<text x="164" y="99" font-size="11.5" fill="#333333">TRIP crew pairing at American</text>
+<text x="136" y="118" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">1992</text>
+<circle cx="150" cy="114" r="4.5" fill="#7c6fcd"/>
+<text x="164" y="118" font-size="11.5" fill="#333333">Network bid prices from the DLP</text>
+<text x="136" y="137" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">1994</text>
+<circle cx="150" cy="133" r="4.5" fill="#7c6fcd"/>
+<text x="164" y="137" font-size="11.5" fill="#333333">PODS simulator begins at Boeing</text>
+<text x="136" y="156" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">1995</text>
+<circle cx="150" cy="152" r="4.5" fill="#267CB9"/>
+<text x="164" y="156" font-size="11.5" fill="#333333">Fleet assignment model</text>
+<text x="136" y="175" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">1998</text>
+<circle cx="150" cy="171" r="4.5" fill="#267CB9"/>
+<text x="164" y="175" font-size="11.5" fill="#333333">Preferential bidding at Air Canada</text>
+<text x="136" y="194" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">2002</text>
+<circle cx="150" cy="190" r="4.5" fill="#267CB9"/>
+<text x="164" y="194" font-size="11.5" fill="#333333">Itinerary-based fleet assignment</text>
+<text x="136" y="213" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">2004</text>
+<circle cx="150" cy="209" r="4.5" fill="#7c6fcd"/>
+<text x="164" y="213" font-size="11.5" fill="#333333">Choice-based RM</text>
+<text x="136" y="232" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">2005</text>
+<circle cx="150" cy="228" r="4.5" fill="#267CB9"/>
+<text x="164" y="232" font-size="11.5" fill="#333333">Dynamic constraint aggregation</text>
+<text x="136" y="251" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">2006</text>
+<circle cx="150" cy="247" r="4.5" fill="#267CB9"/>
+<text x="164" y="251" font-size="11.5" fill="#333333">Robust aircraft routing</text>
+<text x="136" y="270" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">2010</text>
+<circle cx="150" cy="266" r="4.5" fill="#7c6fcd"/>
+<text x="164" y="270" font-size="11.5" fill="#333333">Fare adjustment for buy-down</text>
+<text x="136" y="289" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">2012</text>
+<circle cx="150" cy="285" r="4.5" fill="#267CB9"/>
+<text x="164" y="289" font-size="11.5" fill="#333333">Integrated recovery</text>
+<circle cx="150" cy="304" r="4.5" fill="#7c6fcd"/>
+<text x="164" y="308" font-size="11.5" fill="#333333">NDC standard adopted</text>
+<text x="136" y="327" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">2019</text>
+<circle cx="150" cy="323" r="4.5" fill="#7c6fcd"/>
+<text x="164" y="327" font-size="11.5" fill="#333333">Dynamic pricing framework</text>
+<text x="136" y="346" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">2020</text>
+<circle cx="150" cy="342" r="4.5" fill="#267CB9"/>
+<text x="164" y="346" font-size="11.5" fill="#333333">ML-guided crew pairing</text>
+<circle cx="150" cy="361" r="4.5" fill="#7c6fcd"/>
+<text x="164" y="365" font-size="11.5" fill="#333333">Reinforcement learning for RM</text>
+<text x="136" y="384" text-anchor="end" font-size="11.5" font-weight="600" fill="#888888">2025</text>
+<circle cx="150" cy="380" r="4.5" fill="#7c6fcd"/>
+<text x="164" y="384" font-size="11.5" fill="#333333">Classless RM engines marketed</text>
+</svg>
+          <div class="chart-caption">A selection of landmark results, covered on this page or in RM 101 and OR 101. Dates are publication or launch years.</div>
+        </div>
+
+        <h4>Where the papers are</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Venue</th><th>Flavour</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong><em>Transportation Science</em></strong></td><td>The flagship for airline planning, crew and recovery models</td></tr>
+            <tr><td><strong><em>Journal of Revenue and Pricing Management</em></strong></td><td>Closest to practice in RM and pricing; many airline and vendor authors</td></tr>
+            <tr><td><strong><em>Operations Research</em>, <em>Management Science</em>, <em>M&amp;SOM</em></strong></td><td>Theory-heavy RM and pricing, new optimization methods</td></tr>
+            <tr><td><strong><em>EJOR</em>, <em>Computers &amp; OR</em>, <em>EURO J. on Transportation and Logistics</em></strong></td><td>Methods and applications, including many European airline studies</td></tr>
+            <tr><td><strong><em>INFORMS Journal on Applied Analytics</em></strong> (formerly <em>Interfaces</em>)</td><td>Implementation stories with measured business impact</td></tr>
+            <tr><td><strong>MIT theses</strong></td><td>Detailed PODS simulation studies of RM methods, freely available on DSpace</td></tr>
+          </tbody>
+        </table>
+
+        <p><hr/></p>
+
+        <!-- ── CH 01 ── -->
+        <h3 id="ch01">Chapter 01: Anatomy of a Paper</h3>
+
+        <p>Almost every airline OR paper follows the same arc. Knowing it lets you jump to the part that answers your question instead of reading from the first line.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Section</th><th>What it contains</th><th>What to look for</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Introduction</strong></td><td>The business problem and the claimed contribution</td><td>One sentence: what can this paper do that previous work could not?</td></tr>
+            <tr><td><strong>Literature review</strong></td><td>Positioning against prior work</td><td>A free map of the field. The papers cited most are the ones to read next</td></tr>
+            <tr><td><strong>Problem and model</strong></td><td>Notation, formulation, assumptions</td><td>The assumptions. Every model is right under its assumptions; the question is whether they hold at your airline</td></tr>
+            <tr><td><strong>Solution method</strong></td><td>Algorithm, decomposition, heuristics</td><td>Is it exact (with a proof of optimality or a gap) or heuristic?</td></tr>
+            <tr><td><strong>Computational study</strong></td><td>Instances, benchmarks, results tables</td><td>Instance size and origin, baseline, run time, and how much was tuned</td></tr>
+            <tr><td><strong>Conclusion</strong></td><td>Summary, limitations, future work</td><td>The limitations paragraph is often the most honest part of the paper</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">Reading order that works</div>
+          Abstract, then the conclusion, then the results tables and figures, then the model. Only read the solution method in detail if the results convince you it is worth it. For an AGIFORS talk, the equivalent is: problem slide, results slide, then the "lessons learned" slide.
+        </div>
+
+        <h4>Reading the notation</h4>
+
+        <p>Airline OR papers reuse a fairly stable vocabulary of symbols. Once you recognize them, most formulations become quick to read:</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Symbol</th><th>Usually means</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>\(\mathcal{L}\), \(\mathcal{F}\), \(i \in \mathcal{L}\)</td><td>Set of flight legs</td></tr>
+            <tr><td>\(\mathcal{K}\), \(k\)</td><td>Fleet types (or crew bases, or commodities)</td></tr>
+            <tr><td>\(\mathcal{P}\), \(p\)</td><td>Pairings, itineraries, or products, depending on the paper</td></tr>
+            <tr><td>\(\mathcal{J}\), \(j\)</td><td>Products or fare classes in RM</td></tr>
+            <tr><td>\(x\), \(y\), \(z\)</td><td>Decision variables (assignment, flow, binary choice)</td></tr>
+            <tr><td>\(\pi\), \(\lambda\), \(\mu\)</td><td>Dual prices or Lagrange multipliers; in RM, \(\lambda\) is often an arrival rate instead</td></tr>
+            <tr><td>\(V_t(x)\)</td><td>Value function of a dynamic program: expected value from time \(t\) with state \(x\)</td></tr>
+            <tr><td>\(C_l\), \(c_l\)</td><td>Capacity of leg \(l\)</td></tr>
+            <tr><td>\(P_j(S)\)</td><td>Probability a customer buys \(j\) when offered the set \(S\) (choice models)</td></tr>
+          </tbody>
+        </table>
+
+        <p><hr/></p>
+
+        <!-- ── CH 02 ── -->
+        <h3 id="ch02">Chapter 02: A Glossary of Methods</h3>
+
+        <p>Papers rarely explain the methods they rely on; they assume you know them. Here is what the most common ones mean, in one or two lines each.</p>
+
+        <h4>Exact optimization</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Term</th><th>What it means when you read it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Column generation</strong></td><td>Solve an LP with only a few variables, and repeatedly add the variable with the best reduced cost found by a pricing subproblem (<a href="/or101.html#ch07">OR 101, Chapter 07</a>)</td></tr>
+            <tr><td><strong>Branch-and-price</strong></td><td>Branch and bound with column generation at every node. The standard exact method for crew and routing problems</td></tr>
+            <tr><td><strong>Branch-and-cut</strong></td><td>Branch and bound with cutting planes added to tighten relaxations along the way</td></tr>
+            <tr><td><strong>Dantzig-Wolfe decomposition</strong></td><td>Reformulate a problem so that each column is a whole solution of a subproblem (a pairing, a route). The theory behind column generation</td></tr>
+            <tr><td><strong>Benders decomposition</strong></td><td>Split variables into a master (for example, aircraft routes) and a subproblem (for example, crew) that sends back cuts. Common for integrating two planning steps</td></tr>
+            <tr><td><strong>Lagrangian relaxation</strong></td><td>Move hard constraints into the objective with a penalty price, solve the easier problem, and adjust the prices. Gives bounds and, in RM, bid prices</td></tr>
+            <tr><td><strong>Set partitioning / covering</strong></td><td>Choose columns so each row (flight) is covered exactly once / at least once</td></tr>
+            <tr><td><strong>Resource-constrained shortest path (RCSPP)</strong></td><td>The pricing problem for crew and routing: cheapest path that respects limits on duty time, flying time and so on. Solved by labelling algorithms</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Approximate and heuristic methods</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Term</th><th>What it means when you read it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Heuristic</strong></td><td>A method that finds good solutions without proving optimality. Fine, but ask how far from optimal it might be</td></tr>
+            <tr><td><strong>Metaheuristic</strong></td><td>A general search strategy (genetic algorithms, simulated annealing, tabu search, large neighbourhood search)</td></tr>
+            <tr><td><strong>Matheuristic</strong></td><td>A heuristic that calls an exact solver on smaller subproblems, for example re-optimizing a few days of a schedule at a time</td></tr>
+            <tr><td><strong>Rolling horizon</strong></td><td>Solve a short window, fix the first part, move the window forward</td></tr>
+            <tr><td><strong>Approximate dynamic programming (ADP)</strong></td><td>Replace an intractable value function with a simpler approximation (linear, piecewise-linear) and optimize that</td></tr>
+            <tr><td><strong>Fluid approximation</strong></td><td>Replace random demand by its expected rate. The DLP is a fluid model; it gives bounds and bid prices</td></tr>
+            <tr><td><strong>Reinforcement learning (RL)</strong></td><td>Learn a decision policy from repeated interaction, usually with a simulator, instead of from a demand model</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Modelling uncertainty and behaviour</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Term</th><th>What it means when you read it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Independent demand</strong></td><td>Each fare class has its own demand, unaffected by what else is open. The classic RM assumption, and the one research has spent twenty years removing</td></tr>
+            <tr><td><strong>Discrete choice model (MNL)</strong></td><td>Customers choose among the options offered, with probabilities from a multinomial logit (or nested logit) utility model</td></tr>
+            <tr><td><strong>Spill, recapture</strong></td><td>Demand turned away by lack of capacity, and the share of it that books another flight of the same airline</td></tr>
+            <tr><td><strong>Stochastic programming</strong></td><td>Optimize expected cost over scenarios, with recourse decisions after uncertainty resolves (<a href="/or101.html#ch10">OR 101, Chapter 10</a>)</td></tr>
+            <tr><td><strong>Robust optimization</strong></td><td>Optimize for the worst case within an uncertainty set</td></tr>
+            <tr><td><strong>Simulation-based evaluation</strong></td><td>Test a method in a simulated market, such as PODS, rather than on live bookings</td></tr>
+          </tbody>
+        </table>
+
+        <p><hr/></p>
+
+        <!-- ── CH 03 ── -->
+        <h3 id="ch03">Chapter 03: Schedule Design &amp; Fleeting</h3>
+
+        <h4>The foundation</h4>
+
+        <p>The modern literature starts with the <strong>Fleet Assignment Model</strong> of Hane, Barnhart, Johnson, Marsten, Nemhauser and Sigismondi (1995), the time-space multicommodity flow model in <a href="/or101.html#ch05">OR 101, Chapter 05</a>. Its limitation is the one NP and RM people always point out: it values each leg independently. The <strong>Itinerary-Based Fleet Assignment Model</strong> (IFAM) of Barnhart, Kniker and Lohatepanont (2002) fixed that by adding passenger flow variables per itinerary, with spill and recapture, so the model sees network revenue. Lohatepanont and Barnhart (2004) then went one step further and let the model also decide which optional flights to operate, integrating schedule design and fleet assignment.</p>
+
+        <h4>The integration line</h4>
+
+        <p>Most of the research since has pushed integration further along the planning sequence. Cordeau, Stojković, Soumis and Desrosiers (2001) used Benders decomposition to solve aircraft routing and crew pairing together. Papadakos (2009) integrated fleet assignment, maintenance routing and crew pairing. Each step up in integration improves the combined plan in the experiments, at the price of much larger and harder models. Surveys such as Sherali, Bish and Zhu (2006) for fleet assignment are the best entry point.</p>
+
+        <h4>Where it is now</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Direction</th><th>The question</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Choice-based schedule design</strong></td><td>Replace fixed demand per itinerary with a passenger choice model, so the schedule accounts for competitors and for how departure times shift demand</td></tr>
+            <tr><td><strong>RM-aware fleeting</strong></td><td>Fleeting models assume a simple spill model, but RM changes who gets spilled. How much does that matter, and can it be modelled cheaply?</td></tr>
+            <tr><td><strong>Late re-fleeting</strong></td><td>Swapping aircraft types close to departure as demand becomes clearer ("demand-driven dispatch")</td></tr>
+            <tr><td><strong>Robust and sustainable schedules</strong></td><td>Planning with delay propagation, emissions, and slot constraints in the objective</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">When you read a planning paper</div>
+          Check which demand model sits inside it. "Fixed demand per leg", "fixed demand per itinerary with recapture rates" and "choice model" are three very different levels of realism, and a result obtained with the first may not survive the third.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 04 ── -->
+        <h3 id="ch04">Chapter 04: Crew Scheduling</h3>
+
+        <h4>The foundation</h4>
+
+        <p>Crew pairing is the textbook success of airline OR. American Airlines' TRIP system (Anbil et al., 1991) reported savings of over $20 million a year. Branch-and-price, with pairings generated by resource-constrained shortest paths, became the standard exact approach in the 1990s. Rostering followed the same path; Gamache, Soumis, Villeneuve, Desrosiers and Gélinas (1998) described the preferential bidding system built for Air Canada, and Kohl and Karisch (2004) wrote the standard overview of rostering problem types.</p>
+
+        <h4>Scaling up</h4>
+
+        <p>The practical challenge is size: a monthly problem at a large airline can have tens of thousands of flights. A key contribution from GERAD is <strong>dynamic constraint aggregation</strong> (Elhallaoui, Villeneuve, Soumis and Desaulniers, 2005). Flights that are likely to be flown consecutively by the same crew are grouped into clusters, and the master problem only has one constraint per cluster. Clusters are split when the duals show it would help. The master shrinks dramatically, and the method underpins much of the later work, including the integrated pairing and crew assignment model of Saddoune, Desaulniers, Elhallaoui and Soumis (2012).</p>
+
+        <h4>Where it is now</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Direction</th><th>The question</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Integrated pairing and rostering</strong></td><td>Build pairings that will produce good personal rosters, instead of optimizing pairing cost alone</td></tr>
+            <tr><td><strong>Machine learning to guide the solver</strong></td><td>Predict which flights will be connected, and use that to initialize or restrict the optimization (see below)</td></tr>
+            <tr><td><strong>Robust crew schedules</strong></td><td>Penalize aircraft changes during short connections, and keep crews with their aircraft to limit delay propagation</td></tr>
+            <tr><td><strong>Fairness and quality of life</strong></td><td>Multi-objective models that balance cost with equitable workload and crew preferences</td></tr>
+          </tbody>
+        </table>
+
+        <div class="example">
+          <div class="example-label">A paper worth reading: ML inside crew pairing</div>
+          Yaakoubi, Soumis and Lacoste-Julien (2020) trained a neural network to predict which flight follows which in a crew's schedule, and used those predictions as the initial clusters of dynamic constraint aggregation in a commercial GENCOL solver. On monthly problems of up to 50,000 flights, they report solution costs 6.8% to 8.5% lower than with the standard initial clusters. They also note that machine learning alone cannot solve a problem that size. It is a good template for the field: the learning guides the optimization, and the optimization guarantees legality.
+        </div>
+
+        <p>For a structured overview, Kasirzadeh, Saddoune and Soumis (2017) survey crew scheduling models and algorithms and describe publicly available data sets, which is a rarity in this field.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 05 ── -->
+        <h3 id="ch05">Chapter 05: Robustness &amp; Recovery</h3>
+
+        <h4>Planning for disruption</h4>
+
+        <p>A landmark in robust planning is Lan, Clarke and Barnhart (2006). They chose aircraft routings to minimize the expected delay that propagates from one flight to the next, and slightly retimed departures to reduce passenger misconnections. The broader idea, that a plan should be judged by how it performs in a disrupted operation rather than by its planned cost, is now mainstream. The usual evaluation tool is an operations simulator that replays historical delays.</p>
+
+        <h4>Recovering from disruption</h4>
+
+        <p>Clausen, Larsen, Larsen and Rezanova (2010) is the standard review of disruption management models for aircraft, crew and passengers. The field then moved towards integration. Petersen, Sölveling, Clarke, Johnson and Shebalov (2012) combined schedule, aircraft, crew and passenger recovery in one optimization approach. Later work has put passengers at the centre of the objective, for example passenger-centric integrated schedule and aircraft recovery (<em>Transportation Science</em>, 2022).</p>
+
+        <h4>Where it is now</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Direction</th><th>The question</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Speed</strong></td><td>Good solutions in minutes for large disruptions, via decomposition, heuristics and warm starts from the plan</td></tr>
+            <tr><td><strong>Prediction</strong></td><td>Use ML to forecast delays, cancellations and crew availability early enough to act on them</td></tr>
+            <tr><td><strong>Passenger value</strong></td><td>Recovery objectives that include rebooking cost, compensation rules (EU261, APPR) and loyalty value</td></tr>
+            <tr><td><strong>Planning–recovery link</strong></td><td>Plans built knowing how the recovery system will repair them</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">When you read a recovery paper</div>
+          Look at the disruption scenarios. A method tested on a single aircraft breakdown says little about a hub-wide snowstorm, and vice versa. Also check run time against the decision window: a recovery model is only useful if it answers before the controller has to decide.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 06 ── -->
+        <h3 id="ch06">Chapter 06: RM: From Classes to Choice</h3>
+
+        <p>The RM literature is the largest in airline OR, and its history is a steady relaxation of the independent-demand assumption behind Littlewood and EMSR (<a href="/rm101.html#ch03">RM 101, Chapter 03</a>).</p>
+
+        <h4>Network control</h4>
+
+        <p>The deterministic LP (DLP) and its bid prices (<a href="/or101.html#ch11">OR 101, Chapter 11</a>) became the practical standard for network RM in the 1990s. Research since has tried to get closer to the exact but intractable network dynamic program. Adelman (2007) used approximate dynamic programming to compute bid prices that change over time. Topaloglu (2009) used Lagrangian relaxation to decompose the network problem into single-leg problems with capacity-dependent bid prices. Both kinds of approach give better revenue than the DLP in experiments, at higher computational cost.</p>
+
+        <h4>The choice revolution</h4>
+
+        <p>The turning point was Talluri and van Ryzin (2004), who solved single-leg RM under a general discrete choice model. Customers no longer ask for a class; they choose among whatever is offered, so the decision becomes which <em>set</em> of fares to offer. The network version, the <strong>choice-based deterministic LP</strong> (CDLP), was introduced by Gallego, Iyengar, Phillips and Dubey (2004) and analyzed by Liu and van Ryzin (2008). It optimizes how long to offer each set of products. Strauss, Klein and Steinhardt (2018) review this whole line of work.</p>
+
+        <div class="formula">
+          <div class="formula-label">Choice-based deterministic LP (CDLP)</div>
+          \[\max_{t(S) \ge 0}\; \sum_{S} \lambda\, R(S)\, t(S) \quad \text{s.t.} \quad \sum_{S} \lambda\, Q_l(S)\, t(S) \le C_l \;\; \forall l, \qquad \sum_S t(S) \le T\]
+          <div class="note">\(S\) is an offer set, \(t(S)\) how long it is offered, \(\lambda\) the arrival rate, \(R(S)\) expected revenue per arrival when offering \(S\), and \(Q_l(S)\) expected capacity used on leg \(l\). The number of offer sets is exponential, so CDLP is solved by column generation.</div>
+        </div>
+
+        <h4>Making it work in legacy systems</h4>
+
+        <p>Airline RM systems still control fare classes, so a practical question was how to bring choice into class-based optimizers. The answer that spread through the industry is <strong>fare adjustment</strong> (also called marginal revenue transformation), formalized by Fiig, Isler, Hopperstad and Belobaba (2010). It transforms fares and demand so that a standard EMSR or DLP optimizer behaves correctly when customers buy down. This is the method behind the <a href="/buydown.html">buy-down simulator</a>, and it is the reference point for most later work on dependent demand.</p>
+
+        <div class="callout">
+          <div class="callout-label">When you read an RM paper</div>
+          Identify the demand model first: independent, buy-down (a simple dependency), MNL, nested logit, or non-parametric. Then check how it was estimated. Many papers assume the choice model is known; in practice, estimating it from censored airline data is at least as hard as optimizing with it.
+        </div>
+
+        <p>For a broader recent overview, Klein, Koch, Steinhardt and Strauss (2020) review RM research and its industrial applications across industries, with airlines as the main reference case.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 07 ── -->
+        <h3 id="ch07">Chapter 07: RM: Pricing, Offers &amp; Simulation</h3>
+
+        <h4>Simulation: PODS</h4>
+
+        <p>Airlines cannot run controlled experiments on their whole RM system (see <a href="/impact101.html#ch06">Impact 101, Chapter 06</a>). They also compete, so a method's value depends on what the other airlines do. Much of the applied RM research is therefore done in simulation, and one simulator dominates. Craig Hopperstad began developing PODS, the Passenger Origin-Destination Simulator, at Boeing in 1994. The aim was to stop validating RM methods with simulations that made exactly the same assumptions as the methods being tested. Boeing partnered with MIT and Peter Belobaba in 1995, and the MIT/PODS consortium of airlines was formed in 1999. PODS simulates competing airlines, each with its own RM system, and passengers who choose among their offers. When an AGIFORS talk or MIT thesis reports that a method "gains 1.5% in PODS", this is the setting.</p>
+
+        <h4>From fare classes to dynamic pricing</h4>
+
+        <p>A decade of NDC and offer-management work (<a href="/commercial101.html#ch04">Commercial 101, Chapter 04</a>) has turned pricing into an active research area. Wittman and Belobaba (2019) gave the field a shared vocabulary for "dynamic pricing", distinguishing mechanisms such as dynamic price adjustment, continuous pricing and fully dynamic offer generation. Much of the follow-up work in PODS studies <strong>continuous pricing</strong>, where the price is no longer restricted to filed class levels.</p>
+
+        <div class="example">
+          <div class="example-label">A result worth remembering: competitive effects</div>
+          A PODS study of segmented continuous pricing, published in the <em>Journal of Revenue and Pricing Management</em>, found that one airline adopting it alone could gain around 17% in revenue in their simulated network. When competitors responded, the first mover lost that benefit entirely and instead saw a revenue loss of about 17%. The authors attribute most of the initial advantage to unrestricted continuous fare quotes rather than to better price granularity. The lesson for readers: always ask what the competitors in a simulation are assumed to do.
+        </div>
+
+        <h4>Ancillaries, offers and reinforcement learning</h4>
+
+        <p>Ancillary pricing has moved from fixed fees to data-driven, context-dependent prices. An early widely cited example is <em>Dynamic Pricing for Airline Ancillaries with Customer Context</em> (KDD 2019). The <em>Journal of Revenue and Pricing Management</em> published a review of offer management and ancillary pricing research in 2025, a good starting point for this growing area.</p>
+
+        <p>Reinforcement learning is the newest strand. Bondoux, Nguyen, Fiig and Acuna-Agost (2020) applied deep RL to airline RM in simulation, and a growing number of papers since then have tested RL for seat inventory control and continuous pricing. On the industry side, vendors have started to market "classless" RM engines. In October 2025 Sabre announced an AI-driven continuous revenue optimizer, with Riyadh Air as its first airline. Vendor claims like its "up to 3.5%" uplift should be read with Chapter 09 in mind.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 08 ── -->
+        <h3 id="ch08">Chapter 08: Machine Learning Meets OR</h3>
+
+        <p>Machine learning now appears in almost every AGIFORS study group. The papers fall into a few recognizable patterns, and each has its own questions to ask.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Pattern</th><th>Example</th><th>Question to ask</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Better inputs</strong></td><td>Deep learning forecasts of demand, no-shows, block times, delays</td><td>Is the improvement measured in forecast error, or in the decisions and revenue that use the forecast?</td></tr>
+            <tr><td><strong>Predict, then optimize</strong></td><td>A forecast feeds a classical optimizer</td><td>Does the forecast error matter where the optimizer is sensitive?</td></tr>
+            <tr><td><strong>Learning to optimize</strong></td><td>ML proposes clusters, columns, branching decisions or warm starts for a solver</td><td>Does it generalize to next season's schedule, or only to instances like the training set?</td></tr>
+            <tr><td><strong>End-to-end policies</strong></td><td>RL learns pricing or inventory control directly</td><td>Was it trained and tested in the same simulator? How does it compare with a well-tuned classical method?</td></tr>
+          </tbody>
+        </table>
+
+        <p>The most convincing papers so far combine the two worlds: the learning component handles what is hard to model, and the optimization component enforces constraints and provides a benchmark. The weakest ones replace a strong classical method with a neural network and compare it against a weak baseline.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 09 ── -->
+        <h3 id="ch09">Chapter 09: Judging a Result</h3>
+
+        <p>Airline OR results are notoriously hard to compare. Data are proprietary, instances are rarely shared, and the same method can gain 5% in one paper and nothing in another. A few questions separate strong evidence from weak.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Question</th><th>Why it matters</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Compared to what?</strong></td><td>A 3% gain over first come, first served is meaningless; a 0.5% gain over a well-tuned current method can be worth millions</td></tr>
+            <tr><td><strong>In what world?</strong></td><td>Simulation, historical replay, or live operation. Each level is more convincing and less common than the one before</td></tr>
+            <tr><td><strong>Whose assumptions?</strong></td><td>If the simulator generates demand from the same model the method assumes, the method will look good. That was the reason PODS was created</td></tr>
+            <tr><td><strong>Which competitors?</strong></td><td>In RM, gains often shrink or reverse when competitors adopt the same method (Chapter 07)</td></tr>
+            <tr><td><strong>How big, how fast?</strong></td><td>Instance size (flights, days, crew bases) and run time. A method that solves a 1,000-flight week may not solve a 50,000-flight month</td></tr>
+            <tr><td><strong>Exact or heuristic?</strong></td><td>Is there an optimality gap or lower bound? Without one, "better than the previous heuristic" is the only claim</td></tr>
+            <tr><td><strong>Measured how?</strong></td><td>Live results should come from a controlled comparison, not a before-and-after chart (<a href="/impact101.html">Impact 101</a>)</td></tr>
+            <tr><td><strong>Who wrote it?</strong></td><td>Vendor and airline results are valuable but rarely independently replicated</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">Typical magnitudes</div>
+          Mature areas rarely produce large improvements. In RM, a new method is usually a success if it adds a percent or two over a good current method in simulation. In crew and fleet planning, cost improvements of a few percent on large instances are significant. Headline numbers much larger than that usually come from a weak baseline, a favourable simulation, or a problem that was previously not optimized at all. Any of those can be legitimate, but it should be stated.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 10 ── -->
+        <h3 id="ch10">Chapter 10: A Reading Plan</h3>
+
+        <h4>Books</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Book</th><th>Use it for</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Belobaba, Odoni and Barnhart (eds.), <em>The Global Airline Industry</em>, 2nd ed., Wiley, 2015</td><td>The whole airline business, with chapters on planning, RM and operations. Start here</td></tr>
+            <tr><td>Talluri and van Ryzin, <em>The Theory and Practice of Revenue Management</em>, Springer, 2004</td><td>The reference for RM theory up to choice-based RM</td></tr>
+            <tr><td>Gallego and Topaloglu, <em>Revenue Management and Pricing Analytics</em>, Springer, 2019</td><td>A more recent, pricing-oriented treatment</td></tr>
+            <tr><td>Barnhart and Smith (eds.), <em>Quantitative Problem Solving Methods in the Airline Industry</em>, Springer, 2012</td><td>One chapter per planning and operations problem, written by leading researchers</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Surveys by topic</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Topic</th><th>Start with</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Overview</td><td>Barnhart, Belobaba and Odoni, "Applications of operations research in the air transport industry", <em>Transportation Science</em>, 2003</td></tr>
+            <tr><td>Fleet assignment</td><td>Sherali, Bish and Zhu, "Airline fleet assignment concepts, models, and algorithms", <em>EJOR</em>, 2006</td></tr>
+            <tr><td>Crew scheduling</td><td>Kasirzadeh, Saddoune and Soumis, "Airline crew scheduling: models, algorithms, and data sets", <em>EURO J. on Transportation and Logistics</em>, 2017</td></tr>
+            <tr><td>Rostering</td><td>Kohl and Karisch, "Airline crew rostering: problem types, modeling, and optimization", <em>Annals of OR</em>, 2004</td></tr>
+            <tr><td>Disruption management</td><td>Clausen, Larsen, Larsen and Rezanova, "Disruption management in the airline industry", <em>Computers &amp; OR</em>, 2010</td></tr>
+            <tr><td>Choice-based RM</td><td>Strauss, Klein and Steinhardt, "A review of choice-based revenue management", <em>EJOR</em>, 2018</td></tr>
+            <tr><td>RM in industry</td><td>Klein, Koch, Steinhardt and Strauss, "A review of revenue management", <em>EJOR</em>, 2020</td></tr>
+            <tr><td>Dynamic pricing</td><td>Wittman and Belobaba, "Dynamic pricing mechanisms for the airline industry", <em>JRPM</em>, 2019</td></tr>
+          </tbody>
+        </table>
+
+        <h4>A suggested path</h4>
+
+        <p>If you have a few weeks, read in this order: the Barnhart–Belobaba–Odoni overview for the map; then the survey for the area you care about most; then the two or three landmark papers it cites most, from this page. Only then start on recent AGIFORS material. At that point you will know which parts of a new talk are genuinely new and which repackage ideas from ten years ago, and you will know which questions from Chapter 09 to ask.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 11 ── -->
+        <h3 id="ch11">Chapter 11: Open Problems</h3>
+
+        <p>Several questions come up in almost every part of the field, and they are where much of the next decade's research will go.</p>
+
+        <h4>Integration without intractability</h4>
+
+        <p>Every step of the planning sequence has been integrated with its neighbours in some paper, but full integration at airline scale remains out of reach. The open question is which links matter most, and how to capture them cheaply.</p>
+
+        <h4>Demand that reacts</h4>
+
+        <p>Planning models, RM models and recovery models each use a different, simplified view of passengers. Consistent choice-based demand across planning and RM, estimated from data that is censored by the airline's own controls, is still largely unsolved.</p>
+
+        <h4>Competition</h4>
+
+        <p>Most optimization treats competitors as part of the environment. Pricing research increasingly shows that results depend on how competitors respond, and game-theoretic and multi-agent approaches are still early.</p>
+
+        <h4>Offers and orders</h4>
+
+        <p>If the airline builds every offer in real time, RM, pricing and merchandising become one problem over bundles, customers and channels. Its models, data and evaluation methods are only starting to take shape.</p>
+
+        <h4>Trust in learned methods</h4>
+
+        <p>For ML-based methods to be deployed in safety- and regulation-heavy areas like crew and operations, they need guarantees: legality, stability, explainability. Hybrid methods that keep an exact optimizer in the loop are the current answer.</p>
+
+        <h4>Benchmarks</h4>
+
+        <p>Airline OR has few public data sets, which makes results hard to compare and replicate. Shared benchmark instances and open simulators would help the field as much as any new algorithm.</p>
+
+        <p>Anyway, that's the map. If you are reading something from AGIFORS and want to talk it through, feel free to reach out. I find this stuff genuinely fascinating, and I'm always happy to talk about it.</p>
+
+        <p><hr/></p>
+
+        <h4>Papers and sources mentioned</h4>
+
+        <p><small>
+          <strong>Community.</strong> <a href="https://www.agifors.org/">AGIFORS</a>; <a href="https://podsresearch.com/history.html">PODS Research, The history of PODS</a>; <a href="https://investors.sabre.com/news-releases/news-release-details/sabre-shatters-industry-norms-first-ai-native-classless-revenue">Sabre press release, October 2025</a>.<br>
+          <strong>Planning.</strong> Hane et al., <a href="https://link.springer.com/article/10.1007/BF01585938">"The fleet assignment problem: Solving a large-scale integer program"</a>, <em>Math. Programming</em> 70, 1995. Barnhart, Kniker and Lohatepanont, "Itinerary-based airline fleet assignment", <em>Transportation Science</em> 36(2), 2002. Lohatepanont and Barnhart, "Airline schedule planning: Integrated models and algorithms for schedule design and fleet assignment", <em>Transportation Science</em> 38(1), 2004. Cordeau et al., "Benders decomposition for simultaneous aircraft routing and crew scheduling", <em>Transportation Science</em> 35(4), 2001. Papadakos, "Integrated airline scheduling", <em>Computers &amp; OR</em> 36(1), 2009.<br>
+          <strong>Crew.</strong> Anbil et al., <a href="https://pubsonline.informs.org/doi/10.1287/inte.21.1.62">"Recent advances in crew-pairing optimization at American Airlines"</a>, <em>Interfaces</em> 21(1), 1991. Gamache et al., <a href="https://pubsonline.informs.org/doi/10.1287/trsc.32.3.246">"The preferential bidding system at Air Canada"</a>, <em>Transportation Science</em> 32(3), 1998. Kohl and Karisch, <a href="https://link.springer.com/article/10.1023/B:ANOR.0000019091.54417.ca">"Airline crew rostering"</a>, <em>Annals of OR</em> 127, 2004. Elhallaoui et al., "Dynamic aggregation of set-partitioning constraints in column generation", <em>Operations Research</em> 53(4), 2005. Saddoune et al., <a href="https://ideas.repec.org/a/inm/ortrsc/v46y2012i1p39-55.html">"Integrated airline crew pairing and crew assignment by dynamic constraint aggregation"</a>, <em>Transportation Science</em> 46(1), 2012. Kasirzadeh et al., <a href="https://link.springer.com/article/10.1007/s13676-015-0080-x">"Airline crew scheduling: models, algorithms, and data sets"</a>, 2017. Yaakoubi et al., <a href="https://www.sciencedirect.com/science/article/pii/S2192437620300236">"Machine learning in airline crew pairing to construct initial clusters for dynamic constraint aggregation"</a>, <em>EURO J. on Transportation and Logistics</em> 9(4), 2020.<br>
+          <strong>Operations.</strong> Lan, Clarke and Barnhart, <a href="https://pubsonline.informs.org/doi/10.1287/trsc.1050.0134">"Planning for robust airline operations"</a>, <em>Transportation Science</em> 40(1), 2006. Clausen et al., "Disruption management in the airline industry: Concepts, models and methods", <em>Computers &amp; OR</em> 37(5), 2010. Petersen et al., <a href="https://pubsonline.informs.org/doi/10.1287/trsc.1120.0414">"An optimization approach to airline integrated recovery"</a>, <em>Transportation Science</em> 46(4), 2012. <a href="https://doi.org/10.1287/trsc.2022.1174">"Passenger-centric integrated airline schedule and aircraft recovery"</a>, <em>Transportation Science</em>, 2022.<br>
+          <strong>RM and pricing.</strong> Talluri and van Ryzin, "Revenue management under a general discrete choice model of consumer behavior", <em>Management Science</em> 50(1), 2004. Liu and van Ryzin, "On the choice-based linear programming model for network revenue management", <em>M&amp;SOM</em> 10(2), 2008. Adelman, "Dynamic bid prices in revenue management", <em>Operations Research</em> 55(4), 2007. Topaloglu, "Using Lagrangian relaxation to compute capacity-dependent bid prices in network revenue management", <em>Operations Research</em> 57(3), 2009. Fiig et al., <a href="https://link.springer.com/article/10.1057/rpm.2009.18">"Optimization of mixed fare structures: Theory and applications"</a>, <em>JRPM</em> 9, 2010. Strauss, Klein and Steinhardt, "A review of choice-based revenue management: Theory and methods", <em>EJOR</em> 271(2), 2018. Klein et al., <a href="https://www.sciencedirect.com/science/article/abs/pii/S0377221719305272">"A review of revenue management: Recent generalizations and advances in industry applications"</a>, <em>EJOR</em> 284(2), 2020. Wittman and Belobaba, <a href="https://link.springer.com/article/10.1057/s41272-018-00162-6">"Dynamic pricing mechanisms for the airline industry: a definitional framework"</a>, <em>JRPM</em> 18, 2019. Bondoux et al., <a href="https://link.springer.com/article/10.1057/s41272-020-00228-4">"Reinforcement learning applied to airline revenue management"</a>, <em>JRPM</em> 19, 2020. <a href="https://link.springer.com/article/10.1057/s41272-023-00462-6">"Airline revenue management with segmented continuous pricing: methods and competitive effects"</a>, <em>JRPM</em>. <a href="https://dl.acm.org/doi/abs/10.1145/3292500.3330746">"Dynamic pricing for airline ancillaries with customer context"</a>, KDD 2019. <a href="https://link.springer.com/article/10.1057/s41272-025-00526-9">"Emerging research on airline ancillaries: a review of offer management and dynamic pricing literature"</a>, <em>JRPM</em>, 2025.<br>
+          <strong>Overview.</strong> Barnhart, Belobaba and Odoni, "Applications of operations research in the air transport industry", <em>Transportation Science</em> 37(4), 2003.
+        </small></p>
+
+      </section>
+
+      <footer>
+      </footer>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+      // ── Active sidebar highlight on scroll ──
+      const chapters = document.querySelectorAll('h3[id]');
+      const navLinks = document.querySelectorAll('#toc a');
+
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
+            if (link) link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-15% 0px -75% 0px' });
+
+      chapters.forEach(ch => obs.observe(ch));
+    </script>
+  </body>
+</html>

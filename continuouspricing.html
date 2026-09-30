@@ -1,0 +1,1151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Continuous pricing simulator</title>
+    <meta name="description" content="A continuous pricing simulator: a ladder of fare classes controlled with EMSR-b against prices set at any amount, on thousands of simulated departures, and where the extra revenue comes from.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same layout as buydown.html / bookinglimits.html, under the shared airline tools bar:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* Policies: the class ladder keeps the EMSR-b colour of bookinglimits.html / buydown.html */
+        --p-class: #2a7fb5;
+        --p-cont: #3a8f5c;
+        --neg: #c8551f;
+      }
+
+      .content {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+      .err { color: #9a3b0b; font-size: 13px; }
+
+      /* ── Pill switcher (same as bookinglimits / buydown) ── */
+      .views {
+        display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff;
+        flex-wrap: wrap; gap: 2px;
+      }
+      .views button {
+        border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text);
+        padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .views.small button { font-size: 12.5px; padding: 4px 11px; }
+
+      /* ── Layout: inputs rail + results ── */
+      .stage {
+        display: grid;
+        grid-template-columns: 290px minmax(0, 1fr);
+        gap: 26px;
+        align-items: start;
+        margin-top: 22px;
+      }
+      .inputs {
+        border: 1px solid var(--line); border-radius: 8px; background: #fff;
+        padding: 14px 16px 16px;
+        position: sticky; top: 78px;              /* below the 64px airline tools bar */
+      }
+      .inputs h3 { margin: 18px 0 10px; font-size: 13px; color: var(--ink); font-weight: 600; }
+      .inputs h3:first-child { margin-top: 0; }
+      .slider { margin: 0 0 16px; }
+      .slider .row, .field .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 12.5px; }
+      .slider label, .field .lbl { color: var(--ink); font-weight: 500; }
+      .slider output { color: var(--ink); font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+      .slider input[type=range] { width: 100%; margin: 8px 0 2px; accent-color: #222; cursor: pointer; }
+      .slider .ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+      .field { margin: 0 0 14px; }
+      .field .views { margin-top: 6px; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 4px 0 0; }
+      .fares { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 4px; }
+      .fares span { border: 1px solid var(--line); border-top: 3px solid var(--p-class); border-radius: 6px; padding: 2px 6px 1px; font-size: 11.5px; color: var(--ink); font-variant-numeric: tabular-nums; }
+      .fares.dense span { padding: 1px 4px 0; font-size: 10.5px; border-top-width: 2px; }
+      .check { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--ink); font-weight: 500; cursor: pointer; }
+      .check input { margin: 2px 0 0; accent-color: #222; }
+      .btn {
+        font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff;
+        border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink);
+      }
+      .btn:hover { border-color: #cfcfcf; }
+      .busy { font-size: 11.5px; color: var(--muted); margin-left: 8px; visibility: hidden; }
+      .busy.on { visibility: visible; }
+
+      /* ── Result tiles ── */
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin: 0 0 18px;
+      }
+      .tile {
+        border: 1px solid var(--line); border-radius: 8px; background: #fff;
+        padding: 12px 14px; color: var(--text);
+      }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .tile b.pair { font-size: 20px; }
+      .tile b .a { color: var(--p-class); }
+      .tile b .c { color: var(--p-cont); }
+      .tile b .arrow { color: #b5b5b5; font-weight: 400; padding: 0 2px; }
+      .tile span { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+
+      .block { margin: 0 0 30px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h3 { margin: 0; font-size: 16px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .lead { margin: 0 0 10px; font-size: 13px; max-width: 760px; }
+      .rm-link { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+      .run-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 10px; font-size: 12px; color: var(--muted); }
+
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+      .chart svg text { font-family: inherit; }
+      .chart .wait { font-size: 12.5px; color: var(--muted); padding: 40px 12px; text-align: center; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .legend i.dot { width: 8px; height: 8px; border-radius: 50%; }
+      .legend i.ring { width: 8px; height: 8px; border-radius: 50%; background: #fff !important; border: 1.5px solid; }
+
+      .prose { max-width: 780px; font-size: 14px; }
+      .prose p { margin: 0 0 10px; }
+
+      /* ── Tooltip ── */
+      .tip {
+        position: fixed; pointer-events: none; z-index: 20;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45;
+        max-width: 290px; display: none;
+      }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: center; gap: 7px; }
+      .tip .r i { display: inline-block; width: 12px; height: 0; border-top: 2px solid; flex: none; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+      .method .eq { padding-left: 14px; }
+
+      @media (max-width: 980px) {
+        .stage { grid-template-columns: minmax(0, 1fr); }
+        .inputs { position: static; }
+      }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 19px; }
+        .tile b.pair { font-size: 16px; }
+      }
+    </style>
+
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+    </style>
+    <style>
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+    </style>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>13</b> tools · <b>7</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Continuous pricing</h2>
+        <p class="lede">What a ladder of fare classes leaves on the table when a price can be set at any amount.</p>
+        <p>For decades an airline's price could only move in steps: a flight is sold in a handful of fare classes, each filed in advance at a fixed amount, and revenue management decides which of them are open. Continuous pricing lets the price land anywhere, $287 instead of $243 or $332, and it's the main pricing argument behind offer-based distribution (NDC). This page sells the same shoppers on the same flight twice, once through a class ladder controlled with EMSR-b and once with a price set at any amount from the same forecast, over 2,000 simulated departures. It's the hands-on companion to <a href="/rm101.html#ch07">Revenue Management 101, chapter 07</a>.</p>
+        <p class="note-line">All fares, demand figures and customer behaviour on this page are illustrative assumptions, not any airline's data.</p>
+      </div>
+
+      <div class="stage">
+        <aside class="inputs" aria-label="Simulator inputs">
+          <h3>Demand</h3>
+          <div class="slider">
+            <div class="row"><label for="in-dem">Shoppers per seat</label><output id="out-dem" for="in-dem"></output></div>
+            <input id="in-dem" type="range" min="0.8" max="2.6" step="0.05">
+            <p class="hint" id="hint-dem"></p>
+          </div>
+          <div class="slider">
+            <div class="row"><label for="in-rise">Late-booker premium</label><output id="out-rise" for="in-rise"></output></div>
+            <input id="in-rise" type="range" min="1" max="4" step="0.1">
+            <div class="ends"><span>Same as early</span><span>4× early</span></div>
+            <p class="hint" id="hint-rise"></p>
+          </div>
+
+          <h3>Class ladder</h3>
+          <div class="field">
+            <div class="row"><span class="lbl" id="lbl-n">Fare classes</span></div>
+            <div class="views small" id="in-n" role="group" aria-labelledby="lbl-n">
+              <button data-v="6">6</button><button data-v="10">10</button><button data-v="26">26</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="row"><span class="lbl" id="lbl-sp">Spacing</span></div>
+            <div class="views small" id="in-sp" role="group" aria-labelledby="lbl-sp">
+              <button data-v="pct">Equal % steps</button><button data-v="dollar">Equal $ steps</button>
+            </div>
+          </div>
+          <div class="slider">
+            <div class="row"><label for="in-lo">Lowest fare</label><output id="out-lo" for="in-lo"></output></div>
+            <input id="in-lo" type="range" min="60" max="250" step="10">
+          </div>
+          <div class="slider">
+            <div class="row"><label for="in-hi">Highest fare</label><output id="out-hi" for="in-hi"></output></div>
+            <input id="in-hi" type="range" min="400" max="1200" step="20">
+          </div>
+          <div class="fares" id="fares" aria-label="Fares in the ladder"></div>
+
+          <h3>Continuous price</h3>
+          <label class="check"><input type="checkbox" id="in-bound"><span>Keep it between the lowest and highest fare</span></label>
+          <p class="hint">Off: any amount. On: like most airline programmes today, which price between their filed fares.</p>
+
+          <div style="margin-top:16px"><button class="btn" id="reset">Reset the example</button><span class="busy" id="busy">Simulating…</span></div>
+        </aside>
+
+        <div class="results" id="results">
+          <p class="lead" id="loading">Loading the simulator…</p>
+          <div class="tiles" id="tiles"></div>
+
+          <div class="block">
+            <div class="block-head"><h3>One departure, priced two ways</h3><span id="dep-sub"></span></div>
+            <p class="lead" id="dep-lead"></p>
+            <div class="run-row"><button class="btn" id="another">Show another departure</button><span id="dep-stats"></span></div>
+            <div class="chart" id="ch-dep"></div>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h3>Where the extra revenue comes from</h3><span id="wf-sub"></span></div>
+            <p class="lead" id="wf-lead"></p>
+            <div class="chart" id="ch-wf"></div>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h3>The gain against the number of fare classes</h3><span id="sw-sub"></span></div>
+            <p class="lead" id="sw-lead"></p>
+            <div class="chart" id="ch-sw"></div>
+            <p class="rm-link">How EMSR-b sets booking limits: the <a href="/bookinglimits.html">booking limits</a> page and <a href="/rm101.html#ch03">RM 101, chapter 03</a>. Why the ladder here uses fare adjustment: the <a href="/buydown.html">buy-down</a> page.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+      <div class="method" id="how">
+        <h3>How it works</h3>
+
+        <h4>Shoppers</h4>
+        <p>The flight has <span id="how-seats">150</span> economy seats and a 180-day booking period. Each departure gets a number of shoppers drawn from a Poisson distribution whose mean is <var>shoppers per seat</var> × <var>seats</var>, scaled for each departure by a gamma factor with a 25% coefficient of variation so that some departures are much busier than others. Shoppers arrive at a rate proportional to exp(−<var>t</var> / 55), <var>t</var> being days before departure, so about 40% of them come in the last 30 days.</p>
+        <p>Each shopper has a willingness to pay (WTP), drawn from a lognormal distribution with a spread <var>σ</var> = 0.5 and a median that climbs as departure nears:</p>
+        <p class="eq"><var>m</var>(<var>t</var>) = $160 × <var>r</var><sup>((180 − <var>t</var>) / 180)³</sup>,</p>
+        <p>where <var>r</var> is the late-booker premium. The median stays close to $160 for the first months and rises quickly in the last weeks, as business travellers book. <span id="how-wtp"></span> A shopper buys if the price on offer is at or below their WTP, and walks away otherwise. There are no fences and no competitor: every shopper sees the lowest fare open, or the one continuous price.</p>
+
+        <h4>Class ladder, controlled with EMSR-b</h4>
+        <p>The ladder has 6, 10 or 26 fares between the lowest and the highest fare, with equal percentage steps (geometric) or equal dollar steps. At each of the 10 data collection points (DCPs: 180, 120, 90, 60, 45, 30, 21, 14, 7 and 3 days out), EMSR-b (Belobaba, 1992) sets nested protection levels on the seats left, from the forecast of demand still to come. Between two DCPs, a class closes when it has sold its booking limit, so the lowest open fare steps up as the flight fills.</p>
+        <p>Because shoppers buy the cheapest fare they see, class demand isn't independent, so EMSR-b runs on fare-adjusted inputs (Fiig, Isler, Hopperstad and Belobaba, 2010). If class <var>j</var> is the lowest one open in a period, the forecast sells <var>Q</var><sub>j</sub> = <var>λ</var> · <var>S</var>(<var>f</var><sub>j</sub>) seats, <var>λ</var> being the shoppers expected in that period and <var>S</var>(<var>f</var>) the share willing to pay at least <var>f</var>, and earns <var>R</var><sub>j</sub> = <var>f</var><sub>j</sub><var>Q</var><sub>j</sub>. Each class's adjusted fare is the marginal revenue of opening it, (<var>R</var><sub>j</sub> − <var>R</var><sub>j−1</sub>) / (<var>Q</var><sub>j</sub> − <var>Q</var><sub>j−1</sub>), taken along the upper concave hull of the points (<var>Q</var>, <var>R</var>); classes off the hull or with a negative adjusted fare stay closed. The <a href="/buydown.html">buy-down</a> page shows what happens without this step: the ladder would lose much more, and not because of its price points.</p>
+
+        <h4>Continuous price</h4>
+        <p>The continuous price comes from the same forecast, the same arrival rate and WTP distribution, through a dynamic programme (Gallego and van Ryzin, 1994). With <var>V</var>(<var>t</var>, <var>c</var>) the expected revenue still to come with <var>c</var> seats left, the price is</p>
+        <p class="eq"><var>p</var>*(<var>t</var>, <var>c</var>) = argmax<sub><var>p</var></sub> <var>S</var><sub>t</sub>(<var>p</var>) · (<var>p</var> − Δ<var>V</var>), with Δ<var>V</var> = <var>V</var>(<var>t</var>, <var>c</var>) − <var>V</var>(<var>t</var>, <var>c</var> − 1),</p>
+        <p>the price that maximises what a sale brings minus the value of the seat it uses up (Δ<var>V</var> is the seat's bid price). <var>V</var> is solved backwards from departure on a time grid fine enough for at most one shopper per step. The price is rounded to the dollar and recomputed every six hours and after every sale, so it moves with the seats left as the ladder's open class does between DCPs, but without steps. The forecast never changes during the booking period here, so re-optimising at each DCP gives the same prices. <span id="how-bound"></span></p>
+
+        <h4>The simulation and the charts</h4>
+        <p>2,000 departures are generated from a fixed random seed, and both policies see exactly the same shoppers, so the gain is measured shopper by shopper rather than between two samples. Revenue, load factor and average fare are averages per departure. In the breakdown, a shopper who bought under both policies counts for the difference in price; one who bought under only one of them counts for the whole fare, split by what the other policy did at that moment (a price above their WTP, or nothing on sale). The dashed line in the last chart reruns the same dynamic programme with the price limited to the ladder's fares: the gap between it and continuous pricing is the value of the price points alone, and the gap between it and EMSR-b comes from how the ladder is controlled. <span id="how-sweep"></span></p>
+
+        <h4>Continuous and offer-based pricing in the industry</h4>
+        <p><b>The class ladder.</b> A published airline fare is filed in advance, through ATPCO for most carriers, and sold in a booking class, one of up to 26 letters on each cabin. Revenue management doesn't set prices; it opens and closes classes. A GDS or an agency can price a ticket on its own because every possible price is already on file, which is also why the price can only move in steps (<a href="/commercial101.html#ch02">Commercial 101, chapter 02</a>).</p>
+        <p><b>Continuous pricing.</b> The airline's own system computes the price at the time of the request and can land between the filed levels. Lufthansa Group launched it in October 2020 on most European routes of Lufthansa, SWISS and Austrian, sold on its own websites and through NDC connections but not through GDSs using the old EDIFACT messages, and said the prices are based on market factors such as season, day of travel and time before departure, not on personal data (<a href="https://www.businesstravelnews.com/Distribution/Lufthansa-Launches-NDC-Continuous-Pricing" target="_blank" rel="noopener">Business Travel News, 27 Oct 2020</a>). The group's guideline for agencies describes a price derived from its filed fares and booking classes, never higher than the standard fare for the same itinerary and valid only on the day it's offered (<a href="https://business.lufthansagroup.com/content/dam/b2b/experts/files/LHG_ContinuousPricing_Guideline.pdf" target="_blank" rel="noopener">Lufthansa Group, Continuous Pricing Logic</a>). Singapore Airlines began a trial on 31 January 2023 on its website and app, "resulting in a smoother transition from one price point to another", with NDC partners to follow (<a href="https://agent360.singaporeair.com/en_UK/lb/agent-resources/news-updates/policies/singapore-airlines-introduces-continuous-pricing" target="_blank" rel="noopener">Singapore Airlines</a>). United also prices this way in its direct and NDC channels, while American's NDC prices at the time still came from its filed fares (<a href="https://www.businesstravelnews.com/Procurement/Airline-Continuous-Pricing-Explained" target="_blank" rel="noopener">Business Travel News, 9 Oct 2023</a>).</p>
+        <p><b>Offers and orders.</b> NDC, the XML/API standard IATA launched with Resolution 787 in 2012, lets an agency ask the airline for a complete, priced offer instead of assembling the price from filed fares (<a href="/commercial101.html#ch04">Commercial 101, chapter 04</a>). IATA's Modern Airline Retailing programme builds on it: "Dynamic Offers" combine continuous pricing with dynamic bundling, aiming to move "away from static fare filings and booking classes", and ONE Order replaces the PNR and the e-ticket with a single order record (<a href="https://www.iata.org/en/programs/airline-distribution/retailing/dynamic-offers/" target="_blank" rel="noopener">IATA, Dynamic Offers</a>; <a href="https://www.iata.org/en/programs/airline-distribution/retailing/" target="_blank" rel="noopener">IATA, Airline Retailing</a>). ATPCO, which carries the filed fares, reported in 2024 that about a quarter of flight offers were already dynamically generated, with a goal of 80% by 2026 (<a href="https://www.travelweekly.com/Travel-News/Airline-News/ATPCO-dynamic-pricing-initiatives" target="_blank" rel="noopener">Travel Weekly, 12 Apr 2024</a>).</p>
+        <p><b>Words to keep apart.</b> Wittman and Belobaba (2019) separate choosing which fare products to offer (assortment optimisation), moving filed fares up or down (dynamic price adjustment) and setting prices from a continuous range (continuous pricing). None of these requires personalisation. When prices do vary by customer segment, the gains can be larger but depend on how competitors react: in MIT's PODS simulations, one airline using segmented continuous pricing gained up to 17%, mostly at its competitors' expense, and competitors could neutralise much of it (Long and Belobaba, 2024). This page has one airline and no segments, so it measures only the value of the price points and of the control method. More on where this is heading in <a href="/rm101.html#ch07">RM 101, chapter 07</a> (dynamic pricing) and <a href="/rm101.html#ch08">chapter 08</a> (offer and order).</p>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>Gallego, G. and van Ryzin, G. (1994), "Optimal dynamic pricing of inventories with stochastic demand over finite horizons", <a href="https://doi.org/10.1287/mnsc.40.8.999" target="_blank" rel="noopener">Management Science 40(8), 999–1020</a>.</li>
+          <li>Belobaba, P. (1992), "Optimal vs. heuristic methods for nested seat allocation", AGIFORS Reservations and Yield Management Study Group (EMSR-b).</li>
+          <li>Fiig, T., Isler, K., Hopperstad, C. and Belobaba, P. (2010), "Optimization of mixed fare structures: Theory and applications", <a href="https://doi.org/10.1057/rpm.2009.18" target="_blank" rel="noopener">Journal of Revenue and Pricing Management 9(1–2), 152–170</a>.</li>
+          <li>Wittman, M. D. and Belobaba, P. P. (2019), "Dynamic pricing mechanisms for the airline industry: a definitional framework", <a href="https://doi.org/10.1057/s41272-018-00162-6" target="_blank" rel="noopener">Journal of Revenue and Pricing Management 18(2), 100–106</a>.</li>
+          <li>Long, Y. and Belobaba, P. (2024), "Airline revenue management with segmented continuous pricing: methods and competitive effects", <a href="https://doi.org/10.1057/s41272-023-00462-6" target="_blank" rel="noopener">Journal of Revenue and Pricing Management 23(1)</a>.</li>
+          <li>Industry: Business Travel News (<a href="https://www.businesstravelnews.com/Distribution/Lufthansa-Launches-NDC-Continuous-Pricing" target="_blank" rel="noopener">2020</a>, <a href="https://www.businesstravelnews.com/Procurement/Airline-Continuous-Pricing-Explained" target="_blank" rel="noopener">2023</a>), <a href="https://business.lufthansagroup.com/content/dam/b2b/experts/files/LHG_ContinuousPricing_Guideline.pdf" target="_blank" rel="noopener">Lufthansa Group</a>, <a href="https://agent360.singaporeair.com/en_UK/lb/agent-resources/news-updates/policies/singapore-airlines-introduces-continuous-pricing" target="_blank" rel="noopener">Singapore Airlines</a>, <a href="https://www.iata.org/en/programs/airline-distribution/retailing/dynamic-offers/" target="_blank" rel="noopener">IATA</a>, <a href="https://www.travelweekly.com/Travel-News/Airline-News/ATPCO-dynamic-pricing-initiatives" target="_blank" rel="noopener">Travel Weekly on ATPCO</a>.</li>
+          <li>Fares, for scale: the default $130–$620 range is the one on the <a href="/bookinglimits.html">booking limits</a> and <a href="/buydown.html">buy-down</a> pages, invented around the 2025 US average domestic fare of $387 (<a href="https://www.bts.gov/newsroom/2025-annual-average-domestic-air-fare-decreases-2024" target="_blank" rel="noopener">BTS</a>). All other parameters are in <a href="assets/data/continuouspricing.json">continuouspricing.json</a> and are assumptions. Links checked September 2026.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>Both policies are handed the true demand model. In practice the WTP curve is estimated, and a continuous price amplifies estimation errors that a coarse ladder would round away; the gain here is an upper bound for a given model.</li>
+          <li>One flight leg, one cabin, no competitor. A price a few dollars above a competitor's can lose the booking outright, and competitors react, which this page can't show.</li>
+          <li>Shoppers see one price and have no fences, bundles or ancillaries. Real offers mix fare families, bags and seats, which is where dynamic bundling and offer-based retailing go beyond price points.</li>
+          <li>Shoppers are myopic: they don't wait for a lower price or shop again later. Prices that move after every sale can teach customers to watch them.</li>
+          <li>No cancellations, no-shows, overbooking or groups, and the forecast is never updated with the bookings of the departure itself.</li>
+        </ul>
+        <p>More on pricing beyond the fare ladder in <a href="/rm101.html#ch07">Revenue Management 101, chapter 07</a>. This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    // ═════════════════════════════════════════ model (no DOM, no d3)
+    var CPModel = (function () {
+      "use strict";
+
+      function mulberry32(a) {
+        return function () {
+          a |= 0; a = a + 0x6D2B79F5 | 0;
+          var t = Math.imul(a ^ a >>> 15, 1 | a);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      function gauss(rng) {
+        var u, v, w;
+        do { u = rng() * 2 - 1; v = rng() * 2 - 1; w = u * u + v * v; } while (w >= 1 || w === 0);
+        return u * Math.sqrt(-2 * Math.log(w) / w);
+      }
+      function gammaRand(rng, k) {                       // Marsaglia and Tsang, scale 1
+        if (k < 1) return gammaRand(rng, k + 1) * Math.pow(rng(), 1 / k);
+        var d = k - 1 / 3, c = 1 / Math.sqrt(9 * d), x, v, u;
+        for (;;) {
+          do { x = gauss(rng); v = 1 + c * x; } while (v <= 0);
+          v = v * v * v; u = rng();
+          if (u < 1 - 0.0331 * x * x * x * x) return d * v;
+          if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+        }
+      }
+      function poisson(rng, mu) {
+        if (mu < 30) { var L = Math.exp(-mu), k = 0, p = 1; do { k++; p *= rng(); } while (p > L); return k - 1; }
+        return Math.max(0, Math.round(mu + Math.sqrt(mu) * gauss(rng)));
+      }
+      function normCdf(z) {                              // Abramowitz and Stegun 7.1.26, |error| < 1.5e-7
+        var s = z < 0 ? -1 : 1, x = Math.abs(z) / Math.SQRT2, t = 1 / (1 + 0.3275911 * x);
+        var y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+        return 0.5 * (1 + s * y);
+      }
+      function normInv(p) {
+        if (p <= 0) return -Infinity;
+        if (p >= 1) return Infinity;
+        var a = [-39.69683028665376, 220.9460984245205, -275.9285104469687, 138.3577518672690, -30.66479806614716, 2.506628277459239];
+        var b = [-54.47609879822406, 161.5858368580409, -155.6989798598866, 66.80131188771972, -13.28068155288572];
+        var c = [-0.007784894002430293, -0.3223964580411365, -2.400758277161838, -2.549732539343734, 4.374664141464968, 2.938163982698783];
+        var d = [0.007784695709041462, 0.3224671290700398, 2.445134137142996, 3.754408661907416];
+        var q, r;
+        if (p < 0.02425) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+        if (p <= 1 - 0.02425) { q = p - 0.5; r = q * q; return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1); }
+        q = Math.sqrt(-2 * Math.log(1 - p));
+        return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+      }
+
+      // The market. cfg: { horizon, dcps, arrivalScale, sigma, wtpStart, cv, seats }; p: { demand, rise, lo, hi, n, spacing, bounded }
+      function market(cfg, p) {
+        var T = cfg.horizon, th = cfg.arrivalScale, tail = Math.exp(-T / th), norm = th * (1 - tail), Lam = p.demand * cfg.seats;
+        function rate(t) { return Lam * Math.exp(-t / th) / norm; }                                    // shoppers per day, t days out
+        function share(t1, t0) { return (Math.exp(-t0 / th) - Math.exp(-t1 / th)) / (1 - tail); }      // share arriving between t1 and t0 days out
+        function median(t) { var x = (T - t) / T; return cfg.wtpStart * Math.pow(p.rise, x * x * x); }
+        function surv(price, t) { return price <= 0 ? 1 : 1 - normCdf(Math.log(price / median(t)) / cfg.sigma); }
+        return { Lam: Lam, rate: rate, share: share, median: median, surv: surv, T: T, th: th, tail: tail };
+      }
+
+      function ladder(p) {                                // highest fare first: index 0 is the top class
+        var f = [];
+        for (var i = 0; i < p.n; i++) {
+          var x = p.n === 1 ? 0 : i / (p.n - 1);
+          f.push(Math.round(p.spacing === "dollar" ? p.lo + (p.hi - p.lo) * x : p.lo * Math.pow(p.hi / p.lo, x)));
+        }
+        return f.reverse();
+      }
+
+      // One random stream per departure: every policy sees the same shoppers
+      function departures(cfg, M, D, seed) {
+        var deps = [], k = 1 / (cfg.cv * cfg.cv);
+        for (var d = 0; d < D; d++) {
+          var rng = mulberry32(((seed || 1) * 7919 + d * 104729) >>> 0);
+          var scale = cfg.cv > 0 ? gammaRand(rng, k) / k : 1;
+          var N = poisson(rng, M.Lam * scale), tau = new Float64Array(N), wtp = new Float64Array(N), tmp = [];
+          for (var c = 0; c < N; c++) {
+            var t = -M.th * Math.log(M.tail + rng() * (1 - M.tail));
+            tmp.push([t, M.median(t) * Math.exp(cfg.sigma * gauss(rng))]);
+          }
+          tmp.sort(function (a, b) { return b[0] - a[0]; });                    // booking order: far out first
+          for (c = 0; c < N; c++) { tau[c] = tmp[c][0]; wtp[c] = tmp[c][1]; }
+          deps.push({ tau: tau, wtp: wtp, n: N, scale: scale });
+        }
+        return deps;
+      }
+
+      // Time grid of the dynamic programmes: prices kept every quarter day, sub-steps with at most ~0.08 shoppers each
+      function timeGrid(cfg, M) {
+        var perQ = Math.max(1, Math.ceil(M.rate(0) / 0.08 / 4));
+        return { Q: cfg.horizon * 4, perQ: perQ, dt: 0.25 / perQ, mid: Math.floor(perQ / 2) };
+      }
+
+      // u*(x): best price as a multiple of the median WTP, for an opportunity cost x (also in medians)
+      var uCache = {};
+      function uTable(sigma) {
+        if (uCache[sigma]) return uCache[sigma];
+        var XN = 1200, XMAX = 12, u = new Float64Array(XN + 1), gr = 0.6180339887;
+        for (var i = 0; i <= XN; i++) {
+          var x = i / XN * XMAX, a = Math.max(1e-6, x), b = x + 8;
+          var f = function (v) { return (1 - normCdf(Math.log(v) / sigma)) * (v - x); };
+          var c1 = b - gr * (b - a), c2 = a + gr * (b - a), f1 = f(c1), f2 = f(c2);
+          for (var it = 0; it < 50; it++) {
+            if (f1 < f2) { a = c1; c1 = c2; f1 = f2; c2 = a + gr * (b - a); f2 = f(c2); }
+            else { b = c2; c2 = c1; f2 = f1; c1 = b - gr * (b - a); f1 = f(c1); }
+          }
+          u[i] = (a + b) / 2;
+        }
+        var tab = { u: u, XN: XN, XMAX: XMAX };
+        uCache[sigma] = tab;
+        return tab;
+      }
+
+      // Continuous price p*(t, c), solved backwards from departure
+      function solveContinuous(cfg, p, M) {
+        var C = cfg.seats, G = timeGrid(cfg, M), V = new Float64Array(C + 1), Vn = new Float64Array(C + 1);
+        var price = new Float32Array(G.Q * (C + 1)), U = uTable(cfg.sigma), sig = cfg.sigma;
+        var lo = p.bounded ? p.lo : 1, hi = p.bounded ? p.hi : 1e6;
+        for (var q = 0; q < G.Q; q++) {
+          for (var j = 0; j < G.perQ; j++) {
+            var t = q / 4 + (j + 0.5) * G.dt, m = M.median(t), lam = M.rate(t) * G.dt;
+            Vn[0] = 0;
+            for (var c = 1; c <= C; c++) {
+              var dV = V[c] - V[c - 1], x = Math.max(0, dV) / m, u;
+              if (x >= U.XMAX) u = x + 1;
+              else { var s = x / U.XMAX * U.XN, i0 = Math.floor(s), w = s - i0; u = U.u[i0] * (1 - w) + U.u[Math.min(U.XN, i0 + 1)] * w; }
+              var pr = Math.round(Math.min(hi, Math.max(lo, m * u)));
+              var S = 1 - normCdf(Math.log(pr / m) / sig);
+              Vn[c] = V[c] + lam * S * Math.max(0, pr - dV);
+              if (j === G.mid) price[q * (C + 1) + c] = pr;
+            }
+            var tmp = V; V = Vn; Vn = tmp;
+          }
+        }
+        return { price: price, V0: V[C], Q: G.Q, C: C };
+      }
+      function priceAt(sol, t, c) {
+        if (c <= 0) return NaN;
+        var q = Math.min(sol.Q - 1, Math.max(0, Math.floor(t * 4)));
+        return sol.price[q * (sol.C + 1) + c];
+      }
+
+      // Same programme, price limited to the ladder's fares (or nothing on sale)
+      function solveLadderDP(cfg, M, fares) {
+        var C = cfg.seats, G = timeGrid(cfg, M), V = new Float64Array(C + 1), Vn = new Float64Array(C + 1), n = fares.length;
+        var choice = new Int8Array(G.Q * (C + 1)).fill(-1), S = new Float64Array(n), lf = fares.map(Math.log);
+        for (var q = 0; q < G.Q; q++) {
+          for (var j = 0; j < G.perQ; j++) {
+            var t = q / 4 + (j + 0.5) * G.dt, lm = Math.log(M.median(t)), lam = M.rate(t) * G.dt, i;
+            for (i = 0; i < n; i++) S[i] = 1 - normCdf((lf[i] - lm) / cfg.sigma);
+            Vn[0] = 0;
+            for (var c = 1; c <= C; c++) {
+              var dV = V[c] - V[c - 1], best = 0, bi = -1;
+              for (i = 0; i < n; i++) { var v = S[i] * (fares[i] - dV); if (v > best) { best = v; bi = i; } }
+              Vn[c] = V[c] + lam * best;
+              if (j === G.mid) choice[q * (C + 1) + c] = bi;
+            }
+            var tmp = V; V = Vn; Vn = tmp;
+          }
+        }
+        return { choice: choice, V0: V[C], Q: G.Q, C: C, fares: fares };
+      }
+
+      // ── EMSR-b on fare-adjusted demand (Fiig et al., 2010), one table per DCP
+      function periodCurves(cfg, M, fares) {
+        var d = cfg.dcps, out = [];
+        for (var k = 0; k < d.length - 1; k++) {
+          var t1 = d[k], t0 = d[k + 1], steps = Math.max(4, Math.round((t1 - t0) * 2)), S = [];
+          for (var i = 0; i < fares.length; i++) {
+            var num = 0, den = 0;
+            for (var s = 0; s < steps; s++) { var t = t0 + (s + 0.5) * (t1 - t0) / steps, w = M.rate(t); num += w * M.surv(fares[i], t); den += w; }
+            S.push(num / den);
+          }
+          out.push({ mu: M.Lam * M.share(t1, t0), S: S });
+        }
+        return out;
+      }
+      function transform(pc, fares) {
+        var n = fares.length, Q = [0], R = [0], j;
+        for (j = 0; j < n; j++) { Q.push(pc.mu * pc.S[j]); R.push(fares[j] * pc.mu * pc.S[j]); }
+        var hull = [0];
+        for (j = 1; j <= n; j++) {
+          while (hull.length >= 2) {
+            var a = hull[hull.length - 2], b = hull[hull.length - 1];
+            var s1 = (R[b] - R[a]) / Math.max(1e-9, Q[b] - Q[a]), s2 = (R[j] - R[b]) / Math.max(1e-9, Q[j] - Q[b]);
+            if (s2 >= s1) hull.pop(); else break;
+          }
+          hull.push(j);
+        }
+        var mr = [], dm = [];
+        for (j = 0; j < n; j++) { mr.push(null); dm.push(0); }
+        for (var h = 1; h < hull.length; h++) {
+          var j1 = hull[h], j0 = hull[h - 1], dq = Q[j1] - Q[j0];
+          mr[j1 - 1] = dq > 1e-9 ? (R[j1] - R[j0]) / dq : 0;
+          dm[j1 - 1] = dq;
+        }
+        return { mr: mr, dm: dm };
+      }
+      function emsrTables(cfg, M, fares) {
+        var tr = periodCurves(cfg, M, fares).map(function (pc) { return transform(pc, fares); });
+        var K = tr.length, n = fares.length, tabs = [];
+        for (var k = 0; k < K; k++) {
+          var fa = [], mu = [], sd = [], i;
+          for (i = 0; i < n; i++) {
+            var sMR = 0, sD = 0;
+            for (var kk = k; kk < K; kk++) if (tr[kk].mr[i] !== null) { sMR += tr[kk].mr[i] * tr[kk].dm[i]; sD += tr[kk].dm[i]; }
+            fa.push(sD > 0 ? sMR / sD : 0); mu.push(sD); sd.push(Math.sqrt(sD + Math.pow(cfg.cv * sD, 2)));
+          }
+          var cur = tr[k], open = fares.map(function (f, i) { return cur.mr[i] !== null && cur.mr[i] > 0; });
+          var prot = [], sf = 0, sm = 0, sv = 0;
+          for (var j = 0; j < n - 1; j++) {
+            sf += fa[j] * mu[j]; sm += mu[j]; sv += sd[j] * sd[j];
+            var y;
+            if (!open[j + 1]) y = Infinity;
+            else {
+              var fbar = sm > 0 ? sf / sm : 0, ratio = fbar > 0 ? cur.mr[j + 1] / fbar : 1, sbar = Math.sqrt(sv);
+              y = ratio >= 1 ? 0 : (sbar > 0 ? sm + sbar * normInv(1 - ratio) : sm);
+            }
+            prot.push(y);
+          }
+          tabs.push({ open: open, prot: prot });
+        }
+        return tabs;
+      }
+      function limitsAt(tab, c) {                         // nested booking limits with c seats left
+        var n = tab.open.length, BL = [tab.open[0] ? c : 0], prev = 0;
+        for (var j = 0; j < n - 1; j++) {
+          var y = Math.max(prev, Math.min(c, Math.max(0, Math.round(tab.prot[j]))));
+          prev = y;
+          BL.push(tab.open[j + 1] ? c - y : 0);
+        }
+        return BL;
+      }
+
+      // ── selling a departure. paid[i] > 0: shopper i bought at that price. why[i]: 1 = price above WTP, 2 = nothing on sale
+      function sellClass(dep, cfg, fares, tabs, trace) {
+        var C = cfg.seats, d = cfg.dcps, n = fares.length, N = dep.n;
+        var paid = new Float64Array(N), why = new Int8Array(N), offer = trace ? new Float64Array(N) : null;
+        var sold = 0, rev = 0, ci = 0, steps = trace ? [] : null;
+        for (var k = 0; k < d.length - 1; k++) {
+          var BL = limitsAt(tabs[k], C - sold), start = sold;
+          var lowest = function () { for (var i = n - 1; i >= 0; i--) if (BL[i] > 0 && sold - start < BL[i]) return i; return -1; };
+          var L = lowest();
+          if (trace) steps.push({ t: d[k], fare: L >= 0 ? fares[L] : null, left: C - sold });
+          while (ci < N && dep.tau[ci] > d[k + 1]) {
+            if (trace) offer[ci] = L >= 0 ? fares[L] : NaN;
+            if (L >= 0 && fares[L] <= dep.wtp[ci]) {
+              paid[ci] = fares[L]; sold++; rev += fares[L];
+              var L2 = lowest();
+              if (L2 !== L) { L = L2; if (trace) steps.push({ t: dep.tau[ci], fare: L >= 0 ? fares[L] : null, left: C - sold }); }
+            } else why[ci] = L < 0 ? 2 : 1;
+            ci++;
+          }
+        }
+        if (trace) steps.push({ t: 0, fare: steps[steps.length - 1].fare, left: C - sold });
+        return { paid: paid, why: why, sold: sold, rev: rev, steps: steps, offer: offer };
+      }
+      function sellContinuous(dep, cfg, sol, trace) {
+        var C = cfg.seats, N = dep.n, paid = new Float64Array(N), why = new Int8Array(N), offer = trace ? new Float64Array(N) : null;
+        var sold = 0, rev = 0, path = trace ? [] : null, qNext = sol.Q - 1;
+        function fill(toT) {                              // price path every quarter day, with the seats left at the time
+          while (qNext >= 0 && (qNext + 0.5) / 4 > toT) { path.push({ t: (qNext + 0.5) / 4, p: priceAt(sol, (qNext + 0.5) / 4, C - sold), left: C - sold }); qNext--; }
+        }
+        for (var i = 0; i < N; i++) {
+          var t = dep.tau[i], c = C - sold;
+          if (trace) { fill(t); offer[i] = c > 0 ? priceAt(sol, t, c) : NaN; }
+          if (c <= 0) { why[i] = 2; continue; }
+          var pr = priceAt(sol, t, c);
+          if (pr <= dep.wtp[i]) {
+            paid[i] = pr; sold++; rev += pr;
+            if (trace) { path.push({ t: t, p: pr, left: c }); path.push({ t: t, p: priceAt(sol, t, C - sold), left: C - sold }); }
+          } else why[i] = 1;
+        }
+        if (trace) { fill(-1); path.push({ t: 0, p: path.length ? path[path.length - 1].p : NaN, left: C - sold }); }
+        return { paid: paid, why: why, sold: sold, rev: rev, path: path, offer: offer };
+      }
+      function sellLadderDP(dep, cfg, sol) {
+        var C = cfg.seats, sold = 0, rev = 0;
+        for (var i = 0; i < dep.n; i++) {
+          var c = C - sold; if (c <= 0) break;
+          var q = Math.min(sol.Q - 1, Math.floor(dep.tau[i] * 4)), ch = sol.choice[q * (C + 1) + c];
+          if (ch >= 0 && sol.fares[ch] <= dep.wtp[i]) { sold++; rev += sol.fares[ch]; }
+        }
+        return { sold: sold, rev: rev };
+      }
+
+      return {
+        market: market, ladder: ladder, departures: departures, solveContinuous: solveContinuous, priceAt: priceAt,
+        solveLadderDP: solveLadderDP, emsrTables: emsrTables, sellClass: sellClass, sellContinuous: sellContinuous, sellLadderDP: sellLadderDP
+      };
+    })();
+    if (typeof module !== "undefined") module.exports = CPModel;
+    </script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var $ = function (id) { return document.getElementById(id); };
+      var DATA_URL = "assets/data/continuouspricing.json";
+
+      function fail(msg) {
+        $("loading").outerHTML = '<p class="err">' + msg + '</p>';
+      }
+      if (typeof d3 === "undefined") { fail("Couldn't load the chart library. Check your connection and reload the page."); return; }
+
+      fetch(DATA_URL).then(function (r) { if (!r.ok) throw new Error("data " + r.status); return r.json(); })
+        .then(start)
+        .catch(function (e) { fail("Couldn't load the simulator's inputs (" + String(e.message || e).replace(/[<>&]/g, "") + "). Reload the page."); });
+
+      function start(DATA) {
+        var CP = CPModel;
+        var cfg = {
+          horizon: DATA.horizonDays, dcps: DATA.dcps, arrivalScale: DATA.arrivals.scaleDays, cv: DATA.arrivals.departureCV,
+          sigma: DATA.wtp.sigma, wtpStart: DATA.wtp.medianAtOpening, seats: DATA.seats
+        };
+        var D = DATA.simulation.departures, SEED = DATA.simulation.seed, SWEEP = DATA.sweep;
+        var DEFAULTS = Object.assign({}, DATA.defaults);
+        var state = Object.assign({}, DEFAULTS);
+
+        // ═════════════════════════════════════════ formatting, colours, tooltip, chart helpers
+        var fmt$ = d3.format("$,.0f"), fmtInt = d3.format(",.0f"), fmt1 = d3.format(".1f"), fmtPct0 = d3.format(".0%");
+        function fmtK(v) { return "$" + d3.format(",.1f")(v / 1000) + "k"; }
+        function sgnPct(x, dp) { var s = d3.format("." + (dp == null ? 1 : dp) + "f")(Math.abs(x * 100)); return (x >= 0 ? "+" : "−") + s + "%"; }
+        function sgn$(v) { var r = Math.round(v); return (r >= 0 ? "+$" : "−$") + fmtInt(Math.abs(r)); }
+        function daysOut(t) { return t < 1 ? Math.max(0, Math.round(t * 24)) + " hours before departure" : (t < 1.5 ? "1 day" : Math.round(t) + " days") + " before departure"; }
+        var COL = { cls: "#2a7fb5", cont: "#3a8f5c", neg: "#c8551f", both: "#333", none: "#b3b3b3", ink: "#222" };
+        var NAME = { cls: "Class ladder, EMSR-b", cont: "Continuous price" };
+
+        var tip = $("tip");
+        function showTip(ev, title, rows) {
+          tip.textContent = "";
+          if (title) { var t = document.createElement("div"); t.className = "t"; t.textContent = title; tip.appendChild(t); }
+          rows.forEach(function (r) {
+            var row = document.createElement("div"); row.className = "r";
+            if (r.col) { var i = document.createElement("i"); i.style.borderColor = r.col; if (r.dash) i.style.borderTopStyle = "dashed"; row.appendChild(i); }
+            if (r.value) { var b = document.createElement("b"); b.textContent = r.value; row.appendChild(b); }
+            if (r.label) { var s = document.createElement("span"); s.textContent = r.label; row.appendChild(s); }
+            tip.appendChild(row);
+          });
+          tip.style.display = "block";
+          var pt = ev.touches ? ev.touches[0] : ev, w = tip.offsetWidth, h = tip.offsetHeight;
+          var x = pt.clientX + 14, y = pt.clientY + 14;
+          if (x + w > window.innerWidth - 8) x = pt.clientX - w - 14;
+          if (x < 8) x = 8;
+          if (y + h > window.innerHeight - 8) y = pt.clientY - h - 14;
+          tip.style.left = x + "px"; tip.style.top = y + "px";
+        }
+        function hideTip() { tip.style.display = "none"; }
+
+        function frame(el, height, m) {
+          el.textContent = "";
+          var W = Math.max(280, el.clientWidth - 12);
+          var svg = d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + height).attr("width", W).attr("height", height);
+          var g = svg.append("g").attr("transform", "translate(" + m.l + "," + m.t + ")");
+          return { svg: svg, g: g, W: W, iw: W - m.l - m.r, ih: height - m.t - m.b };
+        }
+        function legend(el, items) {
+          var box = document.createElement("div"); box.className = "legend";
+          items.forEach(function (it) {
+            var s = document.createElement("span"), i = document.createElement("i");
+            if (it.line) { i.className = "ln" + (it.dash ? " dash" : ""); i.style.borderColor = it.col; }
+            else if (it.ring) { i.className = "ring"; i.style.borderColor = it.col; }
+            else if (it.dot) { i.className = "dot"; i.style.background = it.col; }
+            else i.style.background = it.col;
+            s.appendChild(i); s.appendChild(document.createTextNode(it.name)); box.appendChild(s);
+          });
+          el.appendChild(box);
+        }
+
+        // ═════════════════════════════════════════ simulation, with caches
+        var cache = { k1: null, M: null, deps: null, k2: null, sol: null, B: null, kS: null, sweep: null };
+        var R = null, sampleIdx = null, sweepToken = 0;
+
+        function keys() {
+          var k1 = state.demand + "|" + state.rise;
+          var k2 = k1 + "|" + (state.bounded ? state.lo + "|" + state.hi : "free");
+          return { k1: k1, k2: k2, kS: k2 + "|" + state.spacing + "|" + state.lo + "|" + state.hi };
+        }
+
+        function simulate() {
+          var K = keys();
+          if (cache.k1 !== K.k1) {
+            cache.M = CP.market(cfg, state);
+            cache.deps = CP.departures(cfg, cache.M, D, SEED);
+            cache.k1 = K.k1; cache.k2 = null; cache.kS = null;
+            if (sampleIdx === null) {              // an ordinary departure: busiest-to-quietest near the middle
+              var best = 0;
+              for (var d = 0; d < 200; d++) if (Math.abs(cache.deps[d].scale - 1.02) < Math.abs(cache.deps[best].scale - 1.02)) best = d;
+              sampleIdx = best;
+            }
+          }
+          var M = cache.M, deps = cache.deps;
+          if (cache.k2 !== K.k2) {
+            cache.sol = CP.solveContinuous(cfg, state, M);
+            cache.B = deps.map(function (dep) { return CP.sellContinuous(dep, cfg, cache.sol); });
+            cache.k2 = K.k2; cache.kS = null;
+          }
+          var fares = CP.ladder(state), tabs = CP.emsrTables(cfg, M, fares);
+          var A = deps.map(function (dep) { return CP.sellClass(dep, cfg, fares, tabs); });
+
+          // totals and the shopper-by-shopper breakdown
+          var out = { fares: fares, tabs: tabs, a: { rev: 0, sold: 0 }, b: { rev: 0, sold: 0 }, parts: {}, shoppers: 0, belowLo: 0, aboveHi: 0 };
+          var P = { up: [0, 0], down: [0, 0], same: [0, 0], onlyBprice: [0, 0], onlyBseat: [0, 0], onlyAprice: [0, 0], onlyAseat: [0, 0], none: [0, 0] };
+          for (var d2 = 0; d2 < deps.length; d2++) {
+            var a = A[d2], b = cache.B[d2];
+            out.a.rev += a.rev; out.a.sold += a.sold; out.b.rev += b.rev; out.b.sold += b.sold; out.shoppers += deps[d2].n;
+            for (var i = 0; i < deps[d2].n; i++) {
+              var pa = a.paid[i], pb = b.paid[i], key, v;
+              if (pb > 0 && pb < state.lo) out.belowLo++;
+              if (pb > state.hi) out.aboveHi++;
+              if (pa > 0 && pb > 0) { v = pb - pa; key = v > 0 ? "up" : v < 0 ? "down" : "same"; }
+              else if (pb > 0) { v = pb; key = a.why[i] === 2 ? "onlyBseat" : "onlyBprice"; }
+              else if (pa > 0) { v = -pa; key = b.why[i] === 2 ? "onlyAseat" : "onlyAprice"; }
+              else { v = 0; key = "none"; }
+              P[key][0] += v; P[key][1]++;
+            }
+          }
+          Object.keys(P).forEach(function (k) { out.parts[k] = { v: P[k][0] / D, n: P[k][1] / D }; });
+          ["a", "b"].forEach(function (s) { out[s].revD = out[s].rev / D; out[s].lf = out[s].sold / D / cfg.seats; out[s].avg = out[s].rev / Math.max(1, out[s].sold); });
+          out.gain = out.b.rev / out.a.rev - 1;
+          out.bSolds = out.b.sold;
+          // share of shoppers who'd pay the lowest fare
+          var pcs = 0; for (var k = 0; k < cfg.dcps.length - 1; k++) { var t1 = cfg.dcps[k], t0 = cfg.dcps[k + 1], tm = (t1 + t0) / 2; pcs += M.share(t1, t0) * M.surv(state.lo, tm); }
+          out.payLo = state.demand * pcs;
+          return out;
+        }
+
+        // The ladder sweep runs in small chunks after the main results are drawn
+        function runSweep() {
+          var K = keys();
+          if (cache.kS === K.kS && cache.sweep) { renderSweep(); return; }
+          var token = ++sweepToken, M = cache.M, deps = cache.deps, Brev = 0, rows = [], idx = 0;
+          cache.B.forEach(function (b) { Brev += b.rev; });
+          $("ch-sw").innerHTML = '<div class="wait">Simulating ' + SWEEP.length + ' ladders × ' + fmtInt(D) + ' departures…</div>';
+          $("sw-lead").textContent = "";
+          function step() {
+            if (token !== sweepToken) return;
+            var n = SWEEP[idx], p = Object.assign({}, state, { n: n }), fares = CP.ladder(p), tabs = CP.emsrTables(cfg, M, fares), A = 0, L = 0;
+            deps.forEach(function (dep) { A += CP.sellClass(dep, cfg, fares, tabs).rev; });
+            var ld = CP.solveLadderDP(cfg, M, fares);
+            deps.forEach(function (dep) { L += CP.sellLadderDP(dep, cfg, ld).rev; });
+            rows.push({ n: n, emsr: Brev / A - 1, opt: Brev / L - 1 });
+            idx++;
+            if (idx < SWEEP.length) setTimeout(step, 0);
+            else { cache.sweep = rows; cache.kS = K.kS; renderSweep(); }
+          }
+          setTimeout(step, 30);
+        }
+
+        // ═════════════════════════════════════════ inputs
+        var IN = {
+          demand: { el: $("in-dem"),  out: $("out-dem"),  get: Number, show: function (v) { return d3.format(".2f")(v); } },
+          rise:   { el: $("in-rise"), out: $("out-rise"), get: Number, show: function (v) { return "×" + fmt1(v); } },
+          lo:     { el: $("in-lo"),   out: $("out-lo"),   get: Number, show: fmt$ },
+          hi:     { el: $("in-hi"),   out: $("out-hi"),   get: Number, show: fmt$ }
+        };
+        function syncPills(id, v) {
+          document.querySelectorAll("#" + id + " button").forEach(function (b) { var on = b.dataset.v === String(v); b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
+        }
+        function syncInputs() {
+          Object.keys(IN).forEach(function (k) { IN[k].el.value = state[k]; IN[k].out.textContent = IN[k].show(state[k]); });
+          syncPills("in-n", state.n); syncPills("in-sp", state.spacing);
+          $("in-bound").checked = !!state.bounded;
+          renderFares(); renderHints();
+        }
+        function renderFares() {
+          var box = $("fares"), f = CP.ladder(state).slice().reverse();
+          box.textContent = ""; box.classList.toggle("dense", f.length > 10);
+          f.forEach(function (v) { var s = document.createElement("span"); s.textContent = "$" + v; box.appendChild(s); });
+        }
+        function renderHints() {
+          var M = CP.market(cfg, state);
+          $("hint-rise").textContent = "Median willingness to pay: " + fmt$(M.median(180)) + " when bookings open, " + fmt$(M.median(30)) + " a month out, " + fmt$(M.median(0)) + " at departure.";
+          $("hint-dem").textContent = "Everyone who looks at this flight over the booking period, per seat" + (R ? "; " + d3.format(".2f")(R.payLo) + " per seat would pay the lowest fare when they look." : ".");
+        }
+
+        // ═════════════════════════════════════════ rendering
+        function renderTiles() {
+          var a = R.a, b = R.b;
+          var tiles = [
+            { html: null, v: sgnPct(R.gain), l: "revenue per departure with continuous pricing, against " + state.n + " fare classes with EMSR-b" },
+            { a: fmtK(a.revD), b: fmtK(b.revD), l: "revenue per departure, class ladder → continuous" },
+            { a: fmtPct0(a.lf), b: fmtPct0(b.lf), l: "load factor" },
+            { a: fmt$(a.avg), b: fmt$(b.avg), l: "average fare paid" }
+          ];
+          var tb = $("tiles"); tb.textContent = "";
+          tiles.forEach(function (t) {
+            var d = document.createElement("div"); d.className = "tile";
+            var bb = document.createElement("b");
+            if (t.v) { bb.textContent = t.v; bb.style.color = R.gain >= 0 ? COL.cont : COL.neg; }
+            else {
+              bb.className = "pair";
+              var s1 = document.createElement("span"); s1.className = "a"; s1.textContent = t.a;
+              var s2 = document.createElement("span"); s2.className = "arrow"; s2.textContent = " → ";
+              var s3 = document.createElement("span"); s3.className = "c"; s3.textContent = t.b;
+              [s1, s2, s3].forEach(function (s) { s.style.display = "inline"; s.style.margin = "0"; s.style.fontSize = "inherit"; bb.appendChild(s); });
+            }
+            var sp = document.createElement("span"); sp.textContent = t.l;
+            d.appendChild(bb); d.appendChild(sp); tb.appendChild(d);
+          });
+        }
+
+        // ── one departure
+        function renderDeparture() {
+          var el = $("ch-dep"), dep = cache.deps[sampleIdx];
+          var a = CP.sellClass(dep, cfg, R.fares, R.tabs, true), b = CP.sellContinuous(dep, cfg, cache.sol, true);
+          var narrow = el.clientWidth < 560;
+          var m = { t: 14, r: narrow ? 10 : 16, b: 40, l: 48 };
+          var f = frame(el, narrow ? 320 : 380, m);
+          var x = d3.scaleSqrt().domain([cfg.horizon, 0]).range([0, f.iw]);
+          var maxP = Math.max(state.hi, d3.max(b.path, function (d) { return isNaN(d.p) ? 0 : d.p; }));
+          var yMax = Math.max(maxP * 1.12, state.hi * 1.15);
+          var y = d3.scaleLinear().domain([0, yMax]).nice().range([f.ih, 0]);
+          yMax = y.domain()[1];
+          var ticks = narrow ? [180, 90, 60, 30, 14, 7, 0] : [180, 120, 90, 60, 45, 30, 21, 14, 7, 3, 0];
+
+          f.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(6).tickSize(-f.iw).tickFormat(""));
+          // DCPs
+          f.g.append("g").selectAll("line").data(cfg.dcps.slice(1, -1)).enter().append("line")
+            .attr("x1", x).attr("x2", x).attr("y1", 0).attr("y2", f.ih).attr("stroke", "#e3e3e3").attr("stroke-dasharray", "2 3");
+          // the ladder's fares
+          f.g.append("g").selectAll("line").data(R.fares).enter().append("line")
+            .attr("x1", 0).attr("x2", f.iw).attr("y1", y).attr("y2", y).attr("stroke", "#cfe1ee").attr("stroke-width", 1);
+          // median WTP
+          var med = d3.range(0, 61).map(function (i) { var t = cfg.horizon * Math.pow(1 - i / 60, 2); return { t: t, v: cache.M.median(t) }; });
+          f.g.append("path").attr("d", d3.line().x(function (d) { return x(d.t); }).y(function (d) { return y(Math.min(yMax, d.v)); })(med))
+            .attr("fill", "none").attr("stroke", "#9a9a9a").attr("stroke-dasharray", "4 4").attr("stroke-width", 1.2);
+
+          f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")")
+            .call(d3.axisBottom(x).tickValues(ticks).tickFormat(d3.format("d")));
+          f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(6).tickFormat(fmt$));
+          f.g.append("text").attr("x", f.iw).attr("y", f.ih + 32).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("days before departure");
+
+          // shoppers
+          var cats = [];
+          for (var i = 0; i < dep.n; i++) {
+            var pa = a.paid[i], pb = b.paid[i];
+            cats.push(pa > 0 && pb > 0 ? "both" : pb > 0 ? "cont" : pa > 0 ? "cls" : "none");
+          }
+          var gd = f.g.append("g");
+          var order = d3.range(dep.n).sort(function (i, j) { var r = { none: 0, both: 1, cls: 2, cont: 3 }; return r[cats[i]] - r[cats[j]]; });
+          order.forEach(function (i) {
+            var cx = x(dep.tau[i]), w = dep.wtp[i], cy = y(Math.min(yMax, w)), c = cats[i];
+            if (w > yMax) {
+              gd.append("path").attr("d", "M" + (cx - 3.5) + "," + (cy + 3) + "L" + cx + "," + (cy - 3) + "L" + (cx + 3.5) + "," + (cy + 3) + "Z")
+                .attr("fill", c === "none" ? "#fff" : COL[c]).attr("stroke", c === "none" ? COL.none : "#fff").attr("stroke-width", c === "none" ? 1.2 : 0.8);
+            } else if (c === "none") gd.append("circle").attr("cx", cx).attr("cy", cy).attr("r", 2.8).attr("fill", "#fff").attr("stroke", COL.none).attr("stroke-width", 1.1);
+            else gd.append("circle").attr("cx", cx).attr("cy", cy).attr("r", c === "both" ? 2.8 : 3.4).attr("fill", COL[c]).attr("stroke", "#fff").attr("stroke-width", 0.8);
+          });
+
+          // prices
+          var stepLine = d3.line().defined(function (d) { return d.fare !== null; }).curve(d3.curveStepAfter)
+            .x(function (d) { return x(d.t); }).y(function (d) { return y(d.fare); });
+          f.g.append("path").attr("d", stepLine(a.steps)).attr("fill", "none").attr("stroke", COL.cls).attr("stroke-width", 2.4).attr("stroke-linejoin", "round");
+          var contLine = d3.line().defined(function (d) { return !isNaN(d.p); }).x(function (d) { return x(d.t); }).y(function (d) { return y(d.p); });
+          f.g.append("path").attr("d", contLine(b.path)).attr("fill", "none").attr("stroke", COL.cont).attr("stroke-width", 2.2).attr("stroke-linejoin", "round");
+
+          // hover: nearest shopper, or both prices at that moment
+          var cross = f.g.append("line").attr("y1", 0).attr("y2", f.ih).attr("stroke", "#bbb").attr("display", "none");
+          var ring = f.g.append("circle").attr("r", 6).attr("fill", "none").attr("stroke", COL.ink).attr("stroke-width", 1.2).attr("display", "none");
+          function atTime(t) {
+            var fa = null, la = cfg.seats, pb = NaN, lb = cfg.seats;
+            for (var s = 0; s < a.steps.length && a.steps[s].t >= t; s++) { fa = a.steps[s].fare; la = a.steps[s].left; }
+            for (var s2 = 0; s2 < b.path.length && b.path[s2].t >= t; s2++) { pb = b.path[s2].p; lb = b.path[s2].left; }
+            return { fa: fa, la: la, pb: pb, lb: lb };
+          }
+          f.g.append("rect").attr("width", f.iw).attr("height", f.ih).attr("fill", "transparent")
+            .on("pointermove", function (ev) {
+              var pt = d3.pointer(ev), bi = -1, bd = 81;
+              for (var i = 0; i < dep.n; i++) {
+                var dx = x(dep.tau[i]) - pt[0], dy = y(Math.min(yMax, dep.wtp[i])) - pt[1], dd = dx * dx + dy * dy;
+                if (dd < bd) { bd = dd; bi = i; }
+              }
+              if (bi >= 0) {
+                cross.attr("display", "none");
+                ring.attr("cx", x(dep.tau[bi])).attr("cy", y(Math.min(yMax, dep.wtp[bi]))).attr("display", null);
+                var oa = a.offer[bi], ob = b.offer[bi];
+                showTip(ev, "Shopper " + daysOut(dep.tau[bi]) + ", willing to pay " + fmt$(dep.wtp[bi]), [
+                  { col: COL.cls, value: a.paid[bi] > 0 ? "bought at " + fmt$(a.paid[bi]) : isNaN(oa) ? "nothing on sale" : "walked away", label: a.paid[bi] > 0 || isNaN(oa) ? "class ladder" : "from " + fmt$(oa) + ", class ladder" },
+                  { col: COL.cont, value: b.paid[bi] > 0 ? "bought at " + fmt$(b.paid[bi]) : isNaN(ob) ? "sold out" : "walked away", label: b.paid[bi] > 0 || isNaN(ob) ? "continuous" : "from " + fmt$(ob) + ", continuous" }
+                ]);
+              } else {
+                ring.attr("display", "none");
+                var t = Math.max(0, Math.min(cfg.horizon, x.invert(pt[0]))), s = atTime(t);
+                cross.attr("x1", x(t)).attr("x2", x(t)).attr("display", null);
+                showTip(ev, daysOut(t), [
+                  { col: COL.cls, value: s.fa === null ? (s.la > 0 ? "all classes closed" : "sold out") : fmt$(s.fa), label: "lowest open class · " + s.la + " seats left" },
+                  { col: COL.cont, value: isNaN(s.pb) ? "sold out" : fmt$(s.pb), label: "continuous price · " + s.lb + " seats left" },
+                  { col: "#9a9a9a", dash: true, value: fmt$(cache.M.median(t)), label: "median willingness to pay" }
+                ]);
+              }
+            })
+            .on("pointerleave", function () { cross.attr("display", "none"); ring.attr("display", "none"); hideTip(); });
+
+          legend(el, [
+            { name: NAME.cls + ", lowest open fare", col: COL.cls, line: true },
+            { name: NAME.cont, col: COL.cont, line: true },
+            { name: "median willingness to pay", col: "#9a9a9a", line: true, dash: true },
+            { name: "bought under both", col: COL.both, dot: true },
+            { name: "bought only with continuous pricing", col: COL.cont, dot: true },
+            { name: "bought only with the class ladder", col: COL.cls, dot: true },
+            { name: "walked away from both", col: COL.none, ring: true },
+            { name: "fares in the ladder", col: "#cfe1ee", line: true }
+          ]);
+
+          $("dep-sub").textContent = "Departure " + (sampleIdx + 1) + " of " + fmtInt(D) + " · " + dep.n + " shoppers";
+          $("dep-stats").textContent = "Class ladder: " + a.sold + " seats, " + fmt$(a.rev) + " · Continuous: " + b.sold + " seats, " + fmt$(b.rev);
+          var counts = { both: 0, cont: 0, cls: 0, none: 0 }; cats.forEach(function (c) { counts[c]++; });
+          $("dep-lead").textContent = "Each dot is a shopper, placed at the moment they looked and at the most they would pay; shoppers willing to pay more than the top of the chart are drawn as triangles on its edge. The ladder's price can only sit on one of its " + state.n + " fares, the pale lines, and it steps up at data collection points or when a class sells out its booking limit. The continuous price follows the same forecast without steps, and drops a little when sales run behind or rises right after each sale. On this departure, " + counts.cont + " shoppers bought only with continuous pricing and " + counts.cls + " only with the class ladder. Hover over a dot or a moment for details.";
+        }
+
+        // ── the breakdown
+        function renderWaterfall() {
+          var el = $("ch-wf"), P = R.parts;
+          var rows = [
+            { k: "up", label: "Paid more than the class price", short: "Paid more than the class price", sub: "bought under both, at a higher continuous price" },
+            { k: "down", label: "Paid less than the class price", short: "Paid less than the class price", sub: "bought under both, at a lower continuous price" },
+            { k: "onlyBprice", label: "Bought only because a price between two classes existed", short: "Bought only thanks to an in-between price", sub: "the lowest open class was above what they'd pay" },
+            { k: "onlyBseat", label: "Bought only because the ladder had nothing on sale", short: "Bought only because the ladder was closed", sub: "all classes closed or sold out" },
+            { k: "onlyAprice", label: "Walked away from the continuous price", short: "Walked away from the continuous price", sub: "bought a class fare, but the continuous price was higher" },
+            { k: "onlyAseat", label: "Found continuous pricing sold out", short: "Found continuous pricing sold out", sub: "bought a class fare after the continuous flight was full" }
+          ];
+          var hidden = rows.filter(function (r) { return !(P[r.k].n >= 0.05 && Math.abs(P[r.k].v) >= 5); });
+          rows = rows.filter(function (r) { return hidden.indexOf(r) < 0; });
+          var net = R.b.revD - R.a.revD;
+          rows.push({ k: "net", label: "Net gain from continuous pricing", short: "Net gain from continuous pricing", sub: sgnPct(R.gain) + " on " + fmtK(R.a.revD) + " per departure", v: net, net: true });
+          var narrow = el.clientWidth < 560, rowH = 50;
+          var m = { t: 6, r: narrow ? 44 : 64, b: 30, l: narrow ? 44 : 64 };
+          var f = frame(el, m.t + m.b + rowH * rows.length, m);
+          var maxAbs = d3.max(rows, function (r) { return Math.abs(r.net ? r.v : P[r.k].v); }) || 1;
+          var x = d3.scaleLinear().domain([-maxAbs, maxAbs]).nice().range([0, f.iw]);
+          f.g.append("g").attr("class", "grid").attr("transform", "translate(0," + rowH * rows.length + ")").call(d3.axisBottom(x).ticks(narrow ? 4 : 6).tickSize(-rowH * rows.length).tickFormat(""));
+          f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + rowH * rows.length + ")").call(d3.axisBottom(x).ticks(narrow ? 4 : 6).tickFormat(function (v) { return v === 0 ? "$0" : sgn$(v); }));
+          f.g.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", 0).attr("y2", rowH * rows.length).attr("stroke", "#999");
+          rows.forEach(function (r, i) {
+            var v = r.net ? r.v : P[r.k].v, n = r.net ? null : P[r.k].n, y0 = rowH * i;
+            if (r.net) f.g.append("line").attr("x1", -m.l + 8).attr("x2", f.iw + m.r - 8).attr("y1", y0 + 2).attr("y2", y0 + 2).attr("stroke", "#ddd");
+            var col = r.net ? COL.ink : v >= 0 ? COL.cont : COL.neg;
+            var lab = f.g.append("text").attr("x", -m.l + 8).attr("y", y0 + 16).attr("font-size", narrow ? 11.5 : 12).attr("font-weight", 600).attr("fill", "#222");
+            lab.append("tspan").text(narrow ? r.short : r.label);
+            if (!r.net) lab.append("tspan").attr("font-weight", 400).attr("fill", "#767676").text(" · " + fmt1(n) + (narrow ? "" : " shoppers"));
+            f.g.append("rect").attr("x", Math.min(x(0), x(v))).attr("y", y0 + 23).attr("width", Math.max(1, Math.abs(x(v) - x(0)))).attr("height", 12).attr("rx", 3).attr("fill", col);
+            f.g.append("text").attr("x", x(v) + (v >= 0 ? 6 : -6)).attr("y", y0 + 29).attr("dy", "0.35em").attr("text-anchor", v >= 0 ? "start" : "end")
+              .attr("font-size", 11.5).attr("font-weight", 600).attr("fill", col).text(sgn$(v));
+            f.g.append("rect").attr("x", -m.l).attr("y", y0).attr("width", f.iw + m.l + m.r).attr("height", rowH).attr("fill", "transparent")
+              .on("pointermove", function (ev) {
+                showTip(ev, r.label, [{ col: col, value: sgn$(v), label: "per departure" }].concat(r.net ? [{ label: r.sub }] : [{ value: fmt1(n), label: "shoppers per departure, " + r.sub }]));
+              })
+              .on("pointerleave", hideTip);
+          });
+
+          $("wf-sub").textContent = "Per departure, averaged over " + fmtInt(D) + " departures · shoppers per departure after each label" + (hidden.length ? " · rows under $5 hidden" : "");
+          var up = P.up, dn = P.down, ob = P.onlyBprice, oa = P.onlyAprice;
+          var txt = "The two policies sell to the same shoppers, so the gain can be traced shopper by shopper. ";
+          txt += "Continuous pricing charges " + fmt1(up.n) + " shoppers per departure more than the class fare they would have paid, since a price between two classes still fit their budget: " + sgn$(up.v) + ". ";
+          txt += "It wins " + fmt1(ob.n) + " shoppers who found the lowest open class too expensive: " + sgn$(ob.v) + ". ";
+          txt += "Against that, it charges " + fmt1(dn.n) + " shoppers less than the class ladder did (" + sgn$(dn.v) + ") and loses " + fmt1(oa.n) + " who bought a class fare but not the continuous price (" + sgn$(oa.v) + "). ";
+          txt += net >= 0 ? "The two sides net out at " + sgn$(net) + " per departure: a small difference between large flows in both directions, since a price that can move freely goes down for some shoppers as well as up for others."
+                          : "Here the two sides net out at " + sgn$(net) + " per departure: the ladder does better with these settings.";
+          if (R.belowLo > 0 || R.aboveHi > 0) txt += " " + d3.format(".1%")((R.belowLo + R.aboveHi) / Math.max(1, R.bSolds)) + " of continuous sales were priced outside the ladder's range.";
+          $("wf-lead").textContent = txt;
+        }
+
+        // ── the gain against the number of classes
+        function renderSweep() {
+          var el = $("ch-sw"), rows = cache.sweep;
+          if (!rows) return;
+          var narrow = el.clientWidth < 560;
+          var m = { t: 16, r: narrow ? 14 : 124, b: 42, l: 50 };
+          var f = frame(el, narrow ? 280 : 320, m);
+          var x = d3.scaleLog().base(2).domain([SWEEP[0], SWEEP[SWEEP.length - 1]]).range([0, f.iw]);
+          var lo = Math.min(0, d3.min(rows, function (r) { return Math.min(r.emsr, r.opt); })), hi = d3.max(rows, function (r) { return Math.max(r.emsr, r.opt); });
+          var y = d3.scaleLinear().domain([lo, hi * 1.08]).nice().range([f.ih, 0]);
+          f.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(6).tickSize(-f.iw).tickFormat(""));
+          f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")")
+            .call(d3.axisBottom(x).tickValues(narrow ? [3, 4, 6, 10, 16, 26] : SWEEP).tickFormat(d3.format("d")));
+          f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(6).tickFormat(function (v) { return d3.format(".0%")(v) === "0%" ? "0%" : (v > 0 ? "+" : "") + d3.format(v !== 0 && Math.abs(v) < 0.1 ? ".1%" : ".0%")(v); }));
+          f.g.append("text").attr("x", f.iw).attr("y", f.ih + 34).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("fare classes in the ladder");
+          f.g.append("line").attr("x1", 0).attr("x2", f.iw).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "#999");
+
+          // bands: price points (0 → dashed), control method (dashed → solid)
+          var area1 = d3.area().x(function (d) { return x(d.n); }).y0(y(0)).y1(function (d) { return y(Math.max(0, d.opt)); });
+          var area2 = d3.area().x(function (d) { return x(d.n); }).y0(function (d) { return y(Math.max(0, d.opt)); }).y1(function (d) { return y(Math.max(0, d.opt, d.emsr)); });
+          f.g.append("path").attr("d", area1(rows)).attr("fill", COL.cont).attr("opacity", 0.1);
+          f.g.append("path").attr("d", area2(rows)).attr("fill", COL.cls).attr("opacity", 0.1);
+          var lineE = d3.line().x(function (d) { return x(d.n); }).y(function (d) { return y(d.emsr); });
+          var lineO = d3.line().x(function (d) { return x(d.n); }).y(function (d) { return y(d.opt); });
+          f.g.append("path").attr("d", lineO(rows)).attr("fill", "none").attr("stroke", "#555").attr("stroke-width", 1.8).attr("stroke-dasharray", "5 4");
+          f.g.append("path").attr("d", lineE(rows)).attr("fill", "none").attr("stroke", COL.cls).attr("stroke-width", 2.5);
+          f.g.selectAll(null).data(rows).enter().append("circle").attr("cx", function (d) { return x(d.n); }).attr("cy", function (d) { return y(d.emsr); })
+            .attr("r", function (d) { return d.n === state.n ? 6 : 3.5; }).attr("fill", COL.cls).attr("stroke", "#fff").attr("stroke-width", 1.5);
+          f.g.selectAll(null).data(rows).enter().append("circle").attr("cx", function (d) { return x(d.n); }).attr("cy", function (d) { return y(d.opt); })
+            .attr("r", function (d) { return d.n === state.n ? 5 : 3; }).attr("fill", "#fff").attr("stroke", "#555").attr("stroke-width", 1.5);
+          if (!narrow) {
+            var last = rows[rows.length - 1], yE = y(last.emsr), yO = y(last.opt);
+            if (Math.abs(yE - yO) < 30) { var mid = (yE + yO) / 2; yE = mid - 15; yO = mid + 15; }
+            [[yE, COL.cls, "Ladder with", "EMSR-b"], [yO, "#555", "Same ladder,", "same optimiser"]].forEach(function (l) {
+              var t = f.g.append("text").attr("x", f.iw + 10).attr("y", l[0]).attr("font-size", 11.5).attr("fill", l[1]).attr("font-weight", 600);
+              t.append("tspan").attr("x", f.iw + 10).attr("dy", "-0.2em").text(l[2]);
+              t.append("tspan").attr("x", f.iw + 10).attr("dy", "1.2em").attr("font-weight", 400).text(l[3]);
+            });
+          }
+          var cross = f.g.append("line").attr("y1", 0).attr("y2", f.ih).attr("stroke", "#bbb").attr("display", "none");
+          f.g.append("rect").attr("width", f.iw).attr("height", f.ih).attr("fill", "transparent")
+            .on("pointermove", function (ev) {
+              var px = d3.pointer(ev)[0], r = rows.reduce(function (b, d) { return Math.abs(x(d.n) - px) < Math.abs(x(b.n) - px) ? d : b; }, rows[0]);
+              cross.attr("x1", x(r.n)).attr("x2", x(r.n)).attr("display", null);
+              showTip(ev, r.n + " fare classes · gain from continuous pricing", [
+                { col: COL.cls, value: sgnPct(r.emsr, 2), label: "against the ladder with EMSR-b" },
+                { col: "#555", dash: true, value: sgnPct(r.opt, 2), label: "against the ladder priced by the same optimiser: the value of the missing price points" }
+              ]);
+            })
+            .on("pointerleave", function () { cross.attr("display", "none"); hideTip(); });
+          legend(el, [
+            { name: "gain against the ladder controlled with EMSR-b", col: COL.cls, line: true },
+            { name: "gain against the same ladder priced by the same optimiser", col: "#555", line: true, dash: true },
+            { name: "cost of the missing price points", col: "rgba(58,143,92,.25)" },
+            { name: "gap from the control method", col: "rgba(42,127,181,.25)" }
+          ]);
+
+          $("sw-sub").textContent = (state.spacing === "pct" ? "Equal % steps" : "Equal $ steps") + " from " + fmt$(state.lo) + " to " + fmt$(state.hi) + " · " + fmtInt(D) + " departures each";
+          var get = function (n) { return rows.find(function (r) { return r.n === n; }); };
+          var r6 = get(6), r10 = get(10), r26 = get(26), cur = get(state.n);
+          var share = cur && cur.emsr > 0 ? Math.max(0, Math.min(1, cur.opt / cur.emsr)) : null;
+          var txt = "With " + state.n + " classes, continuous pricing earns " + sgnPct(cur.emsr, 2) + " against the ladder controlled with EMSR-b. ";
+          txt += "Priced by the same optimiser as continuous pricing, the same ladder would trail by " + sgnPct(cur.opt, 2).replace("+", "") + ": that part is what the missing price points cost" + (share !== null ? ", " + fmtPct0(share) + " of the gain" : "") + ". ";
+          txt += "It shrinks quickly as the ladder gets finer: " + sgnPct(r6.opt, 2) + " with 6 classes, " + sgnPct(r10.opt, 2) + " with 10 and " + sgnPct(r26.opt, 2) + " with 26, so a finer ladder already captures most of it. ";
+          txt += "The gap between the two lines doesn't close: it comes from the way the ladder is controlled, EMSR-b being a heuristic re-run at 10 DCPs, and the continuous price being recomputed every six hours and after each sale. A dense ladder only pays if the control behind it uses it.";
+          $("sw-lead").textContent = txt;
+          $("how-sweep").textContent = "With the current settings, the dashed line shows the price points are worth " + sgnPct(r6.opt, 2) + " with 6 classes and " + sgnPct(r26.opt, 2) + " with 26.";
+        }
+
+        function renderText() {
+          var M = cache.M;
+          $("how-wtp").textContent = "With the current setting, the median is " + fmt$(M.median(180)) + " 180 days out, " + fmt$(M.median(60)) + " at 60 days, " + fmt$(M.median(14)) + " at 14 days and " + fmt$(M.median(0)) + " at departure.";
+          $("how-bound").textContent = state.bounded ? "With the current setting, the continuous price is kept between " + fmt$(state.lo) + " and " + fmt$(state.hi) + "." : "With the current setting, the continuous price can take any amount; tick the box to keep it between the lowest and highest fare, as airlines that derive it from their filed fares do.";
+          $("how-seats").textContent = cfg.seats;
+        }
+
+        function renderAll() { renderTiles(); renderHints(); renderText(); renderDeparture(); renderWaterfall(); if (cache.sweep && cache.kS === keys().kS) renderSweep(); }
+
+        // ═════════════════════════════════════════ interaction
+        var busy = $("busy"), timer = null;
+        function recompute() {
+          busy.classList.add("on");
+          setTimeout(function () {
+            R = simulate();
+            renderAll();
+            busy.classList.remove("on");
+            runSweep();
+          }, 20);
+        }
+        function later() { clearTimeout(timer); timer = setTimeout(recompute, 200); }
+        Object.keys(IN).forEach(function (k) {
+          IN[k].el.addEventListener("input", function () {
+            state[k] = IN[k].get(IN[k].el.value); IN[k].out.textContent = IN[k].show(state[k]);
+            renderFares(); later();
+          });
+        });
+        function pills(id, key, parse) {
+          document.querySelectorAll("#" + id + " button").forEach(function (b) {
+            b.addEventListener("click", function () { state[key] = parse(b.dataset.v); syncPills(id, state[key]); renderFares(); later(); });
+          });
+        }
+        pills("in-n", "n", Number); pills("in-sp", "spacing", String);
+        $("in-bound").addEventListener("change", function () { state.bounded = this.checked; later(); });
+        $("reset").addEventListener("click", function () { state = Object.assign({}, DEFAULTS); sampleIdx = null; cache.k1 = null; syncInputs(); recompute(); });
+        $("another").addEventListener("click", function () {
+          var j; do { j = Math.floor(Math.random() * D); } while (j === sampleIdx);
+          sampleIdx = j; renderDeparture();
+        });
+        var lastW = window.innerWidth, rt = null;
+        window.addEventListener("resize", function () {
+          if (window.innerWidth === lastW) return; lastW = window.innerWidth;
+          clearTimeout(rt); rt = setTimeout(function () { if (R) renderAll(); }, 150);
+        });
+        document.addEventListener("scroll", hideTip, { passive: true });
+
+        $("loading").remove();
+        syncInputs();
+        R = simulate();
+        renderAll();
+        runSweep();
+      }
+    });
+    </script>
+  </body>
+</html>
