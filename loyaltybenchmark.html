@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Loyalty benchmark</title>
+    <meta name="description" content="Alliance tier translator and earn rate comparator for 13 airline loyalty programmes: what each status gives on partner airlines, and how many points the same trip earns in each programme, from public rules.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as awardvalue.html / airflows.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        --grid: #eeeeec;
+        /* one colour per alliance (validated categorical set, same hues as awardvalue.html) */
+        --star: #2a78d6;
+        --oneworld: #eb6834;
+        --skyteam: #1baf7a;
+        --none: #4a3aa7;
+      }
+
+
+      .content { max-width: 1100px; margin: 0 auto; padding: 26px 30px 60px; }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 6px; max-width: 780px; }
+      .crumbs { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+      .crumbs a { color: var(--muted); }
+      .crumbs a:hover { color: var(--link); }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+      .asof { display: inline-block; margin: 10px 8px 0 0; font-size: 12px; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
+      .asof b { font-weight: 600; }
+      .jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 0; }
+      .jump a { font-size: 12.5px; border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; color: var(--text); text-decoration: none; background: #fff; }
+      .jump a:hover { border-color: #cfcfcf; color: var(--ink); }
+
+      /* ── Controls ── */
+      .panel { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fff; margin: 14px 0 16px; }
+      .ctl-grid { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; align-items: center; }
+      .ctl-grid > label, .lbl { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .row { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip { border: 1px solid var(--line); background: #fff; color: var(--text); border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer; }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .hint { font-size: 12px; color: var(--muted); }
+      input.num, select.num {
+        font: inherit; font-size: 13px; color: var(--ink);
+        border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px; background: #fff;
+        width: 96px; font-variant-numeric: tabular-nums; max-width: 100%;
+      }
+      select.num { width: auto; }
+      select.wide { min-width: 0; max-width: 100%; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: var(--c); margin-right: 6px; vertical-align: -1px; flex: none; }
+
+      /* ── Sections & cards ── */
+      .sec { margin-top: 38px; }
+      .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px; }
+      .sec-head h3 { margin: 0; font-size: 17px; color: var(--ink); }
+      .sec-head span { color: var(--muted); font-size: 12.5px; }
+      .sec > p.lead { margin: 0 0 12px; max-width: 800px; font-size: 13.5px; line-height: 1.55; }
+      .two { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 18px; align-items: start; }
+      .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 10px; background: #fff; min-width: 0; }
+      .card h4 { margin: 0 0 6px; font-size: 14px; color: var(--ink); font-weight: 600; }
+      .card .sub { margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+      /* translator */
+      .status-big { font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.2; margin: 2px 0 4px; display: flex; align-items: center; gap: 8px; }
+      .status-big .sw { width: 14px; height: 14px; border-radius: 4px; margin: 0; }
+      .status-sub { font-size: 12.5px; color: var(--text); margin: 0 0 12px; line-height: 1.5; }
+      .eq { list-style: none; padding: 0; margin: 0 0 12px; }
+      .eq li { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-top: 1px solid #f1f1f1; font-size: 12.5px; }
+      .eq li b { color: var(--ink); font-weight: 500; text-align: right; }
+      .eq li button { all: unset; cursor: pointer; color: var(--ink); text-align: right; font-weight: 500; }
+      .eq li button:hover { color: var(--link); }
+      .eq li button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+      .notes { margin: 0; padding-left: 16px; font-size: 12.5px; line-height: 1.5; }
+      .notes li { margin: 0 0 6px; }
+      table.ben { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+      table.ben th { text-align: left; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+      table.ben td { padding: 7px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); vertical-align: top; line-height: 1.45; }
+      table.ben td.k { color: var(--ink); white-space: nowrap; width: 1%; }
+      .yes { color: var(--ink); font-weight: 500; white-space: nowrap; }
+      .no { color: #9a9a96; white-space: nowrap; }
+      .per { color: var(--muted); white-space: nowrap; }
+      .mk { display: inline-block; width: 16px; text-align: center; }
+      .srcs { font-size: 11.5px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+      .srcs a { color: var(--muted); }
+
+      /* grid */
+      .tbl-wrap { overflow-x: auto; }
+      table.tg { border-collapse: collapse; width: 100%; font-size: 12.5px; min-width: 720px; }
+      table.tg th { text-align: left; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: bottom; line-height: 1.35; }
+      table.tg td { padding: 6px 8px; border-bottom: 1px solid #f1f1f1; vertical-align: top; }
+      table.tg td.p { color: var(--ink); white-space: nowrap; }
+      table.tg td.p small { display: block; color: var(--muted); font-size: 11px; }
+      table.tg tr.grp td { padding-top: 14px; font-size: 11.5px; font-weight: 600; color: var(--ink); border-bottom: 1px solid var(--line); }
+      .tchip { display: inline-block; margin: 2px 4px 2px 0; border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; font: inherit; font-size: 12px; color: var(--ink); background: #fff; cursor: pointer; }
+      .tchip:hover { border-color: #bdbdbd; }
+      .tchip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+      .tbl-foot { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; max-width: 900px; }
+
+      /* comparator */
+      .chart { position: relative; width: 100%; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart .axis text { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .chart .axis path, .chart .axis line { stroke: #d9d9d6; }
+      .chart .grid line { stroke: var(--grid); }
+      .chart .grid path { display: none; }
+      .chart .rowlab { font-size: 12.5px; fill: var(--ink); }
+      .chart .rowlab.sm { font-size: 11px; fill: var(--muted); }
+      .chart .vlab { font-size: 12px; fill: var(--ink); font-variant-numeric: tabular-nums; }
+      .chart .hit { fill: transparent; cursor: default; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); margin: 6px 0 0; align-items: center; }
+      .headline { font-size: 13.5px; color: var(--text); margin: 0 0 10px; line-height: 1.55; }
+      .headline b { color: var(--ink); font-weight: 600; }
+      .warn { font-size: 12.5px; color: var(--text); margin: 8px 0 0; line-height: 1.5; }
+      .warn li { margin: 0 0 4px; }
+      .nocredit { font-size: 12.5px; color: var(--muted); margin: 10px 0 0; line-height: 1.5; }
+      table.bk { border-collapse: collapse; width: 100%; font-size: 12.5px; min-width: 760px; }
+      table.bk th { text-align: right; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+      table.bk th:nth-child(-n+3), table.bk td:nth-child(-n+3) { text-align: left; }
+      table.bk td { padding: 7px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; vertical-align: top; font-variant-numeric: tabular-nums; }
+      table.bk td.k { color: var(--ink); white-space: nowrap; }
+      table.bk td small { display: block; color: var(--muted); font-size: 11.5px; }
+      table.bk td b { color: var(--ink); font-weight: 600; }
+      table.bk td.calc { white-space: normal; min-width: 220px; line-height: 1.45; }
+      details.cpp { margin: 14px 0 0; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 10px 14px; }
+      details.cpp summary { cursor: pointer; font-size: 13px; color: var(--ink); }
+      .cpp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px 18px; margin: 12px 0 4px; }
+      .cpp-grid label { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--ink); }
+      .cpp-grid label small { display: block; color: var(--muted); font-size: 11px; }
+      .cpp-grid input { width: 70px; }
+
+      .tip {
+        position: absolute; pointer-events: none; z-index: 5;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.5;
+        max-width: 320px; display: none;
+      }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+      .tip .r { display: flex; justify-content: space-between; gap: 14px; }
+      .tip .r b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .tip .f { color: var(--muted); font-size: 11.5px; margin-top: 3px; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; line-height: 1.55; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method .fx { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; color: var(--ink); display: block; padding: 7px 10px; margin: 6px 0 10px; white-space: pre-wrap; line-height: 1.6; }
+      .method details { margin: 0 0 6px; }
+      .method summary { cursor: pointer; color: var(--ink); }
+
+      .loading { padding: 40px 20px; text-align: center; color: var(--muted); }
+
+      @media (max-width: 900px) {
+        .two { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+          .content { padding: 18px 16px 40px; }
+        .ctl-grid { grid-template-columns: 1fr; gap: 4px 0; }
+        .ctl-grid > label { margin-top: 8px; }
+        .status-big { font-size: 21px; }
+        table.ben td.k { white-space: normal; }
+        select.wide { width: 100%; }
+      }
+    </style>
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+    </style>
+    <style>
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+    </style>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>15</b> tools · <b>7</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Loyalty</div>
+        <h2>Loyalty benchmark</h2>
+        <p class="lede">How airline status travels between programmes, and what the same trip earns in each.</p>
+        <p>Thirteen airline loyalty programmes side by side, from the rules each one publishes. The tier translator shows what a status is worth on partner airlines. The earn comparator shows how many points one trip earns in every programme it can be credited to.</p>
+        <span class="asof" id="asof">Rules as of <b>30 Sep 2026</b></span>
+        <span class="asof"><b>13</b> programmes · <b>3</b> alliances</span>
+        <p class="note-line">Numbers are illustrative. The rules come from public programme and alliance pages, each linked below. Point values are medians from the award value comparator, or an assumption you can edit. Nothing here comes from any airline's internal data.</p>
+        <div class="jump"><a href="#translator">Tier translator</a><a href="#grid">Tier grid</a><a href="#earn">Earn comparator</a><a href="#how">How it works</a></div>
+      </div>
+
+      <!-- ─────────────── Tool 1 ─────────────── -->
+      <section class="sec" id="translator" aria-labelledby="h-tr">
+        <div class="sec-head"><h3 id="h-tr">Alliance tier translator</h3><span>What a status is worth on partner airlines</span></div>
+        <div class="panel">
+          <div class="ctl-grid">
+            <label for="tr-prog">Programme</label>
+            <div><select class="num wide" id="tr-prog"></select></div>
+            <label>Tier</label>
+            <div class="chips" id="tr-tier"></div>
+          </div>
+        </div>
+        <div class="two" id="tr-out"><div class="loading">Loading…</div></div>
+      </section>
+
+      <section class="sec" id="grid" aria-labelledby="h-grid">
+        <div class="sec-head"><h3 id="h-grid">Tiers across all programmes</h3><span>Aligned by alliance level · select a tier to open it above</span></div>
+        <div class="tbl-wrap"><table class="tg" id="tg"></table></div>
+        <p class="tbl-foot">Columns follow alliance status: Star Alliance Silver, oneworld Ruby and SkyTeam Elite give priority services; Star Alliance Gold, oneworld Sapphire and SkyTeam Elite Plus add lounges; oneworld Emerald adds first class lounges. Etihad and Emirates belong to no alliance, so their tiers carry no status elsewhere; they are placed by comparable benefits on their own airline, not by an official equivalence.</p>
+      </section>
+
+      <!-- ─────────────── Tool 2 ─────────────── -->
+      <section class="sec" id="earn" aria-labelledby="h-earn">
+        <div class="sec-head"><h3 id="h-earn">Earn rate comparator</h3><span>One trip, every programme it can be credited to</span></div>
+        <div class="panel">
+          <div class="ctl-grid">
+            <label for="e-from">Route</label>
+            <div class="row"><select class="num wide" id="e-from" aria-label="From"></select><span class="hint">to</span><select class="num wide" id="e-to" aria-label="To"></select><span class="hint" id="e-dist"></span></div>
+            <label for="e-op">Operating airline</label>
+            <div><select class="num wide" id="e-op"></select></div>
+            <label for="e-cls">Booking class</label>
+            <div class="row"><select class="num wide" id="e-cls"></select><select class="num wide" id="e-brand" aria-label="Fare brand"></select></div>
+            <label for="e-fare">Fare paid</label>
+            <div class="row"><input class="num" id="e-fare" type="number" min="0" step="10" inputmode="decimal" value="650"><select class="num" id="e-cur" aria-label="Currency"><option value="USD">USD</option><option value="CAD">CAD</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select><span class="hint">base fare plus carrier surcharges, before taxes</span></div>
+            <label>Status</label>
+            <div><div class="chips" id="e-lvl"></div><div class="hint" id="e-lvl-desc" style="margin-top:5px"></div></div>
+          </div>
+        </div>
+
+        <p class="headline" id="e-head"></p>
+        <div class="card">
+          <div class="row" style="justify-content:space-between;margin-bottom:4px">
+            <h4 style="margin:0" id="e-chart-title">Points earned</h4>
+            <div class="chips" id="e-metric"></div>
+          </div>
+          <div class="chart" id="c-earn"></div>
+          <div class="legend" id="l-earn"></div>
+          <ul class="warn" id="e-warn"></ul>
+          <p class="nocredit" id="e-none"></p>
+        </div>
+
+        <div class="sec-head" style="margin-top:22px"><h3 style="font-size:15px">The rule behind each bar</h3><span>Calculation, point value and source</span></div>
+        <div class="tbl-wrap"><table class="bk" id="bk"></table></div>
+        <details class="cpp" id="cpp-box">
+          <summary>Point values used (US cents per point)</summary>
+          <div class="cpp-grid" id="cpp-grid"></div>
+          <p class="tbl-foot" id="cpp-foot"></p>
+        </details>
+      </section>
+
+      <div class="method" id="how">
+        <h3>How it works</h3>
+
+        <h4>Tier translator</h4>
+        <p>Each programme tier is mapped to the alliance status it carries: Star Alliance Silver or Gold, oneworld Ruby, Sapphire or Emerald, SkyTeam Elite or Elite Plus. The mappings for Star Alliance come from Star Alliance's own programme list; the others from the oneworld member pages and the programmes' own pages. The benefits shown are the alliance's published benefits on partner airlines, which is what a member can count on when flying an airline other than their own. A programme's extra deals with specific partners, and exceptions such as American's North America lounge rule, are listed as notes.</p>
+
+        <h4>Earn comparator</h4>
+        <p>Every programme credits a flight in one of two ways, and the page uses the rule the programme publishes for that operating airline:</p>
+        <span class="fx">revenue-based:   points = fare × rate for your tier   (fare converted to the programme's currency)
+distance-based:  points = max(distance, minimum) × booking-class % + status bonus</span>
+        <ul>
+          <li><b>Revenue-based</b> (a programme's own flights, and a few partners): Aeroplan on Air Canada, MileagePlus on United, Miles &amp; More on the Lufthansa Group, Flying Blue on Air France and KLM, SkyMiles on Delta, AAdvantage on American and British Airways, The British Airways Club on British Airways and American. The fare is the base fare plus carrier surcharges, before taxes, converted at the ECB euro reference rates of <span id="fx-date">29 Sep 2026</span>.</li>
+          <li><b>Distance-based</b> (partners): distance × the percentage for the booking class, with the programme's minimums. Status bonuses follow each programme's rule: a percentage of the miles (United's Premier bonus on selected partners, Miles &amp; More's 25% Executive Bonus, Delta's Medallion bonus on Air France and KLM, AAdvantage on Qatar Airways), a percentage capped at 100% of distance (Flying Blue on Delta and SAS), a booster on the distance part only (SAS EuroBonus), or added percentage points (Qatar Privilege Club).</li>
+          <li><b>Fixed tables</b>: SAS, Etihad and Emirates publish points per route and fare on their own flights, not a percentage; Turkish Airlines does so within Türkiye. The page uses those tables. For Etihad and Emirates they come from each airline's public miles calculator, saved for every route in the airport list; for SAS from its published tables.</li>
+          <li><b>Status</b>: "Lower elite" is each programme's first tier with alliance status (Star Silver, Ruby, Elite), "Upper elite" the first with lounge-level status (Star Gold, Sapphire, Elite Plus), "Top tier" its highest published tier. The tier used for each programme is shown next to its bar.</li>
+          <li><b>Point value</b>: points × US cents per point. For Aeroplan, MileagePlus, Flying Blue and Etihad Guest, the median value from the <a href="/awardvalue.html">award value comparator</a> (Economy median for Economy and Premium Economy classes, Business median for Business and First). For the other nine programmes there is no median yet, so the page assumes <span id="cpp-def">1.0</span>¢ per point; edit any value under "Point values used".</li>
+        </ul>
+
+        <h4>Sources</h4>
+        <p>Every rule was read on the official programme or alliance page on 29 or 30 September 2026. The breakdown table links each bar to its source.</p>
+        <div id="how-sources"></div>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>The ticket is assumed to be issued by the operating airline. Many programmes earn differently when another airline issues the ticket: an Air Canada-issued ticket on a Star Alliance partner earns Aeroplan points on the fare, for example, and a United-issued ticket earns MileagePlus miles on the fare.</li>
+          <li>Distances are great-circle miles from airport coordinates. Programmes use their own mileage tables, which can differ by a few percent. Nonstop flights only; connections and stopovers are not modelled.</li>
+          <li>Booking classes are shown by their usual cabin. Some airlines use the same letter for different products on short and long haul, and a few published charts list a letter twice; the first listing is used and noted.</li>
+          <li>Promotions, credit card earn rates and co-brand bonuses are left out. United's rates are those for members without a United card; United awards far fewer miles on Emirates than the chart suggests outside the routes it lists.</li>
+          <li>Status qualification credits (SQC, PQP, XP, Tier Points, Qpoints) are not shown, only redeemable points.</li>
+          <li>Where a chart gives a status bonus without saying whether it applies to the base or the total, the page applies it to the chart miles. SAS fare names on partner charts (Go Light, Go Smart, Plus) are matched to SAS's current names (Light, Standard, Flex, Premium, Business) by me, not by SAS.</li>
+          <li>Rules change often: Aeroplan and United both changed how they earn in 2026. Check the linked pages before relying on a number.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline. For how status tiers and earning are designed, read <a href="/loyalty101.html#ch06">Loyalty 101: Status Tiers</a> and <a href="/loyalty101.html#ch02">Loyalty 101: Earning</a>.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      var DATA_URL = "assets/data/loyalty-benchmark.json", AV_URL = "assets/data/award-value.json";
+      var ACOL = { star: "#2a78d6", oneworld: "#eb6834", skyteam: "#1baf7a", none: "#4a3aa7" };
+      var ANAME = { star: "Star Alliance", oneworld: "oneworld", skyteam: "SkyTeam", none: "No alliance" };
+      var ORDER = ["star", "oneworld", "skyteam", "none"];
+      var CABIN = { F: "First", J: "Business", W: "Premium economy", Y: "Economy" };
+      var LEVELS = [["0", "Member"], ["1", "Lower elite"], ["2", "Upper elite"], ["3", "Top tier"]];
+      var EU = "GB IE FR NL DE CH AT BE IT ES PT DK SE NO FI TR GR PL CZ HU".split(" ");
+      var MMEU = EU.concat(["MA", "EG"]), MED = EU.concat(["MA", "EG", "IL", "JO"]), SCAN = ["DK", "SE", "NO"];
+      var D = null, AV = null, tip = el("tip");
+      var S = { prog: "united", tier: "gold", from: "YYZ", to: "FRA", op: "LH", cls: "V", brand: null, fare: 650, cur: "USD", lvl: 0, metric: "pts", cppUser: {} };
+
+      function el(id) { return document.getElementById(id); }
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+      function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
+      function money(v) { return "$" + (v >= 100 ? fmt(v) : (Math.round(v * 100) / 100).toFixed(2)); }
+      function cents(c) { return (Math.round(c * 100) / 100).toFixed(2) + "¢"; }
+      function median(a) { if (!a.length) return null; a = a.slice().sort(function (x, y) { return x - y; }); var n = a.length; return n % 2 ? a[(n - 1) / 2] : (a[n / 2 - 1] + a[n / 2]) / 2; }
+      function dateTxt(iso) { var d = new Date(iso + "T12:00:00Z"); return d.getUTCDate() + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getUTCMonth()] + " " + d.getUTCFullYear(); }
+      function prog(id) { return D.programs.find(function (p) { return p.id === id; }); }
+      function tierOf(p, id) { return p.tiers.find(function (t) { return t.id === id; }); }
+      function op(code) { return D.operators.find(function (o) { return o.code === code; }); }
+      function ap(code) { return D.airports.find(function (a) { return a.code === code; }); }
+      function statusInfo(p, t) {
+        if (!t.status) return null;
+        var lv = D.alliances[p.alliance].levels[t.status];
+        return { key: t.status, name: lv.name, rank: lv.rank, b: lv.b };
+      }
+      function srcLink(s) { return '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a>, read " + dateTxt(s.read); }
+
+      // ───────────────────────────── tooltip
+      function showTip(html, evt) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var pageX = evt.pageX, pageY = evt.pageY, w = tip.offsetWidth, h = tip.offsetHeight;
+        var x = pageX + 14, y = pageY - h - 12;
+        if (x + w > window.scrollX + document.documentElement.clientWidth - 8) x = pageX - w - 14;
+        if (x < window.scrollX + 8) x = window.scrollX + 8;
+        if (y < window.scrollY + 8) y = pageY + 16;
+        tip.style.left = x + "px"; tip.style.top = y + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      function trow(l, v) { return '<div class="r"><span>' + l + "</span><b>" + v + "</b></div>"; }
+
+      function chips(host, opts, cur, onPick) {
+        var h = el(host); h.innerHTML = "";
+        opts.forEach(function (o) {
+          var b = document.createElement("button"); b.type = "button"; b.className = "chip" + (String(cur) === String(o[0]) ? " on" : "");
+          b.textContent = o[1]; b.setAttribute("aria-pressed", String(cur) === String(o[0]));
+          b.addEventListener("click", function () { onPick(o[0]); });
+          h.appendChild(b);
+        });
+      }
+
+      // ═════════════════════════════ TOOL 1: translator
+      function buildProgSelect() {
+        var s = el("tr-prog"); s.innerHTML = "";
+        ORDER.forEach(function (a) {
+          var g = document.createElement("optgroup"); g.label = ANAME[a];
+          D.programs.filter(function (p) { return p.alliance === a; }).forEach(function (p) {
+            var o = document.createElement("option"); o.value = p.id; o.textContent = p.name + " (" + p.airline + ")"; g.appendChild(o);
+          });
+          s.appendChild(g);
+        });
+        s.value = S.prog;
+        s.addEventListener("change", function () { S.prog = s.value; var p = prog(S.prog); S.tier = (p.tiers.find(function (t) { return t.col === 2; }) || p.tiers[1]).id; renderTranslator(); });
+      }
+      function renderTranslator() {
+        var p = prog(S.prog), t = tierOf(p, S.tier);
+        el("tr-prog").value = p.id;
+        chips("tr-tier", p.tiers.map(function (x) { return [x.id, x.name]; }), S.tier, function (id) { S.tier = id; renderTranslator(); });
+        var si = statusInfo(p, t), left = "", right = "";
+        if (p.alliance === "none") {
+          left += '<div class="card"><div class="lbl">' + esc(p.name + " " + t.name) + ' gives</div><div class="status-big"><i class="sw" style="--c:' + ACOL.none + '"></i>No alliance status</div>' +
+            '<p class="status-sub">' + esc(p.airline) + " is not in an alliance. Benefits on other airlines exist only where a partnership spells them out." + (t.qualify ? " Qualification: " + esc(t.qualify) + "." : "") + "</p>";
+          left += noteList(p) + srcList(p.sources) + "</div>";
+          right = '<div class="card"><h4>' + esc(p.name) + ' benefits with partner airlines</h4><p class="sub">From ' + esc(p.airline) + (/s$/.test(p.airline) ? "'" : "'s") + " own pages. These apply to Silver, Gold and Platinum as described; there is no reciprocal status.</p>" +
+            '<table class="ben"><tbody>' + p.partner_benefits.map(function (b) { return '<tr><td class="k">' + esc(b.label) + "</td><td>" + esc(b.value) + "</td></tr>"; }).join("") + "</tbody></table></div>";
+        } else {
+          var al = D.alliances[p.alliance];
+          left += '<div class="card"><div class="lbl">' + esc(p.name + " " + t.name) + ' gives</div>';
+          if (si) {
+            left += '<div class="status-big"><i class="sw" style="--c:' + ACOL[p.alliance] + '"></i>' + esc(si.name) + "</div>";
+            left += '<p class="status-sub">Recognised on every ' + esc(al.name) + " airline." + (t.qualify ? " Qualification: " + esc(t.qualify) + "." : "") + "</p>";
+            left += '<h4>Equivalent tiers in ' + esc(al.name) + "</h4><ul class=\"eq\">" + equivalents(p, si.key) + "</ul>";
+          } else {
+            left += '<div class="status-big"><i class="sw" style="--c:#b9b8b3"></i>No alliance status</div><p class="status-sub">The base tier earns and redeems on ' + esc(al.name) + " airlines but carries no priority benefits.</p>";
+          }
+          left += noteList(p) + srcList(p.sources) + "</div>";
+          var lv = si ? si.b : null;
+          right = '<div class="card"><h4>On ' + esc(al.name) + ' partner airlines</h4><p class="sub">' + (si ? "The alliance's published benefits for " + esc(si.name) + "." : "Without alliance status, priority services depend on the fare and cabin.") + '</p><table class="ben"><thead><tr><th>Benefit</th><th>' + (si ? esc(si.name) : "Base tier") + "</th></tr></thead><tbody>" +
+            D.benefit_rows.map(function (r) {
+              var b = lv ? lv[r[0]] : { v: false };
+              var mark = b.v === true ? '<span class="yes"><span class="mk" aria-hidden="true">✓</span>Included</span>' : b.v === false ? '<span class="no"><span class="mk" aria-hidden="true">–</span>Not included</span>' : '<span class="per"><span class="mk" aria-hidden="true">·</span>Per airline</span>';
+              return '<tr><td class="k">' + r[1] + "</td><td>" + mark + (b.rule ? "<br>" + esc(b.rule) : "") + "</td></tr>";
+            }).join("") + "</tbody></table>" + srcList(al.src) + "</div>";
+        }
+        el("tr-out").innerHTML = left + right;
+        el("tr-out").querySelectorAll("button[data-p]").forEach(function (b) {
+          b.addEventListener("click", function () { S.prog = b.getAttribute("data-p"); S.tier = b.getAttribute("data-t"); renderTranslator(); });
+        });
+        renderGrid();
+      }
+      function equivalents(p, key) {
+        var list = D.programs.filter(function (q) { return q.alliance === p.alliance && q.id !== p.id; });
+        return list.map(function (q) {
+          var ts = q.tiers.filter(function (x) { return x.status === key; });
+          return "<li><span>" + esc(q.name) + "</span><span>" + (ts.length ? ts.map(function (x) { return '<button type="button" data-p="' + q.id + '" data-t="' + x.id + '">' + esc(x.name) + "</button>"; }).join(", ") : "–") + "</span></li>";
+        }).join("");
+      }
+      function noteList(p) { return p.notes.length ? '<h4>Programme notes</h4><ul class="notes">' + p.notes.map(function (n) { return "<li>" + esc(n) + "</li>"; }).join("") + "</ul>" : ""; }
+      function srcList(arr) { return '<p class="srcs">Sources: ' + arr.map(srcLink).join("; ") + ".</p>"; }
+
+      // ───────────────────────────── tier grid
+      function renderGrid() {
+        var heads = ["Programme", "Base", "Star Alliance Silver<br>oneworld Ruby<br>SkyTeam Elite", "Star Alliance Gold<br>oneworld Sapphire<br>SkyTeam Elite Plus", "oneworld Emerald<br><small>(Etihad, Emirates: top tiers)</small>"];
+        var h = "<thead><tr>" + heads.map(function (x) { return "<th>" + x + "</th>"; }).join("") + "</tr></thead><tbody>";
+        ORDER.forEach(function (a) {
+          h += '<tr class="grp"><td colspan="5"><i class="sw" style="--c:' + ACOL[a] + '"></i>' + ANAME[a] + "</td></tr>";
+          D.programs.filter(function (p) { return p.alliance === a; }).forEach(function (p) {
+            h += '<tr><td class="p">' + esc(p.name) + "<small>" + esc(p.airline) + "</small></td>";
+            for (var c = 0; c <= 3; c++) {
+              var ts = p.tiers.filter(function (t) { return t.col === c; });
+              h += "<td>" + ts.map(function (t) {
+                var on = p.id === S.prog && t.id === S.tier;
+                return '<button type="button" class="tchip' + (on ? " on" : "") + '" data-p="' + p.id + '" data-t="' + t.id + '" aria-pressed="' + on + '">' + esc(t.name) + "</button>";
+              }).join("") + "</td>";
+            }
+            h += "</tr>";
+          });
+        });
+        el("tg").innerHTML = h + "</tbody>";
+        el("tg").querySelectorAll("button.tchip").forEach(function (b) {
+          b.addEventListener("click", function () {
+            S.prog = b.getAttribute("data-p"); S.tier = b.getAttribute("data-t"); renderTranslator();
+            el("translator").scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+      }
+
+      // ═════════════════════════════ TOOL 2: earn comparator
+      function distance(a, b) {
+        var R = 3958.8, r = Math.PI / 180, dLat = (b.lat - a.lat) * r, dLon = (b.lon - a.lon) * r;
+        var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return 2 * R * Math.asin(Math.sqrt(x));
+      }
+      function inSet(s, a, b) { return s.indexOf(a.country) >= 0 && s.indexOf(b.country) >= 0; }
+      function zoneOf(fn, a, b) {
+        if (fn === "eu") return inSet(EU, a, b) ? "eu" : "";
+        if (fn === "med") return inSet(MED, a, b) || a.country === b.country ? "med" : "";
+        if (fn === "ca") return a.country === "CA" && b.country === "CA" ? "dom" : "";
+        if (fn === "mmeu") return inSet(MMEU, a, b) ? "eu" : "";
+        if (fn === "tkmm") return a.country === "TR" && b.country === "TR" ? "dom" : inSet(MMEU, a, b) ? "eu" : "";
+        return "";
+      }
+      function convert(amount, from, to) { var r = D.meta.fx.per_eur; return amount / r[from] * r[to]; }
+      function classInfo(o, c) { return o.classes.find(function (x) { return x.c === c; }); }
+      function brandFor(o, cab) { return o.brands && o.brands[cab] ? S.brand : null; }
+      function brandName(o, cab, b) { if (!o.brands || !o.brands[cab]) return ""; var f = o.brands[cab].find(function (x) { return x[0] === b; }); return f ? f[1] : ""; }
+
+      function matchRule(cr, c, brand, zone) {
+        for (var i = 0; i < cr.rules.length; i++) {
+          var r = cr.rules[i], rz = r.zone || "";
+          if (cr.strict ? rz !== zone : (rz && rz !== zone)) continue;
+          if (r.brand && r.brand !== brand) continue;
+          if (r.c.indexOf(c) < 0) continue;
+          return r;
+        }
+        return null;
+      }
+
+      // returns {pts, calc, tierName, warn?} or {pts:null, reason}
+      function earn(cr, trip, tierId) {
+        var p = prog(cr.prog), t = tierOf(p, tierId), o = op(cr.op), ci = classInfo(o, trip.cls), cab = ci.cab, brand = brandFor(o, cab);
+        var out = { tierName: t.name }, d = trip.dist;
+        if (cr.kind === "revenue") {
+          var isBasic = o.basic && o.basic === trip.cls && cr.basicRates;
+          var rate = (isBasic ? cr.basicRates : cr.rates)[tierId], amt = convert(trip.fare, trip.cur, cr.cur);
+          out.pts = amt * rate; if (cr.cap) out.pts = Math.min(out.pts, cr.cap);
+          out.calc = (trip.cur === cr.cur ? "" : trip.cur + " " + fmt(trip.fare) + " = ") + cr.cur + " " + fmt(amt) + " × " + rate + " per " + cr.cur + (isBasic ? " (basic economy rate)" : "");
+          out.method = "Fare";
+          return out;
+        }
+        if (cr.kind === "distance") {
+          var zone = cr.zoneFn ? zoneOf(cr.zoneFn, trip.A, trip.B) : "";
+          if (cr.euUnavailable && zone === "eu") return { pts: null, reason: "Flights within Europe aren't in this chart" };
+          var r = matchRule(cr, trip.cls, brand, zone);
+          if (!r) return { pts: null, reason: "Class " + trip.cls + (brand ? " (" + brandName(o, cab, brand) + ")" : "") + " doesn't earn" };
+          if (r.fixed != null) { out.pts = r.fixed; out.calc = "Fixed " + fmt(r.fixed) + " for class " + trip.cls + (zone === "dom" ? " (domestic)" : " (within Europe)"); out.method = "Fixed"; return out; }
+          if (!r.p) return { pts: null, reason: "Class " + trip.cls + (brand ? " (" + brandName(o, cab, brand) + ")" : "") + " doesn't earn" };
+          var dd = Math.max(d, cr.minDist || 0), base = dd * r.p / 100, calc = fmt(dd) + " mi × " + r.p + "%";
+          if (cr.minDist && d < cr.minDist) calc = fmt(d) + " mi (minimum " + fmt(cr.minDist) + ") × " + r.p + "%";
+          if (r.min && base < r.min) { base = r.min; calc += " → minimum " + fmt(r.min); }
+          var bonus = 0;
+          if (cr.bonus) {
+            var pct = cr.bonus.tiers[tierId] || 0;
+            if (pct) {
+              if (cr.bonus.type === "pp") { bonus = dd * pct / 100; calc += " + " + pct + " pts of distance for status"; }
+              else if (r.b != null || cr.bonus.cap) { var bp = r.b != null ? r.b : r.p; if (cr.bonus.cap) bp = Math.min(bp, cr.bonus.cap); bonus = dd * bp / 100 * pct / 100; calc += " + " + pct + "% of " + bp + "% for status"; }
+              else { bonus = base * pct / 100; calc += " + " + pct + "% status bonus"; }
+            }
+          }
+          out.pts = base + bonus; out.calc = calc + (zone ? " · " + ({ eu: "intra-Europe chart", med: "medium-haul chart", dom: "domestic chart" }[zone]) : "");
+          out.method = "Distance";
+          if (cr.restricted) out.warn = true;
+          return out;
+        }
+        if (cr.kind === "tk_own") {
+          var own = D.own.tk, dom = trip.A.country === "TR" && trip.B.country === "TR";
+          if (dom) { for (var k in own.dom) if (k.indexOf(trip.cls) >= 0) { out.pts = own.dom[k]; out.calc = "Fixed " + fmt(own.dom[k]) + " within Türkiye"; out.method = "Fixed"; return out; } return { pts: null, reason: "Class " + trip.cls + " doesn't earn" }; }
+          var list = own.intl.concat(own.intlJ[tierId === "classic" ? "classic" : "elite"]);
+          for (var i = 0; i < list.length; i++) if (list[i][0].indexOf(trip.cls) >= 0) {
+            var v = Math.max(d * list[i][1] / 100, list[i][2]); out.pts = v; out.calc = fmt(d) + " mi × " + list[i][1] + "% (minimum " + fmt(list[i][2]) + ")"; out.method = "Distance"; return out;
+          }
+          return { pts: null, reason: "Class " + trip.cls + " doesn't earn" };
+        }
+        if (cr.kind === "ey_own") {
+          var eo = D.own.ey, other = trip.A.code === "AUH" ? trip.B.code : trip.B.code === "AUH" ? trip.A.code : null;
+          if (!other) return { pts: null, reason: "Etihad flies from Abu Dhabi: pick a route to or from AUH" };
+          var Z = eo.zones[other]; if (!Z) return { pts: null, reason: "Route not in Etihad's miles calculator" };
+          var fam = S.brand && eo.pct[cab] && eo.pct[cab][S.brand] != null ? S.brand : (cab === "Y" ? "value" : "comfort");
+          var pc = eo.pct[cab === "W" ? "Y" : cab][fam], tp = eo.tierPct[tierId] || 0, b0 = Z * pc / 100, bn = Z * tp / 100;
+          out.pts = b0 + bn; out.calc = fmt(b0) + " for " + brandName(o, cab, fam) + " on this route" + (tp ? " + " + fmt(bn) + " tier bonus (" + tp + "% of " + fmt(Z) + ")" : ""); out.method = "Route table";
+          return out;
+        }
+        if (cr.kind === "ek_own") {
+          var ek = D.own.ek, oth = trip.A.code === "DXB" ? trip.B.code : trip.B.code === "DXB" ? trip.A.code : null;
+          if (!oth) return { pts: null, reason: "Emirates flies from Dubai: pick a route to or from DXB" };
+          var rt = ek.routes[oth]; if (!rt || !rt[cab]) return { pts: null, reason: "Route or cabin not in Emirates' calculator" };
+          var br = ek.brand[trip.cls] || "flex", row = rt[cab], m = row[br] != null ? row[br] : row.flexPlus;
+          var tp2 = ek.tierPct[tierId] || 0, bonus2 = (rt.Y ? rt.Y.flexPlus : 0) * tp2 / 100;
+          var bl = { flexPlus: "Flex Plus", flex: "Flex", saver: "Saver", special: "Special" }[row[br] != null ? br : "flexPlus"];
+          out.pts = m + bonus2; out.calc = fmt(m) + " for " + CABIN[cab] + " " + bl + " on this route" + (tp2 ? " + " + fmt(bonus2) + " tier bonus (" + tp2 + "% of Economy Flex Plus)" : ""); out.method = "Route table";
+          return out;
+        }
+        if (cr.kind === "sas_own") {
+          var so = D.own.sas, A = trip.A, Bp = trip.B, sA = SCAN.indexOf(A.country) >= 0, sB = SCAN.indexOf(Bp.country) >= 0, z = null, far = sA ? Bp : A;
+          if (sA && sB) z = A.country === Bp.country ? "dom" : "scan";
+          else if (sA || sB) {
+            if (EU.indexOf(far.country) >= 0) z = "eur";
+            else for (var zz in so.zones) if (so.zones[zz].indexOf(far.code) >= 0) z = zz;
+          }
+          if (!z) return { pts: null, reason: "Route not in SAS's EuroBonus tables" };
+          var sb = S.brand || "smart";
+          if (z === "dom") sb = { biz: "plus", bizflex: "plusflex" }[sb] || sb;
+          if (z === "scan" || z === "eur") sb = { plus: "biz", plusflex: "bizflex" }[sb] || sb;
+          var tbl = so.tables[z], hit = tbl.find(function (x) { return x[0] === sb && x[1].indexOf(trip.cls) >= 0; });
+          if (!hit) return { pts: null, reason: "Class " + trip.cls + " with this fare type isn't in SAS's table for this route" };
+          var bo = so.boost[tierId] || 0; out.pts = hit[2] * (1 + bo / 100);
+          out.calc = "Fixed " + fmt(hit[2]) + " (" + ({ dom: "domestic", scan: "within Scandinavia", eur: "Europe", LH1: "long haul, group 1", LH2: "long haul, group 2", LH3: "long haul, group 3" }[z]) + ")" + (bo ? " + " + bo + "% for status" : "");
+          out.method = "Route table"; return out;
+        }
+        return { pts: null, reason: "Not modelled" };
+      }
+
+      // point values
+      function cppDefault(pid, cab) {
+        if (AV) {
+          var c = cab === "J" || cab === "F" ? "J" : "Y";
+          var v = AV.awards.filter(function (a) { return a.program === pid && a.cabin === c; }).map(function (a) { return a.cpp; });
+          if (v.length) return { v: median(v), src: "median, award value page (" + (c === "J" ? "Business" : "Economy") + ")" };
+        }
+        return { v: D.meta.assumed_cpp, src: "assumption" };
+      }
+      function cppFor(pid, cab) { return S.cppUser[pid] != null ? { v: S.cppUser[pid], src: "your value" } : cppDefault(pid, cab); }
+
+      function buildEarnControls() {
+        var byCity = D.airports.slice().sort(function (a, b) { return a.city.localeCompare(b.city); });
+        ["e-from", "e-to"].forEach(function (id) {
+          var s = el(id); s.innerHTML = byCity.map(function (a) { return '<option value="' + a.code + '">' + esc(a.city) + " (" + a.code + ")</option>"; }).join("");
+        });
+        el("e-op").innerHTML = D.operators.map(function (o) { return '<option value="' + o.code + '">' + esc(o.name) + "</option>"; }).join("");
+        el("e-from").addEventListener("change", function () { S.from = this.value; renderEarn(); });
+        el("e-to").addEventListener("change", function () { S.to = this.value; renderEarn(); });
+        el("e-op").addEventListener("change", function () {
+          S.op = this.value; var o = op(S.op);
+          if (!classInfo(o, S.cls)) S.cls = (o.classes.find(function (c) { return c.cab === "Y"; }) || o.classes[0]).c;
+          S.brand = o.defaultBrand || null;
+          if (o.hub && S.from !== o.hub && S.to !== o.hub) { S.from = o.hub; if (S.to === o.hub) S.to = "LHR"; }
+          renderEarn();
+        });
+        el("e-cls").addEventListener("change", function () { S.cls = this.value; var o = op(S.op), cab = classInfo(o, S.cls).cab; if (o.brands && o.brands[cab] && !o.brands[cab].some(function (b) { return b[0] === S.brand; })) S.brand = o.brands[cab][Math.min(1, o.brands[cab].length - 1)][0]; renderEarn(); });
+        el("e-brand").addEventListener("change", function () { S.brand = this.value; renderEarn(); });
+        el("e-fare").addEventListener("input", function () { S.fare = Math.max(0, +this.value || 0); renderEarn(); });
+        el("e-cur").addEventListener("change", function () { S.cur = this.value; renderEarn(); });
+      }
+
+      function renderEarn() {
+        var o = op(S.op), A = ap(S.from), B = ap(S.to);
+        el("e-from").value = S.from; el("e-to").value = S.to; el("e-op").value = S.op;
+        var groups = ["F", "J", "W", "Y"].map(function (cab) {
+          var cs = o.classes.filter(function (c) { return c.cab === cab; }); if (!cs.length) return "";
+          return '<optgroup label="' + CABIN[cab] + '">' + cs.map(function (c) { return '<option value="' + c.c + '">' + c.c + " · " + CABIN[cab] + (o.basic === c.c ? " (basic)" : "") + "</option>"; }).join("") + "</optgroup>";
+        }).join("");
+        el("e-cls").innerHTML = groups; el("e-cls").value = S.cls;
+        var cab = classInfo(o, S.cls).cab, bsel = el("e-brand");
+        if (o.brands && o.brands[cab]) {
+          bsel.style.display = ""; bsel.innerHTML = o.brands[cab].map(function (b) { return '<option value="' + b[0] + '">' + esc(b[1]) + "</option>"; }).join("");
+          if (!o.brands[cab].some(function (b) { return b[0] === S.brand; })) S.brand = o.brands[cab][Math.min(1, o.brands[cab].length - 1)][0];
+          bsel.value = S.brand;
+        } else { bsel.style.display = "none"; }
+        el("e-fare").value = S.fare; el("e-cur").value = S.cur;
+        chips("e-lvl", LEVELS, S.lvl, function (v) { S.lvl = +v; renderEarn(); });
+        el("e-lvl-desc").textContent = ["Base membership in every programme.", "Each programme's first tier with alliance status (Star Silver, oneworld Ruby, SkyTeam Elite; Silver at Etihad and Emirates).", "The first tier with lounge-level status (Star Gold, oneworld Sapphire, SkyTeam Elite Plus; Gold at Etihad and Emirates).", "Each programme's highest published tier."][S.lvl];
+
+        var warn = [];
+        if (S.from === S.to) { el("e-dist").textContent = ""; el("c-earn").innerHTML = '<div class="loading">Pick two different airports.</div>'; el("bk").innerHTML = ""; el("e-head").textContent = ""; el("e-warn").innerHTML = ""; el("e-none").textContent = ""; return; }
+        var d = distance(A, B);
+        el("e-dist").textContent = fmt(d) + " miles";
+        var trip = { A: A, B: B, dist: d, cls: S.cls, fare: S.fare, cur: S.cur };
+        var crs = D.credit.filter(function (c) { return c.op === S.op; });
+        var res = crs.map(function (cr) {
+          var p = prog(cr.prog), tid = p.levels[S.lvl], r = earn(cr, trip, tid), cv = cppFor(p.id, cab);
+          r.p = p; r.cr = cr; r.cpp = cv; if (r.pts != null) { r.pts = Math.round(r.pts); r.usd = r.pts * cv.v / 100; }
+          return r;
+        });
+        var ok = res.filter(function (r) { return r.pts != null && r.pts > 0; }), zero = res.filter(function (r) { return !(r.pts > 0); });
+        var credited = crs.map(function (c) { return c.prog; });
+        var none = D.programs.filter(function (p) { return credited.indexOf(p.id) < 0; }).map(function (p) { return p.name; });
+        var key = S.metric === "usd" ? "usd" : "pts";
+        ok.sort(function (a, b) { return b[key] - a[key]; });
+
+        // headline
+        if (ok.length) {
+          var top = ok[0];
+          el("e-head").innerHTML = "On this " + esc(o.name) + " flight, <b>" + esc(top.p.name) + "</b> earns the most " + (key === "usd" ? "value" : "points") + ": <b>" + fmt(top.pts) + "</b> points, worth about <b>" + money(top.usd) + "</b> at " + cents(top.cpp.v) + " a point." +
+            (ok.length > 1 ? " The lowest of the " + ok.length + " programmes that earn is " + esc(ok[ok.length - 1].p.name) + " with " + fmt(ok[ok.length - 1].pts) + "." : "");
+        } else el("e-head").textContent = "No programme earns on this combination.";
+
+        drawEarn(ok, key);
+        el("e-chart-title").textContent = key === "usd" ? "Value of the points earned, US dollars" : "Points earned";
+        chips("e-metric", [["pts", "Points"], ["usd", "Value"]], S.metric, function (v) { S.metric = v; renderEarn(); });
+        el("l-earn").innerHTML = ORDER.filter(function (a) { return ok.some(function (r) { return r.p.alliance === a; }); }).map(function (a) { return '<span><i class="sw" style="--c:' + ACOL[a] + '"></i>' + ANAME[a] + "</span>"; }).join("");
+
+        ok.forEach(function (r) { if (r.warn && r.cr.note) warn.push(esc(r.p.name) + ": " + esc(r.cr.note)); });
+        zero.forEach(function (r) { warn.push(esc(r.p.name) + ": " + esc(r.reason || "earns nothing with this class")); });
+        el("e-warn").innerHTML = warn.map(function (w) { return "<li>" + w + "</li>"; }).join("");
+        el("e-none").textContent = none.length ? "Can't be credited to: " + none.join(", ") + " (no earning partnership with " + o.name + ")." : "";
+
+        // breakdown table
+        var rowsAll = ok.concat(zero);
+        el("bk").innerHTML = "<thead><tr><th>Programme</th><th>Tier used</th><th>Rule</th><th>Points</th><th>Value per point</th><th>Value</th></tr></thead><tbody>" +
+          rowsAll.map(function (r) {
+            var srcA = '<a href="' + esc(r.cr.src.url) + '" target="_blank" rel="noopener">source</a>';
+            return '<tr><td class="k"><i class="sw" style="--c:' + ACOL[r.p.alliance] + '"></i>' + esc(r.p.name) + "<small>" + esc(r.p.airline) + "</small></td><td>" + esc(tierOf(r.p, r.p.levels[S.lvl]).name) + '</td><td class="calc">' +
+              (r.pts != null && r.pts > 0 ? esc(r.calc) : "<i>" + esc(r.reason || "No earning") + "</i>") + "<small>" + (r.cr.note ? esc(r.cr.note) + " " : "") + srcA + ", read " + dateTxt(r.cr.src.read) + "</small></td>" +
+              "<td>" + (r.pts > 0 ? "<b>" + fmt(r.pts) + "</b>" : "–") + "</td><td>" + cents(r.cpp.v) + "<small>" + esc(r.cpp.src) + "</small></td><td>" + (r.pts > 0 ? money(r.usd) : "–") + "</td></tr>";
+          }).join("") + "</tbody>";
+        renderCppGrid(cab);
+      }
+
+      function drawEarn(list, key) {
+        var host = el("c-earn");
+        d3.select(host).selectAll("*").remove();
+        if (!list.length) { host.innerHTML = '<div class="loading">No programme earns points on this combination.</div>'; return; }
+        var W = Math.max(300, host.clientWidth || 600), narrow = W < 560;
+        var rowH = 38, M = { top: 6, right: narrow ? 64 : 90, bottom: 26, left: narrow ? 118 : 190 };
+        var H = M.top + M.bottom + rowH * list.length;
+        var svg = d3.select(host).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img")
+          .attr("aria-label", "Bar chart of " + (key === "usd" ? "point value" : "points earned") + " by programme for the trip");
+        var g = svg.append("g").attr("transform", "translate(" + M.left + "," + M.top + ")");
+        var iw = W - M.left - M.right, ih = rowH * list.length;
+        var x = d3.scaleLinear().domain([0, d3.max(list, function (r) { return r[key]; }) * 1.02 || 1]).nice().range([0, iw]);
+        g.append("g").attr("class", "grid").attr("transform", "translate(0," + ih + ")").call(d3.axisBottom(x).ticks(narrow ? 3 : 6).tickSize(-ih).tickFormat(""));
+        g.append("g").attr("class", "axis").attr("transform", "translate(0," + ih + ")").call(d3.axisBottom(x).ticks(narrow ? 3 : 6).tickSize(4)
+          .tickFormat(function (v) { return key === "usd" ? "$" + d3.format(",")(v) : (v >= 1000 ? d3.format(",")(v / 1000) + "k" : v); }));
+        list.forEach(function (r, i) {
+          var y = rowH * i, bh = 14, by = y + (rowH - bh) / 2, w = Math.max(2, x(r[key]));
+          g.append("text").attr("class", "rowlab").attr("x", -10).attr("y", y + rowH / 2).attr("dy", "-0.15em").attr("text-anchor", "end").text(r.p.short);
+          g.append("text").attr("class", "rowlab sm").attr("x", -10).attr("y", y + rowH / 2).attr("dy", "1.05em").attr("text-anchor", "end").text(r.tierName);
+          g.append("path").attr("fill", ACOL[r.p.alliance])
+            .attr("d", "M0," + by + "H" + (w - 4) + "a4,4 0 0 1 4,4V" + (by + bh - 4) + "a4,4 0 0 1 -4,4H0Z");
+          g.append("text").attr("class", "vlab").attr("x", w + 6).attr("y", by + bh / 2).attr("dy", "0.35em")
+            .text(key === "usd" ? money(r.usd) : fmt(r.pts));
+          g.append("rect").attr("class", "hit").attr("x", -M.left).attr("y", y).attr("width", iw + M.left + M.right).attr("height", rowH)
+            .on("mousemove", function (e) { showTip(earnTip(r), e); }).on("mouseleave", hideTip)
+            .on("touchstart", function (e) { showTip(earnTip(r), e.touches ? e.touches[0] : e); }, { passive: true });
+        });
+      }
+      function earnTip(r) {
+        return '<div class="t"><i class="sw" style="--c:' + ACOL[r.p.alliance] + '"></i>' + esc(r.p.name) + " · " + esc(r.tierName) + "</div>" +
+          trow("Points", fmt(r.pts)) + trow("Value", money(r.usd) + " at " + cents(r.cpp.v)) + '<div class="f">' + esc(r.method) + ": " + esc(r.calc) + "</div>";
+      }
+
+      function renderCppGrid(cab) {
+        el("cpp-grid").innerHTML = D.programs.map(function (p) {
+          var v = cppFor(p.id, cab);
+          return '<label><span>' + esc(p.name) + '<small>' + esc(v.src) + '</small></span><input class="num" type="number" min="0" step="0.05" inputmode="decimal" data-p="' + p.id + '" value="' + (Math.round(v.v * 100) / 100) + '" aria-label="US cents per point for ' + esc(p.name) + '"></label>';
+        }).join("");
+        el("cpp-grid").querySelectorAll("input").forEach(function (inp) {
+          inp.addEventListener("change", function () { var v = parseFloat(inp.value); S.cppUser[inp.getAttribute("data-p")] = isFinite(v) && v >= 0 ? v : null; renderEarn(); });
+        });
+        el("cpp-foot").innerHTML = "Medians come from the <a href=\"/awardvalue.html\">award value comparator</a> (typical prices, one-way, US cents, taxes deducted); the " + (cab === "J" || cab === "F" ? "Business" : "Economy") + " median is used for this booking class. Programmes without a median start at an assumed " + D.meta.assumed_cpp.toFixed(1) + "¢. Your changes apply until you reload the page.";
+      }
+
+      function renderSources() {
+        var h = "<details><summary>Alliances</summary><ul>" + ORDER.slice(0, 3).map(function (a) { return D.alliances[a].src.map(function (s) { return "<li>" + srcLink(s) + "</li>"; }).join(""); }).join("") + "</ul></details>";
+        D.programs.forEach(function (p) {
+          var list = p.sources.slice();
+          D.credit.filter(function (c) { return c.prog === p.id; }).forEach(function (c) { if (!list.some(function (s) { return s.url === c.src.url; })) list.push(c.src); });
+          h += "<details><summary>" + esc(p.name) + " (" + esc(p.airline) + ")</summary><ul>" + list.map(function (s) { return "<li>" + srcLink(s) + "</li>"; }).join("") + "</ul></details>";
+        });
+        h += "<p>" + esc(D.meta.fx.source) + ", " + dateTxt(D.meta.fx.date) + ' (<a href="' + D.meta.fx.url + '" target="_blank" rel="noopener">ECB</a>). Airport coordinates: <a href="https://ourairports.com/data/" target="_blank" rel="noopener">OurAirports</a>. Point value medians: <a href="/awardvalue.html">award value comparator</a> (<a href="assets/data/award-value.json">dataset</a>). The full rule set behind this page: <a href="assets/data/loyalty-benchmark.json">loyalty-benchmark.json</a>.</p>';
+        el("how-sources").innerHTML = h;
+      }
+
+      // ───────────────────────────── boot
+      Promise.all([
+        fetch(DATA_URL).then(function (r) { return r.json(); }),
+        fetch(AV_URL).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+      ]).then(function (res) {
+        D = res[0]; AV = res[1];
+        el("asof").innerHTML = "Rules as of <b>" + dateTxt(D.meta.rules_as_of) + "</b>";
+        el("fx-date").textContent = dateTxt(D.meta.fx.date);
+        el("cpp-def").textContent = D.meta.assumed_cpp.toFixed(1);
+        buildProgSelect(); renderTranslator();
+        buildEarnControls(); renderEarn(); renderSources();
+        var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(renderEarn, 150); });
+      }).catch(function (e) {
+        el("tr-out").innerHTML = '<div class="loading">The data file couldn\'t be loaded.</div>';
+        if (window.console) console.error(e);
+      });
+    });
+    </script>
+  </body>
+</html>
