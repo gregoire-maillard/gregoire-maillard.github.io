@@ -1,0 +1,120 @@
+{
+  "about": "Inputs for /allotments.html. Scenario parameters are illustrative assumptions, not any airline's figures. The context timeline quotes public index headlines; each entry links to its source. Compiled 2026-09-30.",
+  "compiled": "2026-09-30",
+  "lane": {
+    "capacity_t": 100,
+    "weeks": 26,
+    "season": "July to December, weeks 1 to 26; the peak is centred on week 20 (mid-November)"
+  },
+  "fixed": {
+    "persist": 0.85,
+    "demandLink": 1.0,
+    "divert": 2.0,
+    "tol": 0.10,
+    "offload": 1.00
+  },
+  "scenarios": [
+    {
+      "id": "base",
+      "name": "Base case",
+      "blurb": "A normal year: spot rates average a little above the contract rate, move about 6% a week, and rise into a November peak.",
+      "params": { "contract": 3.40, "spotBase": 4.00, "vol": 0.06, "persist": 0.85, "shockProb": 0.03, "shockSize": 0.30, "shockUp": 0.60, "peakRate": 0.20, "peakDemand": 0.25, "spotDemand": 0.70, "need": 0.90, "late": 0.40, "penalty": 0, "release": "cutoff" }
+    },
+    {
+      "id": "volatile",
+      "name": "Very volatile (2020–21)",
+      "blurb": "Belly capacity disappears and rates jump in steps that last for weeks, mostly upwards. Contracts were signed before the jump, at the old rate.",
+      "params": { "contract": 3.40, "spotBase": 4.00, "vol": 0.10, "persist": 0.90, "shockProb": 0.07, "shockSize": 0.40, "shockUp": 0.75, "peakRate": 0.20, "peakDemand": 0.25, "spotDemand": 0.80, "need": 0.90, "late": 0.40, "penalty": 0, "release": "cutoff" }
+    },
+    {
+      "id": "soft",
+      "name": "Soft market",
+      "blurb": "Too much capacity chasing cargo: spot rates sit below the contract rate, demand is thin and forwarders ship part of their allotted cargo on the cheaper spot market.",
+      "params": { "contract": 3.40, "spotBase": 3.10, "vol": 0.05, "persist": 0.85, "shockProb": 0.02, "shockSize": 0.30, "shockUp": 0.60, "peakRate": 0.10, "peakDemand": 0.15, "spotDemand": 0.55, "need": 0.80, "late": 0.40, "penalty": 0, "release": "cutoff" }
+    },
+    {
+      "id": "peak",
+      "name": "Strong peak season",
+      "blurb": "The base case with a much stronger October–December peak, as in e-commerce and new-product launch years: spot rates up 50% and demand up 45% at the top.",
+      "params": { "contract": 3.40, "spotBase": 4.00, "vol": 0.06, "persist": 0.85, "shockProb": 0.03, "shockSize": 0.30, "shockUp": 0.60, "peakRate": 0.50, "peakDemand": 0.45, "spotDemand": 0.70, "need": 0.90, "late": 0.40, "penalty": 0, "release": "cutoff" }
+    },
+    {
+      "id": "penalty",
+      "name": "No-show penalty",
+      "blurb": "The base case, but the contract makes forwarders pay half the contract rate on committed space they don't use, beyond a 10% tolerance.",
+      "params": { "contract": 3.40, "spotBase": 4.00, "vol": 0.06, "persist": 0.85, "shockProb": 0.03, "shockSize": 0.30, "shockUp": 0.60, "peakRate": 0.20, "peakDemand": 0.25, "spotDemand": 0.70, "need": 0.90, "late": 0.40, "penalty": 0.50, "release": "cutoff" }
+    }
+  ],
+  "context": [
+    {
+      "date": "2020-04",
+      "label": "April 2020",
+      "headline": "Shanghai–North America $6.95/kg, up 131% since 1 March",
+      "text": "Passenger flights were grounded and their belly capacity went with them. The TAC Index for Shanghai–North America reached $6.95/kg on 17 April 2020, a record since the index started in 2016; Shanghai–Europe was $8.65/kg, up 273% in six weeks. A week later Shanghai–North America was $7.59/kg, and one-off charters from China were quoted at $14–16/kg.",
+      "sources": [
+        { "name": "TAC Index via Cargo News Wire, 17 Apr 2020", "url": "https://cargonewswire.com/tac-index-air-cargo-pricing-from-china-surges-again/" },
+        { "name": "Air Cargo News, 22 Apr 2020", "url": "https://www.aircargonews.net/business/2020/04/ppe-mayhem-continues-to-push-china-air-cargo-rates/" }
+      ]
+    },
+    {
+      "date": "2021-12",
+      "label": "December 2021",
+      "headline": "Rates almost 150% above December 2019",
+      "text": "IATA reported record air cargo rates at the end of 2021, almost 150% above December 2019. Belly capacity was still 39% below 2019 (January–November) while freighter capacity was up 26%, and the international cargo load factor hit an all-time high of 63.9%.",
+      "sources": [
+        { "name": "IATA Air Cargo Market Analysis, December 2021 (published 25 Jan 2022)", "url": "https://www.iata.org/en/iata-repository/publications/economic-reports/air-freight-monthly-analysis---december-2021/" }
+      ]
+    },
+    {
+      "date": "2023-12",
+      "label": "December 2023",
+      "headline": "Hong Kong–North America peaks at $7.10/kg, then the index drops 20.5% in two weeks",
+      "text": "The Baltic Air Freight Index (TAC data) had Hong Kong–North America at $7.10/kg in December 2023, up from $6.15 in November and 9.2% above December 2022. The overall index then fell 20.5% in the two weeks to 1 January 2024, and the lane ended the month below $6.",
+      "sources": [
+        { "name": "Air Cargo News, 3 Jan 2024", "url": "https://www.aircargonews.net/airfreight-rates/2024/01/airfreight-rates-slide-as-2023-draws-to-a-close/" }
+      ]
+    },
+    {
+      "date": "2025-05",
+      "label": "May 2025",
+      "headline": "China–North America $5.28/kg as US de minimis rules change",
+      "text": "The Freightos Air Index put China–North America at $5.28/kg, China–North Europe at $3.49/kg and North Europe–North America at $1.91/kg in early May 2025, each down 5–6% on the week as the US ended duty-free de minimis entry for Chinese e-commerce parcels.",
+      "sources": [
+        { "name": "Freightos weekly update, 7 May 2025", "url": "https://www.freightos.com/freight-resources/blanks-keep-rates-level-no-de-minimis-air-rate-collapse-yet-us-houthi-truce-first-step-to-red-sea-return-may-7-2025-update/" }
+      ]
+    },
+    {
+      "date": "2025-12",
+      "label": "December 2025",
+      "headline": "Hong Kong–North America $6.60/kg, the high of the year",
+      "text": "December 2025 averaged $6.60/kg from Hong Kong to North America and $5.44/kg to Europe, the highest months of 2025, but still 1.9% and 0.9% below December 2024. The transpacific had run as much as 13% behind the year before in June.",
+      "sources": [
+        { "name": "Air Cargo News, 2 Jan 2026", "url": "https://www.aircargonews.net/data-news/air-cargo-rates-on-key-trades-end-the-year-on-a-high/1081070.article" }
+      ]
+    },
+    {
+      "date": "2026-03",
+      "label": "March 2026",
+      "headline": "Middle East conflict: the index jumps 9.3% in a week",
+      "text": "With conflict in the Middle East disrupting capacity and jet fuel about double its level a year earlier, the Baltic Air Freight Index rose 9.3% in the week to 30 March 2026. Hong Kong–North America was about $5.70/kg and Hong Kong–Europe $5.45/kg, heading back towards the $6.79 and $5.71 of the previous peak season in what is normally a quiet month.",
+      "sources": [
+        { "name": "Air Cargo News, 31 Mar 2026", "url": "https://www.aircargonews.net/data/2026/03/airfreight-rates-heading-back-to-peak-season-levels/" }
+      ]
+    },
+    {
+      "date": "2026-08",
+      "label": "August 2026",
+      "headline": "Global index +18% year on year, jet fuel +74%",
+      "text": "The Baltic Air Freight Index (BAI00) was flat through August 2026 but 18.1% above a year earlier, with China–US up 28.7%. Hong Kong–US West Coast spot rates were HK$45.62/kg (about US$5.85) at the end of August. Jet fuel averaged 74% more than a year before, and ocean shipping through the Strait of Hormuz was still disrupted.",
+      "sources": [
+        { "name": "TAC Index market report, 2 Sep 2026", "url": "http://www.tacindex.com/air-freight-rates-costs-latest-september-2026" },
+        { "name": "TAC Index market report, 6 Aug 2026", "url": "http://www.tacindex.com/air-freight-rates-costs-latest-august-2026" }
+      ]
+    }
+  ],
+  "indices": [
+    { "name": "Baltic Air Freight Index (BAI), calculated by TAC Index", "url": "https://www.balticexchange.com/en/data-services/market-information0/air-freight-services.html" },
+    { "name": "TAC Index", "url": "https://www.tacindex.com/" },
+    { "name": "Freightos Air Index (FAX)", "url": "https://www.freightos.com/enterprise/terminal/fax-global-freightos-air-index/" }
+  ]
+}

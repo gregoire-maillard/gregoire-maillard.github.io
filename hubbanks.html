@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Hub banks</title>
+    <meta name="description" content="How Air Canada and WestJet time their hubs in waves of arrivals and departures, and how many connections those waves create.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern and palette as airflows.html. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* flight categories (validated categorical set: blue / aqua / orange) */
+        --dom: #2a78d6;
+        --tb: #1baf7a;
+        --intl: #eb6834;
+        --band: #eaf0f7;
+        --band-2: #f3f3f1;
+      }
+
+      .content { max-width: 1280px; margin: 0 auto; padding: 26px 30px 60px; }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .intro .lede { margin: 0 0 8px; color: var(--ink); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+      .stamp { color: var(--muted); font-size: 12px; margin-top: 8px; }
+
+      /* ── Shared controls ── */
+      .controls {
+        display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center;
+        margin: 22px 0 18px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+      }
+      .rng { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text); }
+      .rng label { color: var(--ink); font-weight: 500; white-space: nowrap; }
+      .rng input[type=range] { width: 150px; accent-color: var(--ink); }
+      .rng output { min-width: 58px; font-variant-numeric: tabular-nums; color: var(--ink); }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--text); margin-left: auto; }
+      .legend span { white-space: nowrap; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: var(--c); margin-right: 5px; vertical-align: -1px; }
+      .sw.band { background: var(--band); box-shadow: inset 0 0 0 1px #d5dfeb; }
+
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+      .note-line:empty { display: none; }
+      .loading { padding: 80px 20px; text-align: center; color: var(--muted); }
+
+      /* ── Two hubs side by side ── */
+      .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; align-items: start; }
+      .hub { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px 16px 16px; min-width: 0; }
+      .pick { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+      .views {
+        display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff;
+        flex-wrap: wrap; gap: 2px;
+      }
+      .views button {
+        border: 0; background: transparent; font: inherit; font-size: 13px; color: var(--text);
+        padding: 5px 12px; border-radius: 999px; cursor: pointer;
+      }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .views button:disabled { color: #c4c4c4; cursor: default; }
+      .hub h3 { margin: 12px 0 0; font-size: 15px; color: var(--ink); }
+      .hub .verdict { margin: 2px 0 0; font-size: 12.5px; color: var(--text); line-height: 1.5; }
+      .hub .verdict b { color: var(--ink); font-weight: 600; }
+
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 12px 0 10px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: #fff; min-width: 0; }
+      .tile b { display: block; font-size: 22px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .tile span { display: block; font-size: 11.5px; line-height: 1.35; color: var(--text); }
+      .tile small { display: block; font-size: 11px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+
+      /* ── Timeline ── */
+      .chart { position: relative; margin: 4px 0 0; }
+      .chart svg { display: block; width: 100%; height: auto; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+      .chart .f { shape-rendering: crispEdges; transition: opacity .12s; }
+      .chart svg.sel .f { opacity: .16; }
+      .chart svg.sel .f.hot { opacity: 1; }
+      .chart svg.sel .f.me { opacity: 1; stroke: #111; stroke-width: 1.5; }
+      .chart .f.hov { stroke: #111; stroke-width: 1; }
+      .chart .axis-t { font-size: 10.5px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .chart .half-t { font-size: 11px; fill: var(--text); font-weight: 500; }
+      .chart .bank-t { font-size: 10.5px; fill: #3d5a7a; font-weight: 600; }
+      .chart .bank-t.solo { fill: #8a8a86; font-weight: 500; }
+      .chart .win { fill: rgb(21 26 35 / .06); stroke: rgb(21 26 35 / .35); stroke-dasharray: 3 3; }
+      .tip {
+        position: absolute; pointer-events: none; z-index: 5;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45;
+        max-width: 260px; display: none;
+      }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13px; }
+      .tip .n { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+      /* ── Selected flight ── */
+      .detail { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px; font-size: 12.5px; }
+      .detail .row1 { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+      .detail select { font: inherit; font-size: 12.5px; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; background: #fff; max-width: 100%; min-width: 0; flex: 1 1 220px; }
+      .detail .clear { font: inherit; font-size: 12px; border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 4px 9px; cursor: pointer; color: var(--ink); }
+      .detail .sum { margin: 8px 0 6px; color: var(--text); }
+      .detail .sum b { color: var(--ink); font-weight: 600; }
+      .conns { max-height: 232px; overflow-y: auto; border-top: 1px solid #f0f0f0; }
+      .conns div { display: grid; grid-template-columns: 44px 64px minmax(0, 1fr) 52px; gap: 6px; padding: 4px 0; border-bottom: 1px solid #f3f3f3; align-items: baseline; }
+      .conns .tm, .conns .w { font-variant-numeric: tabular-nums; color: var(--ink); }
+      .conns .w { text-align: right; color: var(--text); }
+      .conns .ct { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .conns .ct small { color: var(--muted); }
+
+      /* ── Banks table + heatmap ── */
+      .sub-h { margin: 16px 0 6px; font-size: 13px; font-weight: 600; color: var(--ink); }
+      .sub-h span { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
+      .tbl-wrap { overflow-x: auto; }
+      table.banks { font-size: 12px; margin: 0; min-width: 380px; }
+      table.banks th { font-size: 11.5px; padding: 5px 6px; white-space: nowrap; }
+      table.banks td { font-size: 12px; padding: 5px 6px; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--text); }
+      table.banks td:first-child { color: var(--ink); font-weight: 600; }
+      table.banks td.num, table.banks th.num { text-align: right; }
+      table.banks td.none { white-space: normal; color: var(--muted); font-weight: 400; }
+      table.banks.empty { min-width: 0; }
+      table.banks.empty thead { display: none; }
+      table.heat { width: auto; border-collapse: separate; border-spacing: 2px; margin: 0; }
+      table.heat th, table.heat td { border: 0; padding: 0; font-size: 11px; }
+      table.heat th { color: var(--muted); font-weight: 500; text-align: center; padding: 2px 4px; white-space: nowrap; }
+      table.heat th.rh { text-align: right; padding-right: 6px; }
+      table.heat td { vertical-align: middle; width: 38px; min-width: 30px; height: 26px; text-align: center; border-radius: 3px; font-variant-numeric: tabular-nums; color: var(--ink); background: #f6f6f4; }
+      table.heat td.dk { color: #fff; }
+      table.heat td.diag { box-shadow: inset 0 0 0 1.5px #151A23; }
+      table.heat tbody tr:hover td { background-color: inherit; }
+      .heat-note { font-size: 11.5px; color: var(--muted); margin: 6px 0 0; max-width: 520px; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method p { margin: 0 0 8px; }
+      .method .fx { font-family: var(--mono, ui-monospace, Menlo, monospace); font-size: 12px; color: var(--ink); background: var(--soft); border-radius: 4px; padding: 1px 6px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+      @media (max-width: 1100px) {
+        .pair { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .controls { gap: 10px 16px; padding: 10px 12px; }
+        .rng { width: 100%; }
+        .rng label { min-width: 118px; }
+        .rng input[type=range] { flex: 1; width: auto; min-width: 0; }
+        .legend { margin-left: 0; }
+        .hub { padding: 12px 12px 14px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+    </style>
+
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>17</b> tools · <b>7</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Hub banks</h2>
+        <p class="lede">How an airline times its hub in waves of arrivals and departures, and how many connections those waves create.</p>
+        <p>Air Canada and WestJet at Toronto, Montréal, Vancouver and Calgary, from one weekday's published schedule. Each block is one flight: arrivals stack above the line, departures below. The shaded bands are the banks this page detects in the schedule. Click a flight to see where it connects.</p>
+        <div class="stamp" id="stamp"></div>
+      </div>
+
+      <div class="controls" id="controls">
+        <div class="rng">
+          <label for="mct">Minimum connection</label>
+          <input type="range" id="mct" min="20" max="120" step="5" value="45">
+          <output id="mct-o" for="mct">45 min</output>
+        </div>
+        <div class="rng">
+          <label for="maxc">Longest acceptable</label>
+          <input type="range" id="maxc" min="60" max="360" step="15" value="180">
+          <output id="maxc-o" for="maxc">3 h 00</output>
+        </div>
+        <div class="legend" aria-label="Legend">
+          <span><i class="sw" style="--c:var(--dom)"></i>Domestic</span>
+          <span><i class="sw" style="--c:var(--tb)"></i>Transborder (US)</span>
+          <span><i class="sw" style="--c:var(--intl)"></i>International</span>
+          <span><i class="sw band"></i>Detected bank</span>
+        </div>
+      </div>
+      <p class="note-line" id="note-line"></p>
+
+      <div class="pair" id="pair">
+        <div class="loading">Loading schedules…</div>
+      </div>
+
+      <div class="method">
+        <h3>How it works</h3>
+        <p><b>Why airlines bank.</b> A connecting passenger needs an inbound flight to land before an outbound one leaves, with enough time to change planes but not so much that the trip stops being attractive. If an airline brings <i>n</i> flights from different cities into the hub within a short window and sends <i>n</i> flights out shortly afterwards, every arrival can feed every departure except the one returning to where it came from: up to <i>n</i>&thinsp;×&thinsp;(<i>n</i>&thinsp;−&thinsp;1) connections. Connections grow with the square of the flights in a bank. One bank of 20 arrivals and 20 departures can create 380 connections; the same 40 flights split into two banks of 10 and 10 create only 180. That is why hub carriers pack their schedules into waves.</p>
+        <p><b>What banks cost.</b> Aircraft wait on the ground for the rest of the bank to arrive, so each plane flies fewer hours a day. The airport needs enough gates, stands, ground crews, security and customs officers for the peak, and many of them sit idle between waves. Runways and taxiways get congested during peaks, and a late inbound flight either holds its outbound connections or strands passengers, so delays spread through the network. Some carriers have de-peaked hubs into a <i>rolling</i> schedule, spreading flights evenly to improve aircraft, gate and staff use at the price of fewer and longer connections. American Airlines de-peaked Chicago O'Hare and Dallas/Fort Worth in 2002 and Delta de-peaked Atlanta in 2005; several of these hubs later went back to banks. The line above each chart shows where a hub sits between the two.</p>
+        <p><b>Connections.</b> An arrival at time <i>a</i> connects to a departure at time <i>d</i> when <span class="fx">MCT ≤ d − a ≤ max</span>, where MCT is the minimum connecting time and max the longest acceptable wait (defaults 45 and 180 minutes, set above), and the departure doesn't go back to the arrival's origin. Connections past midnight count, since the schedule repeats every day. <i>Connections per arrival</i> is the total number of feasible connections divided by the number of arrivals. <i>O&amp;D pairs</i> counts the distinct one-way origin–destination pairs that at least one connection links through the hub (Winnipeg → Toronto → London and London → Toronto → Winnipeg count as two).</p>
+        <p><b>Banked or rolling.</b> Banking is about short connections, so the page counts <i>quick</i> connections, those between the minimum connecting time and one hour more (45 to 105 minutes by default), and compares them with what the same arrivals would get if the day's departures were spread evenly between the first and the last one: <span class="fx">ratio = quick connections ÷ Σ<sub>arrivals</sub> D × overlap([a + MCT, a + MCT + 60], departure day) ÷ length of departure day</span>, where D is the number of departures. Both sides ignore the no-return rule and midnight. A ratio near 1 means departures are timed no better than chance. The page calls a hub <i>banked</i> from 1.5, <i>partly banked</i> from 1.2 and <i>rolling</i> below; these thresholds are my own rule of thumb, not an industry standard.</p>
+        <p><b>Bank detection.</b> Arrivals and departures are counted in 15-minute buckets and smoothed over 45 minutes (weights 1-2-1). A <i>wave</i> is a run of buckets at least 1.5 times the baseline rate (runs one bucket apart are merged), kept only if it holds at least 4 flights and clearly more than the baseline would put there: at least 3 standard deviations above the Poisson expectation. The baseline starts as the day's average rate per bucket and is then recomputed from the buckets outside the waves found, so that big banks don't hide smaller ones. Each arrival wave is paired with the nearest departure wave whose centre comes 20 to 150 minutes later; a pair is a <i>bank</i>. A bank's width runs from its first arrival to its last departure, and its size is arrivals plus departures. Waves left unpaired are drawn in grey: typically the first departures of the morning, flown by aircraft that spent the night at the hub, and the last arrivals at night. The heatmap counts connections by the wave the arrival and the departure belong to; the outlined diagonal cells are connections within the same bank.</p>
+        <p><b>Data.</b> Scheduled departures and arrivals at each hub for <span id="m-date">one weekday</span>, from the airport departure and arrival boards of <a href="https://aerodatabox.com/" target="_blank" rel="noopener">AeroDataBox</a> (fetched <span id="m-fetched">—</span>). Only flights operated under the airline's own flight numbers are kept: Air Canada includes Air Canada Rouge and Air Canada Express (Jazz, PAL Airlines), WestJet includes WestJet Encore. Codeshares and cargo flights are left out. Domestic, transborder and international come from the country of the other airport. The script that builds the data is in the site's repository (<code>scripts/hubbanks/fetch.mjs</code>).</p>
+        <p><b>Limitations.</b> One weekday, as scheduled on that date; weekends, other seasons and later schedule changes will differ. A single minimum connecting time is applied to every connection, while real ones at these airports are longer for flights to the US (US preclearance) and for international flights, so the defaults flatter transborder connections. Any departure in the window counts, even when the routing makes no sense (Calgary to Winnipeg via Toronto), and nothing checks whether the airline actually sells the connection. Partner flights (United, Lufthansa, Delta and others) feed these hubs too but aren't counted. Bank detection is a heuristic and can split or merge waves at a hub that isn't clearly banked.</p>
+        <p>More on hub design in <a href="/np101.html#ch04">Network Planning 101, Chapter 04: The Schedule (Banks and waves)</a>. This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      "use strict";
+      const REG = {
+        dom:  { label: "Domestic", c: "#2a78d6" },
+        tb:   { label: "Transborder", c: "#1baf7a" },
+        intl: { label: "International", c: "#eb6834" },
+      };
+      const ORDER = ["dom", "tb", "intl"];
+      const B = 96, BM = 15;                 // 96 buckets of 15 minutes
+      const QUICK = 60;                      // "quick" connection: within an hour of the minimum
+      const HUB_ORDER = ["YYZ", "YUL", "YVR", "YYC"];
+      const AL_ORDER = ["AC", "WS"];
+      const HEAT = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"];
+
+      const $ = (id) => document.getElementById(id);
+      const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      const hhmm = (m) => { m = ((Math.round(m) % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"); };
+      const dur = (m) => m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")}`;
+      const fmt = (n, d = 0) => n.toLocaleString("en-CA", { minimumFractionDigits: d, maximumFractionDigits: d });
+
+      let DATA = null;
+      let MCT = 45, MAXC = 180;
+      const panels = [
+        { key: "A", al: "AC", hub: "YYZ", sel: null },
+        { key: "B", al: "WS", hub: "YYC", sel: null },
+      ];
+      const cache = new Map();
+
+      // ------------------------------------------------------------ state in the URL hash
+      function readHash() {
+        const m = location.hash.match(/^#([A-Z]{2})-([A-Z]{3})\/([A-Z]{2})-([A-Z]{3})/);
+        if (!m) return;
+        [[m[1], m[2]], [m[3], m[4]]].forEach(([al, hub], i) => {
+          if (AL_ORDER.includes(al) && HUB_ORDER.includes(hub)) { panels[i].al = al; panels[i].hub = hub; }
+        });
+      }
+      function writeHash() {
+        history.replaceState(null, "", `#${panels[0].al}-${panels[0].hub}/${panels[1].al}-${panels[1].hub}`);
+      }
+
+      // ------------------------------------------------------------ data
+      function regionOf(cc) { return cc === "CA" ? "dom" : cc === "US" ? "tb" : "intl"; }
+
+      function flightsOf(al, hub) {
+        const k = `${al}-${hub}`;
+        if (cache.has(k)) return cache.get(k);
+        const o = DATA.ops[k] || { arr: [], dep: [] };
+        const mk = (dir) => (o[dir] || []).map(([t, num, ap, mi], i) => {
+          const a = DATA.airports[ap] || [ap, ""];
+          return { id: dir + i, dir, t, num, ap, city: a[0], reg: regionOf(a[1]), model: DATA.models[mi] || "" };
+        });
+        const r = { arr: mk("arr"), dep: mk("dep") };
+        r.waves = { arr: detectWaves(r.arr), dep: detectWaves(r.dep) };
+        pairWaves(r);
+        cache.set(k, r);
+        return r;
+      }
+
+      // ------------------------------------------------------------ bank detection
+      function detectWaves(fl) {
+        const c = new Array(B).fill(0);
+        fl.forEach((f) => c[Math.min(B - 1, Math.floor(f.t / BM))]++);
+        const n = fl.length;
+        if (n < 8) return [];
+        const s = c.map((_, i) => ((c[i - 1] || 0) + 2 * c[i] + (c[i + 1] || 0)) / 4);
+        let first = c.findIndex((x) => x > 0), last = B - 1 - [...c].reverse().findIndex((x) => x > 0);
+        // Baseline rate: first the day's average, then the average outside the waves found,
+        // so that strong banks don't hide weaker ones by inflating the average.
+        const avg = n / (last - first + 1);
+        let base = avg, waves = [];
+        for (let pass = 0; pass < 2; pass++) {
+          const T = 1.5 * base, runs = [];
+          for (let i = 0; i < B; i++) {
+            if (s[i] >= T && c[i] > 0) {
+              const prev = runs[runs.length - 1];
+              if (prev && i - prev.e <= 2) prev.e = i; else runs.push({ s: i, e: i });
+            }
+          }
+          waves = [];
+          for (const r of runs) {
+            let N = 0; for (let i = r.s; i <= r.e; i++) N += c[i];
+            const mu = base * (r.e - r.s + 1);
+            if (N < 4 || (N - mu) / Math.sqrt(mu) < 3) continue;
+            const inW = fl.filter((f) => { const b = Math.floor(f.t / BM); return b >= r.s && b <= r.e; });
+            waves.push({ bs: r.s, be: r.e, n: N, t0: inW[0].t, t1: inW[inW.length - 1].t, mid: inW.reduce((a, f) => a + f.t, 0) / N });
+          }
+          let out = 0, nOut = 0;
+          for (let i = first; i <= last; i++) if (!waves.some((w) => i >= w.bs && i <= w.be)) { out += c[i]; nOut++; }
+          if (!nOut) break;
+          base = Math.max(out / nOut, 0.35 * avg);
+        }
+        waves.forEach((w, i) => { w.i = i; });
+        fl.forEach((f) => { const b = Math.floor(f.t / BM); f.w = waves.findIndex((w) => b >= w.bs && b <= w.be); });
+        return waves;
+      }
+
+      function pairWaves(r) {
+        const A = r.waves.arr, D = r.waves.dep;
+        A.forEach((w) => { w.pair = -1; }); D.forEach((w) => { w.pair = -1; });
+        const cand = [];
+        A.forEach((a) => D.forEach((d) => { const g = d.mid - a.mid; if (g >= 20 && g <= 150) cand.push([g, a, d]); }));
+        cand.sort((x, y) => x[0] - y[0]);
+        for (const [, a, d] of cand) if (a.pair < 0 && d.pair < 0) { a.pair = d.i; d.pair = a.i; }
+        const banks = A.filter((a) => a.pair >= 0).map((a) => ({ a, d: D[a.pair] })).sort((x, y) => x.a.t0 - y.a.t0);
+        banks.forEach((b, i) => { b.a.label = b.d.label = `B${i + 1}`; b.no = i; });
+        let ka = 0, kd = 0;
+        A.filter((w) => w.pair < 0).forEach((w) => { w.label = `A${++ka}`; });
+        D.filter((w) => w.pair < 0).forEach((w) => { w.label = `D${++kd}`; });
+        r.banks = banks;
+      }
+
+      // ------------------------------------------------------------ connections
+      function connect(r) {
+        const { arr, dep } = r;
+        let total = 0, raw = 0;
+        const od = new Set();
+        dep.forEach((d) => { d.from = []; });
+        arr.forEach((a) => {
+          a.on = [];
+          dep.forEach((d) => {
+            const g = ((d.t - a.t) % 1440 + 1440) % 1440;
+            if (g >= MCT && g <= MAXC) {
+              if (d.t >= a.t && g <= MCT + QUICK) raw++;   // banked/rolling ratio: quick connections, same day, no-return rule off
+              if (d.ap === a.ap) return;
+              a.on.push(d); d.from.push(a); total++; od.add(a.ap + ">" + d.ap);
+            }
+          });
+          a.on.sort((x, y) => (((x.t - a.t) % 1440 + 1440) % 1440) - (((y.t - a.t) % 1440 + 1440) % 1440));
+        });
+        dep.forEach((d) => d.from.sort((x, y) => (((d.t - x.t) % 1440 + 1440) % 1440) - (((d.t - y.t) % 1440 + 1440) % 1440)));
+        // expected quick connections if departures were spread evenly over the departure day
+        let expct = 0;
+        if (dep.length > 1) {
+          const d0 = dep[0].t, d1 = dep[dep.length - 1].t, L = Math.max(1, d1 - d0);
+          arr.forEach((a) => {
+            const lo = Math.max(d0, a.t + MCT), hi = Math.min(d1, a.t + MCT + QUICK);
+            if (hi > lo) expct += dep.length * (hi - lo) / L;
+          });
+        }
+        // wave × wave matrix
+        const nA = r.waves.arr.length, nD = r.waves.dep.length;
+        const M = Array.from({ length: nA + 1 }, () => new Array(nD + 1).fill(0));
+        arr.forEach((a) => a.on.forEach((d) => { M[a.w < 0 ? nA : a.w][d.w < 0 ? nD : d.w]++; }));
+        r.banks.forEach((b) => { b.conn = M[b.a.i][b.d.i]; });
+        r.stats = { total, od: od.size, perArr: arr.length ? total / arr.length : 0, ratio: expct > 0 ? raw / expct : null, M };
+      }
+
+      // ------------------------------------------------------------ rendering
+      const pairEl = $("pair");
+
+      function buildPanels() {
+        pairEl.innerHTML = "";
+        panels.forEach((p) => {
+          const el = document.createElement("div");
+          el.className = "hub";
+          el.innerHTML = `
+            <div class="pick">
+              <div class="views" role="group" aria-label="Airline">${AL_ORDER.map((a) => `<button type="button" data-al="${a}">${esc(DATA.airlines[a])}</button>`).join("")}</div>
+              <div class="views" role="group" aria-label="Hub">${HUB_ORDER.map((h) => `<button type="button" data-hub="${h}" title="${esc(DATA.hubs[h].name)}">${h}</button>`).join("")}</div>
+            </div>
+            <h3 class="ttl"></h3>
+            <p class="verdict"></p>
+            <div class="tiles"></div>
+            <div class="chart"><svg role="img"></svg><div class="tip"></div></div>
+            <div class="detail">
+              <div class="row1"><select aria-label="Pick a flight"></select><button type="button" class="clear" hidden>Clear</button></div>
+              <div class="sum"></div>
+              <div class="conns"></div>
+            </div>
+            <div class="sub-h">Banks<span></span></div>
+            <div class="tbl-wrap"><table class="banks"><thead><tr><th>Bank</th><th>Arrivals</th><th class="num">n</th><th>Departures</th><th class="num">n</th><th class="num">Width</th><th class="num">Connections</th></tr></thead><tbody></tbody></table></div>
+            <div class="sub-h">Connections by wave<span>arrival wave ↓ × departure wave →</span></div>
+            <div class="tbl-wrap"><table class="heat"></table></div>
+            <p class="heat-note">Outlined: connections inside the same bank. “Other” is flights outside any detected wave.</p>`;
+          pairEl.appendChild(el);
+          p.el = el;
+          el.querySelectorAll("[data-al]").forEach((b) => b.addEventListener("click", () => { p.al = b.dataset.al; p.sel = null; writeHash(); renderAll(); }));
+          el.querySelectorAll("[data-hub]").forEach((b) => b.addEventListener("click", () => { p.hub = b.dataset.hub; p.sel = null; writeHash(); renderAll(); }));
+          el.querySelector("select").addEventListener("change", (e) => { p.sel = e.target.value || null; renderPanel(p); });
+          el.querySelector(".clear").addEventListener("click", () => { p.sel = null; renderPanel(p); });
+          const svg = el.querySelector("svg");
+          svg.addEventListener("pointermove", (e) => hover(p, e));
+          svg.addEventListener("pointerleave", () => hover(p, null));
+          svg.addEventListener("click", (e) => { const f = hit(p, e); p.sel = f ? (p.sel === f.id ? null : f.id) : null; renderPanel(p); hover(p, e); });
+        });
+      }
+
+      function bucketsOf(fl) {
+        const st = Array.from({ length: B }, () => []);
+        fl.forEach((f) => st[Math.min(B - 1, Math.floor(f.t / BM))].push(f));
+        st.forEach((s) => s.sort((x, y) => ORDER.indexOf(x.reg) - ORDER.indexOf(y.reg) || x.t - y.t));
+        return st;
+      }
+
+      function renderAll() {
+        panels.forEach((p) => {
+          p.r = flightsOf(p.al, p.hub);
+          connect(p.r);
+          p.st = { arr: bucketsOf(p.r.arr), dep: bucketsOf(p.r.dep) };
+        });
+        // one vertical scale for both charts, so the two hubs compare directly
+        const maxC = Math.max(4, ...panels.flatMap((p) => [...p.st.arr, ...p.st.dep].map((s) => s.length)));
+        const narrow = pairEl.clientWidth < 560;
+        const unit = Math.max(2, Math.min(7, (narrow ? 96 : 124) / maxC));
+        panels.forEach((p) => { p.unit = unit; p.maxC = maxC; renderPanel(p); });
+      }
+
+      function renderPanel(p) {
+        const r = p.r, el = p.el, S = r.stats;
+        el.querySelectorAll("[data-al]").forEach((b) => {
+          b.classList.toggle("on", b.dataset.al === p.al);
+        });
+        el.querySelectorAll("[data-hub]").forEach((b) => {
+          b.classList.toggle("on", b.dataset.hub === p.hub);
+          const o = DATA.ops[`${p.al}-${b.dataset.hub}`];
+          b.disabled = !o || (o.arr.length + o.dep.length === 0);
+        });
+        const hub = DATA.hubs[p.hub];
+        el.querySelector(".ttl").textContent = `${DATA.airlines[p.al]} at ${hub.name} (${p.hub})`;
+
+        const nF = r.arr.length + r.dep.length;
+        let verdict;
+        if (nF < 40) verdict = `Only <b>${nF}</b> flights a day here: too few to form banks.`;
+        else if (S.ratio == null) verdict = "";
+        else {
+          const kind = S.ratio >= 1.5 ? "banked" : S.ratio >= 1.2 ? "partly banked" : "rolling";
+          verdict = `<b>${fmt(S.ratio, 1)}×</b> as many quick connections (${dur(MCT)} to ${dur(MCT + QUICK)}) as the same flights spread evenly through the day: a <b>${kind}</b> hub.`;
+        }
+        el.querySelector(".verdict").innerHTML = verdict;
+
+        const bw = r.banks.length ? r.banks.reduce((a, b) => a + (b.d.t1 - b.a.t0), 0) / r.banks.length : 0;
+        const bs = r.banks.length ? r.banks.reduce((a, b) => a + b.a.n + b.d.n, 0) / r.banks.length : 0;
+        el.querySelector(".tiles").innerHTML = `
+          <div class="tile"><b>${fmt(nF)}</b><span>flights a day</span><small>${fmt(r.arr.length)} arr · ${fmt(r.dep.length)} dep</small></div>
+          <div class="tile"><b>${r.banks.length}</b><span>banks</span><small>${r.banks.length ? `avg ${dur(Math.round(bw))} · ${fmt(bs)} flights` : "none detected"}</small></div>
+          <div class="tile"><b>${fmt(S.perArr, 1)}</b><span>connections per arrival</span><small>${fmt(S.total)} in total</small></div>
+          <div class="tile"><b>${fmt(S.od)}</b><span>O&amp;D pairs connected</span><small>one-way, via ${p.hub}</small></div>`;
+
+        drawChart(p);
+        drawDetail(p);
+        drawBanks(p);
+        drawHeat(p);
+      }
+
+      function geom(p) {
+        const W = Math.max(300, p.el.querySelector(".chart").clientWidth);
+        const m = { l: 6, r: 6, t: 30, b: 30 };
+        const half = p.unit * p.maxC;
+        const axis = 22;
+        const bw = (W - m.l - m.r) / B;
+        const y0 = m.t + half, y1 = y0 + axis;
+        return { W, H: y1 + half + m.b, m, half, axis, bw, y0, y1, u: p.unit };
+      }
+
+      function drawChart(p) {
+        const g = geom(p), r = p.r;
+        p.g = g;
+        const svg = d3.select(p.el.querySelector("svg"))
+          .attr("viewBox", `0 0 ${g.W} ${g.H}`)
+          .attr("aria-label", `Arrivals and departures of ${DATA.airlines[p.al]} at ${p.hub} by 15-minute period`);
+        svg.selectAll("*").remove();
+        const X = (min) => g.m.l + (min / BM) * g.bw;
+
+        // bank bands
+        const band = svg.append("g");
+        const bandFor = (w, dir) => {
+          const paired = w.pair >= 0;
+          const x = X(w.bs * BM), wd = (w.be - w.bs + 1) * g.bw;
+          band.append("rect").attr("x", x).attr("width", wd)
+            .attr("y", dir === "arr" ? g.m.t - 16 : g.y1).attr("height", g.half + 16)
+            .attr("rx", 3).attr("fill", paired ? "var(--band)" : "var(--band-2)");
+          band.append("text").attr("class", "bank-t" + (paired ? "" : " solo"))
+            .attr("x", x + wd / 2).attr("text-anchor", "middle")
+            .attr("y", dir === "arr" ? g.m.t - 5 : g.y1 + g.half + 12).text(w.label);
+        };
+        r.waves.arr.forEach((w) => bandFor(w, "arr"));
+        r.waves.dep.forEach((w) => bandFor(w, "dep"));
+
+        // hour grid + labels
+        const step = g.W < 460 ? 6 : 3;
+        const grid = svg.append("g");
+        for (let h = 0; h <= 24; h += step) {
+          const x = X(h * 60);
+          grid.append("line").attr("x1", x).attr("x2", x).attr("y1", g.m.t - 16).attr("y2", g.y0).attr("stroke", "#ececea");
+          grid.append("line").attr("x1", x).attr("x2", x).attr("y1", g.y1).attr("y2", g.y1 + g.half + 16).attr("stroke", "#ececea");
+          if (h < 24 || g.W >= 460) grid.append("text").attr("class", "axis-t").attr("x", x).attr("y", g.y0 + 15)
+            .attr("text-anchor", h === 0 ? "start" : h === 24 ? "end" : "middle").text(String(h % 24 === 0 && h ? 24 : h).padStart(2, "0") + ":00");
+        }
+        grid.append("line").attr("x1", g.m.l).attr("x2", g.W - g.m.r).attr("y1", g.y0 + .5).attr("y2", g.y0 + .5).attr("stroke", "#c9c9c4");
+        grid.append("line").attr("x1", g.m.l).attr("x2", g.W - g.m.r).attr("y1", g.y1 - .5).attr("y2", g.y1 - .5).attr("stroke", "#c9c9c4");
+        svg.append("text").attr("class", "half-t").attr("x", g.m.l).attr("y", 11).text("Arrivals ↑");
+        svg.append("text").attr("class", "half-t").attr("x", g.m.l).attr("y", g.H - 3).text("Departures ↓");
+
+        // connection window for the selected flight
+        const sel = selected(p);
+        if (sel) {
+          if (sel.dir === "arr") winRect(svg, g, X, sel.t + MCT, sel.t + MAXC, "dep");
+          else winRect(svg, g, X, sel.t - MAXC, sel.t - MCT, "arr");
+        }
+
+        // one block per flight
+        const gap = g.u >= 4 ? 1 : 0.5;
+        const hot = new Set(sel ? (sel.dir === "arr" ? sel.on : sel.from).map((f) => f.id) : []);
+        const blocks = svg.append("g");
+        ["arr", "dep"].forEach((dir) => {
+          p.st[dir].forEach((stack, b) => stack.forEach((f, k) => {
+            const y = dir === "arr" ? g.y0 - (k + 1) * g.u : g.y1 + k * g.u + gap;
+            blocks.append("rect")
+              .attr("class", "f" + (hot.has(f.id) ? " hot" : "") + (sel && f.id === sel.id ? " me" : ""))
+              .attr("data-id", f.id)
+              .attr("x", g.m.l + b * g.bw + 0.5).attr("width", Math.max(1, g.bw - 1))
+              .attr("y", y).attr("height", g.u - gap)
+              .attr("rx", g.u >= 5 && g.bw >= 5 ? 1 : 0)
+              .attr("fill", REG[f.reg].c);
+          }));
+        });
+        svg.classed("sel", !!sel);
+      }
+
+      function winRect(svg, g, X, a, b, dir) {
+        const y = dir === "dep" ? g.y1 : g.m.t - 16, h = g.half + 16;
+        const seg = (s, e) => {
+          s = Math.max(0, s); e = Math.min(1440, e);
+          if (e > s) svg.append("rect").attr("class", "win").attr("x", X(s)).attr("width", X(e) - X(s)).attr("y", y).attr("height", h).attr("rx", 3);
+        };
+        seg(a, b); seg(a + 1440, b + 1440); seg(a - 1440, b - 1440);
+      }
+
+      function selected(p) {
+        if (!p.sel) return null;
+        const list = p.sel.startsWith("arr") ? p.r.arr : p.r.dep;
+        return list.find((f) => f.id === p.sel) || null;
+      }
+
+      function hit(p, e) {
+        const g = p.g, svg = p.el.querySelector("svg");
+        const box = svg.getBoundingClientRect();
+        const sx = g.W / box.width;
+        const x = (e.clientX - box.left) * sx, y = (e.clientY - box.top) * sx;
+        const b = Math.floor((x - g.m.l) / g.bw);
+        if (b < 0 || b >= B) return null;
+        let dir, k;
+        if (y < (g.y0 + g.y1) / 2) { dir = "arr"; k = Math.floor((g.y0 - y) / g.u); }
+        else { dir = "dep"; k = Math.floor((y - g.y1) / g.u); }
+        const stack = p.st[dir][b];
+        if (!stack.length) return null;
+        if (k < 0) k = 0;
+        if (k >= stack.length) { if (k > stack.length + 3) return null; k = stack.length - 1; }
+        return stack[k];
+      }
+
+      function hover(p, e) {
+        const tipEl = p.el.querySelector(".tip");
+        p.el.querySelectorAll(".f.hov").forEach((n) => n.classList.remove("hov"));
+        const f = e && e.pointerType !== "touch" ? hit(p, e) : null;
+        if (!f) { tipEl.style.display = "none"; return; }
+        const node = p.el.querySelector(`.f[data-id="${f.id}"]`);
+        if (node) node.classList.add("hov");
+        const n = f.dir === "arr" ? f.on.length : f.from.length;
+        const wave = f.w >= 0 ? p.r.waves[f.dir][f.w].label : null;
+        tipEl.innerHTML = `<div class="t">${esc(f.num)} · ${hhmm(f.t)}</div>
+          ${f.dir === "arr" ? "From" : "To"} ${esc(f.city)} (${esc(f.ap)}) · ${REG[f.reg].label}<br>
+          ${f.model ? esc(f.model) + "<br>" : ""}
+          <span class="n">${n}</span> ${f.dir === "arr" ? "onward flights" : "feeding arrivals"}${wave ? ` · wave ${wave}` : ""}`;
+        tipEl.style.display = "block";
+        const wrap = p.el.querySelector(".chart").getBoundingClientRect();
+        let left = e.clientX - wrap.left + 14, top = e.clientY - wrap.top + 14;
+        if (left + tipEl.offsetWidth > wrap.width) left = e.clientX - wrap.left - tipEl.offsetWidth - 14;
+        if (left < 0) left = 4;
+        tipEl.style.left = left + "px"; tipEl.style.top = top + "px";
+      }
+
+      function drawDetail(p) {
+        const el = p.el, r = p.r, sel = selected(p);
+        const opt = (f) => `<option value="${f.id}"${sel && sel.id === f.id ? " selected" : ""}>${hhmm(f.t)} ${esc(f.num)} ${f.dir === "arr" ? "from" : "to"} ${esc(f.city)}</option>`;
+        el.querySelector("select").innerHTML = `<option value="">${sel ? "Pick another flight…" : "Click a flight in the chart, or pick one…"}</option>
+          <optgroup label="Arrivals">${r.arr.map(opt).join("")}</optgroup>
+          <optgroup label="Departures">${r.dep.map(opt).join("")}</optgroup>`;
+        el.querySelector(".clear").hidden = !sel;
+        const sum = el.querySelector(".sum"), list = el.querySelector(".conns");
+        if (!sel) { sum.innerHTML = ""; list.innerHTML = ""; list.style.display = "none"; return; }
+        const other = sel.dir === "arr" ? sel.on : sel.from;
+        const places = new Set(other.map((f) => f.ap)).size;
+        const lead = `<b>${esc(sel.num)}</b> ${sel.dir === "arr" ? "arrives from" : "leaves for"} ${esc(sel.city)} (${esc(sel.ap)}) at ${hhmm(sel.t)}${sel.model ? `, ${esc(sel.model)}` : ""}. `;
+        if (!other.length) {
+          sum.innerHTML = lead + (sel.dir === "arr" ? `No onward ${esc(DATA.airlines[p.al])} flight leaves ${dur(MCT)} to ${dur(MAXC)} after it.` : `No arrival lands ${dur(MCT)} to ${dur(MAXC)} before it.`);
+          list.innerHTML = ""; list.style.display = "none"; return;
+        }
+        sum.innerHTML = lead + (sel.dir === "arr"
+          ? `Connects to <b>${other.length}</b> departures, reaching <b>${places}</b> destinations:`
+          : `Fed by <b>${other.length}</b> arrivals from <b>${places}</b> cities:`);
+        list.style.display = "";
+        list.innerHTML = other.map((f) => {
+          const wait = sel.dir === "arr" ? ((f.t - sel.t) % 1440 + 1440) % 1440 : ((sel.t - f.t) % 1440 + 1440) % 1440;
+          return `<div><span class="tm">${hhmm(f.t)}</span><span>${esc(f.num)}</span><span class="ct"><i class="sw" style="--c:${REG[f.reg].c}"></i>${esc(f.city)} <small>${esc(f.ap)}</small></span><span class="w">${dur(wait)}</span></div>`;
+        }).join("");
+      }
+
+      function drawBanks(p) {
+        const r = p.r, tb = p.el.querySelector("table.banks tbody");
+        p.el.querySelector(".sub-h span").textContent = r.banks.length ? `${r.banks.length} detected` : "";
+        p.el.querySelector("table.banks").classList.toggle("empty", !r.banks.length);
+        if (!r.banks.length) {
+          tb.innerHTML = `<tr><td class="none" colspan="7">No bank detected: arrivals and departures are spread through the day without clear waves.</td></tr>`;
+          return;
+        }
+        tb.innerHTML = r.banks.map((b) => `<tr>
+          <td>${b.a.label}</td>
+          <td>${hhmm(b.a.t0)}–${hhmm(b.a.t1)}</td><td class="num">${b.a.n}</td>
+          <td>${hhmm(b.d.t0)}–${hhmm(b.d.t1)}</td><td class="num">${b.d.n}</td>
+          <td class="num">${dur(Math.max(0, b.d.t1 - b.a.t0))}</td>
+          <td class="num">${fmt(b.conn)}</td></tr>`).join("");
+      }
+
+      function drawHeat(p) {
+        const r = p.r, M = r.stats.M, A = r.waves.arr, D = r.waves.dep;
+        const tbl = p.el.querySelector("table.heat");
+        const rows = [...A.map((w) => ({ lab: w.label, t: hhmm(w.t0), i: w.i })), { lab: "Other", t: "", i: A.length }];
+        const cols = [...D.map((w) => ({ lab: w.label, t: hhmm(w.t0), i: w.i })), { lab: "Other", t: "", i: D.length }];
+        const max = Math.max(1, ...M.flat());
+        const color = (v) => v === 0 ? "#f6f6f4" : HEAT[Math.min(HEAT.length - 1, Math.floor(Math.sqrt(v / max) * HEAT.length))];
+        tbl.innerHTML = `<thead><tr><th></th>${cols.map((c) => `<th title="${c.t ? "Departure wave from " + c.t : "Departures outside any wave"}">${c.lab}</th>`).join("")}</tr></thead>
+          <tbody>${rows.map((rw) => `<tr><th class="rh" title="${rw.t ? "Arrival wave from " + rw.t : "Arrivals outside any wave"}">${rw.lab}</th>${cols.map((c) => {
+            const v = M[rw.i][c.i];
+            const diag = rw.lab === c.lab && rw.lab.startsWith("B");
+            const bg = color(v);
+            const dk = HEAT.indexOf(bg) >= 3;
+            return `<td class="${dk ? "dk" : ""}${diag ? " diag" : ""}" style="background:${bg}" title="${rw.lab} → ${c.lab}: ${v} connections">${v || ""}</td>`;
+          }).join("")}</tr>`).join("")}</tbody>`;
+      }
+
+      // ------------------------------------------------------------ controls
+      function bindControls() {
+        const mct = $("mct"), mx = $("maxc");
+        const upd = (src) => {
+          MCT = +mct.value; MAXC = +mx.value;
+          if (MAXC < MCT + 15) {
+            if (src === mct) { MAXC = Math.ceil((MCT + 15) / 15) * 15; mx.value = MAXC; }
+            else { MCT = Math.max(20, MAXC - 15); mct.value = MCT; }
+          }
+          $("mct-o").textContent = dur(MCT);
+          $("maxc-o").textContent = dur(MAXC);
+          renderAll();
+        };
+        mct.addEventListener("input", () => upd(mct));
+        mx.addEventListener("input", () => upd(mx));
+        let rt;
+        window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(renderAll, 120); });
+      }
+
+      // ------------------------------------------------------------ boot
+      fetch("assets/data/hubbanks.json", { cache: "no-cache" })
+        .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then((d) => {
+          DATA = d;
+          const day = new Date(d.schedule_date + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+          const got = new Date(d.generated).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+          $("stamp").textContent = `Schedule for ${day}, local times at each hub · AeroDataBox, fetched ${got}`;
+          $("m-date").textContent = day;
+          $("m-fetched").textContent = got;
+          readHash();
+          buildPanels();
+          bindControls();
+          $("mct-o").textContent = dur(MCT);
+          $("maxc-o").textContent = dur(MAXC);
+          renderAll();
+        })
+        .catch((e) => {
+          console.error(e);
+          pairEl.innerHTML = "";
+          $("note-line").textContent = "The schedule data couldn't be loaded (assets/data/hubbanks.json). Please try again later.";
+        });
+    });
+    </script>
+  </body>
+</html>

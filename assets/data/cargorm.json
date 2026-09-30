@@ -1,0 +1,59 @@
+{
+  "about": "Illustrative assumptions for cargorm.html. Not any airline's data.",
+  "currency": "US$",
+  "volRatio": 166.6667,
+  "window": 14,
+  "checkpoints": [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1.5, 1, 0.5],
+  "allotShare": 0.30,
+  "allotRelease": 2,
+  "rateSd": 0.15,
+  "demandCv": 0.30,
+  "densSd": 0.20,
+  "tenderVolBias": 0.05,
+  "aircraft": [
+    { "key": "belly", "name": "Widebody belly", "W": 16000, "V": 110, "maxKg": 3000, "maxM3": 12,
+      "blurb": "The lower deck of a long-haul passenger widebody: about 16 t and 110 m³ left for cargo once bags, fuel and passengers are loaded." },
+    { "key": "freighter", "name": "Main-deck freighter", "W": 95000, "V": 580, "maxKg": 12000, "maxM3": 60,
+      "blurb": "A large twin-engine freighter on a long sector: about 95 t and 580 m³ of usable space after pallet contours and packing losses." }
+  ],
+  "segments": [
+    { "key": "allot", "name": "Allotment", "rate": 2.0, "show": 0.70, "arrival": [5, 2], "priority": 1,
+      "profiles": [
+        { "key": "dense", "p": 0.25, "medKg": 450, "sdLog": 0.9, "density": 320 },
+        { "key": "std", "p": 0.50, "medKg": 450, "sdLog": 0.9, "density": 170 },
+        { "key": "light", "p": 0.25, "medKg": 450, "sdLog": 0.9, "density": 100 } ] },
+    { "key": "spot", "name": "Spot", "rate": 2.6, "show": 0.85, "arrival": [4, 2], "priority": 1,
+      "profiles": [
+        { "key": "dense", "p": 0.25, "medKg": 350, "sdLog": 1.0, "density": 340 },
+        { "key": "std", "p": 0.50, "medKg": 350, "sdLog": 1.0, "density": 170 },
+        { "key": "light", "p": 0.25, "medKg": 350, "sdLog": 1.0, "density": 95 } ] },
+    { "key": "express", "name": "Express & e-commerce", "rate": 3.6, "show": 0.95, "arrival": [7, 1], "priority": 2,
+      "profiles": [
+        { "key": "std", "p": 0.40, "medKg": 120, "sdLog": 0.8, "density": 150 },
+        { "key": "light", "p": 0.60, "medKg": 120, "sdLog": 0.8, "density": 85 } ] },
+    { "key": "special", "name": "Special cargo (pharma)", "rate": 5.5, "show": 0.92, "arrival": [2, 2], "priority": 2,
+      "profiles": [
+        { "key": "dense", "p": 0.50, "medKg": 500, "sdLog": 0.7, "density": 260 },
+        { "key": "std", "p": 0.50, "medKg": 500, "sdLog": 0.7, "density": 170 } ] }
+  ],
+  "demand": [
+    { "key": "balanced", "name": "Balanced", "densityMult": 1.0, "allotUse": 0.75,
+      "frac": { "spot": 0.95, "express": 0.40, "special": 0.18 },
+      "blurb": "General cargo, some e-commerce and a little pharma, at about the IATA volume ratio on average." },
+    { "key": "ecom", "name": "E-commerce peak", "densityMult": 0.8, "allotUse": 0.75,
+      "frac": { "spot": 0.70, "express": 0.90, "special": 0.15 },
+      "blurb": "Light, bulky parcels: the hold cubes out long before it weighs out." },
+    { "key": "dense", "name": "Heavy industrial", "densityMult": 1.35, "allotUse": 0.80,
+      "frac": { "spot": 1.10, "express": 0.25, "special": 0.25 },
+      "blurb": "Machinery, parts and other dense freight: weight runs out first." }
+  ],
+  "variability": [
+    { "key": "low", "name": "Low", "noShowMult": 0.5, "fw": [0.85, 1.05], "sv": 0.05,
+      "blurb": "Half the base no-show rates; tendered weight 85–105% of booked." },
+    { "key": "medium", "name": "Medium", "noShowMult": 1.0, "fw": [0.70, 1.10], "sv": 0.10,
+      "blurb": "Base no-show rates; tendered weight 70–110% of booked." },
+    { "key": "high", "name": "High", "noShowMult": 1.6, "fw": [0.55, 1.15], "sv": 0.16,
+      "blurb": "1.6 times the base no-show rates; tendered weight 55–115% of booked." }
+  ],
+  "offloadCost": 4.0
+}

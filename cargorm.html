@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Cargo revenue management</title>
+    <meta name="description" content="Why cargo revenue management differs from passenger RM: weight and volume capacity, shipments of every size and density, late bookings and allotments, tendered weight that differs from booked, no-shows, overbooking and offloads. Bid-price control against first come, first served over 1,000 simulated flights.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / bidprice.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* Policies: same colours as bidprice.html (no control = orange, bid price = green) */
+        --p-fcfs: #d9480f;
+        --p-bp: #3a8f5c;
+        /* Shipper types */
+        --s-allot: #9aa3ad;
+        --s-spot: #2a7fb5;
+        --s-express: #7a5ab8;
+        --s-special: #1f9e89;
+      }
+
+      .content {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 800px; }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Pill switchers (same as airflows / bidprice) ── */
+      .switch { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 20px 0 6px; }
+      .switch .grp { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .switch .grp > span { font-size: 12px; color: var(--muted); }
+      .views {
+        display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff;
+        flex-wrap: wrap; gap: 2px;
+      }
+      .views button {
+        border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text);
+        padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .preset-blurb { font-size: 13px; color: var(--text); margin: 8px 0 0; max-width: 860px; }
+
+      .btn {
+        font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff;
+        border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink);
+        display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+      }
+      .btn:hover { border-color: #cfcfcf; }
+      .btn.dark { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .btn:disabled { opacity: .45; cursor: default; }
+
+      /* ── Sections ── */
+      section.sec { width: auto; float: none; padding: 0; border: 0; }
+      .sec { margin: 38px 0 0; }
+      .sec > h3 { font-size: 20px; margin: 0 0 6px; color: var(--ink); }
+      .sec > p.lead { margin: 0 0 14px; font-size: 13.5px; max-width: 820px; }
+      .block { margin: 0 0 28px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h4 { margin: 0; font-size: 15px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .block > p.lead { margin: 0 0 10px; font-size: 13px; max-width: 800px; }
+      .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+
+      /* ── The five differences ── */
+      .diffs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 0 0 22px; }
+      .diff { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 13px 13px; font-size: 12.5px; line-height: 1.5; color: var(--text); display: flex; flex-direction: column; gap: 6px; }
+      .diff .n { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+      .diff h5 { margin: 0; font-size: 13.5px; color: var(--ink); line-height: 1.35; }
+      .diff .pax { color: var(--muted); font-size: 12px; }
+      .diff .m { margin-top: auto; padding-top: 6px; border-top: 1px solid #f1f1f1; color: var(--ink); }
+      .diff .m b { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table.res { border-collapse: collapse; width: 100%; font-size: 13px; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: bottom; }
+      table.res td { padding: 5px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res td.l, table.res th.l { text-align: left; }
+      table.res td.hl { color: var(--ink); font-weight: 600; }
+      table.res tbody tr:hover td { background: var(--soft); }
+      table.res .neg { color: #b4441a; }
+      table.res .pos { color: #2e7a4d; }
+      table.res tr.sum td { border-top: 1px solid var(--line); color: var(--ink); font-weight: 600; }
+      table.res tr.grp td { color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding-top: 12px; border-bottom: 1px solid var(--line); }
+      table.res tr.cur td { background: #f4f9f6; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+      input[type=number] {
+        font: inherit; font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right;
+        border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; background: #fff;
+        min-width: 0; box-sizing: border-box; width: 70px;
+      }
+      input[type=number]:focus { outline: 2px solid #9cc7df; outline-offset: 0; border-color: #9cc7df; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+      .status { font-size: 12px; color: var(--muted); }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 18px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile .k { font-size: 12px; }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; margin-top: 4px; }
+      .tile span.s { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+
+      /* ── Controls row ── */
+      .ctl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin: 0 0 8px; font-size: 12.5px; color: var(--text); }
+      .ctl-row label { display: inline-flex; align-items: center; gap: 8px; }
+      .ctl-row input[type=range] { width: 130px; accent-color: #222; }
+      .ctl-row output { min-width: 40px; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      .opt-line { font-size: 12.5px; color: var(--text); margin: 0 0 16px; }
+      .opt-line b { color: var(--ink); }
+
+      /* ── Step-through ── */
+      .stepper { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px 16px 16px; }
+      .step-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+      .req { font-size: 17px; color: var(--ink); font-weight: 600; line-height: 1.35; }
+      .req small { display: block; font-size: 13px; font-weight: 400; color: var(--text); margin-top: 2px; }
+      .req .sw { width: 11px; height: 11px; border-radius: 50%; }
+      .req-meta { font-size: 12px; color: var(--muted); }
+      .decisions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 12px 0 12px; }
+      .dec { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px 11px; font-size: 12.5px; line-height: 1.55; color: var(--text); border-top: 3px solid var(--c); }
+      .dec h5 { margin: 0 0 4px; font-size: 12.5px; color: var(--ink); font-weight: 600; }
+      .dec .v { margin-top: 6px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+      .dec .v i { display: inline-block; width: 18px; height: 18px; border-radius: 50%; font-style: normal; font-size: 12px; line-height: 18px; text-align: center; color: #fff; background: var(--ink); }
+      .dec .v.no i { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+      .dec .ln { display: block; }
+      .dec .ln.bad { color: #9a3b0b; }
+      .dec b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      .caps { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 5px 10px; align-items: center; margin-top: 8px; font-size: 12px; }
+      .caps .lbl { color: var(--muted); }
+      .caps .val { font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; white-space: nowrap; }
+      .cbar { position: relative; height: 10px; border-radius: 3px; background: #f1f1ef; }
+      .cbar .blk { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(45deg, #e3e6ea 0 3px, #f1f1ef 3px 6px); border-radius: 3px; }
+      .cbar .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--c); border-radius: 3px; opacity: .85; }
+      .cbar .cap { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
+      .cbar .lim { position: absolute; top: -3px; bottom: -3px; width: 0; border-left: 2px dotted var(--ink); }
+      .step-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+      .step-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 12px 0 0; }
+      .step-nav input[type=range] { flex: 1 1 160px; min-width: 120px; accent-color: #222; }
+      .dep { font-size: 12.5px; }
+      .dep table.res td, .dep table.res th { padding: 4px 6px; }
+
+      /* ── Charts ── */
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart.bare { border: 0; padding: 0; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart svg text { font-family: inherit; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .axis-title { font-size: 11px; fill: #767676; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .heat rect.cell { cursor: pointer; }
+      .heat rect.cell:hover { stroke: #222; stroke-width: 1.5; }
+
+      /* ── Tooltip ── */
+      .tip {
+        position: fixed; pointer-events: none; z-index: 20;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45;
+        max-width: 280px; display: none;
+      }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: center; gap: 7px; }
+      .tip .r i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 10px; }
+
+      .loading { font-size: 13px; color: var(--muted); padding: 30px 0; }
+      .err { font-size: 13px; color: #9a3b0b; background: #fff6f2; border: 1px solid #f3c9b5; border-radius: 8px; padding: 10px 12px; margin: 16px 0; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+
+      @media (max-width: 1080px) { .diffs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+      @media (max-width: 980px) {
+        .two, .step-grid { grid-template-columns: minmax(0, 1fr); }
+      }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        .diffs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .decisions { grid-template-columns: minmax(0, 1fr); }
+        .views button { padding: 6px 11px; font-size: 13px; }
+        .stepper { padding: 12px 12px 14px; }
+      }
+      @media (max-width: 420px) { .diffs { grid-template-columns: minmax(0, 1fr); } }
+    </style>
+
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+    </style>
+    <style>
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+    </style>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>18</b> tools · <b>7</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Cargo revenue management</h2>
+        <p class="lede">Why selling space in the hold is harder than selling seats, and what a bid price per kilo and per cubic metre does about it.</p>
+        <p>Passenger RM sells identical seats, booked weeks ahead by people who mostly turn up. Cargo RM sells one space that can run out by weight or by volume, to shipments of every size and density, booked in the last few days by forwarders who often hold space in advance, and who then tender more or less than they booked, or nothing at all. Below, one flight's hold is sold to four kinds of shipper under two policies: first come, first served, and <b>bid-price control</b>, which values each kilo and each cubic metre with a small linear program and accepts a shipment only if it pays for the space it takes. Both overbook, and both pay for any cargo they have to offload. It builds on bid prices in <a href="/rm101.html#ch04">RM 101, chapter 04</a> and the network version on the <a href="/bidprice.html">network bid prices</a> page.</p>
+        <p class="note-line">The aircraft capacities, rates, demand and show-up rates are illustrative assumptions, not any airline's data. Money is in US dollars, the currency air cargo is usually quoted in.</p>
+      </div>
+
+      <div class="switch" role="group" aria-label="Scenario">
+        <div class="grp"><span id="l-ac">Aircraft</span><div class="views" id="sw-ac" role="group" aria-labelledby="l-ac"></div></div>
+        <div class="grp"><span id="l-dem">Demand</span><div class="views" id="sw-dem" role="group" aria-labelledby="l-dem"></div></div>
+        <div class="grp"><span id="l-var">Show-up variability</span><div class="views" id="sw-var" role="group" aria-labelledby="l-var"></div></div>
+      </div>
+      <p class="preset-blurb" id="preset-blurb"></p>
+
+      <div id="app"><p class="loading" id="loading">Loading the scenario…</p></div>
+
+      <div id="main" hidden>
+        <!-- ═══════════════════════════ DIFFERENCES ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-diff">
+          <h3 id="h-diff">1. Five ways cargo is not passengers</h3>
+          <p class="lead">The figures come from this scenario's demand: the requests one flight receives on average, and the flight you can step through in section 3.</p>
+          <div class="diffs" id="diffs"></div>
+
+          <div class="block">
+            <div class="block-head"><h4>One flight's booking requests, by weight and density</h4><span id="sc-sub"></span></div>
+            <div class="chart" id="ch-scatter"></div>
+            <p class="hint" id="sc-hint"></p>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ 1,000 FLIGHTS ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-sim">
+          <h3 id="h-sim">2. Two policies over 1,000 flights</h3>
+          <p class="lead">The same 1,000 flights, each with its own booking requests, no-shows and tendered weights, go through <span class="sw" style="background:var(--p-fcfs)"></span><b>first come, first served</b> (accept while the shipment fits under the overbooking limits) and <span class="sw" style="background:var(--p-bp)"></span><b>bid-price control</b> (it must also fit, and its expected revenue must cover the bid-price value of the kilos and cubic metres it takes). Both keep the forwarders' allotments and overbook by the same amount, so the only difference is which shipments they accept.</p>
+
+          <div class="ctl-row">
+            <label for="ob-w">Overbook weight by <input type="range" id="ob-w" min="0" max="60" step="5" value="35"><output id="ob-w-o" for="ob-w">35%</output></label>
+            <label for="ob-v">Overbook volume by <input type="range" id="ob-v" min="0" max="60" step="5" value="35"><output id="ob-v-o" for="ob-v">35%</output></label>
+            <label for="cost">Offload cost US$ <input type="number" id="cost" min="0" max="20" step="0.25" value="4.00"> per kg</label>
+            <button class="btn" id="use-opt">Use the optimum</button>
+            <span class="status" id="sim-status" role="status" aria-live="polite"></span>
+          </div>
+          <p class="opt-line" id="opt-line"></p>
+
+          <div class="tiles" id="tiles"></div>
+
+          <div class="block">
+            <div class="block-head"><h4>Results per flight</h4><span>Average of 1,000 flights</span></div>
+            <div class="tbl-wrap"><table class="res" id="res-table"></table></div>
+          </div>
+
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>Who gets the space</h4><span>Chargeable kg flown per flight, by shipper type</span></div>
+              <div class="chart" id="ch-mix"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>Flight by flight</h4><span id="gain-sub">Bid price minus first come, first served, net revenue</span></div>
+              <div class="chart" id="ch-gain"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ STEP-THROUGH ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-step">
+          <h3 id="h-step">3. Step through one flight</h3>
+          <p class="lead">Requests arrive from 14 days before departure, most in the last few days. For each one: its kilos and cubic metres, what it pays, the bid-price value of the space it takes, and what each policy decides. The last step is departure day: who turns up, with how much, and what has to be offloaded.</p>
+
+          <div class="stepper">
+            <div class="step-top">
+              <div class="req" id="req"></div>
+              <div class="req-meta" id="req-meta"></div>
+            </div>
+            <div class="decisions" id="decisions"></div>
+            <div class="step-grid">
+              <div>
+                <div class="block-head" style="margin-bottom:2px"><h4 style="font-size:13px">Space booked so far</h4><span>% of the aircraft's capacity</span></div>
+                <div class="chart bare" id="ch-path"></div>
+              </div>
+              <div>
+                <div class="block-head" style="margin-bottom:2px"><h4 style="font-size:13px">Bid prices</h4><span>Bid-price policy, re-solved daily</span></div>
+                <div class="chart bare" id="ch-bp"></div>
+              </div>
+            </div>
+            <div class="step-nav">
+              <button class="btn" id="s-first" aria-label="Back to the first request">⏮</button>
+              <button class="btn" id="s-prev">◀ Back</button>
+              <button class="btn dark" id="s-next">Next ▶</button>
+              <button class="btn" id="s-play">Play</button>
+              <button class="btn" id="s-diff" title="Jump to the next request where the two policies decide differently">Next difference</button>
+              <button class="btn" id="s-last" aria-label="Jump to departure">Departure ⏭</button>
+              <input type="range" id="s-range" min="0" max="1" value="0" aria-label="Request number">
+              <button class="btn" id="s-new">New flight</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ OVERBOOKING ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-ob">
+          <h3 id="h-ob">4. How much to overbook</h3>
+          <p class="lead">Overbooking fills the space that no-shows and short tenders would leave empty, at the risk of offloading cargo when more turns up than fits. With two dimensions there are two levels to set, and the right ones depend on how unpredictable the show-up is. Each cell is the average net revenue of the bid-price policy at one pair of levels, over 1,000 flights (300 for the freighter), after the offload cost. Click a cell to use it above.</p>
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>Net revenue per flight</h4><span id="heat-sub"></span></div>
+              <div class="chart heat" id="ch-heat"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>Best net revenue at each weight overbooking level</h4><span>Volume level set to its best, by show-up variability</span></div>
+              <div class="chart" id="ch-obline"></div>
+            </div>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>The optimum against show-up variability</h4><span id="obt-sub"></span></div>
+            <div class="tbl-wrap"><table class="res" id="ob-table"></table></div>
+            <p class="hint" id="ob-hint"></p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>The flight and its demand</h4>
+        <p>One flight, either the belly of a long-haul passenger widebody (16,000 kg and 110 m³ available for cargo) or a large main-deck freighter (95,000 kg and 580 m³ usable). Both are assumptions in round numbers: a belly's cargo capacity depends on the passenger load, bags and fuel on the day, and a freighter's usable volume is well below its gross hold volume because pallets are contoured and never packed perfectly. For scale, Boeing lists a maximum structural payload of 107 tonnes for the 777 Freighter.</p>
+        <p>Booking requests come from four kinds of shipper, each with its own rate, timing, show-up rate and mix of densities (all in <a href="assets/data/cargorm.json">cargorm.json</a>):</p>
+        <ul>
+          <li><b>Allotment:</b> forwarders that hold 30% of the flight's weight and volume under contract, at US$2.00 per chargeable kg. They book into their block mostly in the last week, and 70% of their bookings show up. Unused allotment space is released to free sale 48 hours before departure; after that, their bookings are treated like anyone else's.</li>
+          <li><b>Spot:</b> general cargo booked ad hoc at about US$2.60 per kg, 85% show-up.</li>
+          <li><b>Express and e-commerce:</b> small, light parcels at US$3.60 per kg, booked very late, 95% show-up.</li>
+          <li><b>Special cargo</b> such as temperature-controlled pharma: US$5.50 per kg, booked earliest, 92% show-up.</li>
+        </ul>
+        <p>For one flight, the number of requests from each shipper type is a Poisson draw whose mean is itself random (a gamma factor with a 30% coefficient of variation). Each request gets a weight from a lognormal distribution (capped at 3,000 kg and 12 m³ in the belly, 12,000 kg and 60 m³ on the freighter), a density from one of two or three profiles (dense, standard, light, each with ±20% lognormal noise), a rate with 15% lognormal noise around its type's rate, and a booking time: the share of the 14-day window elapsed is Beta(5, 2) for allotments, Beta(4, 2) for spot, Beta(7, 1) for express and Beta(2, 2) for special cargo. "Balanced" demand asks for about 1.75 times the flight's weight capacity in booked kilos; the other two demand settings shift the mix and scale every density by 0.8 or 1.35.</p>
+
+        <h4>What a shipment pays</h4>
+        <p>Air cargo is charged on the <b>chargeable weight</b>, the higher of the actual weight and the volume weight. IATA's general rule is to divide the volume in cm³ by 6,000, so one cubic metre counts as 166.67 kg: <var>cw</var> = max(<var>w</var>, 166.67 <var>v</var>), and revenue = rate × <var>cw</var>.</p>
+
+        <h4>Bid prices from a two-resource linear program</h4>
+        <p>At 14 days out and then about once a day, the bid-price policy solves the deterministic LP for the demand still to come. Each product <var>j</var> is a shipper type in one density profile, with expected remaining requests <var>D</var><sub>j</sub>, average weight <var>w</var><sub>j</sub>, average volume <var>v</var><sub>j</sub> and expected revenue <var>r</var><sub>j</sub>:</p>
+        <p>maximise Σ<sub>j</sub> <var>r</var><sub>j</sub> <var>x</var><sub>j</sub> subject to Σ<sub>j</sub> <var>w</var><sub>j</sub> <var>x</var><sub>j</sub> ≤ <var>C</var><sub>w</sub>, Σ<sub>j</sub> <var>v</var><sub>j</sub> <var>x</var><sub>j</sub> ≤ <var>C</var><sub>v</sub>, 0 ≤ <var>x</var><sub>j</sub> ≤ <var>D</var><sub>j</sub>,</p>
+        <p>where <var>C</var><sub>w</sub> and <var>C</var><sub>v</sub> are the kilos and cubic metres still free under the overbooking limits, net of the allotment block until it is released. The bid prices <var>π</var><sub>w</sub> (US$ per kg) and <var>π</var><sub>v</sub> (US$ per m³) are the dual values of the two capacity constraints. Because there are only two of them, the page finds them exactly without a solver: the dual, minimise <var>π</var><sub>w</sub><var>C</var><sub>w</sub> + <var>π</var><sub>v</sub><var>C</var><sub>v</sub> + Σ<sub>j</sub> <var>D</var><sub>j</sub> (<var>r</var><sub>j</sub> − <var>π</var><sub>w</sub><var>w</var><sub>j</sub> − <var>π</var><sub>v</sub><var>v</var><sub>j</sub>)<sup>+</sup> over <var>π</var> ≥ 0, is convex and piecewise linear in two variables, so its minimum lies at one of the points where two of the lines <var>r</var><sub>j</sub> = <var>π</var><sub>w</sub><var>w</var><sub>j</sub> + <var>π</var><sub>v</sub><var>v</var><sub>j</sub> (or the axes) cross, and the page checks them all. The results match an LP solver (HiGHS) to rounding.</p>
+        <p>A request with booked weight <var>w</var>, volume <var>v</var> and revenue <var>R</var> is accepted if it fits and its expected revenue covers the value of its space: <var>s</var> <var>t̄</var> <var>R</var> ≥ <var>π</var><sub>w</sub><var>w</var> + <var>π</var><sub>v</sub><var>v</var>, where <var>s</var> is its shipper type's show-up rate and <var>t̄</var> the average tendered share of booked weight. The same rule prices a dense shipment mainly by its kilos and a light one mainly by its cubic metres, so when the hold is short of volume, bulky low-rate cargo is turned away first. Requests within a forwarder's remaining allotment are always accepted: that is the contract.</p>
+
+        <h4>Show-up, overbooking and offloads</h4>
+        <p>Every accepted booking either shows up or not (with its type's show-up rate, scaled by the variability setting). If it shows, the tendered weight is the booked weight times a uniform factor (70–110% at medium variability, 85–105% at low, 55–115% at high), and the tendered volume is the booked volume times the same factor times a lognormal error with a 5% upward bias, because shippers tend to under-declare volume. Both policies accept up to the capacity times one plus the overbooking level, set separately for weight and volume. At departure, if the tendered cargo is over the aircraft's weight or volume, general cargo (allotment and spot) is offloaded before express and special cargo, starting with the least revenue per share of the aircraft it uses, until the rest fits; anything removed that turns out not to be needed is put back. An offloaded shipment earns nothing on this flight and costs the offload cost per chargeable kg: US$4.00 by default, more than any rate, because the cargo still has to move (handling, storage, trucking or space on a later flight) and the customer was promised this one. Net revenue = revenue flown − offload cost.</p>
+        <p>The overbooking grid in section 4 is precomputed by <code>scripts/cargorm/precompute.js</code> with the same code as this page, for every scenario, on 1,000 flights per cell for the belly and 300 for the freighter, in 5-point steps from 0 to 60%, and stored in <a href="assets/data/cargorm-overbooking.json">cargorm-overbooking.json</a>. It stores revenue and offloaded kilos separately, so a new offload cost only needs a subtraction. Sections 1 to 3 run live in your browser, and the generator is seeded, so the page opens on the same flights every time.</p>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>Kasilingam, R. G. (1997), "<a href="https://www.sciencedirect.com/science/article/abs/pii/0377221795003290" target="_blank" rel="noopener">Air cargo revenue management: characteristics and complexities</a>", European Journal of Operational Research 96(1), 36–44. The classic list of how cargo differs from passenger RM: two-dimensional, variable capacity, allotments, uncertain show-up.</li>
+          <li>Amaruchkul, K., Cooper, W. L. and Gupta, D. (2007), "<a href="https://doi.org/10.1287/trsc.1060.0177" target="_blank" rel="noopener">Single-leg air-cargo revenue management</a>", Transportation Science 41(4), 457–469. Booking control for one flight with random weight and volume, offloading costs and heuristics that value weight and volume separately.</li>
+          <li>Luo, S., Çakanyıldırım, M. and Kasilingam, R. G. (2009), "<a href="https://www.sciencedirect.com/science/article/abs/pii/S037722170800204X" target="_blank" rel="noopener">Two-dimensional cargo overbooking models</a>", European Journal of Operational Research 197(3), 862–883. Overbooking limits for weight and volume together, trading spoilage against offloading.</li>
+          <li>Levin, Y., Nediak, M. and Topaloglu, H. (2012), "<a href="https://doi.org/10.1287/opre.1110.1023" target="_blank" rel="noopener">Cargo capacity management with allotments and spot market demand</a>", Operations Research 60(2), 351–365.</li>
+          <li>IATA, "<a href="https://www.iata.org/en/publications/newsletters/iata-knowledge-hub/air-cargo-tariffs-and-rules-what-you-need-to-know/" target="_blank" rel="noopener">Air cargo tariffs and rules: what you need to know</a>": the volume divisor of 6,000 cm³ per kg and the chargeable weight (checked September 2026).</li>
+          <li>Boeing, <a href="https://www.boeing.com/commercial/freighters" target="_blank" rel="noopener">Freighters</a>: 777 Freighter maximum structural payload (checked September 2026).</li>
+          <li>Charts drawn with <a href="https://d3js.org" target="_blank" rel="noopener">D3</a> 7.9.0.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>The LP uses expected demand only, so its bid prices ignore uncertainty and move in steps; they can be zero on a dimension the forecast doesn't fill. Amaruchkul, Cooper and Gupta build stronger value-function approximations. Real systems also forecast show-up by customer and booking history, not by shipper type alone.</li>
+          <li>Space is treated as two numbers. In a real hold, cargo goes on pallets and in containers of fixed shapes, contour limits and floor loading matter, and dangerous goods and live animals have their own positions, so a flight can be "full" before either number reaches 100%. A belly's capacity is also uncertain until passengers and bags are known, which this page ignores.</li>
+          <li>Rates are given, not optimised, and there is no negotiation: in practice spot rates are quoted per shipment, and an RM system uses the bid prices as a floor for the quote (see <a href="/rm101.html#ch07">RM 101, chapter 07</a> on dynamic pricing).</li>
+          <li>One flight at a time. On a network, a shipment's bid price is the sum over the flights it uses, and trucking and alternative routings change the cost of offloading (see <a href="/rm101.html#ch06">RM 101, chapter 06</a> and the <a href="/bidprice.html">network bid prices</a> page). No-show fees, booking cancellations and rebooking before departure are not modelled.</li>
+          <li>Allotments are a fixed 30% block with a fixed release time. Real allotment contracts vary (hard and soft blocks, use-it-or-lose-it clauses, different release times), and choosing how much to sell as allotment is a decision of its own: see the <a href="/allotments.html">allotments vs spot</a> page and Levin, Nediak and Topaloglu (2012).</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+// <crm-engine>
+// Cargo RM engine: shipment generator, two-resource LP bid prices, FCFS and bid-price acceptance,
+// show-up and offloading. Pure functions, no DOM. Shared by cargorm.html and scripts/cargorm/precompute.js.
+var CRM = (function () {
+  "use strict";
+
+  // ---------- random ----------
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function gaussFactory(rng) {
+    var spare = null;
+    return function () {
+      if (spare !== null) { var s = spare; spare = null; return s; }
+      var u, v, q;
+      do { u = rng() * 2 - 1; v = rng() * 2 - 1; q = u * u + v * v; } while (q === 0 || q >= 1);
+      var m = Math.sqrt(-2 * Math.log(q) / q);
+      spare = v * m; return u * m;
+    };
+  }
+  // Gamma(k, 1) for k >= 1 (Marsaglia-Tsang)
+  function gamma(rng, g, k) {
+    var d = k - 1 / 3, c = 1 / Math.sqrt(9 * d);
+    for (;;) {
+      var x, v;
+      do { x = g(); v = 1 + c * x; } while (v <= 0);
+      v = v * v * v;
+      var u = rng();
+      if (u < 1 - 0.0331 * x * x * x * x) return d * v;
+      if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+    }
+  }
+  function poisson(rng, g, lam) {
+    if (lam <= 0) return 0;
+    if (lam > 40) return Math.max(0, Math.round(lam + Math.sqrt(lam) * g()));
+    var L = Math.exp(-lam), k = 0, p = 1;
+    do { k++; p *= rng(); } while (p > L);
+    return k - 1;
+  }
+  // Beta(a, b) with integer a, b: the a-th smallest of a+b-1 uniforms
+  function betaInt(rng, a, b) {
+    var n = a + b - 1, u = [];
+    for (var i = 0; i < n; i++) u.push(rng());
+    u.sort(function (x, y) { return x - y; });
+    return u[a - 1];
+  }
+  // Regularised incomplete beta for integer a, b
+  function betaCdf(x, a, b) {
+    if (x <= 0) return 0; if (x >= 1) return 1;
+    var n = a + b - 1, s = 0, c = 1;
+    for (var j = 0; j <= n; j++) {
+      if (j > 0) c = c * (n - j + 1) / j;
+      if (j >= a) s += c * Math.pow(x, j) * Math.pow(1 - x, n - j);
+    }
+    return s;
+  }
+  function find(arr, key) { for (var i = 0; i < arr.length; i++) if (arr[i].key === key) return arr[i]; return arr[0]; }
+
+  // ---------- scenario ----------
+  // One flight's capacity, demand by segment and density profile, show-up behaviour.
+  function model(data, acKey, demKey, varKey) {
+    var ac = Object.assign({}, find(data.aircraft, acKey), { densSd: data.densSd }), dem = find(data.demand, demKey), vr = find(data.variability, varKey);
+    var VR = data.volRatio, T = data.window;
+    var mc = mulberry32(12345), mg = gaussFactory(mc);
+    var fwMean = (vr.fw[0] + vr.fw[1]) / 2;
+    var segs = data.segments.map(function (s) {
+      var show = 1 - (1 - s.show) * vr.noShowMult;
+      var profiles = s.profiles.map(function (p) {
+        var prof = { key: p.key, p: p.p, med: p.medKg, sd: p.sdLog, dens: p.density * dem.densityMult };
+        // product means by Monte Carlo (truncation makes closed forms messy)
+        var sw = 0, sv = 0, sc = 0, N = 4000;
+        for (var i = 0; i < N; i++) { var sh = drawSize(prof, ac, VR, mg); sw += sh.w; sv += sh.v; sc += sh.cw; }
+        prof.w = sw / N; prof.v = sv / N; prof.cw = sc / N;
+        return prof;
+      });
+      var ew = profiles.reduce(function (a, p) { return a + p.p * p.w; }, 0);
+      var frac = s.key === "allot" ? data.allotShare * dem.allotUse : dem.frac[s.key];
+      return { key: s.key, name: s.name, rate: s.rate, show: show, arrival: s.arrival, priority: s.priority,
+        profiles: profiles, meanW: ew, lam: frac * ac.W / ew, frac: frac,
+        // expected share of the booked revenue that is actually earned (show-up × average tender)
+        realise: show * fwMean };
+    });
+    return { ac: ac, dem: dem, vr: vr, W: ac.W, V: ac.V, VR: VR, T: T, segs: segs,
+      blockW: data.allotShare * ac.W, blockV: data.allotShare * ac.V, release: data.allotRelease,
+      checkpoints: data.checkpoints, rateSd: data.rateSd, demandCv: data.demandCv, densSd: data.densSd, muV: data.tenderVolBias };
+  }
+
+  function drawSize(prof, ac, VR, g) {
+    var w = prof.med * Math.exp(prof.sd * g());
+    var d = prof.dens * Math.exp((ac.densSd || 0.2) * g());
+    w = Math.max(5, Math.min(ac.maxKg, w));
+    var v = w / d;
+    if (v > ac.maxM3) { v = ac.maxM3; w = v * d; }
+    return { w: w, v: v, d: d, cw: Math.max(w, v * VR) };
+  }
+
+  // ---------- one flight's booking requests and show-up draws ----------
+  function genFlight(M, seed) {
+    var rng = mulberry32(seed), g = gaussFactory(rng), k = 1 / (M.demandCv * M.demandCv), reqs = [];
+    M.segs.forEach(function (s, si) {
+      var lam = s.lam * gamma(rng, g, k) / k, n = poisson(rng, g, lam);
+      for (var r = 0; r < n; r++) {
+        var u = rng(), pi = 0, acc = s.profiles[0].p;
+        while (u > acc && pi < s.profiles.length - 1) { pi++; acc += s.profiles[pi].p; }
+        var prof = s.profiles[pi];
+        var sh = drawSize(prof, M.ac, M.VR, g);
+        var rate = s.rate * Math.exp(M.rateSd * g() - M.rateSd * M.rateSd / 2);
+        var x = betaInt(rng, s.arrival[0], s.arrival[1]);
+        var shows = rng() < s.show;
+        var fw = M.vr.fw[0] + (M.vr.fw[1] - M.vr.fw[0]) * rng();
+        var fv = fw * Math.exp(M.muV + M.vr.sv * g());
+        reqs.push({ tau: M.T * (1 - x), s: si, p: pi, w: sh.w, v: sh.v, d: sh.d, cw: sh.cw, rate: rate, R: rate * sh.cw,
+          ER: rate * sh.cw * s.realise, shows: shows, fw: fw, fv: fv });
+      }
+    });
+    reqs.sort(function (a, b) { return b.tau - a.tau; });
+    return reqs;
+  }
+
+  // ---------- LP bid prices ----------
+  // max Σ R_j x_j  s.t.  Σ w_j x_j ≤ Cw,  Σ v_j x_j ≤ Cv,  0 ≤ x_j ≤ D_j.
+  // Dual: min  πw Cw + πv Cv + Σ D_j (R_j − πw w_j − πv v_j)^+  over π ≥ 0. It is convex and piecewise
+  // linear in two variables, so the minimum sits on a vertex of the lines R_j = πw w_j + πv v_j and the axes:
+  // enumerate them all. Exact, and fast for a dozen products.
+  function lpDual(prods, Cw, Cv) {
+    Cw = Math.max(0, Cw); Cv = Math.max(0, Cv);
+    var P = prods.filter(function (p) { return p.D > 1e-9 && p.R > 0; });
+    if (!P.length) return { pw: 0, pv: 0, z: 0 };
+    var cand = [[0, 0]], n = P.length, i, j;
+    for (i = 0; i < n; i++) { cand.push([P[i].R / P[i].w, 0]); cand.push([0, P[i].R / P[i].v]); }
+    for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) {
+      var a = P[i], b = P[j], det = a.w * b.v - b.w * a.v;
+      if (Math.abs(det) < 1e-12) continue;
+      var pw = (a.R * b.v - b.R * a.v) / det, pv = (a.w * b.R - b.w * a.R) / det;
+      if (pw >= -1e-12 && pv >= -1e-12) cand.push([Math.max(0, pw), Math.max(0, pv)]);
+    }
+    var best = null, bz = Infinity, bs = Infinity;
+    for (i = 0; i < cand.length; i++) {
+      var c = cand[i], z = c[0] * Cw + c[1] * Cv;
+      for (j = 0; j < n; j++) { var m = P[j].R - c[0] * P[j].w - c[1] * P[j].v; if (m > 0) z += P[j].D * m; }
+      var s = c[0] + c[1];
+      if (z < bz - 1e-7 || (Math.abs(z - bz) <= 1e-7 && s < bs)) { bz = z; bs = s; best = c; }
+    }
+    return { pw: best[0], pv: best[1], z: bz };
+  }
+
+  // expected requests still to come in each product, and their average size and expected revenue
+  function products(M, tau, released) {
+    var out = [], x = 1 - tau / M.T;
+    M.segs.forEach(function (s, si) {
+      if (s.key === "allot" && !released) return; // before release, forwarders book into their own block
+      var rem = 1 - betaCdf(x, s.arrival[0], s.arrival[1]);
+      s.profiles.forEach(function (p, pi) {
+        out.push({ s: si, p: pi, D: s.lam * p.p * rem, w: p.w, v: p.v, R: s.rate * p.cw * s.realise });
+      });
+    });
+    return out;
+  }
+
+  // ---------- one flight under one policy ----------
+  // policy: "fcfs" or "bp". obW, obV: overbooking as a fraction of physical capacity.
+  function simFlight(M, reqs, policy, obW, obV, trace) {
+    var W = M.W, V = M.V, Wlim = W * (1 + obW), Vlim = V * (1 + obV);
+    var fW = 0, fV = 0, aW = 0, aV = 0, released = false, ci = 0, ck = M.checkpoints;
+    var pw = 0, pv = 0, acc = [], log = trace ? [] : null, bpHist = trace ? [] : null;
+    function freeW() { return Wlim - fW - (released ? aW : M.blockW); }
+    function freeV() { return Vlim - fV - (released ? aV : M.blockV); }
+    function resolve(t) {
+      if (policy !== "bp") return;
+      var sol = lpDual(products(M, t, released), freeW(), freeV());
+      pw = sol.pw; pv = sol.pv;
+      if (bpHist) bpHist.push({ tau: t, pw: pw, pv: pv, cw: Math.max(0, freeW()), cv: Math.max(0, freeV()) });
+    }
+    for (var r = 0; r < reqs.length; r++) {
+      var q = reqs[r], seg = M.segs[q.s];
+      var relNow = !released && q.tau <= M.release;
+      if (relNow) released = true;
+      var moved = false;
+      while (ci < ck.length && ck[ci] >= q.tau) { ci++; moved = true; }
+      if (moved || relNow || r === 0) resolve(ci > 0 ? ck[ci - 1] : q.tau);
+      var dec, why;
+      if (seg.key === "allot" && !released && aW + q.w <= M.blockW + 1e-9 && aV + q.v <= M.blockV + 1e-9) {
+        dec = true; why = "allot"; aW += q.w; aV += q.v;
+      } else {
+        var fits = q.w <= freeW() + 1e-9 && q.v <= freeV() + 1e-9;
+        if (!fits) { dec = false; why = "full"; }
+        else if (policy === "bp" && q.ER < pw * q.w + pv * q.v - 1e-9) { dec = false; why = "bid"; }
+        else { dec = true; why = "ok"; fW += q.w; fV += q.v; }
+      }
+      if (dec) acc.push(q);
+      if (log) log.push({ dec: dec, why: why, pw: pw, pv: pv, aW: aW, aV: aV, bookedW: fW + aW, bookedV: fV + aV, freeW: freeW(), freeV: freeV(), released: released });
+    }
+    var res = depart(M, acc);
+    res.bookedW = fW + aW; res.bookedV = fV + aV; res.nAcc = acc.length; res.nReq = reqs.length;
+    if (trace) { res.log = log; res.bpHist = bpHist; }
+    return res;
+  }
+
+  // ---------- departure: who shows up, what gets offloaded ----------
+  function depart(M, acc) {
+    var W = M.W, V = M.V, VR = M.VR, ten = [], TW = 0, TV = 0, noShow = 0;
+    acc.forEach(function (q) {
+      if (!q.shows) { noShow++; return; }
+      var tw = q.w * q.fw, tv = q.v * q.fv, cw = Math.max(tw, tv * VR);
+      ten.push({ q: q, tw: tw, tv: tv, cw: cw, rev: q.rate * cw, pri: M.segs[q.s].priority });
+      TW += tw; TV += tv;
+    });
+    var tenW = TW, tenV = TV, off = [];
+    if (TW > W + 1e-9 || TV > V + 1e-9) {
+      // offload general cargo before express and special cargo; within a priority, the least revenue per share of the flight
+      var order = ten.slice().sort(function (a, b) {
+        if (a.pri !== b.pri) return a.pri - b.pri;
+        return a.rev / (a.tw / W + a.tv / V) - b.rev / (b.tw / W + b.tv / V);
+      });
+      for (var i = 0; i < order.length && (TW > W + 1e-9 || TV > V + 1e-9); i++) {
+        var c = order[i];
+        c.off = true; off.push(c); TW -= c.tw; TV -= c.tv;
+      }
+      // put back anything that fits again (greedy removal can overshoot)
+      for (var j = off.length - 1; j >= 0; j--) {
+        var o = off[j];
+        if (TW + o.tw <= W + 1e-9 && TV + o.tv <= V + 1e-9) { o.off = false; TW += o.tw; TV += o.tv; off.splice(j, 1); }
+      }
+    }
+    var rev = 0, offKg = 0, revSeg = M.segs.map(function () { return 0; }), kgSeg = M.segs.map(function () { return 0; });
+    ten.forEach(function (t) {
+      if (t.off) { offKg += t.cw; return; }
+      rev += t.rev; revSeg[t.q.s] += t.rev; kgSeg[t.q.s] += t.cw;
+    });
+    return { rev: rev, offKg: offKg, offN: off.length, noShow: noShow, tenW: tenW, tenV: tenV, carW: TW, carV: TV,
+      revSeg: revSeg, kgSeg: kgSeg, ten: ten };
+  }
+
+  // ---------- many flights ----------
+  function runMany(M, n, seed0, obW, obV, policies) {
+    var out = {};
+    policies.forEach(function (p) { out[p] = []; });
+    for (var f = 0; f < n; f++) {
+      var reqs = genFlight(M, seed0 + f * 7919);
+      policies.forEach(function (p) {
+        var r = simFlight(M, reqs, p, obW, obV, false);
+        delete r.ten;
+        out[p].push(r);
+      });
+    }
+    return out;
+  }
+
+  return { mulberry32: mulberry32, model: model, genFlight: genFlight, lpDual: lpDual, products: products,
+    simFlight: simFlight, depart: depart, runMany: runMany, betaCdf: betaCdf, find: find };
+})();
+if (typeof module !== "undefined") module.exports = CRM;
+// </crm-engine>
+    </script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var DATA_URL = "assets/data/cargorm.json", OB_URL = "assets/data/cargorm-overbooking.json";
+      var N_FLIGHTS = 1000, STEP_SEED = 424242, MANY_SEED = 1;
+      var POL = [
+        { key: "fcfs", name: "First come, first served", short: "FCFS", hex: "#d9480f" },
+        { key: "bp", name: "Bid price", short: "Bid price", hex: "#3a8f5c" }
+      ];
+      var SEGC = { allot: "#9aa3ad", spot: "#2a7fb5", express: "#7a5ab8", special: "#1f9e89" };
+      var VARC = { low: "#8FA9F2", medium: "#2455E6", high: "#151A23" };
+
+      var $ = function (id) { return document.getElementById(id); };
+      var nf0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+      var nf1 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      var nf2 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      function money(v) { return (v < -0.5 ? "−$" : "$") + nf0.format(Math.abs(Math.round(v))); }
+      function money2(v) { return (v < 0 ? "−$" : "$") + nf2.format(Math.abs(v)); }
+      function signedMoney(v) { var r = Math.round(v); return (r > 0 ? "+$" : r < 0 ? "−$" : "$") + nf0.format(Math.abs(r)); }
+      function kg(v) { return nf0.format(Math.round(v)) + " kg"; }
+      function m3(v) { return (v >= 100 ? nf0.format(v) : nf1.format(v)) + " m³"; }
+      function pct(v) { return nf0.format(Math.round(v * 100)) + "%"; }
+      function pct1(v) { return nf1.format(v * 100) + "%"; }
+      function signedPct(v) { var s = nf1.format(Math.abs(v * 100)); return (v >= 0.0005 ? "+" : v <= -0.0005 ? "−" : "") + s + "%"; }
+      function days(t) { return t >= 1 ? nf1.format(t) + " days" : nf0.format(Math.round(t * 24)) + " hours"; }
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+      var data, obData;
+      Promise.all([DATA_URL, OB_URL].map(function (u) {
+        return fetch(u).then(function (r) { if (!r.ok) throw new Error(u.split("/").pop() + " " + r.status); return r.json(); });
+      })).then(function (res) {
+        data = res[0]; obData = res[1];
+        if (typeof d3 === "undefined") { $("loading").outerHTML = '<p class="err">Couldn\'t load the chart library. Reload the page.</p>'; return; }
+        start();
+      }).catch(function (e) {
+        $("loading").outerHTML = '<p class="err">Couldn\'t load the scenario (' + esc(e.message || e) + '). Check your connection and reload the page.</p>';
+      });
+
+      // ---------- state ----------
+      var S = { ac: "belly", dem: "balanced", vr: "medium", obW: 0.35, obV: 0.35, cost: 1.5,
+        M: null, reqs: null, tr: null, step: 0, stepSeed: STEP_SEED, many: null, token: 0, playing: null };
+
+      function start() {
+        S.ac = data.aircraft[0].key; S.dem = data.demand[0].key; S.vr = data.variability[1].key; S.cost = data.offloadCost;
+        $("cost").value = S.cost.toFixed(2);
+        renderSwitches();
+        wire();
+        $("loading").remove();
+        $("main").hidden = false;
+        setScenario(true);
+      }
+
+      function setScenario(snapOB) {
+        S.M = CRM.model(data, S.ac, S.dem, S.vr);
+        if (snapOB) { var o = optimum(S.ac, S.dem, S.vr, S.cost); S.obW = o.ow; S.obV = o.ov; syncSliders(); }
+        renderBlurb();
+        S.stepSeed = STEP_SEED; S.step = 0;
+        buildStepFlight();
+        renderDiffs();
+        renderScatter();
+        renderStep();
+        renderOB();
+        runMany();
+      }
+
+      // ---------- switches ----------
+      function renderSwitches() {
+        [["sw-ac", data.aircraft, "ac"], ["sw-dem", data.demand, "dem"], ["sw-var", data.variability, "vr"]].forEach(function (g) {
+          var el = $(g[0]);
+          el.innerHTML = g[1].map(function (o) {
+            return '<button type="button" data-k="' + o.key + '" aria-pressed="' + (S[g[2]] === o.key) + '" class="' + (S[g[2]] === o.key ? "on" : "") + '">' + esc(o.name) + "</button>";
+          }).join("");
+          el.onclick = function (e) {
+            var b = e.target.closest("button"); if (!b || S[g[2]] === b.dataset.k) return;
+            S[g[2]] = b.dataset.k;
+            el.querySelectorAll("button").forEach(function (x) { var on = x.dataset.k === S[g[2]]; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on); });
+            stopPlay();
+            setScenario(true);
+          };
+        });
+      }
+      function renderBlurb() {
+        var ac = CRM.find(data.aircraft, S.ac), dm = CRM.find(data.demand, S.dem), vr = CRM.find(data.variability, S.vr);
+        $("preset-blurb").innerHTML = "<b>" + esc(ac.name) + ".</b> " + esc(ac.blurb) + " <b>" + esc(dm.name) + ".</b> " + esc(dm.blurb) + " <b>" + esc(vr.name) + " variability.</b> " + esc(vr.blurb);
+      }
+
+      function syncSliders() {
+        $("ob-w").value = Math.round(S.obW * 100); $("ob-v").value = Math.round(S.obV * 100);
+        $("ob-w-o").textContent = Math.round(S.obW * 100) + "%"; $("ob-v-o").textContent = Math.round(S.obV * 100) + "%";
+      }
+
+      var debounceT = null;
+      function wire() {
+        function onOB() {
+          S.obW = +$("ob-w").value / 100; S.obV = +$("ob-v").value / 100;
+          syncSliders();
+          clearTimeout(debounceT);
+          debounceT = setTimeout(function () { obChanged(); }, 120);
+        }
+        $("ob-w").addEventListener("input", onOB);
+        $("ob-v").addEventListener("input", onOB);
+        $("cost").addEventListener("input", function () {
+          var v = parseFloat($("cost").value);
+          if (!isFinite(v) || v < 0) return;
+          S.cost = Math.min(50, v);
+          renderResults(); renderStep(); renderOB();
+        });
+        $("use-opt").addEventListener("click", function () {
+          var o = optimum(S.ac, S.dem, S.vr, S.cost); S.obW = o.ow; S.obV = o.ov; syncSliders(); obChanged();
+        });
+        // stepper
+        $("s-first").onclick = function () { stopPlay(); goStep(0); };
+        $("s-prev").onclick = function () { stopPlay(); goStep(S.step - 1); };
+        $("s-next").onclick = function () { stopPlay(); goStep(S.step + 1); };
+        $("s-last").onclick = function () { stopPlay(); goStep(S.reqs.length); };
+        $("s-range").oninput = function () { stopPlay(); goStep(+this.value); };
+        $("s-diff").onclick = function () {
+          stopPlay();
+          for (var i = S.step + 1; i < S.reqs.length; i++) if (S.tr.fcfs.log[i].dec !== S.tr.bp.log[i].dec) { goStep(i); return; }
+          goStep(S.reqs.length);
+        };
+        $("s-play").onclick = function () {
+          if (S.playing) { stopPlay(); return; }
+          if (S.step >= S.reqs.length) goStep(0);
+          $("s-play").textContent = "Pause";
+          S.playing = setInterval(function () { if (S.step >= S.reqs.length) { stopPlay(); return; } goStep(S.step + 1); }, 550);
+        };
+        $("s-new").onclick = function () { stopPlay(); S.stepSeed += 7; S.step = 0; buildStepFlight(); renderScatter(); renderStep(); };
+        document.querySelector(".stepper").addEventListener("keydown", function (e) {
+          if (e.target.tagName === "INPUT") return;
+          if (e.key === "ArrowRight") { e.preventDefault(); stopPlay(); goStep(S.step + 1); }
+          if (e.key === "ArrowLeft") { e.preventDefault(); stopPlay(); goStep(S.step - 1); }
+        });
+        var rw = window.innerWidth;
+        window.addEventListener("resize", function () {
+          if (Math.abs(window.innerWidth - rw) < 30) return; rw = window.innerWidth;
+          clearTimeout(S.rt); S.rt = setTimeout(function () { renderScatter(); renderStep(); renderOB(); if (S.many) renderCharts(); }, 150);
+        });
+      }
+      function stopPlay() { if (S.playing) { clearInterval(S.playing); S.playing = null; $("s-play").textContent = "Play"; } }
+      function obChanged() { buildStepFlight(true); renderStep(); renderOB(); runMany(); }
+
+      // ---------- overbooking surface ----------
+      function surface(ac, dem, vr) { return obData.cells[ac + "|" + dem + "|" + vr]; }
+      function netAt(cell, i, cost) { return cell.rev[i] - cost * cell.offKg[i]; }
+      // Best cell, with a tie-break: the surface is flat near the top, so among cells within 0.2% of the best
+      // net revenue, take the one with the fewest offloads (then the lowest levels).
+      function optimum(ac, dem, vr, cost) {
+        var c = surface(ac, dem, vr), G = obData.grid, n = G.length, best = -Infinity, bi = -1, i;
+        for (i = 0; i < n * n; i++) best = Math.max(best, netAt(c, i, cost));
+        var tol = Math.abs(best) * 0.002;
+        for (i = 0; i < n * n; i++) {
+          if (netAt(c, i, cost) < best - tol) continue;
+          if (bi < 0 || c.offN[i] < c.offN[bi] - 1e-9) bi = i;
+        }
+        return { ow: G[Math.floor(bi / n)], ov: G[bi % n], net: netAt(c, bi, cost), best: best, i: bi };
+      }
+
+      // ---------- step-through flight ----------
+      function buildStepFlight(keepStep) {
+        S.reqs = CRM.genFlight(S.M, S.stepSeed);
+        S.tr = {};
+        POL.forEach(function (p) { S.tr[p.key] = CRM.simFlight(S.M, S.reqs, p.key, S.obW, S.obV, true); });
+        if (!keepStep) S.step = 0;
+        S.step = Math.min(S.step, S.reqs.length);
+        $("s-range").max = S.reqs.length;
+      }
+      function goStep(i) { S.step = Math.max(0, Math.min(S.reqs.length, i)); renderStep(); }
+
+      // ---------- section 1: differences ----------
+      function renderDiffs() {
+        var M = S.M, ac = M.ac;
+        // averages over the scenario's expected demand, from 300 generated flights
+        var n = 0, late = 0, allotLate = 0, allotN = 0, vol = 0, wts = [], dens = [], noshowExp = 0, lamSum = 0;
+        for (var f = 0; f < 300; f++) {
+          CRM.genFlight(M, 90001 + f * 13).forEach(function (q) {
+            n++; if (q.tau <= 3) late++;
+            if (M.segs[q.s].key === "allot") { allotN++; if (q.tau <= 3) allotLate++; }
+            if (q.v * M.VR > q.w) vol++;
+            if (f < 60) { wts.push(q.w); dens.push(q.d); }
+          });
+        }
+        M.segs.forEach(function (s) { lamSum += s.lam; noshowExp += s.lam * (1 - s.show); });
+        wts.sort(d3.ascending); dens.sort(d3.ascending);
+        var vr = M.vr;
+        var cards = [
+          { t: "Two capacities, not one", pax: "A seat is a seat. A hold can run out by weight or by volume.",
+            m: "<b>" + kg(ac.W) + "</b> and <b>" + m3(ac.V) + "</b>, " + nf0.format(ac.W / ac.V) + " kg per m³ on average" },
+          { t: "Every shipment is a different size", pax: "Passengers take one seat each. Shipments range from a parcel to a machine.",
+            m: "Half weigh <b>" + nf0.format(d3.quantile(wts, 0.25)) + "–" + nf0.format(d3.quantile(wts, 0.75)) + " kg</b>; " + pct(vol / n) + " pay on volume" },
+          { t: "Late bookings, forwarders' allotments", pax: "Passengers book weeks ahead. Cargo books in the last days, and forwarders hold space.",
+            m: "<b>" + pct(late / n) + "</b> of requests in the last 3 days; <b>" + pct(data.allotShare) + "</b> of space on allotment" },
+          { t: "Tendered ≠ booked", pax: "A passenger is one passenger. A shipment turns up heavier or lighter than booked.",
+            m: "Tendered weight <b>" + pct(vr.fw[0]) + "–" + pct(vr.fw[1]) + "</b> of booked; volume often more than declared" },
+          { t: "Frequent no-shows", pax: "Passenger no-shows are a few percent. Cargo bookings often don't turn up at all.",
+            m: "<b>" + pct(noshowExp / lamSum) + "</b> of requests would be no-shows if accepted" }
+        ];
+        $("diffs").innerHTML = cards.map(function (c, i) {
+          return '<div class="diff"><span class="n">' + (i + 1) + '</span><h5>' + c.t + '</h5><span class="pax">' + c.pax + '</span><span class="m">' + c.m + "</span></div>";
+        }).join("");
+      }
+
+      // ---------- tooltip ----------
+      var tip = $("tip");
+      function showTip(html, ev) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var x = ev.clientX + 14, y = ev.clientY + 14, r = tip.getBoundingClientRect();
+        if (x + r.width > window.innerWidth - 8) x = ev.clientX - r.width - 14;
+        if (y + r.height > window.innerHeight - 8) y = ev.clientY - r.height - 14;
+        tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      function shipTip(q) {
+        var s = S.M.segs[q.s], volu = q.v * S.M.VR > q.w;
+        return '<div class="t">' + esc(s.name) + " · " + days(q.tau) + " before departure</div>" +
+          '<div class="r">Weight<b>' + kg(q.w) + "</b></div>" +
+          '<div class="r">Volume<b>' + m3(q.v) + "</b></div>" +
+          '<div class="r">Density<b>' + nf0.format(q.d) + " kg/m³</b></div>" +
+          '<div class="r">Pays on<b>' + kg(q.cw) + (volu ? " (volume)" : "") + "</b></div>" +
+          '<div class="r">Rate<b>' + money2(q.rate) + "/kg</b></div>" +
+          '<div class="r">Revenue if flown<b>' + money(q.R) + "</b></div>";
+      }
+
+      function chartWidth(el, min) { return Math.max(min || 280, Math.floor(el.getBoundingClientRect().width - 12)); }
+      function svgIn(el, W, H) {
+        el.innerHTML = "";
+        return d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("width", W).attr("height", H).attr("role", "img");
+      }
+      function legendHtml(items) {
+        return '<div class="legend">' + items.map(function (it) {
+          return "<span><i class=\"" + (it.cls || "") + "\" style=\"" + (it.cls && it.cls.indexOf("ln") >= 0 ? "border-color:" : "background:") + it.c + "\"></i>" + esc(it.t) + "</span>";
+        }).join("") + "</div>";
+      }
+
+      // ---------- section 1: scatter ----------
+      function renderScatter() {
+        var el = $("ch-scatter"), M = S.M, reqs = S.reqs;
+        var W = chartWidth(el), H = Math.round(Math.min(360, Math.max(250, W * 0.4)));
+        var m = { l: 52, r: 16, t: 14, b: 40 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Scatter plot of one flight's booking requests by weight and density");
+        var x = d3.scaleLog().domain([5, M.ac.maxKg * 1.15]).range([m.l, W - m.r]).clamp(true);
+        var y = d3.scaleLog().domain([40, 700]).range([H - m.b, m.t]).clamp(true);
+        var xt = [10, 30, 100, 300, 1000, 3000, 10000].filter(function (v) { return v <= M.ac.maxKg * 1.15; }), yt = [50, 100, 200, 400];
+        svg.append("g").attr("class", "grid").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues(xt).tickSize(-(H - m.t - m.b)).tickFormat(""));
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).tickValues(yt).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues(xt).tickFormat(d3.format(",")));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).tickValues(yt).tickFormat(d3.format(",")));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Booked weight, kg (log scale)");
+        svg.append("text").attr("class", "axis-title").attr("transform", "rotate(-90)").attr("x", -m.t).attr("y", 12).attr("text-anchor", "end").text("Density, kg per m³ (log scale)");
+        var ad = M.W / M.V, close = Math.abs(ad / M.VR - 1) < 0.08;
+        svg.append("rect").attr("x", m.l).attr("width", W - m.l - m.r).attr("y", y(M.VR)).attr("height", y(40) - y(M.VR)).attr("fill", "#2a7fb5").attr("opacity", 0.05);
+        svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(M.VR)).attr("y2", y(M.VR)).attr("stroke", "#222").attr("stroke-width", 1.2).attr("stroke-dasharray", "5 4");
+        svg.append("text").attr("x", W - m.r - 4).attr("y", y(M.VR) - 5).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#444").attr("dy", (!close && ad < M.VR) ? 0 : 0).text(W < 500 ? "< 167 kg/m³: pays on volume" : "below 167 kg/m³: pays on volume");
+        if (!close) {
+          svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(ad)).attr("y2", y(ad)).attr("stroke", "#222").attr("stroke-width", 1.2);
+          svg.append("text").attr("x", m.l + 6).attr("y", y(ad) + (ad < M.VR ? 14 : -5)).attr("text-anchor", "start").attr("font-size", 11).attr("fill", "#444").text("aircraft: " + nf0.format(ad) + " kg/m³");
+        }
+        svg.append("g").selectAll("circle").data(reqs).join("circle")
+          .attr("cx", function (q) { return x(q.w); }).attr("cy", function (q) { return y(q.d); }).attr("r", W < 500 ? 3.2 : 4)
+          .attr("fill", function (q) { return SEGC[M.segs[q.s].key]; }).attr("fill-opacity", 0.85).attr("stroke", "#fff").attr("stroke-width", 0.7)
+          .on("mousemove", function (ev, q) { showTip(shipTip(q), ev); }).on("mouseleave", hideTip);
+        el.insertAdjacentHTML("beforeend", legendHtml(M.segs.map(function (s) { return { t: s.name, c: SEGC[s.key], cls: "dot" }; })));
+        $("sc-sub").textContent = reqs.length + " requests, the flight in section 3";
+        $("sc-hint").textContent = "Each dot is a shipment someone asked to book. Shipments in the shaded band are lighter than 167 kg per m³, so they pay on their volume weight (m³ × 166.67) rather than their actual weight. " +
+          (close ? "This aircraft's own density, " + nf0.format(ad) + " kg per m³, is close to that line, so shipments below it fill the hold by volume before they fill it by weight."
+                 : "The solid line is the aircraft's own density: shipments below it fill the hold by volume before they fill it by weight.");
+      }
+
+      // ---------- section 2: 1,000 flights ----------
+      function runMany() {
+        var tok = ++S.token, M = S.M, out = { fcfs: [], bp: [] }, f = 0, CH = S.ac === "freighter" ? 40 : 150;
+        $("sim-status").textContent = "Simulating 1,000 flights…";
+        (function chunk() {
+          if (tok !== S.token) return;
+          var end = Math.min(N_FLIGHTS, f + CH);
+          for (; f < end; f++) {
+            var reqs = CRM.genFlight(M, MANY_SEED + f * 7919);
+            POL.forEach(function (p) {
+              var r = CRM.simFlight(M, reqs, p.key, S.obW, S.obV, false);
+              out[p.key].push({ rev: r.rev, offKg: r.offKg, offN: r.offN, noShow: r.noShow, nAcc: r.nAcc, nReq: r.nReq,
+                bookedW: r.bookedW, bookedV: r.bookedV, tenW: r.tenW, tenV: r.tenV, carW: r.carW, carV: r.carV, revSeg: r.revSeg, kgSeg: r.kgSeg });
+            });
+          }
+          if (f < N_FLIGHTS) { $("sim-status").textContent = "Simulating " + nf0.format(f) + " of 1,000 flights…"; setTimeout(chunk, 0); return; }
+          S.many = out;
+          $("sim-status").textContent = "";
+          renderResults();
+        })();
+      }
+      function agg(list) {
+        var M = S.M, n = list.length, o = { rev: 0, offKg: 0, offN: 0, noShow: 0, nAcc: 0, nReq: 0, bookedW: 0, bookedV: 0, tenW: 0, tenV: 0, carW: 0, carV: 0,
+          offFl: 0, kgSeg: M.segs.map(function () { return 0; }), revSeg: M.segs.map(function () { return 0; }), cw: 0 };
+        list.forEach(function (r) {
+          ["rev", "offKg", "offN", "noShow", "nAcc", "nReq", "bookedW", "bookedV", "tenW", "tenV", "carW", "carV"].forEach(function (k) { o[k] += r[k]; });
+          if (r.offN > 0) o.offFl++;
+          r.kgSeg.forEach(function (v, i) { o.kgSeg[i] += v; o.cw += v; }); r.revSeg.forEach(function (v, i) { o.revSeg[i] += v; });
+        });
+        Object.keys(o).forEach(function (k) { if (Array.isArray(o[k])) o[k] = o[k].map(function (v) { return v / n; }); else o[k] /= n; });
+        o.cost = o.offKg * S.cost; o.net = o.rev - o.cost;
+        return o;
+      }
+      function renderResults() {
+        if (!S.many) return;
+        var M = S.M, A = { fcfs: agg(S.many.fcfs), bp: agg(S.many.bp) }, f = A.fcfs, b = A.bp;
+        S.agg = A;
+        var opt = optimum(S.ac, S.dem, S.vr, S.cost);
+        var atOpt = Math.abs(opt.ow - S.obW) < 1e-9 && Math.abs(opt.ov - S.obV) < 1e-9;
+        $("opt-line").innerHTML = "Best levels for this scenario at " + money2(S.cost) + " per kg offloaded: <b>weight +" + Math.round(opt.ow * 100) + "%</b>, <b>volume +" + Math.round(opt.ov * 100) + "%</b> (section 4)." + (atOpt ? " These are the levels in use." : "");
+        var tiles = [
+          { k: "Net revenue per flight", v: money(b.net), s: signedPct(b.net / f.net - 1) + " vs first come, first served (" + money(f.net) + ")" },
+          { k: "Weight load factor", v: pct(b.carW / M.W), s: "First come, first served " + pct(f.carW / M.W) + " · flown ÷ capacity" },
+          { k: "Volume load factor", v: pct(b.carV / M.V), s: "First come, first served " + pct(f.carV / M.V) },
+          { k: "Shipments offloaded per flight", v: nf1.format(b.offN), s: "First come, first served " + nf1.format(f.offN) + " · " + pct(b.offFl) + " of flights have one" }
+        ];
+        $("tiles").innerHTML = tiles.map(function (t) { return '<div class="tile"><span class="k">' + t.k + "</span><b>" + t.v + '</b><span class="s">' + t.s + "</span></div>"; }).join("");
+
+        function row(label, fv, bv, fmt, dfmt, cls) {
+          var d = bv - fv;
+          var dcls = Math.abs(d) < 1e-9 ? "" : (d > 0 ? "pos" : "neg");
+          if (cls && cls.indexOf("inv") >= 0) dcls = dcls === "pos" ? "neg" : dcls === "neg" ? "pos" : "";
+          if (cls && cls.indexOf("neutral") >= 0) dcls = "";
+          return "<tr" + (cls && cls.indexOf("sum") >= 0 ? ' class="sum"' : "") + '><td class="l">' + label + "</td><td>" + fmt(fv) + "</td><td>" + fmt(bv) + '</td><td class="' + dcls + '">' + dfmt(d) + "</td></tr>";
+        }
+        var sp = function (v) { return (v > 0.0005 ? "+" : v < -0.0005 ? "−" : "") + nf1.format(Math.abs(v * 100)) + " pts"; };
+        var sn1 = function (v) { return (v > 0.005 ? "+" : v < -0.005 ? "−" : "") + nf1.format(Math.abs(v)); };
+        var skg = function (v) { return (v > 0.5 ? "+" : v < -0.5 ? "−" : "") + kg(Math.abs(v)); };
+        var id = function (v) { return v; };
+        var html = '<thead><tr><th class="l">Per flight</th><th><span class="sw" style="background:var(--p-fcfs)"></span>First come, first served</th><th><span class="sw" style="background:var(--p-bp)"></span>Bid price</th><th>Difference</th></tr></thead><tbody>';
+        html += '<tr class="grp"><td colspan="4">Booking</td></tr>';
+        html += row("Booking requests", f.nReq, b.nReq, function (v) { return nf1.format(v); }, sn1, "neutral");
+        html += row("Accepted", f.nAcc, b.nAcc, function (v) { return nf1.format(v); }, sn1, "neutral");
+        html += row("Booked weight, % of capacity", f.bookedW / M.W, b.bookedW / M.W, pct1, sp, "neutral");
+        html += row("Booked volume, % of capacity", f.bookedV / M.V, b.bookedV / M.V, pct1, sp, "neutral");
+        html += '<tr class="grp"><td colspan="4">Departure</td></tr>';
+        html += row("No-shows", f.noShow, b.noShow, function (v) { return nf1.format(v); }, sn1, "neutral");
+        html += row("Tendered weight, % of capacity", f.tenW / M.W, b.tenW / M.W, pct1, sp, "neutral");
+        html += row("Tendered volume, % of capacity", f.tenV / M.V, b.tenV / M.V, pct1, sp, "neutral");
+        html += row("Shipments offloaded", f.offN, b.offN, function (v) { return nf1.format(v); }, sn1, "inv");
+        html += row("Flights with an offload", f.offFl, b.offFl, pct1, sp, "inv");
+        html += row("Weight load factor (flown)", f.carW / M.W, b.carW / M.W, pct1, sp);
+        html += row("Volume load factor (flown)", f.carV / M.V, b.carV / M.V, pct1, sp);
+        html += row("Chargeable weight flown", f.cw, b.cw, kg, skg);
+        html += row("Revenue per chargeable kg", f.rev / f.cw, b.rev / b.cw, money2, function (v) { return (v >= 0 ? "+" : "−") + money2(Math.abs(v)).replace("−", ""); });
+        html += '<tr class="grp"><td colspan="4">Revenue</td></tr>';
+        html += row("Revenue flown", f.rev, b.rev, money, signedMoney);
+        html += row("Offloaded chargeable weight", f.offKg, b.offKg, kg, skg, "inv");
+        html += row("Offload cost", f.cost, b.cost, money, signedMoney, "inv");
+        html += row("Net revenue", f.net, b.net, money, function (v) { return signedMoney(v) + " (" + signedPct(v / f.net) + ")"; }, "sum");
+        html += "</tbody>";
+        $("res-table").innerHTML = html;
+        renderCharts();
+      }
+      function renderCharts() { renderMix(); renderGain(); }
+
+      function renderMix() {
+        var el = $("ch-mix"), M = S.M, A = S.agg; if (!A) return;
+        var W = chartWidth(el), H = 150, m = { l: W < 480 ? 88 : 150, r: 16, t: 10, b: 34 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Chargeable kilos flown per flight by shipper type, per policy");
+        var tot = d3.max(POL, function (p) { return d3.sum(A[p.key].kgSeg); });
+        var x = d3.scaleLinear().domain([0, tot * 1.04]).nice().range([m.l, W - m.r]);
+        var y = d3.scaleBand().domain(POL.map(function (p) { return p.key; })).range([m.t, H - m.b]).padding(0.3);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 480 ? 3 : 5).tickSize(-(H - m.t - m.b)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 480 ? 3 : 5).tickFormat(function (v) { return d3.format("~s")(v) + " kg"; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).tickSize(0).tickPadding(8).tickFormat(function (k) { return W < 480 ? CRM.find(POL, k).short : CRM.find(POL, k).name; })).select(".domain").remove();
+        POL.forEach(function (p) {
+          var x0 = 0, a = A[p.key];
+          M.segs.forEach(function (s, i) {
+            var v = a.kgSeg[i];
+            svg.append("rect").attr("x", x(x0)).attr("y", y(p.key)).attr("width", Math.max(0, x(x0 + v) - x(x0))).attr("height", y.bandwidth())
+              .attr("fill", SEGC[s.key]).attr("stroke", "#fff").attr("stroke-width", 1)
+              .on("mousemove", function (ev) {
+                showTip('<div class="t">' + esc(p.name) + " · " + esc(s.name) + '</div><div class="r">Chargeable kg<b>' + kg(v) + '</b></div><div class="r">Revenue<b>' + money(a.revSeg[i]) + '</b></div><div class="r">Per kg<b>' + (v > 0 ? money2(a.revSeg[i] / v) : "–") + "</b></div>", ev);
+              }).on("mouseleave", hideTip);
+            x0 += v;
+          });
+        });
+        el.insertAdjacentHTML("beforeend", legendHtml(M.segs.map(function (s) { return { t: s.name, c: SEGC[s.key] }; })));
+      }
+
+      function renderGain() {
+        var el = $("ch-gain"); if (!S.many) return;
+        var d = S.many.bp.map(function (r, i) { var f = S.many.fcfs[i]; return (r.rev - S.cost * r.offKg) - (f.rev - S.cost * f.offKg); });
+        var W = chartWidth(el), H = 150 + 0, m = { l: 44, r: 12, t: 10, b: 34 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Histogram of the per-flight net revenue difference between the two policies");
+        var ext = d3.extent(d), x = d3.scaleLinear().domain([Math.min(0, ext[0]), Math.max(0, ext[1])]).nice().range([m.l, W - m.r]);
+        var bins = d3.bin().domain(x.domain()).thresholds(x.ticks(W < 480 ? 16 : 28))(d);
+        var y = d3.scaleLinear().domain([0, d3.max(bins, function (b) { return b.length; })]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(4).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 480 ? 4 : 6).tickFormat(function (v) { return (v < 0 ? "−$" : "$") + d3.format("~s")(Math.abs(v)); }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(4));
+        svg.append("g").selectAll("rect").data(bins).join("rect")
+          .attr("x", function (b) { return x(b.x0) + 0.5; }).attr("width", function (b) { return Math.max(0, x(b.x1) - x(b.x0) - 1); })
+          .attr("y", function (b) { return y(b.length); }).attr("height", function (b) { return y(0) - y(b.length); })
+          .attr("fill", function (b) { return b.x1 <= 0 ? "#d9480f" : "#3a8f5c"; }).attr("opacity", 0.85)
+          .on("mousemove", function (ev, b) { showTip('<div class="t">' + signedMoney(b.x0) + " to " + signedMoney(b.x1) + '</div><div class="r">Flights<b>' + b.length + "</b></div>", ev); })
+          .on("mouseleave", hideTip);
+        svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-width", 1);
+        var wins = d.filter(function (v) { return v > 0.5; }).length, mean = d3.mean(d);
+        svg.append("text").attr("x", x(mean)).attr("y", m.t + 2).attr("dy", "0.7em").attr("dx", 4).attr("font-size", 11).attr("fill", "#222").text("average " + signedMoney(mean));
+        svg.append("line").attr("x1", x(mean)).attr("x2", x(mean)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-dasharray", "3 3");
+        $("gain-sub").textContent = "Net revenue, bid price minus first come, first served · bid price ahead on " + pct(wins / d.length) + " of flights";
+      }
+
+      // ---------- section 3: step-through ----------
+      function capBars(p, log, pre) {
+        var M = S.M, lw = 1 + S.obW, lv = 1 + S.obV, mx = Math.max(lw, lv) * 1.02;
+        var bw = log ? log.bookedW : 0, bv = log ? log.bookedV : 0, rel = log ? log.released : false;
+        function bar(v, cap, lim, isW) {
+          // unused allotment block, reserved until release, drawn after what is booked
+          var used = log ? (isW ? log.aW : log.aV) : 0, blk = !rel ? Math.max(0, (isW ? M.blockW : M.blockV) - used) / cap : 0, f = v / cap;
+          return '<div class="cbar" style="--c:' + p.hex + '">' +
+            '<span class="fill" style="width:' + Math.min(100, f / mx * 100) + '%"></span>' +
+            (blk > 0 ? '<span class="blk" style="left:' + Math.min(100, f / mx * 100) + '%;width:' + Math.min(100 - f / mx * 100, blk / mx * 100) + '%"></span>' : "") +
+            '<span class="cap" style="left:' + (1 / mx * 100) + '%"></span><span class="lim" style="left:' + (lim / mx * 100) + '%"></span></div>';
+        }
+        return '<div class="caps"><span class="lbl">Weight</span>' + bar(bw, M.W, lw, true) + '<span class="val">' + kg(bw) + " · " + pct(bw / M.W) + "</span>" +
+          '<span class="lbl">Volume</span>' + bar(bv, M.V, lv, false) + '<span class="val">' + m3(bv) + " · " + pct(bv / M.V) + "</span></div>";
+      }
+
+      function renderStep() {
+        var M = S.M, n = S.reqs.length, i = S.step;
+        $("s-range").max = n; $("s-range").value = i;
+        $("s-prev").disabled = i <= 0; $("s-first").disabled = i <= 0; $("s-next").disabled = i >= n; $("s-last").disabled = i >= n;
+        var capNote = '<span class="hint" style="display:block;margin-top:4px">Bar: booked. Solid tick: capacity. Dotted tick: overbooking limit' + " (+" + Math.round(S.obW * 100) + "% / +" + Math.round(S.obV * 100) + "%). Hatched: forwarders' allotment space not yet booked, held until 48 hours out.</span>";
+        if (i >= n) { renderDeparture(); renderPath(); renderBP(); return; }
+        var q = S.reqs[i], s = M.segs[q.s], volu = q.v * M.VR > q.w;
+        $("req").innerHTML = '<span class="sw" style="background:' + SEGC[s.key] + '"></span>' + esc(s.name) + " · " + kg(q.w) + " · " + m3(q.v) +
+          "<small>" + nf0.format(q.d) + " kg per m³, so it pays on " + kg(q.cw) + " (" + (volu ? "its volume weight" : "its actual weight") + ") at " + money2(q.rate) + " per kg = <b>" + money(q.R) + "</b> if it flies as booked</small>";
+        $("req-meta").textContent = "Request " + (i + 1) + " of " + n + " · " + days(q.tau) + " before departure";
+        var lf = S.tr.fcfs.log[i], lb = S.tr.bp.log[i], prevF = i > 0 ? S.tr.fcfs.log[i - 1] : null, prevB = i > 0 ? S.tr.bp.log[i - 1] : null;
+        function verdict(l) { return '<div class="v' + (l.dec ? "" : " no") + '"><i>' + (l.dec ? "✓" : "✕") + "</i>" + (l.dec ? "Accept" : "Reject") + "</div>"; }
+        function spaceLeft(pol, l) {
+          // free space before this request = after-state free + what this request took (if it took free space)
+          var fw = l.freeW + (l.dec && l.why === "ok" ? q.w : 0), fv = l.freeV + (l.dec && l.why === "ok" ? q.v : 0);
+          return '<span class="ln">Free to sell: <b>' + kg(Math.max(0, fw)) + "</b> and <b>" + m3(Math.max(0, fv)) + "</b></span>";
+        }
+        var fcfsHtml, bpHtml;
+        if (lf.why === "allot") {
+          var allotTxt = '<span class="ln">Within the forwarder\'s allotment: accepted under the contract, whatever the bid price.</span>';
+          fcfsHtml = allotTxt; bpHtml = allotTxt;
+        } else {
+          fcfsHtml = spaceLeft("fcfs", lf) + '<span class="ln' + (lf.why === "full" ? " bad" : "") + '">' + (lf.why === "full" ? "Doesn't fit under the overbooking limits." : "Fits, so it is accepted.") + "</span>";
+          var sv = lb.pw * q.w + lb.pv * q.v, er = q.ER;
+          bpHtml = spaceLeft("bp", lb) +
+            '<span class="ln">Expected revenue: ' + money(q.R) + " × " + pct(s.realise) + " (show-up × average tender) = <b>" + money(er) + "</b></span>" +
+            '<span class="ln">Value of its space: ' + nf0.format(q.w) + " kg × " + money2(lb.pw) + " + " + (q.v < 10 ? nf2.format(q.v) : nf1.format(q.v)) + " m³ × " + money(lb.pv) + " = <b>" + money(sv) + "</b></span>" +
+            (lb.why === "full" ? '<span class="ln bad">Doesn\'t fit under the overbooking limits.</span>' :
+              lb.why === "bid" ? '<span class="ln bad">Pays ' + money(sv - er) + " less than its space is worth to later shipments.</span>" :
+              '<span class="ln">Covers its space by ' + money(er - sv) + ".</span>");
+        }
+        $("decisions").innerHTML =
+          '<div class="dec" style="--c:' + POL[0].hex + '"><h5>First come, first served</h5>' + fcfsHtml + verdict(lf) + capBars(POL[0], lf) + "</div>" +
+          '<div class="dec" style="--c:' + POL[1].hex + '"><h5>Bid price</h5>' + bpHtml + verdict(lb) + capBars(POL[1], lb) + "</div>" + '<div style="grid-column:1/-1">' + capNote + "</div>";
+        renderPath(); renderBP();
+      }
+
+      function renderDeparture() {
+        var M = S.M, n = S.reqs.length;
+        $("req").innerHTML = "Departure: who turns up<small>Every accepted booking either shows up, with more or less than it booked, or doesn't. Anything over the aircraft's weight or volume is offloaded, general cargo first.</small>";
+        $("req-meta").textContent = n + " requests · departure";
+        $("decisions").innerHTML = POL.map(function (p) {
+          var r = S.tr[p.key], ten = r.ten, off = ten.filter(function (t) { return t.off; });
+          var offTxt = off.length ? off.map(function (t) { return esc(M.segs[t.q.s].name) + " " + kg(t.tw) + " / " + m3(t.tv); }).slice(0, 4).join("; ") + (off.length > 4 ? "; …" : "") : "none";
+          var cost = r.offKg * S.cost;
+          return '<div class="dec dep" style="--c:' + p.hex + '"><h5>' + p.name + "</h5>" +
+            '<div class="tbl-wrap"><table class="res"><thead><tr><th class="l"></th><th>Weight</th><th>Volume</th></tr></thead><tbody>' +
+            '<tr><td class="l">Booked (' + r.nAcc + ' shipments)</td><td>' + kg(r.bookedW) + "</td><td>" + m3(r.bookedV) + "</td></tr>" +
+            '<tr><td class="l">Tendered (' + (r.nAcc - r.noShow) + " showed, " + r.noShow + " didn't)</td><td>" + kg(r.tenW) + "</td><td>" + m3(r.tenV) + "</td></tr>" +
+            '<tr><td class="l">Capacity</td><td>' + kg(M.W) + "</td><td>" + m3(M.V) + "</td></tr>" +
+            '<tr class="sum"><td class="l">Flown</td><td>' + kg(r.carW) + " · " + pct(r.carW / M.W) + "</td><td>" + m3(r.carV) + " · " + pct(r.carV / M.V) + "</td></tr>" +
+            "</tbody></table></div>" +
+            '<span class="ln" style="margin-top:6px">Offloaded: <b>' + off.length + "</b> (" + offTxt + ")</span>" +
+            '<span class="ln">Revenue flown <b>' + money(r.rev) + "</b> − offload cost <b>" + money(cost) + "</b> = net <b>" + money(r.rev - cost) + "</b></span></div>";
+        }).join("");
+      }
+
+      function renderPath() {
+        var el = $("ch-path"), M = S.M, n = S.reqs.length, i = Math.min(S.step, n);
+        var W = chartWidth(el, 260), H = Math.round(Math.min(300, Math.max(220, W * 0.62))), m = { l: 58, r: 14, t: 10, b: 34 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Booked weight against booked volume as the flight sells");
+        var mx = Math.max(1 + S.obW, 1 + S.obV, 1.05) * 1.05;
+        var x = d3.scaleLinear().domain([0, mx]).range([m.l, W - m.r]), y = d3.scaleLinear().domain([0, mx]).range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(5).tickSize(-(H - m.t - m.b)).tickFormat(""));
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(5, "%"));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5, "%"));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Weight booked");
+        svg.append("text").attr("class", "axis-title").attr("transform", "rotate(-90)").attr("x", -m.t).attr("y", 11).attr("text-anchor", "end").text("Volume booked");
+        svg.append("rect").attr("x", x(0)).attr("y", y(1)).attr("width", x(1) - x(0)).attr("height", y(0) - y(1)).attr("fill", "none").attr("stroke", "#222").attr("stroke-width", 1.4);
+        svg.append("rect").attr("x", x(0)).attr("y", y(1 + S.obV)).attr("width", x(1 + S.obW) - x(0)).attr("height", y(0) - y(1 + S.obV)).attr("fill", "none").attr("stroke", "#222").attr("stroke-dasharray", "2 3");
+        svg.append("text").attr("x", x(1) - 4).attr("y", y(1) + 13).attr("text-anchor", "end").attr("font-size", 10.5).attr("fill", "#444").text("capacity");
+        svg.append("text").attr("x", x(1 + S.obW) - 4).attr("y", y(1 + S.obV) - 4).attr("text-anchor", "end").attr("font-size", 10.5).attr("fill", "#444").text("overbooking limits");
+        POL.forEach(function (p) {
+          var L = S.tr[p.key].log, pts = [[0, 0]];
+          for (var k = 0; k < i; k++) pts.push([L[k].bookedW / M.W, L[k].bookedV / M.V]);
+          svg.append("path").attr("d", d3.line().x(function (d) { return x(d[0]); }).y(function (d) { return y(d[1]); })(pts))
+            .attr("fill", "none").attr("stroke", p.hex).attr("stroke-width", 2).attr("stroke-linejoin", "round");
+          var last = pts[pts.length - 1];
+          svg.append("circle").attr("cx", x(last[0])).attr("cy", y(last[1])).attr("r", 4.5).attr("fill", p.hex).attr("stroke", "#fff").attr("stroke-width", 1.5);
+          if (i >= n) {
+            var r = S.tr[p.key];
+            svg.append("circle").attr("cx", x(r.carW / M.W)).attr("cy", y(r.carV / M.V)).attr("r", 5).attr("fill", "#fff").attr("stroke", p.hex).attr("stroke-width", 2.2);
+          }
+        });
+        el.insertAdjacentHTML("beforeend", legendHtml(POL.map(function (p) { return { t: p.name, c: p.hex, cls: "ln" }; }).concat(i >= n ? [{ t: "flown (ring)", c: "#999", cls: "dot" }] : [])));
+      }
+
+      function renderBP() {
+        var el = $("ch-bp"), H0 = S.tr.bp.bpHist, n = S.reqs.length;
+        var tNow = S.step < n ? S.reqs[S.step].tau : 0;
+        var W = chartWidth(el, 260), panelH = 118, m = { l: 50, r: 14, t: 16, b: 26 };
+        el.innerHTML = "";
+        [["pw", "Per kg", function (v) { return "$" + d3.format(".2~f")(v); }, "#222"], ["pv", "Per m³", function (v) { return "$" + d3.format("~s")(v); }, "#2a7fb5"]].forEach(function (cfg, pi) {
+          var H = panelH + (pi === 1 ? 8 : 0);
+          var holder = document.createElement("div"); el.appendChild(holder);
+          var svg = d3.select(holder).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("width", W).attr("height", H).attr("role", "img").attr("aria-label", "Bid price " + cfg[1] + " over the booking window");
+          var x = d3.scaleLinear().domain([14, 0]).range([m.l, W - m.r]);
+          var ymax = d3.max(H0, function (h) { return h[cfg[0]]; }) || 1;
+          var y = d3.scaleLinear().domain([0, ymax * 1.1]).nice().range([H - m.b, m.t]);
+          svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(3).tickSize(-(W - m.l - m.r)).tickFormat(""));
+          svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(7).tickFormat(function (v) { return v === 0 ? "dep." : "−" + v + "d"; }));
+          svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(3).tickFormat(cfg[2]));
+          svg.append("text").attr("x", m.l + 2).attr("y", m.t - 5).attr("font-size", 11.5).attr("font-weight", 600).attr("fill", "#222").text(cfg[1] + (pi === 0 ? " (weight)" : " (volume)"));
+          // step line: each value holds until the next re-solve
+          var pts = [];
+          H0.forEach(function (h, k) { var tEnd = k + 1 < H0.length ? H0[k + 1].tau : 0; pts.push([h.tau, h[cfg[0]]]); pts.push([tEnd, h[cfg[0]]]); });
+          svg.append("path").attr("d", d3.line().x(function (d) { return x(d[0]); }).y(function (d) { return y(d[1]); })(pts)).attr("fill", "none").attr("stroke", cfg[3]).attr("stroke-width", 2);
+          svg.append("line").attr("x1", x(tNow)).attr("x2", x(tNow)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#3a8f5c").attr("stroke-width", 1.5).attr("stroke-dasharray", "3 3");
+          svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+            .on("mousemove", function (ev) {
+              var t = x.invert(d3.pointer(ev)[0]), h = H0[0];
+              H0.forEach(function (hh) { if (hh.tau >= t) h = hh; });
+              showTip('<div class="t">Re-solved ' + days(h.tau) + ' before departure</div><div class="r">Per kg<b>' + money2(h.pw) + '</b></div><div class="r">Per m³<b>' + money(h.pv) + '</b></div><div class="r">Free kg<b>' + kg(h.cw) + '</b></div><div class="r">Free m³<b>' + m3(h.cv) + "</b></div>", ev);
+            }).on("mouseleave", hideTip);
+        });
+      }
+
+      // ---------- section 4: overbooking ----------
+      function renderOB() {
+        var G = obData.grid, n = G.length, cell = surface(S.ac, S.dem, S.vr), opt = optimum(S.ac, S.dem, S.vr, S.cost);
+        // heatmap
+        var el = $("ch-heat"), W = chartWidth(el), m = { l: 60, r: 12, t: 10, b: 40 };
+        var side = Math.min(W - m.l - m.r, 420), H = side + m.t + m.b;
+        var svg = svgIn(el, W, H).attr("aria-label", "Heatmap of net revenue per flight by weight and volume overbooking level");
+        var cs = side / n, x0 = m.l;
+        var vals = []; for (var i = 0; i < n * n; i++) vals.push(netAt(cell, i, S.cost));
+        var lo = d3.min(vals), hi = d3.max(vals);
+        var col = d3.scaleSequential(d3.interpolateRgb("#f3f6fc", "#1A3FAE")).domain([lo, hi]);
+        var g = svg.append("g");
+        for (var iw = 0; iw < n; iw++) for (var iv = 0; iv < n; iv++) {
+          (function (iw, iv) {
+            var k = iw * n + iv, v = vals[k];
+            g.append("rect").attr("class", "cell").attr("x", x0 + iw * cs).attr("y", m.t + (n - 1 - iv) * cs).attr("width", cs - 1).attr("height", cs - 1).attr("rx", 2)
+              .attr("fill", col(v))
+              .on("mousemove", function (ev) {
+                showTip('<div class="t">Weight +' + Math.round(G[iw] * 100) + "%, volume +" + Math.round(G[iv] * 100) + '%</div><div class="r">Net revenue<b>' + money(v) + '</b></div><div class="r">vs best<b>' + signedPct(v / opt.net - 1) + '</b></div><div class="r">Offloads per flight<b>' + nf1.format(cell.offN[k]) + '</b></div><div class="r">Weight load factor<b>' + pct(cell.lfW[k]) + '</b></div><div class="r">Volume load factor<b>' + pct(cell.lfV[k]) + "</b></div>", ev);
+              }).on("mouseleave", hideTip)
+              .on("click", function () { S.obW = G[iw]; S.obV = G[iv]; syncSliders(); obChanged(); });
+          })(iw, iv);
+        }
+        var xs = d3.scaleLinear().domain([G[0] - 0.025, G[n - 1] + 0.025]).range([x0, x0 + side]);
+        var ys = d3.scaleLinear().domain([G[0] - 0.025, G[n - 1] + 0.025]).range([m.t + side, m.t]);
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (m.t + side) + ")").call(d3.axisBottom(xs).tickValues([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]).tickFormat(d3.format(".0%")));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + x0 + ",0)").call(d3.axisLeft(ys).tickValues([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]).tickFormat(d3.format(".0%")));
+        svg.append("text").attr("class", "axis-title").attr("x", x0 + side).attr("y", m.t + side + 32).attr("text-anchor", "end").text("Weight overbooking");
+        svg.append("text").attr("class", "axis-title").attr("transform", "rotate(-90)").attr("x", -m.t).attr("y", 11).attr("text-anchor", "end").text("Volume overbooking");
+        // optimum star and current setting ring
+        var ow = Math.round(opt.ow * 20), ov = Math.round(opt.ov * 20);
+        var sx = x0 + ow * cs + cs / 2, sy = m.t + (n - 1 - ov) * cs + cs / 2;
+        svg.append("path").attr("d", d3.symbol(d3.symbolStar, Math.max(40, cs * cs * 0.35))()).attr("transform", "translate(" + sx + "," + sy + ")").attr("fill", "#fff").attr("stroke", "#222").attr("stroke-width", 1.2).attr("pointer-events", "none");
+        var cw = Math.round(S.obW * 20), cv = Math.round(S.obV * 20);
+        svg.append("rect").attr("x", x0 + cw * cs - 1).attr("y", m.t + (n - 1 - cv) * cs - 1).attr("width", cs + 1).attr("height", cs + 1).attr("rx", 3)
+          .attr("fill", "none").attr("stroke", "#d9480f").attr("stroke-width", 2.2).attr("pointer-events", "none");
+        el.insertAdjacentHTML("beforeend", '<div class="legend"><span>' + money(lo) + ' <i style="width:70px;background:linear-gradient(90deg,#f3f6fc,#1A3FAE);vertical-align:-1px;margin:0 4px"></i> ' + money(hi) + '</span><span>☆ best</span><span><i style="background:none;box-shadow:inset 0 0 0 2px #d9480f"></i>levels in use above</span></div>');
+        $("heat-sub").textContent = CRM.find(data.variability, S.vr).name + " variability, after " + money2(S.cost) + "/kg offload cost";
+
+        // line chart: best over volume, per variability
+        var el2 = $("ch-obline"), W2 = chartWidth(el2), H2 = Math.max(240, Math.min(H - 40, 340)), m2 = { l: 58, r: 14, t: 12, b: 40 };
+        var svg2 = svgIn(el2, W2, H2).attr("aria-label", "Best net revenue against weight overbooking level for three show-up variability settings");
+        var series = data.variability.map(function (vr) {
+          var c = surface(S.ac, S.dem, vr.key), pts = [];
+          for (var iw2 = 0; iw2 < n; iw2++) {
+            var best = -Infinity, bv = 0;
+            for (var iv2 = 0; iv2 < n; iv2++) { var v2 = netAt(c, iw2 * n + iv2, S.cost); if (v2 > best) { best = v2; bv = iv2; } }
+            pts.push({ ow: G[iw2], ov: G[bv], net: best });
+          }
+          return { vr: vr, pts: pts, opt: optimum(S.ac, S.dem, vr.key, S.cost) };
+        });
+        var all = []; series.forEach(function (s) { s.pts.forEach(function (p) { all.push(p.net); }); });
+        var x2 = d3.scaleLinear().domain([0, G[n - 1]]).range([m2.l, W2 - m2.r]);
+        var y2 = d3.scaleLinear().domain(d3.extent(all)).nice().range([H2 - m2.b, m2.t]);
+        svg2.append("g").attr("class", "grid").attr("transform", "translate(" + m2.l + ",0)").call(d3.axisLeft(y2).ticks(5).tickSize(-(W2 - m2.l - m2.r)).tickFormat(""));
+        svg2.append("g").attr("class", "axis").attr("transform", "translate(0," + (H2 - m2.b) + ")").call(d3.axisBottom(x2).ticks(6, "%"));
+        svg2.append("g").attr("class", "axis").attr("transform", "translate(" + m2.l + ",0)").call(d3.axisLeft(y2).ticks(5).tickFormat(function (v) { return "$" + d3.format("~s")(v); }));
+        svg2.append("text").attr("class", "axis-title").attr("x", W2 - m2.r).attr("y", H2 - 6).attr("text-anchor", "end").text("Weight overbooking");
+        series.forEach(function (s) {
+          var cur = s.vr.key === S.vr;
+          svg2.append("path").attr("d", d3.line().x(function (p) { return x2(p.ow); }).y(function (p) { return y2(p.net); })(s.pts))
+            .attr("fill", "none").attr("stroke", VARC[s.vr.key]).attr("stroke-width", cur ? 2.6 : 1.6).attr("opacity", cur ? 1 : 0.8);
+          svg2.append("g").selectAll("circle").data(s.pts).join("circle").attr("cx", function (p) { return x2(p.ow); }).attr("cy", function (p) { return y2(p.net); })
+            .attr("r", 3).attr("fill", VARC[s.vr.key]).attr("stroke", "#fff").attr("stroke-width", 1)
+            .on("mousemove", function (ev, p) { showTip('<div class="t">' + esc(s.vr.name) + " variability · weight +" + Math.round(p.ow * 100) + '%</div><div class="r">Best volume level<b>+' + Math.round(p.ov * 100) + '%</b></div><div class="r">Net revenue<b>' + money(p.net) + "</b></div>", ev); })
+            .on("mouseleave", hideTip);
+          svg2.append("path").attr("d", d3.symbol(d3.symbolStar, 110)()).attr("transform", "translate(" + x2(s.opt.ow) + "," + y2(s.opt.net) + ")").attr("fill", VARC[s.vr.key]).attr("stroke", "#fff").attr("stroke-width", 1);
+        });
+        el2.insertAdjacentHTML("beforeend", legendHtml(series.map(function (s) { return { t: s.vr.name + " variability", c: VARC[s.vr.key], cls: "ln" }; })));
+
+        // table
+        var html = '<thead><tr><th class="l">Show-up variability</th><th class="l">No-shows and tenders</th><th>Best weight level</th><th>Best volume level</th><th>Net revenue per flight</th><th>Offloads per flight</th><th>Weight load factor</th><th>Volume load factor</th></tr></thead><tbody>';
+        series.forEach(function (s) {
+          var c = surface(S.ac, S.dem, s.vr.key), k = s.opt.i, Mv = CRM.model(data, S.ac, S.dem, s.vr.key), ns = 0, ls = 0;
+          Mv.segs.forEach(function (sg) { ls += sg.lam; ns += sg.lam * (1 - sg.show); });
+          html += "<tr" + (s.vr.key === S.vr ? ' class="cur"' : "") + '><td class="l"><span class="sw" style="background:' + VARC[s.vr.key] + '"></span>' + esc(s.vr.name) + '</td><td class="l">' + pct(ns / ls) + " no-shows, tender " + pct(s.vr.fw[0]) + "–" + pct(s.vr.fw[1]) + '</td><td class="hl">+' + Math.round(s.opt.ow * 100) + '%</td><td class="hl">+' + Math.round(s.opt.ov * 100) + "%</td><td>" + money(s.opt.net) + "</td><td>" + nf1.format(c.offN[k]) + "</td><td>" + pct(c.lfW[k]) + "</td><td>" + pct(c.lfV[k]) + "</td></tr>";
+        });
+        $("ob-table").innerHTML = html + "</tbody>";
+        $("obt-sub").textContent = CRM.find(data.aircraft, S.ac).name + " · " + CRM.find(data.demand, S.dem).name + " demand · bid-price policy";
+        var lowO = series[0].opt, hiO = series[2].opt;
+        $("ob-hint").textContent = "The less predictable the show-up, the more it pays to overbook: from +" + Math.round(lowO.ow * 100) + "% / +" + Math.round(lowO.ov * 100) + "% at low variability to +" + Math.round(hiO.ow * 100) + "% / +" + Math.round(hiO.ov * 100) + "% at high, yet the best achievable net revenue still falls, by " + pct1(1 - hiO.net / lowO.net) + ". Where one dimension never binds (weight in the e-commerce peak, for instance), its level barely matters and the surface is flat along it. The surface is flat near the top, so the best levels shown are, among the cells within 0.2% of the highest net revenue, the ones with the fewest offloads.";
+      }
+    });
+    </script>
+  </body>
+</html>
