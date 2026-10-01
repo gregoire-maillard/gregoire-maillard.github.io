@@ -19,6 +19,18 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/awardseatcost.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Award seat cost · Airline tools">
+    <meta property="og:description" content="What does an award seat really cost the airline? The larger of the marginal cost of one more passenger and the revenue the seat displaces, compared with what the loyalty programme pays for it.">
+    <meta property="og:url" content="https://gregoiremaillard.com/awardseatcost.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/awardseatcost.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Award seat cost · Airline tools">
+    <meta name="twitter:card" content="summary_large_image">
 
     <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 
@@ -214,7 +226,12 @@
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
       @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      /* breadcrumb: "Airline tools · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
     </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -225,12 +242,13 @@
           <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>19</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Loyalty</div>
         <h2>Award seat cost</h2>
         <p class="lede">What does an award seat really cost the airline? Almost nothing on an empty flight, and a paying passenger's fare on a full one.</p>
         <p>When a member books a seat with points, the airline carries one more passenger and, if the flight would have filled, loses the sale of that seat. So the cost of an award seat is the larger of two numbers: the <b>marginal cost</b> of carrying one more person (fuel, catering, fees) and the <b>displacement cost</b>, the revenue the seat would otherwise have earned. That second number is the bid price of the last seat, the same opportunity cost that revenue management uses to accept or reject any booking. Compare it with what the loyalty programme pays the airline for the seat, and you know when releasing award seats helps both sides.</p>

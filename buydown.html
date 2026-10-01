@@ -19,6 +19,18 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/buydown.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Buy-down simulator · Airline tools">
+    <meta property="og:description" content="A buy-down simulator: how EMSR-b seat control spirals down when fares lose their restrictions, and how Q-forecasting with fare adjustment fixes it.">
+    <meta property="og:url" content="https://gregoiremaillard.com/buydown.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/buydown.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Buy-down simulator · Airline tools">
+    <meta name="twitter:card" content="summary_large_image">
 
     <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 
@@ -203,10 +215,15 @@
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
       @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      /* breadcrumb: "Airline tools · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
     </style>
     <style>
       .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
     </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -217,12 +234,13 @@
           <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>12</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Revenue management</div>
         <h2>Buy-down and the spiral-down effect</h2>
         <p class="lede">What happens to seat control when passengers can always pick the cheapest fare on the screen.</p>
         <p>When fare classes are fenced by rules, each class has its own passengers. Take the rules away and many passengers simply buy the cheapest fare still open. A seat-control system that forecasts each class from its own past bookings then sees high-fare demand vanish, protects fewer seats, sells more cheap fares, and sees even less high-fare demand the next season. This page runs one flight through twelve seasons with standard EMSR-b and with the fix airlines use: Q-forecasting with fare adjustment. It's the hands-on companion to <a href="/rm101.html#ch05">Revenue Management 101, chapter 05</a>; the seat-protection maths is on the <a href="/bookinglimits.html">booking limits</a> page.</p>
@@ -670,18 +688,38 @@
         f.g.append("text").attr("x", f.iw).attr("y", f.ih + 32).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("season");
         return f;
       }
-      // End-of-line labels, spread so they don't overlap and stay inside the plot
+      // End-of-line labels. Lines that finish on top of each other (closer than 6 px) share one label,
+      // the rest are spread at least 14 px apart inside the plot, with a short leader when a label had to move.
       function endLabels(f, items) {
-        var gap = 11, lab = items.slice().sort(function (a, b) { return a.y - b.y; }), i;
+        var gap = 14, i;
+        var byY = items.map(function (it, k) { return { text: it.text, col: it.col, y: it.y, k: k }; })
+          .sort(function (a, b) { return a.y - b.y; });
+        var groups = [];
+        byY.forEach(function (it) {
+          var g = groups[groups.length - 1];
+          if (g && it.y - g.last < 6) { g.items.push(it); g.last = it.y; } else groups.push({ items: [it], last: it.y });
+        });
+        var lab = groups.map(function (g) {
+          g.items.sort(function (a, b) { return a.k - b.k; });
+          var t = d3.mean(g.items, function (d) { return d.y; });
+          return { items: g.items, target: t, y: t };
+        });
         for (i = 1; i < lab.length; i++) if (lab[i].y - lab[i - 1].y < gap) lab[i].y = lab[i - 1].y + gap;
         var over = lab.length ? lab[lab.length - 1].y - (f.ih - 2) : 0;
         if (over > 0) {
           lab[lab.length - 1].y -= over;
           for (i = lab.length - 2; i >= 0; i--) if (lab[i + 1].y - lab[i].y < gap) lab[i].y = lab[i + 1].y - gap;
         }
+        if (lab.length && lab[0].y < 4) { var dn = 4 - lab[0].y; lab.forEach(function (l) { l.y += dn; }); }
         lab.forEach(function (l) {
-          f.g.append("text").attr("x", f.iw + 5).attr("y", l.y).attr("dy", "0.35em").attr("font-size", 10.5)
-            .attr("fill", l.col).attr("font-weight", 600).text(l.text);
+          var moved = Math.abs(l.y - l.target) > 2;
+          if (moved) f.g.append("path").attr("d", "M" + (f.iw + 1) + "," + l.target + "L" + (f.iw + 5) + "," + l.y)
+            .attr("fill", "none").attr("stroke", "#c4c4c4").attr("stroke-width", 1);
+          var t = f.g.append("text").attr("x", f.iw + (moved ? 7 : 5)).attr("y", l.y).attr("dy", "0.35em").attr("font-size", 11).attr("font-weight", 600);
+          l.items.forEach(function (it, j) {
+            if (j) t.append("tspan").attr("fill", "#9a9a9a").attr("font-weight", 400).text(" · ");
+            t.append("tspan").attr("fill", it.col).text(it.text);
+          });
         });
       }
       function crosshair(f, rowsFor, title) {
@@ -801,7 +839,7 @@
 
       function renderFc() {
         var el = document.getElementById("ch-fc"), data = R[view];
-        var m = { t: 12, r: 30, b: 40, l: 40 };
+        var m = { t: 12, r: 62, b: 40, l: 40 };
         var yMax = Math.max(d3.max(R.truth), d3.max(data, function (d) { return d3.max(d.fc); })) * 1.05;
         var f = seasonFrame(el, 250, yMax, d3.format(",.0f"), m);
         KEYS.forEach(function (k, i) {
@@ -819,7 +857,7 @@
 
       function renderProt() {
         var el = document.getElementById("ch-prot"), data = R[view];
-        var m = { t: 12, r: 40, b: 40, l: 40 };
+        var m = { t: 12, r: 92, b: 40, l: 40 };
         var f = seasonFrame(el, 250, state.cap, d3.format(",.0f"), m);
         var groups = KEYS.slice(0, NC - 1).map(function (k, j) { return j === 0 ? "Y" : "Y–" + k; });
         groups.forEach(function (g, j) {

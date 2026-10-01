@@ -19,6 +19,18 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/cargorm.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Cargo revenue management · Airline tools">
+    <meta property="og:description" content="Why cargo revenue management differs from passenger RM: weight and volume capacity, shipments of every size and density, late bookings and allotments, tendered weight that differs from booked, no-shows, overbooking and offloads. Bid-price control against first come, first served over 1,000 simulated flights.">
+    <meta property="og:url" content="https://gregoiremaillard.com/cargorm.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/cargorm.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Cargo revenue management · Airline tools">
+    <meta name="twitter:card" content="summary_large_image">
 
     <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 
@@ -258,10 +270,15 @@
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
       @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      /* breadcrumb: "Airline tools · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
     </style>
     <style>
       .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
     </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -272,12 +289,13 @@
           <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>18</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Cargo</div>
         <h2>Cargo revenue management</h2>
         <p class="lede">Why selling space in the hold is harder than selling seats, and what a bid price per kilo and per cubic metre does about it.</p>
         <p>Passenger RM sells identical seats, booked weeks ahead by people who mostly turn up. Cargo RM sells one space that can run out by weight or by volume, to shipments of every size and density, booked in the last few days by forwarders who often hold space in advance, and who then tender more or less than they booked, or nothing at all. Below, one flight's hold is sold to four kinds of shipper under two policies: first come, first served, and <b>bid-price control</b>, which values each kilo and each cubic metre with a small linear program and accepts a shipment only if it pays for the space it takes. Both overbook, and both pay for any cargo they have to offload. It builds on bid prices in <a href="/rm101.html#ch04">RM 101, chapter 04</a> and the network version on the <a href="/bidprice.html">network bid prices</a> page.</p>
@@ -899,7 +917,7 @@ if (typeof module !== "undefined") module.exports = CRM;
           { t: "Two capacities, not one", pax: "A seat is a seat. A hold can run out by weight or by volume.",
             m: "<b>" + kg(ac.W) + "</b> and <b>" + m3(ac.V) + "</b>, " + nf0.format(ac.W / ac.V) + " kg per m³ on average" },
           { t: "Every shipment is a different size", pax: "Passengers take one seat each. Shipments range from a parcel to a machine.",
-            m: "Half weigh <b>" + nf0.format(d3.quantile(wts, 0.25)) + "–" + nf0.format(d3.quantile(wts, 0.75)) + " kg</b>; " + pct(vol / n) + " pay on volume" },
+            m: "Half of them weigh <b>" + nf0.format(d3.quantile(wts, 0.25)) + "–" + nf0.format(d3.quantile(wts, 0.75)) + " kg</b>; " + pct(vol / n) + " pay on volume" },
           { t: "Late bookings, forwarders' allotments", pax: "Passengers book weeks ahead. Cargo books in the last days, and forwarders hold space.",
             m: "<b>" + pct(late / n) + "</b> of requests in the last 3 days; <b>" + pct(data.allotShare) + "</b> of space on allotment" },
           { t: "Tendered ≠ booked", pax: "A passenger is one passenger. A shipment turns up heavier or lighter than booked.",

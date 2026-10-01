@@ -37,3 +37,18 @@ Airbus download is the most likely to fail from GitHub's servers.
 
 Airbus workbooks are picked by the "Summary to <date>" inside them, so file names don't matter.
 Past Airbus years are kept from run to run once they've been read.
+
+## Airbus delivery history
+
+The deliveries-by-year chart needs Airbus deliveries **by customer** for past years. They are only
+in Airbus's annual archives (`orders-and-deliveries-YYYY.zip`, one per year since 2021), which sit
+behind the same bot filter, so the Action can't fetch them. They were read once in a browser
+(2021–2025, on 1 October 2026) and merged into `assets/data/fleet-orders.json`. From then on
+`update.mjs` carries them over from run to run (`customers[].hA`, `sources.airbus.historyYears`).
+
+Once a year, after Airbus publishes the new archive (usually February):
+
+1. Open the Airbus orders and deliveries page in a browser and paste `airbus-history-browser.js`
+   into the developer console. It saves one `YYYY.json` per archive.
+2. `node scripts/fleet-orders/merge-airbus-history.mjs <folder with the YYYY.json files>`
+3. Commit `assets/data/fleet-orders.json`.

@@ -19,6 +19,18 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/fleetorders.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Fleet orders &amp; backlog · Airline tools">
+    <meta property="og:description" content="What each airline has on order from Airbus and Boeing, when it&#x27;s arriving, how old its fleet is, and what it could look like in 2030.">
+    <meta property="og:url" content="https://gregoiremaillard.com/fleetorders.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/fleetorders.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Fleet orders &amp; backlog · Airline tools">
+    <meta name="twitter:card" content="summary_large_image">
 
     <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 
@@ -218,10 +230,15 @@
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
       @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      /* breadcrumb: "Airline tools · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
     </style>
     <style>
       .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
     </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -232,12 +249,13 @@
           <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>12</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Network &amp; fleet</div>
         <h2>Fleet orders &amp; backlog</h2>
         <p class="lede">Who has ordered what from Airbus and Boeing, and what will their fleets look like?</p>
         <p>What each airline has on order from Airbus and Boeing, how many it has taken each year, and how old its fleet is. Change the retirement age or the delivery pace to see what the fleet could look like in 2030.</p>
@@ -250,7 +268,7 @@
         <h3>How it works</h3>
         <p><b>Order books.</b> Airbus publishes a monthly <a id="m-airbus" href="https://www.airbus.com/en/products-services/commercial-aircraft/orders-and-deliveries" target="_blank" rel="noopener">Orders &amp; Deliveries workbook</a>. Its <i>Worldwide</i> sheet gives, for every customer and every aircraft type, the number ordered, delivered and in operation since the programme began. What's still to come is <i>ordered − delivered</i>. Boeing publishes its <a id="m-boeing" href="https://www.boeing.com/commercial#orders-deliveries" target="_blank" rel="noopener">Commercial Orders &amp; Deliveries</a> as a Tableau dashboard whose data can be exported: unfilled orders and deliveries by customer, model series, order year and delivery year. Boeing reports the 737 MAX and 777X per customer as one series, so this page does the same; the global view splits them by variant using Boeing's own minor-model table. Boeing's figures are unfilled orders before the ASC 606 accounting adjustment, so they're somewhat higher than the backlog in Boeing's financial statements. The two files spell customers differently ("UNITED AIRLINES" and "United Airlines", legal suffixes, a few different names), so names are normalised and matched before the two are added up.</p>
         <p><b>Lessors and undisclosed customers.</b> About a third of the world's airliners are leased. Lessors such as AerCap, SMBC or Avolon order in their own name and place the aircraft with airlines later, so those aircraft only count for the airline once they're delivered, and only on the Airbus side, where deliveries are listed as "LESSOR (AIRLINE)". Both manufacturers also hold several hundred orders for customers that haven't been named. So an airline's order book here is what it has ordered directly, which can be much less than what it will actually receive. The page says so rather than guessing which lessor aircraft will go where.</p>
-        <p><b>Deliveries by year.</b> Boeing's export has every delivery by year, back to the 1950s; the chart starts in 2016. Airbus's monthly workbook only lists deliveries by customer for the current year. Earlier years are in Airbus's annual archives, which the update script reads when they are available; years with no Airbus data are shaded. Neither manufacturer publishes future delivery dates by customer.</p>
+        <p><b>Deliveries by year.</b> Boeing's export has every delivery by year, back to the 1950s. Airbus's monthly workbook only lists deliveries by customer for the current year; earlier years come from the December workbook in each of Airbus's annual archives (2021 to 2025 are published), which list every delivery of the year by customer. So the chart starts in 2021, the first year both manufacturers can be shown. An aircraft delivered to a lessor for an airline ("AERCAP (UNITED AIRLINES)") counts for the airline, shown as "via a lessor". Neither manufacturer publishes future delivery dates by customer.</p>
         <p><b>Fleet and age.</b> Air Canada: every aircraft registered to Air Canada and Air Canada Rouge in <a href="https://wwwapps.tc.gc.ca/saf-sec-sur/2/ccarcs-riacc/" target="_blank" rel="noopener">Transport Canada's Canadian Civil Aircraft Register</a>, with its date of manufacture. Air Canada Express is flown by Jazz under contract and is left out. United: the <a href="https://www.faa.gov/licenses_certificates/aircraft_certification/aircraft_registry/releasable_aircraft_download" target="_blank" rel="noopener">FAA aircraft registry</a>, taking aircraft registered to United Airlines plus leased ones (registered to bank trustees) that the <a href="fleettracker.html#UA">fleet tracker</a> has seen flying as United, and leaving out United Express. Age is measured from the middle of the year of manufacture. Air France and Etihad have no public register with years of manufacture: their Airbus fleet is Airbus's "in operation" count, their 787s are the aircraft Boeing delivered to them, and other Boeing and Embraer types are the aircraft the fleet tracker has seen flying so far, which is a lower bound. Their average age and retirements are left blank.</p>
         <p><b>2030 projection.</b> For each aircraft family:</p>
         <p class="formula">fleet 2030 = fleet today + share × order book − aircraft at least R years old by the end of 2030</p>
@@ -540,7 +558,9 @@
         var el = document.getElementById("dl");
         var sa = D.sources.airbus, cur = +(sa.asOf || D.sources.boeing.asOf).slice(0, 4);
         var covered = {}; (sa.historyYears || []).forEach(function (x) { covered[x.year] = true; });
-        var years = []; for (var y = HIST_FROM; y <= cur; y++) years.push(y);
+        // start where Airbus deliveries by customer start, so every bar has both manufacturers
+        var firstA = d3.min(Object.keys(covered).map(Number)), from = firstA ? Math.max(HIST_FROM, firstA) : HIST_FROM;
+        var years = []; for (var y = from; y <= cur; y++) years.push(y);
         var data = years.map(function (y) {
           var m = (c.h || {})[y] || {}, A = 0, AV = 0, B = 0, rows = [];
           sortFams(Object.keys(m)).forEach(function (f) {
@@ -551,10 +571,11 @@
           return { y: y, A: A, AV: AV, B: B, rows: rows, noA: !covered[y] };
         });
         var anyA = Object.keys(covered).length;
-        document.getElementById("dl-sub").textContent = "Boeing from " + HIST_FROM + ", Airbus " + (anyA ? "for " + Object.keys(covered).join(", ") : "not available") + ". " + cur + " is year to date.";
+        var gaps = years.filter(function (y) { return !covered[y]; });
+        document.getElementById("dl-sub").textContent = "Airbus and Boeing, " + from + " to " + cur + (gaps.length ? " (no Airbus data by customer for " + gaps.join(", ") + ")" : "") + ". " + cur + " is year to date.";
         document.getElementById("dl-legend").innerHTML =
           '<span><i class="sw" style="--c:var(--airbus)"></i>Airbus</span><span><i class="sw" style="--c:var(--airbus-l)"></i>Airbus, via a lessor</span>' +
-          '<span><i class="sw" style="--c:var(--boeing)"></i>Boeing</span><span><i class="hatch"></i>No Airbus data by customer</span>';
+          '<span><i class="sw" style="--c:var(--boeing)"></i>Boeing</span>' + (gaps.length ? '<span><i class="hatch"></i>No Airbus data by customer</span>' : '');
         var W = Math.max(280, el.clientWidth || 500), H = 210, m = { t: 10, r: 6, b: 22, l: 30 };
         var x = d3.scaleBand().domain(years).range([m.l, W - m.r]).paddingInner(0.22).paddingOuter(0.05);
         var max = d3.max(data, function (d) { return d.A + d.AV + d.B; }) || 1;
@@ -571,7 +592,7 @@
           .attr("x", function (d) { return x(d.y); }).attr("width", x.bandwidth()).attr("y", m.t).attr("height", H - m.b - m.t);
         var every = W < 420 ? 3 : W < 600 ? 2 : 1;
         svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")")
-          .call(d3.axisBottom(x).tickSize(0).tickPadding(6).tickFormat(function (y) { return (y - HIST_FROM) % every && y !== cur ? "" : y === cur ? y + "*" : "’" + String(y).slice(2); }));
+          .call(d3.axisBottom(x).tickSize(0).tickPadding(6).tickFormat(function (y) { return (y - from) % every && y !== cur ? "" : y === cur ? y + "*" : "’" + String(y).slice(2); }));
         var seg = function (d) {
           var base = H - m.b, out = [];
           [["A", "var(--airbus)"], ["AV", "var(--airbus-l)"], ["B", "var(--boeing)"]].forEach(function (s) {

@@ -19,6 +19,18 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/allotments.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Allotments vs spot · Airline tools">
+    <meta property="og:description" content="An air cargo capacity simulator: how much of a weekly freighter to sell under allotment contracts with forwarders and how much to keep for the spot market, over a 26-week season.">
+    <meta property="og:url" content="https://gregoiremaillard.com/allotments.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/allotments.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Allotments vs spot · Airline tools">
+    <meta name="twitter:card" content="summary_large_image">
 
     <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 
@@ -241,10 +253,15 @@
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
       @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      /* breadcrumb: "Airline tools · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
     </style>
     <style>
       .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
     </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -255,12 +272,13 @@
           <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>16</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Cargo</div>
         <h2>Allotments vs spot</h2>
         <p class="lede">How much of a cargo flight to sell in advance to forwarders, and how much to keep for the spot market.</p>
         <p>Cargo airlines sell much of their space months ahead as <b>allotments</b> (block space agreements): a forwarder commits to a number of kilos on every flight at a fixed contract rate. The rest goes on the <b>spot market</b>, one shipment at a time, at whatever the market pays that week. Allotments steady the revenue, but they lock in a rate that can look cheap when the market jumps, and forwarders often hand back space they don't need, sometimes too late to sell again. This page simulates one weekly freighter over a 26-week season, a thousand times, for every allotment share from 0% to 100%.</p>

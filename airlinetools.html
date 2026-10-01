@@ -16,6 +16,18 @@
 <title>Airline tools</title>
 <meta name="description" content="Visualizations and strategic tools for the airline industry, built on open data, plus short courses on how airlines work.">
 <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+<!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+<link rel="canonical" href="https://gregoiremaillard.com/airlinetools.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Grégoire Maillard">
+<meta property="og:title" content="Airline tools · Grégoire Maillard">
+<meta property="og:description" content="Visualizations and strategic tools for the airline industry, built on open data, plus short courses on how airlines work.">
+<meta property="og:url" content="https://gregoiremaillard.com/airlinetools.html">
+<meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/airlinetools.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Airline tools · Grégoire Maillard">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 /* Same design language as fleettracker.html: glass panels on a soft page,
@@ -118,7 +130,7 @@ main { padding-top: 48px; }
 .tool .meta { display: flex; gap: 8px; flex-wrap: wrap; }
 .tool h3 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; }
 .tool p { color: var(--ink-2); max-width: 520px; }
-.tool .cta { margin-top: 4px; }
+.tool .cta { margin-top: auto; padding-top: 4px; }
 .tool:hover .btn.dark { background: #000; }
 @media (max-width: 839px) { .tool { grid-column: 1 / -1; } }
 
@@ -151,6 +163,7 @@ main { padding-top: 48px; }
 
 @media (prefers-reduced-motion: reduce) { .tool, .course, .go .ico { transition: none; } .tool:hover, .course:hover { transform: none; } }
 </style>
+<script defer src="/assets/js/airline-tools.js"></script>
 </head>
 <body>
 
@@ -166,7 +179,7 @@ main { padding-top: 48px; }
       <a class="tab" href="#knowledge">Knowledge</a>
     </nav>
     <div class="grow"></div>
-    <span class="pill"><b>23</b> tools · <b>7</b> courses</span>
+    <span class="pill" data-at-count><b>23</b> tools · <b>7</b> courses</span>
   </div>
 </header>
 
@@ -643,7 +656,7 @@ main { padding-top: 48px; }
       </div>
 
       <div class="area">
-        <h3 class="area-h">Network</h3>
+        <h3 class="area-h">Network &amp; fleet</h3>
         <div class="area-row">
         <a class="panel tool" href="/airflows.html">
           <div class="viz" aria-hidden="true">
@@ -699,12 +712,6 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the chart<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
-        </div>
-      </div>
-
-      <div class="area">
-        <h3 class="area-h">Fleet</h3>
-        <div class="area-row">
         <a class="panel tool" href="/fleettracker.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -729,7 +736,7 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
-              <span class="pill"><i class="dot" style="--c:var(--air)"></i>Live · every 5 min</span>
+              <span class="pill"><i class="dot" style="--c:var(--air)"></i>Live positions</span>
               <span class="pill"><b>4</b> airlines</span>
             </div>
             <h3>Fleet tracker</h3>

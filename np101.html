@@ -17,35 +17,21 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
 <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+<!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+<meta name="description" content="How airlines decide where to fly, how often, when, and with what aircraft.">
+<link rel="canonical" href="https://gregoiremaillard.com/np101.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Grégoire Maillard">
+<meta property="og:title" content="Airline Network Planning 101">
+<meta property="og:description" content="How airlines decide where to fly, how often, when, and with what aircraft.">
+<meta property="og:url" content="https://gregoiremaillard.com/np101.html">
+<meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/np101.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Airline Network Planning 101">
+<meta name="twitter:card" content="summary_large_image">
 
     <style>
-      /* ── Sidebar nav ── */
-      header {
-        display: flex !important;
-        flex-direction: column !important;
-        height: calc(100dvh - 64px - 4rem) !important;
-        overflow: hidden !important;
-        box-sizing: border-box !important;
-      }
-      .chapter-nav {
-        margin-top: 4px;
-        font-size: 0.82em;
-        line-height: 1.8;
-        flex: 1 1 0;
-        overflow-y: auto;
-        min-height: 0;
-      }
-      .chapter-nav a {
-        display: block;
-        color: #555;
-        text-decoration: none;
-        padding-left: 6px;
-        border-left: 2px solid transparent;
-        transition: all 0.15s;
-      }
-      .chapter-nav a:hover { color: #267CB9; border-left-color: #267CB9; }
-      .chapter-nav a.active { color: #267CB9; border-left-color: #267CB9; font-weight: bold; }
-      .chapter-nav .ch-n { color: #bbb; font-size: 0.85em; margin-right: 3px; }
 
       /* ── Callout / example boxes ── */
       .callout {
@@ -225,12 +211,76 @@
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
       @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
     </style>
-    <style>
-      /* the sticky left rail now sits below the 64px site bar */
+      <style>
+      /* ── Course rail (left column) and chapter menu ──────────────────────────
+         Desktop: sticky rail with the course badge, a reading-progress bar and the chapter list
+         (current chapter highlighted, read ones ticked). Phones and tablets: the rail shrinks to a
+         short intro and a slim chapter bar sticks under the site header instead. */
+      .wrapper > header.crs-rail { display: flex; flex-direction: column; min-width: 0; }
       @media (min-width: 60.001rem) {
-        .wrapper > header { top: calc(64px + 2rem) !important; max-height: calc(100dvh - 64px - 4rem) !important; }
+        .wrapper > header.crs-rail { position: sticky; top: calc(64px + 2rem); max-height: calc(100dvh - 64px - 4rem); }
       }
+      .crs-back { align-self: flex-start; display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; color: var(--muted); margin: 0 0 1.4rem; }
+      .crs-back:hover { color: var(--ink); }
+      .crs-back svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+      .crs-badge { display: flex; align-items: baseline; gap: .4rem; color: var(--ink); line-height: 1; }
+      .crs-badge b { font-size: 2.6rem; font-weight: 650; letter-spacing: -0.045em; }
+      .crs-badge small { font-size: .95rem; font-weight: 500; color: var(--muted); }
+      .crs-desc { margin: .85rem 0 0; font-style: normal; font-size: .88rem; line-height: 1.5; color: var(--body); }
+      .crs-meta { margin: .65rem 0 0; font-style: normal; font-size: .76rem; color: var(--muted); display: flex; gap: .5rem; flex-wrap: wrap; }
+      .crs-meta span + span::before { content: "·"; margin-right: .5rem; color: var(--faint); }
+      .crs-progress { flex: none; height: 3px; margin: 1.15rem 0 .35rem; border-radius: 2px; background: var(--line); overflow: hidden; }
+      .crs-progress i { display: block; height: 100%; width: 0; background: var(--blue); border-radius: 2px; transition: width .15s linear; }
+
+      .wrapper > header.crs-rail .chapter-nav {
+        flex: 1 1 auto; min-height: 0; overflow-y: auto; margin: 0; padding: .3rem 0 .8rem; border-top: 0;
+        font-size: .84rem; line-height: 1.3; scrollbar-width: thin; -webkit-mask-image: none; mask-image: none;
+      }
+      .wrapper > header.crs-rail .chapter-nav.fade-b { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent); }
+      .wrapper > header.crs-rail .chapter-nav.fade-t { -webkit-mask-image: linear-gradient(to top, #000 calc(100% - 1.5rem), transparent); mask-image: linear-gradient(to top, #000 calc(100% - 1.5rem), transparent); }
+      .wrapper > header.crs-rail .chapter-nav.fade-t.fade-b { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent); mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent); }
+      .chapter-nav a, .crs-bar-menu a {
+        display: grid; grid-template-columns: 1.75rem 1fr; align-items: baseline; gap: 0;
+        padding: .42rem .55rem; margin: 1px 0; border: 0; border-radius: 8px; color: var(--muted); font-weight: 400;
+        transition: background-color .15s, color .15s;
+      }
+      .chapter-nav a:hover, .crs-bar-menu a:hover { color: var(--ink); background: var(--blue-tint); border: 0; }
+      .chapter-nav a.active, .crs-bar-menu a.active { color: var(--blue-dark); background: var(--blue-wash); font-weight: 560; }
+      .chapter-nav .ch-n, .crs-bar-menu .ch-n { margin: 0; font-size: .74rem; color: var(--faint); font-variant-numeric: tabular-nums; font-weight: 500; }
+      .chapter-nav a.done .ch-n, .crs-bar-menu a.done .ch-n { color: var(--blue); }
+      .chapter-nav a.active .ch-n, .crs-bar-menu a.active .ch-n { color: var(--blue-dark); }
+
+      /* phones & tablets: slim sticky chapter bar */
+      .crs-bar { display: none; }
+      @media (max-width: 60rem) {
+        .wrapper > header.crs-rail .chapter-nav, .wrapper > header.crs-rail .crs-progress { display: none; }
+        .crs-bar { display: block; position: sticky; top: 64px; z-index: 900; background: rgb(255 255 255 / .92); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 1px 0 var(--line); }
+        .crs-bar-btn { display: flex; align-items: center; gap: .6rem; width: 100%; max-width: 43rem; margin: 0 auto; padding: .7rem 1rem; border: 0; background: none; font: inherit; font-size: .86rem; color: var(--ink); text-align: left; cursor: pointer; }
+        .crs-bar-btn .n { font-size: .74rem; color: var(--blue); font-variant-numeric: tabular-nums; font-weight: 600; }
+        .crs-bar-btn .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 560; }
+        .crs-bar-btn .k { font-size: .74rem; color: var(--muted); }
+        .crs-bar-btn svg { width: 16px; height: 16px; flex: none; fill: none; stroke: var(--muted); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+        .crs-bar-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+        .crs-bar-prog { height: 2px; background: transparent; }
+        .crs-bar-prog i { display: block; height: 100%; width: 0; background: var(--blue); }
+        .crs-bar-menu { max-width: 43rem; margin: 0 auto; padding: .25rem .5rem .75rem; max-height: min(70vh, 34rem); overflow-y: auto; font-size: .88rem; line-height: 1.3; border-top: 1px solid var(--line); }
+        .crs-bar-menu[hidden] { display: none; }
+      }
+      @media (max-width: 35rem) { .crs-badge b { font-size: 2.2rem; } }
+
+      /* ── "Try it" boxes: the tools that go with a chapter ── */
+      .try-it { margin: 26px 0 8px; }
+      .try-it .try-label { font-size: .68em; text-transform: uppercase; letter-spacing: 1.5px; color: var(--blue); font-weight: 700; margin: 0 0 8px; }
+      .try-it a { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 16px; padding: 12px 14px; margin: 0 0 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--body); transition: border-color .15s, background-color .15s; }
+      .try-it a:hover { border-color: rgb(40 122 158 / 45%); background: var(--blue-tint); color: var(--body); }
+      .try-it a b { color: var(--ink); font-weight: 600; font-size: .95em; }
+      .try-it a span { grid-column: 1; font-size: .88em; line-height: 1.5; }
+      .try-it a svg { grid-column: 2; grid-row: 1 / span 2; width: 18px; height: 18px; fill: none; stroke: var(--blue); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
+      .try-it a:hover svg { transform: translateX(2px); }
+      /* wide formulas scroll inside their box instead of widening the page on phones */
+      .katex-display { overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
     </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -241,18 +291,18 @@
           <a class="at-tab" href="/airlinetools.html#knowledge" aria-current="page">Knowledge</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>12</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
       </div>
     </div>
     <div class="wrapper">
 
       <!-- ── Sidebar ── -->
-      <header>
-        <img src="/assets/img/network_main.png" alt="Airline network planning" />
-        <p><i>Me, drawing routes on a map.</i> <br><hr/>
-        A beginner's guide to airline network planning, covering the intuitions behind where airlines fly, when, and with what aircraft.</p>
-
-        <hr/>
+      <header class="crs-rail">
+        <a class="crs-back" href="/airlinetools.html#knowledge"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg>All courses</a>
+        <div class="crs-badge"><b>NP</b><small>101</small></div>
+        <p class="crs-desc">A beginner's guide to airline network planning, covering the intuitions behind where airlines fly, when, and with what aircraft.</p>
+        <p class="crs-meta"><span>12 chapters</span><span>about 25 min read</span></p>
+        <div class="crs-progress" aria-hidden="true"><i></i></div>
         <nav class="chapter-nav" id="toc">
           <a href="#ch00"><span class="ch-n">00</span> Why Network Planning?</a>
           <a href="#ch01"><span class="ch-n">01</span> Hubs, Spokes &amp; Point-to-Point</a>
@@ -521,6 +571,11 @@
 
         <p>New routes have no booking history at all. Planners use analogues (existing routes between similar city pairs), gravity models, and surveys of local travel patterns. They also allow for stimulation: launching a new nonstop flight tends to create demand that did not exist while travelers had to make a connection. And they allow for ramp-up. A new route rarely reaches its mature load factor on day one, because travelers, travel agents and corporate buyers need time to discover it. A route should be judged by whether it follows a credible ramp-up path, not by its first month.</p>
 
+        <aside class="try-it" aria-label="Tools for this chapter">
+          <div class="try-label">Try it</div>
+          <a href="/airflows.html"><b>Air travel flows</b><span>The biggest city-pair markets by passengers actually travelling, and which ones still have no nonstop.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </aside>
+
         <p><hr/></p>
 
         <!-- ── CH 04 ── -->
@@ -606,6 +661,11 @@
 
         <p>Schedules are built for two seasons a year: northern summer, starting around the end of March, and northern winter, starting around the end of October. Airlines typically design each season roughly a year ahead, and open sales close to a year before departure. Changes after that are costly: customers already have tickets, connections have been sold, crews have been rostered. So planners try to get the schedule right early and make later changes small.</p>
 
+        <aside class="try-it" aria-label="Tools for this chapter">
+          <div class="try-label">Try it</div>
+          <a href="/hubbanks.html"><b>Hub banks</b><span>How Air Canada and WestJet time their hubs in waves of arrivals and departures, and the connections each wave creates.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </aside>
+
         <p><hr/></p>
 
         <!-- ── CH 05 ── -->
@@ -650,6 +710,11 @@
           <div class="callout-label">The value of flexibility</div>
           Because demand is uncertain, airlines like to keep the option of changing the aircraft later, once booking data shows which flights are really strong. Assigning aircraft types that are easy to swap, for instance because they share a cockpit and pilots can fly both, preserves that option. A slightly worse assignment on paper can be worth more than a perfect one that cannot be adjusted.
         </div>
+
+        <aside class="try-it" aria-label="Tools for this chapter">
+          <div class="try-label">Try it</div>
+          <a href="/unconstraining.html"><b>Demand unconstraining</b><span>Spill and recapture: what a bigger aircraft would carry and earn on a flight that keeps selling out.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </aside>
 
         <p><hr/></p>
 
@@ -742,6 +807,11 @@
           A schedule squeezed to its limit has no slack. Short turnarounds and high aircraft utilization look great on paper, and then one delay in the morning ripples through the whole day, especially at a hub, where hundreds of connections depend on each other. Planners add buffers on purpose: longer turn times, spare aircraft, reserve crews. It costs a small amount every day to avoid a large loss on the bad ones.
         </div>
 
+        <aside class="try-it" aria-label="Tools for this chapter">
+          <div class="try-label">Try it</div>
+          <a href="/rangemap.html"><b>Aircraft range map</b><span>Which airports an aircraft reaches with full passengers, with headwinds, runway length and a lighter load.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </aside>
+
         <p><hr/></p>
 
         <!-- ── CH 08 ── -->
@@ -788,6 +858,12 @@
         </div>
 
         <p>That last part is why planners value flexibility so much: options to defer or cancel deliveries, leases that can be ended early, aircraft families that allow conversion between variants, and a used-aircraft market for resale. In 2020, when demand collapsed, airlines that could defer deliveries and retire older aircraft early were in a far better position than those locked into commitments.</p>
+
+        <aside class="try-it" aria-label="Tools for this chapter">
+          <div class="try-label">Try it</div>
+          <a href="/fleetorders.html"><b>Fleet orders &amp; backlog</b><span>What each airline has on order from Airbus and Boeing, and what its fleet could look like in 2030.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+          <a href="/fleettracker.html"><b>Fleet tracker</b><span>Every Air Canada, United, Air France and Etihad aircraft on a live globe.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </aside>
 
         <p><hr/></p>
 
@@ -849,6 +925,11 @@
 
         <p>Loyalty data adds a third view. Members have identities, and identities carry information about who is flying, how often, and how much they are worth. That helps planning judge the value of a route beyond its own revenue, for example if it serves an important city for high-value members or a partner's card portfolio. It also links planning to Loyalty 101: more capacity means more seats for award redemptions, and award availability is an RM decision that planning makes possible.</p>
 
+        <aside class="try-it" aria-label="Tools for this chapter">
+          <div class="try-label">Try it</div>
+          <a href="/bidprice.html"><b>Network bid prices</b><span>How a hub’s seats are valued across the network: leg bid prices from an LP, then leg-based and O&amp;D control side by side.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </aside>
+
         <p><hr/></p>
 
         <!-- ── CH 11 ── -->
@@ -892,21 +973,70 @@
 
     <script src="javascripts/scale.fix.js"></script>
     <script>
-      // ── Active sidebar highlight on scroll ──
-      const chapters = document.querySelectorAll('h3[id]');
-      const navLinks = document.querySelectorAll('#toc a');
+    </script>
+      <script>
+      // Chapter menu: highlights the chapter being read (and ticks the ones before it), fills the
+      // progress bars, keeps the active entry in view in the rail, and drives the phone chapter bar.
+      (function () {
+        var toc = document.getElementById("toc");
+        if (!toc) return;
+        var links = [].slice.call(toc.querySelectorAll('a[href^="#"]'));
+        var heads = links.map(function (a) { return document.getElementById(a.getAttribute("href").slice(1)); });
+        var section = document.querySelector(".wrapper > section");
+        var rail = document.querySelector(".crs-progress i");
+        var hdr = document.querySelector(".at-hdr");
+        var label = function (a) { var n = a.querySelector(".ch-n"); return { n: n ? n.textContent.trim() : "", t: a.textContent.replace(n ? n.textContent : "", "").trim() }; };
 
-      const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            navLinks.forEach(l => l.classList.remove('active'));
-            const link = document.querySelector('#toc a[href="#' + e.target.id + '"]');
-            if (link) link.classList.add('active');
+        // phone / tablet bar, built from the same links
+        var bar = document.createElement("div");
+        bar.className = "crs-bar";
+        bar.innerHTML = '<button type="button" class="crs-bar-btn" aria-expanded="false" aria-controls="crs-bar-menu"><span class="n"></span><span class="t"></span><span class="k"></span>' +
+          '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="crs-bar-prog"><i></i></div>' +
+          '<nav class="crs-bar-menu" id="crs-bar-menu" aria-label="Chapters" hidden></nav>';
+        var menu = bar.querySelector("nav"), btn = bar.querySelector("button");
+        links.forEach(function (a) { menu.appendChild(a.cloneNode(true)); });
+        var mlinks = [].slice.call(menu.querySelectorAll("a"));
+        (hdr && hdr.parentNode === document.body ? hdr : document.body.firstChild).insertAdjacentElement(hdr ? "afterend" : "beforebegin", bar);
+        function setOpen(o) { menu.hidden = !o; btn.setAttribute("aria-expanded", String(o)); }
+        btn.addEventListener("click", function () { setOpen(menu.hidden); });
+        menu.addEventListener("click", function (e) { if (e.target.closest("a")) setOpen(false); });
+        document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });
+
+        var cur = -2;
+        function update() {
+          var line = (hdr ? hdr.offsetHeight : 0) + (bar.offsetHeight || 0) + window.innerHeight * 0.2, i = -1;
+          heads.forEach(function (h, k) { if (h && h.getBoundingClientRect().top <= line) i = k; });
+          if (section) {
+            var r = section.getBoundingClientRect(), total = r.height - window.innerHeight * 0.6;
+            var p = Math.max(0, Math.min(1, (-r.top + window.innerHeight * 0.2) / Math.max(1, total)));
+            if (rail) rail.style.width = (p * 100).toFixed(1) + "%";
+            bar.querySelector(".crs-bar-prog i").style.width = (p * 100).toFixed(1) + "%";
           }
-        });
-      }, { rootMargin: '-15% 0px -75% 0px' });
-
-      chapters.forEach(ch => obs.observe(ch));
+          if (i === cur) return;
+          cur = i;
+          [links, mlinks].forEach(function (L) { L.forEach(function (a, k) { a.classList.toggle("active", k === i); a.classList.toggle("done", k < i); if (k === i) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); }); });
+          var l = i >= 0 ? label(links[i]) : { n: "", t: "Contents" };
+          bar.querySelector(".n").textContent = l.n;
+          bar.querySelector(".t").textContent = l.t;
+          bar.querySelector(".k").textContent = i >= 0 ? (i + 1) + " / " + links.length : links.length + " chapters";
+          // keep the active entry visible inside the rail's own scroll area
+          var a = links[i];
+          if (a && toc.scrollHeight > toc.clientHeight) {
+            var top = a.offsetTop - toc.offsetTop, bot = top + a.offsetHeight;
+            if (top < toc.scrollTop + 24 || bot > toc.scrollTop + toc.clientHeight - 24) toc.scrollTo({ top: Math.max(0, top - toc.clientHeight / 3), behavior: "smooth" });
+          }
+        }
+        function fades() {
+          toc.classList.toggle("fade-t", toc.scrollTop > 2);
+          toc.classList.toggle("fade-b", toc.scrollTop + toc.clientHeight < toc.scrollHeight - 2);
+        }
+        var queued = false;
+        function onScroll() { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; update(); }); }
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", function () { update(); fades(); });
+        toc.addEventListener("scroll", fades, { passive: true });
+        update(); fades();
+      })();
     </script>
   </body>
 </html>

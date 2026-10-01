@@ -73,7 +73,7 @@ const MON3 = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, S
 
 function airbusAsOf(sheets) {
   for (const rows of Object.values(sheets)) for (const r of rows.slice(0, 12)) for (const c of r) {
-    const m = /Summary to (\d{1,2}) (\w{3})\w* (\d{4})/.exec(String(c ?? ""));
+    const m = /Summary to (\d{1,2})(?:st|nd|rd|th)? (\w{3})\w* (\d{4})/.exec(String(c ?? "")); // "31 Aug 2026" or "31st December 2024"
     if (m && m[2] in MON3) return new Date(Date.UTC(+m[3], MON3[m[2]], +m[1])).toISOString().slice(0, 10);
   }
   return null;

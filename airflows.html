@@ -19,6 +19,18 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/airflows.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Air travel flows · Airline tools">
+    <meta property="og:description" content="The largest US city-pair air travel markets on a map, and which of them have no nonstop flight.">
+    <meta property="og:url" content="https://gregoiremaillard.com/airflows.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/airflows.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Air travel flows · Airline tools">
+    <meta name="twitter:card" content="summary_large_image">
 
     <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
@@ -163,6 +175,13 @@
       .table-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 30px 0 8px; flex-wrap: wrap; }
       .table-head h3 { margin: 0; font-size: 16px; }
       .table-head span { color: var(--muted); font-size: 12px; }
+      .table-head #tbl-note { flex-basis: 100%; }
+      .tbl-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+      .tbl-tools .chip[hidden] { display: none; }
+      /* "Download CSV" button (same on every page that offers one) */
+      .csv-btn { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 12.5px; line-height: 1.4; padding: 4px 10px; border: 1px solid var(--line, #e5e5e5); border-radius: 6px; background: #fff; color: var(--ink, #222); cursor: pointer; white-space: nowrap; }
+      .csv-btn:hover { border-color: #bdbdbd; }
+      .csv-btn svg { width: 13px; height: 13px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
       .tbl-wrap { overflow-x: auto; border-top: 1px solid var(--line); }
       table.flows { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 720px; }
       table.flows th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
@@ -301,10 +320,15 @@
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
       @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      /* breadcrumb: "Airline tools · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
     </style>
     <style>
       .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
     </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -315,12 +339,13 @@
           <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>12</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Network &amp; fleet</div>
         <h2>Air travel flows</h2>
         <p class="lede">Where do people fly, and which big markets still have no nonstop?</p>
         <p id="intro-text">Loading…</p>
@@ -353,7 +378,11 @@
 
       <div class="table-head">
         <h3 id="tbl-title">All markets</h3>
-        <select class="sort-m" id="sort-m" aria-label="Sort by"></select>
+        <div class="tbl-tools">
+          <button type="button" class="chip" id="gaps-only" aria-pressed="false">No nonstop only</button>
+          <select class="sort-m" id="sort-m" aria-label="Sort by"></select>
+          <button type="button" class="csv-btn" id="dl-csv"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>Download CSV</button>
+        </div>
         <span id="tbl-note"></span>
       </div>
       <div class="tbl-wrap">
@@ -486,7 +515,7 @@
       // ───────────────────────────── state
       var DATA = {};
       var world, usTopo, landFeature;
-      var state = { view: "us", country: "us", top: 1000, focus: null, show: [true, true, true], showOpp: true, rows: ROWS_STEP, sort: { key: "rank", asc: true } };
+      var state = { view: "us", country: "us", top: 1000, focus: null, show: [true, true, true], showOpp: true, rows: ROWS_STEP, sort: { key: "rank", asc: true }, gapsOnly: false };
       var svg, gZoom, gBase, gArcs, gCities, gLabels, projection, wScale, opScale, V, zoom;
       var zt = d3.zoomIdentity, lastShown = [], mobile = window.innerWidth < 720;
       // Phones get a narrower, taller drawing area so labels and dots stay readable.
@@ -1255,6 +1284,31 @@
         if (f.car) return f.car.map(function (c) { return carrierName(c.code) + ' <span style="color:var(--muted)">' + Math.round(c.share) + "%</span>"; }).join(", ");
         return f.airlines.length ? f.airlines.map(carrierName).join(", ") : '<span style="color:var(--muted)">No longer scheduled</span>';
       }
+      // CSV download: one row per line of the table as currently filtered and sorted
+      function downloadCSV(name, header, rows) {
+        var q = function (v) { v = v == null ? "" : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+        var csv = "\ufeff" + [header].concat(rows).map(function (r) { return r.map(q).join(","); }).join("\n");
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+        a.download = name; document.body.appendChild(a); a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+      }
+      function cellText(html) { var d = document.createElement("div"); d.innerHTML = html; d.querySelectorAll(".rk-m").forEach(function (e) { e.remove(); }); return d.textContent.replace(/\s+/g, " ").trim(); }
+      document.getElementById("gaps-only").addEventListener("click", function () {
+        state.gapsOnly = !state.gapsOnly; state.rows = ROWS_STEP; render();
+      });
+      document.getElementById("dl-csv").addEventListener("click", function () {
+        if (!lastTable) return;
+        var cs = cities();
+        var cols = lastTable.cols.filter(function (c) { return c.key !== "pair"; });
+        var header = ["Rank", "City A", "City B"].concat(cols.filter(function (c) { return c.key !== "rank"; }).map(function (c) { return c.label; }));
+        var rows = lastTable.rows.map(function (f) {
+          var A = cs[f.a], B = cs[f.b];
+          return [f.opp ? "estimate" : f.rank, A.city + (A.st ? ", " + A.st : ""), B.city + (B.st ? ", " + B.st : "")]
+            .concat(cols.filter(function (c) { return c.key !== "rank"; }).map(function (c) { return cellText(c.cell(f)); }));
+        });
+        downloadCSV("air-travel-flows-" + state.view + (state.gapsOnly ? "-no-nonstop" : "") + ".csv", header, rows);
+      });
       document.getElementById("thead").addEventListener("click", function (e) {
         var th = e.target.closest("th"); if (!th) return;
         var col = columns().find(function (c) { return c.key === th.dataset.key; });
@@ -1263,17 +1317,30 @@
         state.rows = ROWS_STEP;
         render();
       });
+      var lastTable = null;
+      // "No nonstop only": O&D views keep markets whose nonstop is seasonal, dropped or missing;
+      // views with estimated opportunities keep those estimates.
+      function gapRow(f) { return f.opp || (V.kind === "od" && f.st > 0); }
       function renderTable(list) {
         var cs = cities(), cols = columns();
+        var gb = document.getElementById("gaps-only"), canGap = list.some(gapRow);
+        if (!canGap) state.gapsOnly = false;
+        gb.hidden = !canGap;
+        gb.textContent = V.kind === "od" ? "No nonstop only" : "Estimated opportunities only";
+        gb.classList.toggle("on", state.gapsOnly); gb.setAttribute("aria-pressed", String(state.gapsOnly));
+        if (state.gapsOnly) list = list.filter(gapRow);
         var n = state.focus !== null ? " touching " + cs[state.focus].city : "";
         var nO = list.filter(function (f) { return f.opp; }).length;
-        document.getElementById("tbl-title").textContent = fmt(list.length - nO) + (V.kind === "od" ? " markets" : " nonstop routes") + (nO ? " + " + nO + " estimated opportunities" : "") + n;
+        document.getElementById("tbl-title").textContent = state.gapsOnly
+          ? (V.kind === "od" ? fmt(list.length) + " markets without a year-round nonstop" : fmt(nO) + " estimated opportunities") + n
+          : fmt(list.length - nO) + (V.kind === "od" ? " markets" : " nonstop routes") + (nO ? " + " + nO + " estimated opportunities" : "") + n;
         var col = cols.find(function (c) { return c.key === state.sort.key; }) || cols[0];
         var sorted = list.slice().sort(function (x, y) {
           var a = col.get(x), b = col.get(y);
           var r = typeof a === "string" ? a.localeCompare(b) : a - b;
           return (state.sort.asc ? r : -r) || x.rank - y.rank;
         });
+        lastTable = { cols: cols, rows: sorted };
         var maxBar = d3.max(flows(), function (f) { return f.pax || 0; }) || 1;
         var rows = sorted.slice(0, state.rows);
         var tb = document.getElementById("tbody");

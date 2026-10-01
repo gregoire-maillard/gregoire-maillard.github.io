@@ -19,6 +19,18 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/hubbanks.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Hub banks · Airline tools">
+    <meta property="og:description" content="How Air Canada and WestJet time their hubs in waves of arrivals and departures, and how many connections those waves create.">
+    <meta property="og:url" content="https://gregoiremaillard.com/hubbanks.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/hubbanks.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Hub banks · Airline tools">
+    <meta name="twitter:card" content="summary_large_image">
 
     <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 
@@ -148,6 +160,11 @@
       table.heat td.diag { box-shadow: inset 0 0 0 1.5px #151A23; }
       table.heat tbody tr:hover td { background-color: inherit; }
       .heat-note { font-size: 11.5px; color: var(--muted); margin: 6px 0 0; max-width: 520px; }
+      .dl-row { margin-top: 12px; }
+      /* "Download CSV" button (same on every page that offers one) */
+      .csv-btn { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 12.5px; line-height: 1.4; padding: 4px 10px; border: 1px solid var(--line, #e5e5e5); border-radius: 6px; background: #fff; color: var(--ink, #222); cursor: pointer; white-space: nowrap; }
+      .csv-btn:hover { border-color: #bdbdbd; }
+      .csv-btn svg { width: 13px; height: 13px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
       .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
       .method h3 { font-size: 14px; margin-bottom: 8px; }
@@ -202,7 +219,12 @@
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
       @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      /* breadcrumb: "Airline tools · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
     </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -213,12 +235,13 @@
           <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>17</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Network &amp; fleet</div>
         <h2>Hub banks</h2>
         <p class="lede">How an airline times its hub in waves of arrivals and departures, and how many connections those waves create.</p>
         <p>Air Canada and WestJet at Toronto, Montréal, Vancouver and Calgary, from one weekday's published schedule. Each block is one flight: arrivals stack above the line, departures below. The shaded bands are the banks this page detects in the schedule. Click a flight to see where it connects.</p>
@@ -436,18 +459,45 @@
             <div class="tbl-wrap"><table class="banks"><thead><tr><th>Bank</th><th>Arrivals</th><th class="num">n</th><th>Departures</th><th class="num">n</th><th class="num">Width</th><th class="num">Connections</th></tr></thead><tbody></tbody></table></div>
             <div class="sub-h">Connections by wave<span>arrival wave ↓ × departure wave →</span></div>
             <div class="tbl-wrap"><table class="heat"></table></div>
-            <p class="heat-note">Outlined: connections inside the same bank. “Other” is flights outside any detected wave.</p>`;
+            <p class="heat-note">Outlined: connections inside the same bank. “Other” is flights outside any detected wave.</p>
+            <div class="dl-row"><button type="button" class="csv-btn"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>Download this hub's flights (CSV)</button></div>`;
           pairEl.appendChild(el);
           p.el = el;
           el.querySelectorAll("[data-al]").forEach((b) => b.addEventListener("click", () => { p.al = b.dataset.al; p.sel = null; writeHash(); renderAll(); }));
           el.querySelectorAll("[data-hub]").forEach((b) => b.addEventListener("click", () => { p.hub = b.dataset.hub; p.sel = null; writeHash(); renderAll(); }));
           el.querySelector("select").addEventListener("change", (e) => { p.sel = e.target.value || null; renderPanel(p); });
           el.querySelector(".clear").addEventListener("click", () => { p.sel = null; renderPanel(p); });
+          el.querySelector(".csv-btn").addEventListener("click", () => downloadFlights(p));
           const svg = el.querySelector("svg");
           svg.addEventListener("pointermove", (e) => hover(p, e));
           svg.addEventListener("pointerleave", () => hover(p, null));
           svg.addEventListener("click", (e) => { const f = hit(p, e); p.sel = f ? (p.sel === f.id ? null : f.id) : null; renderPanel(p); hover(p, e); });
         });
+      }
+
+      // CSV download: one row per line of the table as currently filtered and sorted
+      function downloadCSV(name, header, rows) {
+        var q = function (v) { v = v == null ? "" : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+        var csv = "\ufeff" + [header].concat(rows).map(function (r) { return r.map(q).join(","); }).join("\n");
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+        a.download = name; document.body.appendChild(a); a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+      }
+      // every flight of the day at this hub, with its wave, bank and number of feasible connections
+      function downloadFlights(p) {
+        const r = p.r, REG = { dom: "Domestic", tb: "Transborder (US)", intl: "International" };
+        const rows = [];
+        [["arr", "Arrival", "From"], ["dep", "Departure", "To"]].forEach(([dir, lab]) => {
+          r[dir].forEach((f) => {
+            const w = f.w >= 0 ? r.waves[dir][f.w] : null;
+            rows.push([lab, hhmm(f.t), f.num, f.ap, f.city, REG[f.reg] || "", f.model, w ? w.label : "", w && w.label.startsWith("B") ? w.label : "",
+              dir === "arr" ? (f.on || []).length : (f.from || []).length]);
+          });
+        });
+        rows.sort((a, b) => a[1].localeCompare(b[1]) || a[0].localeCompare(b[0]));
+        downloadCSV(`hub-banks-${p.al}-${p.hub}-${DATA.schedule_date}.csv`,
+          ["Direction", "Scheduled time (local)", "Flight", "Other airport", "City", "Region", "Aircraft", "Wave", "Bank", "Feasible connections"], rows);
       }
 
       function bucketsOf(fl) {
