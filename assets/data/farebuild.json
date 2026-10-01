@@ -1,0 +1,560 @@
+{
+ "checked": "2026-09-30",
+ "categories": [
+  {
+   "id": "fare",
+   "name": "Fare",
+   "color": "#2455E6"
+  },
+  {
+   "id": "yq",
+   "name": "Carrier surcharges",
+   "color": "#C2378F"
+  },
+  {
+   "id": "gov",
+   "name": "Government taxes",
+   "color": "#12A150"
+  },
+  {
+   "id": "airport",
+   "name": "Airport charges",
+   "color": "#6B4FD8"
+  },
+  {
+   "id": "extra",
+   "name": "Fare family and extras",
+   "color": "#D98A1C"
+  }
+ ],
+ "itineraries": {
+  "yul": {
+   "label": "Montréal–Paris",
+   "orig": "YUL",
+   "origCity": "YMQ",
+   "origName": "Montréal-Trudeau",
+   "dest": "CDG",
+   "destCity": "PAR",
+   "destName": "Paris-Charles de Gaulle",
+   "currency": "CAD",
+   "sym": "CA$",
+   "country": "Canada",
+   "countryAdj": "Canadian",
+   "soldIn": "Canada",
+   "roe": 1.38,
+   "eurRate": 1.6,
+   "km": 5524,
+   "tpm": 3432,
+   "outDate": "Tue 12 May",
+   "inDate": "Tue 23 Jun",
+   "fares": [
+    {
+     "dir": "out",
+     "from": "YMQ",
+     "to": "PAR",
+     "basis": "KLX7SV",
+     "rbd": "K",
+     "season": "low",
+     "rt": 760
+    },
+    {
+     "dir": "in",
+     "from": "PAR",
+     "to": "YMQ",
+     "basis": "KHX7SV",
+     "rbd": "K",
+     "season": "high",
+     "rt": 1020
+    }
+   ],
+   "yq": 115,
+   "taxes": [
+    {
+     "code": "CA",
+     "name": "Air Travellers Security Charge (ATSC)",
+     "cat": "gov",
+     "amount": 34.42,
+     "leg": "out",
+     "src": "cra_atsc",
+     "note": "International flat rate, charged once on departure from Canada; no GST/HST on it."
+    },
+    {
+     "code": "SQ",
+     "name": "Montréal-Trudeau airport improvement fee",
+     "cat": "airport",
+     "amount": 40.0,
+     "leg": "out",
+     "src": "adm_aif",
+     "note": "Every passenger departing YUL, since 1 March 2024."
+    }
+   ],
+   "taxNote": "No GST/HST or QST: international air transport is zero-rated. Canada charges nothing on the way in.",
+   "fr": [
+    {
+     "code": "",
+     "name": "French air passenger tax: civil aviation rate",
+     "cat": "gov",
+     "eur": 9.25,
+     "src": "fr_taxes",
+     "note": "Destinations outside the EU, rate published for April 2025 to March 2026 (indexed each April).",
+     "amount": 14.8,
+     "leg": "in"
+    },
+    {
+     "code": "",
+     "name": "French air passenger tax: solidarity rate (TSBA)",
+     "cat": "gov",
+     "eur": 40.0,
+     "src": "fr_tsba",
+     "note": "Economy, destinations over 5,500 km, since 1 March 2025.",
+     "amount": 64.0,
+     "leg": "in"
+    },
+    {
+     "code": "",
+     "name": "French air passenger tax: security and safety rate",
+     "cat": "gov",
+     "eur": 11.8,
+     "src": "fr_taxes",
+     "note": "Top of the €0.73 to €11.80 range, which depends on the airport's traffic; assumed for Paris-CDG.",
+     "amount": 18.88,
+     "leg": "in"
+    },
+    {
+     "code": "",
+     "name": "French air passenger tax: airport equalisation rate",
+     "cat": "gov",
+     "eur": 1.25,
+     "src": "fr_taxes",
+     "note": "Not charged to connecting passengers.",
+     "amount": 2.0,
+     "leg": "in"
+    },
+    {
+     "code": "",
+     "name": "Paris-CDG passenger charge",
+     "cat": "airport",
+     "eur": 28.3,
+     "src": "adp",
+     "note": "Departing passenger to a non-Schengen international destination, not connecting.",
+     "amount": 45.28,
+     "leg": "in"
+    }
+   ],
+   "brand": {
+    "name": "Standard",
+    "basisSuffix": "ST",
+    "perDir": 75,
+    "includes": "a checked bag, a seat chosen free at booking and changes without a fee"
+   },
+   "seat": 35
+  },
+  "jfk": {
+   "label": "New York–Paris",
+   "orig": "JFK",
+   "origCity": "NYC",
+   "origName": "New York-JFK",
+   "dest": "CDG",
+   "destCity": "PAR",
+   "destName": "Paris-Charles de Gaulle",
+   "currency": "USD",
+   "sym": "$",
+   "country": "United States",
+   "countryAdj": "US",
+   "soldIn": "the United States",
+   "roe": 1.0,
+   "eurRate": 1.16,
+   "km": 5833,
+   "tpm": 3625,
+   "outDate": "Tue 12 May",
+   "inDate": "Tue 23 Jun",
+   "fares": [
+    {
+     "dir": "out",
+     "from": "NYC",
+     "to": "PAR",
+     "basis": "KLX7SV",
+     "rbd": "K",
+     "season": "low",
+     "rt": 640
+    },
+    {
+     "dir": "in",
+     "from": "PAR",
+     "to": "NYC",
+     "basis": "KHX7SV",
+     "rbd": "K",
+     "season": "high",
+     "rt": 860
+    }
+   ],
+   "yq": 95,
+   "taxes": [
+    {
+     "code": "US",
+     "name": "US international transportation tax, departure",
+     "cat": "gov",
+     "amount": 23.4,
+     "leg": "out",
+     "src": "irs_fet",
+     "note": "Per passenger leaving the US, 2026 rate (indexed every January)."
+    },
+    {
+     "code": "AY",
+     "name": "September 11 Security Fee",
+     "cat": "gov",
+     "amount": 5.6,
+     "leg": "out",
+     "src": "tsa",
+     "note": "Per one-way trip starting at a US airport, capped at $11.20 a round trip."
+    },
+    {
+     "code": "XF",
+     "name": "Passenger facility charge, JFK",
+     "cat": "airport",
+     "amount": 4.5,
+     "leg": "out",
+     "src": "faa_pfc",
+     "note": "Up to $4.50 per US airport boarded; JFK charges the maximum."
+    },
+    {
+     "code": "US",
+     "name": "US international transportation tax, arrival",
+     "cat": "gov",
+     "amount": 23.4,
+     "leg": "in",
+     "src": "irs_fet",
+     "note": "Per passenger arriving in the US."
+    },
+    {
+     "code": "YC",
+     "name": "Customs user fee",
+     "cat": "gov",
+     "amount": 7.61,
+     "leg": "in",
+     "src": "cbp_fy27",
+     "note": "Per arriving passenger, fiscal-2027 rate from 1 October 2026."
+    },
+    {
+     "code": "XY",
+     "name": "Immigration user fee",
+     "cat": "gov",
+     "amount": 7.0,
+     "leg": "in",
+     "src": "cbp_fees",
+     "note": "Per arriving passenger."
+    },
+    {
+     "code": "XA",
+     "name": "APHIS agricultural inspection fee",
+     "cat": "gov",
+     "amount": 3.98,
+     "leg": "in",
+     "src": "aphis",
+     "note": "Per arriving passenger, from 1 October 2026."
+    }
+   ],
+   "taxNote": "No 7.5% ticket tax: it applies to domestic US transport, not international trips, which pay the flat facilities tax both ways instead.",
+   "fr": [
+    {
+     "code": "",
+     "name": "French air passenger tax: civil aviation rate",
+     "cat": "gov",
+     "eur": 9.25,
+     "src": "fr_taxes",
+     "note": "Destinations outside the EU, rate published for April 2025 to March 2026 (indexed each April).",
+     "amount": 10.73,
+     "leg": "in"
+    },
+    {
+     "code": "",
+     "name": "French air passenger tax: solidarity rate (TSBA)",
+     "cat": "gov",
+     "eur": 40.0,
+     "src": "fr_tsba",
+     "note": "Economy, destinations over 5,500 km, since 1 March 2025.",
+     "amount": 46.4,
+     "leg": "in"
+    },
+    {
+     "code": "",
+     "name": "French air passenger tax: security and safety rate",
+     "cat": "gov",
+     "eur": 11.8,
+     "src": "fr_taxes",
+     "note": "Top of the €0.73 to €11.80 range, which depends on the airport's traffic; assumed for Paris-CDG.",
+     "amount": 13.69,
+     "leg": "in"
+    },
+    {
+     "code": "",
+     "name": "French air passenger tax: airport equalisation rate",
+     "cat": "gov",
+     "eur": 1.25,
+     "src": "fr_taxes",
+     "note": "Not charged to connecting passengers.",
+     "amount": 1.45,
+     "leg": "in"
+    },
+    {
+     "code": "",
+     "name": "Paris-CDG passenger charge",
+     "cat": "airport",
+     "eur": 28.3,
+     "src": "adp",
+     "note": "Departing passenger to a non-Schengen international destination, not connecting.",
+     "amount": 32.83,
+     "leg": "in"
+    }
+   ],
+   "brand": {
+    "name": "Standard",
+    "basisSuffix": "ST",
+    "perDir": 65,
+    "includes": "a checked bag, a seat chosen free at booking and changes without a fee"
+   },
+   "seat": 30
+  }
+ },
+ "rules": [
+  {
+   "cat": 2,
+   "name": "Day/time",
+   "text": "X: Monday to Thursday departures. A Friday to Sunday departure needs the W fare, filed higher."
+  },
+  {
+   "cat": 3,
+   "name": "Seasonality",
+   "text": "Low season (KL…) for travel 1 October to 14 June, high season (KH…) 15 June to 30 September, judged on each fare component's departure date."
+  },
+  {
+   "cat": 5,
+   "name": "Advance reservations/ticketing",
+   "text": "Book and ticket at least 7 days before departure."
+  },
+  {
+   "cat": 6,
+   "name": "Minimum stay",
+   "text": "The return can't start before the Sunday after the outbound departure."
+  },
+  {
+   "cat": 7,
+   "name": "Maximum stay",
+   "text": "Return within 3 months."
+  },
+  {
+   "cat": 8,
+   "name": "Stopovers",
+   "text": "None permitted."
+  },
+  {
+   "cat": 10,
+   "name": "Permitted combinations",
+   "text": "Half round trip with any other SV fare of the same carrier: this is what lets the low-season and high-season fares share one ticket."
+  },
+  {
+   "cat": 16,
+   "name": "Penalties",
+   "text": "Changes for a fee plus any fare difference; no refund of the fare. (Automated as categories 31 and 33.)"
+  }
+ ],
+ "rbd": [
+  {
+   "letters": "F A",
+   "meaning": "First"
+  },
+  {
+   "letters": "J C D I Z",
+   "meaning": "Business: J and C full fare, the others discounted"
+  },
+  {
+   "letters": "W P",
+   "meaning": "Premium economy at many airlines (P is discounted First at some)"
+  },
+  {
+   "letters": "Y B",
+   "meaning": "Economy, full fare"
+  },
+  {
+   "letters": "M H",
+   "meaning": "Economy, flexible"
+  },
+  {
+   "letters": "Q K L V",
+   "meaning": "Economy, discounted"
+  },
+  {
+   "letters": "S T N O G",
+   "meaning": "Economy, deep discount or basic"
+  },
+  {
+   "letters": "U X R E",
+   "meaning": "Often reserved for awards, upgrades or special uses"
+  }
+ ],
+ "tokens": {
+  "season": {
+   "H": "High (peak) season",
+   "L": "Low season",
+   "K": "Shoulder season, at some airlines",
+   "O": "Off-peak"
+  },
+  "day": {
+   "W": "Weekend travel",
+   "X": "Weekday travel"
+  },
+  "pairs": {
+   "NR": "Non-refundable",
+   "OW": "One-way fare",
+   "RT": "Round-trip fare",
+   "EE": "Excursion fare (a discounted return with minimum and maximum stays)",
+   "AP": "Advance purchase",
+   "IP": "Instant purchase (ticket at booking)",
+   "CH": "Child fare",
+   "IN": "Infant fare",
+   "PX": "Instant-purchase excursion",
+   "GV": "Group fare"
+  }
+ },
+ "examples": [
+  "KLX7ACP",
+  "QHX14NR",
+  "VLW21",
+  "YOW",
+  "TL3MEE/CH25"
+ ],
+ "sources": {
+  "ata_cats": {
+   "title": "What are ATPCO fare rules categories?",
+   "org": "ATPCO",
+   "url": "https://atpco.net/single-blog/what-are-atpco-fare-rules-categories/",
+   "date": "2024-09-23"
+  },
+  "atp_yq": {
+   "title": "Yankee Queen and Yankee Romeo: a data love story (YQ/YR)",
+   "org": "ATPCO",
+   "url": "https://atpco.net/single-blog/yankee-queen-and-yankee-romeo-a-data-love-story/",
+   "date": "2018-03-20, updated 2026-01-27"
+  },
+  "atp_dyn": {
+   "title": "Dynamic offers",
+   "org": "ATPCO",
+   "url": "https://atpco.net/dynamic-offers/",
+   "date": "checked 2026-09-30"
+  },
+  "iata_dyn": {
+   "title": "Dynamic Offers, Airline Retailing",
+   "org": "IATA",
+   "url": "https://www.iata.org/en/programs/airline-distribution/retailing/dynamic-offers/",
+   "date": "checked 2026-09-30"
+  },
+  "iata_ret": {
+   "title": "Airline Retailing (NDC, ONE Order)",
+   "org": "IATA",
+   "url": "https://www.iata.org/en/programs/airline-distribution/retailing/",
+   "date": "checked 2026-09-30"
+  },
+  "wiki_fbc": {
+   "title": "Fare basis code",
+   "org": "Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Fare_basis_code",
+   "date": "checked 2026-09-30"
+  },
+  "tp_nuc": {
+   "title": "NUCs and currency rounding",
+   "org": "Travelport",
+   "url": "https://support.travelport.com/webhelp/FaresAndPricing/Content/NUC'sCurrency%20Rounding.htm",
+   "date": "checked 2026-09-30"
+  },
+  "tp_mil": {
+   "title": "Mileage (TPM, MPM, excess mileage)",
+   "org": "Travelport",
+   "url": "https://support.travelport.com/webhelp/FaresAndPricing/Content/Mileage.htm",
+   "date": "checked 2026-09-30"
+  },
+  "cra_atsc": {
+   "title": "Air Travellers Security Charge (ATSC) rates",
+   "org": "Canada Revenue Agency",
+   "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/atscrates/air-travellers-security-charge-atsc-rates.html",
+   "date": "rates effective 2024-05-01"
+  },
+  "adm_aif": {
+   "title": "ADM Aéroports de Montréal raises airport improvement fee",
+   "org": "Skies Mag (ADM press release)",
+   "url": "https://skiesmag.com/press-releases/adm-aeroports-de-montreal-raises-airport-improvement-fee/",
+   "date": "2023-12-01, effective 2024-03-01"
+  },
+  "cta_allin": {
+   "title": "Q&A: All-inclusive air price advertising",
+   "org": "Canadian Transportation Agency",
+   "url": "https://otc-cta.gc.ca/eng/qa-all-inclusive-air-price-advertising",
+   "date": "checked 2026-09-30"
+  },
+  "irs_fet": {
+   "title": "IRS announces 2026 FET rates (international facilities tax)",
+   "org": "NATA, citing IRS",
+   "url": "https://nata.aero/icymi-irs-announces-2026-fet-rates/",
+   "date": "calendar 2026"
+  },
+  "tsa": {
+   "title": "Security fees",
+   "org": "TSA",
+   "url": "https://www.tsa.gov/for-industry/security-fees",
+   "date": "checked 2026-09-30"
+  },
+  "cbp_fy27": {
+   "title": "Customs user fees to be adjusted for inflation in fiscal year 2027",
+   "org": "CBP, Federal Register",
+   "url": "https://www.federalregister.gov/documents/2026/07/31/2026-15530/customs-user-fees-to-be-adjusted-for-inflation-in-fiscal-year-2027",
+   "date": "2026-07-31, effective 2026-10-01"
+  },
+  "cbp_fees": {
+   "title": "Air/sea passenger user fees",
+   "org": "CBP",
+   "url": "https://www.cbp.gov/border-security/ports-entry/carriers/air-sea-passenger-user-fees-railroad-car-fee",
+   "date": "checked 2026-09-30"
+  },
+  "aphis": {
+   "title": "7 CFR 354.3, AQI user fees (Table 6)",
+   "org": "eCFR / USDA APHIS",
+   "url": "https://www.ecfr.gov/current/title-7/subtitle-B/chapter-III/part-354/section-354.3",
+   "date": "rate from 2026-10-01"
+  },
+  "dot_adv": {
+   "title": "14 CFR 399.84, price advertising",
+   "org": "US DOT (Cornell LII)",
+   "url": "https://www.law.cornell.edu/cfr/text/14/399.84",
+   "date": "checked 2026-09-30"
+  },
+  "dot_nprm": {
+   "title": "Enhancing flexibility of air fare price advertising (proposed rule)",
+   "org": "US DOT, Federal Register",
+   "url": "https://www.federalregister.gov/documents/2026/07/01/2026-13294/enhancing-flexibility-of-air-fare-price-advertising",
+   "date": "2026-07-01"
+  },
+  "fr_taxes": {
+   "title": "Aeronautical taxes (TTAP)",
+   "org": "Ministère de la Transition écologique",
+   "url": "https://www.ecologie.gouv.fr/en/public-policies/aeronautical-taxes",
+   "date": "checked 2026-09-30"
+  },
+  "fr_tsba": {
+   "title": "Hausse de la taxe sur les billets d'avion : décodage",
+   "org": "Équilibre des énergies",
+   "url": "https://www.equilibredesenergies.org/11-06-2025-hausse-de-la-taxe-sur-les-billets-davion-decodage-dune-enieme-reforme-de-la-fiscalite-aerienne-francaise/",
+   "date": "2025-06-11, rates from 2025-03-01"
+  },
+  "adp": {
+   "title": "Aéroports de Paris, tarifs 2026 (première notification)",
+   "org": "Groupe ADP",
+   "url": "https://www.parisaeroport.fr/docs/default-source/professionnel-fichiers/services-aux-compagnies-aeriennes/adp-tarifs-2026-premiere-notification.pdf?sfvrsn=42b2a5bd_2",
+   "date": "rates from 2026-04-01"
+  },
+  "faa_pfc": {
+   "title": "Passenger facility charges",
+   "org": "FAA",
+   "url": "https://www.faa.gov/airports/pfc",
+   "date": "checked 2026-09-30"
+  }
+ }
+}

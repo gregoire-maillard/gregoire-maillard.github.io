@@ -1,0 +1,67 @@
+{
+  "updated": "2026-10-01",
+  "note": "Illustrative numbers: the shoppers, conversion rates, booking values, complaint rates and test effects are invented assumptions and don't describe any airline.",
+  "defaults": {
+    "preset": "seat",
+    "shoppersPerDay": 20000,
+    "shareB": 0.5,
+    "mde": 1.5,
+    "conf": 95,
+    "power": 80,
+    "guardConv": 1,
+    "guardComp": 20,
+    "seed": 1,
+    "draw": 2,
+    "bayes": true,
+    "looks": "daily"
+  },
+  "limits": { "shoppersMin": 2000, "shoppersMax": 60000, "maxDays": 56 },
+  "weekday": { "labels": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], "traffic": [1.07, 1.03, 1.00, 1.02, 1.06, 0.84, 0.98] },
+  "shareOptions": [0.5, 0.3, 0.1],
+  "confOptions": [90, 95, 99],
+  "powerOptions": [80, 90],
+  "scepticalPriorSd": 2,
+  "presets": {
+    "seat": {
+      "label": "Preselected seat",
+      "type": "Default selection",
+      "desc": "Should a paid seat be ticked by default? Shoppers can untick it, but many won't notice. Revenue usually rises, and so do refund requests.",
+      "a": { "title": "No seat chosen", "detail": "Shoppers pick a seat or skip; skippers get a free seat at check-in." },
+      "b": { "title": "Standard seat ticked, $18", "detail": "A standard seat is preselected on the extras page. Shoppers can untick it." },
+      "legal": "In the EU, optional extras must be opt-in (Regulation (EC) No 1008/2008, Art. 23), so this variant could only be tested elsewhere.",
+      "conv": 0.55, "rev": 310, "cv": 0.8, "comp": 8,
+      "prior": { "pNull": 0.15, "conv": [-0.8, 0.4], "rev": [2.3, 0.8], "comp": [45, 20] },
+      "truth": { "conv": -0.8, "rev": 2.2, "comp": 45 }
+    },
+    "bundle": {
+      "label": "Bundle contents",
+      "type": "Bundle contents",
+      "desc": "Does adding priority boarding to the comfort pack, for $4 more, earn more per shopper? A small change in a small share of bookings: hard to detect.",
+      "a": { "title": "Comfort pack, $55", "detail": "Standard seat and one checked bag, offered after the fare is chosen." },
+      "b": { "title": "Comfort pack plus, $59", "detail": "The same seat and bag, plus priority boarding." },
+      "conv": 0.55, "rev": 300, "cv": 0.8, "comp": 6,
+      "prior": { "pNull": 0.35, "conv": [0, 0.3], "rev": [0.7, 0.8], "comp": [0, 6] },
+      "truth": { "conv": 0, "rev": 0.8, "comp": 0 }
+    },
+    "price": {
+      "label": "Bag price point",
+      "type": "Price point",
+      "desc": "Raise the checked-bag price bought during booking from $35 to $40. More revenue per bag, fewer bags, and a few shoppers who give up.",
+      "a": { "title": "Checked bag $35", "detail": "Price for the first checked bag when added during booking." },
+      "b": { "title": "Checked bag $40", "detail": "Same bag, same page, $5 more." },
+      "conv": 0.55, "rev": 305, "cv": 0.8, "comp": 6,
+      "prior": { "pNull": 0.2, "conv": [-0.3, 0.3], "rev": [0.8, 0.8], "comp": [6, 6] },
+      "truth": { "conv": -0.3, "rev": 0.9, "comp": 5 }
+    },
+    "order": {
+      "label": "Display order",
+      "type": "Display order",
+      "desc": "Show the fare families with Standard first and labelled \"Most chosen\" instead of cheapest first. Shoppers trade up, or some leave.",
+      "a": { "title": "Basic, Standard, Flex", "detail": "Fare families listed cheapest first, no label." },
+      "b": { "title": "Standard first, \"Most chosen\"", "detail": "Standard leads the list with a label; Basic and Flex follow." },
+      "conv": 0.55, "rev": 310, "cv": 0.8, "comp": 5,
+      "prior": { "pNull": 0.3, "conv": [-0.2, 0.4], "rev": [1.0, 0.9], "comp": [2, 5] },
+      "truth": { "conv": -0.2, "rev": 1.2, "comp": 0 }
+    }
+  }
+}
