@@ -1,0 +1,654 @@
+{
+  "updated": "2026-09-30",
+  "note": "Illustrative numbers: the customers, fares, load factors and costs are invented assumptions and don't describe any airline.",
+  "seed": 20260930,
+  "defaultPreset": "aycf",
+  "behaviour": {
+    "bias": 0.25,
+    "awareness": 0.4,
+    "hassleMedian": 40,
+    "hassleSigma": 1.0,
+    "commitDiscount": {
+      "1": 0,
+      "6": 0.05,
+      "12": 0.1
+    },
+    "unusedAncillaryValue": 0.25,
+    "inducedSurplus": 0.5,
+    "inducedFlex": 1.0,
+    "shareShift": 1.0,
+    "shareShiftCap": 0.5,
+    "maxTripsPerYear": 60,
+    "serviceCostRate": 0.03
+  },
+  "spill": {
+    "center": 0.93,
+    "scale": 0.025,
+    "fareMultiple": 1.6
+  },
+  "windows": {
+    "any": {
+      "label": "Any time",
+      "base": 1,
+      "flex": 0,
+      "late": 0,
+      "displacement": 1,
+      "desc": "Pass holders book like anyone else, up to departure."
+    },
+    "ahead14": {
+      "label": "14+ days ahead",
+      "base": 1,
+      "flex": 0,
+      "late": 1,
+      "displacement": 1,
+      "desc": "Trips booked less than two weeks out can't use the pass."
+    },
+    "within3": {
+      "label": "Last 3 days",
+      "base": 0.05,
+      "flex": 0.7,
+      "late": 0,
+      "displacement": 0.3,
+      "desc": "Only in the last 72 hours, when RM already knows which flights will go out with empty seats."
+    },
+    "daybefore": {
+      "label": "Day before",
+      "base": 0,
+      "flex": 0.5,
+      "late": 0,
+      "displacement": 0.1,
+      "desc": "Only the day before departure: close to selling standby seats."
+    }
+  },
+  "blackouts": {
+    "none": {
+      "label": "None",
+      "share": 0,
+      "desc": "No blackout dates."
+    },
+    "peaks": {
+      "label": "Peak holidays",
+      "share": 0.12,
+      "desc": "About 25 peak days a year, carrying roughly 12% of trips."
+    },
+    "weekends": {
+      "label": "Peaks + Fri & Sun",
+      "share": 0.35,
+      "desc": "Peak holidays plus every Friday and Sunday, roughly 35% of trips."
+    }
+  },
+  "markets": {
+    "ulcc": {
+      "label": "Low-cost leisure network",
+      "desc": "An invented ultra-low-cost domestic network: 2 million customers, mostly leisure, low fares, bags and seats sold separately.",
+      "customers": 2000000,
+      "sample": 20000,
+      "feeRT": 30,
+      "costRT": 30,
+      "ancillaries": {
+        "bag": {
+          "label": "Bags",
+          "price": 45,
+          "cost": 8,
+          "uptake": 0.4
+        },
+        "seat": {
+          "label": "Seat selection",
+          "price": 20,
+          "cost": 0,
+          "uptake": 1
+        },
+        "wifi": {
+          "label": "Wi-Fi",
+          "price": 8,
+          "cost": 2,
+          "uptake": 0.5
+        }
+      },
+      "loadFactors": [
+        [
+          0.45,
+          0.03
+        ],
+        [
+          0.5,
+          0.04
+        ],
+        [
+          0.55,
+          0.05
+        ],
+        [
+          0.6,
+          0.06
+        ],
+        [
+          0.65,
+          0.07
+        ],
+        [
+          0.7,
+          0.08
+        ],
+        [
+          0.75,
+          0.09
+        ],
+        [
+          0.8,
+          0.11
+        ],
+        [
+          0.85,
+          0.13
+        ],
+        [
+          0.9,
+          0.13
+        ],
+        [
+          0.95,
+          0.12
+        ],
+        [
+          1.0,
+          0.09
+        ]
+      ],
+      "segments": [
+        {
+          "key": "occ",
+          "label": "Occasional leisure",
+          "share": 0.62,
+          "trips": 1.6,
+          "tripsK": 1.5,
+          "wallet": 0.5,
+          "fare": 170,
+          "fareSd": 0.4,
+          "flex": 0.6,
+          "late": 0.1,
+          "bag": 0.65,
+          "seat": 0.3,
+          "wifi": 0.1,
+          "induced": 0.6
+        },
+        {
+          "key": "vfr",
+          "label": "Frequent leisure & VFR",
+          "share": 0.3,
+          "trips": 4,
+          "tripsK": 1.5,
+          "wallet": 0.55,
+          "fare": 160,
+          "fareSd": 0.35,
+          "flex": 0.5,
+          "late": 0.15,
+          "bag": 0.6,
+          "seat": 0.3,
+          "wifi": 0.12,
+          "induced": 0.5
+        },
+        {
+          "key": "biz",
+          "label": "Budget business",
+          "share": 0.08,
+          "trips": 8,
+          "tripsK": 2,
+          "wallet": 0.5,
+          "fare": 230,
+          "fareSd": 0.3,
+          "flex": 0.3,
+          "late": 0.5,
+          "bag": 0.3,
+          "seat": 0.4,
+          "wifi": 0.3,
+          "induced": 0.15
+        }
+      ]
+    },
+    "network": {
+      "label": "Domestic network",
+      "desc": "An invented mid-size domestic network: 1 million customers who flew it at least once last year.",
+      "customers": 1000000,
+      "sample": 20000,
+      "feeRT": 40,
+      "costRT": 50,
+      "ancillaries": {
+        "bag": {
+          "label": "Checked bag",
+          "price": 35,
+          "cost": 8,
+          "uptake": 0.4
+        },
+        "seat": {
+          "label": "Seat selection",
+          "price": 18,
+          "cost": 0,
+          "uptake": 1
+        },
+        "wifi": {
+          "label": "Wi-Fi",
+          "price": 8,
+          "cost": 2,
+          "uptake": 0.5
+        }
+      },
+      "loadFactors": [
+        [
+          0.45,
+          0.02
+        ],
+        [
+          0.5,
+          0.03
+        ],
+        [
+          0.55,
+          0.04
+        ],
+        [
+          0.6,
+          0.05
+        ],
+        [
+          0.65,
+          0.06
+        ],
+        [
+          0.7,
+          0.08
+        ],
+        [
+          0.75,
+          0.1
+        ],
+        [
+          0.8,
+          0.13
+        ],
+        [
+          0.85,
+          0.16
+        ],
+        [
+          0.9,
+          0.15
+        ],
+        [
+          0.95,
+          0.12
+        ],
+        [
+          1.0,
+          0.06
+        ]
+      ],
+      "segments": [
+        {
+          "key": "occ",
+          "label": "Occasional leisure",
+          "share": 0.55,
+          "trips": 1.8,
+          "tripsK": 1.5,
+          "wallet": 0.6,
+          "fare": 300,
+          "fareSd": 0.35,
+          "flex": 0.6,
+          "late": 0.15,
+          "bag": 0.55,
+          "seat": 0.2,
+          "wifi": 0.12,
+          "induced": 0.5
+        },
+        {
+          "key": "vfr",
+          "label": "Regular leisure & VFR",
+          "share": 0.25,
+          "trips": 4.5,
+          "tripsK": 1.5,
+          "wallet": 0.65,
+          "fare": 280,
+          "fareSd": 0.3,
+          "flex": 0.5,
+          "late": 0.2,
+          "bag": 0.6,
+          "seat": 0.25,
+          "wifi": 0.15,
+          "induced": 0.4
+        },
+        {
+          "key": "biz",
+          "label": "Business",
+          "share": 0.15,
+          "trips": 10,
+          "tripsK": 2,
+          "wallet": 0.65,
+          "fare": 520,
+          "fareSd": 0.3,
+          "flex": 0.2,
+          "late": 0.6,
+          "bag": 0.25,
+          "seat": 0.45,
+          "wifi": 0.45,
+          "induced": 0.12
+        },
+        {
+          "key": "war",
+          "label": "Road warriors",
+          "share": 0.05,
+          "trips": 28,
+          "tripsK": 3,
+          "wallet": 0.7,
+          "fare": 470,
+          "fareSd": 0.25,
+          "flex": 0.15,
+          "late": 0.7,
+          "bag": 0.2,
+          "seat": 0.55,
+          "wifi": 0.6,
+          "induced": 0.08
+        }
+      ]
+    },
+    "commuter": {
+      "label": "YUL–YYZ route",
+      "desc": "An invented picture of the Montréal–Toronto market: 80,000 customers who flew the route at least once last year, on any carrier.",
+      "customers": 80000,
+      "sample": 12000,
+      "feeRT": 70,
+      "costRT": 50,
+      "ancillaries": {
+        "bag": {
+          "label": "Checked bag",
+          "price": 35,
+          "cost": 8,
+          "uptake": 0.4
+        },
+        "seat": {
+          "label": "Seat selection",
+          "price": 20,
+          "cost": 0,
+          "uptake": 1
+        },
+        "wifi": {
+          "label": "Wi-Fi",
+          "price": 8,
+          "cost": 2,
+          "uptake": 0.5
+        }
+      },
+      "loadFactors": [
+        [
+          0.45,
+          0.05
+        ],
+        [
+          0.5,
+          0.06
+        ],
+        [
+          0.55,
+          0.07
+        ],
+        [
+          0.6,
+          0.08
+        ],
+        [
+          0.65,
+          0.08
+        ],
+        [
+          0.7,
+          0.08
+        ],
+        [
+          0.75,
+          0.08
+        ],
+        [
+          0.8,
+          0.09
+        ],
+        [
+          0.85,
+          0.1
+        ],
+        [
+          0.9,
+          0.11
+        ],
+        [
+          0.95,
+          0.12
+        ],
+        [
+          1.0,
+          0.08
+        ]
+      ],
+      "segments": [
+        {
+          "key": "wk",
+          "label": "Weekly commuters",
+          "share": 0.12,
+          "trips": 32,
+          "tripsK": 4,
+          "wallet": 0.55,
+          "fare": 440,
+          "fareSd": 0.25,
+          "flex": 0.2,
+          "late": 0.55,
+          "bag": 0.1,
+          "seat": 0.5,
+          "wifi": 0.5,
+          "induced": 0.1
+        },
+        {
+          "key": "biz",
+          "label": "Business",
+          "share": 0.43,
+          "trips": 9,
+          "tripsK": 2,
+          "wallet": 0.55,
+          "fare": 480,
+          "fareSd": 0.3,
+          "flex": 0.25,
+          "late": 0.6,
+          "bag": 0.15,
+          "seat": 0.4,
+          "wifi": 0.4,
+          "induced": 0.12
+        },
+        {
+          "key": "lei",
+          "label": "Leisure & VFR",
+          "share": 0.45,
+          "trips": 2.5,
+          "tripsK": 1.5,
+          "wallet": 0.6,
+          "fare": 250,
+          "fareSd": 0.35,
+          "flex": 0.55,
+          "late": 0.2,
+          "bag": 0.5,
+          "seat": 0.2,
+          "wifi": 0.1,
+          "induced": 0.4
+        }
+      ]
+    }
+  },
+  "presets": {
+    "aycf": {
+      "label": "All-you-can-fly pass",
+      "desc": "Unlimited round trips on a low-cost leisure network for a monthly fee and a 12-month commitment. Pass holders pay taxes and fees on each trip and buy bags and seats as usual. Peak holidays are blacked out, and RM releases seats to pass holders only on flights it expects to be less than 85% full.",
+      "market": "ulcc",
+      "price": 45,
+      "priceMax": 150,
+      "trips": "unl",
+      "anc": [],
+      "window": "any",
+      "blackout": "peaks",
+      "commit": 12,
+      "capOn": true,
+      "capX": 85
+    },
+    "bundle": {
+      "label": "Ancillary bundle",
+      "desc": "A monthly subscription that adds a checked bag, a seat selection and Wi-Fi to every trip on the network. No flights included: members still buy their tickets.",
+      "market": "network",
+      "price": 39,
+      "priceMax": 150,
+      "trips": 0,
+      "anc": [
+        "bag",
+        "seat",
+        "wifi"
+      ],
+      "window": "any",
+      "blackout": "none",
+      "commit": 12,
+      "capOn": false,
+      "capX": 85
+    },
+    "commuter": {
+      "label": "Commuter pass YUL–YYZ",
+      "desc": "24 round trips a year between Montréal and Toronto with a seat selection included, bookable any time, for a 12-month commitment. Seats are released to pass holders only on flights RM expects to be less than 90% full.",
+      "market": "commuter",
+      "price": 499,
+      "priceMax": 1400,
+      "trips": 24,
+      "anc": [
+        "seat"
+      ],
+      "window": "any",
+      "blackout": "none",
+      "commit": 12,
+      "capOn": true,
+      "capX": 90
+    }
+  },
+  "examples": [
+    {
+      "name": "GoWild! pass",
+      "airline": "Frontier (US)",
+      "kind": "All you can fly",
+      "price": "Fall & Winter 2026 pass $199 (intro), valid to 28 Feb 2027; annual pass $399 intro, renews at $699",
+      "terms": "$0.01 fare plus taxes and fees per flight. Domestic flights bookable the day before, international 10 days before; blackout dates around peaks; limited seats per flight; bags and seats extra; renews automatically.",
+      "status": "On sale (Aug 2026)",
+      "sources": [
+        {
+          "t": "Frontier newsroom, 22 Apr 2026",
+          "u": "https://news.flyfrontier.com/frontier-releases-2026-gowild-summer-pass-at-lowest-ever-introductory-price--providing-5-months-of-unlimited-flights-for-just-199/"
+        },
+        {
+          "t": "Upgraded Points, 4 Aug 2026",
+          "u": "https://upgradedpoints.com/news/frontier-gowild-all-you-can-fly-pass/"
+        }
+      ]
+    },
+    {
+      "name": "Flight Pass",
+      "airline": "Alaska Airlines (US)",
+      "kind": "Monthly trip bundle",
+      "price": "$69/month for 6 round trips a year; Flight Pass Plus $129/month for 12",
+      "terms": "Nonstops within California, Nevada, Arizona and Utah. $0.01 fare plus taxes and fees (from $15.11 a flight). Book 14 to 90 days ahead, no blackout dates, 12-month commitment. A same-day Pro tier was dropped in 2024: it carried 2% of usage.",
+      "status": "On sale (Sep 2026)",
+      "sources": [
+        {
+          "t": "Alaska Airlines Flight Pass page, accessed 30 Sep 2026",
+          "u": "https://subscriptions.alaskaair.com/flightpass/"
+        },
+        {
+          "t": "Alaska newsroom, 25 Sep 2024",
+          "u": "https://news.alaskaair.com/guest-experience/enhanced-flight-pass-subscription-service/"
+        },
+        {
+          "t": "AwardWallet, 29 Jun 2026",
+          "u": "https://awardwallet.com/airlines/alaska-atmos-rewards/alaska-flight-pass/"
+        }
+      ]
+    },
+    {
+      "name": "All You Can Fly",
+      "airline": "Wizz Air (Europe)",
+      "kind": "All you can fly",
+      "price": "€499 intro, then €599 a year at launch (Aug 2024); back at €499 for 10,000 members in Oct 2025",
+      "terms": "Unlimited flights booked 72 to 3 hours before departure, about €10 per flight, personal item only. 10,000 passes sold within days of launch. Wizz said a typical member flies about nine times a year. A separate MultiPass (Mar 2026) sells one fixed-price flight a month, booked 5+ days ahead.",
+      "status": "Still sold, per Mar 2026 reports",
+      "sources": [
+        {
+          "t": "AeroTime, Aug 2024",
+          "u": "https://www.aerotime.aero/articles/wizz-air-all-you-can-fly-pass"
+        },
+        {
+          "t": "Business Insider via Yahoo Finance, 28 Oct 2025",
+          "u": "https://finance.yahoo.com/news/budget-giant-wizz-air-bringing-160151882.html"
+        },
+        {
+          "t": "GB News, 12 Mar 2026",
+          "u": "https://www.gbnews.com/travel/wizz-air-multi-pass-subscription-returns"
+        }
+      ]
+    },
+    {
+      "name": "Prime",
+      "airline": "Ryanair (Europe)",
+      "kind": "Discount club",
+      "price": "€79 a year, capped at 250,000 members",
+      "terms": "Reserved seats on up to 12 flights, travel insurance and 12 member-only fare sales a year. Closed to new members on 28 Nov 2025 after 55,000 sign-ups: members had received over €6m in fare discounts against €4.4m in fees. Existing members keep it until Oct 2026.",
+      "status": "Closed to new members",
+      "sources": [
+        {
+          "t": "Euronews, 26 Mar 2025",
+          "u": "https://www.euronews.com/travel/2025/03/26/ryanair-launches-prime-subscription-service-for-frequent-travellers-is-it-worth-it"
+        },
+        {
+          "t": "LoyaltyLobby, 29 Nov 2025",
+          "u": "https://loyaltylobby.com/2025/11/29/ryanair-is-pulling-their-prime-membership-because-its-too-profitable-for-customers/"
+        }
+      ]
+    },
+    {
+      "name": "Economy Plus & checked-bag subscriptions",
+      "airline": "United (US)",
+      "kind": "Ancillary subscription",
+      "price": "Economy Plus from $599 a year (reported to rise to $799 on 1 Aug 2026); the 2013 bag subscription started at $349",
+      "terms": "Extra-legroom seats on every United flight for a year, priced by region and number of travellers. United launched Economy Plus and checked-bag subscriptions together in June 2013; we couldn't confirm the bag subscription is still sold.",
+      "status": "Economy Plus on sale (Jul 2026)",
+      "sources": [
+        {
+          "t": "United newsroom, 3 Jun 2013",
+          "u": "https://united.mediaroom.com/news-releases?item=123943"
+        },
+        {
+          "t": "BargainAirTicket, checked 20 Jul 2026",
+          "u": "https://www.bargainairticket.com/en/help/airlines/united/seats-and-upgrades/"
+        }
+      ]
+    },
+    {
+      "name": "Wi-Fi plans",
+      "airline": "United, Delta, Air Canada",
+      "kind": "Ancillary subscription",
+      "price": "United: $49 a month for non-members; free for MileagePlus members",
+      "terms": "Paid Wi-Fi subscriptions are giving way to free Wi-Fi for loyalty members, often sponsored: Delta for SkyMiles members since Feb 2023, Air Canada for Aeroplan members (sponsored by Bell) across North America since May 2025, United on Starlink-equipped aircraft since 2025.",
+      "status": "Shifting to free for members",
+      "sources": [
+        {
+          "t": "AwardWallet on United Starlink, Apr 2026",
+          "u": "https://awardwallet.com/airlines/united-mileageplus/united-starlink-wifi/"
+        },
+        {
+          "t": "CNBC on Delta, 5 Jan 2023",
+          "u": "https://www.cnbc.com/2023/01/05/delta-plans-to-offer-free-wi-fi-starting-feb-1.html"
+        },
+        {
+          "t": "Air Canada media, 1 May 2025",
+          "u": "https://www.aircanada.com/media/fast-free-wi-fi-for-aeroplan-members-sponsored-by-bell-now-on-air-canada-air-canada-rouge-and-air-canada-express-flights-in-north-america-mexico-and-the-caribbean/"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "title": "Award seat cost calculator: illustrative inputs",
+    "updated": "2026-09-30",
+    "note": "Invented flight, fares, demand and costs. Not any airline's or programme's data.",
+    "currency": "CA$"
+  },
+  "flight": {
+    "label": "An invented 3½-hour domestic flight, economy cabin only",
+    "capacity": 150,
+    "classes": ["Y", "B", "M", "K", "L"],
+    "classNames": ["Flexible", "Standard+", "Standard", "Saver", "Basic"],
+    "baseFares": [620, 450, 340, 250, 180]
+  },
+  "defaults": {
+    "preset": "average",
+    "marginalCost": { "fuel": 24, "catering": 10, "fees": 16 },
+    "payment": 140,
+    "fixedAllocation": 6
+  },
+  "marginalCostNotes": {
+    "fuel": "Extra fuel to carry about 100 kg (passenger and bag) for 3½ hours, at roughly 3–4% of the extra weight burned per hour and a jet fuel price near US$185 a barrel (IATA/Platts, September 2026).",
+    "catering": "Meal, drinks and amenities for one more passenger.",
+    "fees": "Per-passenger airport, handling and distribution costs the airline pays itself (taxes the award passenger pays are left out)."
+  },
+  "presets": [
+    {
+      "id": "offpeak",
+      "name": "Off-peak midweek",
+      "when": "A Tuesday in late January",
+      "blurb": "Few people fly: the airline files its lowest fares and still expects to fill about 62% of the seats.",
+      "fareLevel": 0.85,
+      "demandFactor": 62,
+      "cv": 0.30,
+      "mix": [0.10, 0.14, 0.20, 0.26, 0.30],
+      "awardRequests": 8
+    },
+    {
+      "id": "average",
+      "name": "Average",
+      "when": "A Thursday in May",
+      "blurb": "A typical day: normal fares and expected demand of about 86% of the seats.",
+      "fareLevel": 1.0,
+      "demandFactor": 86,
+      "cv": 0.30,
+      "mix": [0.10, 0.14, 0.20, 0.26, 0.30],
+      "awardRequests": 12
+    },
+    {
+      "id": "peak",
+      "name": "Peak holiday",
+      "when": "The Friday before Christmas",
+      "blurb": "Everyone wants to go home: peak fares, a richer mix of late, higher-fare bookings, and more demand than seats.",
+      "fareLevel": 1.30,
+      "demandFactor": 104,
+      "cv": 0.22,
+      "mix": [0.12, 0.18, 0.22, 0.24, 0.24],
+      "awardRequests": 30
+    }
+  ]
+}

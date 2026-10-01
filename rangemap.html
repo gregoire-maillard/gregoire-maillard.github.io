@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Aircraft range map</title>
+    <meta name="description" content="Pick an aircraft and a departure airport to see which destinations it can reach nonstop, with how many passengers, and what headwinds do to the return flight.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern and palette as airflows.html. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        --land: #f1f0ec;
+        --border: #d6d4cc;
+        --a: #2a7fb5;          /* aircraft A, full passengers */
+        --a-light: #93c0de;    /* aircraft A, reduced payload */
+        --b: #d9480f;          /* aircraft B (comparison) */
+        --oneway: #9a6fb0;     /* full passengers one way only */
+        --both: #4b5563;       /* comparison: both aircraft */
+        --out: #c3c7cc;
+        --ok: #2f7d32;
+        --bad: #b23c0c;
+      }
+
+      .content { max-width: 1280px; margin: 0 auto; padding: 26px 30px 60px; }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .intro .lede { margin: 0 0 8px; color: var(--ink); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+      .stamp { color: var(--muted); font-size: 12px; margin-top: 8px; }
+
+      /* ── Controls ── */
+      .pick { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-end; margin: 22px 0 0; }
+      .field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+      .field > span { font-size: 12px; color: var(--muted); }
+      .field select, .field input[type=text] {
+        font: inherit; font-size: 14px; color: var(--ink); height: 36px;
+        border: 1px solid var(--line); border-radius: 6px; padding: 0 10px; background: #fff; min-width: 0;
+      }
+      .field select:hover, .field input[type=text]:hover { border-color: #cfcfcf; }
+      #ac { width: 190px; } #cmp { width: 190px; } #from { width: 260px; }
+      .swap { height: 36px; border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 0 12px; font: inherit; font-size: 13px; color: var(--ink); cursor: pointer; }
+      .swap:hover { border-color: #cfcfcf; }
+
+      .controls { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; padding: 14px 0 4px; }
+      .ctl { display: flex; align-items: center; gap: 8px; }
+      .ctl label.lbl, .ctl .lbl { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .ctl output { font-size: 12.5px; color: var(--ink); font-variant-numeric: tabular-nums; min-width: 34px; }
+      .ctl input[type=range] { width: 120px; accent-color: var(--ink); }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip {
+        border: 1px solid var(--line); background: #fff; color: var(--text);
+        border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer;
+      }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+      /* ── Summary tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 16px 0 16px; }
+      .tile { text-align: left; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); min-width: 0; }
+      .tile b { display: block; font-size: 26px; font-weight: 500; color: var(--ink); line-height: 1.1; font-variant-numeric: tabular-nums; }
+      .tile span { font-size: 12px; }
+      .key { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--c); margin-right: 6px; vertical-align: 0; }
+      .key.ring { width: 16px; height: 0; border-radius: 0; background: none; border-top: 2px solid var(--c); vertical-align: 3px; }
+      .key.ring.dash { border-top-style: dashed; }
+
+      /* ── Map + side panel ── */
+      .stage { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; align-items: start; }
+      .map-wrap { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; overflow: hidden; }
+      #map { display: block; width: 100%; height: auto; }
+      #map .bg { fill: #fff; }
+      #map .sphere { fill: #fbfcfd; stroke: var(--border); stroke-width: .8; }
+      #map .grat { fill: none; stroke: #eceae4; stroke-width: .5; }
+      #map .land { fill: var(--land); }
+      #map .borders { fill: none; stroke: var(--border); stroke-width: .6; }
+      #map .ring { fill: none; stroke-width: 1.6; }
+      #map .ring.dash { stroke-dasharray: 6 4; stroke-width: 1.3; }
+      #map .ring-lab { font-weight: 600; paint-order: stroke; stroke: #fbfcfd; stroke-linejoin: round; }
+      #map .gc { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 3 3; }
+      #map .ap { stroke: #fff; stroke-width: .5; }
+      #map .ap.out { fill: var(--out); stroke: none; }
+      #map .origin { fill: var(--ink); stroke: #fff; stroke-width: 2; }
+      #map .dest { fill: #fff; stroke: var(--ink); stroke-width: 2; }
+      #map .hot { fill: none; stroke: var(--ink); stroke-width: 1.5; pointer-events: none; }
+      #map .lab { fill: #333; paint-order: stroke; stroke: #fbfcfd; stroke-linejoin: round; pointer-events: none; }
+      #map .lab.big { font-weight: 600; fill: var(--ink); }
+      #map .ring, #map .gc, #map .grat, #map .borders, #map .sphere, #map .ap, #map .origin, #map .dest, #map .hot { vector-effect: non-scaling-stroke; }
+      .loading { padding: 80px 20px; text-align: center; color: var(--muted); }
+
+      .map-legend {
+        border-top: 1px solid var(--line); background: #fff; padding: 8px 14px;
+        display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; font-size: 11.5px; color: var(--text); line-height: 1.5;
+      }
+      .map-legend .grp { white-space: nowrap; }
+      .zoom-ctl { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 4; }
+      .zoom-ctl button {
+        width: 30px; height: 30px; border: 1px solid var(--line); background: rgba(255,255,255,.95); border-radius: 6px;
+        font: inherit; font-size: 16px; line-height: 1; color: var(--ink); cursor: pointer; padding: 0;
+      }
+      .zoom-ctl button:hover { border-color: #bdbdbd; }
+      .zoom-ctl button.reset { font-size: 12px; }
+      .zoom-hint { position: absolute; top: 12px; left: 12px; font-size: 11.5px; color: var(--muted); background: rgba(255,255,255,.85); padding: 2px 6px; border-radius: 4px; pointer-events: none; }
+
+      .tip {
+        position: absolute; pointer-events: none; z-index: 5;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 9px 12px; font-size: 12.5px; color: var(--text); line-height: 1.45; max-width: 300px; display: none;
+      }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13.5px; }
+      .tip .n { color: var(--ink); font-variant-numeric: tabular-nums; }
+      .tip .st { margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--line); }
+
+      .side { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fff; }
+      .side h3 { margin: 0 0 4px; font-size: 14.5px; color: var(--ink); }
+      .side .sub { color: var(--muted); font-size: 12px; margin: 0 0 10px; line-height: 1.45; }
+      .side .field input[type=text] { width: 100%; }
+      .side hr { border: 0; border-top: 1px solid var(--line); margin: 16px 0 14px; }
+      .rt-head { margin: 12px 0 2px; color: var(--ink); font-weight: 600; font-size: 13.5px; }
+      .rt-dist { font-size: 12.5px; color: var(--text); margin: 0 0 6px; font-variant-numeric: tabular-nums; }
+      .rt-wind { font-size: 12px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 6px; padding: 5px 8px; margin: 6px 0 8px; line-height: 1.45; }
+      .rt-ac { margin-top: 10px; }
+      .rt-ac > b { font-size: 12.5px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+      .rt-row { display: grid; grid-template-columns: 18px 1fr; gap: 2px 6px; padding: 6px 0; border-top: 1px solid #f0f0f0; font-size: 12.5px; line-height: 1.45; }
+      .rt-row:first-of-type { border-top: 0; }
+      .rt-row .ic { font-weight: 700; text-align: center; }
+      .rt-row .ic.ok { color: var(--ok); } .rt-row .ic.bad { color: var(--bad); } .rt-row .ic.mid { color: #b7791f; }
+      .rt-row .dir { color: var(--muted); font-size: 11.5px; }
+      .rt-row .res { color: var(--ink); }
+      .rt-rwy { font-size: 12px; color: var(--muted); margin-top: 8px; }
+      .rt-rwy b { color: var(--ink); font-weight: 500; }
+      .side ol { margin: 0; padding: 0; list-style: none; }
+      .side li {
+        display: grid; grid-template-columns: 1fr auto; gap: 6px;
+        padding: 6px 0; border-top: 1px solid #f0f0f0; font-size: 12.5px; cursor: pointer;
+      }
+      .side li:hover .pr { color: var(--link); }
+      .side .pr { color: var(--ink); }
+      .side .pr small { display: block; color: var(--muted); font-size: 11px; }
+      .side .px { color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; }
+      .side .px small { display: block; color: var(--muted); font-size: 11px; }
+
+      /* ── Payload-range chart ── */
+      .prc { margin-top: 18px; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px 16px 8px; }
+      .prc-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+      .prc-head h3 { margin: 0; font-size: 15px; color: var(--ink); }
+      .prc-head span { color: var(--muted); font-size: 12px; }
+      #chart { display: block; width: 100%; height: auto; margin-top: 6px; }
+      #chart .ax text { font-size: 11px; fill: var(--muted); }
+      #chart .ax path, #chart .ax line { stroke: #d9d9d9; }
+      #chart .grid line { stroke: #f0f0f0; }
+      #chart .ax-t { font-size: 11px; fill: var(--muted); }
+      #chart .curve { fill: none; stroke-width: 2.2; }
+      #chart .area { opacity: .08; }
+      #chart .guide { stroke-width: 1.2; }
+      #chart .guide.dash { stroke-dasharray: 5 4; }
+      #chart .glab { font-size: 11px; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+      #chart .corner { font-size: 10.5px; fill: var(--muted); paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+      #chart .route { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 3; }
+      #chart .rlab { font-size: 11px; fill: var(--ink); paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+      #chart .drop { stroke-width: 2; }
+      .prc-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 11.5px; color: var(--text); padding: 6px 0 4px; border-top: 1px solid var(--line); margin-top: 4px; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 860px; }
+      .method h3 { font-size: 14px; margin: 0 0 8px; }
+      .method h4 { font-size: 13px; margin: 18px 0 6px; color: var(--ink); }
+      .method p { margin: 0 0 8px; }
+      .method .formula-box { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; margin: 6px 0 10px; line-height: 1.7; overflow-x: auto; white-space: nowrap; }
+      .method ul { margin: 0 0 8px; padding-left: 18px; }
+      .method li { margin-bottom: 4px; }
+      .src-wrap { overflow-x: auto; margin: 6px 0 10px; }
+      table.src { font-size: 12px; min-width: 760px; }
+      table.src th, table.src td { font-size: 12px; padding: 6px 8px; }
+      table.src th:first-child, table.src td:first-child { padding-left: 0; }
+      table.src td.num, table.src th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.src td.s { font-size: 11.5px; color: var(--muted); }
+      table.src td.s a { white-space: normal; }
+
+      @media (max-width: 980px) { .stage { grid-template-columns: 1fr; } }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        .pick { gap: 10px; }
+        .pick .field { flex: 1 1 100%; }
+        #ac, #cmp, #from { width: 100%; }
+        .pick .swap { flex: 1 1 100%; }
+        .controls { gap: 10px 16px; }
+        .ctl { flex-wrap: wrap; }
+        .ctl input[type=range] { width: 140px; }
+        .zoom-hint { display: none; }
+      }
+    </style>
+
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>20</b> tools · <b>7</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Aircraft range map</h2>
+        <p class="lede">Where can an aircraft fly nonstop from a given airport, and how many passengers can it take?</p>
+        <p>Pick an aircraft and a departure airport. The rings show how far it flies with every seat full and with a lighter load; each airport is coloured by what it takes to get there and back, including headwinds on transatlantic and transpacific return flights. Compare two aircraft to see which cities one opens up that the other can't. Ranges come from a simple model calibrated on the manufacturers' published figures, so treat the edges of each ring as approximate (see <a href="#how">How it works</a>). To see which aircraft airlines actually fly, open the <a href="fleettracker.html">fleet tracker</a>.</p>
+        <div class="stamp" id="stamp"></div>
+      </div>
+
+      <div class="pick">
+        <label class="field"><span>Aircraft</span><select id="ac"></select></label>
+        <label class="field"><span>From</span><input id="from" type="text" list="ap-list" autocomplete="off" spellcheck="false" placeholder="Airport code or city"></label>
+        <label class="field"><span>Compare with</span><select id="cmp"></select></label>
+        <button type="button" class="swap" id="swap" title="Swap the two aircraft" hidden>⇄ Swap</button>
+      </div>
+      <datalist id="ap-list"></datalist>
+
+      <div class="controls">
+        <div class="ctl"><label class="lbl" for="red">Reduced payload</label><input id="red" type="range" min="40" max="95" step="5" value="80"><output id="red-o" for="red"></output></div>
+        <div class="ctl"><label class="lbl" for="wind">Westbound headwind penalty</label><input id="wind" type="range" min="0" max="20" step="1" value="8"><output id="wind-o" for="wind"></output></div>
+        <div class="ctl"><span class="lbl">Runway at least</span><div class="chips" id="rwy"></div></div>
+        <div class="ctl"><span class="lbl">Airports</span><div class="chips" id="size"></div></div>
+      </div>
+
+      <div class="tiles" id="tiles"></div>
+
+      <div class="stage">
+        <div class="map-wrap" id="map-wrap">
+          <div class="loading" id="loading">Loading map…</div>
+          <div class="zoom-hint" id="zoom-hint" hidden>Scroll or pinch to zoom · click an airport to check the route</div>
+          <div class="zoom-ctl" id="zoom-ctl" hidden>
+            <button type="button" id="zin" aria-label="Zoom in">+</button>
+            <button type="button" id="zout" aria-label="Zoom out">−</button>
+            <button type="button" class="reset" id="zreset" aria-label="Reset zoom">⟲</button>
+          </div>
+          <div class="tip" id="tip"></div>
+          <div class="map-legend" id="legend"></div>
+        </div>
+        <aside class="side" id="side">
+          <h3>Route checker</h3>
+          <p class="sub">Pick a destination, or click an airport on the map.</p>
+          <label class="field"><span>To</span><input id="to" type="text" list="ap-list" autocomplete="off" spellcheck="false" placeholder="Airport code or city"></label>
+          <div id="route"></div>
+          <hr>
+          <div id="list"></div>
+        </aside>
+      </div>
+
+      <div class="prc">
+        <div class="prc-head"><h3 id="prc-title">Payload-range</h3><span id="prc-sub"></span></div>
+        <svg id="chart" role="img" aria-label="Payload-range chart"></svg>
+        <div class="prc-legend" id="prc-legend"></div>
+      </div>
+
+      <div class="method" id="how">
+        <h3>How it works</h3>
+        <h4>The model</h4>
+        <p>Manufacturers publish payload-range charts in their airport planning documents, but only as pictures, and their headline range is a single point on that curve: a given number of passengers, typical reserves, no wind. This page rebuilds the whole curve from public weights with the Breguet range equation, the textbook relation between the fuel burned and the distance flown, and calibrates it so that it passes exactly through the manufacturer's published range.</p>
+        <div class="formula-box">
+          ZFW = OEW + payload &nbsp;&nbsp;(payload ≤ MZFW − OEW)<br>
+          TOW = min(MTOW, ZFW + fuel capacity)<br>
+          Range(payload) = K × ln( TOW / (ZFW × 1.05) )<br>
+          K is set so that Range(seats × 95 kg) = the published range
+        </div>
+        <p>OEW is the operating empty weight, ZFW the zero-fuel weight, MZFW its structural maximum, TOW the take-off weight and MTOW its maximum. The 1.05 keeps 5% of the zero-fuel weight as reserve fuel on landing, roughly what contingency, diversion and holding fuel add up to. K bundles cruise speed, aerodynamic efficiency and engine fuel burn into one number per aircraft. The curve has the usual three parts: at short range the payload is capped by the structure (MZFW), then fuel is traded for payload at MTOW, and once the tanks are full the aircraft can only go further by carrying less.</p>
+        <p><b>Full passengers</b> means every seat of the layout behind the manufacturer's range figure, at 95 kg per passenger with bags (102 kg for the Dash 8-400, as De Havilland states). <b>Reduced payload</b> is the share of that payload set with the slider. For any distance, the page finds the largest payload whose range reaches it and converts it back to passengers; with full passengers and range to spare, the difference up to the structural limit is room for cargo.</p>
+        <h4>Distances and winds</h4>
+        <p>Distances are great-circle distances on a sphere (radius 6,371 km). On this azimuthal equidistant map, centred on the departure airport, every straight line from the centre is a great circle and every distance from the centre is true to scale, so a range ring is a circle. Airports come from <a href="https://ourairports.com/data/" target="_blank" rel="noopener">OurAirports</a> (public domain, the same source as the fleet tracker): large and medium airports with an IATA code and scheduled service, with the length of their longest open, paved runway.</p>
+        <p><b>Winds</b> are a deliberately rough approximation. The jet stream blows from west to east, so on routes between North America and Europe, Africa or the Middle East (transatlantic), or between North America and Asia or Oceania (transpacific), the westbound flight's range is cut by the percentage you set (8% by default, about a 40-knot average headwind at a 480-knot cruise). Eastbound flights get no tailwind credit, which is on the safe side. The rings on the map are still-air ranges; the airport colours include the wind. Other routes, including transcontinental flights within North America and Europe–Asia, are treated as still air.</p>
+        <h4>Aircraft data</h4>
+        <p>Per type: the weights used, the published range the model is calibrated on, and where each figure comes from (sources consulted in September 2026). Empty weights marked * are typical public estimates: each airline's cabin, galleys and seats change them by a few tonnes, which moves the whole curve.</p>
+        <div class="src-wrap"><table class="src" id="src"></table></div>
+        <h4>Limitations</h4>
+        <ul>
+          <li>This is a planning sketch, not flight planning. Real payload-range comes from the operator's own weights, the engine and weight variant, and the airline's fuel policy.</li>
+          <li>Published ranges aren't always consistent with each other. Brochures use different seat counts, and Boeing now markets longer "up to" ranges for the 787 and 777-9 at new weights; the notes in the table say which figure is used.</li>
+          <li>No take-off or landing performance: a short runway, a hot day or a high airport can limit take-off weight well before range does. The runway filter only hides airports below a length; it doesn't compute what the aircraft needs.</li>
+          <li>No ETOPS, overflight or airspace restrictions, no maximum landing weight check, and real routings are 2–5% longer than the great circle.</li>
+          <li>The A321XLR's MZFW isn't published on Airbus's product page, so the A321neo family value is used. The 737-10 and 777-9 were still being certified in 2026, so their figures are Boeing's targets.</li>
+        </ul>
+        <p>More on how aircraft performance shapes a network in <a href="np101.html#ch07">Network Planning 101, Chapter 07: Real-World Constraints (Aircraft performance)</a>, and on choosing between types in <a href="np101.html#ch08">Chapter 08: Fleet Planning</a>. The <a href="fleettracker.html">fleet tracker</a> shows where these aircraft are flying right now. This is a personal project and isn't affiliated with any airline or manufacturer.</p>
+      </div>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    (function () {
+      "use strict";
+      var AC_URL = "assets/data/rangemap-aircraft.json";
+      var AP_URL = "assets/data/rangemap-airports.json";
+      var LAND_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json";
+
+      var NM = 1.852, RE = 6371.0088;
+      var RWY = [0, 1500, 1800, 2500, 3000];
+      var DEF = { ac: "A21N-XLR", vs: "", from: "YUL", to: "LCA", red: 80, wind: 8, rwy: 1800, size: "LM" };
+      // Label priority: the busiest airports worldwide, roughly in traffic order (labels only).
+      var MAJOR = ("ATL DXB DFW LHR HND DEN IST LAX ORD DEL CDG JFK CAN AMS FRA ICN MAD SIN PVG BKK CGK MEX BCN SFO SEA LAS MIA YYZ " +
+        "CLT MCO PHX EWR IAH DOH KUL BOM MUC FCO MNL LGW SYD HKG TPE NRT KIX PEK PKX AUH JED RUH CAI JNB NBO ADD LOS CMN ZRH VIE CPH " +
+        "OSL ARN HEL DUB LIS ATH WAW PRG BUD KEF BOS IAD PHL MSP DTW SLC SAN HNL YVR YUL YYC LIM SCL EZE GRU GIG BOG PTY CUN SJU BLR " +
+        "MAA CCU SGN HAN AKL BNE PER MEL TLV AMM BEY KWI MCT KHI DAC CMB CTU SZX XIY KMG ACC DSS ABJ ALG TUN LCA OTP SOF BEG SVO LED " +
+        "TAS ALA GYD TBS EVN ANC YEG YWG YHZ YOW YQB YYT GDL HAV SDQ MBJ BGI POS UIO CCS MVD LPB BSB SSA REC NAN PPT NOU DPS RGN KTM " +
+        "ISB LHE SEZ MRU TNR DAR EBB KGL LAD WDH CPT DUR MLE CEB FUK CTS OKA GUM MNL BWN PNH VTE ULN").split(" ");
+      var RANK = {}; MAJOR.forEach(function (c, i) { if (!(c in RANK)) RANK[c] = i; });
+
+      var $ = function (id) { return document.getElementById(id); };
+      var fmt = function (n) { return Math.round(n).toLocaleString("en-US"); };
+      var fmt1 = function (n) { return (Math.round(n * 10) / 10).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 }); };
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+      var D = null, AC = {}, ACL = [], AP = [], APX = {}, LAND = null;
+      var state = readHash();
+      var mobile = window.innerWidth < 720;
+
+      // ───────────────────────────── model ─────────────────────────────
+      function prep(a, paxKg, rf) {
+        a.paxKg = a.design.paxKg || paxKg;
+        a.seats = a.design.seats;
+        a.full = a.seats * a.paxKg;
+        a.msp = a.mzfw - a.oew;
+        a.rf = rf;
+        var zfw = a.oew + a.full, tow = Math.min(a.mtow, zfw + a.fuelKg);
+        a.K = a.design.rangeNm / Math.log(tow / (zfw * (1 + rf)));
+        a.ferry = rangeNm(a, 0);
+        a.rMsp = rangeNm(a, a.msp);
+      }
+      function rangeNm(a, p) {
+        var z = a.oew + p, t = Math.min(a.mtow, z + a.fuelKg);
+        return Math.max(0, a.K * Math.log(t / (z * (1 + a.rf))));
+      }
+      // Largest payload (kg) that reaches dNm; -1 if not even empty.
+      function maxPayload(a, dNm) {
+        if (dNm <= a.rMsp) return a.msp;
+        if (dNm > a.ferry) return -1;
+        var lo = 0, hi = a.msp;
+        for (var i = 0; i < 40; i++) { var m = (lo + hi) / 2; if (rangeNm(a, m) >= dNm) lo = m; else hi = m; }
+        return lo;
+      }
+      function reqRange(a, share) { return rangeNm(a, a.full * share); }
+
+      function gcKm(a, b) {
+        var r = Math.PI / 180, la1 = a[5] * r, la2 = b[5] * r, dl = (b[6] - a[6]) * r, dp = la2 - la1;
+        var h = Math.sin(dp / 2) * Math.sin(dp / 2) + Math.cos(la1) * Math.cos(la2) * Math.sin(dl / 2) * Math.sin(dl / 2);
+        return 2 * RE * Math.asin(Math.min(1, Math.sqrt(h)));
+      }
+      // Which side of an ocean crossing an airport is on (for the jet-stream adjustment).
+      function side(ap) {
+        var c = ap[4];
+        if (c === "NA") return "NA";
+        if (c === "EU" || c === "AF") return "ATL";
+        if (c === "AS") return ap[6] < 65 ? "ATL" : "PAC";
+        if (c === "OC") return "PAC";
+        return null;
+      }
+      // "W" (headwind), "E" (tailwind side) or null for the flight o -> d.
+      function windDir(o, d) {
+        var so = side(o), sd = side(d);
+        if (so === "NA" && sd === "ATL") return "E";
+        if (so === "ATL" && sd === "NA") return "W";
+        if (so === "NA" && sd === "PAC") return "W";
+        if (so === "PAC" && sd === "NA") return "E";
+        return null;
+      }
+      function crossing(o, d) {
+        var s = side(o) === "NA" ? side(d) : side(d) === "NA" ? side(o) : null;
+        return s === "ATL" ? "transatlantic" : s === "PAC" ? "transpacific" : null;
+      }
+      function effNm(dNm, dir) { return dir === "W" ? dNm / (1 - state.wind / 100) : dNm; }
+
+      // Class of destination x from origin o for aircraft a.
+      function classify(a, o, x, dNm) {
+        var e1 = effNm(dNm, windDir(o, x)), e2 = effNm(dNm, windDir(x, o));
+        var worse = Math.max(e1, e2), better = Math.min(e1, e2);
+        if (worse <= a.rFull) return "full";
+        if (better <= a.rFull) return "oneway";
+        if (better <= a.rRed) return "red";
+        return "out";
+      }
+
+      // ───────────────────────────── state / URL ─────────────────────────────
+      function readHash() {
+        var s = Object.assign({}, DEF);
+        try {
+          var q = new URLSearchParams(location.hash.slice(1));
+          ["ac", "vs", "from", "to", "size"].forEach(function (k) { if (q.has(k)) s[k] = q.get(k); });
+          ["red", "wind", "rwy"].forEach(function (k) { if (q.has(k) && isFinite(+q.get(k))) s[k] = +q.get(k); });
+        } catch (e) {}
+        return s;
+      }
+      function writeHash() {
+        var q = new URLSearchParams();
+        Object.keys(DEF).forEach(function (k) { if (String(state[k]) !== String(DEF[k])) q.set(k, state[k]); });
+        var h = q.toString();
+        try { history.replaceState(null, "", h ? "#" + h : location.pathname + location.search); } catch (e) {}
+      }
+
+      // ───────────────────────────── load ─────────────────────────────
+      function start() {
+        if (!window.d3 || !window.topojson) { setTimeout(start, 30); return; }
+        Promise.all([d3.json(AC_URL), d3.json(AP_URL), d3.json(LAND_URL).catch(function () { return null; })]).then(function (r) {
+          D = r[0];
+          D.aircraft.forEach(function (a) { prep(a, D.paxKg, D.reserveFrac); AC[a.id] = a; });
+          ACL = D.aircraft;
+          AP = r[1].airports; AP.forEach(function (a) { APX[a[0]] = a; });
+          if (r[2]) {
+            var w = r[2];
+            LAND = { land: topojson.feature(w, w.objects.land), borders: topojson.mesh(w, w.objects.countries, function (a, b) { return a !== b; }) };
+          }
+          $("stamp").textContent = ACL.length + " aircraft types · " + fmt(AP.length) + " airports from OurAirports (" + r[1].built + ") · aircraft data checked " + D.built;
+          if (!AC[state.ac]) state.ac = DEF.ac;
+          if (state.vs && !AC[state.vs]) state.vs = "";
+          if (!APX[state.from]) state.from = DEF.from;
+          if (state.to && !APX[state.to]) state.to = "";
+          buildControls();
+          buildSources();
+          initMap();
+          render();
+        }).catch(function (e) {
+          $("loading").textContent = "Couldn't load the data (" + e.message + ").";
+        });
+      }
+
+      function apLabel(a) { return a[0] + " · " + a[2] + (a[2] !== a[1] ? " (" + a[1] + ")" : ""); }
+      function parseAp(v) {
+        v = String(v || "").trim();
+        if (!v) return null;
+        var m = v.toUpperCase().match(/^([A-Z]{3})\b/);
+        if (m && APX[m[1]]) return m[1];
+        var low = v.toLowerCase(), best = null;
+        for (var i = 0; i < AP.length; i++) {
+          var a = AP[i];
+          if (a[2].toLowerCase() === low) { if (!best || (a[7] === "L" && best[7] !== "L") || (a[7] === best[7] && a[8] > best[8])) best = a; }
+        }
+        if (!best) for (var j = 0; j < AP.length; j++) { if (AP[j][2].toLowerCase().indexOf(low) === 0 || AP[j][1].toLowerCase().indexOf(low) >= 0) { best = AP[j]; break; } }
+        return best ? best[0] : null;
+      }
+
+      function buildControls() {
+        var groups = d3.group(ACL, function (a) { return a.class; });
+        function fill(sel, withNone) {
+          sel.innerHTML = "";
+          if (withNone) { var o = document.createElement("option"); o.value = ""; o.textContent = "No comparison"; sel.appendChild(o); }
+          groups.forEach(function (list, cls) {
+            var g = document.createElement("optgroup"); g.label = cls;
+            list.forEach(function (a) { var o = document.createElement("option"); o.value = a.id; o.textContent = a.maker === "De Havilland Canada" ? "Dash 8-400" : a.maker + " " + a.name; g.appendChild(o); });
+            sel.appendChild(g);
+          });
+        }
+        fill($("ac"), false); fill($("cmp"), true);
+        $("ac").value = state.ac; $("cmp").value = state.vs;
+        $("ac").addEventListener("change", function () { state.ac = this.value; if (state.vs === state.ac) { state.vs = ""; $("cmp").value = ""; } render(); });
+        $("cmp").addEventListener("change", function () { state.vs = this.value === state.ac ? "" : this.value; this.value = state.vs; render(); });
+        $("swap").addEventListener("click", function () { if (!state.vs) return; var t = state.ac; state.ac = state.vs; state.vs = t; $("ac").value = state.ac; $("cmp").value = state.vs; render(); });
+
+        var dl = $("ap-list"), frag = document.createDocumentFragment();
+        AP.forEach(function (a) { var o = document.createElement("option"); o.value = apLabel(a); frag.appendChild(o); });
+        dl.appendChild(frag);
+        $("from").value = apLabel(APX[state.from]);
+        $("to").value = state.to ? apLabel(APX[state.to]) : "";
+        function apInput(el, key, allowEmpty) {
+          function commit() {
+            var c = parseAp(el.value);
+            if (!c && allowEmpty && !el.value.trim()) { state[key] = ""; render(); return; }
+            if (!c) { el.value = state[key] ? apLabel(APX[state[key]]) : ""; return; }
+            state[key] = c; el.value = apLabel(APX[c]); el.blur();
+            if (key === "from") { if (state.to === c) state.to = ""; resetZoom(); }
+            render();
+          }
+          el.addEventListener("change", commit);
+          el.addEventListener("keydown", function (e) { if (e.key === "Enter") commit(); });
+          el.addEventListener("focus", function () { el.select(); });
+        }
+        apInput($("from"), "from", false); apInput($("to"), "to", true);
+
+        $("red").value = state.red; $("wind").value = state.wind;
+        $("red").addEventListener("input", function () { state.red = +this.value; render(); });
+        $("wind").addEventListener("input", function () { state.wind = +this.value; render(); });
+
+        var rw = $("rwy");
+        RWY.forEach(function (m) {
+          var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.dataset.v = m;
+          b.textContent = m ? fmt(m) + " m" : "Any"; b.addEventListener("click", function () { state.rwy = m; render(); }); rw.appendChild(b);
+        });
+        [["L", "Large"], ["LM", "Large + medium"]].forEach(function (p) {
+          var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.dataset.v = p[0];
+          b.textContent = p[1]; b.addEventListener("click", function () { state.size = p[0]; render(); }); $("size").appendChild(b);
+        });
+      }
+
+      // ───────────────────────────── compute ─────────────────────────────
+      var CUR = null;
+      function compute() {
+        var A = AC[state.ac], B = state.vs ? AC[state.vs] : null, o = APX[state.from];
+        [A, B].forEach(function (a) { if (!a) return; a.rFull = a.design.rangeNm; a.rRed = reqRange(a, state.red / 100); });
+        var list = [];
+        for (var i = 0; i < AP.length; i++) {
+          var x = AP[i];
+          if (x === o) continue;
+          if (state.size === "L" && x[7] !== "L" && x[0] !== state.to) continue;
+          if (state.rwy && x[8] < state.rwy && x[0] !== state.to) continue;
+          var km = gcKm(o, x), nm = km / NM;
+          var r = { ap: x, km: km, nm: nm, a: classify(A, o, x, nm) };
+          if (B) r.b = classify(B, o, x, nm);
+          list.push(r);
+        }
+        CUR = { A: A, B: B, o: o, list: list };
+        return CUR;
+      }
+      function cmpClass(r) {
+        var a = r.a === "full", b = r.b === "full";
+        return a && b ? "both" : a ? "onlyA" : b ? "onlyB" : "none";
+      }
+      var COL = { full: "var(--a)", oneway: "var(--oneway)", red: "var(--a-light)", out: "var(--out)", both: "var(--both)", onlyA: "var(--a)", onlyB: "var(--b)", none: "var(--out)" };
+      var ORDER = { out: 0, none: 0, red: 1, oneway: 2, both: 2, full: 3, onlyB: 3, onlyA: 4 };
+
+      // ───────────────────────────── render ─────────────────────────────
+      function render() {
+        if (!D) return;
+        var C = compute();
+        $("red-o").textContent = state.red + "%";
+        $("wind-o").textContent = "−" + state.wind + "%";
+        d3.selectAll("#rwy .chip").classed("on", function () { return +this.dataset.v === state.rwy; });
+        d3.selectAll("#size .chip").classed("on", function () { return this.dataset.v === state.size; });
+        $("swap").hidden = !C.B;
+        renderTiles(C); renderLegend(C); drawMap(C); renderRoute(C); renderList(C); drawChart(C);
+        writeHash();
+      }
+
+      function acName(a) { return a.name; }
+      function kmNm(km) { return fmt(km) + " km · " + fmt(km / NM) + " nm"; }
+
+      function renderTiles(C) {
+        var A = C.A, B = C.B, h = "";
+        function tile(big, small) { h += '<div class="tile"><b>' + big + "</b><span>" + small + "</span></div>"; }
+        if (!B) {
+          var n = { full: 0, oneway: 0, red: 0 };
+          C.list.forEach(function (r) { if (r.a in n) n[r.a]++; });
+          tile(fmt(A.rFull * NM) + " km", fmt(A.rFull) + " nm with " + A.seats + " passengers (full)");
+          tile(fmt(n.full), '<i class="key" style="--c:var(--a)"></i>airports with full passengers, both ways');
+          tile(fmt(n.oneway), '<i class="key" style="--c:var(--oneway)"></i>full passengers one way only (headwinds)');
+          tile(fmt(n.red), '<i class="key" style="--c:var(--a-light)"></i>only with a reduced payload (' + state.red + "%)");
+        } else {
+          var m = { both: 0, onlyA: 0, onlyB: 0 };
+          C.list.forEach(function (r) { var c = cmpClass(r); if (c in m) m[c]++; });
+          tile(fmt(A.rFull * NM) + " km", '<i class="key ring" style="--c:var(--a)"></i>' + A.name + ", " + A.seats + " passengers");
+          tile(fmt(B.rFull * NM) + " km", '<i class="key ring" style="--c:var(--b)"></i>' + B.name + ", " + B.seats + " passengers");
+          tile(fmt(m.onlyA), '<i class="key" style="--c:var(--a)"></i>airports only the ' + A.name + " reaches with full passengers");
+          tile(fmt(m.onlyB), '<i class="key" style="--c:var(--b)"></i>airports only the ' + B.name + " reaches" + (m.both ? " · " + fmt(m.both) + " both" : ""));
+        }
+        $("tiles").innerHTML = h;
+      }
+
+      function renderLegend(C) {
+        var h = "";
+        function g(s) { h += '<span class="grp">' + s + "</span>"; }
+        g('<i class="key" style="--c:var(--ink)"></i>' + esc(C.o[2]) + " (" + C.o[0] + ")");
+        if (!C.B) {
+          g('<i class="key ring" style="--c:var(--a)"></i>Full passengers');
+          g('<i class="key ring dash" style="--c:var(--a)"></i>Reduced payload (' + state.red + "%)");
+          g('<i class="key" style="--c:var(--a)"></i>Both ways');
+          g('<i class="key" style="--c:var(--oneway)"></i>One way only');
+          g('<i class="key" style="--c:var(--a-light)"></i>Reduced payload');
+        } else {
+          g('<i class="key ring" style="--c:var(--a)"></i>' + C.A.name);
+          g('<i class="key ring" style="--c:var(--b)"></i>' + C.B.name);
+          g('<i class="key" style="--c:var(--both)"></i>Both, full passengers');
+          g('<i class="key" style="--c:var(--a)"></i>Only ' + C.A.name);
+          g('<i class="key" style="--c:var(--b)"></i>Only ' + C.B.name);
+        }
+        g('<i class="key" style="--c:var(--out)"></i>Out of range');
+        g('<span style="color:var(--muted)">Rings are still air; colours include winds</span>');
+        $("legend").innerHTML = h;
+      }
+
+      // ───────────────────────────── map ─────────────────────────────
+      var svg, gW, gRings, gDots, gLab, gHot, zoom, proj, path, W, H, zk = 1, drawn = [], delaunay = null, lastKey = "";
+      function initMap() {
+        $("loading").remove();
+        W = mobile ? 600 : 960; H = mobile ? 620 : 600;
+        svg = d3.select("#map-wrap").insert("svg", "#tip").attr("id", "map").attr("viewBox", [0, 0, W, H]).attr("role", "img")
+          .attr("aria-label", "Range map centred on the departure airport");
+        svg.append("rect").attr("class", "bg").attr("width", W).attr("height", H);
+        gW = svg.append("g");
+        gW.append("path").attr("class", "sphere");
+        gW.append("path").attr("class", "grat");
+        gW.append("path").attr("class", "land");
+        gW.append("path").attr("class", "borders");
+        gRings = gW.append("g");
+        gW.append("path").attr("class", "gc");
+        gDots = gW.append("g");
+        gHot = gW.append("g");
+        gLab = gW.append("g");
+        zoom = d3.zoom().scaleExtent([1, 16]).translateExtent([[-W * .5, -H * .5], [W * 1.5, H * 1.5]])
+          .on("zoom", function (ev) {
+            zk = ev.transform.k; gW.attr("transform", ev.transform);
+            gDots.selectAll("circle").attr("r", function (d) { return d.r / zk; });
+            gHot.selectAll("circle").attr("r", function () { return 7 / zk; });
+            gLab.selectAll("text").attr("font-size", (mobile ? 18 : 11) / zk).attr("stroke-width", 3 / zk);
+            gRings.selectAll("text").attr("font-size", (mobile ? 16 : 11) / zk).attr("stroke-width", 3 / zk);
+          })
+          .on("end", function () { placeLabels(); });
+        // On phones one finger scrolls the page and two fingers zoom the map (plus the buttons).
+        zoom.filter(function (ev) { return ev.type.indexOf("touch") === 0 ? ev.touches.length > 1 : (!ev.ctrlKey || ev.type === "wheel") && !ev.button; });
+        svg.call(zoom).on("dblclick.zoom", null);
+        if (mobile) svg.style("touch-action", "pan-y");
+        $("zoom-ctl").hidden = false; $("zoom-hint").hidden = false;
+        $("zin").onclick = function () { svg.transition().duration(250).call(zoom.scaleBy, 1.6); };
+        $("zout").onclick = function () { svg.transition().duration(250).call(zoom.scaleBy, 1 / 1.6); };
+        $("zreset").onclick = resetZoom;
+        svg.on("pointermove", function (ev) { hover(ev, false); })
+          .on("pointerleave", function () { $("tip").style.display = "none"; gHot.selectAll("*").remove(); })
+          .on("click", function (ev) { var r = hover(ev, true); if (r) { state.to = r.ap[0]; $("to").value = apLabel(r.ap); render(); } });
+      }
+      function resetZoom() { if (svg) svg.call(zoom.transform, d3.zoomIdentity); }
+
+      function drawMap(C) {
+        var A = C.A, B = C.B, o = C.o;
+        var rings = [{ a: A, nm: A.rFull, dash: false, col: "var(--a)", lab: A.name + " · full" }, { a: A, nm: A.rRed, dash: true, col: "var(--a)", lab: state.red + "%" }];
+        if (B) rings.push({ a: B, nm: B.rFull, dash: false, col: "var(--b)", lab: B.name + " · full" }, { a: B, nm: B.rRed, dash: true, col: "var(--b)", lab: state.red + "%" });
+        var maxKm = d3.max(rings, function (r) { return r.nm * NM; });
+        var theta = Math.min(Math.PI * 0.999, 1.18 * maxKm / RE);
+        var s = (Math.min(W, H) / 2 - 14) / theta;
+        var key = o[0] + "|" + Math.round(s);
+        proj = d3.geoAzimuthalEquidistant().rotate([-o[6], -o[5]]).translate([W / 2, H / 2]).scale(s).clipAngle(179.9).precision(0.4);
+        path = d3.geoPath(proj);
+        if (key !== lastKey) {
+          lastKey = key;
+          gW.select(".sphere").attr("d", path({ type: "Sphere" }));
+          gW.select(".grat").attr("d", path(d3.geoGraticule10()));
+          if (LAND) { gW.select(".land").attr("d", path(LAND.land)); gW.select(".borders").attr("d", path(LAND.borders)); }
+        }
+        // Rings: in this projection a range ring is a circle of radius s × angle.
+        var rs = gRings.selectAll("g.r").data(rings).join(function (e) { var g = e.append("g").attr("class", "r"); g.append("circle").attr("class", "ring"); g.append("text").attr("class", "ring-lab"); return g; });
+        rs.select("circle").attr("cx", W / 2).attr("cy", H / 2).attr("r", function (r) { return s * r.nm * NM / RE; })
+          .attr("stroke", function (r) { return r.col; }).classed("dash", function (r) { return r.dash; });
+        rs.select("text").attr("x", W / 2).attr("text-anchor", "middle")
+          .attr("y", function (r, i) { var rr = s * r.nm * NM / RE; return H / 2 - rr + (r.dash ? -4 : 12); })
+          .attr("fill", function (r) { return r.col; }).attr("font-size", (mobile ? 16 : 11) / zk).attr("stroke-width", 3 / zk)
+          .text(function (r) { return r.lab + " · " + fmt(r.nm * NM) + " km"; })
+          .attr("display", function (r, i) {
+            var rr = s * r.nm * NM / RE;
+            if (rr > H / 2 - 4) return "none";
+            // Drop the dashed ring's label when it would sit on top of the solid one.
+            if (r.dash) { var full = rings[i - 1], rf = s * full.nm * NM / RE; if ((H / 2 - rf + 12) - (H / 2 - rr - 4) < (mobile ? 22 : 15)) return "none"; }
+            return null;
+          });
+
+        // Great circle to the destination.
+        var dst = state.to ? APX[state.to] : null;
+        gW.select(".gc").attr("d", dst ? path({ type: "LineString", coordinates: [[o[6], o[5]], [dst[6], dst[5]]] }) : null);
+
+        // Airports.
+        drawn = [];
+        C.list.forEach(function (r) {
+          var p = proj([r.ap[6], r.ap[5]]);
+          if (!p || p[0] < -20 || p[0] > W + 20 || p[1] < -20 || p[1] > H + 20) return;
+          r.x = p[0]; r.y = p[1];
+          r.c = B ? cmpClass(r) : r.a;
+          r.r = r.c === "out" || r.c === "none" ? 1.3 : r.ap[7] === "L" ? 2.7 : 1.9;
+          drawn.push(r);
+        });
+        drawn.sort(function (a, b) { return ORDER[a.c] - ORDER[b.c] || (a.ap[7] === "L") - (b.ap[7] === "L"); });
+        gDots.selectAll("circle.ap").data(drawn, function (d) { return d.ap[0]; }).join("circle")
+          .attr("class", function (d) { return "ap" + (d.c === "out" || d.c === "none" ? " out" : ""); })
+          .attr("cx", function (d) { return d.x; }).attr("cy", function (d) { return d.y; }).attr("r", function (d) { return d.r / zk; })
+          .attr("fill", function (d) { return COL[d.c]; })
+          .order();
+        var op = proj([o[6], o[5]]);
+        var marks = [{ x: op[0], y: op[1], r: 5.5, cls: "origin" }];
+        if (dst) { var dp = proj([dst[6], dst[5]]); if (dp) marks.push({ x: dp[0], y: dp[1], r: 5, cls: "dest" }); }
+        gDots.selectAll("circle.mk").data(marks).join("circle").attr("class", function (d) { return "mk " + d.cls; })
+          .attr("cx", function (d) { return d.x; }).attr("cy", function (d) { return d.y; }).attr("r", function (d) { return d.r / zk; }).raise();
+        delaunay = d3.Delaunay.from(drawn, function (d) { return d.x; }, function (d) { return d.y; });
+        placeLabels();
+      }
+
+      function placeLabels() {
+        if (!CUR || !proj) return;
+        var t = d3.zoomTransform(svg.node()), k = t.k;
+        var fs = mobile ? 18 : 11, cw = fs * 0.62;
+        var o = CUR.o, dst = state.to ? APX[state.to] : null;
+        var cands = [];
+        function push(ap, pri, big) { var p = proj([ap[6], ap[5]]); if (p) cands.push({ ap: ap, x: p[0], y: p[1], pri: pri, big: big }); }
+        push(o, -2, true);
+        if (dst) push(dst, -1, true);
+        drawn.forEach(function (r) {
+          if (r.ap === dst) return;
+          var rk = RANK[r.ap[0]];
+          var edge = CUR.B ? (r.c === "onlyA" || r.c === "onlyB") : (r.c === "oneway" || r.c === "red");
+          var zoomedIn = k >= 2.5 && (r.ap[7] === "L" || k >= 6);
+          if (rk === undefined && !(edge && r.ap[7] === "L") && !zoomedIn) return;
+          var pri = (rk === undefined ? (edge && r.ap[7] === "L" ? 400 : 900) : rk) + (edge ? 0 : 250) + (r.c === "out" || r.c === "none" ? 500 : 0);
+          cands.push({ ap: r.ap, x: r.x, y: r.y, pri: pri });
+        });
+        cands.sort(function (a, b) { return a.pri - b.pri; });
+        var boxes = [], out = [], cities = {}, max = (mobile ? 22 : 45) * (k >= 2.5 ? 2 : 1);
+        for (var i = 0; i < cands.length && out.length < max; i++) {
+          var c = cands[i], sx = c.x * k + t.x, sy = c.y * k + t.y;
+          if (sx < 0 || sx > W || sy < 0 || sy > H) continue;
+          var city = c.ap[2];
+          if (cities[city] && c.pri >= 0) continue;
+          var w = city.length * cw + 8, h = fs + 4, placed = null;
+          [[7, -h / 2, "start"], [-7 - w, -h / 2, "end"], [-w / 2, -h - 5, "middle"], [-w / 2, 6, "middle"]].some(function (pos) {
+            var bx = { x: sx + pos[0], y: sy + pos[1], w: w, h: h };
+            if (bx.x < 2 || bx.x + bx.w > W - (mobile ? 64 : 44) || bx.y < 2 || bx.y + bx.h > H - 2) return false;
+            for (var j = 0; j < boxes.length; j++) { var b = boxes[j]; if (bx.x < b.x + b.w && bx.x + bx.w > b.x && bx.y < b.y + b.h && bx.y + bx.h > b.y) return false; }
+            placed = { bx: bx, anchor: pos[2], dx: pos[0], dy: pos[1] }; return true;
+          });
+          if (!placed) continue;
+          boxes.push(placed.bx); cities[city] = 1;
+          var tx = placed.anchor === "start" ? sx + 7 : placed.anchor === "end" ? sx - 7 : sx;
+          var ty = placed.bx.y + fs - 1;
+          out.push({ city: city, big: c.big, x: (tx - t.x) / k, y: (ty - t.y) / k, anchor: placed.anchor });
+        }
+        gLab.selectAll("text").data(out).join("text").attr("class", function (d) { return "lab" + (d.big ? " big" : ""); })
+          .attr("x", function (d) { return d.x; }).attr("y", function (d) { return d.y; }).attr("text-anchor", function (d) { return d.anchor; })
+          .attr("font-size", fs / k).attr("stroke-width", 3 / k).text(function (d) { return d.city; });
+      }
+
+      function statusText(a, cls) {
+        return { full: "Full passengers both ways", oneway: "Full passengers one way only", red: "Only with a reduced payload", out: "Out of range at " + state.red + "% payload" }[cls];
+      }
+      function hover(ev, click) {
+        if (!delaunay || !drawn.length) return null;
+        var pt = d3.pointer(ev, gW.node());
+        var i = delaunay.find(pt[0], pt[1]);
+        var r = drawn[i];
+        var dx = (r.x - pt[0]) * zk, dy = (r.y - pt[1]) * zk;
+        var tip = $("tip");
+        if (dx * dx + dy * dy > (mobile || click ? 400 : 196)) { tip.style.display = "none"; gHot.selectAll("*").remove(); return null; }
+        gHot.selectAll("circle").data([r]).join("circle").attr("class", "hot").attr("cx", r.x).attr("cy", r.y).attr("r", 7 / zk);
+        if (click && mobile) { tip.style.display = "none"; return r; }
+        var h = '<div class="t">' + esc(r.ap[2]) + " (" + r.ap[0] + ")</div><div>" + esc(r.ap[1]) + "</div>" +
+          '<div class="n">' + kmNm(r.km) + "</div>" +
+          '<div style="color:var(--muted)">Longest runway ' + (r.ap[8] ? fmt(r.ap[8]) + " m" : "not recorded") + "</div>";
+        h += '<div class="st"><b>' + CUR.A.name + ":</b> " + statusText(CUR.A, r.a) + "</div>";
+        if (CUR.B) h += "<div><b>" + CUR.B.name + ":</b> " + statusText(CUR.B, r.b) + "</div>";
+        h += '<div style="color:var(--muted);margin-top:4px">Click to check this route</div>';
+        tip.innerHTML = h; tip.style.display = "block";
+        var wrap = $("map-wrap").getBoundingClientRect(), x = ev.clientX - wrap.left, y = ev.clientY - wrap.top;
+        var tw = tip.offsetWidth, th = tip.offsetHeight;
+        tip.style.left = Math.max(6, Math.min(wrap.width - tw - 6, x + 14)) + "px";
+        tip.style.top = Math.max(6, y + th + 20 > wrap.height ? y - th - 12 : y + 14) + "px";
+        return r;
+      }
+
+      // ───────────────────────────── route checker ─────────────────────────────
+      function legs(C, a, o, d, nm) {
+        return [[o, d], [d, o]].map(function (p) {
+          var dir = windDir(p[0], p[1]), e = effNm(nm, dir), mp = maxPayload(a, e);
+          var pax = mp < 0 ? -1 : Math.min(a.seats, Math.floor(mp / a.paxKg + 1e-6));
+          return { from: p[0], to: p[1], dir: dir, eff: e, mp: mp, pax: pax };
+        });
+      }
+      function renderRoute(C) {
+        var el = $("route"), d = state.to ? APX[state.to] : null;
+        if (!d) { el.innerHTML = '<p class="sub" style="margin-top:10px">No destination selected.</p>'; return; }
+        var o = C.o, km = gcKm(o, d), nm = km / NM, cr = crossing(o, d);
+        var h = '<div class="rt-head">' + esc(o[2]) + " (" + o[0] + ") ⇄ " + esc(d[2]) + " (" + d[0] + ")</div>";
+        h += '<div class="rt-dist">' + kmNm(km) + " great circle</div>";
+        if (cr) {
+          var westTo = windDir(o, d) === "W" ? d : o;
+          h += '<div class="rt-wind">' + cr.charAt(0).toUpperCase() + cr.slice(1) + ": flying west to " + esc(westTo[2]) + " into the jet stream, range is cut by " + state.wind + "%, as if the flight were " + fmt(km / (1 - state.wind / 100)) + " km.</div>";
+        }
+        [C.A, C.B].forEach(function (a, ai) {
+          if (!a) return;
+          h += '<div class="rt-ac"><b><i class="key ring" style="--c:var(--' + (ai ? "b" : "a") + ')"></i>' + a.maker + " " + a.name + " · " + a.seats + " seats</b>";
+          legs(C, a, o, d, nm).forEach(function (L) {
+            var ic, res, dirTxt = L.dir === "W" ? "westbound, headwind" : L.dir === "E" ? "eastbound" : "";
+            if (L.mp < 0) { ic = '<span class="ic bad">✕</span>'; res = "Out of range, even empty (ferry range " + fmt(a.ferry * NM) + " km)"; }
+            else if (L.pax >= a.seats) {
+              ic = '<span class="ic ok">✓</span>';
+              var spare = L.mp - a.full;
+              res = "Full passengers (" + a.seats + ")" + (spare >= 100 ? ", plus up to " + fmt1(spare / 1000) + " t of cargo" : "");
+            } else {
+              var lost = a.seats - L.pax;
+              ic = '<span class="ic ' + (L.pax >= a.seats / 4 ? "mid" : "bad") + '">' + (L.pax >= a.seats / 4 ? "!" : "✕") + "</span>";
+              res = L.pax >= a.seats / 4 ? "Payload limited to " + fmt1(L.mp / 1000) + " t: " + L.pax + " passengers, " + lost + " fewer (−" + Math.round(100 * lost / a.seats) + "%)"
+                : "Only " + fmt1(L.mp / 1000) + " t of payload (" + Math.max(0, L.pax) + " passengers): not a realistic passenger route";
+            }
+            h += '<div class="rt-row">' + ic + '<div><div class="dir">' + L.from[0] + " → " + L.to[0] + (dirTxt ? " · " + dirTxt : "") + '</div><div class="res">' + res + "</div></div></div>";
+          });
+          h += "</div>";
+        });
+        h += '<div class="rt-rwy">Longest runway: ' + o[0] + " <b>" + (o[8] ? fmt(o[8]) + " m" : "n/a") + "</b> · " + d[0] + " <b>" + (d[8] ? fmt(d[8]) + " m" : "n/a") + "</b></div>";
+        el.innerHTML = h;
+      }
+
+      function renderList(C) {
+        var el = $("list"), rows, title, sub;
+        var big = function (r) { return r.ap[7] === "L"; };
+        if (C.B) {
+          rows = C.list.filter(function (r) { return cmpClass(r) === "onlyA"; });
+          var rowsB = C.list.filter(function (r) { return cmpClass(r) === "onlyB"; });
+          if (!rows.length && rowsB.length) { rows = rowsB; title = "Only the " + C.B.name + " reaches"; }
+          else title = "Opened up by the " + C.A.name;
+          sub = "Airports one aircraft reaches with full passengers both ways and the other doesn't. Largest airports first, nearest first.";
+        } else {
+          rows = C.list.filter(function (r) { return r.a === "oneway" || r.a === "red"; });
+          title = "At the edge of the range";
+          sub = "Reachable one way only, or only with a lighter load. Largest airports first.";
+        }
+        rows.sort(function (a, b) {
+          var ra = RANK[a.ap[0]], rb = RANK[b.ap[0]];
+          if ((ra !== undefined) !== (rb !== undefined)) return ra !== undefined ? -1 : 1;
+          if (big(a) !== big(b)) return big(a) ? -1 : 1;
+          return a.km - b.km;
+        });
+        var n = rows.length;
+        rows = rows.slice(0, mobile ? 6 : 8);
+        var h = "<h3>" + esc(title) + '</h3><p class="sub">' + (n ? fmt(n) + " airports. " : "") + sub + "</p>";
+        if (!n) h += '<p class="sub">None with the current filters.</p>';
+        else {
+          h += "<ol>";
+          rows.forEach(function (r) {
+            var tag = C.B ? "" : r.a === "oneway" ? "one way" : state.red + "% payload";
+            h += '<li data-c="' + r.ap[0] + '"><span class="pr">' + esc(r.ap[2]) + " (" + r.ap[0] + ")<small>" + esc(r.ap[1]) + '</small></span><span class="px">' + fmt(r.km) + " km" + (tag ? "<small>" + tag + "</small>" : "") + "</span></li>";
+          });
+          h += "</ol>";
+        }
+        el.innerHTML = h;
+        el.querySelectorAll("li").forEach(function (li) {
+          li.addEventListener("click", function () { state.to = li.dataset.c; $("to").value = apLabel(APX[state.to]); render(); });
+        });
+      }
+
+      // ───────────────────────────── payload-range chart ─────────────────────────────
+      function curvePts(a) {
+        var pts = [[0, a.msp], [a.rMsp, a.msp]];
+        for (var i = 1; i <= 80; i++) { var p = a.msp * (1 - i / 80); pts.push([rangeNm(a, p), p]); }
+        return pts;
+      }
+      function drawChart(C) {
+        var A = C.A, B = C.B, acs = B ? [A, B] : [A];
+        var cw = mobile ? 380 : 1200, ch = mobile ? 320 : 360, m = { t: 30, r: mobile ? 10 : 24, b: 36, l: mobile ? 34 : 46 };
+        var s = d3.select("#chart").attr("viewBox", [0, 0, cw, ch]);
+        s.selectAll("*").remove();
+        var dst = state.to ? APX[state.to] : null, lg = [];
+        if (dst) acs.forEach(function (a) { lg.push(legs(C, a, C.o, dst, gcKm(C.o, dst) / NM)); });
+        var xmax = d3.max(acs, function (a) { return a.ferry; }) * NM;
+        if (dst) xmax = Math.max(xmax, d3.max(lg[0], function (L) { return L.eff; }) * NM * 1.05);
+        var x = d3.scaleLinear().domain([0, xmax * 1.04]).nice().range([m.l, cw - m.r]);
+        var ymax = d3.max(acs, function (a) { return a.msp; }) / 1000;
+        var y = d3.scaleLinear().domain([0, ymax * 1.12]).nice().range([ch - m.b, m.t]);
+        var xk = function (nm) { return x(nm * NM); }, yt = function (kg) { return y(kg / 1000); };
+
+        s.append("g").attr("class", "grid").selectAll("line").data(y.ticks(5)).join("line")
+          .attr("x1", m.l).attr("x2", cw - m.r).attr("y1", y).attr("y2", y);
+        s.append("g").attr("class", "ax").attr("transform", "translate(0," + (ch - m.b) + ")")
+          .call(d3.axisBottom(x).ticks(mobile ? 5 : 10).tickFormat(function (v) { return fmt(v); }));
+        var xn = d3.scaleLinear().domain([0, x.domain()[1] / NM]).range(x.range());
+        s.append("g").attr("class", "ax").attr("transform", "translate(0," + m.t + ")")
+          .call(d3.axisTop(xn).tickValues(xn.ticks(mobile ? 4 : 8).filter(function (v) { return v > 0; })).tickFormat(function (v) { return fmt(v); }).tickSize(3))
+          .call(function (g) { g.select(".domain").remove(); });
+        s.append("g").attr("class", "ax").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5))
+          .call(function (g) { g.select(".domain").remove(); });
+        s.append("text").attr("class", "ax-t").attr("x", cw - m.r).attr("y", ch - 4).attr("text-anchor", "end").text("Range, km");
+        s.append("text").attr("class", "ax-t").attr("x", cw - m.r).attr("y", 11).attr("text-anchor", "end").text("nm");
+        s.append("text").attr("class", "ax-t").attr("x", 4).attr("y", m.t - 14).text("Payload, t");
+
+        acs.forEach(function (a, i) {
+          var col = i ? "var(--b)" : "var(--a)", pts = curvePts(a);
+          var line = d3.line().x(function (p) { return xk(p[0]); }).y(function (p) { return yt(p[1]); });
+          if (!i) s.append("path").attr("class", "area").attr("fill", col).attr("d", d3.area().x(function (p) { return xk(p[0]); }).y0(y(0)).y1(function (p) { return yt(p[1]); })(pts));
+          s.append("path").attr("class", "curve").attr("stroke", col).attr("d", line(pts)).attr("stroke-dasharray", i ? "7 4" : null);
+          // full passengers & reduced payload guides
+          s.append("line").attr("class", "guide").attr("stroke", col).attr("x1", m.l).attr("x2", xk(a.rFull)).attr("y1", yt(a.full)).attr("y2", yt(a.full));
+          s.append("line").attr("class", "guide dash").attr("stroke", col).attr("x1", m.l).attr("x2", xk(a.rRed)).attr("y1", yt(a.full * state.red / 100)).attr("y2", yt(a.full * state.red / 100));
+          s.append("circle").attr("cx", xk(a.rFull)).attr("cy", yt(a.full)).attr("r", 3.5).attr("fill", col);
+          s.append("text").attr("class", "glab").attr("fill", col).attr("x", m.l + 6).attr("y", yt(a.full) - 5 - (B && i ? 0 : 0))
+            .attr("dy", i && Math.abs(yt(A.full) - yt(B.full)) < 14 ? 26 : 0)
+            .text(a.name + ": " + a.seats + " passengers · " + fmt(a.rFull * NM) + " km");
+          if (!i) {
+            var cn = [[a.rMsp, a.msp, "Max payload"], [a.ferry, 0, "Ferry (no payload)"]];
+            var pB = a.mtow - a.fuelKg - a.oew;
+            if (pB > 0 && pB < a.msp) cn.splice(1, 0, [rangeNm(a, pB), pB, "MTOW, full tanks"]);
+            cn.forEach(function (c) {
+              s.append("circle").attr("cx", xk(c[0])).attr("cy", yt(c[1])).attr("r", 2.5).attr("fill", "#fff").attr("stroke", col);
+              s.append("text").attr("class", "corner").attr("x", xk(c[0]) + 5).attr("y", yt(c[1]) - 6).attr("text-anchor", c[1] === 0 ? "end" : "start").text(c[2]);
+            });
+          }
+        });
+
+        if (dst) {
+          lg.forEach(function (L2, i) {
+            var a = acs[i], col = i ? "var(--b)" : "var(--a)";
+            var uniq = L2[0].dir ? L2 : [L2[0]];
+            uniq.forEach(function (L) {
+              var xx = xk(L.eff);
+              if (!i) {
+                s.append("line").attr("class", "route").attr("x1", xx).attr("x2", xx).attr("y1", m.t).attr("y2", ch - m.b);
+                var lab = L.from[0] + "→" + L.to[0] + (L.dir === "W" ? " (headwind)" : "");
+                s.append("text").attr("class", "rlab").attr("x", xx + (L.dir === "W" ? 4 : -4)).attr("y", m.t + 12 + (L.dir === "W" ? 14 : 0))
+                  .attr("text-anchor", L.dir === "W" ? "start" : "end").text(lab);
+              }
+              var ok = L.pax >= a.seats, yFull = yt(a.full), yMax = L.mp < 0 ? y(0) : yt(Math.min(L.mp, a.full));
+              if (!ok) s.append("line").attr("class", "drop").attr("stroke", "var(--bad)").attr("x1", xx).attr("x2", xx).attr("y1", yFull).attr("y2", yMax);
+              s.append("circle").attr("cx", xx).attr("cy", yFull).attr("r", 4.5).attr("fill", ok ? "var(--ok)" : "#fff").attr("stroke", ok ? "#fff" : "var(--bad)").attr("stroke-width", 1.8);
+              if (!ok && L.mp > 0) s.append("circle").attr("cx", xx).attr("cy", yMax).attr("r", 3.5).attr("fill", col);
+            });
+          });
+        }
+
+        $("prc-title").textContent = "Payload-range: " + A.maker + " " + A.name + (B ? " vs " + B.maker + " " + B.name : "");
+        $("prc-sub").textContent = "Modelled from published weights, calibrated on the manufacturer's range (see How it works)";
+        var h = '<span class="grp"><i class="key ring" style="--c:var(--a)"></i>' + A.name + " payload-range</span>";
+        if (B) h += '<span class="grp"><i class="key ring dash" style="--c:var(--b)"></i>' + B.name + "</span>";
+        h += '<span class="grp"><i class="key ring" style="--c:var(--ink)"></i>Full passengers</span><span class="grp"><i class="key ring dash" style="--c:var(--ink)"></i>Reduced payload (' + state.red + "%)</span>";
+        if (dst) h += '<span class="grp"><i class="key" style="--c:var(--ok)"></i>Route works with full passengers</span><span class="grp"><i class="key" style="--c:#fff;box-shadow:inset 0 0 0 2px var(--bad)"></i>Payload penalty (red line)</span><span class="grp" style="color:var(--muted)">Headwind legs are plotted at their still-air equivalent distance</span>';
+        $("prc-legend").innerHTML = h;
+      }
+
+      // ───────────────────────────── sources table ─────────────────────────────
+      function buildSources() {
+        var h = '<thead><tr><th>Aircraft</th><th class="num">MTOW</th><th class="num">MZFW</th><th class="num">OEW</th><th class="num">Fuel</th><th class="num">Published range</th><th class="num">Ferry (model)</th><th>Notes and sources</th></tr></thead><tbody>';
+        var t = function (kg) { return fmt1(kg / 1000) + " t"; };
+        ACL.forEach(function (a) {
+          h += "<tr><td><b>" + a.maker + " " + a.name + "</b></td><td class='num'>" + t(a.mtow) + "</td><td class='num'>" + t(a.mzfw) + "</td><td class='num'>" + t(a.oew) + (a.oewEst ? "*" : "") +
+            "</td><td class='num'>" + t(a.fuelKg) + "</td><td class='num'>" + fmt(a.design.rangeNm) + " nm<br><span style='color:var(--muted)'>" + a.seats + " pax × " + a.paxKg + " kg</span></td><td class='num'>" + fmt(a.ferry) + " nm</td><td class='s'>" +
+            esc(a.notes) + " " + a.sources.map(function (s) { return '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.label) + "</a> (" + esc(s.for) + ")"; }).join("; ") + "</td></tr>";
+        });
+        $("src").innerHTML = h + "</tbody>";
+      }
+
+      var rT;
+      window.addEventListener("resize", function () {
+        clearTimeout(rT);
+        rT = setTimeout(function () {
+          var m2 = window.innerWidth < 720;
+          if (m2 !== mobile && svg) { mobile = m2; svg.remove(); svg = null; lastKey = ""; var l = document.createElement("div"); l.id = "loading"; $("map-wrap").prepend(l); initMap(); render(); }
+        }, 200);
+      });
+
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+    })();
+    </script>
+  </body>
+</html>

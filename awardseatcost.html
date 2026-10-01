@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Award seat cost</title>
+    <meta name="description" content="What does an award seat really cost the airline? The larger of the marginal cost of one more passenger and the revenue the seat displaces, compared with what the loyalty programme pays for it.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / bidprice.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* Series: same validated set as bidprice.html / bookinglimits.html */
+        --c-cost: #222;       /* award seat cost = max(marginal, displacement) */
+        --c-disp: #2a7fb5;    /* displacement cost (bid price of the last seat) */
+        --c-mc: #767676;      /* marginal cost of one more passenger */
+        --c-pay: #3a8f5c;     /* what the programme pays per award seat */
+        --c-over: #d9480f;    /* cost above payment */
+        --c-off: #cfcfcf;     /* seats kept for sale, other flights */
+      }
+
+      .content { max-width: 1180px; margin: 0 auto; padding: 26px 30px 60px; }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 800px; }
+      .intro .lede { margin: 0 0 8px; color: var(--ink); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Pill switchers (same as airflows / bidprice) ── */
+      .switch { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 20px 0 6px; }
+      .views { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff; flex-wrap: wrap; gap: 2px; }
+      .views button { border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .preset-blurb { font-size: 13px; color: var(--text); margin: 8px 0 0; max-width: 820px; }
+      .preset-blurb b { color: var(--ink); font-weight: 600; }
+
+      .btn { font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+      .btn:hover { border-color: #cfcfcf; }
+
+      /* ── Controls ── */
+      .ctl-grid { display: grid; grid-template-columns: 1.25fr 1.5fr 1fr 1fr 1fr; gap: 10px; margin: 16px 0 18px; }
+      .fld { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 10px 12px 11px; font-size: 12.5px; color: var(--text); min-width: 0; }
+      .fld > label, .fld > .lbl { display: block; color: var(--ink); font-weight: 600; font-size: 12.5px; margin: 0 0 6px; }
+      .fld .row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+      .fld .sub { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+      .fld .sub b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      .fld input[type=range] { width: 100%; accent-color: #222; margin: 2px 0 0; }
+      .fld .val { font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; }
+      .mc-parts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+      .mc-parts label { display: flex; flex-direction: column; gap: 3px; font-size: 11.5px; color: var(--muted); }
+      .mc-parts input[type=number] { width: 100%; }
+      input[type=number] {
+        font: inherit; font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right;
+        border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; background: #fff;
+        min-width: 0; box-sizing: border-box; width: 78px;
+      }
+      input[type=number]:focus { outline: 2px solid #9cc7df; outline-offset: 0; border-color: #9cc7df; }
+      input.bad { border-color: #d9480f; background: #fff6f2; }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 8px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile .k { font-size: 12px; }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; margin-top: 4px; }
+      .tile span.s { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+      .tile .pos { color: #2e7a4d; } .tile .neg { color: #b4441a; }
+
+      /* ── Sections ── */
+      .sec { margin: 38px 0 0; }
+      .sec > h3 { font-size: 20px; margin: 0 0 6px; color: var(--ink); }
+      .sec > p.lead { margin: 0 0 14px; font-size: 13.5px; max-width: 820px; }
+      .block { margin: 0 0 24px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h4 { margin: 0; font-size: 15px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .block > p.lead { margin: 0 0 10px; font-size: 13px; max-width: 800px; }
+      .two { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+      .rm-link { font-size: 12px; color: var(--muted); margin: 8px 0 0; }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table.res { border-collapse: collapse; width: 100%; font-size: 13px; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: bottom; }
+      table.res td { padding: 6px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res td.hl { color: var(--ink); font-weight: 600; }
+      table.res tr.on td { background: #f4f9f6; }
+      table.res tr.sum td { border-top: 1px solid var(--line); color: var(--ink); font-weight: 600; }
+      table.res .neg { color: #b4441a; }
+      table.res .pos { color: #2e7a4d; }
+      table.res small { color: var(--muted); font-size: 11.5px; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+
+      /* ── Worked formulas (same as bookinglimits / bidprice) ── */
+      .work { background: rgb(40 122 158 / 5%); border-left: 2px solid #287a9e; padding: 12px 16px; font-size: 13px; line-height: 1.75; color: #33434d; overflow-x: auto; }
+      .work .lbl { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #155b7c; margin-bottom: 4px; }
+      .work var, .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+      .work b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+      /* ── Charts ── */
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+      .chart svg text { font-family: inherit; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .legend i.ln.dot { border-top-style: dotted; }
+      .legend i.band { background: rgb(58 143 92 / .16); border: 0; }
+
+      /* ── Tooltip ── */
+      .tip { position: fixed; pointer-events: none; z-index: 20; background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.08); padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45; max-width: 280px; display: none; }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: center; gap: 7px; }
+      .tip .r i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+      .tip .r i.ln { height: 0; border-top: 2px solid; border-radius: 0; width: 12px; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 10px; }
+
+      /* ── Explainer ── */
+      .explain { max-width: 820px; font-size: 13.5px; }
+      .explain p { margin: 0 0 10px; }
+      .explain ol { margin: 0 0 10px; padding-left: 20px; }
+      .explain li { margin: 0 0 6px; }
+      .explain .live { color: var(--ink); background: var(--soft); border-radius: 8px; padding: 10px 14px; margin: 0 0 12px; }
+      .explain b { color: var(--ink); }
+
+      .loading { font-size: 13px; color: var(--muted); padding: 30px 0; }
+      .err { font-size: 13px; color: #9a3b0b; background: #fff6f2; border: 1px solid #f3c9b5; border-radius: 8px; padding: 10px 12px; margin: 16px 0; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+
+      @media (max-width: 1080px) {
+        .ctl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .ctl-grid .fld.wide { grid-column: 1 / -1; }
+      }
+      @media (max-width: 980px) { .two { grid-template-columns: minmax(0, 1fr); } }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+        .tile { padding: 10px 12px; }
+        .tile b { font-size: 21px; }
+        .views button { padding: 6px 11px; font-size: 13px; }
+        table.res td:first-child { white-space: normal; min-width: 120px; }
+        #cmp-table th + th, #cmp-table td + td { padding-left: 6px; padding-right: 0; }
+      }
+      @media (max-width: 460px) {
+        .ctl-grid { grid-template-columns: minmax(0, 1fr); }
+      }
+    </style>
+
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>19</b> tools · <b>7</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <h2>Award seat cost</h2>
+        <p class="lede">What does an award seat really cost the airline? Almost nothing on an empty flight, and a paying passenger's fare on a full one.</p>
+        <p>When a member books a seat with points, the airline carries one more passenger and, if the flight would have filled, loses the sale of that seat. So the cost of an award seat is the larger of two numbers: the <b>marginal cost</b> of carrying one more person (fuel, catering, fees) and the <b>displacement cost</b>, the revenue the seat would otherwise have earned. That second number is the bid price of the last seat, the same opportunity cost that revenue management uses to accept or reject any booking. Compare it with what the loyalty programme pays the airline for the seat, and you know when releasing award seats helps both sides.</p>
+        <p class="note-line">The flight, fares, demand, costs and programme payment are illustrative assumptions, not any airline's or programme's figures.</p>
+      </div>
+
+      <div class="switch">
+        <div class="views" id="presets" role="group" aria-label="Example flight"></div>
+        <button class="btn" id="reset">Reset</button>
+      </div>
+      <p class="preset-blurb" id="preset-blurb"></p>
+
+      <div class="ctl-grid" id="controls">
+        <div class="fld">
+          <label for="in-demand">Expected demand</label>
+          <div class="row"><span class="val" id="demand-v">86%</span><span>of the 150 seats</span></div>
+          <input type="range" id="in-demand" min="50" max="110" step="1" value="86" aria-describedby="demand-sub">
+          <div class="sub" id="demand-sub">Paying passengers the forecast expects, before any award seat.</div>
+        </div>
+        <div class="fld wide">
+          <span class="lbl" id="mc-lbl">Marginal cost of one more passenger</span>
+          <div class="mc-parts" role="group" aria-labelledby="mc-lbl">
+            <label>Extra fuel<input type="number" id="in-fuel" min="0" max="1000" step="1" inputmode="decimal"></label>
+            <label>Catering<input type="number" id="in-cat" min="0" max="1000" step="1" inputmode="decimal"></label>
+            <label>Fees &amp; handling<input type="number" id="in-fees" min="0" max="1000" step="1" inputmode="decimal"></label>
+          </div>
+          <div class="sub">Total <b id="mc-total">$50</b> per passenger, CA$</div>
+        </div>
+        <div class="fld">
+          <label for="in-pay">Programme pays per award seat</label>
+          <div class="row"><span>CA$</span><input type="number" id="in-pay" min="0" max="5000" step="5" inputmode="decimal"></div>
+          <div class="sub">Same amount whatever the date, like a saver award.</div>
+        </div>
+        <div class="fld">
+          <label for="in-req">Members asking for an award</label>
+          <div class="row"><input type="number" id="in-req" min="0" max="150" step="1" inputmode="numeric"><span>on this flight</span></div>
+        </div>
+        <div class="fld">
+          <label for="in-fixed">Fixed allocation</label>
+          <div class="row"><input type="number" id="in-fixed" min="0" max="150" step="1" inputmode="numeric"><span>seats per flight</span></div>
+          <div class="sub">The same number on every flight, for comparison.</div>
+        </div>
+      </div>
+
+      <div class="tiles" id="tiles" aria-live="polite"></div>
+
+      <div id="app"><p class="loading" id="loading">Loading the flight…</p></div>
+
+      <div id="main" hidden>
+        <!-- ═══════════════════════════ 1. THE COST CURVE ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-curve">
+          <h3 id="h-curve">1. The cost of an award seat, from empty to overbooked</h3>
+          <p class="lead">The same flight at every level of expected demand, from half full to 10% more passengers than seats. Where the black cost curve sits below the green payment line, the programme pays more than the seat costs: releasing it helps the member, the programme and the airline.</p>
+          <div class="block">
+            <div class="block-head"><h4>Cost of the first award seat</h4><span>CA$ per seat, one way</span></div>
+            <div class="chart" id="ch-curve" role="img" aria-label="Award seat cost by expected load factor"></div>
+          </div>
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>With these numbers</h4></div>
+              <div class="work" id="work"></div>
+              <p class="rm-link">Bid prices and why they rise as a flight fills: <a href="/rm101.html#ch04">RM 101, chapter 04</a>. What an award costs the airline and how Loyalty and RM share the seat: <a href="/loyalty101.html#ch10">Loyalty 101, chapter 10</a>.</p>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>The flight</h4><span id="flight-sub"></span></div>
+              <div class="tbl-wrap"><table class="res" id="flight-table"></table></div>
+              <p class="hint">Five fare classes on one cabin, low fares booking first. Demand in each class is uncertain; the standard deviation includes both booking-by-booking randomness and forecast error.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ 2. HOW MANY TO RELEASE ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-release">
+          <h3 id="h-release">2. How many award seats to release on this flight</h3>
+          <p class="lead">Each extra award seat takes one more seat away from paying passengers, so it costs a little more than the one before. Releasing by cost means opening award seats while the next one still costs less than the programme pays. A fixed allocation opens the same number everywhere.</p>
+          <div class="block">
+            <div class="block-head"><h4>Cost of each additional award seat</h4><span id="seats-sub">CA$ per seat</span></div>
+            <div class="chart" id="ch-seats" role="img" aria-label="Cost of each additional award seat on this flight"></div>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>Release by cost vs fixed allocation</h4><span id="cmp-sub"></span></div>
+            <div class="tbl-wrap"><table class="res" id="cmp-table"></table></div>
+            <p class="hint">Seats released but not booked stay on sale to paying passengers, so only booked award seats cost anything. The cost of each booked seat is the one in the chart above.</p>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ 3. THREE FLIGHTS ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-three">
+          <h3 id="h-three">3. Three flights, one rule</h3>
+          <p class="lead">The three example flights at their own expected demand and award requests, with the costs, payment and fixed allocation set above.</p>
+          <div class="tbl-wrap"><table class="res" id="three-table"></table></div>
+        </section>
+
+        <!-- ═══════════════════════════ 4. PEAK DATES ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-peak">
+          <h3 id="h-peak">4. Why saver awards disappear on peak dates</h3>
+          <div class="explain">
+            <p class="live" id="peak-live"></p>
+            <p>Members read an empty award calendar at Christmas as the programme hiding seats. From the airline's side it is the cost curve at work, for three reasons that stack up:</p>
+            <ol>
+              <li><b>The flight is expected to fill.</b> Past about 90% expected demand, an award seat is very likely to take the place of a paying passenger, so its cost jumps from the marginal cost to a fare.</li>
+              <li><b>The fares it displaces are higher.</b> Peak dates carry peak fares and more late, high-fare bookings, so the seat the award takes is worth more.</li>
+              <li><b>The forecast is more certain.</b> Holiday demand is predictable, so revenue management is confident the seat will sell and has little reason to take a chance on it.</li>
+            </ol>
+            <p>A saver award pays the airline the same amount on every date, so on peak dates its line sits under the cost curve and no saver seats open. That is why programmes add a second, higher price: a standard award, or dynamic award pricing tied to the cash fare, which pays enough to cover the displacement. Saver seats can also reappear close to departure: if bookings come in below the forecast, the bid price falls and the RM system releases more award seats.</p>
+            <p class="rm-link">More on this trade-off: <a href="/loyalty101.html#ch10">Loyalty 101, chapter 10: Where Loyalty Meets RM</a>, and on what members get for their points: the <a href="/awardvalue.html">award value comparator</a>.</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>The flight and its demand</h4>
+        <p>An invented 3½-hour domestic flight with 150 economy seats and five fare classes. Each example flight has its own fare level (85%, 100% and 130% of a base fare ladder of CA$620, 450, 340, 250 and 180), class mix and demand variability. Expected demand in class <var>j</var> is <var>μ</var><sub>j</sub> = <var>L</var> · 150 · <var>s</var><sub>j</sub>, where <var>L</var> is the expected demand as a share of seats and <var>s</var><sub>j</sub> the class share. Demand is a negative binomial draw (a Poisson whose mean has a gamma-distributed error with coefficient of variation <var>cv</var>), so its variance is <var>μ</var> + (<var>cv</var> · <var>μ</var>)². The inputs are in <a href="/assets/data/awardseatcost.json">assets/data/awardseatcost.json</a>.</p>
+
+        <h4>Displacement cost: the bid price of the last seat</h4>
+        <p>Let <var>V</var>(<var>x</var>) be the expected revenue from paying passengers with <var>x</var> seats, when classes book from the lowest fare to the highest and the airline protects seats for higher fares optimally (the static single-leg model of Brumelle and McGill, 1993, solved by dynamic programming as in Talluri and van Ryzin, 2004, section 2.2). For class <var>j</var> with fare <var>f</var><sub>j</sub>, the seats protected for the higher classes are the largest <var>y</var> with <var>V</var><sub>j−1</sub>(<var>y</var>) − <var>V</var><sub>j−1</sub>(<var>y</var> − 1) &gt; <var>f</var><sub>j</sub>, and</p>
+        <p style="padding-left:14px"><var>V</var><sub>j</sub>(<var>x</var>) = E[ <var>f</var><sub>j</sub> · min(<var>D</var><sub>j</sub>, <var>x</var> − <var>y</var>) + <var>V</var><sub>j−1</sub>(<var>x</var> − min(<var>D</var><sub>j</sub>, <var>x</var> − <var>y</var>)) ].</p>
+        <p>The <var>k</var>-th award seat leaves 150 − <var>k</var> seats for sale, so its displacement cost is Δ<sub>k</sub> = <var>V</var>(150 − <var>k</var> + 1) − <var>V</var>(150 − <var>k</var>). For the first award seat this is the expected marginal seat revenue of the last seat, which EMSR-b (Belobaba, 1989) approximates and Littlewood's rule (1972) gives for two classes.</p>
+
+        <h4>Cost, release and net value</h4>
+        <ul>
+          <li>Marginal cost <var>m</var> = extra fuel + catering + fees. The defaults assume about 100 kg for a passenger and bag, 3–4% of that extra weight burned as fuel per flight hour (a common rule of thumb, not a measured figure), and a jet fuel price near US$185 a barrel.</li>
+          <li>Cost of the <var>k</var>-th award seat: <var>c</var><sub>k</sub> = max(<var>m</var>, Δ<sub>k</sub>). Δ<sub>k</sub> never falls as <var>k</var> grows, so neither does <var>c</var><sub>k</sub>.</li>
+          <li>Release by cost: open award seats while <var>c</var><sub>k</sub> &lt; <var>p</var>, the programme's payment per seat. Booked awards = min(seats released, members asking). Airline net = Σ (<var>p</var> − <var>c</var><sub>k</sub>) over the booked seats. The fixed allocation uses the same formula with its own number of seats released.</li>
+          <li>The cost curve in section 1 repeats the calculation of <var>c</var><sub>1</sub> for every <var>L</var> from 50% to 110%, holding the fares, class mix and variability of the chosen flight. The break-even is where it crosses <var>p</var>, interpolated between whole percentages.</li>
+        </ul>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>Littlewood, K. (1972), "Forecasting and control of passenger bookings", AGIFORS Symposium Proceedings 12; reprinted in <a href="https://doi.org/10.1057/palgrave.rpm.5170134" target="_blank" rel="noopener">Journal of Revenue and Pricing Management 4(2), 2005</a>.</li>
+          <li>Belobaba, P. (1989), "Application of a probabilistic decision model to airline seat inventory control", <a href="https://doi.org/10.1287/opre.37.2.183" target="_blank" rel="noopener">Operations Research 37(2)</a>.</li>
+          <li>Brumelle, S. and McGill, J. (1993), "Airline seat allocation with multiple nested fare classes", <a href="https://doi.org/10.1287/opre.41.1.127" target="_blank" rel="noopener">Operations Research 41(1)</a>.</li>
+          <li>Talluri, K. and van Ryzin, G. (2004), <a href="https://link.springer.com/book/10.1007/b139000" target="_blank" rel="noopener">The Theory and Practice of Revenue Management</a>, Springer, chapter 2 (single-resource capacity control).</li>
+          <li>IATA and S&amp;P Global Platts, <a href="https://www.iata.org/en/publications/economics/fuel-monitor/" target="_blank" rel="noopener">Jet Fuel Price Monitor</a>, global average of about US$185 a barrel, read on 30 September 2026. Used only for the order of magnitude of the fuel default.</li>
+          <li>Charts with <a href="https://d3js.org" target="_blank" rel="noopener">D3</a> 7.9.0, loaded from jsDelivr. Everything else runs in the page.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>The maximum of the two costs is a simplification. Strictly, the expected cost is <var>m</var> · P(seat would fly empty) + Δ<sub>k</sub>: if the seat would have sold, the airline carries a passenger either way. The two differ by less than <var>m</var>, and they agree at both ends of the curve.</li>
+          <li>Demand in each class is independent of what is open: nobody buys up when a cheap class closes (<a href="/rm101.html#ch05">RM 101, chapter 05</a>). Once the flight is expected to be full, the curve levels off near the lowest fare still on sale; with buy-up it would keep rising.</li>
+          <li>Award seats are decided once, at the opening of sales. Real systems re-optimise as bookings come in, and a connecting award displaces seats on several flights at once (<a href="/bidprice.html">network bid prices</a>).</li>
+          <li>The programme's payment is one fixed number per seat. Real arrangements vary: some pay by cabin, route or date, and dynamic award pricing ties the payment to the cash fare. The value of availability for member engagement, which is why programmes accept some awards that don't pay their way, isn't modelled.</li>
+          <li>Taxes and carrier charges the award passenger pays, cancellations, no-shows and overbooking are left out.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline or loyalty programme.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var DATA_URL = "assets/data/awardseatcost.json";
+      var $ = function (id) { return document.getElementById(id); };
+      var DATA = null, S = {};
+      var CUR_MIN = 50, CUR_MAX = 110;
+
+      // ---------- engine ----------
+      // Negative binomial pmf (Poisson with gamma-distributed mean), tail folded into the last value.
+      function nbPmf(mu, cv) {
+        if (mu <= 0) return [1];
+        var sd = Math.sqrt(mu + cv * cv * mu * mu), kmax = Math.ceil(mu + 10 * sd + 10), out = [], cum = 0, p, k;
+        if (cv < 1e-3) {
+          p = Math.exp(-mu);
+          for (k = 0; k <= kmax; k++) { if (k > 0) p *= mu / k; out.push(p); cum += p; }
+        } else {
+          var r = 1 / (cv * cv), q = r / (r + mu);
+          p = Math.exp(r * Math.log(q));
+          for (k = 0; k <= kmax; k++) { if (k > 0) p *= (k - 1 + r) / k * (1 - q); out.push(p); cum += p; }
+        }
+        out[out.length - 1] += Math.max(0, 1 - cum);
+        return out;
+      }
+      // Expected revenue V(x), x = 0..C, classes sorted high fare -> low fare, booking low -> high.
+      function valueFn(C, fares, means, cv) {
+        var Vp = new Float64Array(C + 1);
+        for (var j = 0; j < fares.length; j++) {
+          var f = fares[j], pm = nbPmf(means[j], cv), y = 0, x, d;
+          for (x = 1; x <= C; x++) if (Vp[x] - Vp[x - 1] > f) y = x;
+          var Vn = new Float64Array(C + 1);
+          for (x = 0; x <= C; x++) {
+            var a = Math.max(x - y, 0), s = 0;
+            for (d = 0; d < pm.length; d++) { var sold = d < a ? d : a; s += pm[d] * (f * sold + Vp[x - sold]); }
+            Vn[x] = s;
+          }
+          Vp = Vn;
+        }
+        return Vp;
+      }
+      function flightOf(preset, L) {
+        var C = DATA.flight.capacity;
+        return {
+          C: C,
+          fares: DATA.flight.baseFares.map(function (f) { return Math.round(f * preset.fareLevel); }),
+          means: preset.mix.map(function (s) { return L / 100 * C * s; }),
+          cv: preset.cv
+        };
+      }
+      // displacement of the k-th award seat, k = 1..C
+      function displacement(fl) {
+        var V = valueFn(fl.C, fl.fares, fl.means, fl.cv), out = [];
+        for (var k = 1; k <= fl.C; k++) out.push(Math.max(0, V[fl.C - k + 1] - V[fl.C - k]));
+        return { V: V, disp: out };
+      }
+      // first-seat displacement for every L on the curve
+      function curveOf(preset) {
+        var out = [];
+        for (var L = CUR_MIN; L <= CUR_MAX; L++) {
+          var fl = flightOf(preset, L), V = valueFn(fl.C, fl.fares, fl.means, fl.cv);
+          out.push({ L: L, disp: Math.max(0, V[fl.C] - V[fl.C - 1]) });
+        }
+        return out;
+      }
+      function evaluate(disp, mc, pay, req, fixed) {
+        var cost = disp.map(function (d) { return Math.max(mc, d); });
+        var rel = 0; while (rel < cost.length && cost[rel] < pay) rel++;
+        function run(n) {
+          var booked = Math.min(n, req), c = 0;
+          for (var k = 0; k < booked; k++) c += cost[k];
+          return { released: n, booked: booked, away: Math.max(0, req - n), paid: booked * pay, cost: c, net: booked * pay - c };
+        }
+        return { cost: cost, dyn: run(rel), fix: run(Math.min(fixed, cost.length)) };
+      }
+      function breakEven(curve, mc, pay) {
+        if (mc >= pay) return { kind: "never" };
+        var c0 = Math.max(mc, curve[0].disp);
+        if (c0 >= pay) return { kind: "below" };
+        for (var i = 1; i < curve.length; i++) {
+          var a = Math.max(mc, curve[i - 1].disp), b = Math.max(mc, curve[i].disp);
+          if (b >= pay) return { kind: "at", L: curve[i - 1].L + (pay - a) / (b - a) };
+        }
+        return { kind: "above" };
+      }
+
+      // ---------- formatting ----------
+      var nf0 = d3.format(",.0f");
+      function money(v) { return (v < -0.5 ? "−" : "") + "$" + nf0(Math.abs(v)); }
+      function smoney(v) { return Math.round(v) === 0 ? "$0" : (v > 0 ? "+" : "−") + "$" + nf0(Math.abs(v)); }
+      function pct(v, dp) { return d3.format("." + (dp || 0) + "f")(v) + "%"; }
+      function seats(n) { return n + (n === 1 ? " seat" : " seats"); }
+      function cls(v) { return Math.round(v) > 0 ? "pos" : (Math.round(v) < 0 ? "neg" : ""); }
+
+      // ---------- tooltip ----------
+      var tip = $("tip");
+      function showTip(html, ev) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var x = ev.clientX + 14, y = ev.clientY + 14, r = tip.getBoundingClientRect();
+        if (x + r.width > window.innerWidth - 8) x = ev.clientX - r.width - 14;
+        if (y + r.height > window.innerHeight - 8) y = ev.clientY - r.height - 14;
+        tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      function tipRow(color, label, value, style) {
+        return '<div class="r"><i class="ln" style="border-top-color:' + color + (style ? ';border-top-style:' + style : '') + '"></i>' + label + '<b>' + value + '</b></div>';
+      }
+
+      // ---------- state ----------
+      function preset() { return DATA.presets.filter(function (p) { return p.id === S.preset; })[0]; }
+      function mcTotal() { return S.fuel + S.cat + S.fees; }
+      function applyPreset(id, keepCosts) {
+        S.preset = id;
+        var p = preset();
+        S.demand = p.demandFactor; S.req = p.awardRequests;
+        if (!keepCosts) {
+          var d = DATA.defaults;
+          S.fuel = d.marginalCost.fuel; S.cat = d.marginalCost.catering; S.fees = d.marginalCost.fees;
+          S.pay = d.payment; S.fixed = d.fixedAllocation;
+        }
+        syncInputs();
+      }
+      function syncInputs() {
+        $("in-demand").value = S.demand; $("demand-v").textContent = S.demand + "%";
+        $("in-fuel").value = S.fuel; $("in-cat").value = S.cat; $("in-fees").value = S.fees;
+        $("in-pay").value = S.pay; $("in-req").value = S.req; $("in-fixed").value = S.fixed;
+        ["in-fuel", "in-cat", "in-fees", "in-pay", "in-req", "in-fixed"].forEach(function (id) { $(id).classList.remove("bad"); });
+      }
+      function renderPresets() {
+        $("presets").innerHTML = DATA.presets.map(function (p) {
+          return '<button type="button" data-id="' + p.id + '" class="' + (p.id === S.preset ? "on" : "") + '" aria-pressed="' + (p.id === S.preset) + '">' + p.name + '</button>';
+        }).join("");
+        var p = preset();
+        $("preset-blurb").innerHTML = "<b>" + p.when + ".</b> " + p.blurb;
+      }
+
+      // ---------- compute + render ----------
+      function recompute() {
+        var p = preset(), mc = mcTotal();
+        S.fl = flightOf(p, S.demand);
+        var d = displacement(S.fl);
+        S.V = d.V; S.disp = d.disp;
+        S.ev = evaluate(S.disp, mc, S.pay, S.req, S.fixed);
+        S.be = breakEven(S.curves[p.id], mc, S.pay);
+        $("mc-total").textContent = money(mc);
+        renderPresets(); renderTiles(); renderCurve(); renderWork(); renderFlight(); renderSeats(); renderCmp(); renderThree(); renderPeak();
+      }
+
+      function renderTiles() {
+        var ev = S.ev, mc = mcTotal(), c1 = ev.cost[0], d1 = S.disp[0], diff = ev.dyn.net - ev.fix.net;
+        var which = d1 > mc ? "displacement" : "marginal cost";
+        var t = [
+          { k: "Cost of one award seat", v: money(c1), s: "The " + which + " is the larger: " + money(d1) + " displaced vs " + money(mc) + " to carry." },
+          { k: "Programme pays", v: money(S.pay), s: (S.pay > c1 ? "Covers the first seat with " + money(S.pay - c1) + " to spare." : "Short of the first seat by " + money(c1 - S.pay) + ".") },
+          { k: "Award seats to release", v: String(ev.dyn.released), s: ev.dyn.released === 0 ? "Every seat costs more than the payment." : (ev.dyn.released >= S.fl.C ? "Every seat costs less than the payment." : "Seat " + (ev.dyn.released + 1) + " would cost " + money(ev.cost[ev.dyn.released]) + ".") },
+          { k: "Gain over a fixed " + S.fixed, v: '<span class="' + cls(diff) + '">' + smoney(diff) + '</span>', s: "Airline net " + smoney(ev.dyn.net) + " vs " + smoney(ev.fix.net) + "; " + ev.dyn.booked + " vs " + ev.fix.booked + " members get a seat." }
+        ];
+        $("tiles").innerHTML = t.map(function (x) { return '<div class="tile"><span class="k">' + x.k + '</span><b>' + x.v + '</b><span class="s">' + x.s + '</span></div>'; }).join("");
+      }
+
+      function renderWork() {
+        var C = S.fl.C, V = S.V, mc = mcTotal(), ev = S.ev, n = ev.dyn.released, be = S.be;
+        var h = '<div class="lbl">' + preset().name + ' flight, ' + S.demand + '% expected demand</div>';
+        h += 'Displacement of the first award seat: <var>V</var>(' + C + ') − <var>V</var>(' + (C - 1) + ') = ' + money(V[C]) + ' − ' + money(V[C - 1]) + ' = <b>' + money(S.disp[0]) + '</b><br>';
+        h += 'Marginal cost: ' + money(S.fuel) + ' fuel + ' + money(S.cat) + ' catering + ' + money(S.fees) + ' fees = <b>' + money(mc) + '</b><br>';
+        h += 'Cost of the first award seat: max(' + money(mc) + ', ' + money(S.disp[0]) + ') = <b>' + money(ev.cost[0]) + '</b>, against a payment of <b>' + money(S.pay) + '</b><br>';
+        if (n === 0) h += 'Even the first seat costs more than the payment: release <b>none</b>.';
+        else if (n >= C) h += 'Every seat costs less than the payment: release as many as members ask for.';
+        else h += 'Seat ' + n + ' costs ' + money(ev.cost[n - 1]) + ', seat ' + (n + 1) + ' costs ' + money(ev.cost[n]) + ': release <b>' + seats(n) + '</b>.';
+        h += '<br>Break-even for this flight: ';
+        if (be.kind === "at") h += 'the cost reaches the payment at <b>' + pct(be.L) + '</b> expected demand.';
+        else if (be.kind === "never") h += 'none: the marginal cost alone is above the payment.';
+        else if (be.kind === "below") h += 'below 50%: the payment doesn\'t cover the seat anywhere on the curve.';
+        else h += 'above 110%: the payment covers the first seat everywhere on the curve.';
+        $("work").innerHTML = h;
+      }
+
+      function renderFlight() {
+        var fl = S.fl, cl = DATA.flight.classes, names = DATA.flight.classNames, tot = 0;
+        var rows = fl.fares.map(function (f, j) {
+          var mu = fl.means[j], sd = Math.sqrt(mu + fl.cv * fl.cv * mu * mu); tot += mu;
+          return '<tr><td>' + cl[j] + ' <small>' + names[j] + '</small></td><td>' + money(f) + '</td><td>' + d3.format(".1f")(mu) + '</td><td>' + d3.format(".1f")(sd) + '</td></tr>';
+        }).join("");
+        $("flight-table").innerHTML = '<thead><tr><th>Class</th><th>Fare</th><th>Expected demand</th><th>Std. dev.</th></tr></thead><tbody>' + rows +
+          '<tr class="sum"><td>All classes</td><td></td><td>' + d3.format(".0f")(tot) + '</td><td></td></tr></tbody>';
+        $("flight-sub").textContent = fl.C + " seats · demand variability " + pct(fl.cv * 100);
+      }
+
+      // Section 1: cost curve
+      function renderCurve() {
+        var el = $("ch-curve"), W = Math.max(300, el.clientWidth - 12), small = W < 560, H = small ? 260 : 320;
+        var m = { t: 16, r: small ? 12 : 116, b: 34, l: 48 };
+        var p = preset(), mc = mcTotal(), pay = S.pay, cur = S.curves[p.id];
+        var others = DATA.presets.filter(function (q) { return q.id !== p.id; });
+        var yMax = Math.max(pay, mc, d3.max(DATA.presets, function (q) { return d3.max(S.curves[q.id], function (c) { return c.disp; }); })) * 1.08;
+        var x = d3.scaleLinear().domain([CUR_MIN, CUR_MAX]).range([m.l, W - m.r]);
+        var y = d3.scaleLinear().domain([0, yMax]).nice().range([H - m.b, m.t]);
+        var svg = d3.select(el).html("").append("svg").attr("viewBox", "0 0 " + W + " " + H);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues(small ? [50, 70, 90, 110] : [50, 60, 70, 80, 90, 100, 110]).tickFormat(function (v) { return v + "%"; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return "$" + nf0(v); }));
+        svg.append("text").attr("x", W - m.r).attr("y", H - 2).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("expected demand, % of seats");
+        // capacity reference
+        svg.append("line").attr("x1", x(100)).attr("x2", x(100)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#d4d4d4").attr("stroke-dasharray", "2 3");
+        var line = d3.line().x(function (c) { return x(c.L); }).curve(d3.curveMonotoneX);
+        // win zone: between the cost curve and the payment line, where cost < payment
+        var area = d3.area().x(function (c) { return x(c.L); }).y0(function (c) { return y(Math.min(pay, Math.max(mc, c.disp))); }).y1(y(pay)).curve(d3.curveMonotoneX);
+        var zone = cur.filter(function (c) { return Math.max(mc, c.disp) < pay; });
+        if (zone.length && mc < pay) {
+          var pts = cur.slice();
+          if (S.be.kind === "at") { pts = cur.filter(function (c) { return c.L <= S.be.L; }); pts.push({ L: S.be.L, disp: pay }); }
+          svg.append("path").attr("fill", "rgb(58 143 92 / .14)").attr("d", area(pts));
+        }
+        // other flights, faint
+        others.forEach(function (q) {
+          svg.append("path").attr("fill", "none").attr("stroke", "#cfcfcf").attr("stroke-width", 1.5)
+            .attr("d", line.y(function (c) { return y(Math.max(mc, c.disp)); })(S.curves[q.id]));
+        });
+        // marginal cost, displacement, payment, cost
+        svg.append("line").attr("x1", x(CUR_MIN)).attr("x2", x(CUR_MAX)).attr("y1", y(mc)).attr("y2", y(mc)).attr("stroke", "var(--c-mc)").attr("stroke-width", 2).attr("stroke-dasharray", "1 4").attr("stroke-linecap", "round");
+        svg.append("path").attr("fill", "none").attr("stroke", "var(--c-disp)").attr("stroke-width", 2).attr("stroke-dasharray", "6 4")
+          .attr("d", line.y(function (c) { return y(c.disp); })(cur));
+        svg.append("line").attr("x1", x(CUR_MIN)).attr("x2", x(CUR_MAX)).attr("y1", y(pay)).attr("y2", y(pay)).attr("stroke", "var(--c-pay)").attr("stroke-width", 2);
+        svg.append("path").attr("fill", "none").attr("stroke", "var(--c-cost)").attr("stroke-width", 2.5).attr("stroke-linejoin", "round")
+          .attr("d", line.y(function (c) { return y(Math.max(mc, c.disp)); })(cur));
+        // direct labels at the right end, pushed apart
+        if (!small) {
+          var endC = function (cv) { return Math.max(mc, cv[cv.length - 1].disp); };
+          var lab = [
+            { v: endC(cur), t: "Award seat cost", c: "#222", w: 600 },
+            { v: pay, t: "Programme pays", c: "#2e7a4d", w: 600 },
+            { v: mc, t: "Marginal cost", c: "#767676", w: 400 }
+          ].concat(others.map(function (q) { return { v: endC(S.curves[q.id]), t: q.name, c: "#9a9a9a", w: 400 }; }))
+            .map(function (e) { e.y = y(e.v) + 4; return e; }).sort(function (a, b) { return a.y - b.y; });
+          for (var i = 1; i < lab.length; i++) if (lab[i].y - lab[i - 1].y < 13) lab[i].y = lab[i - 1].y + 13;
+          var over = lab[lab.length - 1].y - (H - m.b);
+          if (over > 0) lab.forEach(function (e) { e.y -= over; });
+          lab.forEach(function (e) {
+            svg.append("text").attr("x", x(CUR_MAX) + 6).attr("y", e.y).attr("font-size", 11).attr("font-weight", e.w).attr("fill", e.c).text(e.t);
+          });
+        }
+        // break-even
+        if (S.be.kind === "at") {
+          var bx = x(S.be.L);
+          svg.append("line").attr("x1", bx).attr("x2", bx).attr("y1", y(pay)).attr("y2", H - m.b).attr("stroke", "#3a8f5c").attr("stroke-dasharray", "3 3");
+          svg.append("text").attr("x", bx).attr("y", H - m.b - 6).attr("text-anchor", S.be.L > 100 ? "end" : "start").attr("dx", S.be.L > 100 ? -4 : 4).attr("font-size", 11).attr("fill", "#2e7a4d")
+            .attr("stroke", "#fff").attr("stroke-width", 3).attr("paint-order", "stroke").text("break-even " + pct(S.be.L));
+        }
+        // this flight
+        var fx = x(S.demand), fy = y(S.ev.cost[0]);
+        svg.append("circle").attr("cx", fx).attr("cy", fy).attr("r", 6).attr("fill", "#222").attr("stroke", "#fff").attr("stroke-width", 2);
+        svg.append("text").attr("x", fx).attr("y", fy - 12).attr("text-anchor", S.demand > 100 ? "end" : "middle").attr("font-size", 11.5).attr("font-weight", 600).attr("fill", "#222")
+          .attr("stroke", "#fff").attr("stroke-width", 3).attr("paint-order", "stroke").text("This flight: " + money(S.ev.cost[0]));
+        // hover
+        var hover = svg.append("line").attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#bdbdbd").style("display", "none");
+        var hdot = svg.append("circle").attr("r", 4).attr("fill", "#222").style("display", "none");
+        svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent").style("cursor", "pointer")
+          .on("pointermove", function (ev) {
+            var L = Math.max(CUR_MIN, Math.min(CUR_MAX, Math.round(x.invert(d3.pointer(ev)[0])))), c = cur[L - CUR_MIN], cost = Math.max(mc, c.disp);
+            hover.style("display", null).attr("x1", x(L)).attr("x2", x(L));
+            hdot.style("display", null).attr("cx", x(L)).attr("cy", y(cost));
+            showTip('<div class="t">' + p.name + ' flight at ' + L + '% expected demand</div>' +
+              tipRow("#2a7fb5", "Displacement", money(c.disp), "dashed") + tipRow("#767676", "Marginal cost", money(mc), "dotted") +
+              tipRow("#222", "Award seat cost", money(cost)) + tipRow("#3a8f5c", "Programme pays", money(pay)) +
+              '<div class="t" style="margin-top:4px">' + (cost < pay ? "Releasing it gains " + money(pay - cost) : "Releasing it loses " + money(cost - pay)) + ' · click to set the flight here</div>', ev);
+          })
+          .on("pointerleave", function () { hover.style("display", "none"); hdot.style("display", "none"); hideTip(); })
+          .on("click", function (ev) { S.demand = Math.max(CUR_MIN, Math.min(CUR_MAX, Math.round(x.invert(d3.pointer(ev)[0])))); syncInputs(); recompute(); });
+        d3.select(el).append("div").attr("class", "legend").html(
+          '<span><i class="ln" style="border-top-color:#222;border-top-width:2.5px"></i>Award seat cost: the larger of the two</span>' +
+          '<span><i class="ln dash" style="border-top-color:#2a7fb5"></i>Displacement (bid price of the last seat)</span>' +
+          '<span><i class="ln dot" style="border-top-color:#767676"></i>Marginal cost</span>' +
+          '<span><i class="ln" style="border-top-color:#3a8f5c"></i>Programme pays</span>' +
+          '<span><i class="band"></i>Both sides gain</span>' +
+          '<span><i class="ln" style="border-top-color:#cfcfcf"></i>The other two example flights</span>');
+      }
+
+      // Section 2: seat by seat
+      function renderSeats() {
+        var el = $("ch-seats"), W = Math.max(300, el.clientWidth - 12), small = W < 560, H = small ? 240 : 280;
+        var m = { t: 22, r: 12, b: 34, l: 48 };
+        var ev = S.ev, mc = mcTotal(), pay = S.pay, C = S.fl.C;
+        var K = Math.min(C, Math.max(small ? 30 : 40, 0));
+        var data = ev.cost.slice(0, K).map(function (c, i) { return { k: i + 1, c: c, d: S.disp[i], on: i < ev.dyn.released }; });
+        var x = d3.scaleBand().domain(data.map(function (d) { return d.k; })).range([m.l, W - m.r]).paddingInner(0.18).paddingOuter(0.05);
+        var y = d3.scaleLinear().domain([0, Math.max(pay, d3.max(data, function (d) { return d.c; })) * 1.12]).nice().range([H - m.b, m.t]);
+        var svg = d3.select(el).html("").append("svg").attr("viewBox", "0 0 " + W + " " + H);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        var step = small ? 5 : 5;
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues(data.filter(function (d) { return d.k === 1 || d.k % step === 0; }).map(function (d) { return d.k; })).tickSizeOuter(0));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return "$" + nf0(v); }));
+        svg.append("text").attr("x", W - m.r).attr("y", H - 2).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("award seat number");
+        var bw = x.bandwidth(), rr = Math.min(4, bw / 2);
+        svg.append("g").selectAll("path").data(data).enter().append("path")
+          .attr("fill", function (d) { return d.on ? "var(--c-disp)" : "var(--c-off)"; })
+          .attr("d", function (d) {
+            var x0 = x(d.k), y0 = y(d.c), yb = y(0), r = Math.min(rr, yb - y0);
+            return "M" + x0 + "," + yb + "V" + (y0 + r) + "Q" + x0 + "," + y0 + " " + (x0 + r) + "," + y0 + "H" + (x0 + bw - r) + "Q" + (x0 + bw) + "," + y0 + " " + (x0 + bw) + "," + (y0 + r) + "V" + yb + "Z";
+          });
+        // payment + marginal cost
+        svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(mc)).attr("y2", y(mc)).attr("stroke", "var(--c-mc)").attr("stroke-width", 2).attr("stroke-dasharray", "1 4").attr("stroke-linecap", "round");
+        svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(pay)).attr("y2", y(pay)).attr("stroke", "var(--c-pay)").attr("stroke-width", 2);
+        svg.append("text").attr("x", W - m.r - 4).attr("y", y(pay) - 6).attr("text-anchor", "end").attr("font-size", 11).attr("font-weight", 600).attr("fill", "#2e7a4d")
+          .attr("stroke", "#fff").attr("stroke-width", 3).attr("paint-order", "stroke").text("Programme pays " + money(pay));
+        // markers: fixed allocation, members asking
+        var marks = [];
+        if (S.fixed > 0 && S.fixed <= K) marks.push({ k: S.fixed, t: "Fixed " + S.fixed, c: "#222", dash: "4 3" });
+        if (S.req > 0 && S.req <= K) marks.push({ k: S.req, t: S.req + " ask", c: "#767676", dash: "1 3" });
+        marks.forEach(function (mk, i) {
+          var mx = x(mk.k) + bw + (x.step() - bw) / 2;
+          svg.append("line").attr("x1", mx).attr("x2", mx).attr("y1", m.t - 6).attr("y2", H - m.b).attr("stroke", mk.c).attr("stroke-width", 1.2).attr("stroke-dasharray", mk.dash);
+          var same = marks.length === 2 && Math.abs(marks[0].k - marks[1].k) < (small ? 5 : 3);
+          svg.append("text").attr("x", mx + 4).attr("y", m.t - 10 + (same && i === 1 ? 13 : 0) + 4).attr("font-size", 11).attr("fill", mk.c)
+            .attr("stroke", "#fff").attr("stroke-width", 3).attr("paint-order", "stroke").text(mk.t);
+        });
+        // hover
+        svg.append("g").selectAll("rect").data(data).enter().append("rect")
+          .attr("x", function (d) { return x(d.k) - (x.step() - bw) / 2; }).attr("width", x.step()).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
+          .on("pointermove", function (e, d) {
+            showTip('<div class="t">Award seat ' + d.k + ' · leaves ' + (C - d.k) + ' seats for sale</div>' +
+              tipRow("#2a7fb5", "Displacement", money(d.d), "dashed") + tipRow("#767676", "Marginal cost", money(mc), "dotted") +
+              tipRow("#222", "Cost", money(d.c)) + tipRow("#3a8f5c", "Programme pays", money(pay)) +
+              '<div class="t" style="margin-top:4px">' + (d.on ? "Released: gains " + money(pay - d.c) : "Kept for sale: would lose " + money(d.c - pay)) + '</div>', e);
+          })
+          .on("pointerleave", hideTip);
+        var more = ev.dyn.released > K ? " · seats " + (K + 1) + "–" + (ev.dyn.released >= C ? C : ev.dyn.released) + " also cost less than the payment (not shown)" : "";
+        $("seats-sub").textContent = "CA$ per seat, first " + K + " award seats" + more;
+        d3.select(el).append("div").attr("class", "legend").html(
+          '<span><i style="background:var(--c-disp)"></i>Released: costs less than the payment</span>' +
+          '<span><i style="background:var(--c-off)"></i>Kept for sale</span>' +
+          '<span><i class="ln" style="border-top-color:#3a8f5c"></i>Programme pays</span>' +
+          '<span><i class="ln dot" style="border-top-color:#767676"></i>Marginal cost</span>' +
+          '<span><i class="ln dash" style="border-top-color:#222;border-top-width:1.2px"></i>Fixed allocation</span>' +
+          '<span><i class="ln dot" style="border-top-color:#767676;border-top-width:1.2px"></i>Members asking</span>');
+      }
+
+      function renderCmp() {
+        var a = S.ev.dyn, b = S.ev.fix;
+        function row(label, fa, fb, klass) { return '<tr' + (klass ? ' class="' + klass + '"' : '') + '><td>' + label + '</td><td>' + fa + '</td><td>' + fb + '</td></tr>'; }
+        var h = '<thead><tr><th></th><th>Release by cost</th><th>Fixed allocation</th></tr></thead><tbody>';
+        h += row("Award seats released", a.released >= S.fl.C ? "all " + S.fl.C : a.released, b.released);
+        h += row("Award seats booked (" + S.req + " members ask)", a.booked, b.booked);
+        h += row("Members who find no award seat", a.away, b.away);
+        h += row("Programme pays the airline", money(a.paid), money(b.paid));
+        h += row("Cost to the airline", money(a.cost), money(b.cost));
+        h += row("Airline net", '<span class="' + cls(a.net) + '">' + smoney(a.net) + '</span>', '<span class="' + cls(b.net) + '">' + smoney(b.net) + '</span>', "sum");
+        $("cmp-table").innerHTML = h + '</tbody>';
+        $("cmp-sub").textContent = preset().name + " flight, " + S.demand + "% expected demand";
+      }
+
+      function renderThree() {
+        var mc = mcTotal();
+        S.three = DATA.presets.map(function (p) {
+          var fl = flightOf(p, p.demandFactor), d = displacement(fl), ev = evaluate(d.disp, mc, S.pay, p.awardRequests, S.fixed);
+          return { p: p, fl: fl, disp: d.disp, ev: ev };
+        });
+        var h = '<thead><tr><th>Flight</th><th>Expected demand</th><th>Fares</th><th>First award seat costs</th><th>Seats released by cost</th><th>Members asking</th><th>Net, release by cost</th><th>Net, fixed ' + S.fixed + '</th></tr></thead><tbody>';
+        h += S.three.map(function (r) {
+          var f = r.fl.fares;
+          return '<tr class="' + (r.p.id === S.preset ? "on" : "") + '"><td>' + r.p.name + '<br><small>' + r.p.when + '</small></td><td>' + r.p.demandFactor + '%</td><td>' + money(f[f.length - 1]) + '–' + money(f[0]) + '</td><td>' + money(r.ev.cost[0]) + '</td><td>' +
+            (r.ev.dyn.released >= r.fl.C ? "all" : r.ev.dyn.released) + '</td><td>' + r.p.awardRequests + '</td><td class="' + cls(r.ev.dyn.net) + '">' + smoney(r.ev.dyn.net) + ' <small>' + r.ev.dyn.booked + ' booked</small></td><td class="' + cls(r.ev.fix.net) + '">' + smoney(r.ev.fix.net) + ' <small>' + r.ev.fix.booked + ' booked</small></td></tr>';
+        }).join("");
+        var sd = d3.sum(S.three, function (r) { return r.ev.dyn.net; }), sf = d3.sum(S.three, function (r) { return r.ev.fix.net; });
+        var bd = d3.sum(S.three, function (r) { return r.ev.dyn.booked; }), bf = d3.sum(S.three, function (r) { return r.ev.fix.booked; });
+        h += '<tr class="sum"><td>The three together</td><td></td><td></td><td></td><td></td><td>' + d3.sum(DATA.presets, function (p) { return p.awardRequests; }) + '</td><td class="' + cls(sd) + '">' + smoney(sd) + ' <small>' + bd + ' booked</small></td><td class="' + cls(sf) + '">' + smoney(sf) + ' <small>' + bf + ' booked</small></td></tr>';
+        $("three-table").innerHTML = h + '</tbody>';
+      }
+
+      function renderPeak() {
+        var r = S.three.filter(function (t) { return t.p.id === "peak"; })[0], off = S.three.filter(function (t) { return t.p.id === "offpeak"; })[0];
+        if (!r) { $("peak-live").textContent = ""; return; }
+        var ev = r.ev, req = r.p.awardRequests, need = ev.cost[Math.max(0, Math.min(req, r.fl.C) - 1)];
+        var h = 'With the numbers above, the peak holiday flight expects demand for ' + r.p.demandFactor + '% of its seats. Its first award seat displaces <b>' + money(r.disp[0]) + '</b> of expected revenue, ';
+        if (ev.dyn.released === 0) h += 'more than the <b>' + money(S.pay) + '</b> the programme pays, so the answer is to release <b>no</b> saver seats, even though ' + req + ' members want one. ';
+        else h += 'and the programme pays <b>' + money(S.pay) + '</b>, so ' + seats(ev.dyn.released) + ' still pay their way for the ' + req + ' members who want one. ';
+        if (S.fixed > 0) h += 'A fixed allocation of ' + S.fixed + ' would ' + (ev.fix.net < 0 ? 'cost the airline <b>' + money(-ev.fix.net) + '</b> net' : 'earn the airline ' + smoney(ev.fix.net)) + ' on this one flight. ';
+        h += 'To give all ' + req + ' members a seat, the programme would have to pay about <b>' + money(Math.ceil(need / 5) * 5) + '</b> a seat';
+        if (off) h += ', compared with ' + money(off.ev.cost[0]) + ' for the first seat on the off-peak flight.';
+        else h += '.';
+        $("peak-live").innerHTML = h;
+      }
+
+      // ---------- inputs ----------
+      function numInput(id, key, lo, hi, isInt) {
+        $(id).addEventListener("input", function () {
+          var v = parseFloat(this.value);
+          if (!isFinite(v) || v < lo || v > hi) { this.classList.add("bad"); return; }
+          this.classList.remove("bad");
+          S[key] = isInt ? Math.round(v) : v;
+          recompute();
+        });
+        $(id).addEventListener("blur", function () { this.value = S[key]; this.classList.remove("bad"); });
+      }
+      numInput("in-fuel", "fuel", 0, 1000); numInput("in-cat", "cat", 0, 1000); numInput("in-fees", "fees", 0, 1000);
+      numInput("in-pay", "pay", 0, 5000); numInput("in-req", "req", 0, 150, true); numInput("in-fixed", "fixed", 0, 150, true);
+      $("in-demand").addEventListener("input", function () { S.demand = +this.value; $("demand-v").textContent = S.demand + "%"; recompute(); });
+      $("presets").addEventListener("click", function (e) {
+        var b = e.target.closest("button"); if (!b) return;
+        applyPreset(b.getAttribute("data-id"), true); recompute();
+      });
+      $("reset").addEventListener("click", function () { applyPreset(DATA.defaults.preset, false); recompute(); });
+
+      var rt = null, lastW = window.innerWidth;
+      window.addEventListener("resize", function () {
+        if (window.innerWidth === lastW) return; lastW = window.innerWidth;
+        clearTimeout(rt); rt = setTimeout(function () { if (DATA) { renderCurve(); renderSeats(); } }, 150);
+      });
+
+      // ---------- load ----------
+      fetch(DATA_URL).then(function (r) { if (!r.ok) throw new Error("data " + r.status); return r.json(); }).then(function (d) {
+        DATA = d;
+        S.curves = {};
+        DATA.presets.forEach(function (p) { S.curves[p.id] = curveOf(p); });
+        $("app").hidden = true; $("main").hidden = false;
+        applyPreset(DATA.defaults.preset, false);
+        recompute();
+      }).catch(function (e) {
+        $("app").innerHTML = '<p class="err">Couldn\'t load the flight data (' + e.message + '). Try reloading the page.</p>';
+      });
+    });
+    </script>
+  </body>
+</html>

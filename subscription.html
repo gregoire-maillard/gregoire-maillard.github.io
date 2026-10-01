@@ -1,0 +1,1206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Airline subscription pricer</title>
+    <meta name="description" content="Design and price an airline subscription: an all-you-can-fly pass, a commuter route pass or a bundle of bags, seats and Wi-Fi. See who signs up, what revenue it displaces, what capacity control protects, and the price that maximises profit.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / promoroi.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* chart roles */
+        --rev: #2a78d6;          /* subscription revenue, subscribers */
+        --gain: #1f9e89;         /* extra fares and ancillaries */
+        --cannib: #eb6834;       /* fares subscribers would have paid anyway */
+        --spill: #c2378f;        /* seats on full flights */
+        --anc: #f4a784;          /* ancillaries now included */
+        --cost: #a8a7a1;         /* incremental costs */
+        --loss: #b23c0c;         /* negative net result */
+        --non: #cfcfca;          /* non-subscribers */
+        --grid: #eeeeec;
+      }
+
+      .content {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 6px; max-width: 780px; }
+      .crumbs { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+      .crumbs a { color: var(--muted); }
+      .crumbs a:hover { color: var(--link); }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Plain-language strip ── */
+      .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 22px 0 6px; }
+      .step { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: #fff; font-size: 13px; line-height: 1.5; }
+      .step b { display: block; color: var(--ink); font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+      .step .n { display: inline-block; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 11.5px; line-height: 20px; text-align: center; margin-right: 6px; vertical-align: 1px; }
+
+      /* ── Controls ── */
+      .panel { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fff; margin: 22px 0 16px; }
+      .ctl-grid { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; align-items: center; }
+      .ctl-grid > label, .lbl { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip {
+        border: 1px solid var(--line); background: #fff; color: var(--text);
+        border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer;
+      }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .chip:disabled { opacity: .45; cursor: default; }
+      .hint { font-size: 12px; color: var(--muted); }
+      input.num {
+        font: inherit; font-size: 13px; color: var(--ink);
+        border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; background: #fff;
+        width: 84px; font-variant-numeric: tabular-nums;
+      }
+      input.num.bad { border-color: #e0a58b; background: #fff8f4; }
+      input[type=range] { width: 100%; margin: 6px 0 2px; accent-color: #222; }
+      .fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px 18px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+      .fgroup { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+      .fgroup h5 { margin: 0; font-size: 11.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+      .field { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--text); min-width: 0; }
+      .field small { color: var(--muted); font-size: 11.5px; line-height: 1.35; }
+      .price-row { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
+      .checks { display: flex; flex-direction: column; gap: 5px; }
+      .check { display: inline-flex; gap: 7px; align-items: center; font-size: 13px; color: var(--ink); cursor: pointer; }
+      .check.off { color: var(--muted); cursor: default; }
+      .cap-out { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+      details.did { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+      details.did summary { cursor: pointer; font-size: 13px; color: var(--ink); }
+      details.did summary span { color: var(--muted); font-size: 12px; }
+      .did-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 10px 18px; margin: 10px 0 4px; align-items: center; }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 8px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); min-width: 0; }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .tile b.neg { color: var(--loss); }
+      .tile b.pos { color: var(--rev); }
+      .tile .k { font-size: 12px; color: var(--muted); display: block; margin-bottom: 3px; }
+      .tile span { font-size: 12px; line-height: 1.4; display: block; margin-top: 3px; }
+      .verdict { font-size: 13.5px; line-height: 1.55; max-width: 860px; margin: 10px 0 0; color: var(--ink); }
+
+      /* ── Sections & charts ── */
+      .sec { margin-top: 38px; }
+      .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px; }
+      .sec-head h3 { margin: 0; font-size: 17px; color: var(--ink); }
+      .sec-head span { color: var(--muted); font-size: 12.5px; }
+      .sec > p.lead { margin: 0 0 12px; max-width: 800px; font-size: 13.5px; line-height: 1.55; }
+      .two { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+      .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 10px; background: #fff; min-width: 0; }
+      .card h4 { margin: 0 0 2px; font-size: 14px; color: var(--ink); font-weight: 600; }
+      .card .sub { margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+      .chart { position: relative; width: 100%; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart .axis text { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .chart .axis path, .chart .axis line { stroke: #d9d9d6; }
+      .chart .grid line { stroke: var(--grid); }
+      .chart .grid path { display: none; }
+      .chart .dlabel { font-size: 11.5px; fill: var(--text); paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; font-variant-numeric: tabular-nums; }
+      .chart .dlabel.strong { fill: var(--ink); font-weight: 600; }
+      .chart .dlabel.in { fill: #fff; stroke: none; font-weight: 600; }
+      .chart .rlabel { font-size: 12px; fill: var(--ink); paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+      .chart .xhair { stroke: #bdbdb8; stroke-width: 1; pointer-events: none; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); margin: 6px 0 0; }
+      .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.ln { height: 0; border-radius: 0; border-top: 2px solid; width: 16px; vertical-align: 3px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+
+      .tip {
+        position: absolute; pointer-events: none; z-index: 5;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.5;
+        max-width: 300px; display: none; white-space: nowrap;
+      }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+      .tip .r { display: flex; justify-content: space-between; gap: 14px; }
+      .tip .r b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+      .tip .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; }
+      .tip .tot { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 3px; }
+
+      /* ── Lists & tables ── */
+      .split { display: flex; height: 26px; border-radius: 5px; overflow: hidden; gap: 2px; margin: 10px 0 12px; }
+      .split div { height: 100%; }
+      .kv { list-style: none; margin: 0; padding: 0; font-size: 12.5px; }
+      .kv li { display: grid; grid-template-columns: 16px 1fr auto; gap: 6px; padding: 5px 0; border-top: 1px solid #f0f0f0; align-items: baseline; }
+      .kv li i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+      .kv li b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .kv li.sum { font-weight: 600; color: var(--ink); }
+      .kv li small { display: block; color: var(--muted); font-size: 11.5px; font-weight: 400; }
+      .tbl-wrap { overflow-x: auto; }
+      table.tt { border-collapse: collapse; width: 100%; font-size: 12.5px; margin: 0; }
+      table.tt th { text-align: right; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+      table.tt th:first-child, table.tt td:first-child { text-align: left; white-space: normal; }
+      table.tt td { padding: 6px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.tt td.k { color: var(--ink); }
+      table.tt td.neg { color: var(--loss); }
+      table.tt tr.total td { color: var(--ink); font-weight: 600; border-top: 1px solid var(--line); }
+      .explain { font-size: 13px; line-height: 1.55; margin: 10px 0 4px; }
+      .empty { padding: 28px 12px; text-align: center; color: var(--muted); font-size: 13px; }
+
+      /* ── Market examples ── */
+      .ex-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .ex { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; font-size: 12.5px; line-height: 1.5; min-width: 0; }
+      .ex h4 { margin: 0; font-size: 14px; color: var(--ink); }
+      .ex .who { color: var(--muted); font-size: 12px; margin: 1px 0 8px; }
+      .ex .tag { display: inline-block; font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; margin: 0 4px 6px 0; color: var(--text); background: var(--soft); }
+      .ex .tag.st { background: #fff; }
+      .ex p { margin: 0 0 6px; }
+      .ex p b { color: var(--ink); font-weight: 600; }
+      .ex .src { font-size: 11.5px; color: var(--muted); margin: 6px 0 0; }
+      .ex .src a { color: var(--link); }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; line-height: 1.55; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method code, .fx { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; color: var(--ink); }
+      .method .fx { display: block; padding: 7px 10px; margin: 6px 0 10px; white-space: pre; line-height: 1.6; overflow-x: auto; }
+
+      .loading { padding: 60px 20px; text-align: center; color: var(--muted); grid-column: 1 / -1; }
+
+      @media (max-width: 900px) {
+        .two { grid-template-columns: 1fr; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .steps { grid-template-columns: 1fr; }
+        .ctl-grid { grid-template-columns: 1fr; gap: 4px 0; }
+        .ctl-grid > label { margin-top: 8px; }
+        .tile b { font-size: 20px; }
+        .ex-grid { grid-template-columns: 1fr; }
+        .did-body { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 480px) {
+        .fields { grid-template-columns: 1fr; }
+        table.tt th { white-space: normal; vertical-align: bottom; }
+        table.tt th, table.tt td { padding: 6px 4px; }
+      }
+      @media (max-width: 380px) {
+        .tiles { grid-template-columns: 1fr; }
+      }
+    </style>
+
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+    </style>
+    <style>
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+    </style>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>21</b> tools · <b>7</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Loyalty</div>
+        <h2>Subscription pricer</h2>
+        <p class="lede">Design an airline subscription, set its price, and see who signs up and whether it pays.</p>
+        <p>An all-you-can-fly pass, a route pass for commuters or a monthly bundle of bags, seats and Wi-Fi all promise the same thing: recurring revenue from loyal customers. The catch is who buys it. The customers who gain most from a flat price are the ones who already fly a lot and would have paid you anyway, and they tend to expect to use it even more than they will. This page builds a synthetic customer base, lets each customer decide whether your product is worth its price, and then adds up what the airline gains and gives away.</p>
+        <p class="note-line" id="note-line">Illustrative numbers: the customers, fares, load factors and costs are invented assumptions and don't describe any airline. The market examples near the bottom are real, with sources.</p>
+      </div>
+
+      <div class="steps" aria-label="The logic in three steps">
+        <div class="step"><b><span class="n">1</span>Design the product</b>A monthly price, what's included (trips, ancillaries or both), when pass holders can book, blackout dates, how long they commit, and whether RM keeps pass holders off flights that are filling up.</div>
+        <div class="step"><b><span class="n">2</span>Customers decide</b>Each customer weighs what the product would save them against its price, with a bias: people overestimate how much they'll use a subscription. Heavy flyers gain most, so they sign up first.</div>
+        <div class="step"><b><span class="n">3</span>The airline adds it up</b>Subscription revenue, minus the fares subscribers would have paid anyway and the paying passengers they push off full flights, minus extra costs, plus the extra trips and ancillaries the product brings in.</div>
+      </div>
+
+      <div class="panel" id="controls">
+        <div class="ctl-grid">
+          <label>Preset</label>
+          <div><div class="chips" id="preset"></div><div class="hint" id="preset-desc" style="margin:5px 0 0 0"></div></div>
+          <label>Market</label>
+          <div><div class="chips" id="market"></div><div class="hint" id="market-desc" style="margin:5px 0 0 0"></div></div>
+        </div>
+        <div class="fields">
+          <div class="fgroup">
+            <h5>Price</h5>
+            <div class="field">
+              <label class="price-row" for="price">$ <input class="num" id="price" type="number" min="0" max="5000" step="1" inputmode="decimal"> a month</label>
+              <input id="price-range" type="range" min="0" max="150" step="1" aria-label="Monthly price">
+            </div>
+            <div class="field">Commitment<div class="chips" id="commit"></div><small id="commit-hint"></small></div>
+          </div>
+          <div class="fgroup">
+            <h5>What's included</h5>
+            <div class="field">Round trips a year<div class="chips" id="trips"></div></div>
+            <div class="field">Ancillaries on every trip<div class="checks" id="anc"></div></div>
+          </div>
+          <div class="fgroup">
+            <h5>Restrictions</h5>
+            <div class="field">Booking window<div class="chips" id="window"></div><small id="window-hint"></small></div>
+            <div class="field">Blackout dates<div class="chips" id="blackout"></div></div>
+          </div>
+          <div class="fgroup">
+            <h5>Seat availability</h5>
+            <label class="check" id="cap-lbl"><input type="checkbox" id="cap-on"> Capacity control</label>
+            <div class="field">
+              <span id="cap-txt">Pass seats only on flights RM expects to be less than <span class="cap-out" id="cap-out">85%</span> full</span>
+              <input id="cap-x" type="range" min="50" max="100" step="5" aria-label="Load factor threshold for pass holders">
+              <small id="cap-hint"></small>
+            </div>
+          </div>
+        </div>
+        <details class="did" id="beh">
+          <summary>Behaviour <span id="beh-sum"></span></summary>
+          <div class="did-body">
+            <label class="field" for="bias">Customers overestimate their usage by <span class="cap-out" id="bias-out">25%</span><input id="bias" type="range" min="0" max="60" step="5"></label>
+            <p class="hint" style="margin:0">A customer signs up when the value they expect exceeds the price. With a bias of 25%, someone who will actually save $800 a year expects to save $1,000. Set it to 0 for perfectly rational customers. Gym members studied by DellaVigna and Malmendier paid about 70% more per visit than the pay-as-you-go price, because they expected to go more often than they did.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="tiles" id="tiles"><div class="loading">Loading…</div></div>
+      <p class="verdict" id="verdict"></p>
+
+      <section class="sec" aria-labelledby="h-wf">
+        <div class="sec-head"><h3 id="h-wf">Where the money goes</h3><span>One year, all subscribers</span></div>
+        <div class="two">
+          <div class="card">
+            <h4>From subscription revenue to net result</h4>
+            <p class="sub">What subscribers pay, less what the airline gives away, plus what the product brings in. The last bar is the net effect of launching it.</p>
+            <div class="chart" id="c-wf"></div>
+          </div>
+          <div class="card">
+            <h4>The subscribers</h4>
+            <p class="sub" id="subs-sub"></p>
+            <div class="split" id="split"></div>
+            <ul class="kv" id="subs"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-price">
+        <div class="sec-head"><h3 id="h-price">Profit against price</h3><span id="price-head">Same design, every monthly price</span></div>
+        <div class="card">
+          <p class="sub" id="price-sub"></p>
+          <div class="chart" id="c-price"></div>
+          <div class="chart" id="c-up"></div>
+          <div class="legend" id="l-price"></div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-who">
+        <div class="sec-head"><h3 id="h-who">Who subscribes</h3><span>Adverse selection: heavy flyers sign up first</span></div>
+        <div class="two">
+          <div class="card">
+            <h4>Round trips a year with the airline, before the offer</h4>
+            <p class="sub" id="who-sub"></p>
+            <div class="chart" id="c-who"></div>
+            <div class="legend" id="l-who"></div>
+          </div>
+          <div class="card">
+            <h4>By customer segment</h4>
+            <p class="sub">Net result per subscriber: what each one pays, less what the airline gives up on them, plus what they add.</p>
+            <div class="tbl-wrap"><table class="tt" id="seg"></table></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-cap">
+        <div class="sec-head"><h3 id="h-cap">Capacity control</h3><span id="cap-head"></span></div>
+        <p class="lead" id="cap-lead">Without control, pass holders can take any seat for sale, including seats on flights that will sell out, where each one turns away a paying passenger. With control, RM opens pass seats only on flights it expects to fly with seats to spare. That protects revenue, but it makes the pass less useful, so fewer customers buy it.</p>
+        <div id="cap-body"></div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-ex">
+        <div class="sec-head"><h3 id="h-ex">Subscriptions in the market</h3><span>Public terms, checked September 2026</span></div>
+        <p class="lead">Real products that map onto the presets. Terms change often, especially introductory prices: check the airline's own page before quoting any of these.</p>
+        <div class="ex-grid" id="examples"></div>
+      </section>
+
+      <div class="method" id="how">
+        <h3>How it works</h3>
+
+        <h4>The customers</h4>
+        <p>Each market is a synthetic sample of customers (20,000 for the two networks, 12,000 for YUL–YYZ), drawn once with a fixed seed so the page always shows the same people, then scaled up to the market size. Customers belong to segments (occasional leisure, frequent leisure and visiting friends and relatives, business, road warriors or weekly commuters), and within a segment each one gets their own draw of:</p>
+        <ul>
+          <li><b>Trips a year</b> <code>M</code> on the market, on any airline: 1 plus a negative binomial (a Poisson with a gamma-distributed mean), so a few customers fly a lot.</li>
+          <li><b>Share of wallet</b> <code>w</code>: the share of those trips they already fly with you (beta). The rest go to competitors, or on other modes on YUL–YYZ.</li>
+          <li><b>Average round-trip fare</b> <code>F</code> (lognormal around the segment's median).</li>
+          <li><b>Flexibility</b> <code>φ</code> and <b>late-booking share</b> <code>ℓ</code> (beta): how easily their trips can move to another day or flight, and how many they book less than two weeks out.</li>
+          <li><b>Ancillary habits</b>: the share of trips on which they buy a checked bag, a seat and Wi-Fi.</li>
+          <li><b>Extra-trip propensity</b> <code>γ</code>: how many more trips they would take if the fare dropped to taxes and fees.</li>
+          <li>Two decision draws: whether they notice the offer (40% do) and a <b>hassle cost</b> of signing up (lognormal, median $40 a year), which stands in for inertia and everything else the model leaves out.</li>
+        </ul>
+
+        <h4>What a pass is worth to a customer</h4>
+        <span class="fx">Share of trips the rules allow        U = clamp(a + b·φ − c·ℓ) × (1 − blackout share × (1 − φ))
+With capacity control at X           U′ = U × (q + (1 − q)·φ·q)       q = share of trips on flights expected below X% full
+Extra trips the pass triggers        I = γ × M × (1 − fee / F)
+Pass trips they'd take anyway        Pb = min(A, U′ × M)               A = round trips included a year
+Extra trips on the pass              Pi = min(A − Pb, U′ᵢ × I)         extra trips are fully flexible (φ = 1)
+Value                                V = (F − fee) × (Pb + ½ Pi) + value of the included ancillaries
+Signs up if                          noticed  and  V × (1 + bias) × (1 − commitment discount) − hassle  >  price × months paid</span>
+        <p>The booking window sets <code>a</code>, <code>b</code> and <code>c</code>: any time (1, 0, 0), 14+ days ahead (1, 0, 1), last 3 days (0.05, 0.7, 0) and day before (0, 0.5, 0). Trips a customer was going to take anyway have fixed dates, so short windows hit them hardest; extra trips are discretionary and fit almost any window. Extra trips are valued at half the saving (the usual triangle under a demand curve). Included ancillaries are worth their full price on trips where the customer would have bought them and a quarter of it on the others. Customers who commit for 12 months discount the value by 10% for the risk (5% for 6 months). On a monthly plan they pay only for the months in which they fly: <code>12 × (1 − (11/12)ⁿ)</code> months for <code>n</code> trips spread over the year.</p>
+
+        <h4>What it's worth to the airline</h4>
+        <span class="fx">Net = price × months paid
+    − Pb × w × F                            fares subscribers would have paid you
+    − (Pb × (1 − w) + Pi) × D               paying passengers turned away on full flights
+    − included ancillaries they'd have bought anyway
+    + extra trips × ancillaries they still buy
+    + fares on trips a bundle wins from competitors
+    − extra trips × cost per passenger − ancillary fulfilment − 3% payment and servicing
+
+D = window factor × 1.6 × average fare × Σ wL·p(L) / Σ wL     over the flights pass holders may use
+p(L) = 1 / (1 + e^−(L − 0.93)/0.025)                        chance that one more passenger on a flight expected to be L full turns away a paying one</span>
+        <p>Trips switched from competitors and extra trips put new passengers on board. On a flight that would have flown with empty seats they cost only the variable cost per passenger ($30 on the low-cost network, $50 on the others); on a flight that will sell out, they take the seat of a paying passenger, typically a late booker paying well above the average fare (hence the 1.6). <code>wL</code> is the share of passengers on flights expected to be <code>L</code> full. A last-minute booking window already works as capacity control, because RM knows by then which flights will go out with empty seats: the displacement is multiplied by 0.3 for the last 3 days and 0.1 for the day before. A bundle with no trips doesn't displace anyone, since the extra trips it wins are booked and priced by RM like any other.</p>
+        <p>The profit curve re-runs the same customers at every price; the capacity-control curve re-runs them at every threshold, at the price you chose. The most profitable price is the highest point of the curve, searched over 0 to the end of the axis.</p>
+
+        <h4>Data and sources</h4>
+        <ul>
+          <li>All model inputs are illustrative assumptions, set <span id="how-date">September 2026</span> and stored in <code>assets/data/subscription.json</code>: segment mixes, trip frequencies, fares, load-factor mixes, ancillary prices and costs, the bias, awareness and hassle. They were chosen to look plausible for a low-cost network, a mid-size network and a busy business route, not estimated from any airline.</li>
+          <li>Product terms in <a href="#h-ex">Subscriptions in the market</a> come from the airlines' own pages and newsrooms and from travel press, each linked with its date.</li>
+          <li>DellaVigna, S. and Malmendier, U. (2006), <a href="https://www.aeaweb.org/articles?id=10.1257/aer.96.3.694" target="_blank" rel="noopener">Paying Not to Go to the Gym</a>, <i>American Economic Review</i> 96(3): the evidence behind the usage-overestimation bias.</li>
+          <li>Displacement and bid prices follow the logic of <a href="/rm101.html#ch04">RM 101, chapter 04</a> and <a href="/rm101.html#ch06">chapter 06</a>; award-seat availability, the loyalty version of the same trade-off, is in <a href="/loyalty101.html#ch10">Loyalty 101, chapter 10</a>.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>One steady-state year. No launch ramp-up, churn or renewal pricing, no seasonality beyond blackout dates, and no competitor response: a rival matching the pass would change who switches.</li>
+          <li>Capacity control uses a load-factor threshold on the expected load. A real RM system would compare each pass request with the flight's bid price, which also accounts for connecting traffic and the time left to sell.</li>
+          <li>The upside rests on two assumptions you can't see on the page: how many extra trips a near-free fare triggers (<code>γ</code>) and how many trips a bundle wins from competitors. Change them in the JSON to test how much the answer depends on them.</li>
+          <li>Pass holders who book and don't show, fraud and account sharing are ignored; so are points and status earned on pass trips, which some programmes award.</li>
+          <li>Wi-Fi in a bundle is priced at a per-flight rate. Several airlines now give it free to loyalty members, which makes it worth little in a subscription.</li>
+          <li>Small uptakes mean few subscribers in the sample, so curves can be a little jagged at high prices.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline. For the business side, read <a href="/rm101.html#ch06">RM 101: Network Optimization</a> on displacement, <a href="/loyalty101.html#ch08">Loyalty 101: Segmentation &amp; Customer Lifetime Value</a> on who your heavy users are, and <a href="/commercial101.html#ch07">Commercial 101: Ancillaries &amp; Merchandising</a> on what a bundle gives away.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      var DATA_URL = "assets/data/subscription.json";
+      var css = getComputedStyle(document.documentElement);
+      function cv(n) { return css.getPropertyValue(n).trim(); }
+      var C = { rev: cv("--rev"), gain: cv("--gain"), cannib: cv("--cannib"), spill: cv("--spill"), anc: cv("--anc"), cost: cv("--cost"), loss: cv("--loss"), non: cv("--non"), ink: cv("--ink") };
+      var tip = el("tip");
+      var cfg, S, ctxCache = {}, R;
+
+      // ───────────────────────────── synthetic customers (fixed seed)
+      function mulberry32(a) {
+        return function () {
+          a |= 0; a = a + 0x6D2B79F5 | 0;
+          var t = Math.imul(a ^ a >>> 15, 1 | a);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      function makeRng(seed) {
+        var u = mulberry32(seed), spare = null;
+        function normal() {
+          if (spare != null) { var s = spare; spare = null; return s; }
+          var a, b, r;
+          do { a = 2 * u() - 1; b = 2 * u() - 1; r = a * a + b * b; } while (r >= 1 || r === 0);
+          var m = Math.sqrt(-2 * Math.log(r) / r);
+          spare = b * m; return a * m;
+        }
+        function gamma(k) {          // Marsaglia–Tsang, scale 1
+          if (k < 1) return gamma(k + 1) * Math.pow(u(), 1 / k);
+          var d = k - 1 / 3, c = 1 / Math.sqrt(9 * d);
+          for (;;) {
+            var x, v;
+            do { x = normal(); v = 1 + c * x; } while (v <= 0);
+            v = v * v * v;
+            var uu = u();
+            if (uu < 1 - 0.0331 * x * x * x * x) return d * v;
+            if (Math.log(uu) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+          }
+        }
+        function beta(mean, conc) { var a = gamma(mean * conc), b = gamma((1 - mean) * conc); return a / (a + b); }
+        function poisson(l) {
+          if (l > 30) return Math.max(0, Math.round(l + Math.sqrt(l) * normal()));
+          var L = Math.exp(-l), k = 0, p = 1;
+          do { k++; p *= u(); } while (p > L);
+          return k - 1;
+        }
+        return { u: u, normal: normal, gamma: gamma, beta: beta, poisson: poisson };
+      }
+
+      // One customer = trips a year on the market (any carrier), our share of them, average round-trip fare,
+      // flexibility, share of trips booked late, ancillary habits, how many extra trips a near-free fare would trigger,
+      // plus two decision draws: whether they notice the offer and how much hassle signing up is worth to them.
+      function makePopulation(market, seed, behaviour) {
+        var R = makeRng(seed), n = market.sample, segs = market.segments, pop = [];
+        var cum = [], c = 0;
+        segs.forEach(function (s) { c += s.share; cum.push(c); });
+        for (var i = 0; i < n; i++) {
+          var r = R.u() * c, si = 0;
+          while (si < cum.length - 1 && r > cum[si]) si++;
+          var s = segs[si];
+          var M = 1 + R.poisson(R.gamma(s.tripsK) * (s.trips - 1) / s.tripsK);
+          pop.push({
+            seg: si,
+            M: M,
+            w: R.beta(s.wallet, 4),
+            F: s.fare * Math.exp(s.fareSd * R.normal() - s.fareSd * s.fareSd / 2),
+            flex: R.beta(s.flex, 5),
+            late: R.beta(Math.max(0.02, Math.min(0.98, s.late)), 6),
+            bag: R.beta(s.bag, 3), seat: R.beta(s.seat, 3), wifi: R.beta(s.wifi, 3),
+            ind: s.induced * Math.exp(0.4 * R.normal() - 0.08),
+            aware: R.u(),
+            hassle: behaviour.hassleMedian * Math.exp(behaviour.hassleSigma * R.normal())
+          });
+        }
+        return pop;
+      }
+
+      // Pax-weighted load-factor mix of the market and the spill probability of one extra passenger on a flight.
+      function lfMix(market, spill) {
+        var tot = 0, bins = market.loadFactors.map(function (b) { tot += b[0] * b[1]; return { L: b[0], w: b[0] * b[1] }; });
+        bins.forEach(function (b) { b.w /= tot; b.p = 1 / (1 + Math.exp(-(b.L - spill.center) / spill.scale)); });
+        return bins;
+      }
+      // Share of trips on flights RM opens to pass holders (q) and the expected fare displaced per extra passenger (D).
+      function capacity(bins, capOn, X, fareD) {
+        var q = 0, pw = 0;
+        bins.forEach(function (b) { if (!capOn || b.L < X - 1e-9) { q += b.w; pw += b.w * b.p; } });
+        return { q: q, D: q > 0 ? fareD * pw / q : 0, pAll: bins.reduce(function (a, b) { return a + b.w * b.p; }, 0) };
+      }
+
+      // Share of a customer's trips that fit the booking window and blackout dates.
+      function usable(W, blk, flex, late) {
+        return Math.max(0, Math.min(1, W.base + W.flex * flex - W.late * late)) * (1 - blk * (1 - flex));
+      }
+
+      // Everything that doesn't depend on the price, per customer, for one design.
+      // d: { trips (number, 0 or "unl"), anc: [...], window, blackout, commit, capOn, capX, bias }
+      function prepare(ctx, d) {
+        var mk = ctx.market, B = ctx.cfg.behaviour, W = ctx.cfg.windows[d.window], blk = ctx.cfg.blackouts[d.blackout].share;
+        var A = d.trips === "unl" ? B.maxTripsPerYear : +d.trips, hasTrips = A > 0;
+        var capOn = hasTrips && d.capOn;
+        var cap = capacity(ctx.bins, capOn, d.capX / 100, ctx.fareD);
+        var D = cap.D * W.displacement;
+        var fee = mk.feeRT, costRT = mk.costRT;
+        var anc = mk.ancillaries, keys = ["bag", "seat", "wifi"], inc = [false, false, false];
+        d.anc.forEach(function (k) { inc[keys.indexOf(k)] = true; });
+        var n = ctx.pop.length;
+        var P = { n: n, hasTrips: hasTrips, cap: cap, D: D, capOn: capOn,
+                  disc: B.commitDiscount[String(d.commit)] || 0, commit: d.commit, bias: d.bias, awareness: B.awareness,
+                  scale: mk.customers / mk.sample, serviceRate: B.serviceCostRate,
+                  wtp: new Float64Array(n), months: new Float64Array(n), cost: new Float64Array(n),
+                  lostFares: new Float64Array(n), displaced: new Float64Array(n), lostAnc: new Float64Array(n),
+                  incFares: new Float64Array(n), incAnc: new Float64Array(n), costTrips: new Float64Array(n), costAnc: new Float64Array(n),
+                  passTrips: new Float64Array(n), wanted: new Float64Array(n), incTrips: new Float64Array(n), value: new Float64Array(n), ours0: new Float64Array(n) };
+        var pr = [anc.bag.price, anc.seat.price, anc.wifi.price], co = [anc.bag.cost, anc.seat.cost, anc.wifi.cost], up = [anc.bag.uptake, anc.seat.uptake, anc.wifi.uptake];
+        var uav = B.unusedAncillaryValue, isur = B.inducedSurplus;
+        for (var i = 0; i < n; i++) {
+          var c = ctx.pop[i], F = c.F, ours0 = c.w * c.M, hab = [c.bag, c.seat, c.wifi];
+          // ancillary economics per round trip (two segments)
+          var av = 0, la = 0, lcBase = 0, lcInc = 0, raInc = 0;
+          for (var j = 0; j < 3; j++) {
+            var p = hab[j];
+            if (inc[j]) {
+              av += 2 * pr[j] * (p + uav * (1 - p));
+              la += 2 * pr[j] * p;
+              lcBase += 2 * co[j] * up[j] * (1 - p);
+              lcInc += 2 * co[j] * (p + up[j] * (1 - p));
+            } else {
+              raInc += 2 * (pr[j] - co[j]) * p;
+            }
+          }
+          // trips the product moves or creates
+          var Pb = 0, Pi = 0, ours = 0, sw = 0, S = 0, wanted = 0, valTrips = 0;
+          if (hasTrips) {
+            // trips they take anyway have fixed dates; extra trips are discretionary, so fences bite them less
+            var fx = c.flex, fi = fx + B.inducedFlex * (1 - fx);
+            var U = usable(W, blk, fx, c.late), Ui = usable(W, blk, fi, 0);
+            var Uc = U * (capOn ? cap.q + (1 - cap.q) * fx * cap.q : 1);
+            var Uci = Ui * (capOn ? cap.q + (1 - cap.q) * fi * cap.q : 1);
+            var I = c.ind * c.M * Math.max(0, 1 - fee / F);
+            Pb = Math.min(A, Uc * c.M); ours = Pb * c.w; sw = Pb - ours;
+            Pi = Math.min(A - Pb, Uci * I);
+            wanted = Math.min(A, U * c.M + Ui * I);
+            valTrips = Math.max(0, F - fee) * (Pb + isur * Pi);
+          } else if (d.anc.length) {
+            S = (1 - c.w) * c.M * Math.min(B.shareShiftCap, B.shareShift * av / F);
+          }
+          var incTrips = sw + Pi + S;
+          var value = valTrips + av * ours0 + isur * av * incTrips;
+          var nTrips = hasTrips ? Pb + Pi : ours0 + incTrips;
+          var months = 12 * (1 - Math.pow(11 / 12, nTrips));
+          P.months[i] = d.commit === 12 ? 12 : d.commit === 6 ? Math.max(6, months) : Math.max(1, months);
+          P.value[i] = value;
+          P.wtp[i] = c.aware < B.awareness && value > 0 ? value * (1 + d.bias) * (1 - P.disc) - c.hassle : -Infinity;
+          P.lostFares[i] = ours * F;
+          P.displaced[i] = (sw + Pi) * D;
+          P.lostAnc[i] = ours0 * la;
+          P.incFares[i] = S * F;
+          P.incAnc[i] = incTrips * raInc;
+          P.costTrips[i] = incTrips * costRT;
+          P.costAnc[i] = ours0 * lcBase + incTrips * lcInc;
+          P.passTrips[i] = Pb + Pi; P.wanted[i] = wanted; P.incTrips[i] = incTrips; P.ours0[i] = ours0;
+          // everything but the subscription revenue and its service cost
+          P.cost[i] = P.lostFares[i] + P.displaced[i] + P.lostAnc[i] - P.incFares[i] - P.incAnc[i] + P.costTrips[i] + P.costAnc[i];
+        }
+        return P;
+      }
+
+      // Quick pass for sweeps: net result and uptake at one monthly price.
+      function quick(P, price) {
+        var net = 0, subs = 0, k = 1 - P.serviceRate;
+        for (var i = 0; i < P.n; i++) {
+          var fee = price * P.months[i];
+          if (P.wtp[i] > fee) { subs++; net += fee * k - P.cost[i]; }
+        }
+        return { net: net * P.scale, uptake: subs / P.n, subsN: subs * P.scale };
+      }
+
+      // Full tally at one monthly price, with the waterfall components and who subscribes.
+      function evaluate(P, price) {
+        var T = { subs: 0, subRev: 0, lostFares: 0, displaced: 0, lostAnc: 0, incFares: 0, incAnc: 0, costTrips: 0, costAnc: 0, costService: 0,
+                  passTrips: 0, wantedTrips: 0, incTrips: 0, custValue: 0, ourTripsSubs: 0, ourTripsNon: 0, nNon: 0 };
+        var flags = new Uint8Array(P.n);
+        for (var i = 0; i < P.n; i++) {
+          var fee = price * P.months[i];
+          if (!(P.wtp[i] > fee)) { T.ourTripsNon += P.ours0[i]; T.nNon++; continue; }
+          flags[i] = 1; T.subs++;
+          T.subRev += fee; T.costService += P.serviceRate * fee;
+          T.lostFares += P.lostFares[i]; T.displaced += P.displaced[i]; T.lostAnc += P.lostAnc[i];
+          T.incFares += P.incFares[i]; T.incAnc += P.incAnc[i]; T.costTrips += P.costTrips[i]; T.costAnc += P.costAnc[i];
+          T.passTrips += P.passTrips[i]; T.wantedTrips += P.wanted[i]; T.incTrips += P.incTrips[i]; T.custValue += P.value[i];
+          T.ourTripsSubs += P.ours0[i];
+        }
+        ["subRev", "lostFares", "displaced", "lostAnc", "incFares", "incAnc", "costTrips", "costAnc", "costService", "passTrips", "wantedTrips", "incTrips", "custValue"].forEach(function (k) { T[k] *= P.scale; });
+        T.net = T.subRev - T.lostFares - T.displaced - T.lostAnc + T.incFares + T.incAnc - T.costTrips - T.costAnc - T.costService;
+        T.subsN = T.subs * P.scale;
+        T.uptake = T.subs / P.n;
+        T.meanSubs = T.subs ? T.ourTripsSubs / T.subs : NaN;
+        T.meanNon = T.nNon ? T.ourTripsNon / T.nNon : NaN;
+        T.flags = flags;
+        return T;
+      }
+
+      function makeContext(cfg, marketKey) {
+        var market = cfg.markets[marketKey];
+        var pop = makePopulation(market, cfg.seed + Object.keys(cfg.markets).indexOf(marketKey), cfg.behaviour);
+        var ft = 0, t = 0;
+        pop.forEach(function (c) { ft += c.F * c.w * c.M; t += c.w * c.M; });
+        var avgFare = ft / t;
+        return { cfg: cfg, market: market, pop: pop, bins: lfMix(market, cfg.spill), avgFare: avgFare, fareD: avgFare * cfg.spill.fareMultiple };
+      }
+      // ───────────────────────────── helpers
+      function el(id) { return document.getElementById(id); }
+      var nf0 = d3.format(",.0f");
+      function int(x) { return (x < -0.5 ? "−" : "") + nf0(Math.abs(Math.round(x))); }
+      function money(x) {
+        var a = Math.abs(x), s;
+        if (a >= 9.995e5) s = "$" + (a / 1e6).toFixed(a >= 1e8 ? 0 : a >= 1e7 ? 1 : 2) + "m";
+        else if (a >= 1e4) s = "$" + Math.round(a / 1e3) + "k";
+        else s = "$" + nf0(a);
+        return (x < 0 && s !== "$0" ? "−" : "") + s;
+      }
+      function signedMoney(x) { return (x > 0 && money(x) !== "$0" ? "+" : "") + money(x); }
+      function dollars(x) { return (x < 0 ? "−" : "") + "$" + nf0(Math.abs(x)); }
+      function pct(x, dp) { if (!isFinite(x)) return "n/a"; var s = Math.abs(x * 100).toFixed(dp == null ? 0 : dp); return (x < 0 && +s !== 0 ? "−" : "") + s + "%"; }
+      function upt(x) { return x > 0 && x < 0.001 ? "<0.1%" : pct(x, x < 0.1 ? 1 : 0); }
+      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+      function tripsLabel(t) { return t === "unl" ? "unlimited" : String(t); }
+
+      function getCtx(m) { return ctxCache[m] || (ctxCache[m] = makeContext(cfg, m)); }
+      function design(over) {
+        var d = { trips: S.trips, anc: S.anc.slice(), window: S.window, blackout: S.blackout, commit: S.commit, capOn: S.capOn, capX: S.capX, bias: S.bias };
+        for (var k in over) d[k] = over[k];
+        return d;
+      }
+      function sweepMax() { return Math.max(S.priceMax, Math.ceil(S.price * 1.6 / 10) * 10); }
+
+      // ───────────────────────────── controls
+      function chipRow(host, items, current, onPick) {
+        host.innerHTML = "";
+        items.forEach(function (it) {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip" + (it.value === current ? " on" : "");
+          b.textContent = it.label; b.setAttribute("aria-pressed", it.value === current);
+          if (it.disabled) b.disabled = true;
+          b.addEventListener("click", function () { onPick(it.value); });
+          host.appendChild(b);
+        });
+      }
+      function edited() { S.preset = null; }
+
+      function applyPreset(k) {
+        var p = cfg.presets[k];
+        S.preset = k; S.market = p.market; S.price = p.price; S.priceMax = p.priceMax;
+        S.trips = p.trips; S.anc = p.anc.slice(); S.window = p.window; S.blackout = p.blackout;
+        S.commit = p.commit; S.capOn = p.capOn; S.capX = p.capX;
+      }
+
+      function buildControls() {
+        var P = cfg.presets, M = cfg.markets;
+        chipRow(el("preset"), Object.keys(P).map(function (k) { return { value: k, label: P[k].label }; }), S.preset, function (k) { applyPreset(k); renderAll(); });
+        el("preset-desc").textContent = S.preset ? P[S.preset].desc : "Your own design. Pick a preset to reset every input.";
+        chipRow(el("market"), Object.keys(M).map(function (k) { return { value: k, label: M[k].label }; }), S.market, function (k) { S.market = k; edited(); renderAll(); });
+        el("market-desc").textContent = M[S.market].desc;
+
+        var pr = el("price"), rg = el("price-range");
+        rg.max = sweepMax();
+        if (document.activeElement !== pr) { pr.value = S.price; pr.classList.remove("bad"); }
+        rg.value = S.price;
+
+        chipRow(el("commit"), [{ value: 1, label: "Monthly" }, { value: 6, label: "6 months" }, { value: 12, label: "12 months" }], S.commit, function (v) { S.commit = v; edited(); renderAll(); });
+        el("commit-hint").textContent = S.commit === 1 ? "Customers can stop any time, so many pay only in the months they fly." :
+          S.commit === 6 ? "Customers pay at least 6 months." : "Customers pay 12 months, whatever they use.";
+        chipRow(el("trips"), [0, 6, 12, 24, "unl"].map(function (v) { return { value: v, label: v === 0 ? "None" : v === "unl" ? "Unlimited" : String(v) }; }), S.trips, function (v) { S.trips = v; edited(); renderAll(); });
+
+        var A = M[S.market].ancillaries, ah = el("anc");
+        ah.innerHTML = "";
+        ["bag", "seat", "wifi"].forEach(function (k) {
+          var l = document.createElement("label"); l.className = "check";
+          l.innerHTML = '<input type="checkbox"' + (S.anc.indexOf(k) >= 0 ? " checked" : "") + "> " + A[k].label + ' <span class="hint">($' + A[k].price + " a flight)</span>";
+          l.querySelector("input").addEventListener("change", function () {
+            var i = S.anc.indexOf(k);
+            if (this.checked && i < 0) S.anc.push(k); else if (!this.checked && i >= 0) S.anc.splice(i, 1);
+            edited(); renderAll();
+          });
+          ah.appendChild(l);
+        });
+
+        var hasTrips = S.trips !== 0, W = cfg.windows, B = cfg.blackouts;
+        chipRow(el("window"), Object.keys(W).map(function (k) { return { value: k, label: W[k].label, disabled: !hasTrips }; }), S.window, function (v) { S.window = v; edited(); renderAll(); });
+        el("window-hint").textContent = hasTrips ? W[S.window].desc : "Restrictions apply to trips on the pass. This design includes none.";
+        chipRow(el("blackout"), Object.keys(B).map(function (k) { return { value: k, label: B[k].label, disabled: !hasTrips }; }), S.blackout, function (v) { S.blackout = v; edited(); renderAll(); });
+
+        var co = el("cap-on"), cx = el("cap-x");
+        co.checked = S.capOn && hasTrips; co.disabled = !hasTrips; cx.disabled = !hasTrips || !S.capOn;
+        el("cap-lbl").classList.toggle("off", !hasTrips);
+        cx.value = S.capX; el("cap-out").textContent = S.capX + "%";
+        el("cap-txt").style.opacity = hasTrips && S.capOn ? 1 : 0.5;
+        el("cap-hint").textContent = !hasTrips ? "Only for products that include trips." :
+          S.capOn ? "Flights expected to be fuller are closed to pass holders." : "Off: pass holders can take any seat for sale.";
+
+        el("bias").value = Math.round(S.bias * 100); el("bias-out").textContent = Math.round(S.bias * 100) + "%";
+        el("beh-sum").textContent = "· customers overestimate their usage by " + Math.round(S.bias * 100) + "%";
+      }
+
+      function wireControls() {
+        var pr = el("price"), rg = el("price-range"), t;
+        pr.addEventListener("input", function () {
+          var v = parseFloat(this.value), ok = isFinite(v) && v >= 0 && v <= 5000;
+          this.classList.toggle("bad", !ok);
+          if (!ok) return;
+          S.price = v; edited(); schedule();
+        });
+        rg.addEventListener("input", function () { S.price = +this.value; el("price").value = S.price; edited(); schedule(); });
+        el("cap-on").addEventListener("change", function () { S.capOn = this.checked; edited(); renderAll(); });
+        el("cap-x").addEventListener("input", function () { S.capX = +this.value; el("cap-out").textContent = S.capX + "%"; edited(); schedule(); });
+        el("bias").addEventListener("input", function () { S.bias = +this.value / 100; el("bias-out").textContent = this.value + "%"; schedule(); });
+        function schedule() { clearTimeout(t); t = setTimeout(renderAll, 60); }
+      }
+
+      // ───────────────────────────── the numbers
+      function compute() {
+        var ctx = getCtx(S.market), hasTrips = S.trips !== 0;
+        var P = prepare(ctx, design({}));
+        var r = evaluate(P, S.price);
+        r.P = P; r.ctx = ctx; r.hasTrips = hasTrips;
+
+        // price sweep, for this design and for the same design with capacity control flipped
+        var max = sweepMax(), n = 120;
+        var Palt = hasTrips ? prepare(ctx, design({ capOn: !S.capOn })) : null;
+        r.sweep = d3.range(n + 1).map(function (i) {
+          var pr = max * i / n, a = quick(P, pr), b = Palt ? quick(Palt, pr) : null;
+          return { price: pr, net: a.net, up: a.uptake, subs: a.subsN, netAlt: b ? b.net : null, upAlt: b ? b.uptake : null };
+        });
+        r.best = r.sweep.reduce(function (b, s) { return s.net > b.net ? s : b; }, { net: -Infinity });
+        r.max = max; r.Palt = Palt;
+
+        // capacity control: off vs on at the chosen threshold, and every threshold, at this price
+        if (hasTrips) {
+          var Poff = S.capOn ? Palt : P;
+          var PonX = S.capOn ? P : Palt;
+          r.off = evaluate(Poff, S.price); r.on = evaluate(PonX, S.price);
+          r.thr = d3.range(50, 100.01, 2.5).map(function (x) {
+            var q = quick(prepare(ctx, design({ capOn: true, capX: x })), S.price);
+            return { x: x, net: q.net, up: q.uptake };
+          });
+        }
+
+        // per subscriber and per segment
+        var segs = ctx.market.segments.map(function (s) { return { label: s.label, n: 0, subs: 0, trips: 0, net: 0 }; });
+        var under = 0, oursTrips = 0, k = 1 - P.serviceRate;
+        for (var i = 0; i < P.n; i++) {
+          var sg = segs[ctx.pop[i].seg]; sg.n++;
+          if (!r.flags[i]) continue;
+          oursTrips += P.lostFares[i] / ctx.pop[i].F;
+          var fee = S.price * P.months[i];
+          sg.subs++; sg.trips += P.ours0[i]; sg.net += fee * k - P.cost[i];
+          if (P.value[i] < fee) under++;
+        }
+        r.segs = segs; r.underShare = r.subs ? under / r.subs : 0; r.oursTrips = oursTrips * P.scale;
+        return r;
+      }
+
+      // ───────────────────────────── tooltip & chart frame
+      function showTip(html, evt) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var pageX = evt.pageX, pageY = evt.pageY, w = tip.offsetWidth, h = tip.offsetHeight;
+        var x = pageX + 14, y = pageY - h - 12;
+        if (x + w > window.scrollX + document.documentElement.clientWidth - 8) x = pageX - w - 14;
+        if (x < window.scrollX + 8) x = window.scrollX + 8;
+        if (y < window.scrollY + 8) y = pageY + 16;
+        tip.style.left = x + "px"; tip.style.top = y + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      function row(color, label, val, cls) {
+        return '<div class="r' + (cls ? " " + cls : "") + '"><span>' + (color ? '<i class="sw" style="background:' + color + '"></i>' : "") + label + "</span><b>" + val + "</b></div>";
+      }
+      function frame(host, heightRatio, minH, M) {
+        var W = Math.max(280, host.clientWidth || host.parentNode.clientWidth || 600);
+        var H = Math.max(minH || 200, Math.round(W * heightRatio));
+        var narrow = W < 520;
+        M = M || { top: 14, right: narrow ? 12 : 18, bottom: 34, left: narrow ? 50 : 60 };
+        d3.select(host).selectAll("*").remove();
+        var svg = d3.select(host).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img");
+        return { svg: svg, W: W, H: H, M: M, iw: W - M.left - M.right, ih: H - M.top - M.bottom, narrow: narrow,
+                 g: svg.append("g").attr("transform", "translate(" + M.left + "," + M.top + ")") };
+      }
+      function yAxis(f, y, fmt, n) {
+        f.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(n || 5).tickSize(-f.iw).tickFormat(""));
+        f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(n || 5).tickSize(0).tickPadding(6).tickFormat(fmt))
+          .select(".domain").remove();
+      }
+      function legend(host, items) {
+        el(host).innerHTML = items.map(function (it) {
+          var st = it.line ? "border-color:" + it.color : "background:" + it.color + (it.opacity ? ";opacity:" + it.opacity : "");
+          return '<span><i class="' + (it.line ? "ln" + (it.dash ? " dash" : "") : "") + '" style="' + st + '"></i>' + it.label + "</span>";
+        }).join("");
+      }
+      function axisMoney(v) { return v === 0 ? "0" : money(v); }
+
+      // ───────────────────────────── summary
+      function drawTiles(R) {
+        var M = cfg.markets[S.market], t = [];
+        var rev = R.subRev + R.incFares + R.incAnc, displaced = R.lostFares + R.displaced + R.lostAnc, extraCost = R.costTrips + R.costAnc + R.costService;
+        t.push('<div class="tile"><span class="k">Subscribers</span><b>' + int(R.subsN) + "</b><span>" + upt(R.uptake) + " of " + int(M.customers) + " customers" +
+          (R.subs ? "<br>" + (R.hasTrips ? (R.passTrips / R.subsN).toFixed(1) + " round trips each on the pass" : "keep " + (R.meanSubs).toFixed(1) + " round trips a year with you") : "") + "</span></div>");
+        t.push('<div class="tile"><span class="k">Revenue</span><b>' + money(rev) + "</b><span>" + money(R.subRev) + " in subscriptions<br>" + money(R.incFares + R.incAnc) + " from extra fares and ancillaries</span></div>");
+        t.push('<div class="tile"><span class="k">Cost</span><b>' + money(displaced + extraCost) + "</b><span>" + money(displaced) + " of revenue displaced<br>" + money(extraCost) + " of extra operating costs</span></div>");
+        t.push('<div class="tile"><span class="k">Net result, a year</span><b class="' + (R.net < 0 ? "neg" : R.net > 0 ? "pos" : "") + '">' + signedMoney(R.net) + "</b><span>" +
+          (R.subs ? dollars(R.net / R.subsN) + " per subscriber" : "no subscribers") + "<br>" +
+          (R.best.net > 0 ? "Best price $" + Math.round(R.best.price) + ": " + signedMoney(R.best.net) : "No price on the chart pays") + "</span></div>");
+        el("tiles").innerHTML = t.join("");
+
+        var v = [];
+        if (!R.subs) {
+          v.push("At $" + nf0(S.price) + " a month nobody signs up: no customer expects to save more than the price and the hassle of subscribing.");
+          if (R.best.net > 0) v.push("The most profitable price for this design is about $" + Math.round(R.best.price) + " a month (" + signedMoney(R.best.net) + " a year, " + upt(R.best.up) + " uptake).");
+          else v.push("No price on the chart makes it pay: " + (R.hasTrips ? "loosen the restrictions to make the pass worth buying, or include fewer trips." : "the bundle gives away more ancillary revenue than it wins back."));
+        } else {
+          v.push(upt(R.uptake) + " of customers subscribe. They already flew " + R.meanSubs.toFixed(1) + " round trips a year with you, against " + R.meanNon.toFixed(1) + " for everyone else: heavy flyers sign up first.");
+          var given = R.hasTrips ? R.lostFares : R.lostAnc;
+          if (R.subRev > 0) v.push("For every $100 they pay, $" + Math.round(100 * given / R.subRev) + " comes back out of " + (R.hasTrips ? "fares they would have paid you anyway" : "ancillaries they would have bought anyway") +
+            (R.hasTrips && R.displaced > 0.02 * R.subRev ? " and $" + Math.round(100 * R.displaced / R.subRev) + " out of seats on full flights" : "") + ".");
+          v.push("Overall the product " + (R.net >= 0 ? "adds " : "costs ") + money(Math.abs(R.net)) + " a year.");
+          if (R.best.net > 0 && Math.abs(R.best.price - S.price) > Math.max(2, 0.05 * S.price)) v.push("The most profitable price for this design is about $" + Math.round(R.best.price) + " a month (" + signedMoney(R.best.net) + ", " + upt(R.best.up) + " uptake).");
+          else if (R.best.net > 0) v.push("That's close to the most profitable price for this design.");
+          else v.push("No price on the chart makes it pay.");
+        }
+        el("verdict").textContent = v.join(" ");
+      }
+
+      // ───────────────────────────── waterfall
+      function drawWaterfall(R) {
+        var host = el("c-wf");
+        var rows = [
+          { k: "Subscription revenue", v: R.subRev, c: C.rev },
+          { k: "Fares they'd have paid you", v: -R.lostFares, c: C.cannib, trips: true },
+          { k: "Seats on full flights", v: -R.displaced, c: C.spill, trips: true },
+          { k: "Included ancillaries they'd have bought", v: -R.lostAnc, c: C.anc, anc: true },
+          { k: "Extra fares and ancillaries", v: R.incFares + R.incAnc, c: C.gain },
+          { k: "Extra operating costs", v: -(R.costTrips + R.costAnc + R.costService), c: C.cost },
+          { k: "Net result", v: R.net, c: R.net >= 0 ? C.rev : C.loss, total: true, strong: true }
+        ].filter(function (r) { return !(r.trips && !R.hasTrips) && !(r.anc && !S.anc.length); });
+        var run = 0;
+        rows.forEach(function (r) { if (r.total) { r.x0 = 0; r.x1 = r.v; } else { r.x0 = run; r.x1 = run + r.v; } run = r.x1; });
+        var rowH = 44, M = { top: 4, right: 14, bottom: 26, left: 8 };
+        var f = frame(host, 0, rows.length * rowH + M.top + M.bottom, M);
+        var ext = d3.extent(rows.reduce(function (a, r) { return a.concat([r.x0, r.x1]); }, [0]));
+        if (ext[0] === ext[1]) ext[1] = ext[0] + 1;
+        var x = d3.scaleLinear().domain(ext).nice(5).range([0, f.iw]);
+        f.g.append("g").attr("class", "grid").attr("transform", "translate(0," + (rows.length * rowH) + ")")
+          .call(d3.axisBottom(x).ticks(f.narrow ? 4 : 6).tickSize(-rows.length * rowH).tickFormat(""));
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + (rows.length * rowH) + ")")
+          .call(d3.axisBottom(x).ticks(f.narrow ? 4 : 6).tickSize(4).tickFormat(axisMoney)).select(".domain").remove();
+        f.g.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", 0).attr("y2", rows.length * rowH).attr("stroke", "#9a9a96");
+        var conn = f.g.append("g");
+        rows.forEach(function (r, i) {
+          var y0 = i * rowH, by = y0 + 20, bh = 16;
+          var lo = Math.min(r.x0, r.x1), hi = Math.max(r.x0, r.x1);
+          var g = f.g.append("g");
+          g.append("text").attr("class", "rlabel").attr("x", 0).attr("y", y0 + 13).style("font-weight", r.strong ? 600 : null).text(r.k);
+          g.append("rect").attr("x", x(lo)).attr("y", by).attr("width", Math.max(1, x(hi) - x(lo))).attr("height", bh).attr("rx", 3).attr("fill", r.c);
+          var lbl = (r.v > 0 && money(r.v) !== "$0" ? "+" : "") + money(r.v), tw = lbl.length * 6.6 + 8;
+          var right = x(hi) + 6 + tw <= f.iw, left = x(lo) - 6 - tw >= 0;
+          var inside = !right && !left && x(hi) - x(lo) > tw + 4;
+          g.append("text").attr("class", "dlabel" + (r.strong ? " strong" : "") + (inside ? " in" : "")).attr("y", by + 12)
+            .attr("x", right ? x(hi) + 6 : inside ? x(hi) - 6 : x(lo) - 6).attr("text-anchor", right ? "start" : "end").text(lbl);
+          if (i < rows.length - 1 && !rows[i + 1].total) {
+            conn.append("line").attr("x1", x(r.x1)).attr("x2", x(r.x1)).attr("y1", by + bh).attr("y2", by + rowH)
+              .attr("stroke", "#bdbdb8").attr("stroke-dasharray", "2 2");
+          }
+          g.append("rect").attr("x", 0).attr("y", y0).attr("width", f.iw).attr("height", rowH).attr("fill", "transparent")
+            .on("pointermove", function (evt) { showTip('<div class="t">' + r.k + "</div>" + row(r.c, "A year", signedMoney(r.v)) + wfDetail(r, R), evt); })
+            .on("pointerleave", hideTip);
+        });
+      }
+      function wfDetail(r, R) {
+        var per = R.subsN ? function (v) { return row(null, "Per subscriber", dollars(v / R.subsN)); } : function () { return ""; };
+        switch (r.k) {
+          case "Subscription revenue": return row(null, "Subscribers", int(R.subsN)) + row(null, "Price", "$" + nf0(S.price) + " a month") + per(R.subRev);
+          case "Fares they'd have paid you": return row(null, "Round trips moved onto the pass", int(R.oursTrips)) + per(R.lostFares);
+          case "Seats on full flights": return row(null, "Displaced fare per extra passenger", "$" + nf0(R.P.D)) + per(R.displaced);
+          case "Extra fares and ancillaries": return row(null, "Extra round trips", int(R.incTrips)) + row(null, "Fares", money(R.incFares)) + row(null, "Ancillaries", money(R.incAnc));
+          case "Extra operating costs": return row(null, "Carrying extra passengers", money(R.costTrips)) + row(null, "Ancillary fulfilment", money(R.costAnc)) + row(null, "Payment and servicing", money(R.costService));
+          case "Net result": return per(R.net);
+          default: return per(-r.v);
+        }
+      }
+
+      function drawSubs(R) {
+        var pass = R.passTrips;
+        el("subs-sub").textContent = R.hasTrips ? "What subscribers do with the pass, and whether it was worth it to them." : "What the bundle changes for its subscribers, and whether it was worth it to them.";
+        var li = [];
+        if (!R.subs) {
+          el("split").innerHTML = "";
+          el("subs").innerHTML = '<li><i></i><span>No subscribers at this price.</span><b></b></li>';
+          return;
+        }
+        if (R.hasTrips) {
+          // pass trips they'd have paid you for vs trips new to the airline
+          var o = R.oursTrips, inc = Math.max(0, R.incTrips);
+          el("split").innerHTML = '<div style="flex:' + o + ";background:" + C.cannib + '" title="Would have paid you"></div><div style="flex:' + inc + ";background:" + C.gain + '" title="New to you"></div>';
+          li.push(["", "Round trips on the pass", int(pass), (pass / R.subsN).toFixed(1) + " per subscriber a year", "sum"]);
+          li.push([C.cannib, "Would have paid you for them", int(o), pct(pass ? o / pass : 0) + " of pass trips"]);
+          li.push([C.gain, "New to you", int(inc), "switched from competitors or not taken before"]);
+        } else {
+          li.push(["", "Round trips a year with you", int(R.meanSubs * R.subsN + R.incTrips), (R.meanSubs + R.incTrips / R.subsN).toFixed(1) + " per subscriber", "sum"]);
+          li.push([C.gain, "Won from competitors", int(R.incTrips), "paid at full fare"]);
+          el("split").innerHTML = '<div style="flex:' + (R.meanSubs * R.subsN) + ";background:" + C.non + '" title="Already with you"></div><div style="flex:' + R.incTrips + ";background:" + C.gain + '" title="Won from competitors"></div>';
+        }
+        var paid = R.subRev / R.subsN;
+        li.push(["", "Paid per subscriber", dollars(paid), "a year, " + (S.commit === 12 ? "12-month commitment" : S.commit === 6 ? "at least 6 months" : "months with a trip only")]);
+        li.push(["", "Actual value per subscriber", dollars(R.custValue / R.subsN), "what the product really saves them, before the bias"]);
+        li.push(["", "Subscribers who pay more than they get", pct(R.underShare), "they expected to use it more than they did", "sum"]);
+        el("subs").innerHTML = li.map(function (r) {
+          return '<li class="' + (r[4] || "") + '"><i style="background:' + (r[0] || "transparent") + '"></i><span>' + r[1] + (r[3] ? "<small>" + r[3] + "</small>" : "") + "</span><b>" + r[2] + "</b></li>";
+        }).join("");
+      }
+
+      // ───────────────────────────── profit against price
+      function drawPrice(R) {
+        var sw = R.sweep, alt = R.hasTrips;
+        var f = frame(el("c-price"), 0.36, 240, null);
+        var x = d3.scaleLinear().domain([0, R.max]).range([0, f.iw]);
+        var vals = [0];
+        sw.forEach(function (s) { vals.push(s.net); if (alt) vals.push(s.netAlt); });
+        var lo = d3.min(vals), hi = d3.max(vals);
+        // a deep loss at low prices would flatten the interesting part: cut it off
+        var loClip = Math.min(lo, 0, R.net), hiClip = Math.max(hi, 0) * 1.08 || 1;
+        var y = d3.scaleLinear().domain([Math.max(loClip, -Math.max(Math.abs(hiClip), Math.abs(R.net), 1e5) * 2.5), hiClip]).nice(6).range([f.ih, 0]);
+        var ymin = y.domain()[0];
+        f.g.append("rect").attr("x", 0).attr("width", f.iw).attr("y", y(0)).attr("height", Math.max(0, f.ih - y(0))).attr("fill", C.cannib).attr("opacity", 0.06);
+        yAxis(f, y, axisMoney, 6);
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")")
+          .call(d3.axisBottom(x).ticks(f.narrow ? 5 : 8).tickSize(4).tickFormat(function (v) { return "$" + v; }));
+        f.g.append("line").attr("x1", 0).attr("x2", f.iw).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "#9a9a96");
+        var clipY = function (v) { return y(Math.max(v, ymin)); };
+        if (alt) f.g.append("path").datum(sw).attr("d", d3.line().x(function (s) { return x(s.price); }).y(function (s) { return clipY(s.netAlt); }))
+          .attr("fill", "none").attr("stroke", C.ink).attr("stroke-width", 1.5).attr("stroke-dasharray", "4 3").attr("opacity", 0.7);
+        f.g.append("path").datum(sw).attr("d", d3.line().x(function (s) { return x(s.price); }).y(function (s) { return clipY(s.net); }))
+          .attr("fill", "none").attr("stroke", C.rev).attr("stroke-width", 2.2);
+        // best
+        if (R.best.net > 0) {
+          var bx = x(R.best.price), by = y(R.best.net);
+          f.g.append("circle").attr("cx", bx).attr("cy", by).attr("r", 5).attr("fill", "#fff").attr("stroke", C.rev).attr("stroke-width", 2);
+          var br = bx < f.iw * 0.62;
+          f.g.append("text").attr("class", "dlabel strong").attr("x", bx + (br ? 9 : -9)).attr("y", by - 8).attr("text-anchor", br ? "start" : "end").text("Best: $" + Math.round(R.best.price) + ", " + signedMoney(R.best.net));
+        }
+        // current
+        var cx = x(Math.min(S.price, R.max)), cy = clipY(R.net);
+        f.g.append("line").attr("x1", cx).attr("x2", cx).attr("y1", 0).attr("y2", f.ih).attr("stroke", C.ink).attr("stroke-dasharray", "2 3").attr("opacity", 0.5);
+        f.g.append("circle").attr("cx", cx).attr("cy", cy).attr("r", 5.5).attr("fill", C.rev).attr("stroke", "#fff").attr("stroke-width", 2);
+        var cr = cx < f.iw * 0.62, below = cy < 40 || (R.best.net > 0 && Math.abs(cy - y(R.best.net)) < 20 && Math.abs(cx - x(R.best.price)) < 120);
+        f.g.append("text").attr("class", "dlabel strong").attr("x", cx + (cr ? 9 : -9)).attr("y", cy + (below ? 20 : -10)).attr("text-anchor", cr ? "start" : "end")
+          .text("Your price: $" + nf0(S.price) + ", " + signedMoney(R.net));
+
+        // uptake panel
+        var g2 = frame(el("c-up"), 0.12, 110, { top: 8, right: f.M.right, bottom: 30, left: f.M.left });
+        var x2 = d3.scaleLinear().domain([0, R.max]).range([0, g2.iw]);
+        var umax = d3.max(sw, function (s) { return Math.max(s.up, alt ? s.upAlt : 0); }) || 0.01;
+        var y2 = d3.scaleLinear().domain([0, umax]).nice(3).range([g2.ih, 0]);
+        yAxis(g2, y2, function (v) { return v === 0 ? "0" : pct(v, umax < 0.05 ? 1 : 0); }, 3);
+        g2.g.append("g").attr("class", "axis").attr("transform", "translate(0," + g2.ih + ")")
+          .call(d3.axisBottom(x2).ticks(g2.narrow ? 5 : 8).tickSize(4).tickFormat(function (v) { return "$" + v; }));
+        g2.g.append("text").attr("class", "dlabel").attr("x", 4).attr("y", 4).attr("dy", "0.7em").text("uptake");
+        g2.g.append("text").attr("class", "dlabel").attr("x", g2.iw).attr("y", g2.ih + 28).attr("text-anchor", "end").text("price a month");
+        if (alt) g2.g.append("path").datum(sw).attr("d", d3.line().x(function (s) { return x2(s.price); }).y(function (s) { return y2(s.upAlt); }))
+          .attr("fill", "none").attr("stroke", C.ink).attr("stroke-width", 1.5).attr("stroke-dasharray", "4 3").attr("opacity", 0.7);
+        g2.g.append("path").datum(sw).attr("d", d3.line().x(function (s) { return x2(s.price); }).y(function (s) { return y2(s.up); }))
+          .attr("fill", "none").attr("stroke", C.rev).attr("stroke-width", 2);
+        g2.g.append("line").attr("x1", x2(Math.min(S.price, R.max))).attr("x2", x2(Math.min(S.price, R.max))).attr("y1", 0).attr("y2", g2.ih).attr("stroke", C.ink).attr("stroke-dasharray", "2 3").attr("opacity", 0.5);
+
+        // crosshair on both panels
+        function hover(evt, xs) {
+          var pr = clamp(xs.invert(d3.pointer(evt, this)[0]), 0, R.max);
+          var s = sw[Math.round(pr / R.max * (sw.length - 1))];
+          xh.attr("x1", x(s.price)).attr("x2", x(s.price)).style("display", null);
+          dot.attr("cx", x(s.price)).attr("cy", clipY(s.net)).style("display", null);
+          var h = '<div class="t">$' + nf0(s.price) + " a month</div>" + row(C.rev, capName(S.capOn), signedMoney(s.net)) + row(null, "Uptake", upt(s.up)) + row(null, "Subscribers", int(s.subs));
+          if (alt) h += '<div class="tot"></div>' + row(C.ink, capName(!S.capOn), signedMoney(s.netAlt)) + row(null, "Uptake", upt(s.upAlt));
+          showTip(h, evt);
+        }
+        var xh = f.g.append("line").attr("class", "xhair").attr("y1", 0).attr("y2", f.ih).style("display", "none");
+        var dot = f.g.append("circle").attr("r", 3.5).attr("fill", C.rev).style("display", "none");
+        f.g.append("rect").attr("width", f.iw).attr("height", f.ih).attr("fill", "transparent")
+          .on("pointermove", function (evt) { hover.call(this, evt, x); }).on("pointerleave", function () { xh.style("display", "none"); dot.style("display", "none"); hideTip(); });
+        g2.g.append("rect").attr("width", g2.iw).attr("height", g2.ih).attr("fill", "transparent")
+          .on("pointermove", function (evt) { hover.call(this, evt, x2); }).on("pointerleave", function () { xh.style("display", "none"); dot.style("display", "none"); hideTip(); });
+
+        var items = [{ line: true, color: C.rev, label: "This design" + (alt ? " (" + capName(S.capOn).toLowerCase() + ")" : "") }];
+        if (alt) items.push({ line: true, dash: true, color: C.ink, label: "Same design, " + capName(!S.capOn).toLowerCase() });
+        items.push({ color: C.cannib, opacity: 0.2, label: "Loss" });
+        legend("l-price", items);
+        el("price-sub").textContent = "Net result a year (top) and the share of customers who subscribe (bottom). A higher price keeps only the customers who gain most from the product, who are also the ones the airline gives most away to." +
+          (ymin > d3.min(vals) ? " Losses below " + money(ymin) + " are cut off." : "");
+      }
+      function capName(on) { return on ? "With capacity control at " + S.capX + "%" : "Without capacity control"; }
+
+      // ───────────────────────────── who subscribes
+      var BUCKETS = [[0, 1, "under 1"], [1, 2, "1–2"], [2, 4, "2–4"], [4, 8, "4–8"], [8, 16, "8–16"], [16, Infinity, "16+"]];
+      function drawWho(R) {
+        var P = R.P, flags = R.flags, b = BUCKETS.map(function (d) { return { label: d[2], lo: d[0], hi: d[1], subs: 0, non: 0 }; });
+        for (var i = 0; i < P.n; i++) {
+          var t = P.ours0[i], k = 0;
+          while (k < b.length - 1 && t >= b[k].hi) k++;
+          if (flags[i]) b[k].subs++; else b[k].non++;
+        }
+        var ns = R.subs, nn = P.n - R.subs;
+        b.forEach(function (d) { d.ps = ns ? d.subs / ns : 0; d.pn = nn ? d.non / nn : 0; d.up = d.subs + d.non ? d.subs / (d.subs + d.non) : 0; });
+        var f = frame(el("c-who"), 0.5, 230, null);
+        var x0 = d3.scaleBand().domain(b.map(function (d) { return d.label; })).range([0, f.iw]).paddingInner(0.22).paddingOuter(0.05);
+        var x1 = d3.scaleBand().domain(["non", "subs"]).range([0, x0.bandwidth()]).padding(0.08);
+        var y = d3.scaleLinear().domain([0, d3.max(b, function (d) { return Math.max(d.ps, d.pn); }) * 1.18 || 1]).nice(5).range([f.ih, 0]);
+        yAxis(f, y, function (v) { return Math.round(v * 100) + "%"; }, 5);
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")").call(d3.axisBottom(x0).tickSize(0).tickPadding(8)).select(".domain").remove();
+        f.g.append("text").attr("class", "dlabel").attr("x", f.iw).attr("y", f.ih + 30).attr("text-anchor", "end").text("round trips a year");
+        var g = f.g.selectAll(".b").data(b).enter().append("g").attr("transform", function (d) { return "translate(" + x0(d.label) + ",0)"; });
+        g.append("rect").attr("x", x1("non")).attr("width", x1.bandwidth()).attr("y", function (d) { return y(d.pn); }).attr("height", function (d) { return f.ih - y(d.pn); }).attr("rx", 2).attr("fill", C.non);
+        g.append("rect").attr("x", x1("subs")).attr("width", x1.bandwidth()).attr("y", function (d) { return y(d.ps); }).attr("height", function (d) { return f.ih - y(d.ps); }).attr("rx", 2).attr("fill", C.rev);
+        if (ns) g.append("text").attr("class", "dlabel").attr("x", x0.bandwidth() / 2).attr("text-anchor", "middle")
+          .attr("y", function (d) { return y(Math.max(d.ps, d.pn)) - 6; }).text(function (d) { return d.subs ? upt(d.up) : ""; });
+        g.append("rect").attr("width", x0.bandwidth()).attr("height", f.ih).attr("fill", "transparent")
+          .on("pointermove", function (evt, d) {
+            showTip('<div class="t">' + d.label + " round trips a year</div>" + row(C.rev, "Share of subscribers", pct(d.ps, 1)) + row(C.non, "Share of non-subscribers", pct(d.pn, 1)) +
+              row(null, "Uptake in this group", upt(d.up), "tot"), evt);
+          }).on("pointerleave", hideTip);
+        legend("l-who", [{ color: C.rev, label: "Subscribers" }, { color: C.non, label: "Non-subscribers" }, { color: "transparent", label: "Labels: uptake in each group" }]);
+        el("who-sub").textContent = ns ? "How the " + int(R.subsN) + " subscribers and everyone else are spread by how often they flew with you before the offer. Subscribers average " + R.meanSubs.toFixed(1) + " round trips a year, non-subscribers " + R.meanNon.toFixed(1) + "."
+          : "No subscribers at this price: every customer is in grey.";
+
+        var h = "<thead><tr><th>Segment</th><th>Customers</th><th>Uptake</th><th>Trips a year</th><th>Net per subscriber</th></tr></thead><tbody>";
+        R.segs.forEach(function (s) {
+          var net = s.subs ? s.net / s.subs : NaN;
+          h += "<tr><td class='k'>" + s.label + "</td><td>" + pct(s.n / P.n) + "</td><td>" + (s.subs ? upt(s.subs / s.n) : "0%") + "</td><td>" + (s.subs ? (s.trips / s.subs).toFixed(1) : "–") +
+            "</td><td class='" + (net < 0 ? "neg" : "") + "'>" + (s.subs ? dollars(net) : "–") + "</td></tr>";
+        });
+        h += "<tr class='total'><td>All subscribers</td><td>100%</td><td>" + upt(R.uptake) + "</td><td>" + (R.subs ? R.meanSubs.toFixed(1) : "–") + "</td><td class='" + (R.net < 0 ? "neg" : "") + "'>" + (R.subs ? dollars(R.net / R.subsN) : "–") + "</td></tr>";
+        el("seg").innerHTML = h + "</tbody>";
+      }
+
+      // ───────────────────────────── capacity control
+      function drawCap(R) {
+        var host = el("cap-body");
+        if (!R.hasTrips) {
+          el("cap-head").textContent = "For products that include trips";
+          host.innerHTML = '<div class="card"><p class="empty">This design includes no trips, so there are no pass seats to control. Choose a number of round trips a year, or the All-you-can-fly or Commuter preset.</p></div>';
+          return;
+        }
+        el("cap-head").textContent = "Off vs on at " + S.capX + "%, at $" + nf0(S.price) + " a month";
+        host.innerHTML = '<div class="two"><div class="card"><h4>Net result and uptake by threshold</h4><p class="sub" id="thr-sub"></p><div class="chart" id="c-thr"></div><div class="chart" id="c-thr2"></div><div class="legend" id="l-thr"></div></div>' +
+          '<div class="card"><h4>What control at ' + S.capX + '% changes</h4><div class="tbl-wrap"><table class="tt" id="cap-t"></table></div><p class="explain" id="cap-x-txt"></p></div></div>';
+        var off = R.off, on = R.on;
+        function tr(k, a, b, fmt, neg) { return "<tr><td class='k'>" + k + "</td><td>" + fmt(a) + "</td><td>" + fmt(b) + "</td><td class='" + (neg && b - a < 0 ? "neg" : "") + "'>" + (b - a > 0 ? "+" : "") + fmt(b - a) + "</td></tr>"; }
+        var h = "<thead><tr><th></th><th>Off</th><th>On at " + S.capX + "%</th><th>Change</th></tr></thead><tbody>";
+        h += tr("Subscribers", off.subsN, on.subsN, int);
+        h += "<tr><td class='k'>Uptake</td><td>" + upt(off.uptake) + "</td><td>" + upt(on.uptake) + "</td><td></td></tr>";
+        h += tr("Round trips on the pass", off.passTrips, on.passTrips, int);
+        h += tr("Pass trips turned away", Math.max(0, off.wantedTrips - off.passTrips), Math.max(0, on.wantedTrips - on.passTrips), int);
+        h += tr("Subscription revenue", off.subRev, on.subRev, money, true);
+        h += tr("Fares they'd have paid you", -off.lostFares, -on.lostFares, money, true);
+        h += tr("Seats on full flights", -off.displaced, -on.displaced, money, true);
+        h += "<tr class='total'><td>Net result</td><td>" + signedMoney(off.net) + "</td><td>" + signedMoney(on.net) + "</td><td class='" + (on.net - off.net < 0 ? "neg" : "") + "'>" + signedMoney(on.net - off.net) + "</td></tr>";
+        el("cap-t").innerHTML = h + "</tbody>";
+        var prot = (off.lostFares - on.lostFares) + (off.displaced - on.displaced), lostRev = off.subRev - on.subRev;
+        var t = "At " + S.capX + "%, pass holders can book only on flights that carry " + pct(capQ(R)) + " of your passengers. ";
+        t += "Control protects " + money(Math.max(0, prot)) + " of fares and full-flight seats, but the pass is worth less, so uptake " + (on.uptake < off.uptake ? "falls from " + upt(off.uptake) + " to " + upt(on.uptake) : "barely moves") +
+          " and subscription revenue " + (lostRev > 0 ? "drops by " + money(lostRev) : "doesn't fall") + ". ";
+        t += on.net > off.net ? "Net, control is worth " + signedMoney(on.net - off.net) + " a year at this price." : "At this price, control costs more than it protects (" + signedMoney(on.net - off.net) + "): " +
+          (S.window === "daybefore" || S.window === "within3" ? "the last-minute booking window already keeps pass holders off flights that will sell out." : "try a lower threshold or a different price.");
+        el("cap-x-txt").textContent = t;
+
+        // threshold chart
+        var thr = R.thr, f = frame(el("c-thr"), 0.42, 200, null);
+        var x = d3.scaleLinear().domain([50, 100]).range([0, f.iw]);
+        var vals = thr.map(function (d) { return d.net; }).concat([off.net, 0]);
+        var y = d3.scaleLinear().domain([d3.min(vals), d3.max(vals) * 1.1 || 1]).nice(5).range([f.ih, 0]);
+        f.g.append("rect").attr("x", 0).attr("width", f.iw).attr("y", y(0)).attr("height", Math.max(0, f.ih - y(0))).attr("fill", C.cannib).attr("opacity", 0.06);
+        yAxis(f, y, axisMoney, 5);
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")").call(d3.axisBottom(x).ticks(5).tickSize(4).tickFormat(function (v) { return v + "%"; }));
+        f.g.append("line").attr("x1", 0).attr("x2", f.iw).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "#9a9a96");
+        f.g.append("line").attr("x1", 0).attr("x2", f.iw).attr("y1", y(off.net)).attr("y2", y(off.net)).attr("stroke", C.ink).attr("stroke-dasharray", "4 3").attr("opacity", 0.7);
+        f.g.append("text").attr("class", "dlabel").attr("x", 4).attr("y", y(off.net) + (y(off.net) > f.ih - 20 ? -6 : 14)).text("Off: " + signedMoney(off.net));
+        f.g.append("path").datum(thr).attr("d", d3.line().x(function (d) { return x(d.x); }).y(function (d) { return y(d.net); })).attr("fill", "none").attr("stroke", C.rev).attr("stroke-width", 2.2);
+        var mx = x(S.capX), my = y(on.net);
+        f.g.append("circle").attr("cx", mx).attr("cy", my).attr("r", 5.5).attr("fill", C.rev).attr("stroke", "#fff").attr("stroke-width", 2);
+        var mr = mx < f.iw * 0.6;
+        f.g.append("text").attr("class", "dlabel strong").attr("x", mx + (mr ? 9 : -9)).attr("y", my + (my < 30 ? 18 : -9)).attr("text-anchor", mr ? "start" : "end").text(S.capX + "%: " + signedMoney(on.net));
+
+        var g2 = frame(el("c-thr2"), 0.14, 100, { top: 8, right: f.M.right, bottom: 30, left: f.M.left });
+        var x2 = d3.scaleLinear().domain([50, 100]).range([0, g2.iw]);
+        var umax = d3.max(thr, function (d) { return d.up; }) || 0.01; umax = Math.max(umax, off.uptake);
+        var y2 = d3.scaleLinear().domain([0, umax]).nice(3).range([g2.ih, 0]);
+        yAxis(g2, y2, function (v) { return v === 0 ? "0" : pct(v, umax < 0.05 ? 1 : 0); }, 3);
+        g2.g.append("g").attr("class", "axis").attr("transform", "translate(0," + g2.ih + ")").call(d3.axisBottom(x2).ticks(5).tickSize(4).tickFormat(function (v) { return v + "%"; }));
+        g2.g.append("text").attr("class", "dlabel").attr("x", 4).attr("y", 4).attr("dy", "0.7em").text("uptake");
+        g2.g.append("text").attr("class", "dlabel").attr("x", g2.iw).attr("y", g2.ih + 28).attr("text-anchor", "end").text("pass seats only below this expected load factor");
+        g2.g.append("line").attr("x1", 0).attr("x2", g2.iw).attr("y1", y2(off.uptake)).attr("y2", y2(off.uptake)).attr("stroke", C.ink).attr("stroke-dasharray", "4 3").attr("opacity", 0.7);
+        g2.g.append("path").datum(thr).attr("d", d3.line().x(function (d) { return x2(d.x); }).y(function (d) { return y2(d.up); })).attr("fill", "none").attr("stroke", C.rev).attr("stroke-width", 2);
+
+        function hv(evt, xs) {
+          var xv = clamp(xs.invert(d3.pointer(evt, this)[0]), 50, 100), d = thr[Math.round((xv - 50) / 2.5)];
+          xh.attr("x1", x(d.x)).attr("x2", x(d.x)).style("display", null);
+          showTip('<div class="t">Pass seats below ' + d.x + "% full</div>" + row(C.rev, "Net result", signedMoney(d.net)) + row(null, "Uptake", upt(d.up)) +
+            '<div class="tot"></div>' + row(C.ink, "Without control", signedMoney(off.net)) + row(null, "Uptake", upt(off.uptake)), evt);
+        }
+        var xh = f.g.append("line").attr("class", "xhair").attr("y1", 0).attr("y2", f.ih).style("display", "none");
+        [[f, x], [g2, x2]].forEach(function (p) {
+          p[0].g.append("rect").attr("width", p[0].iw).attr("height", p[0].ih).attr("fill", "transparent")
+            .on("pointermove", function (evt) { hv.call(this, evt, p[1]); }).on("pointerleave", function () { xh.style("display", "none"); hideTip(); });
+        });
+        legend("l-thr", [{ line: true, color: C.rev, label: "Capacity control at each threshold" }, { line: true, dash: true, color: C.ink, label: "No capacity control" }]);
+        el("thr-sub").textContent = "At $" + nf0(S.price) + " a month. A low threshold protects almost every paying seat but leaves the pass nearly useless; at 100%, only flights expected to sell out are closed.";
+      }
+      function capQ(R) { var c = capacity(R.ctx.bins, true, S.capX / 100, R.ctx.fareD); return c.q; }
+
+      // ───────────────────────────── market examples
+      function drawExamples() {
+        el("examples").innerHTML = cfg.examples.map(function (e) {
+          return '<div class="ex"><h4>' + e.name + '</h4><div class="who">' + e.airline + '</div>' +
+            '<span class="tag">' + e.kind + '</span><span class="tag st">' + e.status + '</span>' +
+            "<p><b>Price.</b> " + e.price + "</p><p><b>Terms.</b> " + e.terms + "</p>" +
+            '<p class="src">Sources: ' + e.sources.map(function (s) { return '<a href="' + s.u + '" target="_blank" rel="noopener">' + s.t + "</a>"; }).join(" · ") + "</p></div>";
+        }).join("");
+      }
+
+      // ───────────────────────────── render
+      function renderAll() {
+        buildControls();
+        R = compute();
+        drawTiles(R);
+        drawWaterfall(R);
+        drawSubs(R);
+        drawPrice(R);
+        drawWho(R);
+        drawCap(R);
+      }
+
+      fetch(DATA_URL).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(function (d) {
+        cfg = d;
+        S = { bias: cfg.behaviour.bias };
+        applyPreset(cfg.defaultPreset);
+        if (cfg.note) el("note-line").textContent = cfg.note.replace(/\.$/, "") + ". The market examples near the bottom are real, with sources.";
+        if (cfg.updated) { var dt = new Date(cfg.updated + "T12:00:00Z"); el("how-date").textContent = dt.toLocaleString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }); }
+        wireControls();
+        drawExamples();
+        renderAll();
+        var t;
+        S.w = document.documentElement.clientWidth;
+        window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(function () { var w = document.documentElement.clientWidth; if (w !== S.w) { S.w = w; renderAll(); } }, 150); });
+      }).catch(function (e) {
+        el("tiles").innerHTML = '<div class="loading">Couldn\'t load the model data (' + e.message + ').</div>';
+        console.error(e);
+      });
+    });
+    </script>
+  </body>
+</html>
