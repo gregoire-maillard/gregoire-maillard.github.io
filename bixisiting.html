@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Where should the next BIXI stations go?</title>
+    <meta name="description" content="A maximal covering model picks where Montréal's next BIXI stations should go, from census population, jobs, metro and REM access and observed trips, and checks itself against the stations BIXI actually added in 2025.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link rel="canonical" href="https://gregoiremaillard.com/bixisiting.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Where should the next BIXI stations go? · Montréal Mobility Lab">
+    <meta property="og:description" content="Station siting as a maximal covering problem on Montréal open data, back-tested against BIXI's 2025 expansion.">
+    <meta property="og:url" content="https://gregoiremaillard.com/bixisiting.html">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/h3-js@4.1.0/dist/h3-js.umd.js"></script>
+
+    <style>
+      html, body { margin: 0; padding: 0; }
+      :root {
+        --ink: #151A23;
+        --text: #4b5160;
+        --muted: #6B7282;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #2455E6;
+        /* presets: fixed categorical order (validated: CVD ΔE ≥ 11, normal ΔE ≥ 28) */
+        --p-balanced: #2455E6;
+        --p-residents: #C2378F;
+        --p-proven: #12A150;
+        --p-custom: #151A23;
+        --today: #A0A7B4;
+        --covered: #D9E1EC;
+      }
+      .content { max-width: 1280px; margin: 0 auto; padding: 26px 30px 60px; box-sizing: border-box; }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 6px; max-width: 800px; }
+      .intro .lede { color: var(--ink); font-size: 1.05em; line-height: 1.5; }
+      .stamp { color: var(--muted); font-size: 12px; margin-top: 8px; }
+      a { color: var(--link); }
+
+      /* controls */
+      .controls { display: flex; flex-wrap: wrap; gap: 12px 26px; align-items: center; margin: 20px 0 6px; }
+      .ctl { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .ctl .lbl { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .ctl output { font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums; min-width: 26px; font-weight: 600; }
+      .ctl input[type=range] { width: 150px; accent-color: var(--ink); }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip { border: 1px solid var(--line); background: #fff; color: var(--text); border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .chip:disabled { opacity: .45; cursor: not-allowed; }
+      .chip .sw { width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 1.5px #fff; }
+      .weights { display: none; flex-wrap: wrap; gap: 8px 22px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--soft); margin: 8px 0 0; }
+      .weights.show { display: flex; }
+      .weights .ctl input[type=range] { width: 110px; }
+      .weights .note { flex-basis: 100%; font-size: 12px; color: var(--muted); }
+      .assume { font-size: 12px; color: var(--muted); margin: 8px 0 0; max-width: 900px; }
+      .assume b { color: var(--text); font-weight: 600; }
+      .tag { display: inline-block; font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; color: #8a5a00; background: #fff4dc; border: 1px solid #f1dcae; border-radius: 4px; padding: 0 5px; margin-right: 4px; vertical-align: 1px; }
+
+      /* tiles */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); min-width: 0; }
+      .tile b { display: block; font-size: 26px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .tile span { font-size: 12px; display: block; }
+      .tile .k { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+
+      /* map + side */
+      .stage { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; align-items: start; }
+      .map-wrap { position: relative; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; }
+      .map { height: 620px; width: 100%; background: #f3f3f1; }
+      .map-legend { border-top: 1px solid var(--line); padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; font-size: 11.5px; color: var(--text); line-height: 1.5; }
+      .map-legend .grp { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+      .ramp { display: inline-flex; }
+      .ramp i { width: 18px; height: 10px; display: inline-block; }
+      .k-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; background: var(--c); }
+      .k-ring { width: 9px; height: 9px; border-radius: 50%; display: inline-block; border: 2px solid var(--c); box-sizing: border-box; background: #fff; }
+      .k-sq { width: 9px; height: 9px; display: inline-block; border: 2px solid var(--c); box-sizing: border-box; background: #fff; }
+      .k-fill { width: 14px; height: 10px; display: inline-block; background: var(--c); }
+      .layers { position: absolute; top: 10px; right: 10px; z-index: 500; background: rgba(255,255,255,.95); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 12px; color: var(--text); display: flex; flex-direction: column; gap: 2px; }
+      .layers label { display: flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; }
+      .tip { position: absolute; pointer-events: none; z-index: 600; background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.08); padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45; max-width: 260px; display: none; }
+      .tip .t { color: var(--ink); font-weight: 600; }
+      .tip .n { color: var(--ink); font-variant-numeric: tabular-nums; }
+      .side { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; font-size: 12.5px; max-height: 664px; display: flex; flex-direction: column; box-sizing: border-box; }
+      .side h3 { margin: 0 0 2px; font-size: 14px; color: var(--ink); }
+      .side .sub { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+      .side ol { list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1; }
+      .side li { display: grid; grid-template-columns: 28px 1fr auto; gap: 6px; align-items: baseline; padding: 5px 2px; border-top: 1px solid #f0f0f0; cursor: pointer; }
+      .side li:hover { background: var(--soft); }
+      .side li .r { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+      .side li .u { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .side li .v { color: var(--text); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+      .side li small { grid-column: 2 / 4; color: var(--muted); font-size: 11.5px; }
+
+      .pk { border-radius: 50%; color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 2px #fff, 0 1px 3px rgba(0,0,0,.35); font-family: system-ui, sans-serif; }
+      .pk.sq { border-radius: 3px; }
+      .rem-ic { width: 8px; height: 8px; border: 2px solid var(--ink); background: #fff; box-sizing: border-box; }
+      .leaflet-container { font: inherit; }
+      .leaflet-control-attribution { font-size: 10px; }
+
+      /* sections */
+      .sec { margin-top: 44px; }
+      .sec h3.st { font-size: 18px; margin: 0 0 4px; color: var(--ink); }
+      .sec .sd { margin: 0 0 12px; max-width: 820px; font-size: 14px; }
+      .two { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+      .card { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; min-width: 0; position: relative; }
+      .card h4 { margin: 0 0 4px; font-size: 13.5px; color: var(--ink); }
+      .card .cap { font-size: 12px; color: var(--muted); margin: 0 0 6px; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11.5px; color: var(--text); margin: 4px 0 2px; }
+      .legend span { display: inline-flex; align-items: center; gap: 6px; }
+      .k-line { width: 16px; height: 0; border-top: 2px solid var(--c); display: inline-block; }
+      svg text { font-family: inherit; }
+      .axis text { fill: var(--muted); font-size: 11px; }
+      .axis path, .axis line { stroke: #d9d9d9; }
+      .grid line { stroke: #f0f0f0; }
+      .grid path { display: none; }
+      .note-list { font-size: 13px; margin: 0; padding-left: 18px; }
+      .note-list li { margin-bottom: 6px; }
+      table.mini { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+      table.mini th, table.mini td { padding: 5px 6px; border-bottom: 1px solid #f0f0f0; text-align: left; }
+      table.mini th { color: var(--muted); font-weight: 500; font-size: 11.5px; }
+      table.mini td.num, table.mini th.num { text-align: right; font-variant-numeric: tabular-nums; }
+      .bar { display: inline-block; height: 8px; border-radius: 0 4px 4px 0; vertical-align: 0; }
+      .btmap { height: 440px; }
+      .callout { border: 1px solid var(--line); border-left: 3px solid var(--ink); border-radius: 8px; background: var(--soft); padding: 14px 18px; font-size: 13.5px; }
+      .callout h3 { margin: 0 0 8px; font-size: 15px; color: var(--ink); }
+      .callout table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0 8px; }
+      .callout td, .callout th { padding: 6px 8px; border-bottom: 1px solid #e8e8e8; vertical-align: top; text-align: left; }
+      .callout th { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; max-width: 880px; }
+      .method h3 { font-size: 15px; margin: 0 0 8px; }
+      .method h4 { font-size: 13.5px; margin: 18px 0 6px; color: var(--ink); }
+      .method p { margin: 0 0 8px; }
+      .method ul { margin: 0 0 8px; padding-left: 18px; }
+      .method li { margin-bottom: 4px; }
+      .formula-box { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; margin: 6px 0 10px; line-height: 1.75; overflow-x: auto; white-space: nowrap; }
+      table.src { width: 100%; border-collapse: collapse; font-size: 12px; }
+      table.src td, table.src th { padding: 5px 8px 5px 0; border-bottom: 1px solid #f0f0f0; vertical-align: top; text-align: left; }
+      table.src th { color: var(--muted); font-weight: 500; }
+      .loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 13px; background: #fafafa; z-index: 700; }
+
+      @media (max-width: 1000px) { .stage, .two { grid-template-columns: 1fr; } .side { max-height: 360px; } }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        .map { height: 64vh; min-height: 380px; }
+        .btmap { height: 360px; }
+        .controls { gap: 10px 16px; }
+        .layers { font-size: 11px; padding: 4px 8px; }
+      }
+    </style>
+
+    <!-- Lab header: same bar as the other hubs (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      @media (max-width: 599px) { .at-hdr .at-tabs { display: none; } }
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted); text-decoration: none; }
+      .crumbs a:hover { color: var(--link); }
+    </style>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/" aria-label="Grégoire Maillard, home"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Montréal Mobility Lab">
+          <a class="at-tab" href="/mtlmobility.html" aria-current="page">Montréal Mobility Lab</a>
+          <a class="at-tab" href="/airlinetools.html">Airline tools</a>
+        </nav>
+        <div class="at-grow"></div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/mtlmobility.html">Montréal Mobility Lab</a> · Bike</div>
+        <h2>Where should the next BIXI stations go?</h2>
+        <p class="lede">If BIXI could add N stations tomorrow, which spots would put the most people, jobs and trips within a short walk of a bike?</p>
+        <p>Every hexagon on the map gets a demand score built from census population, jobs, distance to the metro and REM, and the trips already made at nearby stations. An optimization model then chooses the N new sites that cover the most demand that today has no station within 400 m. Change the number of stations and the weighting below, then scroll down to see where the returns fall off, who gains, and how the model would have done against the stations BIXI actually opened in 2025. Weights and radii are assumptions, not BIXI's criteria (see <a href="#how">How it works</a>).</p>
+        <div class="stamp" id="stamp"></div>
+      </div>
+
+      <div class="controls">
+        <div class="ctl"><span class="lbl">Weighting</span><div class="chips" id="presets"></div></div>
+        <div class="ctl"><label class="lbl" for="n">New stations</label><input id="n" type="range" min="0" max="3" step="1" value="2" aria-describedby="n-o"><output id="n-o" for="n">50</output></div>
+        <div class="ctl"><span class="lbl">Model</span><div class="chips" id="methods"></div></div>
+      </div>
+      <div class="weights" id="weights"></div>
+      <p class="assume" id="assume"></p>
+
+      <div class="tiles" id="tiles"></div>
+
+      <div class="stage">
+        <div class="map-wrap">
+          <div class="map" id="map" role="img" aria-label="Map of Montréal, Laval and Longueuil with existing BIXI stations, demand by hexagon and recommended new sites"></div>
+          <div class="loading" id="loading">Loading map and model results…</div>
+          <div class="layers" id="layers">
+            <label><input type="checkbox" id="l-ex" checked> Existing stations</label>
+            <label><input type="checkbox" id="l-rt" checked> Metro &amp; REM</label>
+            <label><input type="checkbox" id="l-cat" checked> 400 m catchments</label>
+          </div>
+          <div class="tip" id="tip"></div>
+          <div class="map-legend" id="legend"></div>
+        </div>
+        <aside class="side" aria-labelledby="side-h">
+          <h3 id="side-h">Recommended sites</h3>
+          <div class="sub" id="side-sub"></div>
+          <ol id="list"></ol>
+        </aside>
+      </div>
+
+      <section class="sec" id="curve-sec">
+        <h3 class="st">Diminishing returns</h3>
+        <p class="sd" id="curve-sd">The first stations fill the densest gaps; each extra batch reaches fewer new people. Lines show the share of the study area's 2.87 million residents living within 400 m of a station when the model adds 0 to 150 stations.</p>
+        <div class="two">
+          <div class="card">
+            <h4>Residents within 400 m of a station</h4>
+            <div class="legend" id="curve-legend"></div>
+            <div id="curve" style="position:relative"></div>
+          </div>
+          <div class="card">
+            <h4>People newly within reach, per 10 stations</h4>
+            <p class="cap">Selected weighting, maximal covering model. Bars wobble because each size is solved on its own and the model maximises the weighted demand, not residents alone.</p>
+            <div id="marg" style="position:relative"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="equity">
+        <h3 class="st">Who gains: coverage by borough and city</h3>
+        <p class="sd" id="eq-sd"></p>
+        <div class="card">
+          <div class="legend" id="eq-legend"></div>
+          <div id="eq" style="position:relative"></div>
+        </div>
+      </section>
+
+      <section class="sec" id="backtest">
+        <h3 class="st">Back-test: would the model have predicted 2025?</h3>
+        <p class="sd" id="bt-sd"></p>
+        <div class="controls" style="margin-top:4px">
+          <div class="ctl"><span class="lbl">Weighting</span><div class="chips" id="bt-presets"></div></div>
+          <div class="ctl"><span class="lbl">Model</span><div class="chips" id="bt-mode"></div></div>
+        </div>
+        <div class="tiles" id="bt-tiles"></div>
+        <div class="two">
+          <div class="map-wrap">
+            <div class="map btmap" id="btmap" role="img" aria-label="Back-test map: 2024 stations, stations BIXI added in 2025 and the model's picks"></div>
+            <div class="map-legend" id="bt-legend"></div>
+          </div>
+          <div class="card">
+            <h4>Where BIXI expanded vs where the model would have</h4>
+            <p class="cap">New stations by city or borough, 2025 (top 14)</p>
+            <table class="mini" id="bt-table"></table>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="callout">
+          <h3>Airline parallel: opening stations is network planning</h3>
+          <p>Choosing new BIXI stations is the same question a network planner asks with an O&amp;D demand map: where to add service so the network captures the most demand it doesn't reach today, knowing each addition costs the same and the best markets go first.</p>
+          <table>
+            <thead><tr><th>Bike share</th><th>Airline</th></tr></thead>
+            <tbody>
+              <tr><td>Demand score per hexagon (people, jobs, transit, observed trips)</td><td>Market size per city or O&amp;D pair (population, GDP, traffic already flown)</td></tr>
+              <tr><td>400 m walking catchment</td><td>Airport catchment area (drive time to the airport)</td></tr>
+              <tr><td>Maximal covering: most demand within reach of N stations</td><td>Pick N new destinations that add the most unserved O&amp;D demand</td></tr>
+              <tr><td>p-median: shortest average walk to the nearest station</td><td>Hub and base location: minimise passenger access or connection distance</td></tr>
+              <tr><td>Diminishing returns curve</td><td>The long tail of thin routes: each new destination adds less</td></tr>
+              <tr><td>Back-test against BIXI's 2025 stations</td><td>Comparing your network plan with the routes a competitor actually launched</td></tr>
+            </tbody>
+          </table>
+          <p>And the same caveat applies: the model sees demand, not the deals. BIXI's 2025 expansion followed the cities that paid for stations, the way a new route often follows an airport incentive. More on route selection in <a href="np101.html">Network Planning 101</a> and on the maths in <a href="or101.html">OR 101</a>.</p>
+        </div>
+      </section>
+
+      <div class="method" id="how">
+        <h3>How it works</h3>
+        <h4>Study area and grid</h4>
+        <p>The study area is the island of Montréal (19 boroughs and 15 linked cities), Laval and the Longueuil agglomeration, where BIXI runs almost all its stations; a few stations in outlying towns and the separate Sherbrooke system are left out. It is cut into 9,345 hexagons of about 0.1 km² (Uber's H3 grid at resolution 9; centres roughly 300 m apart). Each hexagon centre is both a place where demand lives and a possible station site.</p>
+        <h4>Demand score <span class="tag">assumption</span></h4>
+        <p>Four ingredients, each turned into a share of its study-area total so they can be added up, then weighted:</p>
+        <div class="formula-box">
+          D<sub>h</sub> = 10,000 × ( w<sub>pop</sub>·pop<sub>h</sub>/Σpop + w<sub>jobs</sub>·jobs<sub>h</sub>/Σjobs + w<sub>tr</sub>·T<sub>h</sub>/ΣT + w<sub>bixi</sub>·B<sub>h</sub>/ΣB )<br>
+          T<sub>h</sub> = Σ<sub>s ∈ metro, REM</sub> max(0, 1 − d(h, s) / 800 m)<br>
+          B<sub>h</sub> = Σ<sub>k ∈ BIXI stations</sub> trips<sub>k</sub> · exp( −d(h, k)² / (2 · 300 m²) )
+        </div>
+        <ul>
+          <li><b>Population</b>: 2021 Census, by dissemination area, spread over the hexagons by land area.</li>
+          <li><b>Jobs</b>: 2021 Census count of workers by the census tract where they work. May 2021 was a pandemic month and people working from home aren't counted at a workplace, so downtown is undercounted.</li>
+          <li><b>Transit</b> (T): a metro or REM station adds pull that fades to zero at 800 m, about a 10-minute walk. Bike-and-ride is one of the main uses of bike share.</li>
+          <li><b>Proven demand</b> (B): starts plus ends at existing stations over a year, smeared onto nearby hexagons. It is the only ingredient that measures cycling directly, but it only exists where stations already are, so it favours filling gaps next to busy areas.</li>
+        </ul>
+        <p>The three presets weight these as: <b>Balanced</b> 40 / 20 / 15 / 25 (population / jobs / transit / trips), <b>Residents first</b> 70 / 10 / 20 / 0, <b>Proven demand</b> 15 / 15 / 10 / 60. <b>Custom</b> lets you set your own.</p>
+        <h4>Maximal covering location problem (MCLP)</h4>
+        <p>A hexagon is <i>covered</i> if its centre is within 400 m of a station (in practice: itself and its six neighbours). Demand that is already covered by today's network counts for nothing. Candidates are hexagons that are at least half land and whose centre is more than 300 m from every existing station, so the model never puts a station on top of another one.</p>
+        <div class="formula-box">
+          maximise &nbsp; Σ<sub>h ∈ U</sub> D<sub>h</sub> · y<sub>h</sub><br>
+          subject to &nbsp; y<sub>h</sub> ≤ Σ<sub>j ∈ C : d(h, j) ≤ 400 m</sub> x<sub>j</sub> &nbsp;&nbsp; for every uncovered hexagon h ∈ U<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Σ<sub>j ∈ C</sub> x<sub>j</sub> = N<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x<sub>j</sub> ∈ {0, 1} (open a station at j), &nbsp; 0 ≤ y<sub>h</sub> ≤ 1 (h is covered)
+        </div>
+        <p>It is solved exactly as a mixed-integer program with <a href="https://coin-or.github.io/pulp/" target="_blank" rel="noopener">PuLP</a> and the <a href="https://highs.dev" target="_blank" rel="noopener">HiGHS</a> solver (a few seconds per run, 0.1% optimality gap) for 10, 25, 50 and 100 stations and each preset, and for 0 to 150 stations in steps of 10 for the coverage curve. With <b>Custom</b> weights the page re-solves in your browser with a greedy heuristic (add the site that covers the most new demand, repeat); on the three presets the heuristic covers <span id="greedy-gap">98%</span> or more of the extra demand the exact optimum covers, so the picture is the same.</p>
+        <h4>p-median, for comparison</h4>
+        <p>Maximal covering only cares whether demand is inside or outside 400 m. The p-median model instead minimises the demand-weighted walk to the nearest station, existing or new, so it also rewards moving people from 600 m to 350 m:</p>
+        <div class="formula-box">
+          minimise &nbsp; Σ<sub>h</sub> D<sub>h</sub> · min( e<sub>h</sub>, min<sub>j open</sub> d(h, j) ) &nbsp;&nbsp;&nbsp; e<sub>h</sub> = distance to the nearest existing station, capped at 1 km<br>
+          ⇔ maximise &nbsp; Σ<sub>h</sub> Σ<sub>j</sub> D<sub>h</sub> · (e<sub>h</sub> − d<sub>hj</sub>) · z<sub>hj</sub> &nbsp; s.t. &nbsp; Σ<sub>j</sub> z<sub>hj</sub> ≤ 1, &nbsp; z<sub>hj</sub> ≤ x<sub>j</sub>, &nbsp; Σ<sub>j</sub> x<sub>j</sub> = N
+        </div>
+        <p id="pmed-note">It is a much bigger program (about 160,000 assignment variables) built directly in HiGHS with a 90-second limit per run.</p>
+        <h4>Back-test</h4>
+        <p id="bt-how"></p>
+        <h4>Limitations</h4>
+        <ul>
+          <li><b>Demand is a proxy.</b> Nobody counts bike-share demand where there is no bike share. Population, jobs and transit are what cities use to plan, and observed trips are biased toward places that already have stations.</li>
+          <li><b>No costs.</b> Every station costs the same here. There is no open data on dock prices, electrical hookups for e-bike stations, rebalancing cost or each city's budget, and in practice the municipality that pays decides how many stations it gets.</li>
+          <li><b>No street-level feasibility.</b> A hexagon centre is not a sidewalk. Real siting needs space, slope, visibility, snow clearing and parking removal, decided block by block.</li>
+          <li><b>Straight-line distances.</b> 400 m as the crow flies; highways, rail yards and the river make some walks much longer.</li>
+          <li><b>Station size and network effects are ignored.</b> A station is useful only if people can ride to another one; the model treats each site on its own and doesn't size docks.</li>
+          <li><b>Data vintages differ</b>: 2021 census, 2024–2025 trips, a 2026 station list. The 2026 Census population counts come out in 2027.</li>
+        </ul>
+        <h4>Sources</h4>
+        <table class="src">
+          <tbody>
+            <tr><th>BIXI trips and stations</th><td><a href="https://bixi.com/en/open-data/" target="_blank" rel="noopener">BIXI open data</a>, 2024 and 2025 trip files (a station exists in a year if it has a trip), and the BIXI <a href="https://gbfs.velobixi.com/gbfs/gbfs.json" target="_blank" rel="noopener">GBFS feed</a> for today's stations</td></tr>
+            <tr><th>Population</th><td>Statistics Canada, <a href="https://www150.statcan.gc.ca/n1/en/catalogue/92-151-X" target="_blank" rel="noopener">2021 Census Geographic Attribute File</a> and <a href="https://www150.statcan.gc.ca/n1/en/catalogue/92-169-X" target="_blank" rel="noopener">dissemination area boundary files</a></td></tr>
+            <tr><th>Jobs</th><td>Statistics Canada, <a href="https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810050401" target="_blank" rel="noopener">table 98-10-0504-01</a> (employed labour force with a usual place of work, by census tract of work), with census tract boundary files</td></tr>
+            <tr><th>Metro</th><td><a href="https://www.stm.info/en/about/developers" target="_blank" rel="noopener">STM GTFS</a> (stations)</td></tr>
+            <tr><th>REM</th><td>Stations from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL); opening dates from <a href="https://rem.info/en/news/november-17-2025-scheduled-opening-date-deux-montagnes-branch" target="_blank" rel="noopener">REM</a> and <a href="https://www.cbc.ca/news/canada/montreal/rem-anse-a-l-orme-branch-spring-2026-9.7163171" target="_blank" rel="noopener">CBC</a></td></tr>
+            <tr><th>Boroughs</th><td>City of Montréal, <a href="https://donnees.montreal.ca/dataset/limites-administratives-agglomeration" target="_blank" rel="noopener">Limites administratives de l'agglomération</a></td></tr>
+            <tr><th>Basemap</th><td>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a></td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:10px">The Python pipeline is in <code>scripts/mtl/</code> of this site's repository (<code>build_shared.py</code> for the shared layers, <code>bixisiting/model.py</code> for the models). This is a personal project, not affiliated with BIXI Montréal or any city.</p>
+      </div>
+    </div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    (function () {
+      "use strict";
+      var BASE = "assets/data/mtl/bixisiting/";
+      var NS = [10, 25, 50, 100];
+      var PCOL = { balanced: "#2455E6", residents: "#C2378F", proven: "#12A150", custom: "#151A23" };
+      var RAMP = ["#FCE3C4", "#F8C08A", "#EF9A55", "#DC6E2E", "#B5461A"];   // sequential, light -> dark (index 0 = legend only)
+      var QS = [0.5, 0.75, 0.9, 0.97];
+      var COMP = [["pop", "Population"], ["jobs", "Jobs"], ["transit", "Metro & REM"], ["bixi", "Observed trips"]];
+      var KX = 111320 * Math.cos(45.53 * Math.PI / 180), KY = 110540;
+      var $ = function (id) { return document.getElementById(id); };
+      var fmt = function (v) { return Math.round(v).toLocaleString("en-CA"); };
+      var pct = function (v, d) { return (v * 100).toFixed(d == null ? 1 : d) + "%"; };
+      var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+
+      var S, SOL, BT;            // data
+      var n, LL = [], XY = [], NB = [], IDX = {}, UNITN = [];
+      var sc = {};               // scenario arrays: fwd / bt
+      var state = { preset: "balanced", N: 50, method: "mclp", w: { pop: 40, jobs: 20, transit: 15, bixi: 25 }, bt: "balanced", btMode: "free" };
+      var map, btmap, L_hex, L_ex, L_rt, L_pk, L_cat, bt_layers;
+      var cache = {};
+
+      function start() {
+        Promise.all(["sites.json", "solutions.json", "backtest.json"].map(function (f) {
+          return fetch(BASE + f).then(function (r) { if (!r.ok) throw new Error(f + " " + r.status); return r.json(); });
+        })).then(function (d) {
+          S = d[0]; SOL = d[1]; BT = d[2];
+          prep(); buildControls(); initMap(); initBt(); render(); renderBt();
+          $("loading").remove();
+        }).catch(function (e) {
+          $("loading").textContent = "Couldn't load the model results (" + e.message + ").";
+        });
+      }
+
+      // ───────────────────────── data prep ─────────────────────────
+      function px(lat, lon) { return [(lon + 73.6) * KX, (lat - 45.53) * KY]; }
+      function dist(a, b) { return Math.hypot(a[0] - b[0], a[1] - b[1]); }
+
+      function prep() {
+        n = S.h3.length;
+        UNITN = S.units.map(function (u) { return u[0]; });
+        for (var i = 0; i < n; i++) { IDX[S.h3[i]] = i; var c = h3.cellToLatLng(S.h3[i]); LL.push(c); XY.push(px(c[0], c[1])); }
+        var R = S.meta.assumptions.R_COVER;
+        for (i = 0; i < n; i++) {
+          var nb = [];
+          h3.gridDisk(S.h3[i], 2).forEach(function (c) { var j = IDX[c]; if (j != null && dist(XY[i], XY[j]) <= R) nb.push(j); });
+          NB.push(nb);
+        }
+        ["fwd", "bt"].forEach(function (k) {
+          var o = S[k];
+          var comps = { pop: S.pop, jobs: S.jobs, transit: o.transit, bixi: o.bixi };
+          var tot = {}; COMP.forEach(function (c) { tot[c[0]] = d3.sum(comps[c[0]]); });
+          var cov = new Uint8Array(n), cand = new Uint8Array(n);
+          for (var i = 0; i < n; i++) { cov[i] = o.covered.charCodeAt(i) === 49; cand[i] = o.cand.charCodeAt(i) === 49; }
+          sc[k] = { comps: comps, tot: tot, covered: cov, cand: cand };
+        });
+        // distance from each hex to the nearest existing station (capped), for the "average walk" tile
+        var cap = S.meta.assumptions.PMED_CAP, G = 500, grid = {};
+        S.existing.forEach(function (s) { var p = px(s[0], s[1]), k = Math.floor(p[0] / G) + "," + Math.floor(p[1] / G); (grid[k] = grid[k] || []).push(p); });
+        var dex = new Float64Array(n);
+        for (i = 0; i < n; i++) {
+          var gx = Math.floor(XY[i][0] / G), gy = Math.floor(XY[i][1] / G), best = cap;
+          for (var a = -2; a <= 2; a++) for (var b = -2; b <= 2; b++) (grid[(gx + a) + "," + (gy + b)] || []).forEach(function (p) { var d = dist(XY[i], p); if (d < best) best = d; });
+          dex[i] = best;
+        }
+        sc.fwd.dex = dex;
+        var st = SOL.meta.built;
+        $("stamp").textContent = "Model run " + st + " · " + fmt(S.existing.length) + " BIXI stations in the study area today · " + fmt(d3.sum(S.pop)) + " residents · " + fmt(n) + " hexagons";
+        var gaps = [];
+        Object.keys(SOL.presets).forEach(function (k) { NS.forEach(function (N) { var r = SOL.presets[k].N[N]; gaps.push((r.mclp_cov.demand - r.greedy_demand) / (r.mclp_cov.demand - SOL.presets[k].base.demand)); }); });
+        $("greedy-gap").textContent = pct(1 - d3.max(gaps), 0);
+        var pg = []; Object.keys(SOL.presets).forEach(function (k) { NS.forEach(function (N) { pg.push([k, N, SOL.presets[k].N[N].pmed_gap]); }); });
+        var open = pg.filter(function (g) { return g[2] > 0.002; });
+        $("pmed-note").textContent = "It is a much bigger program (well over 100,000 assignment variables) built directly in HiGHS with a 90-second limit per run. " +
+          (open.length ? "All runs reached the 0.1% gap except " + open.map(function (g) { return SOL.presets[g[0]].label + " with " + g[1] + " stations (" + pct(g[2], 1) + " from optimal)"; }).join(", ") + "." : "All runs reached the 0.1% gap.");
+      }
+
+      function weights() {
+        if (state.preset !== "custom") return SOL.presets[state.preset].weights;
+        var w = state.w, t = w.pop + w.jobs + w.transit + w.bixi || 1;
+        return { pop: w.pop / t, jobs: w.jobs / t, transit: w.transit / t, bixi: w.bixi / t };
+      }
+      function demand(k, w) {
+        var s = sc[k], D = new Float64Array(n);
+        COMP.forEach(function (c) { var key = c[0], a = s.comps[key], f = (w[key] || 0) / (s.tot[key] || 1) * 1e4; if (f) for (var i = 0; i < n; i++) D[i] += a[i] * f; });
+        return D;
+      }
+      function greedy(k, D, N) {
+        var s = sc[k], cov = s.covered.slice(), out = [], cand = [];
+        for (var i = 0; i < n; i++) if (s.cand[i]) cand.push(i);
+        var gain = function (j) { var g = 0, nb = NB[j]; for (var q = 0; q < nb.length; q++) if (!cov[nb[q]]) g += D[nb[q]]; return g; };
+        for (var t = 0; t < N; t++) {
+          var best = -1, bg = -1;
+          for (var c = 0; c < cand.length; c++) { var g = gain(cand[c]); if (g > bg) { bg = g; best = c; } }
+          var j = cand.splice(best, 1)[0]; out.push(j); NB[j].forEach(function (h) { cov[h] = 1; });
+        }
+        return out;
+      }
+      function picksFor(N) {
+        if (state.preset === "custom") {
+          var key = JSON.stringify(state.w) + N;
+          if (!cache[key]) cache[key] = greedy("fwd", demand("fwd", weights()), N);
+          return cache[key];
+        }
+        return SOL.presets[state.preset].N[N][state.method];
+      }
+      // coverage stats for a pick list (in pick order: marginal gains)
+      function evaluate(D, picks) {
+        var s = sc.fwd, cov = s.covered.slice(), cap = S.meta.assumptions.PMED_CAP;
+        var P0 = 0, Pt = d3.sum(S.pop), D0 = 0, Dt = 0, unit0 = new Float64Array(UNITN.length), unit1;
+        for (var i = 0; i < n; i++) { Dt += D[i]; if (cov[i]) { P0 += S.pop[i]; D0 += D[i]; unit0[S.unit[i]] += S.pop[i]; } }
+        unit1 = unit0.slice();
+        var P1 = P0, D1 = D0, marg = [];
+        picks.forEach(function (j) {
+          var mp = 0, md = 0;
+          NB[j].forEach(function (h) { if (!cov[h]) { cov[h] = 1; mp += S.pop[h]; md += D[h]; unit1[S.unit[h]] += S.pop[h]; } });
+          P1 += mp; D1 += md; marg.push([mp, md]);
+        });
+        var w0 = 0, w1 = 0;
+        for (i = 0; i < n; i++) {
+          var d = s.dex[i], d1 = d;
+          for (var q = 0; q < picks.length; q++) { var dd = dist(XY[i], XY[picks[q]]); if (dd < d1) d1 = dd; }
+          w0 += D[i] * Math.min(d, cap); w1 += D[i] * Math.min(d1, cap);
+        }
+        return { P0: P0 / Pt, P1: P1 / Pt, add: P1 - P0, D0: D0 / Dt, D1: D1 / Dt, marg: marg, unit0: unit0, unit1: unit1, dist0: w0 / Dt, dist1: w1 / Dt };
+      }
+
+      // ───────────────────────── controls ─────────────────────────
+      function chipRow(el, items, cur, onClick) {
+        el.innerHTML = "";
+        items.forEach(function (it) {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip" + (it[0] === cur ? " on" : ""); b.setAttribute("aria-pressed", it[0] === cur);
+          b.innerHTML = (it[2] ? '<i class="sw" style="--c:' + it[2] + '"></i>' : "") + esc(it[1]);
+          if (it[3]) b.disabled = true;
+          b.onclick = function () { onClick(it[0]); };
+          el.appendChild(b);
+        });
+      }
+      function buildControls() {
+        $("n").oninput = function () { state.N = NS[+this.value]; render(); };
+        ["l-ex", "l-rt", "l-cat"].forEach(function (id) { $(id).onchange = layerVis; });
+        var wh = "";
+        COMP.forEach(function (c) {
+          wh += '<div class="ctl"><label class="lbl" for="w-' + c[0] + '">' + c[1] + '</label><input id="w-' + c[0] + '" type="range" min="0" max="100" step="5" value="' + state.w[c[0]] + '"><output id="w-' + c[0] + '-o"></output></div>';
+        });
+        $("weights").innerHTML = wh + '<div class="note">Weights are rescaled to sum to 100%. Custom weights are solved in your browser with a greedy heuristic; the presets use the exact model.</div>';
+        var t;
+        COMP.forEach(function (c) {
+          $("w-" + c[0]).oninput = function () { state.w[c[0]] = +this.value; showW(); clearTimeout(t); t = setTimeout(render, 120); };
+        });
+        controls();
+      }
+      function showW() {
+        var w = weights();
+        COMP.forEach(function (c) { var o = $("w-" + c[0] + "-o"); if (o) o.textContent = Math.round(w[c[0]] * 100) + "%"; });
+      }
+      function controls() {
+        var items = Object.keys(SOL.presets).map(function (k) { return [k, SOL.presets[k].label, PCOL[k]]; });
+        items.push(["custom", "Custom", PCOL.custom]);
+        chipRow($("presets"), items, state.preset, function (k) {
+          if (k === "custom" && state.preset !== "custom") { var w = SOL.presets[state.preset].weights; state.w = { pop: Math.round(w.pop * 100), jobs: Math.round(w.jobs * 100), transit: Math.round(w.transit * 100), bixi: Math.round(w.bixi * 100) }; COMP.forEach(function (c) { $("w-" + c[0]).value = state.w[c[0]]; }); }
+          state.preset = k; render();
+        });
+        var cust = state.preset === "custom";
+        chipRow($("methods"), [["mclp", "Maximal covering"], ["pmed", "p-median", null, cust]], cust ? "mclp" : state.method, function (k) { state.method = k; render(); });
+        $("weights").classList.toggle("show", cust);
+        $("n-o").textContent = state.N;
+        showW();
+        var A = S.meta.assumptions, w = weights();
+        $("assume").innerHTML = '<span class="tag">Assumptions</span> Walking radius <b>' + A.R_COVER + ' m</b> · no new station within <b>' + A.R_EXCLUDE + ' m</b> of an existing one · weights <b>' +
+          COMP.map(function (c) { return (c[0] === "transit" ? c[1] : c[1].toLowerCase()) + " " + Math.round(w[c[0]] * 100) + "%"; }).join(", ") + "</b> · metro/REM pull fades to zero at " + A.TRANSIT_REACH + " m · trips smoothed over ~" + A.BIXI_SIGMA + " m.";
+      }
+
+      // ───────────────────────── main map ─────────────────────────
+      function baseMap(id, zoom) {
+        var m = L.map(id, { zoomControl: true, preferCanvas: true, minZoom: 9, maxZoom: 17, attributionControl: true }).setView([45.535, -73.63], zoom);
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+          subdomains: "abcd", maxZoom: 19, attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>'
+        }).addTo(m);
+        m.setMaxBounds([[45.2, -74.3], [45.85, -73.1]]);
+        return m;
+      }
+      var BND = [];
+      function initMap() {
+        var small = window.innerWidth < 720;
+        map = baseMap("map", small ? 10 : 11);
+        var rend = L.canvas({ padding: 0.3 });
+        for (var i = 0; i < n; i++) BND.push(h3.cellToBoundary(S.h3[i]));
+        L_hex = L.layerGroup().addTo(map);
+        L_ex = L.layerGroup(S.existing.map(function (s) {
+          return L.circleMarker([s[0], s[1]], { renderer: rend, radius: 2.2, stroke: false, fillColor: "#151A23", fillOpacity: 0.6, interactive: false });
+        })).addTo(map);
+        L_rt = L.layerGroup(S.transit.filter(function (t) { return t[4] < "2026-10"; }).map(function (t) {
+          if (t[1] === "metro") return L.circleMarker([t[2], t[3]], { renderer: rend, radius: 4.5, color: "#151A23", weight: 2, fillColor: "#fff", fillOpacity: 1, interactive: false });
+          return L.marker([t[2], t[3]], { icon: L.divIcon({ className: "", html: '<div class="rem-ic"></div>', iconSize: [8, 8] }), interactive: false, keyboard: false });
+        })).addTo(map);
+        L_cat = L.layerGroup().addTo(map);
+        L_pk = L.layerGroup().addTo(map);
+        map._rend = rend;
+        // hover / tap: find the hexagon under the pointer
+        var tip = $("tip"), wrap = $("map").parentNode;
+        function show(e) {
+          var c = h3.latLngToCell(e.latlng.lat, e.latlng.lng, 9), i = IDX[c];
+          if (i == null) { tip.style.display = "none"; return; }
+          var D = cur.D, st = sc.fwd.covered[i] ? "Already within " + S.meta.assumptions.R_COVER + " m of a station" : sc.fwd.cand[i] ? "Possible site" : "Not a candidate (too close to a station or mostly water)";
+          var rk = cur.picks.indexOf(i);
+          tip.innerHTML = '<div class="t">' + esc(UNITN[S.unit[i]]) + "</div>" +
+            (rk >= 0 ? '<div><b style="color:' + cur.col + '">Recommended site #' + (rk + 1) + "</b></div>" : "") +
+            "Residents <span class='n'>" + fmt(S.pop[i]) + "</span> · jobs <span class='n'>" + fmt(S.jobs[i]) + "</span><br>Demand index <span class='n'>" + D[i].toFixed(2) + "</span> (rank " + fmt(cur.rank[i]) + " of " + fmt(n) + ")<br><span style='color:var(--muted)'>" + st + "</span>";
+          var r = wrap.getBoundingClientRect(), p = e.containerPoint;
+          tip.style.display = "block";
+          var x = p.x + 14, y = p.y + 14;
+          if (x + 260 > r.width) x = p.x - 270; if (y + 120 > r.height - 40) y = p.y - 120;
+          tip.style.left = Math.max(4, x) + "px"; tip.style.top = Math.max(4, y) + "px";
+        }
+        map.on("mousemove", show); map.on("click", show);
+        map.on("mouseout", function () { tip.style.display = "none"; });
+      }
+      function layerVis() {
+        [[L_ex, "l-ex"], [L_rt, "l-rt"], [L_cat, "l-cat"]].forEach(function (p) { if ($(p[1]).checked) p[0].addTo(map); else p[0].remove(); });
+      }
+      function pickIcon(rank, col, square, size) {
+        size = size || (rank < 9 ? 18 : rank < 99 ? 20 : 22);
+        return L.divIcon({ className: "", iconSize: [size, size], html: '<div class="pk' + (square ? " sq" : "") + '" style="width:' + size + "px;height:" + size + "px;background:" + col + '">' + (rank + 1) + "</div>" });
+      }
+
+      var cur = {};
+      function render() {
+        controls();
+        var w = weights(), D = demand("fwd", w), picks = picksFor(state.N), col = PCOL[state.preset], sq = state.method === "pmed" && state.preset !== "custom";
+        var ord = d3.range(n).sort(function (a, b) { return D[b] - D[a]; }), rank = new Int32Array(n);
+        ord.forEach(function (i, r) { rank[i] = r + 1; });
+        var ev = evaluate(D, picks);
+        cur = { D: D, picks: picks, col: col, rank: rank, ev: ev };
+        // hexagons: covered today in grey-blue, uncovered coloured by demand quantile
+        var unc = []; for (var i = 0; i < n; i++) if (!sc.fwd.covered[i] && D[i] > 0) unc.push(D[i]);
+        unc.sort(d3.ascending);
+        var th = QS.map(function (q) { return d3.quantileSorted(unc, q); });
+        L_hex.clearLayers();
+        for (i = 0; i < n; i++) {
+          var fill = null, op = 0.62;
+          if (sc.fwd.covered[i]) { fill = "#D9E1EC"; op = 0.55; }
+          else { var b = th.length - 1; while (b >= 0 && D[i] < th[b]) b--; if (b >= 0) fill = RAMP[b + 1]; }
+          if (fill) L_hex.addLayer(L.polygon(BND[i], { renderer: map._rend, stroke: false, fillColor: fill, fillOpacity: op, interactive: false }));
+        }
+        L_pk.clearLayers(); L_cat.clearLayers();
+        picks.slice().reverse().forEach(function (j) {
+          var r = picks.indexOf(j);
+          L_cat.addLayer(L.circle(LL[j], { renderer: map._rend, radius: S.meta.assumptions.R_COVER, color: col, weight: 1.2, opacity: 0.7, dashArray: "3 3", fill: true, fillColor: col, fillOpacity: 0.05, interactive: false }));
+          L_pk.addLayer(L.marker(LL[j], { icon: pickIcon(r, col, sq), keyboard: false, title: "Recommended site #" + (r + 1) + ", " + UNITN[S.unit[j]] }));
+        });
+        layerVis();
+        legend(th);
+        tiles(ev);
+        list(picks, ev, col);
+        drawCurve(); drawMarg(); drawEquity(ev);
+      }
+      function legend(th) {
+        var sq = state.method === "pmed" && state.preset !== "custom";
+        $("legend").innerHTML =
+          '<span class="grp"><span class="ramp">' + RAMP.slice(1).map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("") + "</span>Demand index of areas without a station (top 50% → top 3%)</span>" +
+          '<span class="grp"><i class="k-fill" style="--c:#D9E1EC"></i>Already within ' + S.meta.assumptions.R_COVER + " m of a station</span>" +
+          '<span class="grp"><i class="k-dot" style="--c:#151A23"></i>BIXI station today</span>' +
+          '<span class="grp"><i class="k-ring" style="--c:#151A23"></i>Metro</span><span class="grp"><i class="k-sq" style="--c:#151A23"></i>REM</span>' +
+          '<span class="grp"><i class="' + (sq ? "k-sq" : "k-dot") + '" style="--c:' + cur.col + ';background:' + cur.col + '"></i>Recommended site (' + (state.preset === "custom" ? "greedy" : sq ? "p-median" : "maximal covering") + ")</span>";
+      }
+      function tiles(ev) {
+        var N = state.N;
+        var t = [
+          ["Residents within " + S.meta.assumptions.R_COVER + " m of a station", pct(ev.P1), "today " + pct(ev.P0) + " · +" + fmt(ev.add) + " people"],
+          ["Demand index covered", pct(ev.D1), "today " + pct(ev.D0) + " (this weighting)"],
+          ["New residents reached per station", fmt(ev.add / N), "average over the " + N + " new sites"],
+          ["Average walk to a station", fmt(ev.dist1) + " m", "today " + fmt(ev.dist0) + " m · demand-weighted, straight line, capped at 1 km"]
+        ];
+        $("tiles").innerHTML = t.map(function (x) { return '<div class="tile"><div class="k">' + x[0] + "</div><b>" + x[1] + "</b><span>" + x[2] + "</span></div>"; }).join("");
+      }
+      function list(picks, ev, col) {
+        var m = state.preset === "custom" ? "greedy heuristic" : state.method === "pmed" ? "p-median" : "maximal covering";
+        $("side-sub").textContent = picks.length + " sites, " + m + ". Ranked by the demand each one adds after the ones above it; the number is the residents it brings within " + S.meta.assumptions.R_COVER + " m.";
+        $("list").innerHTML = picks.map(function (j, r) {
+          return '<li data-j="' + j + '"><span class="r" style="color:' + col + '">' + (r + 1) + '</span><span class="u">' + esc(UNITN[S.unit[j]]) + '</span><span class="v">+' + fmt(ev.marg[r][0]) + "</span><small>demand +" + ev.marg[r][1].toFixed(1) + " · " + fmt(S.jobs[j]) + " jobs in hexagon</small></li>";
+        }).join("");
+        Array.prototype.forEach.call($("list").children, function (li) {
+          li.onclick = function () { map.flyTo(LL[+li.dataset.j], 15, { duration: 0.6 }); if (window.innerWidth < 1000) $("map").scrollIntoView({ behavior: "smooth", block: "center" }); };
+        });
+      }
+
+      // ───────────────────────── charts ─────────────────────────
+      function chartBox(el, h, m) {
+        var W = el.clientWidth || 600;
+        d3.select(el).selectAll("*").remove();
+        var svg = d3.select(el).append("svg").attr("width", W).attr("height", h).attr("viewBox", "0 0 " + W + " " + h);
+        return { svg: svg, W: W, H: h, iw: W - m.l - m.r, ih: h - m.t - m.b, g: svg.append("g").attr("transform", "translate(" + m.l + "," + m.t + ")") };
+      }
+      function hoverTip(el) {
+        var t = el.querySelector(".tip");
+        if (!t) { t = document.createElement("div"); t.className = "tip"; el.appendChild(t); }
+        return t;
+      }
+      function drawCurve() {
+        var el = $("curve"), m = { t: 10, r: 92, b: 34, l: 44 }, c = chartBox(el, 300, m);
+        var keys = Object.keys(SOL.curve);
+        var all = []; keys.forEach(function (k) { SOL.curve[k].forEach(function (p) { all.push(p[1]); }); });
+        var x = d3.scaleLinear().domain([0, 150]).range([0, c.iw]);
+        var y = d3.scaleLinear().domain([Math.floor(d3.min(all) * 50) / 50, Math.ceil(d3.max(all) * 50) / 50]).nice().range([c.ih, 0]);
+        c.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(5).tickSize(-c.iw).tickFormat(""));
+        c.g.append("g").attr("class", "axis").attr("transform", "translate(0," + c.ih + ")").call(d3.axisBottom(x).tickValues([0, 25, 50, 75, 100, 125, 150]));
+        c.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return Math.round(v * 100) + "%"; }));
+        c.g.append("text").attr("x", c.iw).attr("y", c.ih + 30).attr("text-anchor", "end").attr("fill", "var(--muted)").attr("font-size", 11).text("New stations");
+        c.g.append("line").attr("x1", x(state.N)).attr("x2", x(state.N)).attr("y1", 0).attr("y2", c.ih).attr("stroke", "#151A23").attr("stroke-dasharray", "2 3").attr("stroke-width", 1);
+        var line = d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return y(p[1]); });
+        keys.forEach(function (k) {
+          var on = k === state.preset;
+          c.g.append("path").datum(SOL.curve[k]).attr("fill", "none").attr("stroke", PCOL[k]).attr("stroke-width", on ? 2.5 : 1.5).attr("opacity", on || state.preset === "custom" ? 1 : 0.55).attr("d", line);
+          var last = SOL.curve[k][SOL.curve[k].length - 1];
+          c.g.append("text").attr("x", c.iw + 6).attr("y", y(last[1])).attr("dy", "0.35em").attr("font-size", 11).attr("fill", "var(--text)").text(SOL.presets[k].label);
+        });
+        // de-overlap end labels
+        var labs = c.g.selectAll("text").filter(function () { return +this.getAttribute("x") === c.iw + 6; }).nodes().sort(function (a, b) { return a.getAttribute("y") - b.getAttribute("y"); });
+        for (var i = 1; i < labs.length; i++) { var p = +labs[i - 1].getAttribute("y"), q = +labs[i].getAttribute("y"); if (q - p < 13) labs[i].setAttribute("y", p + 13); }
+        $("curve-legend").innerHTML = keys.map(function (k) { return '<span><i class="k-line" style="--c:' + PCOL[k] + '"></i>' + esc(SOL.presets[k].label) + "</span>"; }).join("") + '<span style="color:var(--muted)">Dashed line: ' + state.N + " stations selected</span>";
+        // crosshair + tooltip
+        var tip = hoverTip(el), cross = c.g.append("line").attr("y1", 0).attr("y2", c.ih).attr("stroke", "#999").attr("opacity", 0);
+        c.g.append("rect").attr("width", c.iw).attr("height", c.ih).attr("fill", "transparent")
+          .on("mousemove", function (e) {
+            var mx = d3.pointer(e)[0], N = Math.max(0, Math.min(150, Math.round(x.invert(mx) / 10) * 10)), k0 = keys[0], idx = SOL.curve[k0].findIndex(function (p) { return p[0] === N; });
+            cross.attr("x1", x(N)).attr("x2", x(N)).attr("opacity", 1);
+            tip.innerHTML = '<div class="t">' + N + " new stations</div>" + keys.map(function (k) { return '<i class="k-dot" style="--c:' + PCOL[k] + '"></i> ' + esc(SOL.presets[k].label) + ' <span class="n">' + pct(SOL.curve[k][idx][1]) + "</span>"; }).join("<br>");
+            tip.style.display = "block"; var px2 = x(N) + m.l + 12; if (px2 + 200 > c.W) px2 -= 220; tip.style.left = px2 + "px"; tip.style.top = "20px";
+          })
+          .on("mouseleave", function () { cross.attr("opacity", 0); tip.style.display = "none"; });
+      }
+      function drawMarg() {
+        var el = $("marg"), m = { t: 10, r: 12, b: 34, l: 52 }, c = chartBox(el, 300, m);
+        var k = state.preset === "custom" ? "balanced" : state.preset, pts = SOL.curve[k], tot = d3.sum(S.pop);
+        var data = []; for (var i = 1; i < pts.length; i++) data.push({ a: pts[i - 1][0], b: pts[i][0], v: (pts[i][1] - pts[i - 1][1]) * tot });
+        var x = d3.scaleBand().domain(data.map(function (d) { return d.b; })).range([0, c.iw]).padding(0.18);
+        var y = d3.scaleLinear().domain([0, d3.max(data, function (d) { return d.v; })]).nice().range([c.ih, 0]);
+        c.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(4).tickSize(-c.iw).tickFormat(""));
+        c.g.append("g").attr("class", "axis").attr("transform", "translate(0," + c.ih + ")").call(d3.axisBottom(x).tickValues(data.filter(function (d, i) { return i % 3 === 2 || i === 0; }).map(function (d) { return d.b; })).tickFormat(function (v) { return (v - 10) + "–" + v; }));
+        c.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(4).tickFormat(d3.format("~s")));
+        var col = PCOL[k], tip = hoverTip(el);
+        c.g.selectAll("path.b").data(data).enter().append("path").attr("class", "b")
+          .attr("d", function (d) { var x0 = x(d.b), w = x.bandwidth(), y0 = y(Math.max(0, d.v)), h = c.ih - y0, r = Math.min(4, w / 2, h); return "M" + x0 + "," + c.ih + "V" + (y0 + r) + "Q" + x0 + "," + y0 + " " + (x0 + r) + "," + y0 + "H" + (x0 + w - r) + "Q" + (x0 + w) + "," + y0 + " " + (x0 + w) + "," + (y0 + r) + "V" + c.ih + "Z"; })
+          .attr("fill", col).attr("opacity", function (d) { return d.b <= Math.ceil(state.N / 10) * 10 ? 1 : 0.45; });
+        c.g.selectAll("rect.hit").data(data).enter().append("rect").attr("x", function (d) { return x(d.b) - 2; }).attr("width", x.bandwidth() + 4).attr("y", 0).attr("height", c.ih).attr("fill", "transparent")
+          .on("mousemove", function (e, d) { tip.innerHTML = '<div class="t">Stations ' + (d.a + 1) + "–" + d.b + '</div><span class="n">+' + fmt(d.v) + "</span> residents within " + S.meta.assumptions.R_COVER + " m"; tip.style.display = "block"; var p = d3.pointer(e, el); tip.style.left = Math.min(p[0] + 12, c.W - 200) + "px"; tip.style.top = "16px"; })
+          .on("mouseleave", function () { tip.style.display = "none"; });
+        var first = data[0].v, at = data.find(function (d) { return d.b === 100; }) || data[data.length - 1];
+        $("curve-sd").textContent = "The first stations fill the densest gaps; each extra batch reaches fewer new people. With the " + SOL.presets[k].label.toLowerCase() + " weighting, the first 10 stations bring " + fmt(first) + " more residents within 400 m; stations 91 to 100 bring " + fmt(at.v) + ". Lines show the share of the study area's " + (tot / 1e6).toFixed(2) + " million residents within 400 m of a station as the model adds 0 to 150 stations.";
+      }
+      function drawEquity(ev) {
+        var el = $("eq"), rows = [];
+        S.units.forEach(function (u, i) { if (u[2] >= 15000) rows.push({ i: i, name: u[0], pop: u[2], a: ev.unit0[i] / u[2], b: ev.unit1[i] / u[2] }); });
+        rows.sort(function (p, q) { return q.a - p.a; });
+        var small = el.clientWidth < 560, m = { t: 22, r: 16, b: 10, l: small ? 132 : 230 }, rh = 19, c = chartBox(el, m.t + m.b + rows.length * rh, m);
+        var x = d3.scaleLinear().domain([0, 1]).range([0, c.iw]);
+        c.g.append("g").attr("class", "grid").call(d3.axisTop(x).ticks(5).tickSize(-rows.length * rh).tickFormat(""));
+        c.g.append("g").attr("class", "axis").call(d3.axisTop(x).ticks(5).tickFormat(d3.format(".0%")));
+        var col = cur.col, tip = hoverTip(el);
+        var g = c.g.selectAll("g.r").data(rows).enter().append("g").attr("class", "r").attr("transform", function (d, i) { return "translate(0," + (i * rh + rh / 2) + ")"; });
+        g.append("text").attr("x", -8).attr("dy", "0.35em").attr("text-anchor", "end").attr("font-size", 11.5).attr("fill", "var(--text)").text(function (d) { return small && d.name.length > 20 ? d.name.slice(0, 19) + "…" : d.name; });
+        g.append("line").attr("x1", function (d) { return x(d.a); }).attr("x2", function (d) { return x(d.b); }).attr("stroke", col).attr("stroke-width", 2).attr("opacity", 0.5);
+        g.append("circle").attr("cx", function (d) { return x(d.a); }).attr("r", 4.5).attr("fill", "#A0A7B4").attr("stroke", "#fff").attr("stroke-width", 2);
+        g.append("circle").attr("cx", function (d) { return x(d.b); }).attr("r", 4.5).attr("fill", col).attr("stroke", "#fff").attr("stroke-width", 2).attr("opacity", function (d) { return d.b - d.a > 0.0005 ? 1 : 0; });
+        g.append("rect").attr("x", -m.l).attr("y", -rh / 2).attr("width", c.iw + m.l).attr("height", rh).attr("fill", "transparent")
+          .on("mousemove", function (e, d) { tip.innerHTML = '<div class="t">' + esc(d.name) + "</div>" + fmt(d.pop) + " residents<br>Within 400 m today <span class='n'>" + pct(d.a) + "</span><br>With the " + state.N + " new sites <span class='n'>" + pct(d.b) + "</span> (+" + fmt((d.b - d.a) * d.pop) + ")"; tip.style.display = "block"; var p = d3.pointer(e, el); tip.style.left = Math.min(p[0] + 12, c.W - 240) + "px"; tip.style.top = (p[1] + 12) + "px"; })
+          .on("mouseleave", function () { tip.style.display = "none"; });
+        $("eq-legend").innerHTML = '<span><i class="k-dot" style="--c:#A0A7B4"></i>Within 400 m of a station today</span><span><i class="k-dot" style="--c:' + col + '"></i>With the ' + state.N + " recommended sites</span><span style='color:var(--muted)'>Cities and boroughs with 15,000+ residents</span>";
+        var gains = rows.map(function (r) { return { n: r.name, g: (r.b - r.a) * r.pop, a: r.a }; }).sort(function (p, q) { return q.g - p.g; });
+        var low = rows.filter(function (r) { return r.a < 0.25; }), lowGain = d3.sum(low, function (r) { return (r.b - r.a) * r.pop; });
+        $("eq-sd").textContent = "Today, coverage runs from " + pct(rows[0].a, 0) + " of residents in " + rows[0].name + " to " + pct(rows[rows.length - 1].a, 0) + " in " + rows[rows.length - 1].name + ". With these " + state.N + " sites, the biggest gains go to " +
+          gains.slice(0, 3).map(function (q) { return q.n + " (+" + fmt(q.g) + ")"; }).join(", ") + ". Places where under a quarter of residents have a station nearby get " + pct(lowGain / Math.max(1, ev.add), 0) + " of the newly covered people. A demand-maximising model goes where the people are; an equity goal would need its own weight or a minimum per borough.";
+      }
+
+      // ───────────────────────── back-test ─────────────────────────
+      function initBt() {
+        btmap = baseMap("btmap", window.innerWidth < 720 ? 10 : 10);
+        btmap.setView([45.55, -73.62], window.innerWidth < 720 ? 10 : 10);
+        var rend = L.canvas({ padding: 0.3 });
+        btmap._rend = rend;
+        L.layerGroup(BT.existing2024.map(function (s) { return L.circleMarker(s, { renderer: rend, radius: 1.8, stroke: false, fillColor: "#9aa1ad", fillOpacity: 0.7, interactive: false }); })).addTo(btmap);
+        bt_layers = L.layerGroup().addTo(btmap);
+        var A = BT.meta.assumptions, M = BT.meta, ex = BT.adds.filter(function (a) { return a.kind === "expansion"; }).length;
+        $("bt-sd").innerHTML = "Pretend it is the end of 2024. The model gets only what was known then: the " + fmt(M.n_2024) + " stations that had trips in 2024, that year's trips, the metro and the REM South Shore branch. It picks as many sites as BIXI really opened in 2025 (" + M.n_adds + " in the study area) and we count how many of them land within " + A.MATCH_R + " m of a real new station, matching each pick to at most one station. " +
+          ex + " of the real additions were in new territory (more than " + A.R_EXCLUDE + " m from a 2024 station); the other " + (M.n_adds - ex) + " were infill between existing stations, which the model can't propose by design.";
+        $("bt-how").innerHTML = "A 2025 station counts as a <b>real addition</b> if it had at least " + fmt(A.NEW_MIN_TRIPS) + " trips in 2025 (to drop event and pop-up stations) and no 2024 station within " + A.NEW_GAP + " m (to drop moves and renames). That leaves " + M.n_adds + " additions. The model runs on 2024 inputs only, with the same " + A.R_COVER + " m and " + A.R_EXCLUDE + " m rules, and picks " + M.n_adds + " sites. A pick <b>anticipates</b> an addition if they are within " + A.MATCH_R + " m of each other, with a one-to-one matching (Hungarian algorithm) so a single pick can't claim two stations. " +
+          "Baselines: " + M.n_adds + " candidate sites drawn at random (300 draws), and the " + M.n_adds + " highest-scoring hexagons without the coverage logic. <b>With city quotas</b> re-solves the model with the number of stations each city or borough really got in 2025, which separates <i>which city builds</i> (a budget decision) from <i>where in the city</i> (the part the model is about).";
+      }
+      function renderBt() {
+        var items = Object.keys(BT.presets).map(function (k) { return [k, SOL.presets[k].label, PCOL[k]]; });
+        chipRow($("bt-presets"), items, state.bt, function (k) { state.bt = k; renderBt(); });
+        chipRow($("bt-mode"), [["free", "Free"], ["quota", "With city quotas"]], state.btMode, function (k) { state.btMode = k; renderBt(); });
+        var p = BT.presets[state.bt], col = PCOL[state.bt], q = state.btMode === "quota";
+        var picks = q ? p.quota_picks : p.picks, pairs = q ? p.quota_pairs : p.pairs, hits = q ? p.quota_hits : p.hits, N = BT.meta.n_adds, NP = q ? p.quota_n : N;
+        var ex = BT.adds.filter(function (a) { return a.kind === "expansion"; }).length;
+        var t = [
+          ["Real 2025 additions anticipated", hits + " of " + N, pct(hits / N, 0) + " within " + BT.meta.assumptions.MATCH_R + " m" + (q ? " · " + NP + " picks under city quotas" : " · " + p.exp_hits + " of " + ex + " in new territory")],
+          ["Within 600 m", q ? "–" : String(p.hits600), q ? "shown for the free model" : "a looser match radius"],
+          ["Random sites (same N)", BT.random.mean.toFixed(1), "90% of draws between " + BT.random.p5 + " and " + BT.random.p95],
+          ["Highest-scoring hexagons", String(p.top_demand_hits), "top " + N + " by demand, no coverage logic"]
+        ];
+        $("bt-tiles").innerHTML = t.map(function (x) { return '<div class="tile"><div class="k">' + x[0] + "</div><b>" + x[1] + "</b><span>" + x[2] + "</span></div>"; }).join("");
+        bt_layers.clearLayers();
+        var rend = btmap._rend, matchedA = {}, matchedP = {};
+        pairs.forEach(function (pr) { matchedA[pr[0]] = 1; matchedP[pr[1]] = 1; var a = BT.adds[pr[0]]; bt_layers.addLayer(L.polyline([[a.lat, a.lon], LL[picks[pr[1]]]], { renderer: rend, color: "#151A23", weight: 1.5, interactive: false })); });
+        picks.forEach(function (j, r) { bt_layers.addLayer(L.circleMarker(LL[j], { renderer: rend, radius: 5, stroke: true, color: "#fff", weight: 1.5, fillColor: col, fillOpacity: matchedP[r] ? 1 : 0.75 }).bindTooltip("Model pick · " + esc(UNITN[S.unit[j]]) + (matchedP[r] ? " · matched" : ""))); });
+        BT.adds.forEach(function (a, i) { bt_layers.addLayer(L.circleMarker([a.lat, a.lon], { renderer: rend, radius: 5.5, color: "#151A23", weight: 2, dashArray: a.kind === "infill" ? "2 2" : null, fill: true, fillColor: "#fff", fillOpacity: matchedA[i] ? 0 : 0.6 }).bindTooltip(esc(a.name) + "<br>Added in 2025 · " + fmt(a.trips) + " trips · " + (a.kind === "infill" ? "infill (" + a.gap + " m from a 2024 station)" : "new territory") + (matchedA[i] ? " · anticipated" : ""))); });
+        $("bt-legend").innerHTML = '<span class="grp"><i class="k-dot" style="--c:#9aa1ad"></i>Station in 2024</span><span class="grp"><i class="k-ring" style="--c:#151A23"></i>Added by BIXI in 2025 (dashed: infill)</span><span class="grp"><i class="k-dot" style="--c:' + col + '"></i>Model pick</span><span class="grp"><i class="k-line" style="--c:#151A23"></i>Match within ' + BT.meta.assumptions.MATCH_R + " m</span>";
+        // table by unit
+        var pu = new Array(UNITN.length).fill(0); picks.forEach(function (j) { pu[S.unit[j]]++; });
+        var rows = UNITN.map(function (u, i) { return { u: u, a: BT.adds_by_unit[i], p: pu[i] }; }).filter(function (r) { return r.a + r.p > 0; }).sort(function (x, y) { return (y.a - x.a) || (y.p - x.p); }).slice(0, 14);
+        var mx = d3.max(rows, function (r) { return Math.max(r.a, r.p); });
+        $("bt-table").innerHTML = '<thead><tr><th>City or borough</th><th class="num">BIXI 2025</th><th></th><th class="num">Model</th><th></th></tr></thead><tbody>' + rows.map(function (r) {
+          return "<tr><td>" + esc(r.u) + '</td><td class="num">' + r.a + '</td><td style="width:22%"><span class="bar" style="width:' + (r.a / mx * 100) + '%;background:#151A23"></span></td><td class="num">' + r.p + '</td><td style="width:22%"><span class="bar" style="width:' + (r.p / mx * 100) + "%;background:" + col + '"></span></td></tr>';
+        }).join("") + "</tbody>";
+      }
+
+      var rT, lastW = window.innerWidth;
+      window.addEventListener("resize", function () {
+        clearTimeout(rT);
+        rT = setTimeout(function () { if (!S || Math.abs(window.innerWidth - lastW) < 30) return; lastW = window.innerWidth; drawCurve(); drawMarg(); drawEquity(cur.ev); map.invalidateSize(); btmap.invalidateSize(); }, 200);
+      });
+
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+    })();
+    </script>
+  </body>
+</html>
