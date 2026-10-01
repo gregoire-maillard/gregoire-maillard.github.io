@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Littlewood's rule</title>
+    <meta name="description" content="One flight, two fares: how many seats to keep for the high fare. A visual explainer of Littlewood's rule, the idea all airline seat control builds on.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/littlewood.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Littlewood's rule · Airline tools">
+    <meta property="og:description" content="One flight, two fares: how many seats to keep for the high fare. A visual explainer of Littlewood's rule, the idea all airline seat control builds on.">
+    <meta property="og:url" content="https://gregoiremaillard.com/littlewood.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/littlewood.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Littlewood's rule · Airline tools">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <!-- ?embed (e.g. in an iframe from RM 101) hides the top bar, breadcrumb and the "How it works" notes -->
+    <script>if (/[?&]embed(=|&|$)/.test(location.search)) document.documentElement.className += " embed";</script>
+
+    <style>
+      /* Same slim top-bar pattern as airflows.html / bookinglimits.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* fares: same blue ramp as the fare classes in bookinglimits.html (Y darkest, Q light) */
+        --hi: #0b3c5d;
+        --lo: #86bdd6;
+        --protect: #287a9e;
+        --sell: #cfd5db;
+        --away: #d9480f;
+      }
+
+      .content { max-width: 1180px; margin: 0 auto; padding: 26px 30px 60px; }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .intro .lede { margin: 0 0 8px; color: var(--ink); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Layout: inputs rail + results ── */
+      .stage { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 26px; align-items: start; margin-top: 22px; }
+      .inputs { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px 16px 16px; position: sticky; top: 78px; }
+      .inputs h3 { margin: 16px 0 10px; font-size: 13px; color: var(--ink); font-weight: 600; }
+      .inputs h3:first-child { margin-top: 0; }
+      .sl { margin: 0 0 12px; }
+      .sl .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 12.5px; }
+      .sl label { color: var(--text); }
+      .sl output { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .sl input[type=range] { width: 100%; margin: 6px 0 0; accent-color: #222; height: 22px; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+      .warn { font-size: 12px; color: #9a3b0b; margin: 4px 0 0; }
+      .warn:empty { display: none; }
+      .btn { font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink); }
+      .btn:hover { border-color: #cfcfcf; }
+      .btn.dark { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .btn.dark:hover { background: #000; }
+
+      /* ── Result tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 18px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .tile span { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+      .tile.key { border-color: #b9d3e2; background: #f3f8fb; }
+
+      .block { margin: 0 0 34px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h3 { margin: 0; font-size: 16px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .block p.lead { margin: 0 0 10px; font-size: 13px; max-width: 760px; }
+      .verdict { margin: 10px 0 0; font-size: 13px; max-width: 760px; color: var(--ink); }
+      .rm-link { font-size: 12px; color: var(--muted); margin: 8px 0 0; }
+
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart svg text { font-family: inherit; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .legend i.ring { background: #fff; box-shadow: inset 0 0 0 1.3px var(--protect); }
+      .legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+
+      /* ── Seat maps ── */
+      .sim-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
+      .sim-status { font-size: 12.5px; color: var(--text); min-height: 18px; font-variant-numeric: tabular-nums; }
+      .sim-status b { color: var(--ink); font-weight: 600; }
+      .planes { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 6px 12px; }
+      .plane { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 4px 14px; align-items: center; padding: 10px 0; }
+      .plane + .plane { border-top: 1px solid #f1f1f1; }
+      .plane .who { font-size: 12.5px; color: var(--text); line-height: 1.4; }
+      .plane .who b { color: var(--ink); font-weight: 600; font-size: 13px; }
+      .plane .who > span { display: block; }
+      .plane .rev { display: block; margin-top: 2px; font-size: 18px; color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+      .plane .mini { display: block; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+      .plane .mini .aw { color: var(--away); }
+      .plane .best { display: none; margin-left: 6px; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #fff; background: var(--protect); border-radius: 4px; padding: 1px 5px; vertical-align: 1px; }
+      .plane.won .best { display: inline-block; }
+      .plane .map svg { display: block; width: 100%; height: auto; }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; }
+      table.res { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 560px; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 7px 9px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+      table.res td { padding: 6px 9px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res tr.opt td { background: #eef5fa; color: var(--ink); }
+      table.res tr.opt td:first-child { font-weight: 600; }
+      table.res tbody tr:hover td { background: var(--soft); }
+      table.res tr.opt:hover td { background: #e6f0f7; }
+
+      /* ── Two fares to many ── */
+      .ladder { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 10px; align-items: center; font-size: 12.5px; }
+      .ladder .k { color: var(--text); white-space: nowrap; }
+      .ladder .k b { color: var(--ink); }
+      .ladder .track { position: relative; height: 14px; background: #f1f3f5; border-radius: 3px; }
+      .ladder .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
+      .ladder .n { font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; white-space: nowrap; }
+      .cta-row { margin: 14px 0 0; display: flex; gap: 10px 16px; align-items: center; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+      .cta-row a.btn { text-decoration: none; }
+
+      /* ── Tooltip ── */
+      .tip { position: fixed; pointer-events: none; z-index: 20; background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.08); padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45; max-width: 290px; display: none; }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: baseline; gap: 7px; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; min-width: 44px; }
+      .tip .v { margin-top: 4px; color: var(--ink); font-weight: 600; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method var, .verdict var, .lead var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+
+      .embed-open { display: none; font-size: 12px; }
+      .embed .at-hdr, .embed .crumbs, .embed .method { display: none !important; }
+      .embed .embed-open { display: inline; }
+      .embed .content { padding-top: 14px; }
+      .embed .inputs { top: 12px; }
+
+      @media (max-width: 980px) {
+        .stage { grid-template-columns: minmax(0, 1fr); }
+        .inputs { position: static; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; }
+        .inputs h3, .inputs .full { grid-column: 1 / -1; }
+      }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        .plane { grid-template-columns: minmax(0, 1fr); }
+        .plane .who { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
+        .plane .who > span { display: inline; }
+        .plane .rev { margin: 0 0 0 auto; font-size: 16px; }
+        .plane .mini { flex-basis: 100%; }
+      }
+      @media (max-width: 520px) {
+        .inputs { grid-template-columns: minmax(0, 1fr); }
+      }
+    </style>
+
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      /* breadcrumb: "Airline tools · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
+    </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>24</b> tools · <b>7</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Revenue management</div>
+        <h2>Littlewood's rule</h2>
+        <p class="lede">One flight, two fares. Cheap tickets sell first. How many seats do you keep back for the passengers who pay more?</p>
+        <p>Keep too few and late business travellers find the flight full. Keep too many and seats fly empty that a leisure passenger would have bought. In 1972 Ken Littlewood, at BOAC, gave the answer that all airline seat control still builds on: <b>keep protecting one more seat as long as the chance that high-fare demand reaches it is greater than the low fare divided by the high fare.</b> Move the sliders and watch the answer change. Full background in <a href="/rm101.html#littlewood">Revenue Management 101, chapter 03</a>. <a class="embed-open" href="/littlewood.html" target="_blank" rel="noopener">Open the full page ↗</a></p>
+        <p class="note-line">Fares and demand on this page are illustrative assumptions, not any airline's data.</p>
+      </div>
+
+      <div class="stage">
+        <aside class="inputs" aria-label="Inputs">
+          <h3>The flight</h3>
+          <div class="sl full">
+            <div class="top"><label for="in-C">Seats on the flight</label><output id="out-C" for="in-C"></output></div>
+            <input id="in-C" type="range" min="50" max="300" step="1" value="180">
+          </div>
+
+          <h3>The two fares</h3>
+          <div class="sl">
+            <div class="top"><label for="in-fH">High fare</label><output id="out-fH" for="in-fH"></output></div>
+            <input id="in-fH" type="range" min="100" max="1500" step="10" value="500">
+          </div>
+          <div class="sl">
+            <div class="top"><label for="in-fL">Low fare</label><output id="out-fL" for="in-fL"></output></div>
+            <input id="in-fL" type="range" min="50" max="1490" step="10" value="200">
+            <p class="warn" id="fare-warn"></p>
+          </div>
+
+          <h3>High-fare demand forecast</h3>
+          <div class="sl">
+            <div class="top"><label for="in-mu">Average</label><output id="out-mu" for="in-mu"></output></div>
+            <input id="in-mu" type="range" min="0" max="200" step="1" value="40">
+          </div>
+          <div class="sl">
+            <div class="top"><label for="in-sd">Spread (standard deviation)</label><output id="out-sd" for="in-sd"></output></div>
+            <input id="in-sd" type="range" min="1" max="60" step="1" value="10">
+          </div>
+          <p class="hint full">High-fare demand is uncertain: about two flights in three land within one spread of the average. Low-fare customers are assumed to be plentiful: there are always enough of them to buy every seat they're offered, and they all book before the high-fare customers.</p>
+          <div class="full" style="margin-top:12px"><button class="btn" id="reset">Reset the example</button></div>
+        </aside>
+
+        <div class="results">
+          <div class="tiles" id="tiles"></div>
+
+          <!-- 1. the rule -->
+          <div class="block">
+            <div class="block-head"><h3>The rule, one seat at a time</h3><span id="rule-sub"></span></div>
+            <p class="lead">Each bar is one more seat you could keep for the high fare. Its height is the chance that high-fare demand gets that far, so that a high-fare passenger is there to buy it. Keeping the seat is worth the high fare times that chance; selling it now is worth the low fare for certain. The two are equal where the bars cross the dashed line at <b>low fare ÷ high fare</b>.</p>
+            <div class="chart" id="ch-rule"></div>
+            <p class="verdict" id="verdict"></p>
+          </div>
+
+          <!-- 2. the seat map -->
+          <div class="block" id="sim">
+            <div class="block-head"><h3>Fill the flight</h3><span>Same customers, three choices</span></div>
+            <p class="lead">One departure, booked three ways. Low-fare customers book first until the seats on sale to them are gone. Then the high-fare customers arrive, and only the protected seats are left for them. Protect too few and some are turned away; protect too many and seats fly empty.</p>
+            <div class="sim-bar">
+              <button class="btn dark" id="play">Play the bookings</button>
+              <button class="btn" id="newflight">New flight</button>
+              <span class="sim-status" id="sim-status" role="status" aria-live="polite"></span>
+            </div>
+            <div class="planes" id="planes"></div>
+            <div class="legend" id="sim-legend"></div>
+          </div>
+
+          <!-- 3. revenue -->
+          <div class="block">
+            <div class="block-head"><h3>Too few, too many, just right</h3><span>Average revenue per flight</span></div>
+            <p class="lead">One flight can go either way: on a quiet day protecting fewer seats would have earned more, on a busy day more. What Littlewood's level wins is the <b>average</b>, over every departure with this forecast. The curve shows that average for every possible protection level.</p>
+            <div class="chart" id="ch-rev"></div>
+            <div class="tbl-wrap" style="margin-top:12px"><table class="res" id="rev-table"></table></div>
+          </div>
+
+          <!-- 4. two fares to many -->
+          <div class="block">
+            <div class="block-head"><h3>From two fares to many</h3><span>EMSR-b, the industry workhorse</span></div>
+            <p class="lead">Real flights sell six to twenty booking classes, not two. The same comparison is made at every step down the fare ladder: how many seats to keep for all the classes above against the next class down. EMSR-b (Belobaba, 1992) merges the classes above into one, with their average fare and combined demand, and applies Littlewood's rule to it. These are the protection levels it sets on the example flight in the booking-limits simulator: 150 seats, six classes from $620 down to $130.</p>
+            <div class="chart" style="padding:12px 14px"><div class="ladder" id="ladder"></div></div>
+            <div class="cta-row">
+              <a class="btn dark" href="/bookinglimits.html">Open the booking-limits simulator →</a>
+              <span>Change all six fares and forecasts, compare EMSR-a and EMSR-b, test them on 2,000 flights.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>The model</h4>
+        <p>One flight leg with <var>C</var> seats and two fares, <var>f</var><sub>H</sub> &gt; <var>f</var><sub>L</sub>. Low-fare customers book first and are plentiful. High-fare demand <var>D</var><sub>H</sub> is uncertain: a normal draw with average <var>μ</var> and spread <var>σ</var>, rounded down to whole passengers (a negative draw counts as zero). Protecting <var>y</var> seats means the low fare is sold until <var>C</var> − <var>y</var> seats are gone (its <b>booking limit</b>), and the last <var>y</var> are kept for the high fare.</p>
+        <p><b>Revenue.</b> With <var>y</var> seats protected, average revenue is <var>R</var>(<var>y</var>) = <var>f</var><sub>L</sub> (<var>C</var> − <var>y</var>) + <var>f</var><sub>H</sub> E[min(<var>D</var><sub>H</sub>, <var>y</var>)], and for whole-number demand E[min(<var>D</var><sub>H</sub>, <var>y</var>)] = Σ<sub><var>k</var>=1…<var>y</var></sub> P(<var>D</var><sub>H</sub> ≥ <var>k</var>).</p>
+        <p><b>Littlewood's rule.</b> Protecting the <var>y</var>-th seat changes revenue by <var>R</var>(<var>y</var>) − <var>R</var>(<var>y</var> − 1) = <var>f</var><sub>H</sub> P(<var>D</var><sub>H</sub> ≥ <var>y</var>) − <var>f</var><sub>L</sub>. That gain shrinks as <var>y</var> grows, so the best protection level <var>y</var>* is the largest <var>y</var> with P(<var>D</var><sub>H</sub> ≥ <var>y</var>) ≥ <var>f</var><sub>L</sub> / <var>f</var><sub>H</sub>, capped at <var>C</var>. Because demand is a normal draw rounded down, P(<var>D</var><sub>H</sub> ≥ <var>y</var>) = 1 − Φ((<var>y</var> − <var>μ</var>) / <var>σ</var>) exactly for whole <var>y</var> ≥ 1, which is what the bars show, and <var>y</var>* is the whole part of <var>μ</var> + <var>σ</var> · Φ<sup>−1</sup>(1 − <var>f</var><sub>L</sub> / <var>f</var><sub>H</sub>). With the default numbers, the ones in RM 101's worked example: 40 + 10 × 0.253 = 42.5, so protect 42 seats.</p>
+        <p><b>Fill the flight.</b> "Too few" and "too many" protect one spread (<var>σ</var>, rounded, at least one seat) below and above <var>y</var>*. Each flight draws one high-fare demand from the forecast; all three cabins see the same customers. "New flight" draws another. The random generator is seeded, so the page always opens on the same flight. Which seat a passenger takes is only for the picture: airlines protect a number of seats, not particular seats.</p>
+        <p><b>From two fares to many.</b> EMSR-b protection for classes 1 to <var>j</var> against class <var>j</var>+1 uses the composite fare <var>f̄</var> = Σ <var>f</var><sub>i</sub><var>μ</var><sub>i</sub> / Σ <var>μ</var><sub>i</sub> and demand N(Σ <var>μ</var><sub>i</sub>, Σ <var>σ</var><sub>i</sub><sup>2</sup>): <var>y</var><sub>j</sub> = <var>μ̄</var> + <var>σ̄</var> · Φ<sup>−1</sup>(1 − <var>f</var><sub>j+1</sub> / <var>f̄</var>), rounded to the nearest seat as in the <a href="/bookinglimits.html">booking-limits simulator</a>, whose default flight it uses. Rounding to the nearest seat rather than down can give one seat more than the two-fare rule above.</p>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>Littlewood, K. (1972), "Forecasting and control of passenger bookings", AGIFORS Symposium Proceedings 12; reprinted in the <a href="https://doi.org/10.1057/palgrave.rpm.5170134" target="_blank" rel="noopener">Journal of Revenue and Pricing Management 4(2), 2005</a>.</li>
+          <li>Belobaba, P. (1989), "Application of a probabilistic decision model to airline seat inventory control", <a href="https://doi.org/10.1287/opre.37.2.183" target="_blank" rel="noopener">Operations Research 37(2)</a>; Belobaba, P. (1992), "Optimal vs. heuristic methods for nested seat allocation", AGIFORS Reservations and Yield Management Study Group (EMSR-b).</li>
+          <li>Talluri, K. and van Ryzin, G. (2004), <a href="https://link.springer.com/book/10.1007/b139000" target="_blank" rel="noopener">The Theory and Practice of Revenue Management</a>, Springer, chapter 2.1 (two-class model; checked 1 October 2026).</li>
+          <li>Fares, for scale: the US average domestic itinerary fare was $387 in 2025 (<a href="https://www.bts.gov/newsroom/2025-annual-average-domestic-air-fare-decreases-2024" target="_blank" rel="noopener">Bureau of Transportation Statistics</a>, released 24 April 2026, checked 1 October 2026). The $500 and $200 fares are invented around that level.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>Low fares all book before high fares. When they arrive mixed, a fixed protection level is no longer exactly optimal; real systems re-run the calculation many times before departure (<a href="/rm101.html#ch04">RM 101, chapter 04</a>).</li>
+          <li>Demand for each fare is independent of what's on sale. In reality some high-fare customers buy the low fare when it's open and some low-fare customers trade up when it's closed. That buy-down is the subject of the <a href="/buydown.html">buy-down simulator</a> and <a href="/rm101.html#ch05">chapter 05</a>.</li>
+          <li>Low-fare demand is assumed large enough to buy every seat on sale to it. That doesn't change the rule: on a weak low-fare day the booking limit simply isn't reached and the spare seats stay open to high-fare customers. It does make the revenue figures here, and the gain over protecting nothing, too high for such days.</li>
+          <li>Normal demand, one flight leg, no cancellations, no-shows or overbooking (see the overbooking tab of the <a href="/bookinglimits.html">booking-limits simulator</a>), and no connecting passengers (<a href="/bidprice.html">network bid prices</a>).</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+
+      // ───────────────────────────── maths
+      function normCdf(x) {
+        var t = 1 / (1 + 0.2316419 * Math.abs(x));
+        var d = 0.3989422804014327 * Math.exp(-x * x / 2);
+        var p = d * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+        return x > 0 ? 1 - p : p;
+      }
+      // Acklam's inverse normal CDF
+      function normInv(p) {
+        if (p <= 0) return -Infinity;
+        if (p >= 1) return Infinity;
+        var a = [-39.69683028665376, 220.9460984245205, -275.9285104469687, 138.3577518672690, -30.66479806614716, 2.506628277459239];
+        var b = [-54.47609879822406, 161.5858368580409, -155.6989798598866, 66.80131188771972, -13.28068155288572];
+        var c = [-0.007784894002430293, -0.3223964580411365, -2.400758277161838, -2.549732539343734, 4.374664141464968, 2.938163982698783];
+        var d = [0.007784695709041462, 0.3224671290700398, 2.445134137142996, 3.754408661907416];
+        var q, r;
+        if (p < 0.02425) {
+          q = Math.sqrt(-2 * Math.log(p));
+          return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+        }
+        if (p <= 1 - 0.02425) {
+          q = p - 0.5; r = q * q;
+          return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+        }
+        q = Math.sqrt(-2 * Math.log(1 - p));
+        return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+      }
+      // P(D >= y) for D = floor(N(mu, sd)), y a whole number >= 1  (= P(N >= y))
+      function tail(y, mu, sd) { return 1 - normCdf((y - mu) / sd); }
+      function mulberry32(a) {
+        return function () {
+          a |= 0; a = a + 0x6D2B79F5 | 0;
+          var t = Math.imul(a ^ a >>> 15, 1 | a);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      function gauss(rng) {
+        var u, v, w;
+        do { u = rng() * 2 - 1; v = rng() * 2 - 1; w = u * u + v * v; } while (w >= 1 || w === 0);
+        return u * Math.sqrt(-2 * Math.log(w) / w);
+      }
+
+      // Everything the page shows for one set of inputs
+      function solve(s) {
+        var C = s.C, fH = s.fH, fL = s.fL, mu = s.mu, sd = s.sd;
+        var ratio = fL / fH;
+        var P = [1], cum = [0];                 // P[k] = P(D >= k), cum[y] = E[min(D, y)]
+        for (var k = 1; k <= C; k++) { P[k] = tail(k, mu, sd); cum[k] = cum[k - 1] + P[k]; }
+        var ED = cum[C]; for (k = C + 1; k <= C + mu + 10 * sd; k++) ED += tail(k, mu, sd);   // E[D]
+        var y = 0;
+        while (y < C && fH * P[y + 1] >= fL) y++;
+        function R(q) { return fL * (C - q) + fH * cum[q]; }
+        var d = Math.max(1, Math.round(sd));
+        var pols = [
+          { key: "few", name: "Too few", y: Math.max(0, y - d) },
+          { key: "lw", name: "Littlewood", y: y },
+          { key: "many", name: "Too many", y: Math.min(C, y + d) }
+        ];
+        pols.forEach(function (p) {
+          p.R = R(p.y); p.high = cum[p.y]; p.empty = p.y - cum[p.y]; p.away = ED - cum[p.y];
+        });
+        return { s: s, C: C, ratio: ratio, P: P, cum: cum, R: R, ED: ED, y: y, d: d, pols: pols,
+                 yraw: mu + sd * normInv(1 - ratio), R0: R(0) };
+      }
+
+      // EMSR-b on the booking-limits simulator's default flight (same rounding as that page)
+      var BL = { C: 150, cls: [
+        { k: "Y", fare: 620, mu: 14, sd: 5 }, { k: "B", fare: 480, mu: 18, sd: 6 }, { k: "M", fare: 360, mu: 26, sd: 8 },
+        { k: "H", fare: 270, mu: 32, sd: 10 }, { k: "Q", fare: 190, mu: 40, sd: 12 }, { k: "V", fare: 130, mu: 50, sd: 15 } ] };
+      function emsrb(C, cls) {
+        var out = [], prev = 0;
+        for (var j = 0; j < cls.length - 1; j++) {
+          var sm = 0, sv = 0, sf = 0;
+          for (var i = 0; i <= j; i++) { sm += cls[i].mu; sv += cls[i].sd * cls[i].sd; sf += cls[i].fare * cls[i].mu; }
+          var fbar = sf / sm, r = cls[j + 1].fare / fbar;
+          var yraw = r >= 1 ? 0 : sm + Math.sqrt(sv) * normInv(1 - r);
+          var yj = Math.max(prev, Math.min(C, Math.max(0, Math.round(yraw))));
+          out.push({ above: cls.slice(0, j + 1).map(function (c) { return c.k; }), vs: cls[j + 1].k, y: yj });
+          prev = yj;
+        }
+        return out;
+      }
+
+      window.Littlewood = { solve: solve, tail: tail, emsrb: emsrb };
+
+      // ───────────────────────────── formatting
+      var fmt$ = d3.format("$,.0f"), fmtInt = d3.format(",.0f"), fmt1 = d3.format(".1f"), fmt2 = d3.format(".2f"), fmtPct0 = d3.format(".0%");
+      function sgn$(x) { return (x >= 0 ? "+" : "−") + fmt$(Math.abs(x)); }
+      function k$(x) { return Math.abs(x) >= 10000 ? d3.format("$,.1f")(x / 1000) + "k" : fmt$(x); }
+      var CLASS_COL = { Y: "#0b3c5d", B: "#155b7c", M: "#287a9e", H: "#4f9bbd", Q: "#86bdd6", V: "#b9d9e8" };
+      var COL = { hi: "#0b3c5d", lo: "#86bdd6", protect: "#287a9e", sell: "#cfd5db", away: "#d9480f" };
+      function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+      // ───────────────────────────── tooltip
+      var tip = document.getElementById("tip");
+      function showTip(ev, title, rows, verdict) {
+        tip.textContent = "";
+        if (title) tip.appendChild(el("div", "t", title));
+        rows.forEach(function (r) {
+          var row = el("div", "r"); row.appendChild(el("b", null, r.value)); row.appendChild(el("span", null, r.label)); tip.appendChild(row);
+        });
+        if (verdict) tip.appendChild(el("div", "v", verdict));
+        tip.style.display = "block";
+        var pt = ev.touches ? ev.touches[0] : ev;
+        var w = tip.offsetWidth, h = tip.offsetHeight;
+        var x = pt.clientX + 14, y = pt.clientY + 14;
+        if (x + w > window.innerWidth - 8) x = pt.clientX - w - 14;
+        if (x < 8) x = 8;
+        if (y + h > window.innerHeight - 8) y = pt.clientY - h - 14;
+        tip.style.left = x + "px"; tip.style.top = y + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      document.addEventListener("scroll", hideTip, { passive: true });
+
+      function frame(node, height, m) {
+        node.textContent = "";
+        var W = Math.max(280, node.clientWidth - 12);
+        var svg = d3.select(node).append("svg").attr("viewBox", "0 0 " + W + " " + height).attr("width", W).attr("height", height);
+        var g = svg.append("g").attr("transform", "translate(" + m.l + "," + m.t + ")");
+        return { svg: svg, g: g, W: W, iw: W - m.l - m.r, ih: height - m.t - m.b };
+      }
+      function legend(node, items) {
+        var box = el("div", "legend");
+        items.forEach(function (it) {
+          var s = el("span"), i = el("i", it.cls || "");
+          if (it.line) { i.className = "ln" + (it.dash ? " dash" : ""); i.style.borderColor = it.col; }
+          else if (it.col) i.style.background = it.col;
+          s.appendChild(i); s.appendChild(document.createTextNode(it.name)); box.appendChild(s);
+        });
+        node.appendChild(box);
+      }
+
+      // ───────────────────────────── state & inputs
+      var DEFAULT = { C: 180, fH: 500, fL: 200, mu: 40, sd: 10 };
+      var DEFAULT_SEED = 17;            // opens on a flight with 41 high-fare customers; the next one has 47
+      var state = Object.assign({}, DEFAULT), seed = DEFAULT_SEED, sol = null, flight = null;
+      var ids = ["C", "fH", "fL", "mu", "sd"];
+      var outFmt = { C: fmtInt, fH: fmt$, fL: fmt$, mu: function (v) { return fmtInt(v) + " passengers"; }, sd: function (v) { return "± " + fmtInt(v); } };
+
+      function syncInputs() {
+        ids.forEach(function (k) {
+          document.getElementById("in-" + k).value = state[k];
+          document.getElementById("out-" + k).textContent = outFmt[k](state[k]);
+        });
+      }
+      ids.forEach(function (k) {
+        var inp = document.getElementById("in-" + k);
+        inp.addEventListener("input", function () {
+          state[k] = +inp.value;
+          var warn = "";
+          if (state.fL >= state.fH) {
+            if (k === "fL") state.fL = state.fH - 10; else state.fH = Math.min(1500, state.fL + 10);
+            if (state.fL >= state.fH) state.fL = state.fH - 10;
+            warn = "The low fare has to stay below the high fare.";
+          }
+          document.getElementById("fare-warn").textContent = warn;
+          syncInputs();
+          update(false);
+        });
+      });
+      document.getElementById("reset").addEventListener("click", function () {
+        state = Object.assign({}, DEFAULT); seed = DEFAULT_SEED;
+        document.getElementById("fare-warn").textContent = "";
+        syncInputs(); update(false);
+      });
+
+      // ───────────────────────────── tiles & verdict
+      function renderTiles() {
+        var s = state, box = document.getElementById("tiles"), gain = sol.R(sol.y) - sol.R0;
+        box.textContent = "";
+        [
+          { v: fmtInt(sol.y), t: "seats to protect for the high fare", key: true },
+          { v: fmtInt(s.C - sol.y), t: "seats on sale at the low fare (its booking limit)" },
+          { v: fmt2(sol.ratio), t: "fare ratio: " + fmt$(s.fL) + " ÷ " + fmt$(s.fH) },
+          { v: (gain >= 0 ? "+" : "−") + k$(Math.abs(gain)), t: "average revenue per flight vs. protecting nothing (" + (sol.R0 > 0 ? (gain >= 0 ? "+" : "") + fmtPct0(gain / sol.R0) : "") + ")" }
+        ].forEach(function (d) {
+          var t = el("div", "tile" + (d.key ? " key" : "")); t.appendChild(el("b", null, d.v)); t.appendChild(el("span", null, d.t)); box.appendChild(t);
+        });
+        document.getElementById("rule-sub").textContent = "Protect " + fmtInt(sol.y) + " of " + fmtInt(s.C) + " seats";
+
+        var v = document.getElementById("verdict"), y = sol.y, P = sol.P, fH = s.fH, fL = s.fL;
+        if (y === 0) {
+          v.textContent = "Protect nothing. Even the first seat has only a " + fmtPct0(P[1]) + " chance of a high-fare passenger, worth " + fmt$(fH * P[1]) + " on average: less than the " + fmt$(fL) + " a low-fare customer pays now.";
+        } else if (y >= s.C) {
+          v.textContent = "Protect the whole cabin. Even the last seat has a " + fmtPct0(P[s.C]) + " chance of a high-fare passenger, worth " + fmt$(fH * P[s.C]) + " on average, more than the " + fmt$(fL) + " low fare. The flight is too small for this much high-fare demand.";
+        } else {
+          v.textContent = "Protect " + fmtInt(y) + " seats. Seat " + y + " still has a " + fmtPct0(P[y]) + " chance of selling at " + fmt$(fH) + ", worth " + fmt$(fH * P[y]) + " on average, more than the " + fmt$(fL) + " a low-fare customer would pay for it now. Seat " + (y + 1) + "'s chance falls to " + fmtPct0(P[y + 1]) + ", worth " + fmt$(fH * P[y + 1]) + ": sell it.";
+        }
+      }
+
+      // ───────────────────────────── chart 1: P(D >= y) per seat
+      function xMax() {
+        var s = state;
+        return Math.max(10, Math.min(s.C, Math.max(Math.ceil(s.mu + 3.5 * s.sd), sol.y + sol.d + 3)));
+      }
+      function renderRule() {
+        var node = document.getElementById("ch-rule"), s = state, n = xMax();
+        var m = { t: 40, r: 14, b: 40, l: 44 };
+        var f = frame(node, node.clientWidth < 520 ? 264 : 300, m);
+        var x = d3.scaleLinear().domain([0.5, n + 0.5]).range([0, f.iw]);
+        var y = d3.scaleLinear().domain([0, 1]).range([f.ih, 0]);
+        f.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(5).tickSize(-f.iw).tickFormat(""));
+        var bw = Math.max(0.6, x(1) - x(0) - (n > 120 ? 0.3 : 1));
+        var data = d3.range(1, n + 1);
+        f.g.append("g").selectAll("rect").data(data).join("rect")
+          .attr("x", function (k) { return x(k) - bw / 2; }).attr("width", bw)
+          .attr("y", function (k) { return y(sol.P[k]); }).attr("height", function (k) { return f.ih - y(sol.P[k]); })
+          .attr("fill", function (k) { return k <= sol.y ? COL.protect : COL.sell; });
+        // the probability curve through the bar tops
+        f.g.append("path").datum(data).attr("fill", "none").attr("stroke", "#222").attr("stroke-width", 1.2).attr("opacity", .55)
+          .attr("d", d3.line().x(function (k) { return x(k); }).y(function (k) { return y(sol.P[k]); }).curve(d3.curveMonotoneX));
+        // fare ratio line
+        f.g.append("line").attr("x1", 0).attr("x2", f.iw).attr("y1", y(sol.ratio)).attr("y2", y(sol.ratio))
+          .attr("stroke", "#222").attr("stroke-width", 1.5).attr("stroke-dasharray", "5 4");
+        // ratio label on the wider side of the optimum marker, shortened when space is tight
+        var xmk = x(sol.y + 0.5), spR = f.iw - xmk, spL = xmk, labRight = spR >= spL;
+        var full = "fare ratio " + fmt$(s.fL) + " ÷ " + fmt$(s.fH) + " = " + fmt2(sol.ratio);
+        var lab = Math.max(spR, spL) > 200 ? full : "ratio " + fmt2(sol.ratio);
+        f.g.append("text").attr("x", labRight ? f.iw - 2 : 4).attr("y", y(sol.ratio) - 6).attr("text-anchor", labRight ? "end" : "start")
+          .attr("font-size", 12).attr("fill", "#222").attr("paint-order", "stroke").attr("stroke", "#fff").attr("stroke-width", 4)
+          .text(lab);
+        // optimum marker
+        if (sol.y > 0) {
+          var xm = x(sol.y + 0.5);
+          f.g.append("line").attr("x1", xm).attr("x2", xm).attr("y1", -12).attr("y2", f.ih).attr("stroke", "#222").attr("stroke-width", 1.2);
+          f.g.append("circle").attr("cx", x(sol.y)).attr("cy", y(sol.P[sol.y])).attr("r", 4).attr("fill", "#fff").attr("stroke", "#222").attr("stroke-width", 1.6);
+          f.g.append("text").attr("x", xm + (sol.y > n * 0.8 ? -6 : 6)).attr("y", -4).attr("text-anchor", sol.y > n * 0.8 ? "end" : "start")
+            .attr("font-size", 12).attr("font-weight", 600).attr("fill", "#222").text("protect " + sol.y + " seats");
+        }
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")")
+          .call(d3.axisBottom(x).ticks(Math.min(10, Math.floor(f.iw / 60))).tickFormat(d3.format("d")).tickSizeOuter(0));
+        f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat(fmtPct0).tickSizeOuter(0));
+        f.g.append("text").attr("x", f.iw).attr("y", f.ih + 34).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("seats protected for the high fare →");
+        f.g.append("text").attr("x", -m.l + 2).attr("y", -28).attr("font-size", 11).attr("fill", "#767676").text("chance high-fare demand reaches the seat");
+        // hover / tap targets, one per seat
+        f.g.append("g").selectAll("rect").data(data).join("rect")
+          .attr("x", function (k) { return x(k - 0.5); }).attr("width", x(1) - x(0)).attr("y", 0).attr("height", f.ih)
+          .attr("fill", "transparent")
+          .on("pointermove pointerdown", function (ev, k) {
+            var keep = s.fH * sol.P[k];
+            showTip(ev, "Seat " + k + " kept for the high fare", [
+              { value: fmtPct0(sol.P[k]), label: "chance high-fare demand reaches " + k },
+              { value: fmt$(keep), label: "kept: " + fmt$(s.fH) + " × " + fmtPct0(sol.P[k]) },
+              { value: fmt$(s.fL), label: "sold now at the low fare" }
+            ], keep >= s.fL ? "Worth more kept: protect it" : "Worth more sold now: sell it");
+          })
+          .on("pointerleave", hideTip);
+        node.querySelectorAll(".legend").forEach(function (l) { l.remove(); });
+        legend(node, [{ name: "protect: worth more kept for the high fare", col: COL.protect }, { name: "sell at the low fare", col: COL.sell }, { name: "fare ratio", line: true, dash: true, col: "#222" }]);
+      }
+
+      // ───────────────────────────── seat maps
+      var planesNode = document.getElementById("planes"), planeEls = [];
+      function drawFlight() {
+        var rng = mulberry32(seed * 7919);
+        var z = gauss(rng);
+        var keys = []; for (var i = 0; i < 300; i++) keys.push(rng());   // seat order, same for every cabin
+        return { z: z, keys: keys };
+      }
+      function flightDemand() { return Math.max(0, Math.floor(state.mu + state.sd * flight.z)); }
+      function outcome(p, D) {
+        var C = state.C, high = Math.min(D, p.y);
+        return { low: C - p.y, high: high, away: Math.max(0, D - p.y), empty: p.y - high, rev: state.fL * (C - p.y) + state.fH * high };
+      }
+
+      function buildPlanes() {
+        planesNode.textContent = ""; planeEls = [];
+        var C = state.C, ABR = 6, rows = Math.ceil(C / ABR);
+        sol.pols.forEach(function (p) {
+          var row = el("div", "plane"), who = el("div", "who"), map = el("div", "map");
+          var name = el("b", null, p.name); var best = el("span", "best", "best this flight");
+          var line1 = el("span"); line1.appendChild(name); line1.appendChild(best);
+          who.appendChild(line1);
+          who.appendChild(el("span", null, "protect " + fmtInt(p.y) + " · sell " + fmtInt(C - p.y) + " low"));
+          var rev = el("span", "rev", "$0"), mini = el("span", "mini");
+          who.appendChild(rev); who.appendChild(mini);
+          row.appendChild(who); row.appendChild(map); planesNode.appendChild(row);
+          planeEls.push({ p: p, row: row, map: map, rev: rev, mini: mini });
+        });
+        // geometry: nose on the left, rows of six seats with an aisle
+        var W = Math.max(200, planeEls[0].map.clientWidth || planesNode.clientWidth - 30);
+        var pitch = Math.min(15, W / (rows + 4.2)), s = pitch - Math.max(1.2, pitch * 0.16);
+        var aisle = pitch * 0.75, pad = pitch * 0.45, Hf = ABR * pitch + aisle + 2 * pad, x0 = pitch * 2.4;
+        var xEnd = x0 + rows * pitch, tailX = xEnd + pitch * 1.6, mid = Hf / 2;
+        var vbW = tailX + 2, vbH = Hf + 2;
+        var body = "M" + x0 + ",1 L" + xEnd + ",1 C" + (xEnd + pitch) + ",1 " + (tailX - 2) + "," + (mid - pitch) + " " + tailX + "," + (mid - pitch * 0.4) +
+          " L" + tailX + "," + (mid + pitch * 0.4) + " C" + (tailX - 2) + "," + (mid + pitch) + " " + (xEnd + pitch) + "," + (Hf + 1) + " " + xEnd + "," + (Hf + 1) +
+          " L" + x0 + "," + (Hf + 1) + " C" + (x0 * 0.25) + "," + (Hf + 1) + " 1," + (mid + Hf * 0.32) + " 1," + mid +
+          " C1," + (mid - Hf * 0.32) + " " + (x0 * 0.25) + ",1 " + x0 + ",1 Z";
+        var NS = "http://www.w3.org/2000/svg";
+        // seats in display order: protected seats fill in the order of their random keys, low-fare seats likewise
+        planeEls.forEach(function (pe) {
+          var svg = document.createElementNS(NS, "svg");
+          svg.setAttribute("viewBox", "0 0 " + vbW + " " + vbH);
+          svg.setAttribute("role", "img");
+          svg.setAttribute("aria-label", pe.p.name + ": " + C + "-seat cabin with " + pe.p.y + " seats protected for the high fare");
+          var path = document.createElementNS(NS, "path"); path.setAttribute("d", body); path.setAttribute("fill", "#f7f8fa"); path.setAttribute("stroke", "#d4d7dc");
+          svg.appendChild(path);
+          var rects = [];
+          for (var i = 0; i < C; i++) {
+            var r = Math.floor(i / ABR), c = i % ABR;
+            var rx = x0 + r * pitch + (pitch - s) / 2, ry = pad + c * pitch + (c >= 3 ? aisle : 0) + (pitch - s) / 2 + 1;
+            var rect = document.createElementNS(NS, "rect");
+            rect.setAttribute("x", rx.toFixed(2)); rect.setAttribute("y", ry.toFixed(2));
+            rect.setAttribute("width", s.toFixed(2)); rect.setAttribute("height", s.toFixed(2)); rect.setAttribute("rx", (s * 0.22).toFixed(2));
+            svg.appendChild(rect); rects.push(rect);
+          }
+          pe.map.textContent = ""; pe.map.appendChild(svg);
+          var prot = [], low = [];
+          for (i = 0; i < C; i++) (i < pe.p.y ? prot : low).push(i);
+          var byKey = function (a, b) { return flight.keys[a] - flight.keys[b]; };
+          prot.sort(byKey); low.sort(byKey);
+          pe.rects = rects; pe.prot = prot; pe.low = low; pe.shown = null;
+        });
+      }
+
+      // draw every cabin after kLow low-fare and kHigh high-fare requests
+      function paint(kLow, kHigh, done) {
+        var D = flightDemand(), C = state.C, bestRev = -1;
+        planeEls.forEach(function (pe) {
+          var y = pe.p.y, nl = Math.min(kLow, C - y), nh = Math.min(kHigh, y), away = Math.max(0, kHigh - y);
+          var key = nl + "|" + nh;
+          if (pe.shown !== key) {
+            var fillLow = {}, fillHigh = {}, i;
+            for (i = 0; i < nl; i++) fillLow[pe.low[i]] = 1;
+            for (i = 0; i < nh; i++) fillHigh[pe.prot[i]] = 1;
+            for (i = 0; i < C; i++) {
+              var r = pe.rects[i], prot = i < y;
+              if (fillHigh[i]) { r.setAttribute("fill", COL.hi); r.setAttribute("stroke", "none"); }
+              else if (fillLow[i]) { r.setAttribute("fill", COL.lo); r.setAttribute("stroke", "none"); }
+              else if (prot) { r.setAttribute("fill", "#fff"); r.setAttribute("stroke", COL.protect); r.setAttribute("stroke-width", "1.1"); }
+              else { r.setAttribute("fill", "#fff"); r.setAttribute("stroke", "#d0d4d9"); r.setAttribute("stroke-width", "0.8"); }
+            }
+            pe.shown = key;
+          }
+          var rev = state.fL * nl + state.fH * nh;
+          pe.rev.textContent = fmt$(rev);
+          pe.mini.textContent = "";
+          pe.mini.appendChild(document.createTextNode(fmtInt(nl) + " low · " + fmtInt(nh) + " high · "));
+          pe.mini.appendChild(el("span", away ? "aw" : "", fmtInt(away) + " turned away"));
+          if (done) pe.mini.appendChild(document.createTextNode(" · " + fmtInt(y - nh) + " empty"));
+          pe.revVal = rev;
+          if (rev > bestRev) bestRev = rev;
+        });
+        planeEls.forEach(function (pe) { pe.row.classList.toggle("won", !!done && pe.revVal === bestRev); });
+      }
+
+      var anim = null;
+      function status(html) { document.getElementById("sim-status").innerHTML = html; }
+      function finalStatus() {
+        var D = flightDemand();
+        status("This flight: <b>" + fmtInt(D) + "</b> high-fare customers turned up (forecast " + fmtInt(state.mu) + " ± " + fmtInt(state.sd) + ").");
+      }
+      function showFinal() {
+        if (anim) { cancelAnimationFrame(anim); anim = null; }
+        paint(state.C, flightDemand(), true);
+        finalStatus();
+      }
+      function play() {
+        if (anim) cancelAnimationFrame(anim);
+        var D = flightDemand(), C = state.C;
+        var lowMax = C - d3.min(planeEls, function (pe) { return pe.p.y; });
+        var tA = 2600, tGap = 450, tB = D > 0 ? Math.min(2400, 900 + D * 25) : 0, t0 = null;
+        function step(ts) {
+          if (t0 === null) t0 = ts;
+          var t = ts - t0, kLow, kHigh;
+          if (t < tA) {
+            kLow = Math.round(lowMax * t / tA); kHigh = 0;
+            status("Low-fare customers booking… <b>" + fmtInt(kLow) + "</b> so far");
+          } else if (t < tA + tGap) {
+            kLow = lowMax; kHigh = 0;
+            status("Low fare closed in every cabin. Now the high-fare customers…");
+          } else if (t < tA + tGap + tB) {
+            kLow = lowMax; kHigh = Math.round(D * (t - tA - tGap) / tB);
+            status("High-fare customers booking… <b>" + fmtInt(kHigh) + "</b> of " + fmtInt(D));
+          } else {
+            paint(lowMax, D, true); finalStatus(); anim = null; return;
+          }
+          paint(kLow, kHigh, false);
+          anim = requestAnimationFrame(step);
+        }
+        planeEls.forEach(function (pe) { pe.shown = null; });
+        anim = requestAnimationFrame(step);
+      }
+      var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.getElementById("play").addEventListener("click", function () { if (reduced) showFinal(); else play(); });
+      document.getElementById("newflight").addEventListener("click", function () {
+        seed += 1; flight = drawFlight(); buildPlanes();
+        if (reduced) showFinal(); else play();
+        renderRevenue();
+      });
+      legend(document.getElementById("sim-legend"), [
+        { name: "low-fare passenger", col: COL.lo }, { name: "high-fare passenger", col: COL.hi },
+        { name: "kept for the high fare, not sold", cls: "ring" }, { name: "turned away", col: COL.away, cls: "dot" }
+      ]);
+
+      // ───────────────────────────── chart 2: average revenue by protection level
+      function renderRevenue() {
+        var node = document.getElementById("ch-rev"), s = state;
+        var hi = Math.min(s.C, Math.max(xMax(), sol.pols[2].y + sol.d));
+        var m = { t: 22, r: 16, b: 40, l: 62 };
+        var f = frame(node, node.clientWidth < 520 ? 230 : 260, m);
+        var pts = d3.range(0, hi + 1).map(function (q) { return { y: q, R: sol.R(q) }; });
+        var x = d3.scaleLinear().domain([0, hi]).range([0, f.iw]);
+        var ext = d3.extent(pts, function (d) { return d.R; }), padR = (ext[1] - ext[0]) * 0.12 || ext[1] * 0.02;
+        var y = d3.scaleLinear().domain([ext[0] - padR, ext[1] + padR]).nice().range([f.ih, 0]);
+        f.g.append("g").attr("class", "grid").call(d3.axisLeft(y).ticks(5).tickSize(-f.iw).tickFormat(""));
+        f.g.append("path").datum(pts).attr("fill", "none").attr("stroke", "#222").attr("stroke-width", 2)
+          .attr("d", d3.line().x(function (d) { return x(d.y); }).y(function (d) { return y(d.R); }));
+        var D = flightDemand();
+        sol.pols.forEach(function (p, i) {
+          var isL = p.key === "lw";
+          f.g.append("line").attr("x1", x(p.y)).attr("x2", x(p.y)).attr("y1", y(p.R)).attr("y2", f.ih).attr("stroke", isL ? COL.protect : "#bbb").attr("stroke-dasharray", "3 3");
+          f.g.append("circle").attr("cx", x(p.y)).attr("cy", y(p.R)).attr("r", isL ? 5.5 : 4.5).attr("fill", isL ? COL.protect : "#fff").attr("stroke", isL ? "#fff" : "#222").attr("stroke-width", 1.6);
+          var anchor = i === 0 ? "end" : i === 2 ? "start" : "middle", dx = i === 0 ? -8 : i === 2 ? 8 : 0;
+          if (sol.pols[0].y === sol.pols[1].y && i === 0) return;
+          if (sol.pols[2].y === sol.pols[1].y && i === 2) return;
+          f.g.append("text").attr("x", x(p.y) + dx).attr("y", y(p.R) - 10).attr("text-anchor", anchor)
+            .attr("font-size", 12).attr("font-weight", isL ? 600 : 400).attr("fill", "#222")
+            .attr("paint-order", "stroke").attr("stroke", "#fff").attr("stroke-width", 4).text(p.name + " (" + p.y + ")");
+        });
+        f.g.append("g").attr("class", "axis").attr("transform", "translate(0," + f.ih + ")")
+          .call(d3.axisBottom(x).ticks(Math.min(10, Math.floor(f.iw / 60))).tickFormat(d3.format("d")).tickSizeOuter(0));
+        f.g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat(d3.format("$,.0f")).tickSizeOuter(0));
+        f.g.append("text").attr("x", f.iw).attr("y", f.ih + 34).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("seats protected for the high fare →");
+        // hover line
+        var hl = f.g.append("line").attr("y1", 0).attr("y2", f.ih).attr("stroke", "#999").attr("stroke-width", 1).style("display", "none");
+        f.g.append("rect").attr("width", f.iw).attr("height", f.ih).attr("fill", "transparent")
+          .on("pointermove pointerdown", function (ev) {
+            var q = Math.max(0, Math.min(hi, Math.round(x.invert(d3.pointer(ev, this)[0]))));
+            hl.attr("x1", x(q)).attr("x2", x(q)).style("display", null);
+            var r = sol.R(q), best = sol.R(sol.y);
+            showTip(ev, "Protect " + q + " seats", [
+              { value: fmt$(r), label: "average revenue per flight" },
+              { value: q === sol.y ? "best" : sgn$(r - best), label: q === sol.y ? "Littlewood's level" : "vs. Littlewood's " + sol.y }
+            ]);
+          })
+          .on("pointerleave", function () { hl.style("display", "none"); hideTip(); });
+
+        // table
+        var tbl = document.getElementById("rev-table"); tbl.textContent = "";
+        var thead = el("thead"), tr = el("tr");
+        ["Choice", "Protect", "High-fare seats sold", "Seats flying empty", "High-fare turned away", "This flight", "Average flight", "vs. Littlewood"].forEach(function (h) { tr.appendChild(el("th", null, h)); });
+        thead.appendChild(tr); tbl.appendChild(thead);
+        var tb = el("tbody"), best = sol.R(sol.y);
+        sol.pols.forEach(function (p) {
+          var o = outcome(p, D), row = el("tr", p.key === "lw" ? "opt" : "");
+          [p.name, fmtInt(p.y), fmt1(p.high), fmt1(p.empty), fmt1(p.away), fmt$(o.rev), fmt$(p.R), p.key === "lw" ? "—" : sgn$(p.R - best)]
+            .forEach(function (v) { row.appendChild(el("td", null, v)); });
+          tb.appendChild(row);
+        });
+        tbl.appendChild(tb);
+        var cap = el("caption", null, ""); cap.style.cssText = "caption-side:bottom;text-align:left;font-size:11.5px;color:#767676;padding-top:6px";
+        cap.textContent = "Seats, empty seats and turned-away customers are averages over all flights with this forecast, except \"This flight\", the departure in the seat maps above.";
+        tbl.appendChild(cap);
+      }
+
+      // ───────────────────────────── two fares to many
+      function renderLadder() {
+        var box = document.getElementById("ladder"), steps = emsrb(BL.C, BL.cls);
+        box.textContent = "";
+        steps.forEach(function (st) {
+          var k = el("span", "k"); k.appendChild(el("b", null, st.above.join("+"))); k.appendChild(document.createTextNode(" vs " + st.vs));
+          var track = el("div", "track"), fill = el("div", "fill");
+          fill.style.width = (100 * st.y / BL.C) + "%"; fill.style.background = CLASS_COL[st.above[st.above.length - 1]];
+          track.appendChild(fill);
+          track.title = st.y + " seats kept for " + st.above.join(", ") + " against " + st.vs;
+          box.appendChild(k); box.appendChild(track); box.appendChild(el("span", "n", st.y + " seats"));
+        });
+        var last = steps[steps.length - 1];
+        var note = el("p", "hint", "Read each row as Littlewood's rule: the classes on the left are the \"high fare\", the class after \"vs\" is the \"low fare\". The cheapest class, V, can sell the " + (BL.C - last.y) + " seats left after the last row.");
+        note.style.gridColumn = "1 / -1"; note.style.margin = "6px 0 0";
+        box.appendChild(note);
+      }
+
+      // ───────────────────────────── update loop
+      function update(newFlight) {
+        sol = solve(state);
+        if (!flight || newFlight) flight = drawFlight();
+        renderTiles();
+        renderRule();
+        buildPlanes();
+        showFinal();
+        renderRevenue();
+      }
+
+      var rt = null, lastW = window.innerWidth;
+      window.addEventListener("resize", function () {
+        if (window.innerWidth === lastW) return; lastW = window.innerWidth;
+        clearTimeout(rt); rt = setTimeout(function () { renderRule(); buildPlanes(); showFinal(); renderRevenue(); }, 150);
+      });
+
+      // ───────────────────────────── start
+      syncInputs();
+      renderLadder();
+      update(true);
+      // play the bookings once, the first time the seat maps scroll into view
+      if (!reduced && "IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+          if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); play(); }
+        }, { threshold: 0.45 });
+        io.observe(planesNode);
+      }
+    });
+    </script>
+  </body>
+</html>
