@@ -5,13 +5,13 @@
       thing needed to keep every page right. The number written in each page's HTML is only
       a fallback for when this script can't run.
    2. Breadcrumb. A tool page without a breadcrumb gets "Airline tools · <group>" at the top
-      of its intro, using the group its card sits in on the hub.
+      of its intro, using the topic section (data-area) its card sits in on the hub.
 
    No dependencies. Fails silently: if the hub can't be fetched, pages keep their static text. */
 (function () {
   "use strict";
   var HUB = "/airlinetools.html";
-  var KEY = "at-hub-v2";
+  var KEY = "at-hub-v3";
 
   function readHub(doc) {
     var info = { tools: 0, courses: 0, areas: {} };
@@ -19,9 +19,9 @@
     info.tools = tools.length;
     info.courses = doc.querySelectorAll("a.course").length;
     for (var i = 0; i < tools.length; i++) {
-      var a = tools[i], area = a.closest(".area"), h = area && area.querySelector(".area-h");
+      var a = tools[i], topic = a.closest("[data-area]");
       var href = (a.getAttribute("href") || "").replace(/^\.?\//, "/");
-      if (h) info.areas[href] = h.textContent.replace(/\s+/g, " ").trim();
+      if (topic) info.areas[href] = topic.getAttribute("data-area");
     }
     return info;
   }

@@ -99,11 +99,12 @@ a { color: inherit; text-decoration: none; }
 .home:hover { background: var(--wash); }
 .home .mk { width: 24px; height: 24px; border-radius: 7px; background: var(--ink); display: grid; place-items: center; }
 .home .mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
-.tabs { display: flex; align-self: stretch; gap: 8px; }
+.tabs { display: flex; align-self: stretch; gap: 4px; }
 .tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--ink-2); font-weight: 500; }
 .tab:hover { color: var(--ink); }
 .grow { flex: 1; }
-@media (max-width: 599px) { .tabs, .hdr .pill { display: none; } }
+@media (max-width: 1099px) { .hdr .pill { display: none; } }
+@media (max-width: 899px) { .tabs { display: none; } }
 
 /* hero */
 main { padding-top: 48px; }
@@ -134,18 +135,22 @@ main { padding-top: 48px; }
 .tool:hover .btn.dark { background: #000; }
 @media (max-width: 839px) { .tool { grid-column: 1 / -1; } }
 
-/* tools grouped by area: one row per area, its tools side by side (quarters, then thirds, halves, full) */
-.area { grid-column: 1 / -1; min-width: 0; }
-.area + .area { margin-top: 16px; }
-.area-h { margin-bottom: 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
-.area-row { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gutter); }
-.area .tool { grid-column: span 3; }
-.area .tool .viz { height: 144px; }
-@media (max-width: 1099px) { .area .tool { grid-column: span 4; } }
-@media (max-width: 599px)  { .area .tool { grid-column: 1 / -1; } }
+/* topics: one section per topic, its course first, then its tools in course order (quarters, then thirds, halves, full) */
+.topic .sec-head span { max-width: 640px; }
+.area-row { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gutter); counter-reset: step; }
+.area-row .tool { grid-column: span 3; counter-increment: step; }
+.area-row .tool .viz { height: 144px; }
+.area-row .tool .viz::before {
+  content: counter(step, decimal-leading-zero); position: absolute; top: 12px; left: 12px; z-index: 1;
+  height: 24px; min-width: 24px; padding: 4px 7px; border-radius: var(--r-pill);
+  font-size: 12px; line-height: 16px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink);
+  background: var(--glass-2); box-shadow: 0 0 0 1px var(--hair), inset 0 1px 0 #fff;
+}
+@media (max-width: 1099px) { .area-row .tool, .area-row .course { grid-column: span 4; } }
+@media (max-width: 599px)  { .area-row .tool, .area-row .course { grid-column: 1 / -1; } }
 
-/* knowledge cards: thirds */
-.course { grid-column: span 4; padding: 24px; display: flex; flex-direction: column; gap: 12px; transition: box-shadow .2s, transform .2s; }
+/* course cards */
+.course { grid-column: span 6; padding: 24px; display: flex; flex-direction: column; gap: 12px; transition: box-shadow .2s, transform .2s; }
 .course:hover { box-shadow: var(--lift); transform: translateY(-2px); }
 .course .num { font-size: 40px; line-height: 48px; font-weight: 600; letter-spacing: -0.03em; color: var(--ink); font-variant-numeric: tabular-nums; }
 .course .num small { font-size: 14px; letter-spacing: 0; color: var(--ink-3); font-weight: 500; margin-left: 6px; }
@@ -154,7 +159,22 @@ main { padding-top: 48px; }
 .course .go { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
 .course:hover .go .ico { transform: translateX(2px); }
 .go .ico { transition: transform .15s; }
-@media (max-width: 839px) { .course { grid-column: span 4; } }
+@media (max-width: 839px) { .others .course { grid-column: span 4; } }
+@media (max-width: 599px) { .others .course { grid-column: 1 / -1; } }
+
+/* the course that opens a topic: same footprint as a tool, set apart in ink */
+.course.lead {
+  grid-column: span 3; color: #fff;
+  background: radial-gradient(420px 260px at 0% 0%, rgb(36 85 230 / .55), transparent 70%), var(--ink);
+  box-shadow: 0 1px 2px rgb(15 23 42 / .2), 0 16px 40px -24px rgb(15 23 42 / .5), inset 0 1px 0 rgb(255 255 255 / .12);
+}
+.course.lead:hover { box-shadow: 0 2px 4px rgb(15 23 42 / .25), 0 24px 48px -20px rgb(15 23 42 / .55), inset 0 1px 0 rgb(255 255 255 / .14); }
+.course.lead .kicker { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--air-2); }
+.course.lead .num { color: #fff; font-size: 32px; line-height: 40px; margin-top: auto; }
+.course.lead .num small { color: rgb(255 255 255 / .6); }
+.course.lead h3 { font-size: 24px; line-height: 32px; letter-spacing: -0.02em; }
+.course.lead p { color: rgb(255 255 255 / .72); flex: 0; }
+.course.lead .go { margin-top: 4px; }
 
 /* footer */
 .foot { margin-top: 64px; padding-block: 24px 48px; box-shadow: inset 0 1px 0 var(--hair); font-size: 12px; line-height: 16px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 8px 24px; }
@@ -175,8 +195,11 @@ main { padding-top: 48px; }
   <div class="wrap">
     <a class="home" href="/" aria-label="Grégoire Maillard, home"><span class="mk"><i></i></span>Grégoire Maillard</a>
     <nav class="tabs" aria-label="Sections">
-      <a class="tab" href="#tools">Tools</a>
-      <a class="tab" href="#knowledge">Knowledge</a>
+      <a class="tab" href="#rm">Revenue management</a>
+      <a class="tab" href="#network">Network planning</a>
+      <a class="tab" href="#loyalty">Loyalty</a>
+      <a class="tab" href="#cargo">Cargo</a>
+      <a class="tab" href="#courses">Other courses</a>
     </nav>
     <div class="grow"></div>
     <span class="pill" data-at-count><b>24</b> tools · <b>7</b> courses</span>
@@ -187,7 +210,7 @@ main { padding-top: 48px; }
   <div class="hero grid">
     <div class="t">
       <h1>Airline tools</h1>
-      <p>Visualizations and strategic tools that make the airline business easier to see: where the planes are, where people want to fly, and how the commercial side works. Built on open data, with short courses from my years in Revenue Management and Loyalty.</p>
+      <p>Visualizations and strategic tools that make the airline business easier to see: where the planes are, where people want to fly, and how the commercial side works. Built on open data, with short courses from my years in Revenue Management and Loyalty. Organized by topic: each one opens with its course, then the tools in the order the course covers them.</p>
     </div>
     <div class="stats">
       <span class="pill"><i class="dot" style="--c:var(--air)"></i>Live data</span>
@@ -195,186 +218,16 @@ main { padding-top: 48px; }
     </div>
   </div>
 
-  <section class="sec" id="tools" aria-labelledby="h-tools">
-    <div class="sec-head"><h2 id="h-tools">Tools</h2><span>Live data, maps and simulators</span></div>
-    <div class="grid">
-
-      <div class="area">
-        <h3 class="area-h">Revenue management</h3>
-        <div class="area-row">
-        <a class="panel tool" href="/littlewood.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- Littlewood's rule: chance high-fare demand reaches each seat; blue bars are worth protecting, the dashed line is low fare / high fare -->
-              <line x1="120" y1="190" x2="480" y2="190" stroke="rgb(15 23 42 / .10)"/>
-              <g fill="#2455E6"><rect x="120.8" y="31.3" width="5.5" height="158.7" rx="1.5"/><rect x="127.9" y="31.7" width="5.5" height="158.3" rx="1.5"/><rect x="134.9" y="32.2" width="5.5" height="157.8" rx="1.5"/><rect x="142.0" y="32.9" width="5.5" height="157.1" rx="1.5"/><rect x="149.0" y="33.6" width="5.5" height="156.4" rx="1.5"/><rect x="156.1" y="34.6" width="5.5" height="155.4" rx="1.5"/><rect x="163.2" y="35.7" width="5.5" height="154.3" rx="1.5"/><rect x="170.2" y="37.1" width="5.5" height="152.9" rx="1.5"/><rect x="177.3" y="38.8" width="5.5" height="151.2" rx="1.5"/><rect x="184.3" y="40.7" width="5.5" height="149.3" rx="1.5"/><rect x="191.4" y="42.9" width="5.5" height="147.1" rx="1.5"/><rect x="198.4" y="45.5" width="5.5" height="144.5" rx="1.5"/><rect x="205.5" y="48.4" width="5.5" height="141.6" rx="1.5"/><rect x="212.6" y="51.7" width="5.5" height="138.3" rx="1.5"/><rect x="219.6" y="55.4" width="5.5" height="134.6" rx="1.5"/><rect x="226.7" y="59.4" width="5.5" height="130.6" rx="1.5"/><rect x="233.7" y="63.9" width="5.5" height="126.1" rx="1.5"/><rect x="240.8" y="68.7" width="5.5" height="121.3" rx="1.5"/><rect x="247.9" y="73.9" width="5.5" height="116.1" rx="1.5"/><rect x="254.9" y="79.4" width="5.5" height="110.6" rx="1.5"/><rect x="262.0" y="85.1" width="5.5" height="104.9" rx="1.5"/><rect x="269.0" y="91.1" width="5.5" height="98.9" rx="1.5"/><rect x="276.1" y="97.3" width="5.5" height="92.7" rx="1.5"/><rect x="283.2" y="103.6" width="5.5" height="86.4" rx="1.5"/><rect x="290.2" y="110.0" width="5.5" height="80.0" rx="1.5"/><rect x="297.3" y="116.4" width="5.5" height="73.6" rx="1.5"/><rect x="304.3" y="122.7" width="5.5" height="67.3" rx="1.5"/></g>
-              <g fill="#C9D6FA"><rect x="311.4" y="128.9" width="5.5" height="61.1" rx="1.5"/><rect x="318.4" y="134.9" width="5.5" height="55.1" rx="1.5"/><rect x="325.5" y="140.6" width="5.5" height="49.4" rx="1.5"/><rect x="332.6" y="146.1" width="5.5" height="43.9" rx="1.5"/><rect x="339.6" y="151.3" width="5.5" height="38.7" rx="1.5"/><rect x="346.7" y="156.1" width="5.5" height="33.9" rx="1.5"/><rect x="353.7" y="160.6" width="5.5" height="29.4" rx="1.5"/><rect x="360.8" y="164.6" width="5.5" height="25.4" rx="1.5"/><rect x="367.9" y="168.3" width="5.5" height="21.7" rx="1.5"/><rect x="374.9" y="171.6" width="5.5" height="18.4" rx="1.5"/><rect x="382.0" y="174.5" width="5.5" height="15.5" rx="1.5"/><rect x="389.0" y="177.1" width="5.5" height="12.9" rx="1.5"/><rect x="396.1" y="179.3" width="5.5" height="10.7" rx="1.5"/><rect x="403.2" y="181.2" width="5.5" height="8.8" rx="1.5"/><rect x="410.2" y="182.9" width="5.5" height="7.1" rx="1.5"/><rect x="417.3" y="184.3" width="5.5" height="5.7" rx="1.5"/><rect x="424.3" y="185.4" width="5.5" height="4.6" rx="1.5"/><rect x="431.4" y="186.4" width="5.5" height="3.6" rx="1.5"/><rect x="438.4" y="187.1" width="5.5" height="2.9" rx="1.5"/><rect x="445.5" y="187.8" width="5.5" height="2.2" rx="1.5"/><rect x="452.6" y="188.3" width="5.5" height="1.7" rx="1.5"/><rect x="459.6" y="188.7" width="5.5" height="1.3" rx="1.5"/><rect x="466.7" y="189.0" width="5.5" height="1.0" rx="1.5"/><rect x="473.7" y="189.3" width="5.5" height="0.7" rx="1.5"/></g>
-              <path d="M123.5 31.3 L130.6 31.7 L137.6 32.2 L144.7 32.9 L151.8 33.6 L158.8 34.6 L165.9 35.7 L172.9 37.1 L180.0 38.8 L187.1 40.7 L194.1 42.9 L201.2 45.5 L208.2 48.4 L215.3 51.7 L222.4 55.4 L229.4 59.4 L236.5 63.9 L243.5 68.7 L250.6 73.9 L257.6 79.4 L264.7 85.1 L271.8 91.1 L278.8 97.3 L285.9 103.6 L292.9 110.0 L300.0 116.4 L307.1 122.7 L314.1 128.9 L321.2 134.9 L328.2 140.6 L335.3 146.1 L342.4 151.3 L349.4 156.1 L356.5 160.6 L363.5 164.6 L370.6 168.3 L377.6 171.6 L384.7 174.5 L391.8 177.1 L398.8 179.3 L405.9 181.2 L412.9 182.9 L420.0 184.3 L427.1 185.4 L434.1 186.4 L441.2 187.1 L448.2 187.8 L455.3 188.3 L462.4 188.7 L469.4 189.0 L476.5 189.3" fill="none" stroke="#151A23" stroke-width="1.2" opacity=".5"/>
-              <line x1="120" y1="126" x2="480" y2="126" stroke="#151A23" stroke-width="1.6" stroke-dasharray="6 5"/>
-              <line x1="310.6" y1="18" x2="310.6" y2="190" stroke="#151A23" stroke-width="1.4"/>
-              <circle cx="307.1" cy="122.7" r="5" fill="#fff" stroke="#151A23" stroke-width="2"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Explainer</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Littlewood's rule</h3>
-            <p>One flight, two fares: how many seats to keep for the high fare. The probability curve, a seat map that fills booking by booking, and what protecting too few or too many costs.</p>
-            <div class="cta"><span class="btn dark">Open the explainer<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/bookingcurve.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- a flight's booking curve: past departures behind, bookings so far, forecasts fanning out to departure day -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="120" y1="190" x2="480" y2="190"/><line x1="120" y1="130" x2="480" y2="130"/><line x1="120" y1="70" x2="480" y2="70"/></g>
-              <g fill="none" stroke="#A0A7B4" stroke-width="1" opacity=".5"><path d="M120 190 L129 189 L138 188 L147 187 L156 185 L165 183 L174 180 L183 178 L192 175 L201 172 L210 169 L219 166 L228 163 L237 159 L246 156 L255 152 L264 148 L273 144 L282 140 L291 136 L300 132 L309 127 L318 123 L327 118 L336 113 L345 108 L354 104 L363 98 L372 93 L381 88 L390 83 L399 77 L408 72 L417 66 L426 61 L435 55 L444 49 L453 43 L462 37 L471 31 L480 25"/><path d="M120 190 L129 189 L138 188 L147 186 L156 184 L165 182 L174 179 L183 177 L192 174 L201 171 L210 168 L219 165 L228 162 L237 159 L246 156 L255 153 L264 149 L273 146 L282 142 L291 139 L300 135 L309 131 L318 128 L327 124 L336 120 L345 116 L354 112 L363 108 L372 104 L381 99 L390 95 L399 91 L408 86 L417 82 L426 78 L435 73 L444 69 L453 64 L462 59 L471 55 L480 50"/><path d="M120 190 L129 190 L138 189 L147 188 L156 187 L165 186 L174 185 L183 183 L192 181 L201 180 L210 178 L219 176 L228 173 L237 171 L246 168 L255 166 L264 163 L273 160 L282 157 L291 154 L300 151 L309 148 L318 145 L327 141 L336 137 L345 134 L354 130 L363 126 L372 122 L381 118 L390 114 L399 110 L408 106 L417 101 L426 97 L435 92 L444 87 L453 83 L462 78 L471 73 L480 68"/><path d="M120 190 L129 190 L138 189 L147 187 L156 186 L165 184 L174 182 L183 180 L192 178 L201 175 L210 173 L219 170 L228 167 L237 164 L246 161 L255 158 L264 154 L273 151 L282 147 L291 143 L300 139 L309 135 L318 131 L327 126 L336 122 L345 117 L354 113 L363 108 L372 103 L381 98 L390 93 L399 88 L408 83 L417 78 L426 72 L435 67 L444 61 L453 56 L462 50 L471 44 L480 38"/><path d="M120 190 L129 189 L138 188 L147 187 L156 186 L165 184 L174 183 L183 181 L192 179 L201 177 L210 175 L219 173 L228 171 L237 168 L246 166 L255 163 L264 161 L273 158 L282 155 L291 153 L300 150 L309 147 L318 144 L327 141 L336 138 L345 135 L354 132 L363 128 L372 125 L381 122 L390 118 L399 115 L408 111 L417 108 L426 104 L435 101 L444 97 L453 93 L462 90 L471 86 L480 82"/><path d="M120 190 L129 190 L138 189 L147 189 L156 188 L165 187 L174 186 L183 184 L192 183 L201 181 L210 179 L219 177 L228 175 L237 173 L246 170 L255 167 L264 165 L273 162 L282 159 L291 155 L300 152 L309 149 L318 145 L327 141 L336 137 L345 133 L354 129 L363 125 L372 121 L381 116 L390 111 L399 107 L408 102 L417 97 L426 91 L435 86 L444 81 L453 75 L462 70 L471 64 L480 58"/><path d="M120 190 L129 189 L138 187 L147 184 L156 182 L165 179 L174 176 L183 173 L192 170 L201 166 L210 163 L219 160 L228 156 L237 152 L246 149 L255 145 L264 141 L273 137 L282 133 L291 129 L300 125 L309 121 L318 116 L327 112 L336 108 L345 103 L354 99 L363 94 L372 90 L381 85 L390 81 L399 76 L408 71 L417 66 L426 62 L435 57 L444 52 L453 47 L462 42 L471 37 L480 32"/><path d="M120 190 L129 190 L138 189 L147 188 L156 186 L165 185 L174 183 L183 181 L192 179 L201 177 L210 175 L219 173 L228 171 L237 168 L246 166 L255 163 L264 160 L273 157 L282 154 L291 151 L300 148 L309 145 L318 142 L327 139 L336 135 L345 132 L354 128 L363 125 L372 121 L381 117 L390 113 L399 109 L408 106 L417 102 L426 98 L435 93 L444 89 L453 85 L462 81 L471 76 L480 72"/></g>
-              <line x1="365" y1="14" x2="365" y2="190" stroke="#5B6272" stroke-width="1" stroke-dasharray="3 4"/>
-              <g fill="none" stroke-width="2.2" stroke-dasharray="6 5" stroke-linecap="round"><path d="M365 129 L372 123 L381 115 L390 107 L399 99 L408 91 L417 82 L426 74 L435 65 L444 56 L453 47 L462 37 L471 28 L480 18" stroke="#2455E6"/><path d="M365 129 L372 124 L381 119 L390 113 L399 107 L408 101 L417 95 L426 89 L435 82 L444 76 L453 69 L462 62 L471 55 L480 48" stroke="#5B80EC"/><path d="M365 129 L372 126 L381 122 L390 118 L399 115 L408 111 L417 107 L426 102 L435 98 L444 94 L453 90 L462 85 L471 81 L480 76" stroke="#8FA9F2"/></g>
-              <path d="M120 190 L129 190 L138 189 L147 189 L156 188 L165 187 L174 185 L183 184 L192 182 L201 181 L210 179 L219 177 L228 175 L237 173 L246 170 L255 168 L264 165 L273 162 L282 160 L291 157 L300 154 L309 151 L318 147 L327 144 L336 140 L345 137 L354 133 L363 130 L365 129" fill="none" stroke="#151A23" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="365" cy="129" r="5" fill="#151A23" stroke="#fff" stroke-width="2"/>
-              <g fill="#fff" stroke-width="2"><circle cx="480" cy="18" r="4.5" stroke="#2455E6"/><circle cx="480" cy="48" r="4.5" stroke="#5B80EC"/><circle cx="480" cy="76" r="4.5" stroke="#8FA9F2"/></g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Forecaster</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Booking curve forecaster</h3>
-            <p>Watch a flight's bookings build up and compare five ways airlines forecast where they'll finish: pickup, smoothing and regression, scored across a year of simulated departures.</p>
-            <div class="cta"><span class="btn dark">Open the forecaster<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/bookinglimits.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- nested booking limits: each fare class can sell its own bucket and every cheaper one -->
-              <g transform="translate(150 34)">
-                <g fill="#E8EEFD"><rect x="0" y="0" width="300" height="16" rx="4"/><rect x="0" y="26" width="300" height="16" rx="4"/><rect x="0" y="52" width="300" height="16" rx="4"/><rect x="0" y="78" width="300" height="16" rx="4"/><rect x="0" y="104" width="300" height="16" rx="4"/><rect x="0" y="130" width="300" height="16" rx="4"/></g>
-                <g fill="#C9D6FA"><rect x="0" y="0" width="30" height="16" rx="4"/><rect x="0" y="26" width="30" height="16" rx="4"/><rect x="0" y="52" width="30" height="16" rx="4"/><rect x="0" y="78" width="30" height="16" rx="4"/><rect x="0" y="104" width="30" height="16" rx="4"/><rect x="0" y="130" width="30" height="16" rx="4"/></g>
-                <g fill="#8FA9F2"><rect x="32" y="0" width="86" height="16" rx="3"/><rect x="32" y="26" width="86" height="16" rx="3"/><rect x="32" y="52" width="86" height="16" rx="3"/><rect x="32" y="78" width="86" height="16" rx="3"/><rect x="32" y="104" width="86" height="16" rx="3"/></g>
-                <g fill="#5B80EC"><rect x="120" y="0" width="68" height="16" rx="3"/><rect x="120" y="26" width="68" height="16" rx="3"/><rect x="120" y="52" width="68" height="16" rx="3"/><rect x="120" y="78" width="68" height="16" rx="3"/></g>
-                <g fill="#2455E6"><rect x="190" y="0" width="52" height="16" rx="3"/><rect x="190" y="26" width="52" height="16" rx="3"/><rect x="190" y="52" width="52" height="16" rx="3"/></g>
-                <g fill="#1A3FAE"><rect x="244" y="0" width="36" height="16" rx="3"/><rect x="244" y="26" width="36" height="16" rx="3"/></g>
-                <rect x="282" y="0" width="18" height="16" rx="3" fill="#151A23"/>
-                <g font-size="11" font-weight="600" fill="#5B6272" text-anchor="end"><text x="-10" y="12">Y</text><text x="-10" y="38">B</text><text x="-10" y="64">M</text><text x="-10" y="90">H</text><text x="-10" y="116">Q</text><text x="-10" y="142">V</text></g>
-              </g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Simulator</span>
-              <span class="pill"><b>2,000</b> simulated flights</span>
-            </div>
-            <h3>Booking limits</h3>
-            <p>How many seats to keep for late, high-fare passengers with EMSR-a and EMSR-b, and how many extra bookings to accept for no-shows.</p>
-            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/buydown.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- revenue per season: standard EMSR-b spirals down, fare adjustment holds -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="110" y1="190" x2="490" y2="190"/><line x1="110" y1="130" x2="490" y2="130"/><line x1="110" y1="70" x2="490" y2="70"/></g>
-              <line x1="110" y1="69.0" x2="490" y2="69.0" stroke="#A0A7B4" stroke-width="1" stroke-dasharray="3 4"/>
-              <path d="M110.0 69.0 L144.5 47.0 L179.1 47.0 L213.6 47.0 L248.2 47.0 L282.7 47.0 L317.3 47.0 L351.8 47.0 L386.4 47.0 L420.9 47.0 L455.5 47.0 L490.0 47.0" fill="none" stroke="#12A150" stroke-width="2.6" stroke-linejoin="round"/>
-              <path d="M110.0 69.0 L144.5 92.0 L179.1 113.0 L213.6 123.0 L248.2 128.0 L282.7 131.0 L317.3 135.0 L351.8 138.0 L386.4 140.0 L420.9 142.0 L455.5 143.0 L490.0 144.0" fill="none" stroke="#2455E6" stroke-width="2.6" stroke-linejoin="round"/>
-              <g fill="#12A150" stroke="#fff" stroke-width="1.5"><circle cx="110.0" cy="69.0" r="3.4"/><circle cx="144.5" cy="47.0" r="3.4"/><circle cx="179.1" cy="47.0" r="3.4"/><circle cx="213.6" cy="47.0" r="3.4"/><circle cx="248.2" cy="47.0" r="3.4"/><circle cx="282.7" cy="47.0" r="3.4"/><circle cx="317.3" cy="47.0" r="3.4"/><circle cx="351.8" cy="47.0" r="3.4"/><circle cx="386.4" cy="47.0" r="3.4"/><circle cx="420.9" cy="47.0" r="3.4"/><circle cx="455.5" cy="47.0" r="3.4"/><circle cx="490.0" cy="47.0" r="3.4"/></g>
-              <g fill="#2455E6" stroke="#fff" stroke-width="1.5"><circle cx="110.0" cy="69.0" r="3.4"/><circle cx="144.5" cy="92.0" r="3.4"/><circle cx="179.1" cy="113.0" r="3.4"/><circle cx="213.6" cy="123.0" r="3.4"/><circle cx="248.2" cy="128.0" r="3.4"/><circle cx="282.7" cy="131.0" r="3.4"/><circle cx="317.3" cy="135.0" r="3.4"/><circle cx="351.8" cy="138.0" r="3.4"/><circle cx="386.4" cy="140.0" r="3.4"/><circle cx="420.9" cy="142.0" r="3.4"/><circle cx="455.5" cy="143.0" r="3.4"/><circle cx="490.0" cy="144.0" r="3.4"/></g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Simulator</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Buy-down simulator</h3>
-            <p>Why seat control that forecasts from its own bookings spirals down once fares lose their restrictions, and how Q-forecasting with fare adjustment stops it.</p>
-            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/bidprice.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- a hub network: two feeders into YUL, two long-haul flights out, each leg tagged with its bid price; one connecting itinerary highlighted -->
-              <g fill="none" stroke-linecap="round">
-                <path d="M176 64 L286 104" stroke="#8FA9F2" stroke-width="2"/>
-                <path d="M176 152 L286 112" stroke="#8FA9F2" stroke-width="2"/>
-                <path d="M314 104 L424 64" stroke="#2455E6" stroke-width="3"/>
-                <path d="M314 112 L424 152" stroke="#2455E6" stroke-width="3" opacity=".55"/>
-                <path d="M176 64 L286 104 M314 104 L424 64" stroke="#151A23" stroke-width="1.6" stroke-dasharray="4 5"/>
-              </g>
-              <g fill="#fff" stroke="#151A23" stroke-width="1.5">
-                <circle cx="170" cy="62" r="6"/><circle cx="170" cy="154" r="6"/><circle cx="430" cy="62" r="6"/><circle cx="430" cy="154" r="6"/>
-              </g>
-              <circle cx="300" cy="108" r="13" fill="#151A23"/>
-              <g font-size="11" font-weight="600" text-anchor="middle">
-                <g fill="#fff" stroke="rgb(15 23 42 / .10)"><rect x="203" y="54" width="44" height="20" rx="6"/><rect x="203" y="142" width="44" height="20" rx="6"/><rect x="353" y="54" width="44" height="20" rx="6"/><rect x="353" y="142" width="44" height="20" rx="6"/></g>
-                <g fill="#151A23"><text x="225" y="68">$120</text><text x="225" y="156">$110</text><text x="375" y="68">$500</text><text x="375" y="156">$320</text></g>
-                <g fill="#5B6272" font-weight="500"><text x="170" y="42">YQB</text><text x="170" y="182">YOW</text><text x="430" y="42">CDG</text><text x="430" y="182">LHR</text><text x="300" y="140">YUL</text></g>
-              </g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Simulator</span>
-              <span class="pill">LP in the browser</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Network bid prices</h3>
-            <p>Why airlines moved from fare-class limits on each flight to origin-destination control: leg bid prices from a linear program, then one stream of bookings run through leg-based and O&amp;D control, request by request.</p>
-            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/unconstraining.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- censored history: bars stop at each departure's booking limit; the hidden demand above it (dashed, rings) is what unconstraining recovers (blue ticks) -->
-              <line x1="100" y1="190" x2="500" y2="190" stroke="rgb(15 23 42 / .10)"/>
-              <g><rect x="118" y="98" width="18" height="92" rx="2" fill="#d3d8de"/><rect x="144" y="78" width="18" height="112" rx="2" fill="#8c96a3"/><rect x="170" y="120" width="18" height="70" rx="2" fill="#d3d8de"/><rect x="196" y="82" width="18" height="108" rx="2" fill="#8c96a3"/><rect x="222" y="74" width="18" height="116" rx="2" fill="#8c96a3"/><rect x="248" y="106" width="18" height="84" rx="2" fill="#d3d8de"/><rect x="274" y="80" width="18" height="110" rx="2" fill="#8c96a3"/><rect x="300" y="86" width="18" height="104" rx="2" fill="#d3d8de"/><rect x="326" y="76" width="18" height="114" rx="2" fill="#8c96a3"/><rect x="352" y="114" width="18" height="76" rx="2" fill="#d3d8de"/><rect x="378" y="84" width="18" height="106" rx="2" fill="#8c96a3"/><rect x="404" y="78" width="18" height="112" rx="2" fill="#d3d8de"/><rect x="430" y="78" width="18" height="112" rx="2" fill="#8c96a3"/><rect x="456" y="92" width="18" height="98" rx="2" fill="#d3d8de"/></g>
-              <g><line x1="117" x2="137" y1="70" y2="70" stroke="#A0A7B4" stroke-width="1.2"/><line x1="143" x2="163" y1="78" y2="78" stroke="#151A23" stroke-width="1.8"/><line x1="169" x2="189" y1="66" y2="66" stroke="#A0A7B4" stroke-width="1.2"/><line x1="195" x2="215" y1="82" y2="82" stroke="#151A23" stroke-width="1.8"/><line x1="221" x2="241" y1="74" y2="74" stroke="#151A23" stroke-width="1.8"/><line x1="247" x2="267" y1="68" y2="68" stroke="#A0A7B4" stroke-width="1.2"/><line x1="273" x2="293" y1="80" y2="80" stroke="#151A23" stroke-width="1.8"/><line x1="299" x2="319" y1="64" y2="64" stroke="#A0A7B4" stroke-width="1.2"/><line x1="325" x2="345" y1="76" y2="76" stroke="#151A23" stroke-width="1.8"/><line x1="351" x2="371" y1="72" y2="72" stroke="#A0A7B4" stroke-width="1.2"/><line x1="377" x2="397" y1="84" y2="84" stroke="#151A23" stroke-width="1.8"/><line x1="403" x2="423" y1="66" y2="66" stroke="#A0A7B4" stroke-width="1.2"/><line x1="429" x2="449" y1="78" y2="78" stroke="#151A23" stroke-width="1.8"/><line x1="455" x2="475" y1="70" y2="70" stroke="#A0A7B4" stroke-width="1.2"/></g>
-              <g stroke="#A0A7B4" stroke-width="1.4" stroke-dasharray="2 3"><line x1="153.0" x2="153.0" y1="78" y2="60"/><line x1="205.0" x2="205.0" y1="82" y2="40"/><line x1="231.0" x2="231.0" y1="74" y2="72"/><line x1="283.0" x2="283.0" y1="80" y2="30"/><line x1="335.0" x2="335.0" y1="76" y2="52"/><line x1="387.0" x2="387.0" y1="84" y2="44"/><line x1="439.0" x2="439.0" y1="78" y2="20"/></g>
-              <g stroke="#2455E6" stroke-width="3" stroke-linecap="round"><line x1="144" x2="162" y1="59" y2="59"/><line x1="196" x2="214" y1="42" y2="42"/><line x1="222" x2="240" y1="68" y2="68"/><line x1="274" x2="292" y1="34" y2="34"/><line x1="326" x2="344" y1="52" y2="52"/><line x1="378" x2="396" y1="46" y2="46"/><line x1="430" x2="448" y1="25" y2="25"/></g>
-              <g fill="#fff" stroke="#151A23" stroke-width="1.5"><circle cx="153.0" cy="60" r="3.6"/><circle cx="205.0" cy="40" r="3.6"/><circle cx="231.0" cy="72" r="3.6"/><circle cx="283.0" cy="30" r="3.6"/><circle cx="335.0" cy="52" r="3.6"/><circle cx="387.0" cy="44" r="3.6"/><circle cx="439.0" cy="20" r="3.6"/></g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Simulator</span>
-              <span class="pill">Spill model</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Demand unconstraining</h3>
-            <p>Bookings stop at the limit when a flight closes. Five ways to recover the demand that was turned away, how they hold up as more departures close, and what spill and recapture say about a bigger aircraft.</p>
-            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/continuouspricing.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- one departure: the class ladder's lowest open fare (a staircase) against a continuous price (a line); dots are shoppers at their willingness to pay -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="110" y1="36.2" x2="490" y2="36.2"/><line x1="110" y1="79.1" x2="490" y2="79.1"/><line x1="110" y1="110.5" x2="490" y2="110.5"/><line x1="110" y1="133.3" x2="490" y2="133.3"/><line x1="110" y1="150.2" x2="490" y2="150.2"/></g>
-              <g fill="#fff" stroke="#A0A7B4" stroke-width="1.1"><circle cx="114.5" cy="145.6" r="3"/><circle cx="136.1" cy="180.0" r="3"/><circle cx="200.7" cy="148.0" r="3"/><circle cx="208.4" cy="161.1" r="3"/><circle cx="217.2" cy="171.2" r="3"/><circle cx="223.4" cy="165.3" r="3"/><circle cx="229.7" cy="145.2" r="3"/><circle cx="254.7" cy="150.9" r="3"/><circle cx="270.1" cy="136.5" r="3"/><circle cx="300.4" cy="155.5" r="3"/><circle cx="308.0" cy="125.0" r="3"/><circle cx="312.4" cy="160.3" r="3"/><circle cx="320.2" cy="130.8" r="3"/><circle cx="329.0" cy="143.2" r="3"/><circle cx="341.4" cy="118.1" r="3"/><circle cx="345.8" cy="123.6" r="3"/><circle cx="350.4" cy="165.5" r="3"/><circle cx="358.8" cy="140.6" r="3"/><circle cx="362.2" cy="114.5" r="3"/><circle cx="371.9" cy="112.2" r="3"/><circle cx="382.1" cy="123.1" r="3"/><circle cx="389.6" cy="121.8" r="3"/><circle cx="404.6" cy="119.8" r="3"/><circle cx="408.1" cy="132.4" r="3"/><circle cx="414.4" cy="124.6" r="3"/><circle cx="420.1" cy="86.9" r="3"/><circle cx="455.4" cy="82.6" r="3"/><circle cx="473.4" cy="83.1" r="3"/></g>
-              <g fill="#151A23" stroke="#fff" stroke-width=".8"><circle cx="159.2" cy="122.6" r="3"/><circle cx="168.6" cy="102.8" r="3"/><circle cx="175.3" cy="129.9" r="3"/><circle cx="180.4" cy="113.4" r="3"/><circle cx="198.2" cy="35.9" r="3"/><circle cx="226.4" cy="107.2" r="3"/><circle cx="238.3" cy="130.9" r="3"/><circle cx="246.2" cy="84.3" r="3"/><circle cx="261.5" cy="131.6" r="3"/><circle cx="263.3" cy="106.3" r="3"/><circle cx="267.1" cy="100.7" r="3"/><circle cx="275.0" cy="99.3" r="3"/><circle cx="281.6" cy="106.7" r="3"/><circle cx="286.5" cy="73.8" r="3"/><circle cx="299.1" cy="47.1" r="3"/><circle cx="301.9" cy="109.4" r="3"/><circle cx="316.9" cy="97.9" r="3"/><circle cx="321.7" cy="65.0" r="3"/><circle cx="327.0" cy="77.8" r="3"/><circle cx="330.4" cy="99.6" r="3"/><circle cx="335.0" cy="104.0" r="3"/><circle cx="339.6" cy="77.2" r="3"/><circle cx="343.4" cy="39.0" r="3"/><circle cx="353.8" cy="82.4" r="3"/><circle cx="360.7" cy="98.5" r="3"/><circle cx="368.4" cy="32.2" r="3"/><circle cx="374.3" cy="43.4" r="3"/><circle cx="377.2" cy="87.0" r="3"/><circle cx="384.8" cy="98.8" r="3"/><circle cx="390.6" cy="83.0" r="3"/><circle cx="401.4" cy="93.7" r="3"/><circle cx="422.3" cy="34.1" r="3"/><circle cx="432.4" cy="26.8" r="3"/><circle cx="436.3" cy="75.3" r="3"/><circle cx="445.9" cy="60.5" r="3"/><circle cx="487.3" cy="45.1" r="3"/></g>
-              <g fill="#12A150" stroke="#fff" stroke-width=".8"><circle cx="192.9" cy="134.8" r="3"/><circle cx="273.5" cy="127.7" r="3"/><circle cx="276.1" cy="112.3" r="3"/><circle cx="278.1" cy="125.7" r="3"/><circle cx="291.4" cy="120.1" r="3"/><circle cx="418.4" cy="80.2" r="3"/><circle cx="419.0" cy="87.2" r="3"/></g>
-              <g fill="#2455E6" stroke="#fff" stroke-width=".8"><circle cx="392.8" cy="107.8" r="3"/></g>
-              <path d="M110.0 133.3 H179.7 V133.3 H221.3 V133.3 H263.0 V110.5 H270.6 V133.3 H272.5 V110.5 H300.0 V110.5 H334.9 V110.5 H360.2 V110.5 H384.0 V110.5 H401.6 V79.1 H415.1 V79.1 H440.9 V79.1 H490.0 V79.1 H490.0" fill="none" stroke="#2455E6" stroke-width="3" stroke-linejoin="round"/>
-              <path d="M110.1 143.2 L114.1 143.2 L118.1 143.2 L122.2 143.6 L126.3 143.6 L130.5 143.9 L134.7 143.9 L138.7 143.6 L142.7 143.9 L146.7 143.9 L150.9 144.3 L155.0 143.9 L159.2 143.9 L163.2 143.9 L167.2 143.9 L171.3 143.6 L175.3 143.9 L179.6 143.6 L183.8 143.2 L187.8 143.2 L191.8 143.6 L195.8 142.1 L199.9 141.8 L204.1 141.4 L208.4 141.1 L212.7 140.7 L216.7 140.7 L220.7 140.4 L224.9 140.4 L229.1 139.3 L233.3 139.0 L237.3 138.6 L241.3 137.9 L245.3 137.6 L249.5 136.9 L253.7 136.9 L257.9 135.8 L261.9 135.1 L265.9 134.0 L269.9 132.6 L274.1 130.9 L278.1 128.1 L282.1 126.0 L286.5 125.6 L290.5 124.5 L294.5 123.8 L298.7 123.5 L302.9 119.3 L307.3 119.3 L311.6 119.6 L315.7 119.6 L319.8 119.3 L323.9 118.6 L328.2 117.5 L332.6 112.6 L336.6 111.9 L341.1 109.4 L345.2 104.8 L349.4 104.1 L353.8 104.5 L358.3 104.8 L362.9 103.1 L366.9 101.3 L371.1 100.6 L375.4 99.9 L379.8 99.6 L384.5 98.8 L389.4 93.6 L393.4 92.9 L397.7 95.0 L402.1 93.2 L406.8 93.6 L411.8 93.6 L416.2 92.9 L420.5 85.8 L425.9 69.6 L430.8 76.7 L436.1 79.5 L442.0 82.3 L446.4 80.2 L451.2 81.6 L456.6 80.2 L461.1 79.1 L467.6 78.1 L472.7 82.3 L480.0 83.0 L487.3 83.0 L490.0 80.5" fill="none" stroke="#12A150" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Simulator</span>
-              <span class="pill"><b>2,000</b> simulated flights</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Continuous pricing</h3>
-            <p>A ladder of fare classes controlled with EMSR-b against a price that can be set at any amount, the argument behind NDC offers: how much more it earns, shopper by shopper, and how much a finer ladder already captures.</p>
-            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
+  <span id="tools"></span><span id="knowledge"></span>
+  <section class="sec topic" id="rm" aria-labelledby="h-rm" data-area="Revenue management">
+    <div class="sec-head"><h2 id="h-rm">Revenue management</h2><span>The course first, then the tools in the order its chapters use them</span></div>
+    <div class="area-row">
+        <a class="panel course lead" href="/rm101.html">
+          <span class="kicker">Start with the course</span>
+          <div class="num">RM<small>101</small></div>
+          <h3>Revenue Management</h3>
+          <p>How airlines price seats and fill planes as profitably as possible: a mix of economics, statistics and a bit of psychology.</p>
+          <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
         </a>
         <a class="panel tool" href="/farefamilies.html">
           <div class="viz" aria-hidden="true">
@@ -466,6 +319,180 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the explainer<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
+        <a class="panel tool" href="/bookingcurve.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- a flight's booking curve: past departures behind, bookings so far, forecasts fanning out to departure day -->
+              <g stroke="rgb(15 23 42 / .07)"><line x1="120" y1="190" x2="480" y2="190"/><line x1="120" y1="130" x2="480" y2="130"/><line x1="120" y1="70" x2="480" y2="70"/></g>
+              <g fill="none" stroke="#A0A7B4" stroke-width="1" opacity=".5"><path d="M120 190 L129 189 L138 188 L147 187 L156 185 L165 183 L174 180 L183 178 L192 175 L201 172 L210 169 L219 166 L228 163 L237 159 L246 156 L255 152 L264 148 L273 144 L282 140 L291 136 L300 132 L309 127 L318 123 L327 118 L336 113 L345 108 L354 104 L363 98 L372 93 L381 88 L390 83 L399 77 L408 72 L417 66 L426 61 L435 55 L444 49 L453 43 L462 37 L471 31 L480 25"/><path d="M120 190 L129 189 L138 188 L147 186 L156 184 L165 182 L174 179 L183 177 L192 174 L201 171 L210 168 L219 165 L228 162 L237 159 L246 156 L255 153 L264 149 L273 146 L282 142 L291 139 L300 135 L309 131 L318 128 L327 124 L336 120 L345 116 L354 112 L363 108 L372 104 L381 99 L390 95 L399 91 L408 86 L417 82 L426 78 L435 73 L444 69 L453 64 L462 59 L471 55 L480 50"/><path d="M120 190 L129 190 L138 189 L147 188 L156 187 L165 186 L174 185 L183 183 L192 181 L201 180 L210 178 L219 176 L228 173 L237 171 L246 168 L255 166 L264 163 L273 160 L282 157 L291 154 L300 151 L309 148 L318 145 L327 141 L336 137 L345 134 L354 130 L363 126 L372 122 L381 118 L390 114 L399 110 L408 106 L417 101 L426 97 L435 92 L444 87 L453 83 L462 78 L471 73 L480 68"/><path d="M120 190 L129 190 L138 189 L147 187 L156 186 L165 184 L174 182 L183 180 L192 178 L201 175 L210 173 L219 170 L228 167 L237 164 L246 161 L255 158 L264 154 L273 151 L282 147 L291 143 L300 139 L309 135 L318 131 L327 126 L336 122 L345 117 L354 113 L363 108 L372 103 L381 98 L390 93 L399 88 L408 83 L417 78 L426 72 L435 67 L444 61 L453 56 L462 50 L471 44 L480 38"/><path d="M120 190 L129 189 L138 188 L147 187 L156 186 L165 184 L174 183 L183 181 L192 179 L201 177 L210 175 L219 173 L228 171 L237 168 L246 166 L255 163 L264 161 L273 158 L282 155 L291 153 L300 150 L309 147 L318 144 L327 141 L336 138 L345 135 L354 132 L363 128 L372 125 L381 122 L390 118 L399 115 L408 111 L417 108 L426 104 L435 101 L444 97 L453 93 L462 90 L471 86 L480 82"/><path d="M120 190 L129 190 L138 189 L147 189 L156 188 L165 187 L174 186 L183 184 L192 183 L201 181 L210 179 L219 177 L228 175 L237 173 L246 170 L255 167 L264 165 L273 162 L282 159 L291 155 L300 152 L309 149 L318 145 L327 141 L336 137 L345 133 L354 129 L363 125 L372 121 L381 116 L390 111 L399 107 L408 102 L417 97 L426 91 L435 86 L444 81 L453 75 L462 70 L471 64 L480 58"/><path d="M120 190 L129 189 L138 187 L147 184 L156 182 L165 179 L174 176 L183 173 L192 170 L201 166 L210 163 L219 160 L228 156 L237 152 L246 149 L255 145 L264 141 L273 137 L282 133 L291 129 L300 125 L309 121 L318 116 L327 112 L336 108 L345 103 L354 99 L363 94 L372 90 L381 85 L390 81 L399 76 L408 71 L417 66 L426 62 L435 57 L444 52 L453 47 L462 42 L471 37 L480 32"/><path d="M120 190 L129 190 L138 189 L147 188 L156 186 L165 185 L174 183 L183 181 L192 179 L201 177 L210 175 L219 173 L228 171 L237 168 L246 166 L255 163 L264 160 L273 157 L282 154 L291 151 L300 148 L309 145 L318 142 L327 139 L336 135 L345 132 L354 128 L363 125 L372 121 L381 117 L390 113 L399 109 L408 106 L417 102 L426 98 L435 93 L444 89 L453 85 L462 81 L471 76 L480 72"/></g>
+              <line x1="365" y1="14" x2="365" y2="190" stroke="#5B6272" stroke-width="1" stroke-dasharray="3 4"/>
+              <g fill="none" stroke-width="2.2" stroke-dasharray="6 5" stroke-linecap="round"><path d="M365 129 L372 123 L381 115 L390 107 L399 99 L408 91 L417 82 L426 74 L435 65 L444 56 L453 47 L462 37 L471 28 L480 18" stroke="#2455E6"/><path d="M365 129 L372 124 L381 119 L390 113 L399 107 L408 101 L417 95 L426 89 L435 82 L444 76 L453 69 L462 62 L471 55 L480 48" stroke="#5B80EC"/><path d="M365 129 L372 126 L381 122 L390 118 L399 115 L408 111 L417 107 L426 102 L435 98 L444 94 L453 90 L462 85 L471 81 L480 76" stroke="#8FA9F2"/></g>
+              <path d="M120 190 L129 190 L138 189 L147 189 L156 188 L165 187 L174 185 L183 184 L192 182 L201 181 L210 179 L219 177 L228 175 L237 173 L246 170 L255 168 L264 165 L273 162 L282 160 L291 157 L300 154 L309 151 L318 147 L327 144 L336 140 L345 137 L354 133 L363 130 L365 129" fill="none" stroke="#151A23" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="365" cy="129" r="5" fill="#151A23" stroke="#fff" stroke-width="2"/>
+              <g fill="#fff" stroke-width="2"><circle cx="480" cy="18" r="4.5" stroke="#2455E6"/><circle cx="480" cy="48" r="4.5" stroke="#5B80EC"/><circle cx="480" cy="76" r="4.5" stroke="#8FA9F2"/></g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Forecaster</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Booking curve forecaster</h3>
+            <p>Watch a flight's bookings build up and compare five ways airlines forecast where they'll finish: pickup, smoothing and regression, scored across a year of simulated departures.</p>
+            <div class="cta"><span class="btn dark">Open the forecaster<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/unconstraining.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- censored history: bars stop at each departure's booking limit; the hidden demand above it (dashed, rings) is what unconstraining recovers (blue ticks) -->
+              <line x1="100" y1="190" x2="500" y2="190" stroke="rgb(15 23 42 / .10)"/>
+              <g><rect x="118" y="98" width="18" height="92" rx="2" fill="#d3d8de"/><rect x="144" y="78" width="18" height="112" rx="2" fill="#8c96a3"/><rect x="170" y="120" width="18" height="70" rx="2" fill="#d3d8de"/><rect x="196" y="82" width="18" height="108" rx="2" fill="#8c96a3"/><rect x="222" y="74" width="18" height="116" rx="2" fill="#8c96a3"/><rect x="248" y="106" width="18" height="84" rx="2" fill="#d3d8de"/><rect x="274" y="80" width="18" height="110" rx="2" fill="#8c96a3"/><rect x="300" y="86" width="18" height="104" rx="2" fill="#d3d8de"/><rect x="326" y="76" width="18" height="114" rx="2" fill="#8c96a3"/><rect x="352" y="114" width="18" height="76" rx="2" fill="#d3d8de"/><rect x="378" y="84" width="18" height="106" rx="2" fill="#8c96a3"/><rect x="404" y="78" width="18" height="112" rx="2" fill="#d3d8de"/><rect x="430" y="78" width="18" height="112" rx="2" fill="#8c96a3"/><rect x="456" y="92" width="18" height="98" rx="2" fill="#d3d8de"/></g>
+              <g><line x1="117" x2="137" y1="70" y2="70" stroke="#A0A7B4" stroke-width="1.2"/><line x1="143" x2="163" y1="78" y2="78" stroke="#151A23" stroke-width="1.8"/><line x1="169" x2="189" y1="66" y2="66" stroke="#A0A7B4" stroke-width="1.2"/><line x1="195" x2="215" y1="82" y2="82" stroke="#151A23" stroke-width="1.8"/><line x1="221" x2="241" y1="74" y2="74" stroke="#151A23" stroke-width="1.8"/><line x1="247" x2="267" y1="68" y2="68" stroke="#A0A7B4" stroke-width="1.2"/><line x1="273" x2="293" y1="80" y2="80" stroke="#151A23" stroke-width="1.8"/><line x1="299" x2="319" y1="64" y2="64" stroke="#A0A7B4" stroke-width="1.2"/><line x1="325" x2="345" y1="76" y2="76" stroke="#151A23" stroke-width="1.8"/><line x1="351" x2="371" y1="72" y2="72" stroke="#A0A7B4" stroke-width="1.2"/><line x1="377" x2="397" y1="84" y2="84" stroke="#151A23" stroke-width="1.8"/><line x1="403" x2="423" y1="66" y2="66" stroke="#A0A7B4" stroke-width="1.2"/><line x1="429" x2="449" y1="78" y2="78" stroke="#151A23" stroke-width="1.8"/><line x1="455" x2="475" y1="70" y2="70" stroke="#A0A7B4" stroke-width="1.2"/></g>
+              <g stroke="#A0A7B4" stroke-width="1.4" stroke-dasharray="2 3"><line x1="153.0" x2="153.0" y1="78" y2="60"/><line x1="205.0" x2="205.0" y1="82" y2="40"/><line x1="231.0" x2="231.0" y1="74" y2="72"/><line x1="283.0" x2="283.0" y1="80" y2="30"/><line x1="335.0" x2="335.0" y1="76" y2="52"/><line x1="387.0" x2="387.0" y1="84" y2="44"/><line x1="439.0" x2="439.0" y1="78" y2="20"/></g>
+              <g stroke="#2455E6" stroke-width="3" stroke-linecap="round"><line x1="144" x2="162" y1="59" y2="59"/><line x1="196" x2="214" y1="42" y2="42"/><line x1="222" x2="240" y1="68" y2="68"/><line x1="274" x2="292" y1="34" y2="34"/><line x1="326" x2="344" y1="52" y2="52"/><line x1="378" x2="396" y1="46" y2="46"/><line x1="430" x2="448" y1="25" y2="25"/></g>
+              <g fill="#fff" stroke="#151A23" stroke-width="1.5"><circle cx="153.0" cy="60" r="3.6"/><circle cx="205.0" cy="40" r="3.6"/><circle cx="231.0" cy="72" r="3.6"/><circle cx="283.0" cy="30" r="3.6"/><circle cx="335.0" cy="52" r="3.6"/><circle cx="387.0" cy="44" r="3.6"/><circle cx="439.0" cy="20" r="3.6"/></g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Simulator</span>
+              <span class="pill">Spill model</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Demand unconstraining</h3>
+            <p>Bookings stop at the limit when a flight closes. Five ways to recover the demand that was turned away, how they hold up as more departures close, and what spill and recapture say about a bigger aircraft.</p>
+            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/littlewood.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- Littlewood's rule: chance high-fare demand reaches each seat; blue bars are worth protecting, the dashed line is low fare / high fare -->
+              <line x1="120" y1="190" x2="480" y2="190" stroke="rgb(15 23 42 / .10)"/>
+              <g fill="#2455E6"><rect x="120.8" y="31.3" width="5.5" height="158.7" rx="1.5"/><rect x="127.9" y="31.7" width="5.5" height="158.3" rx="1.5"/><rect x="134.9" y="32.2" width="5.5" height="157.8" rx="1.5"/><rect x="142.0" y="32.9" width="5.5" height="157.1" rx="1.5"/><rect x="149.0" y="33.6" width="5.5" height="156.4" rx="1.5"/><rect x="156.1" y="34.6" width="5.5" height="155.4" rx="1.5"/><rect x="163.2" y="35.7" width="5.5" height="154.3" rx="1.5"/><rect x="170.2" y="37.1" width="5.5" height="152.9" rx="1.5"/><rect x="177.3" y="38.8" width="5.5" height="151.2" rx="1.5"/><rect x="184.3" y="40.7" width="5.5" height="149.3" rx="1.5"/><rect x="191.4" y="42.9" width="5.5" height="147.1" rx="1.5"/><rect x="198.4" y="45.5" width="5.5" height="144.5" rx="1.5"/><rect x="205.5" y="48.4" width="5.5" height="141.6" rx="1.5"/><rect x="212.6" y="51.7" width="5.5" height="138.3" rx="1.5"/><rect x="219.6" y="55.4" width="5.5" height="134.6" rx="1.5"/><rect x="226.7" y="59.4" width="5.5" height="130.6" rx="1.5"/><rect x="233.7" y="63.9" width="5.5" height="126.1" rx="1.5"/><rect x="240.8" y="68.7" width="5.5" height="121.3" rx="1.5"/><rect x="247.9" y="73.9" width="5.5" height="116.1" rx="1.5"/><rect x="254.9" y="79.4" width="5.5" height="110.6" rx="1.5"/><rect x="262.0" y="85.1" width="5.5" height="104.9" rx="1.5"/><rect x="269.0" y="91.1" width="5.5" height="98.9" rx="1.5"/><rect x="276.1" y="97.3" width="5.5" height="92.7" rx="1.5"/><rect x="283.2" y="103.6" width="5.5" height="86.4" rx="1.5"/><rect x="290.2" y="110.0" width="5.5" height="80.0" rx="1.5"/><rect x="297.3" y="116.4" width="5.5" height="73.6" rx="1.5"/><rect x="304.3" y="122.7" width="5.5" height="67.3" rx="1.5"/></g>
+              <g fill="#C9D6FA"><rect x="311.4" y="128.9" width="5.5" height="61.1" rx="1.5"/><rect x="318.4" y="134.9" width="5.5" height="55.1" rx="1.5"/><rect x="325.5" y="140.6" width="5.5" height="49.4" rx="1.5"/><rect x="332.6" y="146.1" width="5.5" height="43.9" rx="1.5"/><rect x="339.6" y="151.3" width="5.5" height="38.7" rx="1.5"/><rect x="346.7" y="156.1" width="5.5" height="33.9" rx="1.5"/><rect x="353.7" y="160.6" width="5.5" height="29.4" rx="1.5"/><rect x="360.8" y="164.6" width="5.5" height="25.4" rx="1.5"/><rect x="367.9" y="168.3" width="5.5" height="21.7" rx="1.5"/><rect x="374.9" y="171.6" width="5.5" height="18.4" rx="1.5"/><rect x="382.0" y="174.5" width="5.5" height="15.5" rx="1.5"/><rect x="389.0" y="177.1" width="5.5" height="12.9" rx="1.5"/><rect x="396.1" y="179.3" width="5.5" height="10.7" rx="1.5"/><rect x="403.2" y="181.2" width="5.5" height="8.8" rx="1.5"/><rect x="410.2" y="182.9" width="5.5" height="7.1" rx="1.5"/><rect x="417.3" y="184.3" width="5.5" height="5.7" rx="1.5"/><rect x="424.3" y="185.4" width="5.5" height="4.6" rx="1.5"/><rect x="431.4" y="186.4" width="5.5" height="3.6" rx="1.5"/><rect x="438.4" y="187.1" width="5.5" height="2.9" rx="1.5"/><rect x="445.5" y="187.8" width="5.5" height="2.2" rx="1.5"/><rect x="452.6" y="188.3" width="5.5" height="1.7" rx="1.5"/><rect x="459.6" y="188.7" width="5.5" height="1.3" rx="1.5"/><rect x="466.7" y="189.0" width="5.5" height="1.0" rx="1.5"/><rect x="473.7" y="189.3" width="5.5" height="0.7" rx="1.5"/></g>
+              <path d="M123.5 31.3 L130.6 31.7 L137.6 32.2 L144.7 32.9 L151.8 33.6 L158.8 34.6 L165.9 35.7 L172.9 37.1 L180.0 38.8 L187.1 40.7 L194.1 42.9 L201.2 45.5 L208.2 48.4 L215.3 51.7 L222.4 55.4 L229.4 59.4 L236.5 63.9 L243.5 68.7 L250.6 73.9 L257.6 79.4 L264.7 85.1 L271.8 91.1 L278.8 97.3 L285.9 103.6 L292.9 110.0 L300.0 116.4 L307.1 122.7 L314.1 128.9 L321.2 134.9 L328.2 140.6 L335.3 146.1 L342.4 151.3 L349.4 156.1 L356.5 160.6 L363.5 164.6 L370.6 168.3 L377.6 171.6 L384.7 174.5 L391.8 177.1 L398.8 179.3 L405.9 181.2 L412.9 182.9 L420.0 184.3 L427.1 185.4 L434.1 186.4 L441.2 187.1 L448.2 187.8 L455.3 188.3 L462.4 188.7 L469.4 189.0 L476.5 189.3" fill="none" stroke="#151A23" stroke-width="1.2" opacity=".5"/>
+              <line x1="120" y1="126" x2="480" y2="126" stroke="#151A23" stroke-width="1.6" stroke-dasharray="6 5"/>
+              <line x1="310.6" y1="18" x2="310.6" y2="190" stroke="#151A23" stroke-width="1.4"/>
+              <circle cx="307.1" cy="122.7" r="5" fill="#fff" stroke="#151A23" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Explainer</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Littlewood's rule</h3>
+            <p>One flight, two fares: how many seats to keep for the high fare. The probability curve, a seat map that fills booking by booking, and what protecting too few or too many costs.</p>
+            <div class="cta"><span class="btn dark">Open the explainer<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/bookinglimits.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- nested booking limits: each fare class can sell its own bucket and every cheaper one -->
+              <g transform="translate(150 34)">
+                <g fill="#E8EEFD"><rect x="0" y="0" width="300" height="16" rx="4"/><rect x="0" y="26" width="300" height="16" rx="4"/><rect x="0" y="52" width="300" height="16" rx="4"/><rect x="0" y="78" width="300" height="16" rx="4"/><rect x="0" y="104" width="300" height="16" rx="4"/><rect x="0" y="130" width="300" height="16" rx="4"/></g>
+                <g fill="#C9D6FA"><rect x="0" y="0" width="30" height="16" rx="4"/><rect x="0" y="26" width="30" height="16" rx="4"/><rect x="0" y="52" width="30" height="16" rx="4"/><rect x="0" y="78" width="30" height="16" rx="4"/><rect x="0" y="104" width="30" height="16" rx="4"/><rect x="0" y="130" width="30" height="16" rx="4"/></g>
+                <g fill="#8FA9F2"><rect x="32" y="0" width="86" height="16" rx="3"/><rect x="32" y="26" width="86" height="16" rx="3"/><rect x="32" y="52" width="86" height="16" rx="3"/><rect x="32" y="78" width="86" height="16" rx="3"/><rect x="32" y="104" width="86" height="16" rx="3"/></g>
+                <g fill="#5B80EC"><rect x="120" y="0" width="68" height="16" rx="3"/><rect x="120" y="26" width="68" height="16" rx="3"/><rect x="120" y="52" width="68" height="16" rx="3"/><rect x="120" y="78" width="68" height="16" rx="3"/></g>
+                <g fill="#2455E6"><rect x="190" y="0" width="52" height="16" rx="3"/><rect x="190" y="26" width="52" height="16" rx="3"/><rect x="190" y="52" width="52" height="16" rx="3"/></g>
+                <g fill="#1A3FAE"><rect x="244" y="0" width="36" height="16" rx="3"/><rect x="244" y="26" width="36" height="16" rx="3"/></g>
+                <rect x="282" y="0" width="18" height="16" rx="3" fill="#151A23"/>
+                <g font-size="11" font-weight="600" fill="#5B6272" text-anchor="end"><text x="-10" y="12">Y</text><text x="-10" y="38">B</text><text x="-10" y="64">M</text><text x="-10" y="90">H</text><text x="-10" y="116">Q</text><text x="-10" y="142">V</text></g>
+              </g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Simulator</span>
+              <span class="pill"><b>2,000</b> simulated flights</span>
+            </div>
+            <h3>Booking limits</h3>
+            <p>How many seats to keep for late, high-fare passengers with EMSR-a and EMSR-b, and how many extra bookings to accept for no-shows.</p>
+            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/buydown.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- revenue per season: standard EMSR-b spirals down, fare adjustment holds -->
+              <g stroke="rgb(15 23 42 / .07)"><line x1="110" y1="190" x2="490" y2="190"/><line x1="110" y1="130" x2="490" y2="130"/><line x1="110" y1="70" x2="490" y2="70"/></g>
+              <line x1="110" y1="69.0" x2="490" y2="69.0" stroke="#A0A7B4" stroke-width="1" stroke-dasharray="3 4"/>
+              <path d="M110.0 69.0 L144.5 47.0 L179.1 47.0 L213.6 47.0 L248.2 47.0 L282.7 47.0 L317.3 47.0 L351.8 47.0 L386.4 47.0 L420.9 47.0 L455.5 47.0 L490.0 47.0" fill="none" stroke="#12A150" stroke-width="2.6" stroke-linejoin="round"/>
+              <path d="M110.0 69.0 L144.5 92.0 L179.1 113.0 L213.6 123.0 L248.2 128.0 L282.7 131.0 L317.3 135.0 L351.8 138.0 L386.4 140.0 L420.9 142.0 L455.5 143.0 L490.0 144.0" fill="none" stroke="#2455E6" stroke-width="2.6" stroke-linejoin="round"/>
+              <g fill="#12A150" stroke="#fff" stroke-width="1.5"><circle cx="110.0" cy="69.0" r="3.4"/><circle cx="144.5" cy="47.0" r="3.4"/><circle cx="179.1" cy="47.0" r="3.4"/><circle cx="213.6" cy="47.0" r="3.4"/><circle cx="248.2" cy="47.0" r="3.4"/><circle cx="282.7" cy="47.0" r="3.4"/><circle cx="317.3" cy="47.0" r="3.4"/><circle cx="351.8" cy="47.0" r="3.4"/><circle cx="386.4" cy="47.0" r="3.4"/><circle cx="420.9" cy="47.0" r="3.4"/><circle cx="455.5" cy="47.0" r="3.4"/><circle cx="490.0" cy="47.0" r="3.4"/></g>
+              <g fill="#2455E6" stroke="#fff" stroke-width="1.5"><circle cx="110.0" cy="69.0" r="3.4"/><circle cx="144.5" cy="92.0" r="3.4"/><circle cx="179.1" cy="113.0" r="3.4"/><circle cx="213.6" cy="123.0" r="3.4"/><circle cx="248.2" cy="128.0" r="3.4"/><circle cx="282.7" cy="131.0" r="3.4"/><circle cx="317.3" cy="135.0" r="3.4"/><circle cx="351.8" cy="138.0" r="3.4"/><circle cx="386.4" cy="140.0" r="3.4"/><circle cx="420.9" cy="142.0" r="3.4"/><circle cx="455.5" cy="143.0" r="3.4"/><circle cx="490.0" cy="144.0" r="3.4"/></g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Simulator</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Buy-down simulator</h3>
+            <p>Why seat control that forecasts from its own bookings spirals down once fares lose their restrictions, and how Q-forecasting with fare adjustment stops it.</p>
+            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/bidprice.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- a hub network: two feeders into YUL, two long-haul flights out, each leg tagged with its bid price; one connecting itinerary highlighted -->
+              <g fill="none" stroke-linecap="round">
+                <path d="M176 64 L286 104" stroke="#8FA9F2" stroke-width="2"/>
+                <path d="M176 152 L286 112" stroke="#8FA9F2" stroke-width="2"/>
+                <path d="M314 104 L424 64" stroke="#2455E6" stroke-width="3"/>
+                <path d="M314 112 L424 152" stroke="#2455E6" stroke-width="3" opacity=".55"/>
+                <path d="M176 64 L286 104 M314 104 L424 64" stroke="#151A23" stroke-width="1.6" stroke-dasharray="4 5"/>
+              </g>
+              <g fill="#fff" stroke="#151A23" stroke-width="1.5">
+                <circle cx="170" cy="62" r="6"/><circle cx="170" cy="154" r="6"/><circle cx="430" cy="62" r="6"/><circle cx="430" cy="154" r="6"/>
+              </g>
+              <circle cx="300" cy="108" r="13" fill="#151A23"/>
+              <g font-size="11" font-weight="600" text-anchor="middle">
+                <g fill="#fff" stroke="rgb(15 23 42 / .10)"><rect x="203" y="54" width="44" height="20" rx="6"/><rect x="203" y="142" width="44" height="20" rx="6"/><rect x="353" y="54" width="44" height="20" rx="6"/><rect x="353" y="142" width="44" height="20" rx="6"/></g>
+                <g fill="#151A23"><text x="225" y="68">$120</text><text x="225" y="156">$110</text><text x="375" y="68">$500</text><text x="375" y="156">$320</text></g>
+                <g fill="#5B6272" font-weight="500"><text x="170" y="42">YQB</text><text x="170" y="182">YOW</text><text x="430" y="42">CDG</text><text x="430" y="182">LHR</text><text x="300" y="140">YUL</text></g>
+              </g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Simulator</span>
+              <span class="pill">LP in the browser</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Network bid prices</h3>
+            <p>Why airlines moved from fare-class limits on each flight to origin-destination control: leg bid prices from a linear program, then one stream of bookings run through leg-based and O&amp;D control, request by request.</p>
+            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/continuouspricing.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- one departure: the class ladder's lowest open fare (a staircase) against a continuous price (a line); dots are shoppers at their willingness to pay -->
+              <g stroke="rgb(15 23 42 / .07)"><line x1="110" y1="36.2" x2="490" y2="36.2"/><line x1="110" y1="79.1" x2="490" y2="79.1"/><line x1="110" y1="110.5" x2="490" y2="110.5"/><line x1="110" y1="133.3" x2="490" y2="133.3"/><line x1="110" y1="150.2" x2="490" y2="150.2"/></g>
+              <g fill="#fff" stroke="#A0A7B4" stroke-width="1.1"><circle cx="114.5" cy="145.6" r="3"/><circle cx="136.1" cy="180.0" r="3"/><circle cx="200.7" cy="148.0" r="3"/><circle cx="208.4" cy="161.1" r="3"/><circle cx="217.2" cy="171.2" r="3"/><circle cx="223.4" cy="165.3" r="3"/><circle cx="229.7" cy="145.2" r="3"/><circle cx="254.7" cy="150.9" r="3"/><circle cx="270.1" cy="136.5" r="3"/><circle cx="300.4" cy="155.5" r="3"/><circle cx="308.0" cy="125.0" r="3"/><circle cx="312.4" cy="160.3" r="3"/><circle cx="320.2" cy="130.8" r="3"/><circle cx="329.0" cy="143.2" r="3"/><circle cx="341.4" cy="118.1" r="3"/><circle cx="345.8" cy="123.6" r="3"/><circle cx="350.4" cy="165.5" r="3"/><circle cx="358.8" cy="140.6" r="3"/><circle cx="362.2" cy="114.5" r="3"/><circle cx="371.9" cy="112.2" r="3"/><circle cx="382.1" cy="123.1" r="3"/><circle cx="389.6" cy="121.8" r="3"/><circle cx="404.6" cy="119.8" r="3"/><circle cx="408.1" cy="132.4" r="3"/><circle cx="414.4" cy="124.6" r="3"/><circle cx="420.1" cy="86.9" r="3"/><circle cx="455.4" cy="82.6" r="3"/><circle cx="473.4" cy="83.1" r="3"/></g>
+              <g fill="#151A23" stroke="#fff" stroke-width=".8"><circle cx="159.2" cy="122.6" r="3"/><circle cx="168.6" cy="102.8" r="3"/><circle cx="175.3" cy="129.9" r="3"/><circle cx="180.4" cy="113.4" r="3"/><circle cx="198.2" cy="35.9" r="3"/><circle cx="226.4" cy="107.2" r="3"/><circle cx="238.3" cy="130.9" r="3"/><circle cx="246.2" cy="84.3" r="3"/><circle cx="261.5" cy="131.6" r="3"/><circle cx="263.3" cy="106.3" r="3"/><circle cx="267.1" cy="100.7" r="3"/><circle cx="275.0" cy="99.3" r="3"/><circle cx="281.6" cy="106.7" r="3"/><circle cx="286.5" cy="73.8" r="3"/><circle cx="299.1" cy="47.1" r="3"/><circle cx="301.9" cy="109.4" r="3"/><circle cx="316.9" cy="97.9" r="3"/><circle cx="321.7" cy="65.0" r="3"/><circle cx="327.0" cy="77.8" r="3"/><circle cx="330.4" cy="99.6" r="3"/><circle cx="335.0" cy="104.0" r="3"/><circle cx="339.6" cy="77.2" r="3"/><circle cx="343.4" cy="39.0" r="3"/><circle cx="353.8" cy="82.4" r="3"/><circle cx="360.7" cy="98.5" r="3"/><circle cx="368.4" cy="32.2" r="3"/><circle cx="374.3" cy="43.4" r="3"/><circle cx="377.2" cy="87.0" r="3"/><circle cx="384.8" cy="98.8" r="3"/><circle cx="390.6" cy="83.0" r="3"/><circle cx="401.4" cy="93.7" r="3"/><circle cx="422.3" cy="34.1" r="3"/><circle cx="432.4" cy="26.8" r="3"/><circle cx="436.3" cy="75.3" r="3"/><circle cx="445.9" cy="60.5" r="3"/><circle cx="487.3" cy="45.1" r="3"/></g>
+              <g fill="#12A150" stroke="#fff" stroke-width=".8"><circle cx="192.9" cy="134.8" r="3"/><circle cx="273.5" cy="127.7" r="3"/><circle cx="276.1" cy="112.3" r="3"/><circle cx="278.1" cy="125.7" r="3"/><circle cx="291.4" cy="120.1" r="3"/><circle cx="418.4" cy="80.2" r="3"/><circle cx="419.0" cy="87.2" r="3"/></g>
+              <g fill="#2455E6" stroke="#fff" stroke-width=".8"><circle cx="392.8" cy="107.8" r="3"/></g>
+              <path d="M110.0 133.3 H179.7 V133.3 H221.3 V133.3 H263.0 V110.5 H270.6 V133.3 H272.5 V110.5 H300.0 V110.5 H334.9 V110.5 H360.2 V110.5 H384.0 V110.5 H401.6 V79.1 H415.1 V79.1 H440.9 V79.1 H490.0 V79.1 H490.0" fill="none" stroke="#2455E6" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M110.1 143.2 L114.1 143.2 L118.1 143.2 L122.2 143.6 L126.3 143.6 L130.5 143.9 L134.7 143.9 L138.7 143.6 L142.7 143.9 L146.7 143.9 L150.9 144.3 L155.0 143.9 L159.2 143.9 L163.2 143.9 L167.2 143.9 L171.3 143.6 L175.3 143.9 L179.6 143.6 L183.8 143.2 L187.8 143.2 L191.8 143.6 L195.8 142.1 L199.9 141.8 L204.1 141.4 L208.4 141.1 L212.7 140.7 L216.7 140.7 L220.7 140.4 L224.9 140.4 L229.1 139.3 L233.3 139.0 L237.3 138.6 L241.3 137.9 L245.3 137.6 L249.5 136.9 L253.7 136.9 L257.9 135.8 L261.9 135.1 L265.9 134.0 L269.9 132.6 L274.1 130.9 L278.1 128.1 L282.1 126.0 L286.5 125.6 L290.5 124.5 L294.5 123.8 L298.7 123.5 L302.9 119.3 L307.3 119.3 L311.6 119.6 L315.7 119.6 L319.8 119.3 L323.9 118.6 L328.2 117.5 L332.6 112.6 L336.6 111.9 L341.1 109.4 L345.2 104.8 L349.4 104.1 L353.8 104.5 L358.3 104.8 L362.9 103.1 L366.9 101.3 L371.1 100.6 L375.4 99.9 L379.8 99.6 L384.5 98.8 L389.4 93.6 L393.4 92.9 L397.7 95.0 L402.1 93.2 L406.8 93.6 L411.8 93.6 L416.2 92.9 L420.5 85.8 L425.9 69.6 L430.8 76.7 L436.1 79.5 L442.0 82.3 L446.4 80.2 L451.2 81.6 L456.6 80.2 L461.1 79.1 L467.6 78.1 L472.7 82.3 L480.0 83.0 L487.3 83.0 L490.0 80.5" fill="none" stroke="#12A150" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Simulator</span>
+              <span class="pill"><b>2,000</b> simulated flights</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Continuous pricing</h3>
+            <p>A ladder of fare classes controlled with EMSR-b against a price that can be set at any amount, the argument behind NDC offers: how much more it earns, shopper by shopper, and how much a finer ladder already captures.</p>
+            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
         <a class="panel tool" href="/abtestlab.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -489,198 +516,19 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the lab<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
-        </div>
-      </div>
+    </div>
+  </section>
 
-      <div class="area">
-        <h3 class="area-h">Loyalty</h3>
-        <div class="area-row">
-        <a class="panel tool" href="/awardvalue.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- cents per point by trip: one row per trip, a marker per programme, medians in the last row -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="120" y1="28" x2="120" y2="196"/><line x1="240" y1="28" x2="240" y2="196"/><line x1="360" y1="28" x2="360" y2="196"/><line x1="480" y1="28" x2="480" y2="196"/></g>
-              <g fill="#8FA9F2">
-                <circle cx="210" cy="44" r="5"/><rect x="163" y="39" width="10" height="10"/><path d="M468 38 L474 49 L462 49Z"/><path d="M260 38 L266 44 L260 50 L254 44Z"/>
-                <circle cx="176" cy="76" r="5"/><rect x="142" y="71" width="10" height="10"/><path d="M130 70 L136 81 L124 81Z"/><path d="M98 70 L104 76 L98 82 L92 76Z"/>
-                <circle cx="298" cy="108" r="5"/><rect x="232" y="103" width="10" height="10"/><path d="M296 102 L302 113 L290 113Z"/><path d="M226 102 L232 108 L226 114 L220 108Z"/>
-                <circle cx="508" cy="140" r="5"/><rect x="418" y="135" width="10" height="10"/><path d="M152 134 L158 145 L146 145Z"/><path d="M420 134 L426 140 L420 146 L414 140Z"/>
-              </g>
-              <line x1="80" y1="164" x2="540" y2="164" stroke="rgb(15 23 42 / .1)"/>
-              <g fill="#2455E6">
-                <circle cx="302" cy="184" r="6.5"/><rect x="231" y="178" width="12" height="12"/><path d="M340 176 L347 190 L333 190Z"/><path d="M296 176 L304 184 L296 192 L288 184Z"/>
-              </g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Calculator</span>
-              <span class="pill"><b>4</b> programmes</span>
-              <span class="pill">Snapshot · Sep 2026</span>
-            </div>
-            <h3>Award value comparator</h3>
-            <p>How many points Aeroplan, MileagePlus, Flying Blue and Etihad Guest ask for the same trips, what that's worth in cents per point, and how your own redemption compares.</p>
-            <div class="cta"><span class="btn dark">Open the comparator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
+  <section class="sec topic" id="network" aria-labelledby="h-network" data-area="Network planning">
+    <div class="sec-head"><h2 id="h-network">Network planning</h2><span>Where to fly, when, and with which aircraft</span></div>
+    <div class="area-row">
+        <a class="panel course lead" href="/np101.html">
+          <span class="kicker">Start with the course</span>
+          <div class="num">NP<small>101</small></div>
+          <h3>Network Planning</h3>
+          <p>How airlines decide where to fly, how often, when, and with what aircraft.</p>
+          <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
         </a>
-        <a class="panel tool" href="/awardseatcost.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- award seat cost against expected load: flat at the marginal cost, then rising with the bid price of the last seat; the programme's payment as a line, the zone where both sides gain shaded -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="90" y1="190" x2="510" y2="190"/><line x1="90" y1="120" x2="510" y2="120"/><line x1="90" y1="50" x2="510" y2="50"/><line x1="440" y1="24" x2="440" y2="190" stroke-dasharray="3 4"/></g>
-              <path d="M90 148 L104 148 L118 148 L132 148 L146 148 L160 148 L174 148 L188 148 L202 148 L216 148 L230 148 L244 148 L258 148 L272 148 L286 148 L300 148 L314 148 L328 143 L342 133 L356 122 L370 112 L384 102 L398 91 L412 82 L425 73 L90 73Z" fill="#12A150" opacity=".14"/>
-              <line x1="90" y1="148" x2="510" y2="148" stroke="#A0A7B4" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/>
-              <path d="M90 190 L104 190 L118 190 L132 190 L146 190 L160 190 L174 190 L188 189 L202 189 L216 187 L230 185 L244 182 L258 178 L272 174 L286 168 L300 161 L314 152 L328 143 L342 133 L356 122 L370 112 L384 102 L398 91 L412 82 L426 73 L440 65 L454 60 L468 55 L482 50 L496 47 L510 44" fill="none" stroke="#8FA9F2" stroke-width="2" stroke-dasharray="6 5"/>
-              <line x1="90" y1="74" x2="510" y2="74" stroke="#12A150" stroke-width="2.5"/>
-              <path d="M90 148 L104 148 L118 148 L132 148 L146 148 L160 148 L174 148 L188 148 L202 148 L216 148 L230 148 L244 148 L258 148 L272 148 L286 148 L300 148 L314 148 L328 143 L342 133 L356 122 L370 112 L384 102 L398 91 L412 82 L426 73 L440 65 L454 60 L468 55 L482 50 L496 47 L510 44" fill="none" stroke="#151A23" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="342" cy="133" r="7" fill="#151A23" stroke="#fff" stroke-width="2.5"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Calculator</span>
-              <span class="pill">Bid prices</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Award seat cost</h3>
-            <p>What an award seat really costs the airline: almost nothing on an empty flight, a paying fare on a full one. How many award seats to release, and why saver awards vanish on peak dates.</p>
-            <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/promoroi.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- campaign waterfall: bonus on trips that happen anyway, bonus on extra trips, fixed costs, then the margin the extra trips bring back -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="150" y1="24" x2="150" y2="196"/><line x1="250" y1="24" x2="250" y2="196"/><line x1="450" y1="24" x2="450" y2="196"/></g>
-              <line x1="350" y1="20" x2="350" y2="200" stroke="#5B6272" stroke-width="1.2"/>
-              <g stroke="#A0A7B4" stroke-width="1" stroke-dasharray="2 3"><line x1="217" y1="46" x2="217" y2="58"/><line x1="176" y1="74" x2="176" y2="86"/><line x1="150" y1="102" x2="150" y2="114"/><line x1="150" y1="158" x2="150" y2="170"/></g>
-              <rect x="217" y="30" width="133" height="16" rx="4" fill="#C2378F" opacity=".85"/>
-              <rect x="176" y="58" width="41" height="16" rx="4" fill="#C2378F" opacity=".45"/>
-              <rect x="150" y="86" width="26" height="16" rx="4" fill="#A0A7B4"/>
-              <rect x="150" y="114" width="200" height="16" rx="4" fill="#151A23"/>
-              <rect x="150" y="142" width="307" height="16" rx="4" fill="#2455E6"/>
-              <rect x="350" y="170" width="107" height="16" rx="4" fill="#12A150"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Calculator</span>
-              <span class="pill">A/B test statistics</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Promotion ROI</h3>
-            <p>Did "double points this month" pay for itself? Incremental trips against a holdout, the bonus paid on trips that would have happened anyway, ROI with confidence intervals, and how big the holdout needs to be.</p>
-            <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/breakage.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- the points liability, stacked by year of issue: each year's points run off as they are redeemed -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="90" y1="188" x2="510" y2="188"/><line x1="90" y1="114" x2="510" y2="114"/><line x1="90" y1="40" x2="510" y2="40"/></g>
-              <g stroke="#fff" stroke-width="1.5" stroke-linejoin="round">
-                <path d="M90 60 L97 60 L104 59 L111 59 L118 59 L125 58 L132 58 L139 58 L146 57 L153 57 L160 57 L167 56 L174 64 L181 72 L188 79 L195 85 L202 92 L209 98 L216 103 L223 108 L230 113 L237 118 L244 122 L251 126 L258 130 L265 133 L272 136 L279 140 L286 142 L293 145 L300 148 L307 150 L314 153 L321 155 L328 157 L335 159 L342 160 L349 162 L356 164 L363 165 L370 167 L377 168 L384 169 L391 170 L398 171 L405 172 L412 173 L419 174 L426 175 L433 176 L440 176 L447 177 L454 178 L461 178 L468 179 L475 180 L482 180 L489 181 L496 181 L503 181 L510 182 L510 188 L503 188 L496 188 L489 188 L482 188 L475 188 L468 188 L461 188 L454 188 L447 188 L440 188 L433 188 L426 188 L419 188 L412 188 L405 188 L398 188 L391 188 L384 188 L377 188 L370 188 L363 188 L356 188 L349 188 L342 188 L335 188 L328 188 L321 188 L314 188 L307 188 L300 188 L293 188 L286 188 L279 188 L272 188 L265 188 L258 188 L251 188 L244 188 L237 188 L230 188 L223 188 L216 188 L209 188 L202 188 L195 188 L188 188 L181 188 L174 188 L167 188 L160 188 L153 188 L146 188 L139 188 L132 188 L125 188 L118 188 L111 188 L104 188 L97 188 L90 188Z" fill="#C9D6FA"/>
-                <path d="M167 56 L174 56 L181 56 L188 55 L195 55 L202 55 L209 54 L216 54 L223 54 L230 53 L237 53 L244 53 L251 52 L258 61 L265 68 L272 76 L279 82 L286 89 L293 95 L300 100 L307 106 L314 111 L321 115 L328 120 L335 124 L342 128 L349 131 L356 135 L363 138 L370 141 L377 144 L384 147 L391 149 L398 151 L405 154 L412 156 L419 158 L426 160 L433 161 L440 163 L447 164 L454 166 L461 167 L468 168 L475 170 L482 171 L489 172 L496 173 L503 174 L510 175 L510 182 L503 181 L496 181 L489 181 L482 180 L475 180 L468 179 L461 178 L454 178 L447 177 L440 176 L433 176 L426 175 L419 174 L412 173 L405 172 L398 171 L391 170 L384 169 L377 168 L370 167 L363 165 L356 164 L349 162 L342 160 L335 159 L328 157 L321 155 L314 153 L307 150 L300 148 L293 145 L286 142 L279 140 L272 136 L265 133 L258 130 L251 126 L244 122 L237 118 L230 113 L223 108 L216 103 L209 98 L202 92 L195 85 L188 79 L181 72 L174 64 L167 56Z" fill="#8FA9F2"/>
-                <path d="M251 52 L258 52 L265 52 L272 51 L279 51 L286 51 L293 50 L300 50 L307 50 L314 49 L321 49 L328 49 L335 48 L342 57 L349 65 L356 72 L363 79 L370 86 L377 92 L384 98 L391 103 L398 108 L405 113 L412 118 L419 122 L426 126 L433 130 L440 133 L447 137 L454 140 L461 143 L468 145 L475 148 L482 150 L489 153 L496 155 L503 157 L510 159 L510 175 L503 174 L496 173 L489 172 L482 171 L475 170 L468 168 L461 167 L454 166 L447 164 L440 163 L433 161 L426 160 L419 158 L412 156 L405 154 L398 151 L391 149 L384 147 L377 144 L370 141 L363 138 L356 135 L349 131 L342 128 L335 124 L328 120 L321 115 L314 111 L307 106 L300 100 L293 95 L286 89 L279 82 L272 76 L265 68 L258 61 L251 52Z" fill="#5B80EC"/>
-                <path d="M335 48 L342 48 L349 48 L356 47 L363 47 L370 47 L377 46 L384 46 L391 46 L398 45 L405 45 L412 45 L419 44 L426 53 L433 61 L440 69 L447 76 L454 83 L461 89 L468 95 L475 101 L482 106 L489 111 L496 116 L503 120 L510 124 L510 159 L503 157 L496 155 L489 153 L482 150 L475 148 L468 145 L461 143 L454 140 L447 137 L440 133 L433 130 L426 126 L419 122 L412 118 L405 113 L398 108 L391 103 L384 98 L377 92 L370 86 L363 79 L356 72 L349 65 L342 57 L335 48Z" fill="#2455E6"/>
-                <path d="M419 44 L426 44 L433 44 L440 43 L447 43 L454 43 L461 42 L468 42 L475 42 L482 41 L489 41 L496 41 L503 40 L510 40 L510 124 L503 120 L496 116 L489 111 L482 106 L475 101 L468 95 L461 89 L454 83 L447 76 L440 69 L433 61 L426 53 L419 44Z" fill="#1A3FAE"/>
-              </g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Model</span>
-              <span class="pill">IFRS 15</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Breakage &amp; liability</h3>
-            <p>How points become deferred revenue and then revenue, what breakage is, and what a revised breakage estimate or a new expiry rule does to the numbers.</p>
-            <div class="cta"><span class="btn dark">Open the model<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/memberclv.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- lifetime value by starting tier: revenue streams to the right, costs to the left, net value marked -->
-              <line x1="240" y1="6" x2="240" y2="210" stroke="rgb(15 23 42 / .15)"/>
-              <rect x="240.0" y="14" width="6.3" height="28" rx="3" fill="#2a78d6"/><rect x="245.1" y="10" width="4.0" height="36" rx="1.5" fill="#151A23" stroke="#fff" stroke-width="1.5"/>
-              <rect x="240.0" y="54" width="27.2" height="28" rx="3" fill="#2a78d6"/><rect x="269.0" y="54" width="1.6" height="28" rx="3" fill="#1f9e89"/><rect x="236.3" y="54" width="4.2" height="28" rx="3" fill="#eb6834"/><rect x="231.1" y="54" width="3.8" height="28" rx="3" fill="#c2378f"/><rect x="260.4" y="50" width="4.0" height="36" rx="1.5" fill="#151A23" stroke="#fff" stroke-width="1.5"/>
-              <rect x="240.0" y="94" width="63.4" height="28" rx="3" fill="#2a78d6"/><rect x="305.2" y="94" width="5.1" height="28" rx="3" fill="#1f9e89"/><rect x="229.7" y="94" width="10.3" height="28" rx="3" fill="#eb6834"/><rect x="214.5" y="94" width="13.3" height="28" rx="3" fill="#c2378f"/><rect x="284.1" y="90" width="4.0" height="36" rx="1.5" fill="#151A23" stroke="#fff" stroke-width="1.5"/>
-              <rect x="240.0" y="134" width="122.3" height="28" rx="3" fill="#2a78d6"/><rect x="364.1" y="134" width="10.2" height="28" rx="3" fill="#1f9e89"/><rect x="219.6" y="134" width="20.4" height="28" rx="3" fill="#eb6834"/><rect x="185.8" y="134" width="32.0" height="28" rx="3" fill="#c2378f"/><rect x="319.5" y="130" width="4.0" height="36" rx="1.5" fill="#151A23" stroke="#fff" stroke-width="1.5"/>
-              <rect x="240.0" y="174" width="207.3" height="28" rx="3" fill="#2a78d6"/><rect x="449.1" y="174" width="15.9" height="28" rx="3" fill="#1f9e89"/><rect x="206.3" y="174" width="33.7" height="28" rx="3" fill="#eb6834"/><rect x="137.2" y="174" width="67.2" height="28" rx="3" fill="#c2378f"/><rect x="362.2" y="170" width="4.0" height="36" rx="1.5" fill="#151A23" stroke="#fff" stroke-width="1.5"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Calculator</span>
-              <span class="pill">Markov chain</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Member lifetime value</h3>
-            <p>What a member is worth over the years, by tier: margin from flying, the co-brand card and partners, tier moves as a Markov chain, the levers that matter most, and what better retention or more cardholders add up to.</p>
-            <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/loyaltybenchmark.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <g transform="translate(300 108) scale(.85) translate(-292 -108)">
-              <!-- tier grid: one row per alliance, tiers aligned by alliance level; earn bars per programme on the right -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="110" y1="36" x2="110" y2="180"/><line x1="190" y1="36" x2="190" y2="180"/><line x1="270" y1="36" x2="270" y2="180"/></g>
-              <g fill="#fff" stroke="rgb(15 23 42 / .12)"><rect x="80" y="50" width="54" height="18" rx="5"/><rect x="80" y="98" width="54" height="18" rx="5"/><rect x="80" y="146" width="54" height="18" rx="5"/></g>
-              <g fill="#2a78d6"><rect x="160" y="50" width="54" height="18" rx="5" opacity=".45"/><rect x="240" y="50" width="54" height="18" rx="5"/></g>
-              <g fill="#eb6834"><rect x="160" y="98" width="54" height="18" rx="5" opacity=".35"/><rect x="240" y="98" width="54" height="18" rx="5" opacity=".7"/><rect x="306" y="98" width="30" height="18" rx="5"/></g>
-              <g fill="#1baf7a"><rect x="160" y="146" width="54" height="18" rx="5" opacity=".45"/><rect x="240" y="146" width="54" height="18" rx="5"/></g>
-              <line x1="366" y1="30" x2="366" y2="186" stroke="rgb(15 23 42 / .15)"/>
-              <path d="M366 44H500a4 4 0 0 1 4 4V56a4 4 0 0 1 -4 4H366Z" fill="#2a78d6"/>
-              <path d="M366 72H470a4 4 0 0 1 4 4V84a4 4 0 0 1 -4 4H366Z" fill="#2a78d6" opacity=".7"/>
-              <path d="M366 100H452a4 4 0 0 1 4 4V112a4 4 0 0 1 -4 4H366Z" fill="#1baf7a"/>
-              <path d="M366 128H430a4 4 0 0 1 4 4V140a4 4 0 0 1 -4 4H366Z" fill="#eb6834"/>
-              <path d="M366 156H408a4 4 0 0 1 4 4V168a4 4 0 0 1 -4 4H366Z" fill="#4a3aa7"/>
-              </g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Calculator</span>
-              <span class="pill"><b>13</b> programmes</span>
-              <span class="pill">Rules · Sep 2026</span>
-            </div>
-            <h3>Loyalty benchmark</h3>
-            <p>What an airline status is worth on partner airlines across Star Alliance, oneworld and SkyTeam, and how many points the same trip earns in each of 13 programmes.</p>
-            <div class="cta"><span class="btn dark">Open the benchmark<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/subscription.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- profit against the monthly price: a loss at low prices, a peak, then fading uptake; dashed = same pass without capacity control -->
-              <rect x="90" y="120" width="420" height="72" fill="#eb6834" opacity=".07"/>
-              <g stroke="rgb(15 23 42 / .07)"><line x1="90" y1="48" x2="510" y2="48"/><line x1="90" y1="84" x2="510" y2="84"/><line x1="90" y1="156" x2="510" y2="156"/></g>
-              <line x1="90" y1="120" x2="510" y2="120" stroke="#9a9a96"/>
-              <path d="M90 192 L150 192 L190 186 L230 170 L270 150 L310 132 L350 120 L390 112 L430 106 L470 102 L510 100" fill="none" stroke="#151A23" stroke-width="1.6" stroke-dasharray="5 4" opacity=".55"/>
-              <path d="M90 190 L110 150 L130 116 L150 92 L170 76 L190 66 L210 60 L230 57 L250 56 L270 57 L300 60 L340 66 L380 72 L420 77 L460 81 L510 85" fill="none" stroke="#2a78d6" stroke-width="3"/>
-              <circle cx="250" cy="56" r="7" fill="#fff" stroke="#2a78d6" stroke-width="3"/>
-              <line x1="250" y1="66" x2="250" y2="192" stroke="#2a78d6" stroke-dasharray="2 4" opacity=".6"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Simulator</span>
-              <span class="pill">Synthetic customers</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Subscription pricer</h3>
-            <p>Design an all-you-can-fly pass, a commuter route pass or a bundle of bags, seats and Wi-Fi, set its price, and see who signs up, what revenue it gives away, and what capacity control protects.</p>
-            <div class="cta"><span class="btn dark">Open the pricer<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        </div>
-      </div>
-
-      <div class="area">
-        <h3 class="area-h">Network &amp; fleet</h3>
-        <div class="area-row">
         <a class="panel tool" href="/airflows.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -735,6 +583,52 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the chart<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
+        <a class="panel tool" href="/rangemap.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- range rings around a departure airport: full passengers (solid), lighter load (dashed), reachable airports inside -->
+              <g fill="none" stroke="rgb(15 23 42 / .07)"><circle cx="300" cy="108" r="40"/><line x1="100" y1="108" x2="500" y2="108"/><line x1="300" y1="0" x2="300" y2="216"/></g>
+              <circle cx="300" cy="108" r="78" fill="rgb(36 85 230 / .05)" stroke="#2455E6" stroke-width="1.6"/>
+              <circle cx="300" cy="108" r="96" fill="none" stroke="#2455E6" stroke-width="1.2" stroke-dasharray="5 4"/>
+              <g fill="#2455E6"><circle cx="262" cy="80" r="3"/><circle cx="330" cy="62" r="3"/><circle cx="352" cy="118" r="3"/><circle cx="248" cy="140" r="3"/><circle cx="318" cy="150" r="3"/><circle cx="276" cy="112" r="3"/><circle cx="348" cy="84" r="3"/><circle cx="236" cy="96" r="3"/></g>
+              <g fill="#8FA9F2"><circle cx="384" cy="92" r="3"/><circle cx="214" cy="164" r="3"/><circle cx="366" cy="164" r="3"/></g>
+              <g fill="#C2378F"><circle cx="376" cy="60" r="3"/><circle cx="222" cy="58" r="3"/></g>
+              <g fill="#A0A7B4"><circle cx="420" cy="140" r="2.2"/><circle cx="170" cy="100" r="2.2"/><circle cx="430" cy="70" r="2.2"/><circle cx="182" cy="176" r="2.2"/></g>
+              <path d="M300 108 L376 60" stroke="#151A23" stroke-width="1.2" stroke-dasharray="3 3"/>
+              <circle cx="300" cy="108" r="5" fill="#151A23" stroke="#fff" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Payload-range model</span>
+              <span class="pill"><b>14</b> aircraft</span>
+            </div>
+            <h3>Aircraft range map</h3>
+            <p>Which destinations an aircraft reaches from any airport, and with how many passengers. Compare two types, like the A321XLR and the 737-8.</p>
+            <div class="cta"><span class="btn dark">Open the range map<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/fleetorders.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- order books: stacked bars per customer (Airbus / Boeing), and a fleet that shrinks and grows to 2030 -->
+              <g stroke="rgb(15 23 42 / .07)"><line x1="170" y1="30" x2="170" y2="190"/></g>
+              <g fill="rgb(15 23 42 / .18)"><rect x="110" y="42" width="48" height="6" rx="3"/><rect x="122" y="72" width="36" height="6" rx="3"/><rect x="104" y="102" width="54" height="6" rx="3"/><rect x="128" y="132" width="30" height="6" rx="3"/><rect x="116" y="162" width="42" height="6" rx="3"/></g>
+              <g fill="#2455E6"><rect x="176" y="36" width="210" height="18" rx="3"/><rect x="176" y="66" width="96" height="18" rx="3"/><rect x="176" y="96" width="150" height="18" rx="3"/><rect x="176" y="126" width="40" height="18" rx="3"/><rect x="176" y="156" width="118" height="18" rx="3"/></g>
+              <g fill="#151A23"><rect x="390" y="36" width="12" height="18" rx="3"/><rect x="276" y="66" width="140" height="18" rx="3"/><rect x="330" y="96" width="90" height="18" rx="3"/><rect x="220" y="126" width="168" height="18" rx="3"/><rect x="298" y="156" width="46" height="18" rx="3"/></g>
+              <g fill="#8FA9F2"><rect x="406" y="36" width="36" height="18" rx="3"/><rect x="424" y="96" width="24" height="18" rx="3"/></g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Monthly data</span>
+              <span class="pill">Airbus &amp; Boeing</span>
+            </div>
+            <h3>Fleet orders &amp; backlog</h3>
+            <p>What each airline has on order from Airbus and Boeing, how old its fleet is, and what it could look like in 2030.</p>
+            <div class="cta"><span class="btn dark">Open the order books<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
         <a class="panel tool" href="/fleettracker.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -767,58 +661,230 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the tracker<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
-        <a class="panel tool" href="/fleetorders.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- order books: stacked bars per customer (Airbus / Boeing), and a fleet that shrinks and grows to 2030 -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="170" y1="30" x2="170" y2="190"/></g>
-              <g fill="rgb(15 23 42 / .18)"><rect x="110" y="42" width="48" height="6" rx="3"/><rect x="122" y="72" width="36" height="6" rx="3"/><rect x="104" y="102" width="54" height="6" rx="3"/><rect x="128" y="132" width="30" height="6" rx="3"/><rect x="116" y="162" width="42" height="6" rx="3"/></g>
-              <g fill="#2455E6"><rect x="176" y="36" width="210" height="18" rx="3"/><rect x="176" y="66" width="96" height="18" rx="3"/><rect x="176" y="96" width="150" height="18" rx="3"/><rect x="176" y="126" width="40" height="18" rx="3"/><rect x="176" y="156" width="118" height="18" rx="3"/></g>
-              <g fill="#151A23"><rect x="390" y="36" width="12" height="18" rx="3"/><rect x="276" y="66" width="140" height="18" rx="3"/><rect x="330" y="96" width="90" height="18" rx="3"/><rect x="220" y="126" width="168" height="18" rx="3"/><rect x="298" y="156" width="46" height="18" rx="3"/></g>
-              <g fill="#8FA9F2"><rect x="406" y="36" width="36" height="18" rx="3"/><rect x="424" y="96" width="24" height="18" rx="3"/></g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Monthly data</span>
-              <span class="pill">Airbus &amp; Boeing</span>
-            </div>
-            <h3>Fleet orders &amp; backlog</h3>
-            <p>What each airline has on order from Airbus and Boeing, how old its fleet is, and what it could look like in 2030.</p>
-            <div class="cta"><span class="btn dark">Open the order books<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/rangemap.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- range rings around a departure airport: full passengers (solid), lighter load (dashed), reachable airports inside -->
-              <g fill="none" stroke="rgb(15 23 42 / .07)"><circle cx="300" cy="108" r="40"/><line x1="100" y1="108" x2="500" y2="108"/><line x1="300" y1="0" x2="300" y2="216"/></g>
-              <circle cx="300" cy="108" r="78" fill="rgb(36 85 230 / .05)" stroke="#2455E6" stroke-width="1.6"/>
-              <circle cx="300" cy="108" r="96" fill="none" stroke="#2455E6" stroke-width="1.2" stroke-dasharray="5 4"/>
-              <g fill="#2455E6"><circle cx="262" cy="80" r="3"/><circle cx="330" cy="62" r="3"/><circle cx="352" cy="118" r="3"/><circle cx="248" cy="140" r="3"/><circle cx="318" cy="150" r="3"/><circle cx="276" cy="112" r="3"/><circle cx="348" cy="84" r="3"/><circle cx="236" cy="96" r="3"/></g>
-              <g fill="#8FA9F2"><circle cx="384" cy="92" r="3"/><circle cx="214" cy="164" r="3"/><circle cx="366" cy="164" r="3"/></g>
-              <g fill="#C2378F"><circle cx="376" cy="60" r="3"/><circle cx="222" cy="58" r="3"/></g>
-              <g fill="#A0A7B4"><circle cx="420" cy="140" r="2.2"/><circle cx="170" cy="100" r="2.2"/><circle cx="430" cy="70" r="2.2"/><circle cx="182" cy="176" r="2.2"/></g>
-              <path d="M300 108 L376 60" stroke="#151A23" stroke-width="1.2" stroke-dasharray="3 3"/>
-              <circle cx="300" cy="108" r="5" fill="#151A23" stroke="#fff" stroke-width="2"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Payload-range model</span>
-              <span class="pill"><b>14</b> aircraft</span>
-            </div>
-            <h3>Aircraft range map</h3>
-            <p>Which destinations an aircraft reaches from any airport, and with how many passengers. Compare two types, like the A321XLR and the 737-8.</p>
-            <div class="cta"><span class="btn dark">Open the range map<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        </div>
-      </div>
+    </div>
+  </section>
 
-      <div class="area">
-        <h3 class="area-h">Cargo</h3>
-        <div class="area-row">
+  <section class="sec topic" id="loyalty" aria-labelledby="h-loyalty" data-area="Loyalty">
+    <div class="sec-head"><h2 id="h-loyalty">Loyalty</h2><span>Points as a currency, from earning to the cost of an award seat</span></div>
+    <div class="area-row">
+        <a class="panel course lead" href="/loyalty101.html">
+          <span class="kicker">Start with the course</span>
+          <div class="num">Loyalty<small>101</small></div>
+          <h3>Loyalty programs</h3>
+          <p>Why airlines give away miles and still come out ahead, and how the points currency behind a loyalty program is managed.</p>
+          <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+        </a>
+        <a class="panel tool" href="/loyaltybenchmark.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <g transform="translate(300 108) scale(.85) translate(-292 -108)">
+              <!-- tier grid: one row per alliance, tiers aligned by alliance level; earn bars per programme on the right -->
+              <g stroke="rgb(15 23 42 / .07)"><line x1="110" y1="36" x2="110" y2="180"/><line x1="190" y1="36" x2="190" y2="180"/><line x1="270" y1="36" x2="270" y2="180"/></g>
+              <g fill="#fff" stroke="rgb(15 23 42 / .12)"><rect x="80" y="50" width="54" height="18" rx="5"/><rect x="80" y="98" width="54" height="18" rx="5"/><rect x="80" y="146" width="54" height="18" rx="5"/></g>
+              <g fill="#2a78d6"><rect x="160" y="50" width="54" height="18" rx="5" opacity=".45"/><rect x="240" y="50" width="54" height="18" rx="5"/></g>
+              <g fill="#eb6834"><rect x="160" y="98" width="54" height="18" rx="5" opacity=".35"/><rect x="240" y="98" width="54" height="18" rx="5" opacity=".7"/><rect x="306" y="98" width="30" height="18" rx="5"/></g>
+              <g fill="#1baf7a"><rect x="160" y="146" width="54" height="18" rx="5" opacity=".45"/><rect x="240" y="146" width="54" height="18" rx="5"/></g>
+              <line x1="366" y1="30" x2="366" y2="186" stroke="rgb(15 23 42 / .15)"/>
+              <path d="M366 44H500a4 4 0 0 1 4 4V56a4 4 0 0 1 -4 4H366Z" fill="#2a78d6"/>
+              <path d="M366 72H470a4 4 0 0 1 4 4V84a4 4 0 0 1 -4 4H366Z" fill="#2a78d6" opacity=".7"/>
+              <path d="M366 100H452a4 4 0 0 1 4 4V112a4 4 0 0 1 -4 4H366Z" fill="#1baf7a"/>
+              <path d="M366 128H430a4 4 0 0 1 4 4V140a4 4 0 0 1 -4 4H366Z" fill="#eb6834"/>
+              <path d="M366 156H408a4 4 0 0 1 4 4V168a4 4 0 0 1 -4 4H366Z" fill="#4a3aa7"/>
+              </g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Calculator</span>
+              <span class="pill"><b>13</b> programmes</span>
+              <span class="pill">Rules · Sep 2026</span>
+            </div>
+            <h3>Loyalty benchmark</h3>
+            <p>What an airline status is worth on partner airlines across Star Alliance, oneworld and SkyTeam, and how many points the same trip earns in each of 13 programmes.</p>
+            <div class="cta"><span class="btn dark">Open the benchmark<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/awardvalue.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- cents per point by trip: one row per trip, a marker per programme, medians in the last row -->
+              <g stroke="rgb(15 23 42 / .07)"><line x1="120" y1="28" x2="120" y2="196"/><line x1="240" y1="28" x2="240" y2="196"/><line x1="360" y1="28" x2="360" y2="196"/><line x1="480" y1="28" x2="480" y2="196"/></g>
+              <g fill="#8FA9F2">
+                <circle cx="210" cy="44" r="5"/><rect x="163" y="39" width="10" height="10"/><path d="M468 38 L474 49 L462 49Z"/><path d="M260 38 L266 44 L260 50 L254 44Z"/>
+                <circle cx="176" cy="76" r="5"/><rect x="142" y="71" width="10" height="10"/><path d="M130 70 L136 81 L124 81Z"/><path d="M98 70 L104 76 L98 82 L92 76Z"/>
+                <circle cx="298" cy="108" r="5"/><rect x="232" y="103" width="10" height="10"/><path d="M296 102 L302 113 L290 113Z"/><path d="M226 102 L232 108 L226 114 L220 108Z"/>
+                <circle cx="508" cy="140" r="5"/><rect x="418" y="135" width="10" height="10"/><path d="M152 134 L158 145 L146 145Z"/><path d="M420 134 L426 140 L420 146 L414 140Z"/>
+              </g>
+              <line x1="80" y1="164" x2="540" y2="164" stroke="rgb(15 23 42 / .1)"/>
+              <g fill="#2455E6">
+                <circle cx="302" cy="184" r="6.5"/><rect x="231" y="178" width="12" height="12"/><path d="M340 176 L347 190 L333 190Z"/><path d="M296 176 L304 184 L296 192 L288 184Z"/>
+              </g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Calculator</span>
+              <span class="pill"><b>4</b> programmes</span>
+              <span class="pill">Snapshot · Sep 2026</span>
+            </div>
+            <h3>Award value comparator</h3>
+            <p>How many points Aeroplan, MileagePlus, Flying Blue and Etihad Guest ask for the same trips, what that's worth in cents per point, and how your own redemption compares.</p>
+            <div class="cta"><span class="btn dark">Open the comparator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/breakage.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- the points liability, stacked by year of issue: each year's points run off as they are redeemed -->
+              <g stroke="rgb(15 23 42 / .07)"><line x1="90" y1="188" x2="510" y2="188"/><line x1="90" y1="114" x2="510" y2="114"/><line x1="90" y1="40" x2="510" y2="40"/></g>
+              <g stroke="#fff" stroke-width="1.5" stroke-linejoin="round">
+                <path d="M90 60 L97 60 L104 59 L111 59 L118 59 L125 58 L132 58 L139 58 L146 57 L153 57 L160 57 L167 56 L174 64 L181 72 L188 79 L195 85 L202 92 L209 98 L216 103 L223 108 L230 113 L237 118 L244 122 L251 126 L258 130 L265 133 L272 136 L279 140 L286 142 L293 145 L300 148 L307 150 L314 153 L321 155 L328 157 L335 159 L342 160 L349 162 L356 164 L363 165 L370 167 L377 168 L384 169 L391 170 L398 171 L405 172 L412 173 L419 174 L426 175 L433 176 L440 176 L447 177 L454 178 L461 178 L468 179 L475 180 L482 180 L489 181 L496 181 L503 181 L510 182 L510 188 L503 188 L496 188 L489 188 L482 188 L475 188 L468 188 L461 188 L454 188 L447 188 L440 188 L433 188 L426 188 L419 188 L412 188 L405 188 L398 188 L391 188 L384 188 L377 188 L370 188 L363 188 L356 188 L349 188 L342 188 L335 188 L328 188 L321 188 L314 188 L307 188 L300 188 L293 188 L286 188 L279 188 L272 188 L265 188 L258 188 L251 188 L244 188 L237 188 L230 188 L223 188 L216 188 L209 188 L202 188 L195 188 L188 188 L181 188 L174 188 L167 188 L160 188 L153 188 L146 188 L139 188 L132 188 L125 188 L118 188 L111 188 L104 188 L97 188 L90 188Z" fill="#C9D6FA"/>
+                <path d="M167 56 L174 56 L181 56 L188 55 L195 55 L202 55 L209 54 L216 54 L223 54 L230 53 L237 53 L244 53 L251 52 L258 61 L265 68 L272 76 L279 82 L286 89 L293 95 L300 100 L307 106 L314 111 L321 115 L328 120 L335 124 L342 128 L349 131 L356 135 L363 138 L370 141 L377 144 L384 147 L391 149 L398 151 L405 154 L412 156 L419 158 L426 160 L433 161 L440 163 L447 164 L454 166 L461 167 L468 168 L475 170 L482 171 L489 172 L496 173 L503 174 L510 175 L510 182 L503 181 L496 181 L489 181 L482 180 L475 180 L468 179 L461 178 L454 178 L447 177 L440 176 L433 176 L426 175 L419 174 L412 173 L405 172 L398 171 L391 170 L384 169 L377 168 L370 167 L363 165 L356 164 L349 162 L342 160 L335 159 L328 157 L321 155 L314 153 L307 150 L300 148 L293 145 L286 142 L279 140 L272 136 L265 133 L258 130 L251 126 L244 122 L237 118 L230 113 L223 108 L216 103 L209 98 L202 92 L195 85 L188 79 L181 72 L174 64 L167 56Z" fill="#8FA9F2"/>
+                <path d="M251 52 L258 52 L265 52 L272 51 L279 51 L286 51 L293 50 L300 50 L307 50 L314 49 L321 49 L328 49 L335 48 L342 57 L349 65 L356 72 L363 79 L370 86 L377 92 L384 98 L391 103 L398 108 L405 113 L412 118 L419 122 L426 126 L433 130 L440 133 L447 137 L454 140 L461 143 L468 145 L475 148 L482 150 L489 153 L496 155 L503 157 L510 159 L510 175 L503 174 L496 173 L489 172 L482 171 L475 170 L468 168 L461 167 L454 166 L447 164 L440 163 L433 161 L426 160 L419 158 L412 156 L405 154 L398 151 L391 149 L384 147 L377 144 L370 141 L363 138 L356 135 L349 131 L342 128 L335 124 L328 120 L321 115 L314 111 L307 106 L300 100 L293 95 L286 89 L279 82 L272 76 L265 68 L258 61 L251 52Z" fill="#5B80EC"/>
+                <path d="M335 48 L342 48 L349 48 L356 47 L363 47 L370 47 L377 46 L384 46 L391 46 L398 45 L405 45 L412 45 L419 44 L426 53 L433 61 L440 69 L447 76 L454 83 L461 89 L468 95 L475 101 L482 106 L489 111 L496 116 L503 120 L510 124 L510 159 L503 157 L496 155 L489 153 L482 150 L475 148 L468 145 L461 143 L454 140 L447 137 L440 133 L433 130 L426 126 L419 122 L412 118 L405 113 L398 108 L391 103 L384 98 L377 92 L370 86 L363 79 L356 72 L349 65 L342 57 L335 48Z" fill="#2455E6"/>
+                <path d="M419 44 L426 44 L433 44 L440 43 L447 43 L454 43 L461 42 L468 42 L475 42 L482 41 L489 41 L496 41 L503 40 L510 40 L510 124 L503 120 L496 116 L489 111 L482 106 L475 101 L468 95 L461 89 L454 83 L447 76 L440 69 L433 61 L426 53 L419 44Z" fill="#1A3FAE"/>
+              </g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Model</span>
+              <span class="pill">IFRS 15</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Breakage &amp; liability</h3>
+            <p>How points become deferred revenue and then revenue, what breakage is, and what a revised breakage estimate or a new expiry rule does to the numbers.</p>
+            <div class="cta"><span class="btn dark">Open the model<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/memberclv.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- lifetime value by starting tier: revenue streams to the right, costs to the left, net value marked -->
+              <line x1="240" y1="6" x2="240" y2="210" stroke="rgb(15 23 42 / .15)"/>
+              <rect x="240.0" y="14" width="6.3" height="28" rx="3" fill="#2a78d6"/><rect x="245.1" y="10" width="4.0" height="36" rx="1.5" fill="#151A23" stroke="#fff" stroke-width="1.5"/>
+              <rect x="240.0" y="54" width="27.2" height="28" rx="3" fill="#2a78d6"/><rect x="269.0" y="54" width="1.6" height="28" rx="3" fill="#1f9e89"/><rect x="236.3" y="54" width="4.2" height="28" rx="3" fill="#eb6834"/><rect x="231.1" y="54" width="3.8" height="28" rx="3" fill="#c2378f"/><rect x="260.4" y="50" width="4.0" height="36" rx="1.5" fill="#151A23" stroke="#fff" stroke-width="1.5"/>
+              <rect x="240.0" y="94" width="63.4" height="28" rx="3" fill="#2a78d6"/><rect x="305.2" y="94" width="5.1" height="28" rx="3" fill="#1f9e89"/><rect x="229.7" y="94" width="10.3" height="28" rx="3" fill="#eb6834"/><rect x="214.5" y="94" width="13.3" height="28" rx="3" fill="#c2378f"/><rect x="284.1" y="90" width="4.0" height="36" rx="1.5" fill="#151A23" stroke="#fff" stroke-width="1.5"/>
+              <rect x="240.0" y="134" width="122.3" height="28" rx="3" fill="#2a78d6"/><rect x="364.1" y="134" width="10.2" height="28" rx="3" fill="#1f9e89"/><rect x="219.6" y="134" width="20.4" height="28" rx="3" fill="#eb6834"/><rect x="185.8" y="134" width="32.0" height="28" rx="3" fill="#c2378f"/><rect x="319.5" y="130" width="4.0" height="36" rx="1.5" fill="#151A23" stroke="#fff" stroke-width="1.5"/>
+              <rect x="240.0" y="174" width="207.3" height="28" rx="3" fill="#2a78d6"/><rect x="449.1" y="174" width="15.9" height="28" rx="3" fill="#1f9e89"/><rect x="206.3" y="174" width="33.7" height="28" rx="3" fill="#eb6834"/><rect x="137.2" y="174" width="67.2" height="28" rx="3" fill="#c2378f"/><rect x="362.2" y="170" width="4.0" height="36" rx="1.5" fill="#151A23" stroke="#fff" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Calculator</span>
+              <span class="pill">Markov chain</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Member lifetime value</h3>
+            <p>What a member is worth over the years, by tier: margin from flying, the co-brand card and partners, tier moves as a Markov chain, the levers that matter most, and what better retention or more cardholders add up to.</p>
+            <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/promoroi.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- campaign waterfall: bonus on trips that happen anyway, bonus on extra trips, fixed costs, then the margin the extra trips bring back -->
+              <g stroke="rgb(15 23 42 / .07)"><line x1="150" y1="24" x2="150" y2="196"/><line x1="250" y1="24" x2="250" y2="196"/><line x1="450" y1="24" x2="450" y2="196"/></g>
+              <line x1="350" y1="20" x2="350" y2="200" stroke="#5B6272" stroke-width="1.2"/>
+              <g stroke="#A0A7B4" stroke-width="1" stroke-dasharray="2 3"><line x1="217" y1="46" x2="217" y2="58"/><line x1="176" y1="74" x2="176" y2="86"/><line x1="150" y1="102" x2="150" y2="114"/><line x1="150" y1="158" x2="150" y2="170"/></g>
+              <rect x="217" y="30" width="133" height="16" rx="4" fill="#C2378F" opacity=".85"/>
+              <rect x="176" y="58" width="41" height="16" rx="4" fill="#C2378F" opacity=".45"/>
+              <rect x="150" y="86" width="26" height="16" rx="4" fill="#A0A7B4"/>
+              <rect x="150" y="114" width="200" height="16" rx="4" fill="#151A23"/>
+              <rect x="150" y="142" width="307" height="16" rx="4" fill="#2455E6"/>
+              <rect x="350" y="170" width="107" height="16" rx="4" fill="#12A150"/>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Calculator</span>
+              <span class="pill">A/B test statistics</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Promotion ROI</h3>
+            <p>Did "double points this month" pay for itself? Incremental trips against a holdout, the bonus paid on trips that would have happened anyway, ROI with confidence intervals, and how big the holdout needs to be.</p>
+            <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/awardseatcost.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- award seat cost against expected load: flat at the marginal cost, then rising with the bid price of the last seat; the programme's payment as a line, the zone where both sides gain shaded -->
+              <g stroke="rgb(15 23 42 / .07)"><line x1="90" y1="190" x2="510" y2="190"/><line x1="90" y1="120" x2="510" y2="120"/><line x1="90" y1="50" x2="510" y2="50"/><line x1="440" y1="24" x2="440" y2="190" stroke-dasharray="3 4"/></g>
+              <path d="M90 148 L104 148 L118 148 L132 148 L146 148 L160 148 L174 148 L188 148 L202 148 L216 148 L230 148 L244 148 L258 148 L272 148 L286 148 L300 148 L314 148 L328 143 L342 133 L356 122 L370 112 L384 102 L398 91 L412 82 L425 73 L90 73Z" fill="#12A150" opacity=".14"/>
+              <line x1="90" y1="148" x2="510" y2="148" stroke="#A0A7B4" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/>
+              <path d="M90 190 L104 190 L118 190 L132 190 L146 190 L160 190 L174 190 L188 189 L202 189 L216 187 L230 185 L244 182 L258 178 L272 174 L286 168 L300 161 L314 152 L328 143 L342 133 L356 122 L370 112 L384 102 L398 91 L412 82 L426 73 L440 65 L454 60 L468 55 L482 50 L496 47 L510 44" fill="none" stroke="#8FA9F2" stroke-width="2" stroke-dasharray="6 5"/>
+              <line x1="90" y1="74" x2="510" y2="74" stroke="#12A150" stroke-width="2.5"/>
+              <path d="M90 148 L104 148 L118 148 L132 148 L146 148 L160 148 L174 148 L188 148 L202 148 L216 148 L230 148 L244 148 L258 148 L272 148 L286 148 L300 148 L314 148 L328 143 L342 133 L356 122 L370 112 L384 102 L398 91 L412 82 L426 73 L440 65 L454 60 L468 55 L482 50 L496 47 L510 44" fill="none" stroke="#151A23" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+              <circle cx="342" cy="133" r="7" fill="#151A23" stroke="#fff" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Calculator</span>
+              <span class="pill">Bid prices</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Award seat cost</h3>
+            <p>What an award seat really costs the airline: almost nothing on an empty flight, a paying fare on a full one. How many award seats to release, and why saver awards vanish on peak dates.</p>
+            <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/subscription.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- profit against the monthly price: a loss at low prices, a peak, then fading uptake; dashed = same pass without capacity control -->
+              <rect x="90" y="120" width="420" height="72" fill="#eb6834" opacity=".07"/>
+              <g stroke="rgb(15 23 42 / .07)"><line x1="90" y1="48" x2="510" y2="48"/><line x1="90" y1="84" x2="510" y2="84"/><line x1="90" y1="156" x2="510" y2="156"/></g>
+              <line x1="90" y1="120" x2="510" y2="120" stroke="#9a9a96"/>
+              <path d="M90 192 L150 192 L190 186 L230 170 L270 150 L310 132 L350 120 L390 112 L430 106 L470 102 L510 100" fill="none" stroke="#151A23" stroke-width="1.6" stroke-dasharray="5 4" opacity=".55"/>
+              <path d="M90 190 L110 150 L130 116 L150 92 L170 76 L190 66 L210 60 L230 57 L250 56 L270 57 L300 60 L340 66 L380 72 L420 77 L460 81 L510 85" fill="none" stroke="#2a78d6" stroke-width="3"/>
+              <circle cx="250" cy="56" r="7" fill="#fff" stroke="#2a78d6" stroke-width="3"/>
+              <line x1="250" y1="66" x2="250" y2="192" stroke="#2a78d6" stroke-dasharray="2 4" opacity=".6"/>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Simulator</span>
+              <span class="pill">Synthetic customers</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Subscription pricer</h3>
+            <p>Design an all-you-can-fly pass, a commuter route pass or a bundle of bags, seats and Wi-Fi, set its price, and see who signs up, what revenue it gives away, and what capacity control protects.</p>
+            <div class="cta"><span class="btn dark">Open the pricer<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+    </div>
+  </section>
+
+  <section class="sec topic" id="cargo" aria-labelledby="h-cargo" data-area="Cargo">
+    <div class="sec-head"><h2 id="h-cargo">Cargo</h2><span>Selling the hold rather than the seats</span></div>
+    <div class="area-row">
+        <a class="panel tool" href="/cargorm.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- one hold, two capacities: booked kilos and cubic metres by shipper type against capacity (solid tick) and the overbooking limit (dotted tick) -->
+              <g font-size="12" font-weight="600" fill="#5B6272" text-anchor="end"><text x="176" y="86">kg</text><text x="176" y="146">m³</text></g>
+              <g fill="#EEF1F5"><rect x="186" y="68" width="250" height="26" rx="5"/><rect x="186" y="128" width="250" height="26" rx="5"/></g>
+              <g stroke="#fff" stroke-width="1.5">
+                <rect x="186" y="68" width="32" height="26" rx="4" fill="#9aa3ad"/><rect x="218" y="68" width="84" height="26" rx="4" fill="#2a7fb5"/><rect x="302" y="68" width="40" height="26" rx="4" fill="#7a5ab8"/><rect x="342" y="68" width="44" height="26" rx="4" fill="#1f9e89"/>
+                <rect x="186" y="128" width="36" height="26" rx="4" fill="#9aa3ad"/><rect x="222" y="128" width="72" height="26" rx="4" fill="#2a7fb5"/><rect x="294" y="128" width="92" height="26" rx="4" fill="#7a5ab8"/><rect x="386" y="128" width="32" height="26" rx="4" fill="#1f9e89"/>
+              </g>
+              <g stroke="#151A23" stroke-width="2"><line x1="396" y1="60" x2="396" y2="102"/><line x1="396" y1="120" x2="396" y2="162"/></g>
+              <g stroke="#151A23" stroke-width="1.6" stroke-dasharray="2 3"><line x1="436" y1="60" x2="436" y2="102"/><line x1="436" y1="120" x2="436" y2="162"/></g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Simulator</span>
+              <span class="pill"><b>1,000</b> simulated flights</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Cargo revenue management</h3>
+            <p>Why selling the hold is harder than selling seats: weight and volume, late bookings and allotments, no-shows and short tenders. Bid prices per kg and per m³ against first come, first served, and how much to overbook.</p>
+            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
         <a class="panel tool" href="/allotments.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -898,56 +964,16 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
-        <a class="panel tool" href="/cargorm.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- one hold, two capacities: booked kilos and cubic metres by shipper type against capacity (solid tick) and the overbooking limit (dotted tick) -->
-              <g font-size="12" font-weight="600" fill="#5B6272" text-anchor="end"><text x="176" y="86">kg</text><text x="176" y="146">m³</text></g>
-              <g fill="#EEF1F5"><rect x="186" y="68" width="250" height="26" rx="5"/><rect x="186" y="128" width="250" height="26" rx="5"/></g>
-              <g stroke="#fff" stroke-width="1.5">
-                <rect x="186" y="68" width="32" height="26" rx="4" fill="#9aa3ad"/><rect x="218" y="68" width="84" height="26" rx="4" fill="#2a7fb5"/><rect x="302" y="68" width="40" height="26" rx="4" fill="#7a5ab8"/><rect x="342" y="68" width="44" height="26" rx="4" fill="#1f9e89"/>
-                <rect x="186" y="128" width="36" height="26" rx="4" fill="#9aa3ad"/><rect x="222" y="128" width="72" height="26" rx="4" fill="#2a7fb5"/><rect x="294" y="128" width="92" height="26" rx="4" fill="#7a5ab8"/><rect x="386" y="128" width="32" height="26" rx="4" fill="#1f9e89"/>
-              </g>
-              <g stroke="#151A23" stroke-width="2"><line x1="396" y1="60" x2="396" y2="102"/><line x1="396" y1="120" x2="396" y2="162"/></g>
-              <g stroke="#151A23" stroke-width="1.6" stroke-dasharray="2 3"><line x1="436" y1="60" x2="436" y2="102"/><line x1="436" y1="120" x2="436" y2="162"/></g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Simulator</span>
-              <span class="pill"><b>1,000</b> simulated flights</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Cargo revenue management</h3>
-            <p>Why selling the hold is harder than selling seats: weight and volume, late bookings and allotments, no-shows and short tenders. Bid prices per kg and per m³ against first come, first served, and how much to overbook.</p>
-            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        </div>
-      </div>
-
     </div>
   </section>
 
-  <section class="sec" id="knowledge" aria-labelledby="h-know">
-    <div class="sec-head"><h2 id="h-know">Knowledge</h2><span>Beginner's guides to how an airline plans, prices and flies</span></div>
-    <div class="grid">
-      <a class="panel course" href="/rm101.html">
-        <div class="num">RM<small>101</small></div>
-        <h3>Revenue Management</h3>
-        <p>How airlines price seats and fill planes as profitably as possible: a mix of economics, statistics and a bit of psychology.</p>
-        <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-      </a>
-      <a class="panel course" href="/loyalty101.html">
-        <div class="num">Loyalty<small>101</small></div>
-        <h3>Loyalty programs</h3>
-        <p>Why airlines give away miles and still come out ahead, and how the points currency behind a loyalty program is managed.</p>
-        <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-      </a>
-      <a class="panel course" href="/np101.html">
-        <div class="num">NP<small>101</small></div>
-        <h3>Network Planning</h3>
-        <p>How airlines decide where to fly, how often, when, and with what aircraft.</p>
+  <section class="sec" id="courses" aria-labelledby="h-courses">
+    <div class="sec-head"><h2 id="h-courses">Other courses</h2><span>Beginner's guides to the rest of how an airline sells, plans and measures</span></div>
+    <div class="grid others">
+      <a class="panel course" href="/commercial101.html">
+        <div class="num">Commercial<small>101</small></div>
+        <h3>Airline Commercial</h3>
+        <p>How a seat becomes revenue: pricing, distribution, sales, e-commerce, payment, partnerships and marketing.</p>
         <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
       </a>
       <a class="panel course" href="/or101.html">
@@ -956,22 +982,16 @@ main { padding-top: 48px; }
         <p>The optimization models behind fleet assignment, aircraft routing, crew pairing and disruption recovery, and how they connect to RM.</p>
         <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
       </a>
-      <a class="panel course" href="/commercial101.html">
-        <div class="num">Commercial<small>101</small></div>
-        <h3>Airline Commercial</h3>
-        <p>How a seat becomes revenue: pricing, distribution, sales, e-commerce, payment, partnerships and marketing.</p>
+      <a class="panel course" href="/or102.html">
+        <div class="num">OR<small>102</small></div>
+        <h3>Reading the Research</h3>
+        <p>Where each airline OR topic stands, the papers everyone cites, and how to read an AGIFORS talk or journal paper critically.</p>
         <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
       </a>
       <a class="panel course" href="/impact101.html">
         <div class="num">Impact<small>101</small></div>
         <h3>Impact Evaluation</h3>
         <p>How to tell whether an RM change or a loyalty campaign actually worked: experiments, causal inference and simulations to play with.</p>
-        <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-      </a>
-      <a class="panel course" href="/or102.html">
-        <div class="num">OR<small>102</small></div>
-        <h3>Reading the Research</h3>
-        <p>Where each airline OR topic stands, the papers everyone cites, and how to read an AGIFORS talk or journal paper critically.</p>
         <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
       </a>
     </div>
