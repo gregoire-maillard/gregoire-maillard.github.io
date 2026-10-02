@@ -1,10 +1,10 @@
-/* Airline tools: small shared helper loaded by the hub, every tool and every course.
+/* Airline Economics (/airlinetools.html): small shared helper loaded by the hub, every tool and every course.
 
    1. Header counts. The "N tools · M courses" pill is counted from the hub page itself
       (one card per tool, one per course), so adding a card to airlinetools.html is the only
       thing needed to keep every page right. The number written in each page's HTML is only
       a fallback for when this script can't run.
-   2. Breadcrumb. A tool page without a breadcrumb gets "Airline tools · <group>" at the top
+   2. Breadcrumb. A tool page without a breadcrumb gets "Airline Economics · <topic>" at the top
       of its intro, using the topic section (data-area) its card sits in on the hub.
 
    No dependencies. Fails silently: if the hub can't be fetched, pages keep their static text. */
@@ -43,7 +43,7 @@
     var div = document.createElement("div");
     div.className = "crumbs";
     var a = document.createElement("a");
-    a.href = HUB; a.textContent = "Airline tools";
+    a.href = HUB; a.textContent = "Airline Economics";
     div.appendChild(a);
     div.appendChild(document.createTextNode(" · " + area));
     intro.insertBefore(div, intro.firstChild);

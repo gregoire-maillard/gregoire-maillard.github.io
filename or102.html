@@ -177,7 +177,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
       onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
 
-    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <!-- Airline Economics header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
     <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
     <style>
       @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
@@ -202,14 +202,15 @@
       .at-hdr .at-home:hover { background: var(--at-wash); }
       .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
       .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
-      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 4px; }
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
+      @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
     </style>
       <style>
       /* ── Course rail (left column) and chapter menu ──────────────────────────
@@ -285,13 +286,16 @@
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
-        <nav class="at-tabs" aria-label="Airline tools">
-          <a class="at-tab" href="/airlinetools.html#tools">Tools</a>
-          <a class="at-tab" href="/airlinetools.html#knowledge" aria-current="page">Knowledge</a>
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline economics"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline Economics">
+          <a class="at-tab" href="/airlinetools.html#rm">Revenue management</a>
+          <a class="at-tab" href="/airlinetools.html#network">Network planning</a>
+          <a class="at-tab" href="/airlinetools.html#loyalty">Loyalty</a>
+          <a class="at-tab" href="/airlinetools.html#cargo">Cargo</a>
+          <a class="at-tab" href="/airlinetools.html#courses" aria-current="page">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>22</b> tools · <b>7</b> courses</span>
       </div>
     </div>
     <div class="wrapper">
@@ -714,7 +718,6 @@
         <aside class="try-it" aria-label="Tools for this chapter">
           <div class="try-label">Try it</div>
           <a href="/continuouspricing.html"><b>Continuous pricing</b><span>Class-based control against continuous pricing, shopper by shopper.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
-          <a href="/abtestlab.html"><b>Offer A/B test lab</b><span>Testing offers on simulated shoppers, and why peeking at the results crowns false winners.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
         </aside>
 
         <p><hr/></p>

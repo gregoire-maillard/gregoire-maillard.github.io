@@ -23,13 +23,13 @@
     <link rel="canonical" href="https://gregoiremaillard.com/unconstraining.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Grégoire Maillard">
-    <meta property="og:title" content="Demand unconstraining · Airline tools">
+    <meta property="og:title" content="Demand unconstraining · Airline Economics">
     <meta property="og:description" content="Recorded bookings understate demand whenever a flight or fare class closes. Five ways to recover the true demand, compared on a synthetic history, and what the recovered demand says about spill, recapture and aircraft size.">
     <meta property="og:url" content="https://gregoiremaillard.com/unconstraining.html">
     <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/unconstraining.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Demand unconstraining · Airline tools">
+    <meta property="og:image:alt" content="Demand unconstraining · Airline Economics">
     <meta name="twitter:card" content="summary_large_image">
 
     <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
@@ -62,7 +62,7 @@
         padding: 26px 30px 60px;
       }
       .intro h2 { margin: 0 0 6px; }
-      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .intro p { margin: 0 0 4px; }
       .crumbs { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
       .crumbs a { color: var(--muted); }
       .crumbs a:hover { color: var(--link); }
@@ -217,7 +217,7 @@
       }
     </style>
 
-    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <!-- Airline Economics header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
     <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
     <style>
       @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
@@ -242,40 +242,43 @@
       .at-hdr .at-home:hover { background: var(--at-wash); }
       .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
       .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
-      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 4px; }
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
+      @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
     </style>
     <style>
-      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; }
     </style>
     <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
-        <nav class="at-tabs" aria-label="Airline tools">
-          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
-          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline economics"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline Economics">
+          <a class="at-tab" href="/airlinetools.html#rm" aria-current="page">Revenue management</a>
+          <a class="at-tab" href="/airlinetools.html#network">Network planning</a>
+          <a class="at-tab" href="/airlinetools.html#loyalty">Loyalty</a>
+          <a class="at-tab" href="/airlinetools.html#cargo">Cargo</a>
+          <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>22</b> tools · <b>7</b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
-        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Revenue management</div>
+        <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Revenue management</div>
         <h2>Demand unconstraining</h2>
         <p class="lede">How airlines recover the demand they never saw, and what it is worth.</p>
         <p>An airline only records the bookings it accepted. Once a flight or a fare class closes, every later request disappears from the data, so on the busiest departures the history shows the booking limit, not the demand. Forecasts built on that history come out too low, and fleet decisions built on those forecasts put too few seats where they are needed. This page generates a booking history where the true demand is known, runs five classic ways of recovering it, then turns the recovered demand into spill, recapture and the case for a bigger aircraft. The theory is in <a href="/rm101.html#ch02">Revenue Management 101, Chapter 02</a>.</p>
-        <p class="note-line">Illustrative numbers: the booking history is synthetic, generated in your browser from a fixed seed, and the fares and recapture rates are assumptions. Only the aircraft seat counts are real (published cabin layouts). None of it comes from an airline's data.</p>
         <p class="load-err" id="load-err"></p>
       </div>
 
@@ -439,7 +442,7 @@
         <p>Expected passengers are <var>μ</var> − Spill(<var>C</var>), the load factor is that divided by <var>C</var>, and the spill rate is Spill(<var>C</var>) / <var>μ</var>. A share <var>r</var> of spilled passengers is recaptured on the airline's other flights, so the revenue the airline keeps is fare × (passengers + <var>r</var> × spill) and the revenue lost is fare × (1 − <var>r</var>) × spill. One more seat is worth fare × (1 − <var>r</var>) × P(<var>D</var> &gt; <var>C</var>) per departure: the chance the flight is full is the only time the extra seat sells. That value falls quickly past mean demand, which is why the gain from each step up in aircraft size shrinks. Upgauging pays off when the bigger aircraft's extra trip cost is below the "gain vs smaller" in the table; trip costs are not modelled here.</p>
 
         <h4>From unconstrained demand to forecasts and fleet assignment</h4>
-        <p>Unconstraining sits at the start of both chains. In revenue management, the unconstrained history (by fare class, by DCP) is what the forecaster learns from; the forecasts then set the protection levels and booking limits of <a href="/bookinglimits.html">EMSR-b</a> or the bid prices of <a href="/bidprice.html">network control</a>, and the <a href="/bookingcurve.html">pickup forecasts</a> assume their history is demand. Skip the step and the system under-protects, closes low fares on the wrong days and keeps censoring its own data. In network planning, fleet assignment compares, for every flight, the cost of each aircraft type with the revenue it would lose to spill: exactly the calculation in Part 2, with recapture reducing the loss (<a href="/np101.html#ch05">Network Planning 101, Chapter 05</a>). Feed it recorded bookings instead of unconstrained demand and the busiest flights look like they fit on the aircraft they already have, so the model never upgauges them.</p>
+        <p>Unconstraining sits at the start of both chains. In revenue management, the unconstrained history (by fare class, by DCP) is what the forecaster learns from; the forecasts then set the protection levels and booking limits of <a href="/bookinglimits.html#emsr">EMSR-b</a> or the bid prices of <a href="/bidprice.html">network control</a>, and the <a href="/bookingcurve.html">pickup forecasts</a> assume their history is demand. Skip the step and the system under-protects, closes low fares on the wrong days and keeps censoring its own data. In network planning, fleet assignment compares, for every flight, the cost of each aircraft type with the revenue it would lose to spill: exactly the calculation in Part 2, with recapture reducing the loss (<a href="/np101.html#ch05">Network Planning 101, Chapter 05</a>). Feed it recorded bookings instead of unconstrained demand and the busiest flights look like they fit on the aircraft they already have, so the model never upgauges them.</p>
 
         <h4>Sources</h4>
         <p>Methods: L. Weatherford and S. Pölt, <a href="https://link.springer.com/article/10.1057/palgrave.rpm.5170027" target="_blank" rel="noopener">"Better unconstraining of airline demand data in revenue management systems for improved forecast accuracy and greater revenues"</a>, <i>Journal of Revenue and Pricing Management</i> 1(3), 2002, which compares the naive, mean imputation, booking profile, projection detruncation and EM methods; P. Guo, B. Xiao and J. Li, <a href="https://www.hindawi.com/journals/aor/2012/270910/" target="_blank" rel="noopener">"Unconstraining methods in revenue management systems: research overview and prospects"</a>, <i>Advances in Operations Research</i>, 2012 (open access), which finds EM the most accurate and robust; K. Talluri and G. van Ryzin, <a href="https://link.springer.com/book/10.1007/b139000" target="_blank" rel="noopener"><i>The Theory and Practice of Revenue Management</i></a> (Springer, 2004), chapter 9. Spill: M. Z. F. Li and T. H. Oum, <a href="https://www.sciencedirect.com/science/article/abs/pii/S0377221799001940" target="_blank" rel="noopener">"Airline spill analysis – beyond the normal demand"</a>, <i>European Journal of Operational Research</i> 125(1), 2000. Seat counts (checked 28 September 2026, stored in <a href="assets/data/unconstraining.json">unconstraining.json</a>): <a href="https://news.alaskaair.com/current-fleet/" target="_blank" rel="noopener">Alaska Air Group current fleet</a> for the E175 (76 seats, Horizon and SkyWest), 737-8 (159, Alaska), A321neo (189, Hawaiian) and 787-9 (300, Hawaiian), page dated 27 August 2025; <a href="https://www.delta.com/us/en/aircraft/airbus/a220-300" target="_blank" rel="noopener">Delta's A220-300 page</a> (130 seats).</p>

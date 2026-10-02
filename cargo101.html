@@ -1,0 +1,904 @@
+<!doctype html>
+<html>
+  <head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Air Cargo 101</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+<!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+<meta name="description" content="How airlines sell the space in the hold: weight and volume, forwarders and allotments, and why cargo is harder to sell than seats.">
+<link rel="canonical" href="https://gregoiremaillard.com/cargo101.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Grégoire Maillard">
+<meta property="og:title" content="Air Cargo 101">
+<meta property="og:description" content="How airlines sell the space in the hold: weight and volume, forwarders and allotments, and why cargo is harder to sell than seats.">
+<meta property="og:url" content="https://gregoiremaillard.com/cargo101.html">
+<meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/cargo101.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Air Cargo 101">
+<meta name="twitter:card" content="summary_large_image">
+
+    <style>
+
+      /* ── Callout / example boxes ── */
+      .callout {
+        background: #f4f8fd;
+        border-left: 3px solid #267CB9;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #2a3a4a;
+        line-height: 1.7;
+      }
+      .callout-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #267CB9;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .example {
+        background: #fafafa;
+        border: 1px solid #e4e4e4;
+        padding: 12px 16px;
+        margin: 18px 0;
+        font-size: 0.92em;
+        color: #444;
+        line-height: 1.7;
+      }
+      .example-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #888;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* ── Reference table ── */
+      .rm-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.86em;
+        margin: 16px 0;
+      }
+      .rm-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: left;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .rm-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        vertical-align: top;
+      }
+      .rm-table tr:last-child td { border-bottom: none; }
+
+      section h3 { margin-top: 22px; }
+      section h4 { font-size: 0.95em; margin-top: 18px; color: #444; }
+
+      /* ── Data tables ── */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84em;
+        margin: 16px 0;
+      }
+      .data-table th {
+        background: #f2f2f2;
+        border-bottom: 2px solid #ddd;
+        padding: 7px 10px;
+        text-align: center;
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #888;
+      }
+      .data-table th:first-child { text-align: left; }
+      .data-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .data-table td:first-child { text-align: left; }
+      .data-table tr:last-child td { border-bottom: none; }
+      .data-table tr.total td { background: #f7f7f7; font-weight: bold; border-top: 2px solid #ddd; }
+      .data-table tr.highlight td { background: #fef6d6; font-weight: bold; }
+
+      /* ── Formula block ── */
+      .formula {
+        background: #f9f7ff;
+        border-left: 3px solid #7c6fcd;
+        padding: 14px 20px;
+        margin: 18px 0;
+        text-align: center;
+        overflow-x: auto;
+      }
+      .formula-label {
+        font-size: 0.68em;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #7c6fcd;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: left;
+      }
+      .formula .note {
+        font-size: 0.82em;
+        color: #666;
+        margin-top: 8px;
+        text-align: left;
+        font-style: italic;
+      }
+
+      /* ── Chart container ── */
+      .chart-wrap {
+        margin: 20px 0;
+        background: #fff;
+        border: 1px solid #e4e4e4;
+        border-radius: 4px;
+        padding: 12px 8px 6px;
+      }
+      .chart-wrap svg { display: block; width: 100%; height: auto; }
+      .chart-caption {
+        font-size: 0.78em;
+        color: #888;
+        text-align: center;
+        margin-top: 4px;
+        font-style: italic;
+      }
+    </style>
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+
+    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+    </style>
+      <style>
+      /* ── Course rail (left column) and chapter menu ──────────────────────────
+         Desktop: sticky rail with the course badge, a reading-progress bar and the chapter list
+         (current chapter highlighted, read ones ticked). Phones and tablets: the rail shrinks to a
+         short intro and a slim chapter bar sticks under the site header instead. */
+      .wrapper > header.crs-rail { display: flex; flex-direction: column; min-width: 0; }
+      @media (min-width: 60.001rem) {
+        .wrapper > header.crs-rail { position: sticky; top: calc(64px + 2rem); max-height: calc(100dvh - 64px - 4rem); }
+      }
+      .crs-back { align-self: flex-start; display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; color: var(--muted); margin: 0 0 1.4rem; }
+      .crs-back:hover { color: var(--ink); }
+      .crs-back svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+      .crs-badge { display: flex; align-items: baseline; gap: .4rem; color: var(--ink); line-height: 1; }
+      .crs-badge b { font-size: 2.6rem; font-weight: 650; letter-spacing: -0.045em; }
+      .crs-badge small { font-size: .95rem; font-weight: 500; color: var(--muted); }
+      .crs-desc { margin: .85rem 0 0; font-style: normal; font-size: .88rem; line-height: 1.5; color: var(--body); }
+      .crs-meta { margin: .65rem 0 0; font-style: normal; font-size: .76rem; color: var(--muted); display: flex; gap: .5rem; flex-wrap: wrap; }
+      .crs-meta span + span::before { content: "·"; margin-right: .5rem; color: var(--faint); }
+      .crs-progress { flex: none; height: 3px; margin: 1.15rem 0 .35rem; border-radius: 2px; background: var(--line); overflow: hidden; }
+      .crs-progress i { display: block; height: 100%; width: 0; background: var(--blue); border-radius: 2px; transition: width .15s linear; }
+
+      .wrapper > header.crs-rail .chapter-nav {
+        flex: 1 1 auto; min-height: 0; overflow-y: auto; margin: 0; padding: .3rem 0 .8rem; border-top: 0;
+        font-size: .84rem; line-height: 1.3; scrollbar-width: thin; -webkit-mask-image: none; mask-image: none;
+      }
+      .wrapper > header.crs-rail .chapter-nav.fade-b { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent); }
+      .wrapper > header.crs-rail .chapter-nav.fade-t { -webkit-mask-image: linear-gradient(to top, #000 calc(100% - 1.5rem), transparent); mask-image: linear-gradient(to top, #000 calc(100% - 1.5rem), transparent); }
+      .wrapper > header.crs-rail .chapter-nav.fade-t.fade-b { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent); mask-image: linear-gradient(to bottom, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent); }
+      .chapter-nav a, .crs-bar-menu a {
+        display: grid; grid-template-columns: 1.75rem 1fr; align-items: baseline; gap: 0;
+        padding: .42rem .55rem; margin: 1px 0; border: 0; border-radius: 8px; color: var(--muted); font-weight: 400;
+        transition: background-color .15s, color .15s;
+      }
+      .chapter-nav a:hover, .crs-bar-menu a:hover { color: var(--ink); background: var(--blue-tint); border: 0; }
+      .chapter-nav a.active, .crs-bar-menu a.active { color: var(--blue-dark); background: var(--blue-wash); font-weight: 560; }
+      .chapter-nav .ch-n, .crs-bar-menu .ch-n { margin: 0; font-size: .74rem; color: var(--faint); font-variant-numeric: tabular-nums; font-weight: 500; }
+      .chapter-nav a.done .ch-n, .crs-bar-menu a.done .ch-n { color: var(--blue); }
+      .chapter-nav a.active .ch-n, .crs-bar-menu a.active .ch-n { color: var(--blue-dark); }
+
+      /* phones & tablets: slim sticky chapter bar */
+      .crs-bar { display: none; }
+      @media (max-width: 60rem) {
+        .wrapper > header.crs-rail .chapter-nav, .wrapper > header.crs-rail .crs-progress { display: none; }
+        .crs-bar { display: block; position: sticky; top: 64px; z-index: 900; background: rgb(255 255 255 / .92); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 1px 0 var(--line); }
+        .crs-bar-btn { display: flex; align-items: center; gap: .6rem; width: 100%; max-width: 43rem; margin: 0 auto; padding: .7rem 1rem; border: 0; background: none; font: inherit; font-size: .86rem; color: var(--ink); text-align: left; cursor: pointer; }
+        .crs-bar-btn .n { font-size: .74rem; color: var(--blue); font-variant-numeric: tabular-nums; font-weight: 600; }
+        .crs-bar-btn .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 560; }
+        .crs-bar-btn .k { font-size: .74rem; color: var(--muted); }
+        .crs-bar-btn svg { width: 16px; height: 16px; flex: none; fill: none; stroke: var(--muted); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+        .crs-bar-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+        .crs-bar-prog { height: 2px; background: transparent; }
+        .crs-bar-prog i { display: block; height: 100%; width: 0; background: var(--blue); }
+        .crs-bar-menu { max-width: 43rem; margin: 0 auto; padding: .25rem .5rem .75rem; max-height: min(70vh, 34rem); overflow-y: auto; font-size: .88rem; line-height: 1.3; border-top: 1px solid var(--line); }
+        .crs-bar-menu[hidden] { display: none; }
+      }
+      @media (max-width: 35rem) { .crs-badge b { font-size: 2.2rem; } }
+
+      /* ── "Try it" boxes: the tools that go with a chapter ── */
+      .try-it { margin: 26px 0 8px; }
+      .try-it .try-label { font-size: .68em; text-transform: uppercase; letter-spacing: 1.5px; color: var(--blue); font-weight: 700; margin: 0 0 8px; }
+      .try-it a { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 16px; padding: 12px 14px; margin: 0 0 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--body); transition: border-color .15s, background-color .15s; }
+      .try-it a:hover { border-color: rgb(40 122 158 / 45%); background: var(--blue-tint); color: var(--body); }
+      .try-it a b { color: var(--ink); font-weight: 600; font-size: .95em; }
+      .try-it a span { grid-column: 1; font-size: .88em; line-height: 1.5; }
+      .try-it a svg { grid-column: 2; grid-row: 1 / span 2; width: 18px; height: 18px; fill: none; stroke: var(--blue); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
+      .try-it a:hover svg { transform: translateX(2px); }
+      /* wide formulas scroll inside their box instead of widening the page on phones */
+      .katex-display { overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
+    </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline tools">
+          <a class="at-tab" href="/airlinetools.html#tools">Tools</a>
+          <a class="at-tab" href="/airlinetools.html#knowledge" aria-current="page">Knowledge</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>24</b> tools · <b>8</b> courses</span>
+      </div>
+    </div>
+    <div class="wrapper">
+
+      <!-- ── Sidebar ── -->
+      <header class="crs-rail">
+        <a class="crs-back" href="/airlinetools.html#knowledge"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg>All courses</a>
+        <div class="crs-badge"><b>Cargo</b><small>101</small></div>
+        <p class="crs-desc">A beginner's guide to air cargo, covering the intuitions behind how airlines sell the space under the passengers' feet and on the main deck of freighters.</p>
+        <p class="crs-meta"><span>12 chapters</span><span>about 25 min read</span></p>
+        <div class="crs-progress" aria-hidden="true"><i></i></div>
+        <nav class="chapter-nav" id="toc">
+          <a href="#ch00"><span class="ch-n">00</span> Why Cargo?</a>
+          <a href="#ch01"><span class="ch-n">01</span> Bellies, Freighters &amp; Integrators</a>
+          <a href="#ch02"><span class="ch-n">02</span> Who Buys the Space</a>
+          <a href="#ch03"><span class="ch-n">03</span> Weight, Volume &amp; Chargeable Weight</a>
+          <a href="#ch04"><span class="ch-n">04</span> The Language of Cargo Metrics</a>
+          <a href="#ch05"><span class="ch-n">05</span> Products &amp; Rates</a>
+          <a href="#ch06"><span class="ch-n">06</span> Allotments &amp; the Spot Market</a>
+          <a href="#ch07"><span class="ch-n">07</span> Bid Prices in Two Dimensions</a>
+          <a href="#ch08"><span class="ch-n">08</span> No-Shows, Short Tenders &amp; Overbooking</a>
+          <a href="#ch09"><span class="ch-n">09</span> Imbalance &amp; the Cargo Network</a>
+          <a href="#ch10"><span class="ch-n">10</span> Cargo Meets Passengers</a>
+          <a href="#ch11"><span class="ch-n">11</span> What's Next</a>
+        </nav>
+      </header>
+
+      <!-- ── Content ── -->
+      <section>
+
+        <h2>Air Cargo 101</h2>
+        <p>Most people who fly never think about what travels underneath them. On a long-haul passenger flight, the lower deck usually carries several tonnes of someone else's freight: car parts, phones, medicines, fresh fish, online orders. On a freighter, the whole aircraft is cargo. This page explains how that business works and how airlines sell it, in the same spirit as <a href="/rm101.html">RM 101</a>, <a href="/np101.html">NP 101</a> and <a href="/loyalty101.html">Loyalty 101</a>: the key ideas, a few worked examples, and as little jargon as I can get away with. It describes the industry in general, not how any particular airline runs its cargo business, and every number in the examples is made up for illustration unless a source is given.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 00 ── -->
+        <h3 id="ch00">Chapter 00: Why Cargo?</h3>
+
+        <p>Air cargo is a small business by weight and a large one by value. IATA estimates that it carries about a third of world trade by value, while the tonnes it moves are a tiny fraction of what ships and trucks carry. The reason is simple: flying is expensive, so the goods that fly are the ones where speed is worth the price. Things that are valuable for their weight (electronics, pharmaceuticals, spare parts), things that spoil (flowers, fish, fruit), and things someone needs urgently (a part for a factory line that has stopped, or an aircraft stuck on the ground).</p>
+
+        <p>For a combination airline, one that flies passengers and cargo, cargo is usually a minority of revenue. It still matters more than its share suggests, because a large part of it rides in the lower deck of aircraft that were flying anyway. The extra cost of carrying a pallet in a passenger aircraft's belly is mostly handling and a little extra fuel, so the revenue it brings goes almost straight to the bottom line.</p>
+
+        <h4>Why it is harder than selling seats</h4>
+
+        <p>If you have read RM 101, the logic of cargo will look familiar: a perishable capacity, customers who value it differently, and a decision about which requests to accept. But nearly every assumption that makes passenger RM tractable breaks down.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Passenger seats</th><th>Cargo space</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Every seat is the same size</td><td>Shipments come in every size and density, and the hold can run out of weight or of volume</td></tr>
+            <tr><td>Capacity is fixed: the aircraft has 300 seats</td><td>In a passenger aircraft, cargo capacity depends on passengers, bags and fuel, and is only known on the day</td></tr>
+            <tr><td>Most bookings arrive weeks or months ahead</td><td>Much of the space is promised in advance to a few large customers, and the rest is booked in the last days</td></tr>
+            <tr><td>A booked passenger turns up or doesn't</td><td>A booked shipment may not turn up, or turn up heavier, lighter or bulkier than declared</td></tr>
+            <tr><td>Demand is roughly balanced in both directions</td><td>Goods flow mostly one way, so the return flight is often half empty</td></tr>
+            <tr><td>The traveler is the customer</td><td>The customer is usually a freight forwarder, buying on behalf of many shippers</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Where it came from</h4>
+
+        <p>The first air cargo shipment is usually dated to 7 November 1910, when Phil Parmalee flew a Wright biplane from Dayton to Columbus, Ohio, with five bolts of silk for a department store. For decades after that, airfreight was mostly mail and whatever fitted in the hold of a passenger aircraft. Two things turned it into an industry. The first was the widebody jet, from 1970 onward, whose lower deck could take standard containers and pallets, and whose freighter versions could carry dozens of tonnes. The second was deregulation. In the United States, all-cargo flying was deregulated in 1977, a year before passenger flying. Federal Express, which had started flying overnight parcels from Memphis in 1973 with small jets because the rules limited it to small aircraft, could now fly larger ones on any route, and the overnight express industry took off.</p>
+
+        <div class="example">
+          <div class="example-label">The scale of the prize</div>
+          When passenger flying collapsed in 2020, so did most of the cargo space in passenger bellies, while demand for medical supplies and online goods surged. Rates jumped, and for many combination carriers cargo was one of the few parts of the business still earning money. Some flew passenger aircraft with no passengers, carrying freight in the hold and sometimes in the cabin. The effect lasted: IATA reported that in 2025 cargo yields were still more than 37% above their 2019 level.
+        </div>
+
+        <div class="callout">
+          <div class="callout-label">The core tension</div>
+          Space can be sold early and safely, to forwarders who commit to it months ahead at a negotiated rate, or late and expensively, to whoever needs it this week. Sell too much early and you fill the hold at contract rates when the spot market would have paid more, often with space the forwarder then doesn't use. Keep too much back and you fly it empty when the late demand doesn't come. Every chapter below is a version of that trade-off, made harder by the fact that the space has two dimensions and you only find out how much there is on the day.
+        </div>
+
+        <p>The chapters that follow start with the ways cargo is carried and who buys it, then the physics of weight and volume, the metrics and products, and three chapters on how cargo revenue management actually works: allotments, bid prices and overbooking. The last chapters cover the cargo network and how cargo and passengers share the same aircraft.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 01 ── -->
+        <h3 id="ch01">Chapter 01: Bellies, Freighters &amp; Integrators</h3>
+
+        <p>Cargo travels on three kinds of aircraft, and three kinds of company fly it.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cross-sections of a passenger widebody, with cargo containers in the lower deck only, and a freighter, with a contoured pallet on the main deck and containers below" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<text x="130" y="18" text-anchor="middle" font-size="14" font-weight="600" fill="#333333">Passenger widebody</text>
+<text x="390" y="18" text-anchor="middle" font-size="14" font-weight="600" fill="#333333">Freighter</text>
+<circle cx="130" cy="115" r="88" fill="#ffffff" stroke="#999999" stroke-width="1.6"/>
+<line x1="44" y1="132" x2="216" y2="132" stroke="#999999" stroke-width="1.4"/>
+<g fill="#b7c9da">
+<rect x="62" y="100" width="11" height="24" rx="2.5"/><rect x="75" y="100" width="11" height="24" rx="2.5"/><rect x="88" y="100" width="11" height="24" rx="2.5"/>
+<rect x="111" y="100" width="11" height="24" rx="2.5"/><rect x="124" y="100" width="11" height="24" rx="2.5"/><rect x="137" y="100" width="11" height="24" rx="2.5"/>
+<rect x="160" y="100" width="11" height="24" rx="2.5"/><rect x="173" y="100" width="11" height="24" rx="2.5"/><rect x="186" y="100" width="11" height="24" rx="2.5"/>
+</g>
+<text x="130" y="78" text-anchor="middle" font-size="11" fill="#888888">passengers</text>
+<polygon points="82,142 127,142 127,184 94,184 82,170" fill="#267CB9"/>
+<polygon points="133,142 178,142 178,170 166,184 133,184" fill="#267CB9"/>
+<circle cx="390" cy="115" r="88" fill="#ffffff" stroke="#999999" stroke-width="1.6"/>
+<line x1="304" y1="132" x2="476" y2="132" stroke="#999999" stroke-width="1.4"/>
+<polygon points="324,128 324,92 346,60 390,50 434,60 456,92 456,128" fill="#7c6fcd"/>
+<text x="390" y="99" text-anchor="middle" font-size="11" font-weight="600" fill="#ffffff">main-deck pallet</text>
+<polygon points="342,142 387,142 387,184 354,184 342,170" fill="#267CB9"/>
+<polygon points="393,142 438,142 438,170 426,184 393,184" fill="#267CB9"/>
+<text x="130" y="228" text-anchor="middle" font-size="13" font-weight="600" fill="#333333">Lower deck only</text>
+<text x="130" y="245" text-anchor="middle" font-size="12" fill="#888888">what is left after bags and fuel</text>
+<text x="390" y="228" text-anchor="middle" font-size="13" font-weight="600" fill="#333333">Main deck and lower deck</text>
+<text x="390" y="245" text-anchor="middle" font-size="12" fill="#888888">all of it for cargo</text>
+</svg>
+          <div class="chart-caption">The same fuselage, used two ways. Blue: lower-deck containers. Purple: a main-deck pallet, contoured to the shape of the fuselage.</div>
+        </div>
+
+        <h4>Three ways to fly cargo</h4>
+
+        <p><strong>Belly cargo</strong> rides in the lower deck of passenger aircraft. Its great advantage is cost: the aircraft is flying anyway, and the passengers pay for most of it. Its weakness is that it goes where passengers go, when passengers go, and only in the space they leave. Before the pandemic, a common estimate was that around 45% of airfreight travelled in passenger bellies.</p>
+
+        <p><strong>Freighters</strong> are aircraft with no passengers at all, carrying cargo on the main deck as well as below it. They cost much more per flight than a belly, but they carry much more, they can load large and awkward pieces through a big side or nose door, and they fly where the cargo needs to go rather than where the passengers do. Many freighters are converted from older passenger aircraft at the end of their passenger life.</p>
+
+        <p><strong>Trucks</strong> are the third, and the least glamorous. Airlines move a lot of air cargo by road between airports, under a flight number, to feed their hubs. A shipment booked from one city to another may never see the inside of an aircraft on the first part of its trip.</p>
+
+        <h4>Three kinds of company</h4>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Model</th><th>What it does</th><th>Examples</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Combination carrier</strong></td><td>A passenger airline that sells its belly space, often with some freighters on top</td><td>Lufthansa Cargo, Cathay Cargo, Emirates SkyCargo, Korean Air</td></tr>
+            <tr><td><strong>All-cargo carrier</strong></td><td>Flies only freighters, selling to forwarders or leasing aircraft and crews to others</td><td>Cargolux, Atlas Air</td></tr>
+            <tr><td><strong>Integrator</strong></td><td>Sells door-to-door delivery directly to shippers, with its own aircraft, hubs, trucks and couriers</td><td>FedEx, UPS, DHL Express</td></tr>
+          </tbody>
+        </table>
+
+        <p>Integrators run a hub network that looks a lot like a passenger airline's (NP 101, Chapter 01), with one big difference: the parcels connect overnight. Aircraft fly in from all over the network in the evening, everything is sorted in a few hours at the hub (Memphis for FedEx, Louisville for UPS, Leipzig and Cincinnati for DHL) and the aircraft fly out again before dawn. Because they control the whole chain and sell to the shipper directly, integrators price a delivery, not a kilo of space on a flight. Most of this course is about the other two models, where the airline sells airport-to-airport space and someone else handles the rest.</p>
+
+        <h4>Containers and pallets</h4>
+
+        <p>Cargo is not loaded loose into a widebody. It is built up on unit load devices, or ULDs: metal pallets with a net strapped over the load, or containers shaped to fit the curve of the fuselage, like the LD3 that fills half the width of most widebody lower decks. Building a ULD well is a skill. A pallet that is built badly wastes volume, and a heavy load in the wrong position upsets the aircraft's balance. Both come back in Chapter 03.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 02 ── -->
+        <h3 id="ch02">Chapter 02: Who Buys the Space</h3>
+
+        <p>In passenger RM, the person who buys the ticket is usually the person who flies, or their company. In cargo, the shipper (the company that owns the goods) rarely buys space from the airline directly. The airline's customer is almost always a <strong>freight forwarder</strong>.</p>
+
+        <h4>The forwarder in the middle</h4>
+
+        <p>A forwarder organizes the whole move for the shipper: picking up the goods, export paperwork and customs, trucking to the airport, the flight, and delivery at the other end. The flight is only one piece, and the forwarder chooses which airline to buy it from, much as a travel agent chooses a flight for a corporate traveler.</p>
+
+        <p>The heart of the forwarder's business is <strong>consolidation</strong>. It collects many small shipments from many shippers going to the same destination and tenders them to the airline as one large shipment, on a single master air waybill, the cargo equivalent of a ticket. Each shipper gets its own house air waybill from the forwarder. Because airline rates per kilo fall as shipments get heavier (Chapter 05), the forwarder pays the airline the low rate for a big consolidated shipment and charges each shipper a higher rate for its small one. The spread is its margin.</p>
+
+        <div class="example">
+          <div class="example-label">Consolidation, worked through</div>
+          Ten shippers each send 100 kg from Toronto to Frankfurt. Booking alone, each would pay the airline's rate for a 100 kg shipment, say $4.20 per kg, or $420.<br><br>
+          A forwarder groups all ten into one 1,000 kg shipment and pays the airline its 1,000 kg rate, say $3.10 per kg, or $3,100. It charges each shipper $3.80 per kg, or $380. The shippers each save $40, the airline sells the same tonne of space, and the forwarder keeps $3,800 − $3,100 = $700, out of which it pays for the pickups, the paperwork and the build-up of the pallet.
+        </div>
+
+        <h4>A market with a few very large customers</h4>
+
+        <p>The forwarding market is concentrated. A handful of global forwarders, such as DHL Global Forwarding, Kuehne+Nagel and DSV, buy a large share of the space on many routes. That gives them real negotiating power. An airline cannot afford to lose its biggest forwarders, and a forwarder can move its volume to a competitor from one week to the next. The relationship looks more like corporate sales in passenger airlines (<a href="/commercial101.html">Commercial 101</a>) than like selling seats to the public, and a lot of cargo RM is about managing a portfolio of customers, not individual shipments.</p>
+
+        <p>Airlines also sell through <strong>general sales agents</strong>, or GSAs, in markets where they don't have their own sales team: a local company that sells the airline's space for a commission. And a growing share of spot bookings now go through online booking platforms, where a forwarder can compare rates from several airlines and book instantly, much as a passenger books on a website (Chapter 11).</p>
+
+        <div class="callout">
+          <div class="callout-label">Who decides what flies</div>
+          The shipper decides that the goods should fly. The forwarder decides which airline and which flight. The airline decides whether to accept the booking and at what rate. Cargo RM sits at the third step, but it has to understand the first two: a forwarder that is turned away today may not come back tomorrow.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 03 ── -->
+        <h3 id="ch03">Chapter 03: Weight, Volume &amp; Chargeable Weight</h3>
+
+        <p>A seat is a seat. A kilo of cargo is not just a kilo. A tonne of machine parts fits on a single pallet. A tonne of pillows fills a container and then some. Every hold has two limits, how much weight it can take and how much volume, and depending on what is loaded, either one can run out first.</p>
+
+        <div class="chart-wrap">
+<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Loading a hold with 16,000 kg and 110 cubic metres of capacity: dense cargo runs out of weight first, light cargo runs out of volume first" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<g stroke="#eeeeee" stroke-width="1">
+<line x1="70" y1="252" x2="480" y2="252"/><line x1="70" y1="179.3" x2="480" y2="179.3"/><line x1="70" y1="106.7" x2="480" y2="106.7"/><line x1="70" y1="34" x2="480" y2="34"/>
+<line x1="70" y1="34" x2="70" y2="252"/><line x1="172.5" y1="34" x2="172.5" y2="252"/><line x1="275" y1="34" x2="275" y2="252"/><line x1="377.5" y1="34" x2="377.5" y2="252"/><line x1="480" y1="34" x2="480" y2="252"/>
+</g>
+<g font-size="11" fill="#888888">
+<text x="70" y="268" text-anchor="middle">0</text><text x="172.5" y="268" text-anchor="middle">5,000</text><text x="275" y="268" text-anchor="middle">10,000</text><text x="377.5" y="268" text-anchor="middle">15,000</text><text x="480" y="268" text-anchor="middle">20,000</text>
+<text x="62" y="256" text-anchor="end">0</text><text x="62" y="183.3" text-anchor="end">50</text><text x="62" y="110.7" text-anchor="end">100</text><text x="62" y="38" text-anchor="end">150</text>
+</g>
+<rect x="70" y="92.1" width="328" height="159.9" fill="#f4f8fd" stroke="#267CB9" stroke-width="1.2" stroke-dasharray="4 3"/>
+<text x="390" y="240" text-anchor="end" font-size="11" fill="#267CB9">Hold: 16,000 kg, 110 m³</text>
+<line x1="70" y1="252" x2="480" y2="252" stroke="#999999" stroke-width="1.2"/>
+<line x1="70" y1="252" x2="70" y2="34" stroke="#999999" stroke-width="1.2"/>
+<line x1="70" y1="252" x2="398" y2="92.1" stroke="#9a9a9a" stroke-width="1.4" stroke-dasharray="5 4"/>
+<line x1="70" y1="252" x2="398" y2="193.9" stroke="#267CB9" stroke-width="2.8" stroke-linecap="round"/>
+<line x1="70" y1="252" x2="250.4" y2="92.1" stroke="#7c6fcd" stroke-width="2.8" stroke-linecap="round"/>
+<circle cx="398" cy="193.9" r="5" fill="#267CB9" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="250.4" cy="92.1" r="5" fill="#7c6fcd" stroke="#ffffff" stroke-width="1.5"/>
+<circle cx="398" cy="92.1" r="4" fill="#9a9a9a" stroke="#ffffff" stroke-width="1.5"/>
+<g font-size="11.5" fill="#333333">
+<line x1="96" y1="46" x2="116" y2="46" stroke="#267CB9" stroke-width="2.8"/><text x="122" y="50">Dense, 400 kg/m³: weight runs out, 70 m³ still empty</text>
+<line x1="96" y1="62" x2="116" y2="62" stroke="#7c6fcd" stroke-width="2.8"/><text x="122" y="66">Light, 80 kg/m³: volume runs out, 7,200 kg unused</text>
+<line x1="96" y1="78" x2="116" y2="78" stroke="#9a9a9a" stroke-width="1.4" stroke-dasharray="5 4"/><text x="122" y="82">145 kg/m³, the hold's own density: both run out together</text>
+</g>
+<text x="275" y="292" text-anchor="middle" font-size="12" fill="#333333">Kilos loaded</text>
+<text transform="translate(18 143) rotate(-90)" text-anchor="middle" font-size="12" fill="#333333">Cubic metres loaded</text>
+</svg>
+          <div class="chart-caption">One lower deck, three kinds of cargo. Each line follows the hold as it fills with cargo of one density. Illustrative capacities.</div>
+        </div>
+
+        <p>The ratio of the two limits is the hold's own density. In the illustration, 16,000 kg and 110 m³ make about 145 kg per cubic metre. Cargo denser than that fills the weight first and leaves empty space. Cargo lighter than that fills the volume first and leaves unused weight. The ideal load mixes the two, so that both run out at the same time, and a good part of a cargo planner's job is finding that mix.</p>
+
+        <h4>Chargeable weight</h4>
+
+        <p>If an airline charged only by weight, light shipments would be a bargain: a bulky box of clothes would pay for its few kilos while taking the space of something much heavier. So air cargo is charged on the <strong>chargeable weight</strong>, the higher of the actual weight and the <strong>volume weight</strong>, a weight assigned to the volume. IATA's general rule is to divide the volume in cubic centimetres by 6,000, which makes one cubic metre count as 166.67 kg.</p>
+
+        <div class="formula">
+          <div class="formula-label">Chargeable weight</div>
+          \[\text{chargeable weight} \;=\; \max\!\big(\,w,\;\; 166.67 \times v\,\big) \qquad\qquad \text{charge} \;=\; \text{rate} \times \text{chargeable weight}\]
+          <div class="note">\(w\) is the actual weight in kg and \(v\) the volume in m³. Express carriers often divide by 5,000 instead, which makes volume count for more.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">Two shipments at $3.00 per kg</div>
+          <table class="data-table">
+            <thead>
+              <tr><th>Shipment</th><th>Weight</th><th>Volume</th><th>Chargeable</th><th>Charge</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Machine parts</td><td>500 kg</td><td>1.2 m³</td><td>500 kg</td><td>$1,500</td></tr>
+              <tr><td>Clothing</td><td>200 kg</td><td>2.4 m³</td><td>400 kg</td><td>$1,200</td></tr>
+            </tbody>
+          </table>
+          The parts' 1.2 m³ count as 200 kg, less than their real 500 kg, so they pay by weight. The clothing's 2.4 m³ count as 400 kg, more than its real 200 kg, so it pays by volume: twice its real weight, because it takes twice as much space as the parts.
+        </div>
+
+        <p>Chargeable weight is a fixed exchange rate between kilos and cubic metres, 166.67 to 1, the same on every flight. But the real value of a cubic metre depends on the flight. In a hold full of dense cargo, volume is plentiful and a light shipment costs little to carry. In a hold full of e-commerce parcels, volume is the bottleneck and the same shipment is expensive. Chapter 07 shows how cargo RM prices each dimension by how scarce it actually is.</p>
+
+        <h4>It's not just weight and volume</h4>
+
+        <p>Two more constraints complicate the picture. Pieces have to fit through the door and on the pallet, so a long or tall piece may only fly on a freighter, or only on certain aircraft. And the aircraft has to be balanced: heavy pallets have to go in the right positions, and some positions have floor-strength limits. A load planner can sometimes fit more by rearranging, and sometimes has to leave cargo behind even though the totals say it fits.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 04 ── -->
+        <h3 id="ch04">Chapter 04: The Language of Cargo Metrics</h3>
+
+        <p>Like passenger planning (NP 101, Chapter 02), cargo has its own units, built to compare flights of different lengths and sizes. They count tonnes instead of seats.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Metric</th><th>Definition</th><th>What it tells you</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>CTK</strong><br>Cargo Tonne-Kilometres</td><td>Tonnes carried × kilometres flown</td><td>How much cargo traffic was flown. Older reports call it FTK, freight tonne-kilometres</td></tr>
+            <tr><td><strong>ACTK</strong><br>Available Cargo Tonne-Kilometres</td><td>Tonnes of cargo capacity × kilometres flown</td><td>How much capacity was offered</td></tr>
+            <tr><td><strong>Cargo load factor</strong></td><td>CTK ÷ ACTK</td><td>How much of the capacity was used, by weight</td></tr>
+            <tr><td><strong>Yield</strong></td><td>Cargo revenue ÷ CTK, or per chargeable kg</td><td>The price paid per tonne-kilometre, or per kilo</td></tr>
+          </tbody>
+        </table>
+
+        <div class="formula">
+          <div class="formula-label">Cargo load factor and yield</div>
+          \[\text{CLF} \;=\; \frac{\text{CTK}}{\text{ACTK}} \qquad\qquad \text{revenue per ACTK} \;=\; \text{yield} \times \text{CLF}\]
+          <div class="note">The same identity as RASK = yield × load factor for passengers.</div>
+        </div>
+
+        <h4>Why cargo load factors look so low</h4>
+
+        <p>Passenger load factors are typically above 80%. IATA reported a global cargo load factor of 45.7% for 2025. That doesn't mean that more than half of every aircraft flies empty. Three things pull the number down:</p>
+
+        <p>First, it is measured by weight. A hold that is full by volume with light cargo can be at 60% of its weight limit and still have no room for anything else. Second, cargo flows are unbalanced: a freighter that is full from Asia to Europe may come back a third full (Chapter 09), and the average of the two looks mediocre even if the round trip is profitable. Third, belly capacity is often counted at what the aircraft could carry, not what was actually left once passengers, bags and fuel were loaded on the day.</p>
+
+        <div class="callout">
+          <div class="callout-label">Kilos are not the whole story</div>
+          Because volume is often what runs out, cargo planners also track volume load factors and the average density of what they fly. A flight that is 95% full by volume and 55% by weight is full, and a sales team pushed to "fill the empty 45%" with more light cargo would only create offloads.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 05 ── -->
+        <h3 id="ch05">Chapter 05: Products &amp; Rates</h3>
+
+        <p>Cargo is not one product. Airlines sell several service levels, and the special products are where much of the margin is.</p>
+
+        <table class="rm-table">
+          <thead>
+            <tr><th>Product</th><th>What it is</th><th>Typical traits</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>General cargo</strong></td><td>Standard freight with no special handling</td><td>The bulk of volume, the most price-sensitive, often under allotments</td></tr>
+            <tr><td><strong>Express and e-commerce</strong></td><td>Priority handling and a guaranteed flight, often small, light parcels</td><td>Booked very late, higher rates, usually light for its volume</td></tr>
+            <tr><td><strong>Temperature-controlled</strong></td><td>Pharmaceuticals, vaccines, fresh food, kept within a temperature range from door to door</td><td>High rates, special containers and certified handling</td></tr>
+            <tr><td><strong>Dangerous goods</strong></td><td>Lithium batteries, chemicals and other regulated items</td><td>Strict rules on packing, quantity and position in the aircraft</td></tr>
+            <tr><td><strong>Live animals, valuables, outsized</strong></td><td>Horses, pets, gold, aircraft engines</td><td>Specialized handling and often a specific aircraft type</td></tr>
+            <tr><td><strong>Mail</strong></td><td>Carried for postal operators under separate agreements</td><td>Steady volume, priority loading</td></tr>
+          </tbody>
+        </table>
+
+        <p>Special products earn more per kilo because they cost more to handle and because the shipper's alternatives are few. Fewer airlines have the certification, the cold rooms or the experience, and a shipper moving a pallet of vaccines worth millions is not shopping for the cheapest rate. They are also less exposed to the swings of the general cargo market.</p>
+
+        <h4>How a rate is built</h4>
+
+        <p>A cargo rate is quoted per chargeable kilo, airport to airport. Published rates come with <strong>weight breaks</strong>: a minimum charge, a normal rate for small shipments under 45 kg, and lower rates per kilo above 45, 100, 300, 500 and 1,000 kg. On top come surcharges, the most important being a fuel surcharge that moves with the price of jet fuel, plus security and handling charges. In practice the published rates are a ceiling. Most cargo is sold at negotiated contract rates or at spot rates quoted for the shipment.</p>
+
+        <div class="example">
+          <div class="example-label">When a heavier shipment costs less</div>
+          Rates on a route: $3.00 per kg from 100 kg, $2.70 per kg from 300 kg. A shipment of 280 kg pays 280 × $3.00 = $840. But if it were charged as 300 kg, it would pay 300 × $2.70 = $810. The standard rule is that the lower of the two applies, so the shipper pays $810, for 20 kg it isn't sending. The weight breaks create the same kind of price ladder as fare classes do for passengers, and the same incentive to buy up to the next step.
+        </div>
+
+        <p>Weight breaks are also why forwarders exist in their current form (Chapter 02). The bigger the gap between the rate for a 100 kg shipment and a 1,000 kg one, the more a forwarder earns by consolidating.</p>
+
+        <p><hr/></p>
+
+        <!-- ── CH 06 ── -->
+        <h3 id="ch06">Chapter 06: Allotments &amp; the Spot Market</h3>
+
+        <p>The first decision in cargo RM comes months before any booking: how much of the capacity to sell in advance, and how much to keep for later.</p>
+
+        <h4>Two ways to sell a kilo</h4>
+
+        <p>An <strong>allotment</strong>, or block space agreement, is a contract with a forwarder for a fixed amount of space on a flight, every week, for a season or a year, at a negotiated rate. The forwarder gets guaranteed space to offer its own customers. The airline gets a base load it can count on. Everything not under allotment is sold on the <strong>spot</strong> market, one shipment at a time, at whatever rate the market supports that week.</p>
+
+        <p>The two behave very differently. The contract rate is fixed, but the forwarder doesn't always use its space, and often tells the airline late. The spot rate floats, sometimes wildly: in 2020 and 2021, spot rates on some lanes roughly doubled within weeks, and an airline that had sold most of its space under allotments in 2019 flew a lot of freight at rates far below the market.</p>
+
+        <h4>Littlewood again</h4>
+
+        <p>The trade-off is the one Littlewood solved for two fare classes (RM 101, <a href="/rm101.html#littlewood">Chapter 03</a>). Think of the contract rate as the low fare, sold early and with certainty, and the spot rate as the high fare that might or might not arrive. Keep a kilo back for the spot market as long as the expected spot revenue from that kilo is worth more than the contract rate it gives up.</p>
+
+        <div class="formula">
+          <div class="formula-label">Littlewood's rule for allotments</div>
+          \[S \cdot P(D_{\text{spot}} \geq y) \;\geq\; r_{\text{eff}}\]
+          <div class="note">\(S\) is the expected spot rate, \(D_{\text{spot}}\) the uncertain spot demand, \(y\) the kilos kept for spot, and \(r_{\text{eff}}\) what a kilo under allotment really earns: the contract rate times the share of space the forwarder actually uses, plus any fee on what it doesn't, plus what the airline earns by reselling space handed back in time.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">What an allotment kilo is really worth</div>
+          Contract rate $3.40 per kg, expected spot rate $4.00. If forwarders always used their space, the threshold would be 3.40 / 4.00 = 0.85: keep a kilo for the spot market only if it is 85% likely to sell there. Allotments look attractive.<br><br>
+          Now suppose forwarders use only 80% of their allotment on average, pay nothing for the rest, and hand it back too late to resell. An allotted kilo then earns 0.8 × $3.40 = $2.72, the threshold falls to 2.72 / 4.00 = 0.68, and the airline should keep a lot more space for spot. A use-it-or-pay clause, where the forwarder pays part of the rate on space it doesn't use, pushes the threshold back up.
+        </div>
+
+        <h4>Making allotments work</h4>
+
+        <p>Because unused allotment space is the main risk, the contract terms matter as much as the rate. Common tools are a <strong>release deadline</strong> (space not booked 48 or 72 hours before departure goes back to the airline), <strong>use-it-or-pay</strong> clauses, and reviewing each forwarder's actual usage at the end of a season to resize its allotment for the next one. Airlines also sell ahead some of the space they expect to be handed back late, which is overbooking by another name (Chapter 08).</p>
+
+        <div class="callout">
+          <div class="callout-label">Allotments as insurance</div>
+          A risk-neutral airline picks the allotment share with the highest average revenue. But spot markets swing, and an airline with fixed costs and lenders to pay may prefer a steadier result even if the average is a bit lower. Allotments are partly insurance: the airline gives up some upside in a hot market to protect itself in a cold one. The forwarder is buying the same insurance from the other side.
+        </div>
+
+        <aside class="try-it" aria-label="Tools for this chapter">
+          <div class="try-label">Try it</div>
+          <a href="/allotments.html"><b>Allotments vs spot</b><span>How much of a freighter to sell under block space agreements, what to do with space forwarders hand back, and how the answer changes in a 2020–21 market.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+          <a href="/littlewood.html"><b>Littlewood's rule</b><span>The two-fare case behind the allotment decision, step by step.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </aside>
+
+        <p><hr/></p>
+
+        <!-- ── CH 07 ── -->
+        <h3 id="ch07">Chapter 07: Bid Prices in Two Dimensions</h3>
+
+        <p>Once the allotments are set, the rest of the space is sold booking by booking, mostly in the last days before departure. Each request is a shipment with a weight, a volume and a rate, and the airline has to decide whether to accept it. In passenger RM, the answer is a bid price (RM 101, Chapter 04): accept a booking if its fare is above the opportunity cost of the seat. Cargo uses the same idea, with one twist. A shipment uses two resources, so there are two bid prices.</p>
+
+        <h4>A price for a kilo and a price for a cubic metre</h4>
+
+        <p>The bid prices come from a small linear program: given the demand still expected, which mix of shipments would earn the most without exceeding the weight or the volume left? The solution assigns a shadow price to each constraint: \(\pi_w\), what one more kilo of capacity would be worth, and \(\pi_v\), what one more cubic metre would be worth. A shipment is accepted if its revenue covers the value of the space it uses.</p>
+
+        <div class="formula">
+          <div class="formula-label">Two-dimensional bid-price rule</div>
+          \[\text{accept if}\quad R \;\geq\; \pi_w \, w \;+\; \pi_v \, v\]
+          <div class="note">\(R\) is the shipment's expected revenue, \(w\) its weight and \(v\) its volume. In practice \(R\) is discounted for the chance that the shipment doesn't turn up, or turns up lighter (Chapter 08). When weight is scarce, \(\pi_w\) is high and \(\pi_v\) is near zero, and the reverse when volume is scarce.</div>
+        </div>
+
+        <p>The interesting part is that the bid prices move with the cargo already booked. On a flight filling with dense machinery, weight becomes scarce and volume is nearly free, so a bulky, light shipment is welcome. On a flight filling with e-commerce parcels, volume is scarce and the same shipment is expensive to carry, even though it pays exactly the same chargeable weight.</p>
+
+        <div class="example">
+          <div class="example-label">The same two shipments, two different flights</div>
+          The machine parts and the clothing from Chapter 03, now at $2.60 per chargeable kg: the parts earn $1,300, the clothing $1,040.
+          <table class="data-table">
+            <thead>
+              <tr><th>Flight</th><th>Bid prices</th><th>Parts: value of space</th><th>Clothing: value of space</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Weight is scarce</td><td>$2.00 per kg, $0 per m³</td><td>$1,000: accept (+$300)</td><td>$400: accept (+$640)</td></tr>
+              <tr><td>Volume is scarce</td><td>$0.40 per kg, $450 per m³</td><td>$200 + $540 = $740: accept (+$560)</td><td>$80 + $1,080 = $1,160: <strong>reject</strong> (−$120)</td></tr>
+            </tbody>
+          </table>
+          On the first flight, the clothing is the better booking. On the second, it doesn't pay for the space it takes, and the airline is better off keeping that space for something denser or better paid. Chargeable weight alone can't see the difference.
+        </div>
+
+        <h4>Network and re-optimization</h4>
+
+        <p>As with passengers, a shipment that connects through a hub uses capacity on two flights, and its revenue has to cover the bid prices on both (RM 101, Chapter 06). Cargo networks connect even more than passenger ones, because cargo will happily take a longer routing if it arrives in time. The bid prices are re-solved regularly as bookings come in, typically once a day or more often near departure, when most cargo bookings arrive.</p>
+
+        <aside class="try-it" aria-label="Tools for this chapter">
+          <div class="try-label">Try it</div>
+          <a href="/cargorm.html"><b>Cargo revenue management</b><span>Bid prices per kg and per m³ against first come, first served on 1,000 simulated flights, with a step-through of one flight's bookings.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+          <a href="/bidprice.html"><b>Network bid prices</b><span>The passenger version: leg bid prices from a linear program, and why connecting bookings need them.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </aside>
+
+        <p><hr/></p>
+
+        <!-- ── CH 08 ── -->
+        <h3 id="ch08">Chapter 08: No-Shows, Short Tenders &amp; Overbooking</h3>
+
+        <p>A booking is a promise, and cargo promises are loose. Some booked shipments never turn up: the goods weren't ready, the shipper changed its mind, or the forwarder booked several flights to be sure and used only one. Others turn up with a different weight or volume than booked, usually less, sometimes more. This is called a short tender, or an over-tender. And there is little penalty for any of it: unlike a passenger, a forwarder usually pays nothing for a booking it doesn't use.</p>
+
+        <p>Show-up rates differ a lot between customers. Express and special cargo tend to turn up almost every time, because there is a real shipment behind every booking. Allotment bookings are the least reliable, since the space is already reserved and booking it costs the forwarder nothing. Declared volumes are also often too low, because many shippers don't measure their freight carefully.</p>
+
+        <h4>Overbooking</h4>
+
+        <p>If the airline accepted only what fits, the aircraft would regularly leave with space that no-shows and short tenders left empty. So, like passenger airlines, cargo airlines overbook: they accept more than the capacity, expecting some of it not to turn up. The risk is the opposite case, where more cargo turns up than fits and some has to be <strong>offloaded</strong>. An offloaded shipment earns nothing on this flight, and still costs money: storing it, rebooking it, sometimes trucking it or putting it on a competitor, and the goodwill of a forwarder whose customer was promised this flight.</p>
+
+        <div class="formula">
+          <div class="formula-label">How far to overbook</div>
+          \[P(\text{tendered} > C) \;\leq\; \frac{r}{r + c}\]
+          <div class="note">Keep accepting more as long as the chance that the last kilo won't fit stays below this ratio. \(C\) is the capacity, \(r\) the revenue of a kilo that flies, and \(c\) the cost of offloading one. The same logic as the passenger version: compare the cost of an empty kilo with the cost of a bumped one.</div>
+        </div>
+
+        <div class="example">
+          <div class="example-label">A belly with 16,000 kg</div>
+          Bookings on a route turn up, on average, at 80% of their booked weight. To expect a full hold, the airline would book 16,000 / 0.8 = 20,000 kg, or 125% of capacity. But the 80% is only an average: on some days it is 70%, on others 95%, and booking to the average would mean offloading on about half the flights.<br><br>
+          With a revenue of $2.60 per kg and an offload cost of $4.00 per kg, the ratio is 2.60 / 6.60 ≈ 0.39. The airline should overbook up to the point where the last kilo accepted has a 39% chance of not fitting, which, with this much variability, is somewhat below 125%. If offloads were cheaper, it would overbook more. If show-up were more predictable, it could overbook closer to the average.
+        </div>
+
+        <p>In cargo there are two capacities, so two overbooking levels to set, one for weight and one for volume. Volume is usually overbooked with more caution because declared volumes are less reliable, and because a shipment that doesn't fit by volume physically doesn't fit, while a little extra weight can sometimes be absorbed if the passengers and bags come in lighter.</p>
+
+        <aside class="try-it" aria-label="Tools for this chapter">
+          <div class="try-label">Try it</div>
+          <a href="/cargorm.html"><b>Cargo revenue management</b><span>Section 4: the net revenue of every pair of weight and volume overbooking levels, and how the best one moves when show-up gets less predictable.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+          <a href="/unconstraining.html"><b>Demand unconstraining</b><span>The passenger side of the same data problem: estimating the demand behind bookings that never show what was really there.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </aside>
+
+        <p><hr/></p>
+
+        <!-- ── CH 09 ── -->
+        <h3 id="ch09">Chapter 09: Imbalance &amp; the Cargo Network</h3>
+
+        <p>Passengers mostly fly return trips. Goods don't. They flow from where they are made to where they are bought, and on most big trade lanes much more freight goes one way than the other. Asia to North America and Asia to Europe are the classic examples. The busy direction is called the <strong>headhaul</strong> and the quiet one the <strong>backhaul</strong>.</p>
+
+        <div class="example">
+          <div class="example-label">One freighter, a round trip</div>
+          A freighter with 100 tonnes of payload flies 9,000 km each way. It leaves full at 90 tonnes and $4.00 per kg, and comes back with 35 tonnes at $1.80 per kg.
+          <table class="data-table">
+            <thead>
+              <tr><th></th><th>Headhaul</th><th>Backhaul</th><th>Round trip</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Tonnes carried</td><td>90</td><td>35</td><td>125</td></tr>
+              <tr><td>Load factor (by weight)</td><td>90%</td><td>35%</td><td>62.5%</td></tr>
+              <tr><td>Revenue</td><td>$360,000</td><td>$63,000</td><td>$423,000</td></tr>
+              <tr class="highlight"><td>Share of revenue</td><td>85%</td><td>15%</td><td></td></tr>
+            </tbody>
+          </table>
+          The aircraft has to come back anyway, so any backhaul revenue above the extra handling and fuel is a gain, and backhaul rates are priced accordingly. The real decision is whether the headhaul alone, plus whatever the backhaul brings, covers the cost of the whole round trip.
+        </div>
+
+        <h4>Routing freighters</h4>
+
+        <p>Because the aircraft doesn't have to come straight back, freighter networks are shaped differently from passenger ones. Freighters often fly triangles or round-the-world rotations, picking up cargo wherever the headhaul is: Asia to Europe, Europe to North America, North America back to Asia, for example. Many of those legs need traffic rights to carry cargo between two foreign countries, the so-called fifth freedom, which is one reason cargo airlines care so much about air service agreements. Freighters also stop for fuel or for extra cargo more readily than passenger flights, since cargo doesn't mind a stop as long as it arrives on time.</p>
+
+        <h4>Belly cargo goes where passengers go</h4>
+
+        <p>A combination carrier's belly network is decided by passenger planners (NP 101). Cargo gets what that network offers, which can be a lot of capacity on routes cargo doesn't need and too little on routes it does. Freighters, trucks and partner airlines fill the gaps. Some combination carriers run a few freighters precisely to cover the lanes their passenger network doesn't serve well, and use their hubs to connect belly and freighter capacity into one cargo network.</p>
+
+        <div class="callout">
+          <div class="callout-label">The backhaul is a pricing problem</div>
+          On a backhaul, the opportunity cost of a kilo is close to zero for most of the booking period, so bid prices are low and almost any shipment is worth taking. The risk is training the market: if backhaul rates are always low, forwarders learn to wait for them. The same tension between filling space and protecting price runs through all of revenue management.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 10 ── -->
+        <h3 id="ch10">Chapter 10: Cargo Meets Passengers</h3>
+
+        <p>In a passenger aircraft, cargo and passengers share the same aircraft, the same payload limit and the same departure time, and passengers come first.</p>
+
+        <h4>Capacity you only know on the day</h4>
+
+        <p>The cargo capacity of a passenger flight is whatever is left of the aircraft's payload and lower-deck space after passengers, their bags and the fuel. All three move. A full flight carries more bags. A long flight in strong headwinds needs more fuel, and on the longest routes the aircraft may be <strong>payload restricted</strong>: it can carry everyone but cannot take off at its maximum weight with all the cargo too. Cargo is then the first thing left behind. So cargo RM has to forecast its own capacity, flight by flight, and that forecast is uncertain until the last days, exactly when most cargo is booked.</p>
+
+        <div class="example">
+          <div class="example-label">One flight, two forecasts</div>
+          A widebody's lower deck can take 20 tonnes in theory. Thirty days out, with average bookings, cargo expects about 16 tonnes to be left for it after bags and fuel, and sells against that, plus some overbooking. Five days out, the passenger flight is selling out and the weather forecast calls for headwinds: the estimate drops to 13 tonnes. The 3 tonnes now look like an offload risk, and cargo RM raises its bid prices and slows its sales. If the passengers don't all show, some of it comes back on the day.
+        </div>
+
+        <h4>Cargo in route profitability</h4>
+
+        <p>Cargo can change whether a passenger route makes sense. On a long-haul route, belly cargo might bring in a tenth of a flight's revenue, at a small extra cost: handling and the fuel to carry the extra weight. That can turn a route that loses money on passengers alone into one that contributes (NP 101, Chapter 06), and some long-haul routes are flown partly because of the cargo. When planners compare aircraft for a route, the lower-deck capacity and the cargo it can carry are part of the comparison.</p>
+
+        <h4>Who gets the payload</h4>
+
+        <p>When payload is tight, airlines face a real trade-off: a few more passengers, or a few more tonnes of cargo? Passengers normally win, because bumping a passenger is costly and visible. But on some routes a high-value cargo shipment is worth more than the last few seats, and in principle it can pay to stop selling seats a little earlier on a payload-restricted flight to make room for it. Making that decision well needs the passenger and cargo RM systems to talk to each other, which in many airlines they still don't do automatically.</p>
+
+        <div class="callout">
+          <div class="callout-label">The 2020 experiment</div>
+          When passenger flying stopped in 2020, airlines learned what their cargo was worth on its own. Many flew passenger aircraft as cargo-only flights, sometimes loading boxes on the seats. Routes that had never made sense without passengers suddenly made sense with only cargo, because rates were so high. The experiment showed how much belly capacity the world had been relying on without noticing.
+        </div>
+
+        <p><hr/></p>
+
+        <!-- ── CH 11 ── -->
+        <h3 id="ch11">Chapter 11: What's Next</h3>
+
+        <p>Air cargo has long been one of the less digital corners of aviation, run on phone calls, emails and paper. That is changing quickly.</p>
+
+        <h4>Digital booking and dynamic pricing</h4>
+
+        <p>Forwarders can now get instant quotes and book spot space online, on airline websites and on platforms that compare several airlines, the way passengers have booked for twenty years. That turns the spot market into something close to passenger e-commerce: rates that update continuously, and a record of every quote, including the ones that didn't turn into a booking. As in RM 101, Chapter 07, it opens the door to pricing each shipment dynamically, based on the bid prices and on how likely the forwarder is to accept.</p>
+
+        <h4>Better data</h4>
+
+        <p>Cargo still struggles with basic data: what is really in the booking, how much it weighs, how big it is, and where it is. IATA's ONE Record standard aims to replace the patchwork of messages between airlines, forwarders and handlers with shared, linked data on each shipment, and from January 2026 IATA made it the preferred method for cargo data exchange. Warehouses increasingly measure volume automatically with dimensioning scanners instead of trusting the declaration. Better data improves everything in Chapters 07 and 08: more accurate show-up forecasts, tighter overbooking, fewer offloads.</p>
+
+        <h4>E-commerce</h4>
+
+        <p>Cross-border e-commerce has become one of the main drivers of air cargo growth. It brings large volumes of small, light parcels booked at short notice. That makes volume, not weight, the binding constraint on more flights, and pushes cargo RM further toward the two-dimensional thinking of Chapter 07. It also makes cargo demand more sensitive to trade policy, since a change in customs rules for low-value parcels can move a lot of freight from one week to the next.</p>
+
+        <h4>Fleet and sustainability</h4>
+
+        <p>A new generation of more fuel-efficient freighters is coming, alongside a steady supply of converted passenger aircraft. At the same time, cargo faces the same pressure as passenger flying to cut emissions, and shippers increasingly ask for the carbon footprint of their shipments. Weight is fuel, so the incentive to fly fewer empty kilos, and to fill each flight with the right mix, only gets stronger.</p>
+
+        <p>Anyway, that's the overview. If something here was unclear or you want to go deeper on any chapter, feel free to reach out. I find this stuff genuinely fascinating, and I'm always happy to talk about it.</p>
+
+        <p><hr/></p>
+
+        <h4>Sources for the facts and figures</h4>
+
+        <p><small>
+          Share of world trade by value: <a href="https://www.iata.org/en/programs/cargo/sustainability/benefits/">IATA, Value of air cargo</a>.<br>
+          2025 load factor and yields: <a href="https://www.iata.org/en/pressroom/2026-releases/2026-01-29-01/">IATA, Global air cargo demand achieved record volume in 2025</a> (29 January 2026).<br>
+          Belly share before the pandemic: <a href="https://www.aircargonews.net/freight-forwarder/2022/08/how-air-passenger-traffic-impacts-cargo-capacity/">Air Cargo News, How air passenger traffic impacts cargo capacity</a> (2022).<br>
+          The 1910 silk flight: <a href="https://www.daytondailynews.com/local/on-this-date-the-first-ever-air-delivery-brought-silk-from-dayton-to-columbus-112-years-ago/G2TMDBM6OFFR7JZD4TUFKSPVZ4/">Dayton Daily News</a>.<br>
+          Air cargo deregulation in 1977 and FedEx: <a href="https://www.mercatus.org/research/policy-briefs/unleashing-innovation-deregulation-air-cargo-transportation">Mercatus Center, Unleashing innovation: the deregulation of air cargo transportation</a>.<br>
+          ONE Record: <a href="https://www.iata.org/en/pressroom/2026-releases/2026-03-10-01/">IATA, IATA highlights three priorities for air cargo</a> (10 March 2026).<br>
+          Further reading: Kasilingam, R. (1997), "Air cargo revenue management: characteristics and complexities", <em>European Journal of Operational Research</em> 96(1). Amaruchkul, K., Cooper, W. and Gupta, D. (2007), "Single-leg air-cargo revenue management", <em>Transportation Science</em> 41(4). Levin, Y., Nediak, M. and Topaloglu, H. (2012), "Cargo capacity management with allotments and spot market demand", <em>Operations Research</em> 60(2).
+        </small></p>
+
+      </section>
+
+      <footer>
+      </footer>
+    </div>
+
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+    </script>
+      <script>
+      // Chapter menu: highlights the chapter being read (and ticks the ones before it), fills the
+      // progress bars, keeps the active entry in view in the rail, and drives the phone chapter bar.
+      (function () {
+        var toc = document.getElementById("toc");
+        if (!toc) return;
+        var links = [].slice.call(toc.querySelectorAll('a[href^="#"]'));
+        var heads = links.map(function (a) { return document.getElementById(a.getAttribute("href").slice(1)); });
+        var section = document.querySelector(".wrapper > section");
+        var rail = document.querySelector(".crs-progress i");
+        var hdr = document.querySelector(".at-hdr");
+        var label = function (a) { var n = a.querySelector(".ch-n"); return { n: n ? n.textContent.trim() : "", t: a.textContent.replace(n ? n.textContent : "", "").trim() }; };
+
+        // phone / tablet bar, built from the same links
+        var bar = document.createElement("div");
+        bar.className = "crs-bar";
+        bar.innerHTML = '<button type="button" class="crs-bar-btn" aria-expanded="false" aria-controls="crs-bar-menu"><span class="n"></span><span class="t"></span><span class="k"></span>' +
+          '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><div class="crs-bar-prog"><i></i></div>' +
+          '<nav class="crs-bar-menu" id="crs-bar-menu" aria-label="Chapters" hidden></nav>';
+        var menu = bar.querySelector("nav"), btn = bar.querySelector("button");
+        links.forEach(function (a) { menu.appendChild(a.cloneNode(true)); });
+        var mlinks = [].slice.call(menu.querySelectorAll("a"));
+        (hdr && hdr.parentNode === document.body ? hdr : document.body.firstChild).insertAdjacentElement(hdr ? "afterend" : "beforebegin", bar);
+        function setOpen(o) { menu.hidden = !o; btn.setAttribute("aria-expanded", String(o)); }
+        btn.addEventListener("click", function () { setOpen(menu.hidden); });
+        menu.addEventListener("click", function (e) { if (e.target.closest("a")) setOpen(false); });
+        document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });
+
+        var cur = -2;
+        function update() {
+          var line = (hdr ? hdr.offsetHeight : 0) + (bar.offsetHeight || 0) + window.innerHeight * 0.2, i = -1;
+          heads.forEach(function (h, k) { if (h && h.getBoundingClientRect().top <= line) i = k; });
+          if (section) {
+            var r = section.getBoundingClientRect(), total = r.height - window.innerHeight * 0.6;
+            var p = Math.max(0, Math.min(1, (-r.top + window.innerHeight * 0.2) / Math.max(1, total)));
+            if (rail) rail.style.width = (p * 100).toFixed(1) + "%";
+            bar.querySelector(".crs-bar-prog i").style.width = (p * 100).toFixed(1) + "%";
+          }
+          if (i === cur) return;
+          cur = i;
+          [links, mlinks].forEach(function (L) { L.forEach(function (a, k) { a.classList.toggle("active", k === i); a.classList.toggle("done", k < i); if (k === i) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); }); });
+          var l = i >= 0 ? label(links[i]) : { n: "", t: "Contents" };
+          bar.querySelector(".n").textContent = l.n;
+          bar.querySelector(".t").textContent = l.t;
+          bar.querySelector(".k").textContent = i >= 0 ? (i + 1) + " / " + links.length : links.length + " chapters";
+          // keep the active entry visible inside the rail's own scroll area
+          var a = links[i];
+          if (a && toc.scrollHeight > toc.clientHeight) {
+            var top = a.offsetTop - toc.offsetTop, bot = top + a.offsetHeight;
+            if (top < toc.scrollTop + 24 || bot > toc.scrollTop + toc.clientHeight - 24) toc.scrollTo({ top: Math.max(0, top - toc.clientHeight / 3), behavior: "smooth" });
+          }
+        }
+        function fades() {
+          toc.classList.toggle("fade-t", toc.scrollTop > 2);
+          toc.classList.toggle("fade-b", toc.scrollTop + toc.clientHeight < toc.scrollHeight - 2);
+        }
+        var queued = false;
+        function onScroll() { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; update(); }); }
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", function () { update(); fades(); });
+        toc.addEventListener("scroll", fades, { passive: true });
+        update(); fades();
+      })();
+    </script>
+  </body>
+</html>

@@ -23,13 +23,13 @@
     <link rel="canonical" href="https://gregoiremaillard.com/continuouspricing.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Grégoire Maillard">
-    <meta property="og:title" content="Continuous pricing · Airline tools">
+    <meta property="og:title" content="Continuous pricing · Airline Economics">
     <meta property="og:description" content="A continuous pricing simulator: a ladder of fare classes controlled with EMSR-b against prices set at any amount, on thousands of simulated departures, and where the extra revenue comes from.">
     <meta property="og:url" content="https://gregoiremaillard.com/continuouspricing.html">
     <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/continuouspricing.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Continuous pricing · Airline tools">
+    <meta property="og:image:alt" content="Continuous pricing · Airline Economics">
     <meta name="twitter:card" content="summary_large_image">
 
     <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
@@ -58,7 +58,7 @@
         padding: 26px 30px 60px;
       }
       .intro h2 { margin: 0 0 6px; }
-      .intro p { margin: 0 0 4px; max-width: 780px; }
+      .intro p { margin: 0 0 4px; }
       .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
       .err { color: #9a3b0b; font-size: 13px; }
 
@@ -189,7 +189,7 @@
       }
     </style>
 
-    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <!-- Airline Economics header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
     <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
     <style>
       @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
@@ -214,44 +214,47 @@
       .at-hdr .at-home:hover { background: var(--at-wash); }
       .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
       .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
-      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 4px; }
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
-      /* breadcrumb: "Airline tools · group", same on every tool page */
+      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
+      @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
+      /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
       .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
       .crumbs a:hover { color: var(--link, #267CB9); }
     </style>
     <style>
-      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; max-width: 780px; }
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; }
     </style>
     <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
-        <nav class="at-tabs" aria-label="Airline tools">
-          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
-          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline economics"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline Economics">
+          <a class="at-tab" href="/airlinetools.html#rm" aria-current="page">Revenue management</a>
+          <a class="at-tab" href="/airlinetools.html#network">Network planning</a>
+          <a class="at-tab" href="/airlinetools.html#loyalty">Loyalty</a>
+          <a class="at-tab" href="/airlinetools.html#cargo">Cargo</a>
+          <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>22</b> tools · <b>7</b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
-        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Revenue management</div>
+        <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Revenue management</div>
         <h2>Continuous pricing</h2>
         <p class="lede">What a ladder of fare classes leaves on the table when a price can be set at any amount.</p>
         <p>For decades an airline's price could only move in steps: a flight is sold in a handful of fare classes, each filed in advance at a fixed amount, and revenue management decides which of them are open. Continuous pricing lets the price land anywhere, $287 instead of $243 or $332, and it's the main pricing argument behind offer-based distribution (NDC). This page sells the same shoppers on the same flight twice, once through a class ladder controlled with EMSR-b and once with a price set at any amount from the same forecast, over 2,000 simulated departures. It's the hands-on companion to <a href="/rm101.html#ch07">Revenue Management 101, chapter 07</a>.</p>
-        <p class="note-line">All fares, demand figures and customer behaviour on this page are illustrative assumptions, not any airline's data.</p>
       </div>
 
       <div class="stage">
@@ -320,7 +323,7 @@
             <div class="block-head"><h3>The gain against the number of fare classes</h3><span id="sw-sub"></span></div>
             <p class="lead" id="sw-lead"></p>
             <div class="chart" id="ch-sw"></div>
-            <p class="rm-link">How EMSR-b sets booking limits: the <a href="/bookinglimits.html">booking limits</a> page and <a href="/rm101.html#ch03">RM 101, chapter 03</a>. Why the ladder here uses fare adjustment: the <a href="/buydown.html">buy-down</a> page.</p>
+            <p class="rm-link">How EMSR-b sets booking limits: the <a href="/bookinglimits.html#emsr">booking limits</a> page and <a href="/rm101.html#ch03">RM 101, chapter 03</a>. Why the ladder here uses fare adjustment: the <a href="/buydown.html">buy-down</a> page.</p>
           </div>
         </div>
       </div>

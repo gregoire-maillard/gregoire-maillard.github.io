@@ -23,13 +23,13 @@
     <link rel="canonical" href="https://gregoiremaillard.com/abtestlab.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Grégoire Maillard">
-    <meta property="og:title" content="Offer A/B test lab · Airline tools">
+    <meta property="og:title" content="Offer A/B test lab · Airline Economics">
     <meta property="og:description" content="Design an A/B test of two airline offers (a preselected seat, a bundle, a price point or a display order), run it day by day on simulated shoppers, read the result with guardrails, and see why peeking at the results picks false winners.">
     <meta property="og:url" content="https://gregoiremaillard.com/abtestlab.html">
     <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/abtestlab.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="Offer A/B test lab · Airline tools">
+    <meta property="og:image:alt" content="Offer A/B test lab · Airline Economics">
     <meta name="twitter:card" content="summary_large_image">
 
     <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
@@ -269,7 +269,7 @@
     </style>
 
 
-    <!-- Airline tools header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <!-- Airline Economics header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
     <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
     <style>
       @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
@@ -294,33 +294,37 @@
       .at-hdr .at-home:hover { background: var(--at-wash); }
       .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
       .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
-      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 4px; }
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
       .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
       .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 599px) { .at-hdr .at-tabs, .at-hdr .at-pill { display: none; } }
+      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
+      @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
     </style>
     <script defer src="/assets/js/airline-tools.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline tools"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
-        <nav class="at-tabs" aria-label="Airline tools">
-          <a class="at-tab" href="/airlinetools.html#tools" aria-current="page">Tools</a>
-          <a class="at-tab" href="/airlinetools.html#knowledge">Knowledge</a>
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline economics"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline Economics">
+          <a class="at-tab" href="/airlinetools.html#rm" aria-current="page">Revenue management</a>
+          <a class="at-tab" href="/airlinetools.html#network">Network planning</a>
+          <a class="at-tab" href="/airlinetools.html#loyalty">Loyalty</a>
+          <a class="at-tab" href="/airlinetools.html#cargo">Cargo</a>
+          <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>23</b> tools · <b>7</b> courses</span>
+        <span class="at-pill"><b>22</b> tools · <b>7</b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
-        <div class="crumbs"><a href="/airlinetools.html">Airline tools</a> · Revenue management</div>
+        <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Revenue management</div>
         <h2>Offer A/B test lab</h2>
         <p class="lede">Is the new offer better, or did you just get lucky?</p>
         <p>Airline retailing teams test almost everything on the booking path: what goes in a bundle, what it costs, which fare family is shown first, whether a seat comes preselected. This lab plays one of those tests out on simulated shoppers. You design it, run it day by day, and read the result the way the team would: revenue per shopper first, with guardrails on bookings and complaints. Then you see the true effect you were trying to measure, and how often stopping early would have fooled you.</p>
