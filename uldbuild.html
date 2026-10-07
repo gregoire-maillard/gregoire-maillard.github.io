@@ -1,0 +1,1230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Chargeable weight &amp; ULD build-up</title>
+    <meta name="description" content="Load 40 shipments into a widebody's lower deck of LD3 containers and pallets, by hand or with a packing heuristic. Chargeable against actual weight, weight and volume fill, wasted space, and why loading the best rate first loses to mixing dense and light cargo.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/uldbuild.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Chargeable weight &amp; ULD build-up · Airline Economics">
+    <meta property="og:description" content="Load 40 shipments into a widebody's lower deck of LD3 containers and pallets, by hand or with a packing heuristic. Chargeable against actual weight, weight and volume fill, wasted space, and why loading the best rate first loses to mixing dense and light cargo.">
+    <meta property="og:url" content="https://gregoiremaillard.com/uldbuild.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/uldbuild.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Chargeable weight &amp; ULD build-up · Airline Economics">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as cargorm.html / bidprice.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* Loading orders: same colours as cargorm.html (orange = the naive rule, green = the better one) */
+        --m-rate: #d9480f;
+        --m-mix: #3a8f5c;
+        --m-hand: #222;
+        /* Shipment profiles */
+        --p-dense: #1d3f8f;
+        --p-standard: #2a9d8f;
+        --p-light: #e9a03b;
+      }
+
+      .content {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Pill switchers (same as cargorm / airflows) ── */
+      .switch { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 20px 0 6px; }
+      .switch .grp { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .switch .grp > span { font-size: 12px; color: var(--muted); }
+      .views {
+        display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff;
+        flex-wrap: wrap; gap: 2px;
+      }
+      .views button {
+        border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text);
+        padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .preset-blurb { font-size: 13px; color: var(--text); margin: 8px 0 0; max-width: 860px; }
+
+      .btn {
+        font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff;
+        border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink);
+        display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+      }
+      .btn:hover { border-color: #cfcfcf; }
+      .btn.dark { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .btn:disabled { opacity: .45; cursor: default; }
+
+      /* ── Sections ── */
+      section.sec { width: auto; float: none; padding: 0; border: 0; }
+      .sec { margin: 38px 0 0; }
+      .sec > h3 { font-size: 20px; margin: 0 0 6px; color: var(--ink); }
+      .sec > p.lead { margin: 0 0 14px; font-size: 13.5px; max-width: 820px; }
+      .block { margin: 0 0 28px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h4 { margin: 0; font-size: 15px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .block > p.lead { margin: 0 0 10px; font-size: 13px; max-width: 800px; }
+      .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+      .two.wide-l { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .tbl-wrap.tall { max-height: 520px; overflow-y: auto; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      table.res { border-collapse: collapse; width: 100%; font-size: 13px; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: bottom; background: #fff; }
+      .tbl-wrap.tall table.res th { position: sticky; top: 0; z-index: 1; }
+      table.res td { padding: 5px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res td.l, table.res th.l { text-align: left; }
+      table.res td.hl { color: var(--ink); font-weight: 600; }
+      table.res tbody tr:hover td { background: var(--soft); }
+      table.res .neg { color: #b4441a; }
+      table.res .pos { color: #2e7a4d; }
+      table.res tr.sum td { border-top: 1px solid var(--line); color: var(--ink); font-weight: 600; }
+      table.res tr.cur td { background: #f4f9f6; }
+      table.res tr.off td { color: #a3a3a3; }
+      table.res th.sort { cursor: pointer; user-select: none; }
+      table.res th.sort:hover { color: var(--ink); }
+      table.res th.sort.on { color: var(--ink); }
+      table.res th.sort.on::after { content: " ▾"; font-size: 10px; }
+      table.res th.sort.on.asc::after { content: " ▴"; }
+      table.res input[type=checkbox] { accent-color: #222; width: 15px; height: 15px; margin: 0; vertical-align: -2px; cursor: pointer; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+      .tag { display: inline-block; font-size: 11px; line-height: 1.3; padding: 1px 6px; border-radius: 4px; background: #f1f1ef; color: var(--text); }
+      .tag.ok { background: #e9f4ee; color: #2e7a4d; }
+      .tag.no { background: #fbeee8; color: #9a3b0b; }
+      .tag.long { background: #eef1f8; color: #1d3f8f; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+      .status { font-size: 12px; color: var(--muted); }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 18px; }
+      .tiles.six { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile .k { font-size: 12px; }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; margin-top: 4px; }
+      .tile span.s { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+      .tile.bad b { color: #9a3b0b; }
+
+      /* ── Controls row ── */
+      .ctl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin: 0 0 8px; font-size: 12.5px; color: var(--text); }
+      .ctl-row .grp { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .ctl-row .grp > span { font-size: 12px; color: var(--muted); }
+      .mode-blurb { font-size: 13px; color: var(--text); margin: 4px 0 16px; max-width: 860px; }
+
+      /* ── Fill bars ── */
+      .caps { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; align-items: center; font-size: 12.5px; margin: 14px 0 0; }
+      .caps .lbl { color: var(--muted); }
+      .caps .val { grid-column: 2; font-size: 12px; color: var(--text); margin: -1px 0 6px; font-variant-numeric: tabular-nums; }
+      .caps .val b { color: var(--ink); font-weight: 600; }
+      .cbar { position: relative; height: 14px; border-radius: 3px; background: #f1f1ef; overflow: visible; }
+      .cbar .seg { position: absolute; top: 0; bottom: 0; }
+      .cbar .seg.hatch { background: repeating-linear-gradient(45deg, #dfe4ea 0 3px, #f1f1ef 3px 6px); }
+      .cbar .lim { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 2px dotted var(--ink); }
+
+      /* ── Charts ── */
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart.bare { border: 0; padding: 0; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart svg text { font-family: inherit; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .axis-title { font-size: 11px; fill: #767676; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+      .legend i.ring { width: 9px; height: 9px; border-radius: 50%; background: #fff !important; box-shadow: inset 0 0 0 1.5px #888; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .legend i.hatch { background: repeating-linear-gradient(45deg, #dfe4ea 0 3px, #f7f7f7 3px 6px); }
+      .pt { cursor: pointer; }
+      .deck .cell { cursor: default; }
+
+      /* ── Tooltip ── */
+      .tip {
+        position: fixed; pointer-events: none; z-index: 20;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45;
+        max-width: 300px; display: none;
+      }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: center; gap: 7px; }
+      .tip .r i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 10px; }
+
+      .loading { font-size: 13px; color: var(--muted); padding: 30px 0; }
+      .err { font-size: 13px; color: #9a3b0b; background: #fff6f2; border: 1px solid #f3c9b5; border-radius: 8px; padding: 10px 12px; margin: 16px 0; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+      .method table.res { max-width: 640px; margin: 4px 0 12px; }
+
+      @media (max-width: 1080px) { .tiles.six { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+      @media (max-width: 980px) {
+        .two, .two.wide-l { grid-template-columns: minmax(0, 1fr); }
+      }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .tiles, .tiles.six { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        .views button { padding: 6px 11px; font-size: 13px; }
+        .tbl-wrap.tall { max-height: 440px; }
+      }
+    </style>
+
+    <!-- Airline Economics header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 4px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
+      @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
+      /* breadcrumb: "Airline Economics · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
+    </style>
+    <style>
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; }
+    </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline economics"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline Economics">
+          <a class="at-tab" href="/airlinetools.html#rm">Revenue management</a>
+          <a class="at-tab" href="/airlinetools.html#network">Network planning</a>
+          <a class="at-tab" href="/airlinetools.html#loyalty">Loyalty</a>
+          <a class="at-tab" href="/airlinetools.html#cargo" aria-current="page">Cargo</a>
+          <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>23</b> tools · <b>8</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Cargo</div>
+        <h2>Chargeable weight &amp; ULD build-up</h2>
+        <p class="lede">Which shipments to put in a widebody's lower deck, and why loading the best-paying cargo first can leave weight or space unused.</p>
+        <p>Air cargo pays on its <b>chargeable weight</b>: the actual weight, or its volume counted at 166.67 kg per cubic metre, whichever is higher. But the hold fills with real kilos and real cubic metres, packed into containers and onto pallets of fixed sizes, called unit load devices (ULDs). Below, 40 generated shipments, some dense, some standard, some light, compete for a lower deck laid out like an A350-900's. Load them by hand, or let one of two simple rules do it: <b>best rate first</b>, or <b>mix dense and light</b> so that the weight and the space run out together. It goes with <a href="/cargo101.html#ch03">Cargo 101, chapter 03</a>; the <a href="/cargorm.html">cargo revenue management</a> page makes the same trade-off booking by booking, with bid prices.</p>
+        <p class="note-line">The shipments, their rates, tonight's weight allowance, the positions' distances from the reference point and the centre-of-gravity window are all illustrative. The sizes and weights of the containers and pallets, and the number of each that fit in the hold, come from the manufacturers' sources listed at the bottom.</p>
+      </div>
+
+      <div class="switch" role="group" aria-label="Scenario">
+        <div class="grp"><span id="l-cfg">Hold layout</span><div class="views" id="sw-cfg" role="group" aria-labelledby="l-cfg"></div></div>
+        <div class="grp"><span id="l-al">Weight available</span><div class="views" id="sw-al" role="group" aria-labelledby="l-al"></div></div>
+        <div class="grp"><span>Shipments</span><button class="btn" id="new-list">New list of 40</button><span class="status" id="list-no"></span></div>
+      </div>
+      <p class="preset-blurb" id="preset-blurb"></p>
+
+      <div id="app"><p class="loading" id="loading">Loading the shipments…</p></div>
+
+      <div id="main" hidden>
+        <!-- ═══════════════════════════ 1. SHIPMENTS ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-ship">
+          <h3 id="h-ship">1. Forty shipments, two kinds of kilo</h3>
+          <p class="lead">Each shipment is a number of identical pieces with a size, a weight and a rate per chargeable kilo. Light cargo pays on its volume, so it is charged for more kilos than it weighs; dense cargo pays on its weight and leaves space empty. Together they ask for more than tonight's flight can take, in both weight and space, so something stays behind.</p>
+          <div class="tiles" id="ship-tiles"></div>
+
+          <div class="block">
+            <div class="block-head"><h4>Weight against volume</h4><span id="sc-sub">Click a shipment to add it to your own load or take it off</span></div>
+            <div class="chart" id="ch-scatter"></div>
+            <p class="hint" id="sc-hint"></p>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h4>The list</h4><span>Tick a box to build your own load in section 2. Click a heading to sort.</span></div>
+            <div class="tbl-wrap tall"><table class="res" id="ship-table"></table></div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ 2. BUILD-UP ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-build">
+          <h3 id="h-build">2. Build the load</h3>
+          <p class="lead">Each loaded shipment is packed piece by piece: first into containers and pallets already started, then into new ones, until every position is used or the weight runs out. A shipment flies whole or not at all. The built containers and pallets are then put in positions, and the cargo's centre of gravity is checked against a window around the reference point.</p>
+
+          <div class="ctl-row">
+            <div class="grp"><span id="l-mode">Loading</span><div class="views" id="sw-mode" role="group" aria-labelledby="l-mode"></div></div>
+            <div class="grp"><span id="l-place">Positions</span><div class="views" id="sw-place" role="group" aria-labelledby="l-place"></div></div>
+            <button class="btn" id="clear-picks">Clear my picks</button>
+          </div>
+          <p class="mode-blurb" id="mode-blurb"></p>
+
+          <div class="tiles six" id="load-tiles"></div>
+
+          <div class="block">
+            <div class="block-head"><h4>The lower deck, seen from above</h4><span>Nose on the left. Hover or tap a container or pallet for its contents.</span></div>
+            <div class="chart deck" id="ch-deck"></div>
+            <div class="caps" id="caps"></div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ 3. COMPARE ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-cmp">
+          <h3 id="h-cmp">3. Best rate first, or mix dense and light</h3>
+          <p class="lead">Loading the best rate per chargeable kilo first sounds right, and on this list it means light cargo first, because e-commerce and garments pay the highest rates. The space runs out while there is weight to spare, and the dense cargo that could have used it stays behind. Mixing charges each shipment for the share of the remaining weight <i>and</i> the remaining space it would take, so it steers the load towards the corner where both run out together.</p>
+          <div class="two wide-l">
+            <div class="block">
+              <div class="block-head"><h4>How the hold fills, shipment by shipment</h4><span>Gross weight against cargo volume</span></div>
+              <div class="chart" id="ch-path"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>The two loads side by side</h4><span id="cmp-sub"></span></div>
+              <div class="tbl-wrap"><table class="res" id="cmp-table"></table></div>
+              <p class="hint" id="cmp-hint"></p>
+            </div>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>The same list in all four hold layouts</h4><span id="cfg-sub"></span></div>
+            <div class="tbl-wrap"><table class="res" id="cfg-table"></table></div>
+            <p class="hint">Containers give more space per metre of hold; pallets carry more weight per position and take pieces too long for a container. Revenue per flight, illustrative.</p>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ 4. 1,000 LISTS ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-many">
+          <h3 id="h-many">4. Over 1,000 shipment lists</h3>
+          <p class="lead">One list can be lucky. The same two rules were run on 1,000 generated lists of 40 shipments, for every hold layout and weight allowance. The gap depends on how short of weight the flight is and on the layout. With a tight allowance and a hold of containers, weight is the only limit and loading by rate does about as well. With weight to spare, or with pallets, which hold less, loading by rate fills the space with light cargo and leaves kilos unused.</p>
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>Mixing against best rate first, list by list</h4><span id="hist-sub"></span></div>
+              <div class="chart" id="ch-hist"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>Average revenue per flight</h4><span id="many-sub">1,000 lists, balanced positions</span></div>
+              <div class="tbl-wrap"><table class="res" id="many-table"></table></div>
+              <p class="hint" id="many-hint"></p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>Chargeable weight</h4>
+        <p>IATA's general rule is to divide a shipment's volume in cm³ by 6,000 to get its volume weight, and to charge on whichever is higher, the volume weight or the actual weight. For a shipment of <var>w</var> kg and <var>v</var> m³: <var>cw</var> = max(<var>w</var>, 166.67 <var>v</var>), and revenue = rate × <var>cw</var>. Cargo denser than 166.67 kg per m³ pays on its weight; lighter cargo pays on its volume. No rounding is applied (in practice, carriers round chargeable weight up to the next half kilo or kilo).</p>
+
+        <h4>The 40 shipments</h4>
+        <p>Every list has 12 dense, 16 standard and 12 light shipments, in a random order, drawn from a seeded generator (mulberry32) so the page opens on the same list every time; "New list of 40" moves to the next seed. A shipment is <var>n</var> identical pieces. For each profile (all in <a href="assets/data/uldbuild.json">uldbuild.json</a>, all illustrative):</p>
+        <div class="tbl-wrap"><table class="res" id="prof-table"></table></div>
+        <p>Each piece's three sides are the profile's typical sides times a lognormal factor (20% spread), kept between 20 and 300 cm; 30% of dense shipments have one long side of 175 to 290 cm, too long for an LD3. The shipment's total volume is drawn around the profile's typical volume (lognormal), and the number of pieces is that volume divided by one piece's, rounded, between 1 and 80. The density (lognormal around the profile's) sets the weight of a piece, to the half kilo. The rate is lognormal around the profile's rate with an 8% spread.</p>
+
+        <h4>The hold</h4>
+        <p>The layout is that of an A350-900's lower deck in Airbus's aircraft characteristics document: the forward hold takes 20 LD3 containers or 6 pallets of 96 × 125 in, the aft hold 16 LD3s or 5 pallets, over 16.2 m and 13.6 m. The page offers the four combinations of those standard loads. Mixed loads within one compartment are possible on real aircraft but aren't modelled. The bulk hold at the back, where loose bags and small pieces go, is left out.</p>
+        <div class="tbl-wrap"><table class="res" id="uld-table"></table></div>
+        <p>Two figures are assumptions rather than published numbers: a pallet in the lower deck is built to about 160 cm, the height of the hold under the contour (an LD3, built for the same hold, is 161.6 cm tall), and its usable volume is taken as 11.5 m³, less than its 7.74 m² base times that height because the lower deck's contour cuts the corners. Boxes never fill a container exactly, so only 85% of each ULD's internal volume can hold cargo (the <b>stowage factor</b>, an assumption).</p>
+        <p>The <b>weight available</b> is what the flight can take tonight in the lower deck, cargo plus the ULDs' own weight. It depends on the passengers, their bags and the fuel, and the three settings are illustrative.</p>
+
+        <h4>Build-up</h4>
+        <p>A piece fits in an LD3 if, with its sides sorted from longest to shortest, they are at most 150, 135 and 135 cm, so that it passes the 139 × 155 cm door with some clearance; on a pallet, at most 310, 238 and 155 cm (both limits are assumptions). Loading a shipment goes piece by piece: first into containers and pallets already started (the tightest one that can take all the pieces left, otherwise the one with the most room, so a shipment is spread over as few as possible), as long as the ULD's net weight (maximum gross weight minus tare), its stowable volume and the flight's weight allowance allow; then into new ones, an LD3 if the pieces fit in one and an LD3 position is free, otherwise a pallet. Starting a ULD adds its tare to the flight's weight. If a piece can't be placed, the whole shipment is taken off again and marked as left behind, with the reason.</p>
+        <p><b>Best rate first</b> tries the shipments in order of rate per chargeable kilo, highest first. <b>Mix dense and light</b> repeatedly picks, among the shipments not yet tried, the one with the highest revenue per share of what is left: <var>R</var> / (<var>w</var> / <var>W</var><sub>left</sub> + <var>v</var> / <var>V</var><sub>left</sub>), where <var>W</var><sub>left</sub> is the weight allowance not yet used and <var>V</var><sub>left</sub> is the stowable volume still free, in started ULDs and free positions. A dense shipment uses a large share of the weight and a small share of the space, a light one the opposite, so as soon as one resource gets scarcer than the other, the shipments that lean on the other one rise to the top. It is the same idea as the two bid prices on the <a href="/cargorm.html">cargo revenue management</a> page, without solving a linear program. <b>Your pick</b> starts from the load on screen and loads the ticked shipments with the same build-up rules, in the order they were loaded, then each new tick in the order it was added.</p>
+        <p>Neither rule is optimal. The best load is a two-dimensional bin-packing problem with a knapsack on top, and with some lists and a tight allowance, best rate first comes out a little ahead.</p>
+
+        <h4>Positions and centre of gravity</h4>
+        <p>Each position has an arm, its distance in metres from a reference point near the wing (negative forward). The forward hold is placed from −18.5 m to −2.3 m and the aft hold from +3.2 m to +16.8 m, and positions are evenly spaced in each. These arms are illustrative, not the A350's. <b>Balanced</b> takes the built ULDs from heaviest to lightest and puts each in the free position that keeps the cargo's total moment (weight × arm) closest to zero. <b>Front to back</b> puts them in the order they were built, from the nose backwards. The cargo's centre of gravity is Σ weight × arm / Σ weight, and the check passes if it lies within ±2.5 m of the reference, an illustrative window.</p>
+        <p>Section 4 is precomputed by <code>scripts/uldbuild/precompute.js</code> with the same code as this page, on lists 1 to 1,000, for every hold layout and weight allowance, and stored in <a href="assets/data/uldbuild-batch.json">uldbuild-batch.json</a>. The script also checks every load: no ULD over its maximum gross weight or stowable volume, no flight over its allowance, every piece in a ULD it fits in, and no position used twice. Sections 1 to 3 run live in your browser.</p>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>IATA, "<a href="https://www.iata.org/en/publications/newsletters/iata-knowledge-hub/air-cargo-tariffs-and-rules-what-you-need-to-know/" target="_blank" rel="noopener">Air cargo tariffs and rules: what you need to know</a>" (July 2021): the volume divisor of 6,000 cm³ per kg and chargeable weight as the higher of volume and actual weight (checked October 2026).</li>
+          <li>Avius ULD, <a href="https://www.aviusuld.com/products/ake/" target="_blank" rel="noopener">AKE lower deck containers</a>: base 1,534 × 1,562 mm, height 1,616 mm, maximum gross weight 1,588 kg, internal volume 4.30 m³ (checked October 2026).</li>
+          <li>VRR, <a href="https://vrr.aero/products/ake-qke-container/" target="_blank" rel="noopener">AKE/QKE container</a>: tare 54 kg for its lightweight fire-resistant model (aluminium AKEs weigh more), door opening 1,393 × 1,546 mm; and <a href="https://vrr.aero/products/pmc-pallet/" target="_blank" rel="noopener">PMC pallet</a>: base 2,438 × 3,175 mm, maximum gross weight 6,804 kg, tare 88 to 101.5 kg depending on thickness (checked October 2026).</li>
+          <li>ACL Airshop, <a href="https://www.aclairshop.com/container_specs.php" target="_blank" rel="noopener">ULD container specifications</a>: the LD3 as a widebody lower-deck container, 1,626 mm tall, 4.3 m³ internal volume, 1,588 kg (checked October 2026).</li>
+          <li>Airbus, <a href="https://skybrary.aero/sites/default/files/bookshelf/2374.pdf" target="_blank" rel="noopener">A350-900 Aircraft Characteristics, Airport and Maintenance Planning</a>, preliminary data, revision of December 2012, section 2-6: forward hold 20 LD3s or 6 pallets of 88 or 96 × 125 in, aft hold 16 LD3s or 5 pallets, compartment lengths 16.221 m and 13.578 m. Airbus publishes the current edition on its <a href="https://www.aircraft.airbus.com/en/customer-care/fleet-wide-care/airport-operations-and-aircraft-characteristics/aircraft-characteristics" target="_blank" rel="noopener">aircraft characteristics page</a>.</li>
+          <li>Charts drawn with <a href="https://d3js.org" target="_blank" rel="noopener">D3</a> 7.9.0.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>Packing is by volume, with a fixed stowage factor and a size check per piece. Real build-up is three-dimensional: pieces are stacked, some can't be turned or have things put on top, and how well a ULD is filled depends on the mix of shapes inside it. A real build-up can do better or worse than 85%.</li>
+          <li>Weight and balance is reduced to one centre-of-gravity check on the cargo alone, against an illustrative window. A real load sheet works with the whole aircraft (passengers, bags, fuel and how it burns off), uses the aircraft's own weight-and-balance envelope, and also checks the weight limit of each position, each compartment and the floor per running metre and per square metre, which are often well below a pallet's own maximum gross weight. None of those is modelled.</li>
+          <li>A shipment flies whole or not at all. Carriers do split large shipments across flights, and a forwarder may tender pre-built ULDs, which this page doesn't cover.</li>
+          <li>Each hold layout is one of the standard all-container or all-pallet loads per compartment. Real aircraft can mix them, and passengers' bags take some of the containers in the forward or aft hold.</li>
+          <li>Dangerous goods, live animals, perishables and temperature-controlled cargo have their own positions, separation rules and ULDs, and aren't modelled. Neither are the costs of handling, building and flying the ULDs, so "revenue" here is what the shipments pay, not the profit of carrying them.</li>
+          <li>The rates are given. A cargo revenue management system would instead price or accept each shipment against the value of the weight and the space it takes, before anything reaches the warehouse (see <a href="/cargo101.html#ch07">Cargo 101, chapter 07</a> and the <a href="/cargorm.html">cargo revenue management</a> page).</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+// <uld-engine>
+// ULD build-up engine: shipment generator, chargeable weight, piece-by-piece build-up into LD3s and pallets,
+// three loading orders (by rate, mixing dense and light, the reader's own picks), position assignment and a
+// centre-of-gravity check. Pure functions, no DOM. Shared by uldbuild.html and scripts/uldbuild/precompute.js.
+var ULD = (function () {
+  "use strict";
+
+  // ---------- random ----------
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function gaussFactory(rng) {
+    var spare = null;
+    return function () {
+      if (spare !== null) { var s = spare; spare = null; return s; }
+      var u, v, q;
+      do { u = rng() * 2 - 1; v = rng() * 2 - 1; q = u * u + v * v; } while (q === 0 || q >= 1);
+      var m = Math.sqrt(-2 * Math.log(q) / q);
+      spare = v * m; return u * m;
+    };
+  }
+  function find(arr, key) { for (var i = 0; i < arr.length; i++) if (arr[i].key === key) return arr[i]; return arr[0]; }
+  function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+
+  // ---------- chargeable weight ----------
+  // IATA general rule: volume weight = cm³ / 6,000, so 1 m³ counts as 166.67 kg. Chargeable = the higher of the two.
+  function volWeight(D, m3) { return m3 * 1e6 / D.volDivisor; }
+  function chargeable(D, kg, m3) { return Math.max(kg, volWeight(D, m3)); }
+
+  // ---------- 40 shipments ----------
+  // Each shipment is n identical pieces. Profiles give the density, the rate per chargeable kg, the piece size and the
+  // shipment's total volume. Counts per profile are fixed by the shares (12 / 16 / 12), the order is shuffled.
+  function genShipments(D, seed) {
+    var rng = mulberry32(seed), g = gaussFactory(rng), N = D.nShipments, kinds = [];
+    D.profiles.forEach(function (p, pi) { for (var i = 0; i < Math.round(p.share * N); i++) kinds.push(pi); });
+    while (kinds.length < N) kinds.push(1);
+    kinds.length = N;
+    for (var i = kinds.length - 1; i > 0; i--) { var j = Math.floor(rng() * (i + 1)), t = kinds[i]; kinds[i] = kinds[j]; kinds[j] = t; }
+    return kinds.map(function (pi, k) {
+      var p = D.profiles[pi];
+      var dims = p.pieceCm.map(function (m) { return clamp(Math.round(m * Math.exp(p.pieceSd * g())), 20, 300); });
+      if (p.longP > 0 && rng() < p.longP) dims[0] = Math.round(p.longCm[0] + (p.longCm[1] - p.longCm[0]) * rng());
+      dims.sort(function (a, b) { return b - a; });
+      var vp = dims[0] * dims[1] * dims[2] / 1e6;                         // m³ per piece
+      var target = p.shipM3 * Math.exp(p.shipSd * g());
+      var n = clamp(Math.round(target / vp), 1, 80);
+      var dens = p.density * Math.exp(p.densSd * g());
+      var pw = Math.max(1, Math.round(dens * vp * 2) / 2);                // kg per piece, to the half kilo
+      var w = n * pw, v = n * vp, cw = chargeable(D, w, v);
+      var rate = Math.round(p.rate * Math.exp(p.rateSd * g()) * 100) / 100;
+      return { id: k, label: "S" + (k < 9 ? "0" : "") + (k + 1), prof: pi, what: p.what[Math.floor(rng() * p.what.length)],
+        n: n, dims: dims, pw: pw, vp: vp, w: w, v: v, d: w / v, cw: cw, rate: rate, rev: rate * cw, byVol: cw > w + 1e-9 };
+    });
+  }
+
+  // ---------- the hold ----------
+  // Positions for one configuration. LD3s sit two abreast (left and right) in rows; a pallet takes the full width.
+  function slots(D, cfgKey) {
+    var cfg = find(D.configs, cfgKey), out = [];
+    D.compartments.forEach(function (c) {
+      var type = cfg[c.key], n = c.count[type], rows = type === "LD3" ? n / 2 : n, step = c.lengthM / rows;
+      for (var r = 0; r < rows; r++) {
+        var arm = c.armFrom + (r + 0.5) * step;
+        if (type === "LD3") {
+          out.push({ id: c.key + "-" + (r + 1) + "L", comp: c.key, type: type, row: r, side: 0, arm: arm });
+          out.push({ id: c.key + "-" + (r + 1) + "R", comp: c.key, type: type, row: r, side: 1, arm: arm });
+        } else out.push({ id: c.key + "-" + (r + 1) + "P", comp: c.key, type: type, row: r, side: -1, arm: arm });
+      }
+    });
+    return out;
+  }
+  function pieceFits(D, type, dims) {
+    var m = D.ulds[type].maxPieceCm;
+    return dims[0] <= m[0] && dims[1] <= m[1] && dims[2] <= m[2];
+  }
+
+  // ---------- build-up ----------
+  // State: the ULDs built so far, how many positions of each type are still free, and the gross weight
+  // (cargo plus ULD tare) against the flight's weight allowance.
+  function newState(D, cfgKey, allowance) {
+    var sl = slots(D, cfgKey), free = { LD3: 0, PMC: 0 };
+    sl.forEach(function (s) { free[s.type]++; });
+    return { D: D, cfg: cfgKey, allowance: allowance, slots: sl, free: free, ulds: [], gross: 0, cargoW: 0, cargoV: 0,
+      loaded: [], path: [{ gross: 0, vol: 0, rev: 0 }], rev: 0, status: {} };
+  }
+  function uldCap(D, type) { var u = D.ulds[type]; return { w: u.mgw - u.tare, v: u.volM3 * D.stow }; }
+
+  // Try to load a whole shipment, piece by piece. First top up ULDs already open (fullest first), then open new
+  // ones: an LD3 if the pieces fit in one, otherwise a pallet. All or nothing: if a piece can't be placed, the
+  // state is left unchanged and the reason is returned.
+  function tryLoad(S, sh) {
+    var D = S.D, left = sh.n, gross = S.gross, free = { LD3: S.free.LD3, PMC: S.free.PMC };
+    var changes = [], opened = [];
+    var okType = { LD3: pieceFits(D, "LD3", sh.dims) && sh.pw <= uldCap(D, "LD3").w, PMC: pieceFits(D, "PMC", sh.dims) && sh.pw <= uldCap(D, "PMC").w };
+    if (!(okType.LD3 && S.free.LD3 + countType(S, "LD3") > 0) && !(okType.PMC && S.free.PMC + countType(S, "PMC") > 0))
+      return { ok: false, why: okType.PMC ? "needs a pallet" : "too big for any ULD" };
+    function room(type, uw, uv) {
+      var cap = uldCap(D, type);
+      return Math.max(0, Math.min(left,
+        Math.floor((cap.w - uw) / sh.pw + 1e-9),
+        Math.floor((cap.v - uv) / sh.vp + 1e-9),
+        Math.floor((S.allowance - gross) / sh.pw + 1e-9)));
+    }
+    // 1. top up open ULDs: if one can take all the pieces left, the tightest such one (best fit);
+    //    otherwise the one with the most room, so a shipment is spread over as few ULDs as possible
+    var open = S.ulds.filter(function (u) { return okType[u.type]; }), used = [];
+    while (left > 0) {
+      var best = null, bk = 0, bAll = false, bRoom = 0;
+      for (var i = 0; i < open.length; i++) {
+        var u = open[i]; if (used.indexOf(u) >= 0) continue;
+        var k = room(u.type, u.netW, u.vol); if (k <= 0) continue;
+        var all = k >= left, rv = u.cap.v - u.vol;
+        if (!best || (all && !bAll) || (all && bAll && rv < bRoom) || (!all && !bAll && k > bk)) { best = u; bk = k; bAll = all; bRoom = rv; }
+      }
+      if (!best) break;
+      used.push(best); changes.push({ u: best, k: bk }); left -= bk; gross += bk * sh.pw;
+    }
+    // 2. open new ULDs
+    var why = null;
+    while (left > 0) {
+      var type = okType.LD3 && free.LD3 > 0 ? "LD3" : okType.PMC && free.PMC > 0 ? "PMC" : null;
+      if (!type) { why = "no space left"; break; }
+      var tare = D.ulds[type].tare;
+      if (gross + tare + sh.pw > S.allowance + 1e-9) { why = "over the weight allowance"; break; }
+      gross += tare;
+      var k2 = room(type, 0, 0);
+      if (k2 <= 0) { why = "no space left"; break; }
+      opened.push({ type: type, k: k2 }); free[type]--; left -= k2; gross += k2 * sh.pw;
+    }
+    if (left > 0) return { ok: false, why: why || "no space left" };
+    // commit
+    changes.forEach(function (c) { addTo(c.u, sh, c.k); });
+    opened.forEach(function (o) {
+      var u = { type: o.type, cap: uldCap(D, o.type), tare: D.ulds[o.type].tare, netW: 0, vol: 0, items: [] };
+      addTo(u, sh, o.k); S.ulds.push(u); S.free[o.type]--;
+    });
+    S.gross = gross; S.cargoW += sh.w; S.cargoV += sh.v; S.rev += sh.rev; S.loaded.push(sh.id);
+    S.path.push({ gross: S.gross, vol: S.cargoV, rev: S.rev, id: sh.id });
+    return { ok: true, nUld: changes.length + opened.length };
+  }
+  function countType(S, type) { return S.ulds.filter(function (u) { return u.type === type; }).length; }
+  function addTo(u, sh, k) {
+    var it = null;
+    for (var i = 0; i < u.items.length; i++) if (u.items[i].id === sh.id) it = u.items[i];
+    if (!it) { it = { id: sh.id, prof: sh.prof, n: 0, w: 0, v: 0 }; u.items.push(it); }
+    it.n += k; it.w += k * sh.pw; it.v += k * sh.vp; u.netW += k * sh.pw; u.vol += k * sh.vp;
+  }
+  // Space still free for cargo: the open ULDs' remaining stowable volume plus the free positions.
+  function volLeft(S) {
+    var D = S.D, v = 0;
+    S.ulds.forEach(function (u) { v += u.cap.v - u.vol; });
+    v += S.free.LD3 * uldCap(D, "LD3").v + S.free.PMC * uldCap(D, "PMC").v;
+    return v;
+  }
+
+  // ---------- loading orders ----------
+  // "rate": best rate per chargeable kg first. "mix": at each step, the shipment that pays the most for its share of the
+  // weight and the space still free, revenue / (w / weight left + v / space left). "hand": the reader's picks, an array of
+  // shipment ids, in that order.
+  function build(D, ships, cfgKey, allowance, mode, picks) {
+    var S = newState(D, cfgKey, allowance);
+    var tried = {};
+    function attempt(sh) {
+      var r = tryLoad(S, sh);
+      S.status[sh.id] = r.ok ? { ok: true, nUld: r.nUld } : { ok: false, why: r.why };
+      tried[sh.id] = true;
+    }
+    if (mode === "rate") {
+      ships.slice().sort(function (a, b) { return b.rate - a.rate || b.rev - a.rev; }).forEach(attempt);
+    } else if (mode === "hand") {
+      (picks || []).forEach(function (id) { attempt(ships[id]); });
+      ships.forEach(function (sh) { if (!tried[sh.id]) S.status[sh.id] = { ok: false, why: "not picked", off: true }; });
+    } else {
+      for (;;) {
+        var Wl = allowance - S.gross, Vl = volLeft(S), best = null, bs = -Infinity;
+        if (Wl <= 0 || Vl <= 0) break;
+        for (var i = 0; i < ships.length; i++) {
+          var sh = ships[i]; if (tried[sh.id]) continue;
+          var sc = sh.rev / (sh.w / Wl + sh.v / Vl);
+          if (sc > bs) { bs = sc; best = sh; }
+        }
+        if (!best) break;
+        attempt(best);
+      }
+      ships.forEach(function (sh) { if (!tried[sh.id]) S.status[sh.id] = { ok: false, why: "no space left" }; });
+    }
+    return S;
+  }
+
+  // ---------- positions and centre of gravity ----------
+  // "balanced": heaviest ULD first, each to the free position that keeps the cargo's moment closest to zero.
+  // "front": ULDs in the order they were built, from the nose backwards.
+  function place(S, how) {
+    var free = S.slots.map(function (s) { return s; }), M = 0, W = 0;
+    var order = S.ulds.map(function (u, i) { return i; });
+    if (how !== "front") order.sort(function (a, b) { return (S.ulds[b].netW + S.ulds[b].tare) - (S.ulds[a].netW + S.ulds[a].tare); });
+    else free.sort(function (a, b) { return a.arm - b.arm || a.side - b.side; });
+    var taken = {};
+    order.forEach(function (i) {
+      var u = S.ulds[i], g = u.netW + u.tare, best = null, bv = Infinity;
+      for (var j = 0; j < free.length; j++) {
+        var s = free[j]; if (taken[s.id] || s.type !== u.type) continue;
+        if (how === "front") { best = s; break; }
+        var v = Math.abs(M + g * s.arm) + 1e-6 * Math.abs(s.arm) + 1e-9 * s.side;
+        if (v < bv) { bv = v; best = s; }
+      }
+      taken[best.id] = true; u.slot = best; M += g * best.arm; W += g;
+    });
+    var cg = W > 0 ? M / W : 0, win = S.D.cgWindow;
+    return { cg: cg, ok: W === 0 || (cg >= win[0] && cg <= win[1]), moment: M, weight: W };
+  }
+
+  // ---------- summary numbers ----------
+  function summary(S) {
+    var D = S.D, holdV = 0, tare = 0, builtV = 0, cw = 0, nT = { LD3: 0, PMC: 0 };
+    S.slots.forEach(function (s) { holdV += D.ulds[s.type].volM3; });
+    S.ulds.forEach(function (u) { tare += u.tare; builtV += D.ulds[u.type].volM3; nT[u.type]++; });
+    return { rev: S.rev, cargoW: S.cargoW, cargoV: S.cargoV, tare: tare, gross: S.gross, allowance: S.allowance,
+      wFill: S.gross / S.allowance, holdV: holdV, vFill: S.cargoV / holdV, airV: builtV - S.cargoV, emptyV: holdV - builtV,
+      wastedV: holdV - S.cargoV, nUld: S.ulds.length, nType: nT, nLoaded: S.loaded.length };
+  }
+  function run(D, ships, cfgKey, allowance, mode, picks, how) {
+    var S = build(D, ships, cfgKey, allowance, mode, picks);
+    var P = place(S, how || "balanced"), sm = summary(S);
+    sm.cw = 0; S.loaded.forEach(function (id) { sm.cw += ships[id].cw; });   // ships are indexed by id
+    sm.cg = P.cg; sm.cgOk = P.ok;
+    S.sum = sm;
+    return S;
+  }
+
+  return { mulberry32: mulberry32, find: find, volWeight: volWeight, chargeable: chargeable, genShipments: genShipments,
+    slots: slots, pieceFits: pieceFits, uldCap: uldCap, build: build, place: place, summary: summary, run: run, volLeft: volLeft };
+})();
+if (typeof module !== "undefined") module.exports = ULD;
+// </uld-engine>
+
+    </script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var DATA_URL = "assets/data/uldbuild.json", BATCH_URL = "assets/data/uldbuild-batch.json";
+      var MODES = [
+        { key: "rate", name: "Best rate first", hex: "#d9480f" },
+        { key: "mix", name: "Mix dense and light", hex: "#3a8f5c" },
+        { key: "hand", name: "Your pick", hex: "#222222" }
+      ];
+      var PLACES = [{ key: "balanced", name: "Balanced" }, { key: "front", name: "Front to back" }];
+      var PROFC = ["#1d3f8f", "#2a9d8f", "#e9a03b"];
+
+      var $ = function (id) { return document.getElementById(id); };
+      var nf0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+      var nf1 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      var nf2 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      function money(v) { return (v < -0.5 ? "−$" : "$") + nf0.format(Math.abs(Math.round(v))); }
+      function money2(v) { return "$" + nf2.format(v); }
+      function signedMoney(v) { var r = Math.round(v); return (r > 0 ? "+$" : r < 0 ? "−$" : "$") + nf0.format(Math.abs(r)); }
+      function kg(v) { return nf0.format(Math.round(v)) + " kg"; }
+      function m3(v) { return (Math.abs(v) >= 100 ? nf0.format(v) : nf1.format(v)) + " m³"; }
+      function pct(v) { return nf0.format(Math.round(v * 100)) + "%"; }
+      function signedPct(v) { var s = nf1.format(Math.abs(v * 100)); return (v >= 0.0005 ? "+" : v <= -0.0005 ? "−" : "") + s + "%"; }
+      function arm(v) { return (v < -0.005 ? "−" : v > 0.005 ? "+" : "") + nf1.format(Math.abs(v)) + " m"; }
+      function tonnes(v) { return nf0.format(v / 1000) + " t"; }
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+      var D, B;
+      Promise.all([DATA_URL, BATCH_URL].map(function (u) {
+        return fetch(u).then(function (r) { if (!r.ok) throw new Error(u.split("/").pop() + " " + r.status); return r.json(); });
+      })).then(function (res) {
+        D = res[0]; B = res[1];
+        if (typeof d3 === "undefined") { $("loading").outerHTML = '<p class="err">Couldn\'t load the chart library. Reload the page.</p>'; return; }
+        start();
+      }).catch(function (e) {
+        $("loading").outerHTML = '<p class="err">Couldn\'t load the shipments (' + esc(e.message || e) + '). Check your connection and reload the page.</p>';
+      });
+
+      // ---------- state ----------
+      var S = { cfg: "lp", al: 20000, seed: 1, mode: "mix", place: "balanced", picks: [], sort: { key: "id", asc: true },
+        ships: null, res: {}, cur: null };
+
+      function start() {
+        S.seed = D.seed; S.al = D.allowanceDefault;
+        renderSwitches();
+        wire();
+        renderStatic();
+        $("loading").remove();
+        $("main").hidden = false;
+        newList();
+      }
+
+      function newList() {
+        S.ships = ULD.genShipments(D, S.seed);
+        S.picks = [];
+        if (S.mode === "hand") S.mode = "mix";
+        syncPills();
+        $("list-no").textContent = "List " + (S.seed - D.seed + 1);
+        recompute();
+      }
+
+      function recompute() {
+        ["rate", "mix"].forEach(function (m) { S.res[m] = ULD.run(D, S.ships, S.cfg, S.al, m, null, S.place); });
+        S.res.hand = ULD.run(D, S.ships, S.cfg, S.al, "hand", S.picks, S.place);
+        S.cur = S.res[S.mode];
+        renderBlurb();
+        renderShipTiles();
+        renderScatter();
+        renderTable();
+        renderMode();
+        renderLoadTiles();
+        renderDeck();
+        renderCaps();
+        renderPath();
+        renderCompare();
+        renderConfigs();
+        renderMany();
+      }
+
+      // ---------- switches ----------
+      function pills(id, items, cur, onPick) {
+        var el = $(id);
+        el.innerHTML = items.map(function (o) {
+          var on = String(cur) === String(o.key);
+          return '<button type="button" data-k="' + o.key + '" aria-pressed="' + on + '" class="' + (on ? "on" : "") + '">' + esc(o.name) + "</button>";
+        }).join("");
+        el.onclick = function (e) {
+          var b = e.target.closest("button"); if (!b) return;
+          onPick(b.dataset.k);
+        };
+      }
+      function renderSwitches() {
+        pills("sw-cfg", D.configs, S.cfg, function (k) { if (k === S.cfg) return; S.cfg = k; syncPills(); recompute(); });
+        pills("sw-al", D.allowances.map(function (a) { return { key: a, name: tonnes(a) }; }), S.al, function (k) { if (+k === S.al) return; S.al = +k; syncPills(); recompute(); });
+        pills("sw-mode", MODES, S.mode, function (k) {
+          if (k === S.mode) return;
+          if (k === "hand" && !S.picks.length) S.picks = pickSet(S.cur);
+          S.mode = k; syncPills(); recompute();
+        });
+        pills("sw-place", PLACES, S.place, function (k) { if (k === S.place) return; S.place = k; syncPills(); recompute(); });
+      }
+      function syncPills() {
+        [["sw-cfg", S.cfg], ["sw-al", S.al], ["sw-mode", S.mode], ["sw-place", S.place]].forEach(function (g) {
+          $(g[0]).querySelectorAll("button").forEach(function (b) { var on = b.dataset.k === String(g[1]); b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
+        });
+      }
+      // your pick starts from the load on screen, in the order it was loaded; new ticks go at the end
+      function pickSet(R) { return R.loaded.slice(); }
+      function togglePick(id) {
+        if (S.mode !== "hand") { S.picks = pickSet(S.cur); S.mode = "hand"; syncPills(); }
+        var i = S.picks.indexOf(id);
+        if (i >= 0) S.picks.splice(i, 1); else S.picks.push(id);
+        recompute();
+      }
+      function wire() {
+        $("new-list").onclick = function () { S.seed += 1; newList(); };
+        $("clear-picks").onclick = function () { S.picks = []; S.mode = "hand"; syncPills(); recompute(); };
+        var rw = window.innerWidth;
+        window.addEventListener("resize", function () {
+          if (Math.abs(window.innerWidth - rw) < 30) return; rw = window.innerWidth;
+          clearTimeout(S.rt); S.rt = setTimeout(function () { renderScatter(); renderDeck(); renderPath(); renderMany(); }, 150);
+        });
+      }
+
+      function cfgObj() { return ULD.find(D.configs, S.cfg); }
+      function holdNums() {
+        var sl = ULD.slots(D, S.cfg), v = 0, sv = 0, t = 0;
+        sl.forEach(function (s) { var u = D.ulds[s.type]; v += u.volM3; sv += u.volM3 * D.stow; t += u.tare; });
+        return { slots: sl, vol: v, stowV: sv, tare: t, dens: (S.al - t) / sv };
+      }
+      function renderBlurb() {
+        var c = cfgObj(), h = holdNums();
+        var desc = { ll: "Containers in both holds: the most space, but nothing longer than about 1.5 m fits.",
+          pl: "Pallets forward, containers aft: room for long and heavy pieces at the front, but heavy pallets forward and lighter containers aft often put the cargo's centre of gravity too far forward.",
+          lp: "Containers forward, pallets aft: room for long and heavy pieces at the back.",
+          pp: "Pallets in both holds: the most weight per position, but the least space." }[S.cfg];
+        $("preset-blurb").innerHTML = "<b>" + esc(c.name) + ".</b> " + desc + " Internal volume " + m3(h.vol) + ", of which " + m3(h.stowV) + " can hold cargo at an 85% stowage factor. <b>" + kg(S.al) + "</b> available for cargo and ULDs tonight, after passengers, bags and fuel (illustrative). Filled to both limits at once, the hold would carry cargo at <b>" + nf0.format(h.dens) + " kg per m³</b>.";
+      }
+
+      // ---------- tooltip ----------
+      var tip = $("tip");
+      function showTip(html, ev) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var x = ev.clientX + 14, y = ev.clientY + 14, r = tip.getBoundingClientRect();
+        if (x + r.width > window.innerWidth - 8) x = ev.clientX - r.width - 14;
+        if (y + r.height > window.innerHeight - 8) y = ev.clientY - r.height - 14;
+        tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      document.addEventListener("scroll", hideTip, { passive: true });
+      function statusText(st) {
+        if (!st) return "";
+        if (st.ok) return "loaded";
+        return st.why;
+      }
+      function shipTip(sh) {
+        var p = D.profiles[sh.prof], st = S.cur.status[sh.id];
+        return '<div class="t">' + esc(sh.label) + " · " + esc(sh.what) + " · " + esc(p.name.toLowerCase()) + "</div>" +
+          '<div class="r">Pieces<b>' + sh.n + " × " + sh.dims.join(" × ") + " cm</b></div>" +
+          '<div class="r">Actual weight<b>' + kg(sh.w) + "</b></div>" +
+          '<div class="r">Volume<b>' + m3(sh.v) + "</b></div>" +
+          '<div class="r">Density<b>' + nf0.format(sh.d) + " kg/m³</b></div>" +
+          '<div class="r">Chargeable<b>' + kg(sh.cw) + (sh.byVol ? " (volume)" : " (weight)") + "</b></div>" +
+          '<div class="r">Rate<b>' + money2(sh.rate) + " per kg</b></div>" +
+          '<div class="r">Revenue if flown<b>' + money(sh.rev) + "</b></div>" +
+          '<div class="r">' + esc(modeName(S.mode)) + "<b>" + esc(statusText(st)) + "</b></div>";
+      }
+      function modeName(k) { return ULD.find(MODES, k).name; }
+
+      function chartWidth(el, min) { return Math.max(min || 280, Math.floor(el.getBoundingClientRect().width - 12)); }
+      function svgIn(el, W, H) {
+        el.innerHTML = "";
+        return d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("width", W).attr("height", H).attr("role", "img");
+      }
+      function legendHtml(items) {
+        return '<div class="legend">' + items.map(function (it) {
+          var st = it.cls && it.cls.indexOf("ln") >= 0 ? "border-color:" + it.c : it.c ? "background:" + it.c : "";
+          return "<span><i class=\"" + (it.cls || "") + "\" style=\"" + st + "\"></i>" + esc(it.t) + "</span>";
+        }).join("") + "</div>";
+      }
+
+      // ---------- section 1 ----------
+      function renderShipTiles() {
+        var w = 0, v = 0, cw = 0, rev = 0, h = holdNums(), nv = 0;
+        S.ships.forEach(function (s) { w += s.w; v += s.v; cw += s.cw; rev += s.rev; if (s.byVol) nv++; });
+        var tiles = [
+          { k: "Actual weight", b: kg(w), s: "of 40 shipments, " + nv + " of them paying on volume" },
+          { k: "Chargeable weight", b: kg(cw), s: signedPct(cw / w - 1) + " over the actual weight; " + money(rev) + " if all flew" },
+          { k: "Volume", b: m3(v), s: "average " + nf0.format(w / v) + " kg per m³" },
+          { k: "Against tonight's hold", b: nf1.format((w + h.tare) / S.al) + "× and " + nf1.format(v / h.stowV) + "×", s: "the weight available and the stowable space, if every position were used" }
+        ];
+        $("ship-tiles").innerHTML = tiles.map(function (t) { return '<div class="tile"><span class="k">' + t.k + "</span><b>" + t.b + '</b><span class="s">' + t.s + "</span></div>"; }).join("");
+      }
+
+      function renderScatter() {
+        var el = $("ch-scatter"), ships = S.ships, h = holdNums();
+        var W = chartWidth(el), H = Math.round(Math.min(380, Math.max(260, W * 0.42)));
+        var m = { l: 46, r: 16, t: 14, b: 40 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Scatter plot of the 40 shipments by actual weight and volume");
+        var x = d3.scaleLog().domain([40, 6000]).range([m.l, W - m.r]).clamp(true);
+        var y = d3.scaleLog().domain([0.4, 25]).range([H - m.b, m.t]).clamp(true);
+        var xt = [50, 100, 200, 500, 1000, 2000, 5000], yt = [0.5, 1, 2, 5, 10, 20];
+        if (W < 480) xt = [50, 200, 1000, 5000];
+        svg.append("g").attr("class", "grid").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues(xt).tickSize(-(H - m.t - m.b)).tickFormat(""));
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).tickValues(yt).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues(xt).tickFormat(d3.format(",")));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).tickValues(yt).tickFormat(d3.format("~g")));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Actual weight, kg (log scale)");
+        svg.append("text").attr("class", "axis-title").attr("transform", "rotate(-90)").attr("x", -m.t).attr("y", 11).attr("text-anchor", "end").text("Volume, m³ (log scale)");
+        // density lines: w = d v
+        var VR = ULD.volWeight(D, 1);
+        svg.append("defs").append("clipPath").attr("id", "sc-clip").append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b);
+        var g = svg.append("g").attr("clip-path", "url(#sc-clip)");
+        function dline(d) { return [[40, 40 / d], [6000, 6000 / d]]; }
+        var ln = d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return y(p[1]); });
+        // pays-on-volume region: above the 166.67 line
+        g.append("path").attr("d", "M" + x(40) + "," + y(40 / VR) + "L" + x(6000) + "," + y(6000 / VR) + "L" + x(6000) + "," + m.t + "L" + x(40) + "," + m.t + "Z").attr("fill", "#e9a03b").attr("opacity", 0.06);
+        g.append("path").attr("d", ln(dline(VR))).attr("stroke", "#222").attr("stroke-width", 1.2).attr("stroke-dasharray", "5 4").attr("fill", "none");
+        // label on the line, near its top end, above it
+        var lx = 3200, ly = y(lx / VR) - 7;
+        svg.append("text").attr("x", x(lx)).attr("y", ly).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#444").attr("transform", "rotate(" + angle(x, y, VR) + "," + x(lx) + "," + ly + ")").text(W < 480 ? "166.67 kg/m³" : "166.67 kg per m³: above this line, pays on volume");
+        var loaded = S.cur.status;
+        g.append("g").selectAll("circle").data(ships).join("circle").attr("class", "pt")
+          .attr("cx", function (s) { return x(s.w); }).attr("cy", function (s) { return y(s.v); }).attr("r", W < 500 ? 4.5 : 5.5)
+          .attr("fill", function (s) { return loaded[s.id] && loaded[s.id].ok ? PROFC[s.prof] : "#fff"; })
+          .attr("stroke", function (s) { return PROFC[s.prof]; }).attr("stroke-width", 1.6)
+          .on("mousemove", function (ev, s) { showTip(shipTip(s), ev); }).on("mouseleave", hideTip)
+          .on("click", function (ev, s) { hideTip(); togglePick(s.id); });
+        el.insertAdjacentHTML("beforeend", legendHtml(D.profiles.map(function (p, i) { return { c: PROFC[i], t: p.name, cls: "dot" }; })
+          .concat([{ t: "not loaded (" + modeName(S.mode).toLowerCase() + ")", cls: "ring" }, { c: "#222", t: "chargeable-weight line", cls: "ln dash" }])));
+        var rel = h.dens < VR * 0.93 ? "below" : h.dens > VR * 1.07 ? "above" : "close to";
+        $("sc-hint").textContent = "Filled dots are loaded under \"" + modeName(S.mode) + "\" in section 2. Above the dashed line, a shipment is charged on its volume. Tonight's hold runs out of weight and space together at " + nf0.format(h.dens) + " kg per m³, " + rel + " the 166.67 of the chargeable-weight rule: a load can use both only if it mixes cargo from both sides of that density.";
+      }
+      function angle(x, y, d) { var a = [x(100), y(100 / d)], b = [x(1000), y(1000 / d)]; return Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI; }
+
+      var COLS = [
+        { key: "pick", t: "", l: true },
+        { key: "id", t: "Shipment", l: true, sort: function (s) { return s.id; } },
+        { key: "what", t: "Goods", l: true, sort: function (s) { return s.prof * 100 + s.id / 100; } },
+        { key: "pcs", t: "Pieces, cm", l: true, sort: function (s) { return s.dims[0]; } },
+        { key: "w", t: "Actual kg", sort: function (s) { return s.w; } },
+        { key: "v", t: "m³", sort: function (s) { return s.v; } },
+        { key: "d", t: "kg/m³", sort: function (s) { return s.d; } },
+        { key: "cw", t: "Chargeable kg", sort: function (s) { return s.cw; } },
+        { key: "rate", t: "Rate $/kg", sort: function (s) { return s.rate; } },
+        { key: "rev", t: "Revenue", sort: function (s) { return s.rev; } },
+        { key: "st", t: "Status", l: true, sort: function (s) { var st = S.cur.status[s.id]; return st && st.ok ? 1 : 0; } }
+      ];
+      function renderTable() {
+        var col = ULD.find(COLS, S.sort.key);
+        var rows = S.ships.slice().sort(function (a, b) { var d = col.sort(a) - col.sort(b); return (S.sort.asc ? d : -d) || a.id - b.id; });
+        var head = "<thead><tr>" + COLS.map(function (c) {
+          var cls = (c.l ? "l " : "") + (c.sort ? "sort " : "") + (S.sort.key === c.key ? "on " + (S.sort.asc ? "asc" : "") : "");
+          return '<th class="' + cls + '" data-k="' + c.key + '"' + (c.sort ? ' tabindex="0" aria-sort="' + (S.sort.key === c.key ? (S.sort.asc ? "ascending" : "descending") : "none") + '"' : "") + ">" + c.t + "</th>";
+        }).join("") + "</tr></thead>";
+        var lrRes = S.cur, tw = 0, tc = 0, tr = 0, tv = 0;
+        var body = rows.map(function (s) {
+          var st = lrRes.status[s.id], ok = st && st.ok, p = D.profiles[s.prof];
+          if (ok) { tw += s.w; tc += s.cw; tr += s.rev; tv += s.v; }
+          var long = !ULD.pieceFits(D, "LD3", s.dims);
+          var stTag = ok ? '<span class="tag ok">loaded' + (st.nUld > 1 ? ", " + st.nUld + " ULDs" : "") + "</span>"
+            : st && st.off ? '<span class="tag">not picked</span>' : '<span class="tag no">left: ' + esc(st ? st.why : "") + "</span>";
+          var checked = S.mode === "hand" ? S.picks.indexOf(s.id) >= 0 : ok;
+          return "<tr class=\"" + (ok ? "" : "off") + "\">" +
+            '<td><input type="checkbox" data-id="' + s.id + '"' + (checked ? " checked" : "") + ' aria-label="Load ' + s.label + '"></td>' +
+            '<td class="l">' + s.label + "</td>" +
+            '<td class="l"><span class="sw" style="background:' + PROFC[s.prof] + '"></span>' + esc(s.what) + "</td>" +
+            '<td class="l">' + s.n + " × " + s.dims.join("×") + (long ? ' <span class="tag long">long</span>' : "") + "</td>" +
+            "<td>" + nf0.format(s.w) + "</td><td>" + nf1.format(s.v) + "</td><td>" + nf0.format(s.d) + "</td>" +
+            '<td class="' + (s.byVol ? "hl" : "") + '">' + nf0.format(s.cw) + "</td><td>" + nf2.format(s.rate) + "</td><td>" + money(s.rev) + "</td>" +
+            '<td class="l">' + stTag + "</td></tr>";
+        }).join("");
+        var sum = '<tr class="sum"><td></td><td class="l" colspan="3">Loaded under "' + esc(modeName(S.mode)) + '"</td><td>' + nf0.format(tw) + "</td><td>" + nf1.format(tv) + "</td><td>" + (tv > 0 ? nf0.format(tw / tv) : "") + "</td><td>" + nf0.format(tc) + "</td><td></td><td>" + money(tr) + "</td><td class=\"l\">" + lrRes.loaded.length + " of 40</td></tr>";
+        var t = $("ship-table");
+        t.innerHTML = head + "<tbody>" + body + "</tbody><tfoot>" + sum + "</tfoot>";
+        t.querySelectorAll("th.sort").forEach(function (th) {
+          function go() { var k = th.dataset.k; if (S.sort.key === k) S.sort.asc = !S.sort.asc; else { S.sort.key = k; S.sort.asc = k === "id" || k === "what"; } renderTable(); }
+          th.onclick = go; th.onkeydown = function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } };
+        });
+        t.querySelectorAll("input[type=checkbox]").forEach(function (cb) { cb.onchange = function () { togglePick(+cb.dataset.id); }; });
+      }
+
+      // ---------- section 2 ----------
+      function renderMode() {
+        var b = {
+          rate: "Tries the shipments from the highest rate per chargeable kilo to the lowest, and loads each one that still fits.",
+          mix: "Picks, again and again, the shipment that pays the most for its share of the weight and the space still left, so dense and light cargo take turns.",
+          hand: "Loads the shipments you ticked in section 1: those already on board in the order they were loaded, then each new tick in the order you add it. Tick or untick a box, or click a dot in the chart, to change the load."
+        }[S.mode];
+        $("mode-blurb").textContent = b;
+        $("clear-picks").hidden = S.mode !== "hand";
+      }
+      function renderLoadTiles() {
+        var sm = S.cur.sum, win = D.cgWindow;
+        var tiles = [
+          { k: "Revenue", b: money(sm.rev), s: sm.nLoaded + " of 40 shipments" },
+          { k: "Chargeable vs actual", b: kg(sm.cw), s: "charged for " + kg(sm.cargoW) + " of cargo, " + (sm.cargoW > 0 ? signedPct(sm.cw / sm.cargoW - 1) : "") },
+          { k: "Weight used", b: pct(sm.wFill), s: kg(sm.gross) + " of " + kg(sm.allowance) + ", ULDs included" },
+          { k: "Space used", b: pct(sm.vFill), s: m3(sm.cargoV) + " of cargo in " + m3(sm.holdV) + " of hold" },
+          { k: "Wasted volume", b: m3(sm.wastedV), s: m3(sm.airV) + " inside the ULDs, " + m3(sm.emptyV) + " in empty positions" },
+          { k: "Centre of gravity", b: sm.gross > 0 ? arm(sm.cg) : "–", s: sm.gross === 0 ? "nothing loaded" : sm.cgOk ? "inside the ±" + nf1.format(win[1]) + " m window" : "outside the ±" + nf1.format(win[1]) + " m window", bad: !sm.cgOk }
+        ];
+        $("load-tiles").innerHTML = tiles.map(function (t) { return '<div class="tile' + (t.bad ? " bad" : "") + '"><span class="k">' + t.k + "</span><b>" + t.b + '</b><span class="s">' + t.s + "</span></div>"; }).join("");
+      }
+
+      function uldTip(u) {
+        var R = S.cur, cap = u.cap, us = D.ulds[u.type];
+        var rows = u.items.slice().sort(function (a, b) { return b.v - a.v; }).map(function (it) {
+          var sh = S.ships[it.id];
+          return '<div class="r"><i style="background:' + PROFC[it.prof] + '"></i>' + esc(sh.label) + " " + esc(sh.what) + ", " + it.n + " pc<b>" + kg(it.w) + "</b></div>";
+        }).join("");
+        return '<div class="t">' + esc(us.name) + " (" + us.code + ") · position " + esc(u.slot.id) + ", arm " + arm(u.slot.arm) + "</div>" + rows +
+          '<div class="r" style="margin-top:4px">Net weight<b>' + kg(u.netW) + " of " + kg(cap.w) + "</b></div>" +
+          '<div class="r">Cargo volume<b>' + m3(u.vol) + " of " + m3(us.volM3) + "</b></div>" +
+          '<div class="r">Gross, with ' + kg(u.tare) + " tare<b>" + kg(u.netW + u.tare) + "</b></div>";
+      }
+      function renderDeck() {
+        var el = $("ch-deck"), R = S.cur, sm = R.sum;
+        var W = chartWidth(el), small = W < 560;
+        var m = { l: small ? 8 : 92, r: 12, t: 8 };
+        var x = d3.scaleLinear().domain([0, 16.221]).range([m.l, W - m.r]);
+        var unitPx = x(16.221 / 10) - x(0);
+        var lane = Math.max(24, Math.min(46, unitPx * 0.62)), bandH = lane * 2;
+        var bandGap = small ? 34 : 22, labelH = small ? 16 : 0;
+        var H0 = m.t + 2 * (labelH + bandH) + bandGap;
+        var cgH = 84, H = H0 + cgH + 8;
+        var svg = svgIn(el, W, H).attr("aria-label", "Top view of the lower deck with each container or pallet and how full it is");
+        var byslot = {}; R.ulds.forEach(function (u) { byslot[u.slot.id] = u; });
+        D.compartments.forEach(function (c, ci) {
+          var y0 = m.t + ci * (labelH + bandH + bandGap) + labelH;
+          var type = cfgObj()[c.key], n = c.count[type], rows = type === "LD3" ? n / 2 : n, step = c.lengthM / rows;
+          var lbl = c.name + " · " + n + " " + (type === "LD3" ? "LD3s" : "pallets");
+          if (small) svg.append("text").attr("x", m.l).attr("y", y0 - 5).attr("font-size", 11.5).attr("fill", "#444").text(lbl);
+          else {
+            svg.append("text").attr("x", m.l - 10).attr("y", y0 + bandH / 2 - 3).attr("text-anchor", "end").attr("font-size", 12).attr("fill", "#222").attr("font-weight", 600).text(c.name);
+            svg.append("text").attr("x", m.l - 10).attr("y", y0 + bandH / 2 + 12).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text(n + " " + (type === "LD3" ? "LD3s" : "pallets"));
+          }
+          // compartment outline (to scale along the length)
+          svg.append("rect").attr("x", x(0) - 3).attr("y", y0 - 3).attr("width", x(c.lengthM) - x(0) + 6).attr("height", bandH + 6).attr("rx", 6).attr("fill", "#fafafa").attr("stroke", "#e1e1e1");
+          ULD.slots(D, S.cfg).filter(function (s) { return s.comp === c.key; }).forEach(function (s) {
+            var gx = x(s.row * step) + 2, gw = x(step) - x(0) - 4;
+            var gy = type === "LD3" ? y0 + s.side * lane + 2 : y0 + 2, gh = (type === "LD3" ? lane : bandH) - 4;
+            var u = byslot[s.id], cell = svg.append("g").attr("class", "cell");
+            cell.append("rect").attr("x", gx).attr("y", gy).attr("width", gw).attr("height", gh).attr("rx", 3)
+              .attr("fill", u ? "#fff" : "#f3f3f3").attr("stroke", u ? "#b9c0c8" : "#d9d9d9").attr("stroke-dasharray", u ? null : "3 3");
+            if (!u) return;
+            // volume fill, stacked by profile, bottom up, in the left part; weight fill on the right edge
+            var vw = gw - 8, us = D.ulds[u.type], yb = gy + gh;
+            var byP = [0, 0, 0]; u.items.forEach(function (it) { byP[it.prof] += it.v; });
+            byP.forEach(function (v, pi) {
+              if (v <= 0) return;
+              var hh = gh * v / us.volM3;
+              cell.append("rect").attr("x", gx).attr("y", yb - hh).attr("width", vw).attr("height", hh).attr("fill", PROFC[pi]).attr("opacity", 0.85);
+              yb -= hh;
+            });
+            // dotted line: stowage limit
+            cell.append("line").attr("x1", gx).attr("x2", gx + vw).attr("y1", gy + gh * (1 - D.stow)).attr("y2", gy + gh * (1 - D.stow)).attr("stroke", "#222").attr("stroke-width", 1).attr("stroke-dasharray", "1.5 2.5").attr("opacity", 0.6);
+            var wf = u.netW / u.cap.w;
+            cell.append("rect").attr("x", gx + gw - 6).attr("y", gy + 1).attr("width", 5).attr("height", gh - 2).attr("fill", "#eee");
+            cell.append("rect").attr("x", gx + gw - 6).attr("y", gy + 1 + (gh - 2) * (1 - wf)).attr("width", 5).attr("height", (gh - 2) * wf).attr("fill", "#222");
+            if (gw > 62 && gh > 26) cell.append("text").attr("x", gx + 4).attr("y", gy + 12).attr("font-size", 10.5).attr("fill", "#222").attr("paint-order", "stroke").attr("stroke", "#fff").attr("stroke-width", 3).text(nf0.format(u.netW + u.tare) + " kg");
+            cell.append("rect").attr("x", gx).attr("y", gy).attr("width", gw).attr("height", gh).attr("fill", "transparent")
+              .on("mousemove", function (ev) { showTip(uldTip(u), ev); }).on("mouseleave", hideTip)
+              .on("click", function (ev) { showTip(uldTip(u), ev); });
+          });
+        });
+        // centre-of-gravity strip, on a true arm scale for the whole deck
+        var y1 = H0 + 38, comps = D.compartments, win = D.cgWindow;
+        var ax = d3.scaleLinear().domain([comps[0].armFrom - 0.5, comps[1].armFrom + comps[1].lengthM + 0.5]).range([m.l, W - m.r]);
+        svg.append("text").attr("x", m.l).attr("y", y1 - 24).attr("font-size", 11.5).attr("fill", "#444").text("Side view: arms from the reference point, m");
+        comps.forEach(function (c) { svg.append("rect").attr("x", ax(c.armFrom)).attr("y", y1 + 6).attr("width", ax(c.armFrom + c.lengthM) - ax(c.armFrom)).attr("height", 10).attr("rx", 3).attr("fill", "#eceff3"); });
+        svg.append("rect").attr("x", ax(win[0])).attr("y", y1 + 1).attr("width", ax(win[1]) - ax(win[0])).attr("height", 20).attr("fill", "#3a8f5c").attr("opacity", 0.14);
+        svg.append("line").attr("x1", ax(0)).attr("x2", ax(0)).attr("y1", y1 + 1).attr("y2", y1 + 21).attr("stroke", "#3a8f5c").attr("stroke-width", 1.2);
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (y1 + 24) + ")").call(d3.axisBottom(ax).ticks(small ? 5 : 9).tickFormat(function (v) { return (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v); }));
+        if (sm.gross > 0) {
+          var cx = ax(Math.max(ax.domain()[0], Math.min(ax.domain()[1], sm.cg))), col = sm.cgOk ? "#2e7a4d" : "#b4441a";
+          svg.append("path").attr("d", "M" + cx + "," + (y1 + 1) + "l-6,-9h12z").attr("fill", col);
+          svg.append("line").attr("x1", cx).attr("x2", cx).attr("y1", y1 + 1).attr("y2", y1 + 21).attr("stroke", col).attr("stroke-width", 2);
+          var lab = "cargo CG " + arm(sm.cg) + (sm.cgOk ? ", OK" : ", outside the window");
+          var anchorEnd = cx > W * 0.6;
+          svg.append("text").attr("x", cx + (anchorEnd ? -10 : 10)).attr("y", y1 - 4).attr("text-anchor", anchorEnd ? "end" : "start").attr("font-size", 11.5).attr("font-weight", 600).attr("fill", col).text(lab);
+        }
+        el.insertAdjacentHTML("beforeend", legendHtml(D.profiles.map(function (p, i) { return { c: PROFC[i], t: p.name + " cargo, by volume" }; })
+          .concat([{ c: "#222", t: "weight used (right edge)" }, { c: "#222", t: "85% stowage limit", cls: "ln dash" }, { c: "rgba(58,143,92,.25)", t: "CG window ±" + nf1.format(win[1]) + " m (illustrative)" }])));
+      }
+
+      function renderCaps() {
+        var sm = S.cur.sum;
+        var wc = Math.min(1, sm.cargoW / sm.allowance), wt = Math.min(1 - wc, sm.tare / sm.allowance);
+        var vc = sm.cargoV / sm.holdV, va = sm.airV / sm.holdV;
+        $("caps").innerHTML =
+          '<span class="lbl">Weight</span><div class="cbar"><div class="seg" style="left:0;width:' + (wc * 100) + '%;background:#222"></div><div class="seg" style="left:' + (wc * 100) + "%;width:" + (wt * 100) + '%;background:#9aa3ad"></div></div>' +
+          '<span class="val"><b>' + kg(sm.gross) + "</b> of " + kg(sm.allowance) + ": " + kg(sm.cargoW) + " of cargo and " + kg(sm.tare) + " of containers and pallets; " + kg(sm.allowance - sm.gross) + " unused</span>" +
+          '<span class="lbl">Volume</span><div class="cbar"><div class="seg" style="left:0;width:' + (vc * 100) + '%;background:#2a7fb5"></div><div class="seg hatch" style="left:' + (vc * 100) + "%;width:" + (va * 100) + '%"></div><div class="lim" style="left:' + (D.stow * 100) + '%" title="85% stowage limit"></div></div>' +
+          '<span class="val"><b>' + m3(sm.cargoV) + "</b> of cargo in " + m3(sm.holdV) + " of hold: " + m3(sm.airV) + " of air inside built ULDs (hatched), " + m3(sm.emptyV) + " in " + (D.compartments[0].count.LD3 + 0 >= 0 ? "empty positions" : "") + " (grey). Dotted: the 85% stowage limit.</span>";
+      }
+
+      // ---------- section 3 ----------
+      function renderPath() {
+        var el = $("ch-path"), h = holdNums();
+        var W = chartWidth(el), H = Math.round(Math.min(360, Math.max(260, W * 0.62)));
+        var m = { l: 46, r: 18, t: 16, b: 40 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Loading path: gross weight against cargo volume as shipments are added");
+        var xmax = Math.max(S.al, 24000) * 1.04, ymax = h.vol * 1.06;
+        var x = d3.scaleLinear().domain([0, xmax]).range([m.l, W - m.r]);
+        var y = d3.scaleLinear().domain([0, ymax]).range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 460 ? 4 : 6).tickSize(-(H - m.t - m.b)).tickFormat(""));
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 460 ? 4 : 6).tickFormat(function (v) { return nf0.format(v / 1000) + " t"; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Gross weight loaded, cargo and ULDs");
+        svg.append("text").attr("class", "axis-title").attr("transform", "rotate(-90)").attr("x", -m.t).attr("y", 11).attr("text-anchor", "end").text("Cargo volume, m³");
+        // limits: weight available (vertical), stowable space (dashed), hold volume (thin)
+        svg.append("rect").attr("x", x(0)).attr("y", y(h.stowV)).attr("width", x(S.al) - x(0)).attr("height", y(0) - y(h.stowV)).attr("fill", "#2a7fb5").attr("opacity", 0.05);
+        svg.append("line").attr("x1", x(S.al)).attr("x2", x(S.al)).attr("y1", y(0)).attr("y2", y(h.stowV)).attr("stroke", "#222").attr("stroke-width", 1.4);
+        svg.append("line").attr("x1", x(0)).attr("x2", x(S.al)).attr("y1", y(h.stowV)).attr("y2", y(h.stowV)).attr("stroke", "#222").attr("stroke-width", 1.4);
+        svg.append("line").attr("x1", x(0)).attr("x2", x(xmax)).attr("y1", y(h.vol)).attr("y2", y(h.vol)).attr("stroke", "#bbb").attr("stroke-dasharray", "4 4");
+        svg.append("text").attr("x", x(0) + 6).attr("y", y(h.vol) - 5).attr("font-size", 11).attr("fill", "#767676").text("hold volume " + m3(h.vol));
+        svg.append("text").attr("x", x(0) + 6).attr("y", y(h.stowV) + 14).attr("font-size", 11).attr("fill", "#444").text("stowable space " + m3(h.stowV));
+        svg.append("text").attr("x", x(S.al) - 5).attr("y", y(h.stowV * 0.08)).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#444").text(tonnes(S.al) + " available");
+        var modes = ["rate", "mix"].concat(S.res.hand.loaded.length ? ["hand"] : []);
+        var lineG = d3.line().x(function (p) { return x(p.gross); }).y(function (p) { return y(p.vol); });
+        var ends = [];
+        modes.forEach(function (k) {
+          var R = S.res[k], col = ULD.find(MODES, k).hex;
+          svg.append("path").attr("d", lineG(R.path)).attr("fill", "none").attr("stroke", col).attr("stroke-width", k === "hand" ? 1.6 : 2.2).attr("stroke-dasharray", k === "hand" ? "4 3" : null);
+          svg.append("g").selectAll("circle").data(R.path.slice(1)).join("circle").attr("cx", function (p) { return x(p.gross); }).attr("cy", function (p) { return y(p.vol); }).attr("r", 3.2)
+            .attr("fill", function (p) { return PROFC[S.ships[p.id].prof]; }).attr("stroke", col).attr("stroke-width", 1.2)
+            .on("mousemove", function (ev, p) { showTip('<div class="t">' + esc(ULD.find(MODES, k).name) + "</div>" + shipTipShort(S.ships[p.id]) + '<div class="r">So far<b>' + kg(p.gross) + ", " + m3(p.vol) + ", " + money(p.rev) + "</b></div>", ev); })
+            .on("mouseleave", hideTip);
+          var e = R.path[R.path.length - 1]; ends.push({ k: k, e: e, col: col });
+        });
+        // end labels, kept apart vertically
+        ends.sort(function (a, b) { return y(a.e.vol) - y(b.e.vol); });
+        var lastY = -Infinity;
+        ends.forEach(function (o) {
+          var ly = Math.max(y(o.e.vol) - 10, lastY + 14); lastY = ly;
+          var lx = x(o.e.gross), right = lx > W * 0.55;
+          svg.append("text").attr("x", lx + (right ? -8 : 8)).attr("y", ly).attr("text-anchor", right ? "end" : "start").attr("font-size", 11.5).attr("font-weight", 600).attr("fill", o.col)
+            .attr("paint-order", "stroke").attr("stroke", "#fff").attr("stroke-width", 3).text(money(o.e.rev));
+        });
+        el.insertAdjacentHTML("beforeend", legendHtml(modes.map(function (k) { var o = ULD.find(MODES, k); return { c: o.hex, t: o.name, cls: "ln" + (k === "hand" ? " dash" : "") }; })
+          .concat(D.profiles.map(function (p, i) { return { c: PROFC[i], t: p.name, cls: "dot" }; }))));
+      }
+      function shipTipShort(sh) {
+        return '<div class="r"><i style="background:' + PROFC[sh.prof] + '"></i>' + esc(sh.label) + " " + esc(sh.what) + "<b>" + kg(sh.w) + ", " + m3(sh.v) + "</b></div>" +
+          '<div class="r">Rate, revenue<b>' + money2(sh.rate) + ", " + money(sh.rev) + "</b></div>";
+      }
+
+      function renderCompare() {
+        var a = S.res.rate.sum, b = S.res.mix.sum, hasH = S.res.hand.loaded.length > 0, c = S.res.hand.sum;
+        var rows = [
+          ["Revenue", function (s) { return money(s.rev); }, function () { return signedMoney(b.rev - a.rev); }],
+          ["Shipments loaded", function (s) { return s.nLoaded; }, function () { var d = b.nLoaded - a.nLoaded; return (d > 0 ? "+" : d < 0 ? "−" : "") + Math.abs(d); }],
+          ["Actual weight", function (s) { return kg(s.cargoW); }, function () { return signedPct(b.cargoW / a.cargoW - 1); }],
+          ["Chargeable weight", function (s) { return kg(s.cw); }, function () { return signedPct(b.cw / a.cw - 1); }],
+          ["Revenue per chargeable kg", function (s) { return s.cw ? money2(s.rev / s.cw) : "–"; }, function () { return ""; }],
+          ["Weight used", function (s) { return pct(s.wFill); }, function () { return ""; }],
+          ["Space used", function (s) { return pct(s.vFill); }, function () { return ""; }],
+          ["Wasted volume", function (s) { return m3(s.wastedV); }, function () { return ""; }],
+          ["Containers / pallets", function (s) { return s.nType.LD3 + " / " + s.nType.PMC; }, function () { return ""; }],
+          ["Centre of gravity", function (s) { return s.gross ? arm(s.cg) + (s.cgOk ? "" : " ✗") : "–"; }, function () { return ""; }]
+        ];
+        var head = '<thead><tr><th class="l"></th><th><span class="sw" style="background:#d9480f"></span>Best rate</th><th><span class="sw" style="background:#3a8f5c"></span>Mix</th><th>Mix − rate</th>' + (hasH ? '<th>Your pick</th>' : "") + "</tr></thead>";
+        $("cmp-table").innerHTML = head + "<tbody>" + rows.map(function (r, i) {
+          var dv = r[2](), cls = i === 0 ? (b.rev >= a.rev ? "pos" : "neg") : "";
+          return "<tr><td class=\"l\">" + r[0] + "</td><td>" + r[1](a) + "</td><td>" + r[1](b) + '</td><td class="' + cls + '">' + dv + "</td>" + (hasH ? "<td>" + r[1](c) + "</td>" : "") + "</tr>";
+        }).join("") + "</tbody>";
+        $("cmp-sub").textContent = cfgObj().name + ", " + tonnes(S.al) + " available";
+        var lightR = 0, lightN = 0, denseR = 0, denseN = 0;
+        var la = {}; S.res.rate.loaded.forEach(function (id) { la[id] = 1; });
+        var lb = {}; S.res.mix.loaded.forEach(function (id) { lb[id] = 1; });
+        var swapIn = S.ships.filter(function (s) { return lb[s.id] && !la[s.id]; }), swapOut = S.ships.filter(function (s) { return la[s.id] && !lb[s.id]; });
+        function desc(list) {
+          if (!list.length) return "none";
+          var w = 0, v = 0; list.forEach(function (s) { w += s.w; v += s.v; });
+          return list.length + " shipment" + (list.length > 1 ? "s" : "") + " (" + kg(w) + ", " + m3(v) + ", " + nf0.format(w / v) + " kg per m³)";
+        }
+        $("cmp-hint").textContent = "Mixing flies " + desc(swapIn) + " that best rate first leaves behind, and leaves behind " + desc(swapOut) + " that best rate first flies.";
+      }
+
+      function renderConfigs() {
+        var rows = D.configs.map(function (c) {
+          var a = ULD.run(D, S.ships, c.key, S.al, "rate", null, S.place).sum, b = ULD.run(D, S.ships, c.key, S.al, "mix", null, S.place).sum;
+          return { c: c, a: a, b: b };
+        });
+        var best = d3.max(rows, function (r) { return Math.max(r.a.rev, r.b.rev); });
+        $("cfg-table").innerHTML = '<thead><tr><th class="l">Hold layout</th><th>Best rate</th><th>weight, space</th><th>Mix</th><th>weight, space</th><th>Mix − rate</th><th>CG (mix)</th></tr></thead><tbody>' +
+          rows.map(function (r) {
+            var d = r.b.rev - r.a.rev;
+            return '<tr class="' + (r.c.key === S.cfg ? "cur" : "") + '"><td class="l">' + esc(r.c.name) + (r.c.key === S.cfg ? " (shown)" : "") + '</td><td class="' + (r.a.rev === best ? "hl" : "") + '">' + money(r.a.rev) + "</td><td>" + pct(r.a.wFill) + ", " + pct(r.a.vFill) +
+              '</td><td class="' + (r.b.rev === best ? "hl" : "") + '">' + money(r.b.rev) + "</td><td>" + pct(r.b.wFill) + ", " + pct(r.b.vFill) + '</td><td class="' + (d >= 0 ? "pos" : "neg") + '">' + signedPct(r.b.rev / r.a.rev - 1) + "</td><td>" + (r.b.gross ? arm(r.b.cg) + (r.b.cgOk ? "" : " ✗") : "–") + "</td></tr>";
+          }).join("") + "</tbody>";
+        $("cfg-sub").textContent = "List " + (S.seed - D.seed + 1) + ", " + tonnes(S.al) + " available, " + (S.place === "balanced" ? "balanced" : "front-to-back") + " positions";
+      }
+
+      // ---------- section 4 ----------
+      function cellOf(cfg, al) { return B.cells[cfg + "|" + al]; }
+      function renderMany() {
+        var cell = cellOf(S.cfg, S.al), el = $("ch-hist");
+        var W = chartWidth(el), H = Math.round(Math.min(300, Math.max(220, W * 0.5)));
+        var m = { l: 42, r: 14, t: 14, b: 40 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Histogram of the revenue difference between mixing and loading by rate over 1,000 lists");
+        var bins = B.bins, n = cell.hist.length;
+        var x = d3.scaleLinear().domain([bins[0], bins[0] + n * B.binW]).range([m.l, W - m.r]);
+        var y = d3.scaleLinear().domain([0, d3.max(cell.hist) * 1.12]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(4).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 460 ? 5 : 8).tickFormat(function (v) { return (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) + "%"; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(4));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Mix revenue against best rate first, % (lists outside the range in the end bars)");
+        svg.append("text").attr("class", "axis-title").attr("transform", "rotate(-90)").attr("x", -m.t).attr("y", 11).attr("text-anchor", "end").text("Lists");
+        svg.append("g").selectAll("rect").data(cell.hist).join("rect")
+          .attr("x", function (c, i) { return x(bins[0] + i * B.binW) + 1; }).attr("width", function () { return Math.max(1, x(B.binW) - x(0) - 2); })
+          .attr("y", function (c) { return y(c); }).attr("height", function (c) { return y(0) - y(c); })
+          .attr("fill", function (c, i) { return bins[0] + i * B.binW >= 0 ? "#3a8f5c" : "#d9480f"; }).attr("opacity", 0.85)
+          .on("mousemove", function (ev, c) { var i = cell.hist.indexOf(c), lo = bins[0] + i * B.binW; showTip('<div class="t">Mix vs best rate, ' + signedPct(lo / 100) + " to " + signedPct((lo + B.binW) / 100) + '</div><div class="r">Lists<b>' + c + "</b></div>", ev); })
+          .on("mouseleave", hideTip);
+        svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-width", 1.2);
+        var mx = x(Math.max(bins[0], Math.min(bins[0] + n * B.binW, cell.gainMean * 100)));
+        svg.append("line").attr("x1", mx).attr("x2", mx).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#3a8f5c").attr("stroke-dasharray", "4 3").attr("stroke-width", 1.4);
+        svg.append("text").attr("x", mx + 6).attr("y", m.t + 10).attr("font-size", 11.5).attr("font-weight", 600).attr("fill", "#2e7a4d").text("average " + signedPct(cell.gainMean));
+        $("hist-sub").textContent = cfgObj().name + ", " + tonnes(S.al) + " available";
+
+        var al = D.allowances;
+        var head = '<thead><tr><th class="l">Hold layout</th>' + al.map(function (a) { return '<th colspan="2">' + tonnes(a) + " available</th>"; }).join("") + "</tr>" +
+          '<tr><th class="l"></th>' + al.map(function () { return "<th>Best rate</th><th>Mix</th>"; }).join("") + "</tr></thead>";
+        var body = D.configs.map(function (c) {
+          return '<tr class="' + (c.key === S.cfg ? "cur" : "") + '"><td class="l">' + esc(c.name) + "</td>" + al.map(function (a) {
+            var ce = cellOf(c.key, a), hl = c.key === S.cfg && a === S.al ? ' class="hl"' : "";
+            return "<td" + hl + ">" + money(ce.rate.rev) + "</td><td" + hl + ">" + money(ce.mix.rev) + "</td>";
+          }).join("") + "</tr>";
+        }).join("");
+        var wins = '<tr class="sum"><td class="l">Mix ahead on</td>' + al.map(function (a) {
+          var c = cellOf(S.cfg, a); return '<td colspan="2">' + pct(c.winShare) + " of lists</td>";
+        }).join("") + "</tr>";
+        $("many-table").innerHTML = head + "<tbody>" + body + wins + "</tbody>";
+        $("many-sub").textContent = "1,000 lists, balanced positions; last row for " + cfgObj().name;
+        var bestCfg = {};
+        al.forEach(function (a) { var b = null; D.configs.forEach(function (c) { var v = cellOf(c.key, a).mix.rev; if (!b || v > b.v) b = { c: c, v: v }; }); bestCfg[a] = b.c.name; });
+        var names = al.map(function (a) { return bestCfg[a]; }), same = names.every(function (n) { return n === names[0]; });
+        $("many-hint").textContent = "On average, mixing earns " + signedPct(cell.gainMean) + " in this layout at " + tonnes(S.al) + " (median " + signedPct(cell.gainMed) + "), and its cargo's centre of gravity is inside the window on " + pct(cell.mix.cgOk) + " of lists. The layout that earns the most with mixed loads: " + (same ? names[0] + ", at every allowance" : al.map(function (a) { return bestCfg[a] + " at " + tonnes(a); }).join(", ")) + ". Illustrative shipments and rates.";
+      }
+
+      // ---------- static tables in How it works ----------
+      function renderStatic() {
+        $("prof-table").innerHTML = '<thead><tr><th class="l">Profile</th><th class="l">For example</th><th>Density, kg/m³</th><th>Rate, $/kg</th><th>Shipment volume, m³</th><th class="l">Piece, cm</th></tr></thead><tbody>' +
+          D.profiles.map(function (p, i) {
+            return '<tr><td class="l"><span class="sw" style="background:' + PROFC[i] + '"></span>' + p.name + " (" + Math.round(p.share * D.nShipments) + ')</td><td class="l">' + esc(p.what.slice(0, 2).join(", ").toLowerCase()) + "</td><td>" + p.density + "</td><td>" + nf2.format(p.rate) + "</td><td>" + nf1.format(p.shipM3) + '</td><td class="l">' + p.pieceCm.join(" × ") + (p.longP ? ", " + pct(p.longP) + " long" : "") + "</td></tr>";
+          }).join("") + "</tbody>";
+        var L = D.ulds.LD3, P = D.ulds.PMC;
+        $("uld-table").innerHTML = '<thead><tr><th class="l"></th><th>Base, cm</th><th>Height, cm</th><th>Max gross, kg</th><th>Tare, kg</th><th>Net, kg</th><th>Internal volume, m³</th></tr></thead><tbody>' +
+          [L, P].map(function (u) {
+            return '<tr><td class="l">' + esc(u.name) + " (" + u.code + ")</td><td>" + u.baseCm.join(" × ") + "</td><td>" + nf1.format(u.heightCm) + (u === P ? "*" : "") + "</td><td>" + nf0.format(u.mgw) + "</td><td>" + u.tare + "</td><td>" + nf0.format(u.mgw - u.tare) + "</td><td>" + nf1.format(u.volM3) + (u === P ? "*" : "") + "</td></tr>";
+          }).join("") + "</tbody>";
+      }
+    });
+    </script>
+  </body>
+</html>

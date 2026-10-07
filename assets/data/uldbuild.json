@@ -1,0 +1,47 @@
+{
+  "about": "Inputs for uldbuild.html (Chargeable weight & ULD build-up). ULD sizes and weights from the manufacturers cited on the page; hold layout from Airbus's A350-900 aircraft characteristics document. Shipments, rates, arms, the weight allowance and the centre-of-gravity window are illustrative.",
+  "seed": 11,
+  "nShipments": 40,
+  "volDivisor": 6000,
+  "ulds": {
+    "LD3": {
+      "code": "AKE", "name": "LD3 container", "short": "LD3",
+      "baseCm": [156.2, 153.4], "heightCm": 161.6, "doorCm": [139.3, 154.6],
+      "mgw": 1588, "tare": 54, "volM3": 4.3,
+      "maxPieceCm": [150, 135, 135],
+      "src": "Avius ULD AKE page (base, height, maximum gross weight, internal volume); VRR AKE page (54 kg tare of its lightweight container, door opening)"
+    },
+    "PMC": {
+      "code": "PMC", "name": "PMC pallet", "short": "Pallet",
+      "baseCm": [317.5, 243.8], "heightCm": 160,
+      "mgw": 6804, "tare": 101.5, "volM3": 11.5,
+      "maxPieceCm": [310, 238, 155],
+      "src": "VRR PMC page (base, 6,804 kg maximum gross weight, 101.5 kg tare at 3.7 mm). Lower-deck build height and usable volume are assumptions."
+    }
+  },
+  "stow": 0.85,
+  "compartments": [
+    { "key": "fwd", "name": "Forward hold", "lengthM": 16.221, "armFrom": -18.5, "count": { "LD3": 20, "PMC": 6 } },
+    { "key": "aft", "name": "Aft hold", "lengthM": 13.578, "armFrom": 3.2, "count": { "LD3": 16, "PMC": 5 } }
+  ],
+  "configs": [
+    { "key": "ll", "name": "36 LD3", "fwd": "LD3", "aft": "LD3" },
+    { "key": "pl", "name": "6 pallets + 16 LD3", "fwd": "PMC", "aft": "LD3" },
+    { "key": "lp", "name": "20 LD3 + 5 pallets", "fwd": "LD3", "aft": "PMC" },
+    { "key": "pp", "name": "11 pallets", "fwd": "PMC", "aft": "PMC" }
+  ],
+  "allowances": [16000, 20000, 24000],
+  "allowanceDefault": 20000,
+  "cgWindow": [-2.5, 2.5],
+  "profiles": [
+    { "key": "dense", "name": "Dense", "share": 0.3, "what": ["Machine parts", "Engine parts", "Steel fittings", "Auto parts", "Hand tools"],
+      "density": 330, "densSd": 0.3, "rate": 2.10, "rateSd": 0.08, "shipM3": 2.6, "shipSd": 0.5,
+      "pieceCm": [110, 90, 75], "pieceSd": 0.2, "longP": 0.3, "longCm": [175, 290] },
+    { "key": "standard", "name": "Standard", "share": 0.4, "what": ["Electronics", "Spare parts", "Printed matter", "Wine", "Textiles"],
+      "density": 165, "densSd": 0.2, "rate": 2.50, "rateSd": 0.08, "shipM3": 4.5, "shipSd": 0.5,
+      "pieceCm": [70, 55, 50], "pieceSd": 0.2, "longP": 0, "longCm": [0, 0] },
+    { "key": "light", "name": "Light", "share": 0.3, "what": ["E-commerce parcels", "Garments", "Shoes", "Plastic goods", "Sports gear"],
+      "density": 75, "densSd": 0.25, "rate": 2.95, "rateSd": 0.08, "shipM3": 7, "shipSd": 0.45,
+      "pieceCm": [60, 45, 40], "pieceSd": 0.2, "longP": 0, "longCm": [0, 0] }
+  ]
+}
