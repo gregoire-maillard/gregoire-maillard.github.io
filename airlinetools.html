@@ -13,20 +13,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#EEF1F5">
-<title>Airline tools</title>
+<title>Airline Economics</title>
 <meta name="description" content="Visualizations and strategic tools for the airline industry, built on open data, plus short courses on how airlines work.">
 <link rel="icon" type="image/png" href="/assets/img/favicon.png">
 <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
 <link rel="canonical" href="https://gregoiremaillard.com/airlinetools.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Grégoire Maillard">
-<meta property="og:title" content="Airline tools · Grégoire Maillard">
+<meta property="og:title" content="Airline Economics · Grégoire Maillard">
 <meta property="og:description" content="Visualizations and strategic tools for the airline industry, built on open data, plus short courses on how airlines work.">
 <meta property="og:url" content="https://gregoiremaillard.com/airlinetools.html">
 <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/airlinetools.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Airline tools · Grégoire Maillard">
+<meta property="og:image:alt" content="Airline Economics · Grégoire Maillard">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -109,11 +109,9 @@ a { color: inherit; text-decoration: none; }
 /* hero */
 main { padding-top: 48px; }
 .hero { align-items: end; }
-.hero .t { grid-column: span 8; }
+.hero .t { grid-column: 1 / -1; }
 .hero h1 { font-size: 40px; line-height: 48px; font-weight: 600; letter-spacing: -0.03em; }
-.hero p { margin-top: 16px; max-width: 640px; color: var(--ink-2); font-size: 16px; line-height: 24px; }
-.hero .stats { grid-column: span 4; justify-self: end; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-@media (max-width: 839px) { .hero .t, .hero .stats { grid-column: 1 / -1; justify-self: start; justify-content: flex-start; } }
+.hero p { margin-top: 16px; color: var(--ink-2); font-size: 16px; line-height: 24px; }
 @media (max-width: 599px) { .hero h1 { font-size: 32px; line-height: 40px; } }
 
 /* sections */
@@ -136,7 +134,6 @@ main { padding-top: 48px; }
 @media (max-width: 839px) { .tool { grid-column: 1 / -1; } }
 
 /* topics: one section per topic, its course first, then its tools in course order (quarters, then thirds, halves, full) */
-.topic .sec-head span { max-width: 640px; }
 .area-row { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gutter); counter-reset: step; }
 .area-row .tool { grid-column: span 3; counter-increment: step; }
 .area-row .tool .viz { height: 144px; }
@@ -202,19 +199,15 @@ main { padding-top: 48px; }
       <a class="tab" href="#courses">Other courses</a>
     </nav>
     <div class="grow"></div>
-    <span class="pill" data-at-count><b>24</b> tools · <b>8</b> courses</span>
+    <span class="pill" data-at-count><b>22</b> tools · <b>8</b> courses</span>
   </div>
 </header>
 
 <main class="wrap">
   <div class="hero grid">
     <div class="t">
-      <h1>Airline tools</h1>
+      <h1>Airline Economics</h1>
       <p>Visualizations and strategic tools that make the airline business easier to see: where the planes are, where people want to fly, and how the commercial side works. Built on open data, with short courses from my years in Revenue Management and Loyalty. Organized by topic: each one opens with its course, then the tools in the order the course covers them.</p>
-    </div>
-    <div class="stats">
-      <span class="pill"><i class="dot" style="--c:var(--air)"></i>Live data</span>
-      <span class="pill">Open sources</span>
     </div>
   </div>
 
@@ -286,25 +279,25 @@ main { padding-top: 48px; }
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
               <!-- the price stacked one layer at a time: fare, carrier surcharges, government taxes, airport charges, then fare family and extras on top -->
-              <rect x="102" y="24" width="194" height="22" rx="-22" fill="#2455E6"/>
+              <rect x="102" y="24" width="194" height="22" rx="0" fill="#2455E6"/>
               <text x="306" y="39" font-size="12" font-weight="600" fill="#151A23">$890</text>
-              <rect x="102" y="58" width="194" height="22" rx="-22" fill="#2455E6"/>
-              <rect x="298" y="58" width="49" height="22" rx="-22" fill="#C2378F"/>
+              <rect x="102" y="58" width="194" height="22" rx="0" fill="#2455E6"/>
+              <rect x="298" y="58" width="49" height="22" rx="0" fill="#C2378F"/>
               <text x="357" y="73" font-size="12" font-weight="600" fill="#151A23">$1,120</text>
-              <rect x="102" y="92" width="194" height="22" rx="-22" fill="#2455E6"/>
-              <rect x="298" y="92" width="49" height="22" rx="-22" fill="#C2378F"/>
-              <rect x="349" y="92" width="27" height="22" rx="-22" fill="#12A150"/>
+              <rect x="102" y="92" width="194" height="22" rx="0" fill="#2455E6"/>
+              <rect x="298" y="92" width="49" height="22" rx="0" fill="#C2378F"/>
+              <rect x="349" y="92" width="27" height="22" rx="0" fill="#12A150"/>
               <text x="386" y="107" font-size="12" font-weight="600" fill="#151A23">$1,254</text>
-              <rect x="102" y="126" width="194" height="22" rx="-22" fill="#2455E6"/>
-              <rect x="298" y="126" width="49" height="22" rx="-22" fill="#C2378F"/>
-              <rect x="349" y="126" width="27" height="22" rx="-22" fill="#12A150"/>
-              <rect x="378" y="126" width="17" height="22" rx="-22" fill="#6B4FD8"/>
+              <rect x="102" y="126" width="194" height="22" rx="0" fill="#2455E6"/>
+              <rect x="298" y="126" width="49" height="22" rx="0" fill="#C2378F"/>
+              <rect x="349" y="126" width="27" height="22" rx="0" fill="#12A150"/>
+              <rect x="378" y="126" width="17" height="22" rx="0" fill="#6B4FD8"/>
               <text x="405" y="141" font-size="12" font-weight="600" fill="#151A23">$1,339</text>
-              <rect x="102" y="160" width="194" height="22" rx="-22" fill="#2455E6"/>
-              <rect x="298" y="160" width="49" height="22" rx="-22" fill="#C2378F"/>
-              <rect x="349" y="160" width="27" height="22" rx="-22" fill="#12A150"/>
-              <rect x="378" y="160" width="17" height="22" rx="-22" fill="#6B4FD8"/>
-              <rect x="397" y="160" width="46" height="22" rx="-22" fill="#D98A1C"/>
+              <rect x="102" y="160" width="194" height="22" rx="0" fill="#2455E6"/>
+              <rect x="298" y="160" width="49" height="22" rx="0" fill="#C2378F"/>
+              <rect x="349" y="160" width="27" height="22" rx="0" fill="#12A150"/>
+              <rect x="378" y="160" width="17" height="22" rx="0" fill="#6B4FD8"/>
+              <rect x="397" y="160" width="46" height="22" rx="0" fill="#D98A1C"/>
               <text x="453" y="175" font-size="12" font-weight="600" fill="#151A23">$1,559</text>
             </svg>
           </div>
@@ -365,29 +358,6 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
-        <a class="panel tool" href="/littlewood.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- Littlewood's rule: chance high-fare demand reaches each seat; blue bars are worth protecting, the dashed line is low fare / high fare -->
-              <line x1="120" y1="190" x2="480" y2="190" stroke="rgb(15 23 42 / .10)"/>
-              <g fill="#2455E6"><rect x="120.8" y="31.3" width="5.5" height="158.7" rx="1.5"/><rect x="127.9" y="31.7" width="5.5" height="158.3" rx="1.5"/><rect x="134.9" y="32.2" width="5.5" height="157.8" rx="1.5"/><rect x="142.0" y="32.9" width="5.5" height="157.1" rx="1.5"/><rect x="149.0" y="33.6" width="5.5" height="156.4" rx="1.5"/><rect x="156.1" y="34.6" width="5.5" height="155.4" rx="1.5"/><rect x="163.2" y="35.7" width="5.5" height="154.3" rx="1.5"/><rect x="170.2" y="37.1" width="5.5" height="152.9" rx="1.5"/><rect x="177.3" y="38.8" width="5.5" height="151.2" rx="1.5"/><rect x="184.3" y="40.7" width="5.5" height="149.3" rx="1.5"/><rect x="191.4" y="42.9" width="5.5" height="147.1" rx="1.5"/><rect x="198.4" y="45.5" width="5.5" height="144.5" rx="1.5"/><rect x="205.5" y="48.4" width="5.5" height="141.6" rx="1.5"/><rect x="212.6" y="51.7" width="5.5" height="138.3" rx="1.5"/><rect x="219.6" y="55.4" width="5.5" height="134.6" rx="1.5"/><rect x="226.7" y="59.4" width="5.5" height="130.6" rx="1.5"/><rect x="233.7" y="63.9" width="5.5" height="126.1" rx="1.5"/><rect x="240.8" y="68.7" width="5.5" height="121.3" rx="1.5"/><rect x="247.9" y="73.9" width="5.5" height="116.1" rx="1.5"/><rect x="254.9" y="79.4" width="5.5" height="110.6" rx="1.5"/><rect x="262.0" y="85.1" width="5.5" height="104.9" rx="1.5"/><rect x="269.0" y="91.1" width="5.5" height="98.9" rx="1.5"/><rect x="276.1" y="97.3" width="5.5" height="92.7" rx="1.5"/><rect x="283.2" y="103.6" width="5.5" height="86.4" rx="1.5"/><rect x="290.2" y="110.0" width="5.5" height="80.0" rx="1.5"/><rect x="297.3" y="116.4" width="5.5" height="73.6" rx="1.5"/><rect x="304.3" y="122.7" width="5.5" height="67.3" rx="1.5"/></g>
-              <g fill="#C9D6FA"><rect x="311.4" y="128.9" width="5.5" height="61.1" rx="1.5"/><rect x="318.4" y="134.9" width="5.5" height="55.1" rx="1.5"/><rect x="325.5" y="140.6" width="5.5" height="49.4" rx="1.5"/><rect x="332.6" y="146.1" width="5.5" height="43.9" rx="1.5"/><rect x="339.6" y="151.3" width="5.5" height="38.7" rx="1.5"/><rect x="346.7" y="156.1" width="5.5" height="33.9" rx="1.5"/><rect x="353.7" y="160.6" width="5.5" height="29.4" rx="1.5"/><rect x="360.8" y="164.6" width="5.5" height="25.4" rx="1.5"/><rect x="367.9" y="168.3" width="5.5" height="21.7" rx="1.5"/><rect x="374.9" y="171.6" width="5.5" height="18.4" rx="1.5"/><rect x="382.0" y="174.5" width="5.5" height="15.5" rx="1.5"/><rect x="389.0" y="177.1" width="5.5" height="12.9" rx="1.5"/><rect x="396.1" y="179.3" width="5.5" height="10.7" rx="1.5"/><rect x="403.2" y="181.2" width="5.5" height="8.8" rx="1.5"/><rect x="410.2" y="182.9" width="5.5" height="7.1" rx="1.5"/><rect x="417.3" y="184.3" width="5.5" height="5.7" rx="1.5"/><rect x="424.3" y="185.4" width="5.5" height="4.6" rx="1.5"/><rect x="431.4" y="186.4" width="5.5" height="3.6" rx="1.5"/><rect x="438.4" y="187.1" width="5.5" height="2.9" rx="1.5"/><rect x="445.5" y="187.8" width="5.5" height="2.2" rx="1.5"/><rect x="452.6" y="188.3" width="5.5" height="1.7" rx="1.5"/><rect x="459.6" y="188.7" width="5.5" height="1.3" rx="1.5"/><rect x="466.7" y="189.0" width="5.5" height="1.0" rx="1.5"/><rect x="473.7" y="189.3" width="5.5" height="0.7" rx="1.5"/></g>
-              <path d="M123.5 31.3 L130.6 31.7 L137.6 32.2 L144.7 32.9 L151.8 33.6 L158.8 34.6 L165.9 35.7 L172.9 37.1 L180.0 38.8 L187.1 40.7 L194.1 42.9 L201.2 45.5 L208.2 48.4 L215.3 51.7 L222.4 55.4 L229.4 59.4 L236.5 63.9 L243.5 68.7 L250.6 73.9 L257.6 79.4 L264.7 85.1 L271.8 91.1 L278.8 97.3 L285.9 103.6 L292.9 110.0 L300.0 116.4 L307.1 122.7 L314.1 128.9 L321.2 134.9 L328.2 140.6 L335.3 146.1 L342.4 151.3 L349.4 156.1 L356.5 160.6 L363.5 164.6 L370.6 168.3 L377.6 171.6 L384.7 174.5 L391.8 177.1 L398.8 179.3 L405.9 181.2 L412.9 182.9 L420.0 184.3 L427.1 185.4 L434.1 186.4 L441.2 187.1 L448.2 187.8 L455.3 188.3 L462.4 188.7 L469.4 189.0 L476.5 189.3" fill="none" stroke="#151A23" stroke-width="1.2" opacity=".5"/>
-              <line x1="120" y1="126" x2="480" y2="126" stroke="#151A23" stroke-width="1.6" stroke-dasharray="6 5"/>
-              <line x1="310.6" y1="18" x2="310.6" y2="190" stroke="#151A23" stroke-width="1.4"/>
-              <circle cx="307.1" cy="122.7" r="5" fill="#fff" stroke="#151A23" stroke-width="2"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Explainer</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Littlewood's rule</h3>
-            <p>One flight, two fares: how many seats to keep for the high fare. The probability curve, a seat map that fills booking by booking, and what protecting too few or too many costs.</p>
-            <div class="cta"><span class="btn dark">Open the explainer<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
         <a class="panel tool" href="/bookinglimits.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -406,11 +376,12 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
+              <span class="pill">Explainer</span>
               <span class="pill">Simulator</span>
               <span class="pill"><b>2,000</b> simulated flights</span>
             </div>
             <h3>Booking limits</h3>
-            <p>How many seats to keep for late, high-fare passengers with EMSR-a and EMSR-b, and how many extra bookings to accept for no-shows.</p>
+            <p>How many seats to keep for late, high-fare passengers. Start with one flight and two fares, Littlewood's rule seat by seat, then six classes with EMSR-a and EMSR-b, and how many extra bookings to accept for no-shows.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -491,29 +462,6 @@ main { padding-top: 48px; }
             <h3>Continuous pricing</h3>
             <p>A ladder of fare classes controlled with EMSR-b against a price that can be set at any amount, the argument behind NDC offers: how much more it earns, shopper by shopper, and how much a finer ladder already captures.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/abtestlab.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- a test's estimated lift narrowing day by day: the interval shrinks, the estimate settles above zero -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="110" y1="38" x2="490" y2="38"/><line x1="110" y1="94" x2="490" y2="94"/><line x1="110" y1="206" x2="490" y2="206"/></g>
-              <path d="M110 23 L129 19 L148 21 L167 55 L186 70 L205 86 L224 79 L243 71 L262 79 L281 72 L300 71 L319 78 L338 74 L357 73 L376 78 L395 78 L414 77 L433 79 L452 81 L471 81 L490 81 L490 135 L471 135 L452 137 L433 137 L414 136 L395 138 L376 141 L357 138 L338 142 L319 149 L300 145 L281 149 L262 160 L243 157 L224 171 L205 186 L186 179 L167 177 L148 162 L129 191 L110 200Z" fill="#C9D6FA"/>
-              <line x1="110" y1="150" x2="490" y2="150" stroke="#A0A7B4" stroke-width="1.2"/>
-              <line x1="110" y1="108" x2="490" y2="108" stroke="#5B6272" stroke-width="1" stroke-dasharray="3 4"/>
-              <path d="M110 144 L129 105 L148 91 L167 116 L186 125 L205 136 L224 125 L243 114 L262 119 L281 111 L300 108 L319 114 L338 108 L357 105 L376 109 L395 108 L414 107 L433 108 L452 109 L471 108 L490 108" fill="none" stroke="#2455E6" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="148" cy="91" r="6" fill="none" stroke="#C2378F" stroke-width="2"/>
-              <circle cx="490" cy="108" r="5" fill="#151A23" stroke="#fff" stroke-width="2"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Simulator</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Offer A/B test lab</h3>
-            <p>Design a test of two offers, from a preselected seat to a new bundle, run it day by day on simulated shoppers and read it with guardrails. Then see how often peeking at the results crowns a false winner.</p>
-            <div class="cta"><span class="btn dark">Open the lab<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
     </div>
@@ -1006,7 +954,6 @@ main { padding-top: 48px; }
 
   <footer class="foot">
     <span>By <a href="/">Grégoire Maillard</a></span>
-    <span>More tools to come</span>
     <span class="r">Personal project, not affiliated with any airline.</span>
   </footer>
 </main>
