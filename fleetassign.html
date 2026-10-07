@@ -1,0 +1,1234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Fleet assignment</title>
+    <meta name="description" content="Which aircraft type should fly each flight? A one-day schedule of 30 flights at a hub and four spokes, drawn as a time-space network and solved as an integer program in your browser: operating cost plus expected spill, with flight coverage, aircraft balance and fleet counts. The optimum against a greedy rule, and on 1,000 simulated days.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/fleetassign.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Fleet assignment · Airline Economics">
+    <meta property="og:description" content="Which aircraft type should fly each flight? A one-day schedule of 30 flights at a hub and four spokes, drawn as a time-space network and solved as an integer program in your browser: operating cost plus expected spill, with flight coverage, aircraft balance and fleet counts. The optimum against a greedy rule, and on 1,000 simulated days.">
+    <meta property="og:url" content="https://gregoiremaillard.com/fleetassign.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/fleetassign.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Fleet assignment · Airline Economics">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/highs@1.15.3/build/highs.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as cargorm.html / bidprice.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* Plans: same colours as the policies on cargorm.html (optimum = green, rule of thumb = orange) */
+        --p-opt: #3a8f5c;
+        --p-gr: #d9480f;
+        /* Aircraft types, light to dark by size */
+        --f-rj: #8FA9F2;
+        --f-m: #2455E6;
+        --f-l: #151A23;
+        --c-op: #5B80EC;
+        --c-sp: #C2378F;
+        --count: #7c6fcd;
+      }
+
+      .content { max-width: 1180px; margin: 0 auto; padding: 26px 30px 60px; }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; max-width: 900px; }
+
+      /* ── Pill switchers ── */
+      .switch { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 20px 0 6px; }
+      .switch .grp { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .switch .grp > span { font-size: 12px; color: var(--muted); }
+      .views { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff; flex-wrap: wrap; gap: 2px; }
+      .views button { border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .preset-blurb { font-size: 13px; color: var(--text); margin: 8px 0 0; max-width: 860px; }
+
+      .btn { font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+      .btn:hover { border-color: #cfcfcf; }
+      .btn.dark { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .btn:disabled { opacity: .45; cursor: default; }
+
+      /* ── Sections ── */
+      section.sec { width: auto; float: none; padding: 0; border: 0; }
+      .sec { margin: 38px 0 0; }
+      .sec > h3 { font-size: 20px; margin: 0 0 6px; color: var(--ink); }
+      .sec > p.lead { margin: 0 0 14px; font-size: 13.5px; max-width: 820px; }
+      .block { margin: 0 0 28px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h4 { margin: 0; font-size: 15px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .block > p.lead { margin: 0 0 10px; font-size: 13px; max-width: 800px; }
+      .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table.res { border-collapse: collapse; width: 100%; font-size: 13px; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: bottom; }
+      table.res td { padding: 5px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; vertical-align: middle; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res td.l, table.res th.l { text-align: left; }
+      table.res td.hl { color: var(--ink); font-weight: 600; }
+      table.res tbody tr:hover td { background: var(--soft); }
+      table.res .neg { color: #b4441a; }
+      table.res .pos { color: #2e7a4d; }
+      table.res tr.sum td { border-top: 1px solid var(--line); color: var(--ink); font-weight: 600; }
+      table.res tr.sel td { background: #f4f9f6; }
+      table.res tr.pick { cursor: pointer; }
+      table.res td.c { text-align: center; }
+      table.res td.best { color: var(--ink); font-weight: 600; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+      .chip { display: inline-block; min-width: 30px; padding: 1px 6px; border-radius: 4px; font-size: 11.5px; font-weight: 600; color: #fff; text-align: center; font-variant-numeric: tabular-nums; }
+      .chip.lt { color: #151A23; }
+      .chip.diff { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--p-gr); }
+      input[type=number] { font: inherit; font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; background: #fff; min-width: 0; box-sizing: border-box; width: 72px; }
+      input[type=number]:focus { outline: 2px solid #9cc7df; outline-offset: 0; border-color: #9cc7df; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 6px 0 0; max-width: 900px; }
+      .status { font-size: 12px; color: var(--muted); }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 18px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile .k { font-size: 12px; }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; margin-top: 4px; }
+      .tile span.s { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+
+      /* ── Controls row ── */
+      .ctl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin: 0 0 10px; font-size: 12.5px; color: var(--text); }
+      .ctl-row label { display: inline-flex; align-items: center; gap: 8px; }
+      .ctl-row input[type=range] { width: 130px; accent-color: #222; }
+      .ctl-row output { min-width: 34px; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      .solver-line { font-size: 12.5px; color: var(--text); margin: 0 0 16px; max-width: 900px; }
+      .solver-line b { color: var(--ink); }
+
+      /* ── Selected flight editor ── */
+      .editor { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; font-size: 13px; color: var(--text); }
+      .editor .who { color: var(--ink); font-weight: 600; font-size: 14px; }
+      .editor .who small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); }
+      .editor label { display: inline-flex; align-items: center; gap: 6px; }
+      .editor .picks { display: inline-flex; gap: 14px; flex-wrap: wrap; }
+      .editor .picks span { white-space: nowrap; }
+
+      /* ── Charts ── */
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart svg text { font-family: inherit; }
+      .chart.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .chart.scroll svg { width: auto; max-width: none; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .axis-title { font-size: 11px; fill: #767676; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .ts .flt { cursor: pointer; }
+      .ts .hit { stroke: transparent; stroke-width: 12; fill: none; }
+      .scroll-hint { display: none; font-size: 11.5px; color: var(--muted); margin: 4px 0 0; }
+
+      /* ── Tooltip ── */
+      .tip { position: fixed; pointer-events: none; z-index: 20; background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.08); padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45; max-width: 290px; display: none; }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: center; gap: 7px; }
+      .tip .r i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 10px; }
+
+      .loading { font-size: 13px; color: var(--muted); padding: 30px 0; }
+      .err { font-size: 13px; color: #9a3b0b; background: #fff6f2; border: 1px solid #f3c9b5; border-radius: 8px; padding: 10px 12px; margin: 16px 0; }
+      .err[hidden] { display: none; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+      .method .eq { margin: 6px 0 10px 14px; line-height: 1.9; }
+
+      @media (max-width: 980px) { .two { grid-template-columns: minmax(0, 1fr); } }
+      @media (max-width: 760px) { .scroll-hint { display: block; } }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        .views button { padding: 6px 11px; font-size: 13px; }
+      }
+    </style>
+
+    <!-- Airline Economics header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 4px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
+      @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
+      /* breadcrumb: "Airline Economics · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
+    </style>
+    <style>
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; }
+    </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline economics"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline Economics">
+          <a class="at-tab" href="/airlinetools.html#rm">Revenue management</a>
+          <a class="at-tab" href="/airlinetools.html#network" aria-current="page">Network planning</a>
+          <a class="at-tab" href="/airlinetools.html#loyalty">Loyalty</a>
+          <a class="at-tab" href="/airlinetools.html#cargo">Cargo</a>
+          <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>23</b> tools · <b>8</b> courses</span>
+      </div>
+    </div>
+
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Network planning</div>
+        <h2>Fleet assignment</h2>
+        <p class="lede">Which aircraft type should fly each flight, when every aircraft that lands has to take off again from the same airport, and the airline only has so many of each.</p>
+        <p>A bigger aircraft carries the passengers a smaller one would turn away, but it costs more to fly. Flight by flight the choice is easy. Across a day it isn't: the aircraft that flies a busy morning departure is then away until it comes back, and there are only a few of each type. Below, one day of 30 flights between a hub and four spokes is drawn as a <b>time-space network</b> and solved as an <b>integer program</b> in your browser, with the HiGHS solver: every flight gets exactly one type, aircraft are balanced at every airport at every moment, no type is used more than the airline has, and the total of operating cost and expected spill is as low as possible. The optimum is then compared with a <b>greedy rule</b> that gives the largest aircraft to the busiest flights. This is the hands-on companion to <a href="/np101.html#ch05">Network Planning 101, chapter 05</a> and <a href="/or101.html#ch04">Operations Research 101, chapters 04 and 05</a>, with their numbers. The schedule, costs, fares and demand are illustrative.</p>
+      </div>
+
+      <div class="switch" role="group" aria-label="Scenario">
+        <div class="grp"><span id="l-fleet">Fleet</span><div class="views" id="sw-fleet" role="group" aria-labelledby="l-fleet"></div></div>
+        <div class="grp"><span id="l-dem">Demand</span><div class="views" id="sw-dem" role="group" aria-labelledby="l-dem"></div></div>
+        <div class="grp"><button class="btn" id="new-draw" type="button">New demand draw</button><button class="btn" id="reset-all" type="button">Reset</button></div>
+      </div>
+      <p class="preset-blurb" id="preset-blurb"></p>
+
+      <div id="app"><p class="loading" id="loading">Loading the schedule and the solver…</p></div>
+
+      <div id="main" hidden>
+        <!-- ═══════════════════════════ NETWORK ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-net">
+          <h3 id="h-net">1. The day as a time-space network</h3>
+          <p class="lead">Each airport is a row and time runs left to right from 03:00, where the <b>count line</b> sits. A flight is an arc from its departure to its arrival, and the dotted tail is the turn, after which the aircraft can leave again. While aircraft wait at an airport they travel along a <b>ground arc</b>. Once a plan is chosen, each airport splits into one lane per aircraft type: the numbers on the ground arcs count the aircraft on the ground, and the aircraft that cross the count line are the fleet the plan needs. Click a flight to change its demand.</p>
+          <div class="switch" style="margin-top:0">
+            <div class="grp"><span id="l-view">Show</span><div class="views" id="sw-view" role="group" aria-labelledby="l-view"></div></div>
+          </div>
+          <div class="chart scroll ts" id="ch-ts"></div>
+          <p class="scroll-hint">Scroll sideways to see the whole day.</p>
+          <p class="hint" id="ts-hint"></p>
+          <div class="editor" id="editor"></div>
+        </section>
+
+        <!-- ═══════════════════════════ COSTS ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-cost">
+          <h3 id="h-cost">2. What each flight costs on each aircraft</h3>
+          <p class="lead">Flying a flight with a type costs its <b>operating cost</b>, the type's cost per block hour times the block time, plus the <b>spill cost</b>: the average fare times the passengers expected above the seat count, who go to another airline. This is the leg-fleet cost <var>c</var><sub>ik</sub> of OR 101's model, and every commercial judgment in fleet assignment sits in it.</p>
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>One flight on each type</h4><span id="cost-sub"></span></div>
+              <div class="chart" id="ch-cost"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>What it means for this flight</h4><span>Selected in section 1 or the table below</span></div>
+              <div id="cost-note" class="dec-note" style="font-size:13px;line-height:1.6;color:var(--text)"></div>
+            </div>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>Every flight on every type</h4><span>Cost per flight. Bold: the cheapest type for that flight on its own. Click a row to select it.</span></div>
+            <div class="tbl-wrap"><table class="res" id="cost-table"></table></div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ SOLVE ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-solve">
+          <h3 id="h-solve">3. The optimum against the greedy rule</h3>
+          <p class="lead">The <span class="sw" style="background:var(--p-opt)"></span><b>optimum</b> solves the whole day at once. The <span class="sw" style="background:var(--p-gr)"></span><b>greedy rule</b> goes down the flights from the busiest to the quietest and gives each the largest type that still leaves a flyable plan for the rest: without that check it would soon break the balance, with an aircraft due to leave an airport it never reached. A second rule gives each flight its own cheapest type instead, still busiest first. Change the fleet below, or a flight's demand above, and both are solved again.</p>
+
+          <div class="ctl-row">
+            <div class="grp" style="display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap"><span id="l-rule" style="font-size:12px;color:var(--muted)">Greedy rule</span><div class="views" id="sw-rule" role="group" aria-labelledby="l-rule"></div></div>
+            <label for="recap">Spilled passengers recaptured <input type="range" id="recap" min="0" max="50" step="5" value="0"><output id="recap-o" for="recap">0%</output></label>
+          </div>
+
+          <div class="block">
+            <div class="block-head"><h4>The fleet</h4><span>Edit any number; set "available" to 0 to leave a type out</span></div>
+            <div class="tbl-wrap"><table class="res" id="fleet-table"></table></div>
+            <p class="hint"><button class="btn" id="reset-fleet" type="button">Reset the fleet</button></p>
+          </div>
+
+          <p class="solver-line" id="solver-line" role="status" aria-live="polite"></p>
+          <p class="err" id="infeasible" hidden></p>
+
+          <div class="tiles" id="tiles"></div>
+
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>Where the money goes</h4><span>Cost per day</span></div>
+              <div class="chart" id="ch-bars"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>How each plan uses the fleet</h4><span>Flights, block hours and aircraft by type</span></div>
+              <div class="tbl-wrap"><table class="res" id="type-table"></table></div>
+              <p class="hint" id="res-hint"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ SIMULATION ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-sim">
+          <h3 id="h-sim">4. On 1,000 days of actual demand</h3>
+          <p class="lead">Both plans are chosen on expected spill. On the day, each flight's demand is one draw from its forecast, and spill is whatever exceeds the seats. Here the two plans fly the same 1,000 simulated days: the average realised cost should match the expected cost of section 3, and the gap between the plans varies from day to day.</p>
+          <div class="ctl-row">
+            <button class="btn" id="sim-new" type="button">Run 1,000 new days</button>
+            <span class="status" id="sim-status"></span>
+          </div>
+          <div class="tiles" id="sim-tiles"></div>
+          <div class="block">
+            <div class="block-head"><h4>Greedy minus optimum, day by day</h4><span id="sim-sub"></span></div>
+            <div class="chart" id="ch-sim"></div>
+            <p class="hint" id="sim-hint"></p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>The schedule and the fleet</h4>
+        <p>One day of 30 flights between a hub (H) and four spokes, A to D, with block times of 1, 1.5, 2 and 2.5 hours and average fares of $150, $190, $220 and $250 (all in <a href="assets/data/fleetassign.json">fleetassign.json</a>). Three spokes keep an aircraft overnight for an early flight to the hub, and the hub sends one back to each of them late in the evening. The fleet has up to three types: a 76-seat regional jet at $3,900 per block hour with a 30-minute turn, a 150-seat narrowbody at $7,200 with 40 minutes, and a 190-seat narrowbody at $8,600 with 45 minutes. The two narrowbodies are those of NP 101 and OR 101: on the 2.5-hour leg to D they cost $18,000 and $21,500 to fly, the operating costs of OR 101's worked example. Every number here is illustrative; real costs per block hour vary a lot between airlines and include or leave out different items (ownership, crew, maintenance, fuel).</p>
+
+        <h4>Demand</h4>
+        <p>Each flight's unconstrained demand is normal with mean <var>μ</var><sub>i</sub> and spread <var>σ</var><sub>i</sub>. The mean is the spoke's size (85, 120, 135 and 150 passengers for A to D) times a time-of-day factor (1.2 before 09:00, 0.95 to noon, 0.8 to 15:00, 1.1 to 19:00, 0.9 after) times a lognormal noise with a 12% spread, times the demand level (1, 1.2 on a peak day, 0.8 on a quiet day); the spread is 20% of the mean. The noise comes from a seeded generator (mulberry32), so the page opens on the same demand every time, and "New demand draw" changes the seed. With the opening seed, the 07:45 flight from the hub to D is set to OR 101's example: 160 ± 30 passengers.</p>
+
+        <h4>The cost of a flight on a type</h4>
+        <p>For flight <var>i</var> with block time <var>b</var><sub>i</sub> and average fare <var>r̄</var><sub>i</sub>, and type <var>k</var> with <var>Q</var><sub>k</sub> seats and cost <var>h</var><sub>k</sub> per block hour:</p>
+        <p class="eq"><var>c</var><sub>ik</sub> = <var>h</var><sub>k</sub> <var>b</var><sub>i</sub> + (1 − <var>ρ</var>) <var>r̄</var><sub>i</sub> E[(<var>D</var><sub>i</sub> − <var>Q</var><sub>k</sub>)<sup>+</sup>], &nbsp; with &nbsp; E[(<var>D</var> − <var>Q</var>)<sup>+</sup>] = <var>σ</var> φ(<var>z</var>) + (<var>μ</var> − <var>Q</var>)(1 − Φ(<var>z</var>)), &nbsp; <var>z</var> = (<var>Q</var> − <var>μ</var>) / <var>σ</var>,</p>
+        <p>where φ and Φ are the standard normal density and distribution, and <var>ρ</var> is the share of spilled passengers recaptured on another of the airline's flights (0 by default, as in the courses). With 160 ± 30 passengers and a $250 fare, the expected spill is 17.6 passengers on 150 seats and 2.5 on 190, so the two types cost $22,407 and $22,125 on that leg: OR 101's numbers. Spill is valued at the average fare and nothing else changes with the type: no catering or fees per passenger, no extra revenue from cargo.</p>
+
+        <h4>The time-space network</h4>
+        <p>Each type has its own network, because turn times differ. At each airport, every departure is a node at its departure time, and every arrival is a node at the time the aircraft is ready again, arrival plus turn; events at the same airport and minute share a node, and an aircraft that is ready at 07:45 can leave at 07:45. Ground arcs join consecutive nodes at an airport, and the last one of the day wraps round to the first, because tomorrow repeats today. Time is counted from the count line at 03:00, when no flight is in the air, so the aircraft a type needs are those on the wrap-around ground arcs.</p>
+
+        <h4>The integer program</h4>
+        <p>With <var>x</var><sub>ik</sub> = 1 if flight <var>i</var> is flown by type <var>k</var>, <var>y</var><sub>g</sub> ≥ 0 the number of aircraft of type <var>k</var> on ground arc <var>g</var>, and <var>S</var><sub>k</sub> the aircraft available, the fleet assignment model of Hane et al. (1995), as written in OR 101, chapter 05, is:</p>
+        <p class="eq">minimise Σ<sub>i</sub> Σ<sub>k</sub> <var>c</var><sub>ik</sub> <var>x</var><sub>ik</sub><br>
+          subject to Σ<sub>k</sub> <var>x</var><sub>ik</sub> = 1 for every flight <var>i</var> (cover),<br>
+          Σ<sub><var>i</var> arriving at <var>n</var></sub> <var>x</var><sub>ik</sub> + <var>y</var><sub>n−</sub> − Σ<sub><var>i</var> leaving <var>n</var></sub> <var>x</var><sub>ik</sub> − <var>y</var><sub>n+</sub> = 0 for every type <var>k</var> and node <var>n</var> of its network (balance),<br>
+          Σ<sub><var>g</var> crossing the count line</sub> <var>y</var><sub>g</sub> + Σ<sub><var>i</var> in the air at the count line</sub> <var>x</var><sub>ik</sub> ≤ <var>S</var><sub>k</sub> for every type <var>k</var> (count),<br>
+          <var>x</var><sub>ik</sub> ∈ {0, 1}, <var>y</var><sub>g</sub> ≥ 0 and whole,</p>
+        <p>where <var>y</var><sub>n−</sub> and <var>y</var><sub>n+</sub> are the ground arcs entering and leaving node <var>n</var>. With the three-type fleet that is 90 flight-type variables, 137 ground-arc variables and 170 constraints. The page writes the model in CPLEX LP format and solves it with <a href="https://github.com/lovasoa/highs-js" target="_blank" rel="noopener">highs-js</a> 1.15.3, the HiGHS solver compiled to WebAssembly and loaded from jsDelivr, by branch and bound with cuts. It also solves the <b>LP relaxation</b>, with 0 ≤ <var>x</var><sub>ik</sub> ≤ 1 and <var>y</var> fractional, to show how close it comes: often it is already whole, the near-network structure that OR 101, chapter 04 describes, and when it isn't, the gap is small.</p>
+        <p>The ground counts drawn in section 1 are those of the fewest aircraft that can fly the chosen plan: at each airport, the running total of arrivals minus departures of a type, plus the number parked across the count line that keeps it from going below zero. Aircraft the plan doesn't need are left out of the picture.</p>
+
+        <h4>The greedy rules</h4>
+        <p>Both rules sort the flights by mean demand, busiest first. "Largest on the busiest" gives each flight the largest type that still leaves a flyable plan; "cheapest flight by flight" gives it the type with the lowest <var>c</var><sub>ik</sub> that still does. "Still flyable" is checked by solving the same integer program with the choices made so far fixed and no objective, so a rule never paints itself into a corner. Without that check, both rules would usually produce a plan that can't be flown. Neither is what planners do: they are there to show what solving the day as a whole is worth.</p>
+
+        <h4>Simulated days</h4>
+        <p>For section 4, each day draws every flight's demand from its normal forecast (floored at zero), and each plan pays its operating cost plus the fare (less recapture) for every passenger above the seats. The draws are seeded (mulberry32), and both plans see the same days. With the opening settings, the average over 1,000 days lands within 0.1% of the expected cost of each plan, which checks the spill formula.</p>
+
+        <h4>Checking the numbers</h4>
+        <p><code>scripts/fleetassign/check.mjs</code> runs the engine embedded in this page (between the <code>fam-engine</code> markers) in Node with the same HiGHS build, for both fleets and all three demand levels, and checks every plan: each flight covered once, aircraft balanced, counts within the fleet, OR 101's example leg costs, and the greedy plans never below the optimum. The optima were also reproduced, to the cent, by a separate model built from the same inputs with SciPy's <code>milp</code> and the spill integrated numerically.</p>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>Hane, C. A., Barnhart, C., Johnson, E. L., Marsten, R. E., Nemhauser, G. L. and Sigismondi, G. (1995), "<a href="https://doi.org/10.1007/BF01585938" target="_blank" rel="noopener">The fleet assignment problem: solving a large-scale integer program</a>", Mathematical Programming 70(2), 211–232. The model used here: a multicommodity flow on a time-expanded network with side constraints.</li>
+          <li>Abara, J. (1989), "<a href="https://doi.org/10.1287/inte.19.4.20" target="_blank" rel="noopener">Applying integer linear programming to the fleet assignment problem</a>", Interfaces 19(4), 20–28. The first integer programming formulation assigning several fleets at once, at American Airlines.</li>
+          <li>Subramanian, R., Scheff, R. P., Quillinan, J. D., Wiper, D. S. and Marsten, R. E. (1994), "<a href="https://doi.org/10.1287/inte.24.1.104" target="_blank" rel="noopener">Coldstart: fleet assignment at Delta Air Lines</a>", Interfaces 24(1), 104–120. About 2,500 daily domestic legs and 450 aircraft from 10 fleets; the model was expected to save Delta $300 million over three years.</li>
+          <li>Barnhart, C., Kniker, T. S. and Lohatepanont, M. (2002), "<a href="https://doi.org/10.1287/trsc.36.2.199.566" target="_blank" rel="noopener">Itinerary-based airline fleet assignment</a>", Transportation Science 36(2), 199–217. Spill and recapture by itinerary rather than by leg.</li>
+          <li>Huangfu, Q. and Hall, J. A. J. (2018), "<a href="https://doi.org/10.1007/s12532-017-0130-5" target="_blank" rel="noopener">Parallelizing the dual revised simplex method</a>", Mathematical Programming Computation 10(1), 119–142: the paper behind <a href="https://highs.dev" target="_blank" rel="noopener">HiGHS</a>, run here through <a href="https://github.com/lovasoa/highs-js" target="_blank" rel="noopener">highs-js</a> (MIT licence).</li>
+          <li>Charts drawn with <a href="https://d3js.org" target="_blank" rel="noopener">D3</a> 7.9.0.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>Spill is counted leg by leg. A connecting passenger spilled from a small first leg is also lost on the second, and some spilled passengers would take another of the airline's flights; the recapture slider is a single average for that. The itinerary-based model of Barnhart, Kniker and Lohatepanont (2002) handles both, and the <a href="/unconstraining.html">demand unconstraining</a> page looks at spill and recapture on one flight.</li>
+          <li>Demand is a forecast with a normal spread, fixed before the day. Airlines refine the assignment as bookings come in, swapping types that share a cockpit, which is worth more than a perfect plan that can't be changed (<a href="/np101.html#ch05">NP 101, chapter 05</a>).</li>
+          <li>Aircraft cost only per block hour. There is no ownership or leasing cost per aircraft per day, so the model is happy to use every aircraft it has; nor are there landing fees by weight, crew rules, gate limits or noise curfews.</li>
+          <li>One day, repeated. Real fleeting covers a week with different days, and the next steps, routing each tail through maintenance and building crew pairings (<a href="/or101.html#ch06">OR 101, chapters 06 to 08</a>), can make a cheap assignment impossible to fly.</li>
+          <li>The schedule is fixed. Retiming a flight by a few minutes can free an aircraft for a better assignment; integrated schedule design and fleeting models choose both.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+// <fam-engine>
+// Fleet assignment engine: schedule, seeded demand, leg-fleet costs, the time-space network, the integer program
+// (written in CPLEX LP format for HiGHS), the greedy rule and the aircraft count of any plan. Pure functions, no DOM.
+// Shared by fleetassign.html and scripts/fleetassign/check.mjs. The solver is passed in, so the same code runs in
+// the browser (highs-js from jsDelivr) and in Node (the highs npm package).
+var FAM = (function () {
+  "use strict";
+
+  // ---------- random ----------
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function gaussFactory(rng) {
+    var spare = null;
+    return function () {
+      if (spare !== null) { var s = spare; spare = null; return s; }
+      var u, v, q;
+      do { u = rng() * 2 - 1; v = rng() * 2 - 1; q = u * u + v * v; } while (q === 0 || q >= 1);
+      var m = Math.sqrt(-2 * Math.log(q) / q);
+      spare = v * m; return u * m;
+    };
+  }
+
+  // ---------- normal distribution and expected spill ----------
+  function phi(z) { return Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI); }
+  // Standard normal CDF (Abramowitz and Stegun 7.1.26 on erf, error below 1.5e-7)
+  function Phi(z) {
+    var x = Math.abs(z) / Math.SQRT2, t = 1 / (1 + 0.3275911 * x);
+    var y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+    return z >= 0 ? 0.5 * (1 + y) : 0.5 * (1 - y);
+  }
+  // E[(D − Q)+] for D ~ Normal(mu, sd): sd·φ(z) + (mu − Q)(1 − Φ(z)), z = (Q − mu)/sd
+  function expSpill(mu, sd, Q) {
+    if (!(sd > 0)) return Math.max(0, mu - Q);
+    var z = (Q - mu) / sd;
+    return Math.max(0, sd * phi(z) + (mu - Q) * (1 - Phi(z)));
+  }
+
+  // ---------- time ----------
+  function mins(hhmm) { var p = hhmm.split(":"); return +p[0] * 60 + +p[1]; }
+  function hhmm(m) { m = ((Math.round(m) % 1440) + 1440) % 1440; var h = Math.floor(m / 60), mm = m % 60; return (h < 10 ? "0" : "") + h + ":" + (mm < 10 ? "0" : "") + mm; }
+
+  // ---------- schedule ----------
+  function find(arr, key) { for (var i = 0; i < arr.length; i++) if (arr[i].key === key || arr[i].code === key) return arr[i]; return null; }
+  function schedule(data) {
+    var hub = data.hub;
+    return data.schedule.flights.map(function (f, i) {
+      var spoke = f[0] === hub ? f[1] : f[0], st = find(data.stations, spoke), dep = mins(f[2]);
+      return { i: i, id: f[0] + "-" + f[1] + "-" + f[2].replace(":", ""), org: f[0], dst: f[1], spoke: spoke, out: f[0] === hub,
+        dep: dep, arr: dep + st.block, block: st.block, fare: st.fare };
+    });
+  }
+
+  // ---------- seeded demand ----------
+  // Mean demand per flight = spoke size × time-of-day factor × lognormal noise × demand level; spread = cv × mean.
+  function demand(data, flights, seed, mult) {
+    var D = data.demand, rng = mulberry32(seed), g = gaussFactory(rng), tod = D.timeOfDay.map(function (t) { return { from: mins(t.from), mult: t.mult }; });
+    return flights.map(function (f) {
+      var st = find(data.stations, f.spoke), m = tod[0].mult;
+      tod.forEach(function (t) { if (f.dep >= t.from) m = t.mult; });
+      var mean = st.size * m * Math.exp(D.noiseSd * g() - D.noiseSd * D.noiseSd / 2) * mult;
+      if (D.pinned && seed === D.seed && f.id === D.pinned.flight) return { mean: Math.round(D.pinned.mean * mult), sd: Math.round(D.pinned.sd * mult) };
+      mean = Math.round(mean);
+      return { mean: mean, sd: Math.round(D.cv * mean) };
+    });
+  }
+
+  // ---------- leg-fleet cost ----------
+  // c_ik = operating cost (cost per block hour × block hours) + average fare × (1 − recapture) × expected spill
+  function legCost(f, dem, fl, recapture) {
+    var op = fl.costBH * f.block / 60, sp = expSpill(dem.mean, dem.sd, fl.seats), spillCost = f.fare * (1 - recapture) * sp;
+    return { op: op, spill: sp, spillCost: spillCost, total: op + spillCost };
+  }
+  function costMatrix(flights, dems, fleets, recapture) {
+    return flights.map(function (f, i) { return fleets.map(function (fl) { return legCost(f, dems[i], fl, recapture); }); });
+  }
+
+  // ---------- time-space network ----------
+  // One network per fleet type (turn times differ). Time is measured from the count line, so the only arcs that can
+  // cross it are the wrap-around ground arc at each station (last node of the day to the first) and any flight that
+  // is in the air at the count line. An arrival node sits at the time the aircraft is ready again: arrival + turn.
+  function network(flights, fleet, countLine) {
+    function rel(t) { return ((t - countLine) % 1440 + 1440) % 1440; }
+    var byStation = {};
+    function ev(st, t, kind, i) { (byStation[st] = byStation[st] || []).push({ t: rel(t), kind: kind, i: i }); }
+    flights.forEach(function (f) { ev(f.org, f.dep, "dep", f.i); ev(f.dst, f.arr + fleet.turn, "arr", f.i); });
+    var nodes = [], ground = [], depNode = {}, arrNode = {}, crossFlights = [];
+    Object.keys(byStation).sort().forEach(function (st) {
+      var evs = byStation[st].sort(function (a, b) { return a.t - b.t || (a.kind === "arr" ? -1 : 1); }), list = [];
+      evs.forEach(function (e) {
+        var last = list[list.length - 1];
+        if (!last || last.t !== e.t) { last = { id: nodes.length, st: st, t: e.t, ins: [], outs: [] }; list.push(last); nodes.push(last); }
+        if (e.kind === "dep") { last.outs.push(e.i); depNode[e.i] = last.id; } else { last.ins.push(e.i); arrNode[e.i] = last.id; }
+      });
+      for (var j = 0; j < list.length; j++) {
+        var a = list[j], b = list[(j + 1) % list.length];
+        ground.push({ id: ground.length, st: st, from: a.id, to: b.id, t0: a.t, t1: b.t, wrap: j === list.length - 1 });
+      }
+    });
+    flights.forEach(function (f) { if (rel(f.arr + fleet.turn) < rel(f.dep)) crossFlights.push(f.i); });
+    return { nodes: nodes, ground: ground, depNode: depNode, arrNode: arrNode, crossFlights: crossFlights, rel: rel };
+  }
+
+  // ---------- the integer program, in CPLEX LP format ----------
+  // opts.fix: { flightIndex: fleetIndex } forces assignments (used by the greedy rule); opts.zeroObj: feasibility only;
+  // opts.relax: drop integrality (LP relaxation).
+  function buildLP(flights, fleets, nets, C, opts) {
+    opts = opts || {};
+    var K = fleets.length, lines = [], obj = [], i, k;
+    function x(i, k) { return "x_" + i + "_" + k; }
+    function y(k, g) { return "y_" + k + "_" + g; }
+    function num(v) { return (Math.round(v * 100) / 100).toString(); }
+    for (i = 0; i < flights.length; i++) for (k = 0; k < K; k++) if (fleets[k].count > 0) obj.push((opts.zeroObj ? "0" : num(C[i][k].total)) + " " + x(i, k));
+    lines.push("Minimize");
+    lines.push(" cost: " + wrap(obj.join(" + ").replace(/\+ -/g, "- ")));
+    lines.push("Subject To");
+    // cover
+    for (i = 0; i < flights.length; i++) {
+      var terms = [];
+      for (k = 0; k < K; k++) if (fleets[k].count > 0) terms.push(x(i, k));
+      if (!terms.length) terms.push("0 " + x(i, 0));
+      lines.push(" cover_" + i + ": " + terms.join(" + ") + " = 1");
+    }
+    // balance and count, per fleet
+    for (k = 0; k < K; k++) {
+      if (fleets[k].count <= 0) continue;
+      var N = nets[k], inG = {}, outG = {};
+      N.ground.forEach(function (g) { (inG[g.to] = inG[g.to] || []).push(g.id); (outG[g.from] = outG[g.from] || []).push(g.id); });
+      N.nodes.forEach(function (n) {
+        var t = [];
+        n.ins.forEach(function (fi) { t.push("+ " + x(fi, k)); });
+        (inG[n.id] || []).forEach(function (g) { t.push("+ " + y(k, g)); });
+        n.outs.forEach(function (fi) { t.push("- " + x(fi, k)); });
+        (outG[n.id] || []).forEach(function (g) { t.push("- " + y(k, g)); });
+        lines.push(" bal_" + k + "_" + n.id + ": " + wrap(t.join(" ").replace(/^\+ /, "")) + " = 0");
+      });
+      var cnt = [];
+      N.ground.forEach(function (g) { if (g.wrap) cnt.push(y(k, g.id)); });
+      N.crossFlights.forEach(function (fi) { cnt.push(x(fi, k)); });
+      lines.push(" count_" + k + ": " + cnt.join(" + ") + " <= " + fleets[k].count);
+    }
+    if (opts.fix) Object.keys(opts.fix).forEach(function (fi) { lines.push(" fix_" + fi + ": " + x(fi, opts.fix[fi]) + " = 1"); });
+    lines.push("Bounds");
+    for (i = 0; i < flights.length; i++) for (k = 0; k < K; k++) if (fleets[k].count > 0) lines.push(" 0 <= " + x(i, k) + " <= 1");
+    var ints = [];
+    for (k = 0; k < K; k++) if (fleets[k].count > 0) nets[k].ground.forEach(function (g) { lines.push(" " + y(k, g.id) + " >= 0"); ints.push(y(k, g.id)); });
+    if (!opts.relax) {
+      var bins = [];
+      for (i = 0; i < flights.length; i++) for (k = 0; k < K; k++) if (fleets[k].count > 0) bins.push(x(i, k));
+      lines.push("Generals");
+      lines.push(" " + wrap(bins.concat(ints).join(" ")));
+    }
+    lines.push("End");
+    return lines.join("\n");
+  }
+  function wrap(s) { // LP format lines should stay short; break on spaces every ~200 characters
+    var out = [], cur = "";
+    s.split(" ").forEach(function (w) { if (cur.length + w.length > 200) { out.push(cur); cur = "  " + w; } else cur = cur ? cur + " " + w : w; });
+    out.push(cur);
+    return out.join("\n");
+  }
+
+  function readPlan(res, flights, fleets) {
+    var plan = [];
+    for (var i = 0; i < flights.length; i++) {
+      var best = -1, bv = -1;
+      for (var k = 0; k < fleets.length; k++) {
+        var c = res.Columns["x_" + i + "_" + k], v = c ? c.Primal : 0;
+        if (v > bv) { bv = v; best = k; }
+      }
+      plan.push(best);
+    }
+    return plan;
+  }
+
+  // ---------- solve ----------
+  function instance(flights, dems, fleets, recapture, countLine) {
+    var C = costMatrix(flights, dems, fleets, recapture);
+    var nets = fleets.map(function (fl) { return network(flights, fl, countLine); });
+    return { flights: flights, dems: dems, fleets: fleets, C: C, nets: nets };
+  }
+  function optimum(highs, I) {
+    var t0 = now(), lp = buildLP(I.flights, I.fleets, I.nets, I.C), res = highs.solve(lp, { output_flag: false }), t1 = now();
+    if (res.Status !== "Optimal") return { ok: false, status: res.Status };
+    var relax = highs.solve(buildLP(I.flights, I.fleets, I.nets, I.C, { relax: true }), { output_flag: false });
+    var plan = readPlan(res, I.flights, I.fleets);
+    return { ok: true, plan: plan, obj: res.ObjectiveValue, lpObj: relax.Status === "Optimal" ? relax.ObjectiveValue : null,
+      lpFractional: relax.Status === "Optimal" ? countFractional(relax) : null, ms: t1 - t0, nVars: Object.keys(res.Columns).length, nRows: (lp.match(/\n (cover|bal|count)_/g) || []).length };
+  }
+  function countFractional(res) {
+    var n = 0;
+    Object.keys(res.Columns).forEach(function (c) { if (c[0] === "x") { var v = res.Columns[c].Primal; if (v > 1e-6 && v < 1 - 1e-6) n++; } });
+    return n;
+  }
+  // Greedy rules, busiest flight first. "largest": give it the largest type that still leaves a flyable plan for the
+  // rest. "cheapest": give it its own cheapest type (operating plus spill cost) that still leaves a flyable plan.
+  function greedy(highs, I, rule) {
+    var order = I.flights.map(function (f, i) { return i; }).sort(function (a, b) { return I.dems[b].mean - I.dems[a].mean || I.flights[a].dep - I.flights[b].dep; });
+    var types = I.fleets.map(function (fl, k) { return k; }).filter(function (k) { return I.fleets[k].count > 0; }).sort(function (a, b) { return I.fleets[b].seats - I.fleets[a].seats; });
+    var fix = {}, solves = 0, steps = [];
+    for (var o = 0; o < order.length; o++) {
+      var i = order[o], chosen = -1, tried = [];
+      var ti = rule === "cheapest" ? types.slice().sort(function (a, b) { return I.C[i][a].total - I.C[i][b].total; }) : types;
+      for (var t = 0; t < ti.length; t++) {
+        var k = ti[t], trial = Object.assign({}, fix); trial[i] = k;
+        var res = highs.solve(buildLP(I.flights, I.fleets, I.nets, I.C, { fix: trial, zeroObj: true }), { output_flag: false }); solves++;
+        if (res.Status === "Optimal") { chosen = k; break; }
+        tried.push(k);
+      }
+      if (chosen < 0) return { ok: false, status: "Infeasible" };
+      fix[i] = chosen;
+      steps.push({ i: i, k: chosen, blocked: tried });
+    }
+    var plan = I.flights.map(function (f, i) { return fix[i]; });
+    return { ok: true, plan: plan, obj: planCost(I, plan).total, steps: steps, solves: solves };
+  }
+  function now() { return typeof performance !== "undefined" ? performance.now() : Date.now(); }
+
+  // ---------- evaluating a plan without the solver ----------
+  function planCost(I, plan) {
+    var r = { op: 0, spillCost: 0, spill: 0, total: 0 };
+    plan.forEach(function (k, i) { var c = I.C[i][k]; r.op += c.op; r.spillCost += c.spillCost; r.spill += c.spill; r.total += c.total; });
+    return r;
+  }
+  // Aircraft on the ground at each node, per fleet, with as few aircraft as the plan allows, and the aircraft count
+  // (the flow across the count line). Also checks balance: a plan is flyable if every fleet's count fits.
+  function planFlows(I, plan) {
+    return I.fleets.map(function (fl, k) {
+      var N = I.nets[k], byStation = {}, total = 0;
+      N.nodes.forEach(function (n) { (byStation[n.st] = byStation[n.st] || []).push(n); });
+      var cross = N.crossFlights.filter(function (fi) { return plan[fi] === k; }).length;
+      var stations = {};
+      Object.keys(byStation).forEach(function (st) {
+        var list = byStation[st], cum = 0, minCum = 0, after = [];
+        list.forEach(function (n) {
+          n.ins.forEach(function (fi) { if (plan[fi] === k) cum++; });
+          n.outs.forEach(function (fi) { if (plan[fi] === k) cum--; });
+          after.push(cum); minCum = Math.min(minCum, cum);
+        });
+        var base = -minCum; // aircraft parked across the count line at this station
+        if (cum !== 0) base = NaN; // unbalanced: arrivals ≠ departures over the day
+        stations[st] = { nodes: list, onGround: after.map(function (c) { return base + c; }), overnight: base };
+        total += base;
+      });
+      return { stations: stations, used: total + cross, cross: cross };
+    });
+  }
+
+  // ---------- Monte Carlo: realised cost on simulated days ----------
+  function simulate(I, plans, days, seed, recapture) {
+    var rng = mulberry32(seed), g = gaussFactory(rng), out = plans.map(function () { return []; });
+    for (var d = 0; d < days; d++) {
+      var draw = I.dems.map(function (dm) { return Math.max(0, dm.mean + dm.sd * g()); });
+      plans.forEach(function (plan, p) {
+        var cost = 0;
+        plan.forEach(function (k, i) {
+          var f = I.flights[i], fl = I.fleets[k];
+          cost += fl.costBH * f.block / 60 + f.fare * (1 - recapture) * Math.max(0, draw[i] - fl.seats);
+        });
+        out[p].push(cost);
+      });
+    }
+    return out;
+  }
+
+  return { mulberry32: mulberry32, gaussFactory: gaussFactory, phi: phi, Phi: Phi, expSpill: expSpill, mins: mins, hhmm: hhmm, find: find,
+    schedule: schedule, demand: demand, legCost: legCost, costMatrix: costMatrix, network: network, buildLP: buildLP,
+    instance: instance, optimum: optimum, greedy: greedy, planCost: planCost, planFlows: planFlows, simulate: simulate };
+})();
+// </fam-engine>
+    </script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var DATA_URL = "assets/data/fleetassign.json";
+      var HIGHS_BASE = "https://cdn.jsdelivr.net/npm/highs@1.15.3/build/";
+      var FC = { RJ: "#8FA9F2", M: "#2455E6", L: "#151A23" };
+      var PLAN = { opt: { name: "Optimum", hex: "#3a8f5c" }, gr: { name: "Greedy rule", hex: "#d9480f" } };
+      var RULES = [{ key: "largest", name: "Largest on the busiest" }, { key: "cheapest", name: "Cheapest flight by flight" }];
+      var VIEWS = [{ key: "sched", name: "Schedule only" }, { key: "opt", name: "Optimum" }, { key: "gr", name: "Greedy rule" }];
+      var ROWS = ["A", "B", "H", "C", "D"];
+
+      var $ = function (id) { return document.getElementById(id); };
+      var nf0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+      var nf1 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      function money(v) { return (v < -0.5 ? "−$" : "$") + nf0.format(Math.abs(Math.round(v))); }
+      function signedMoney(v) { var r = Math.round(v); return (r > 0 ? "+$" : r < 0 ? "−$" : "$") + nf0.format(Math.abs(r)); }
+      function moneyK(v) { var a = Math.abs(v); return (v < 0 ? "−$" : "$") + (a >= 1e6 ? nf1.format(a / 1e6) + "M" : a >= 1e4 ? nf0.format(a / 1e3) + "k" : a >= 1e3 ? nf1.format(a / 1e3) + "k" : nf0.format(a)); }
+      function pct(v) { return nf0.format(Math.round(v * 100)) + "%"; }
+      function pct1(v) { return nf1.format(v * 100) + "%"; }
+      function hrs(m) { var h = Math.floor(m / 60), r = Math.round(m % 60); return h + " h" + (r ? " " + (r < 10 ? "0" : "") + r : ""); }
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+      function stName(c) { return c === data.hub ? "Hub" : c; }
+      function fname(f) { return stName(f.org) + " → " + stName(f.dst); }
+      function ftimes(f) { return FAM.hhmm(f.dep) + "–" + FAM.hhmm(f.arr); }
+      function chip(k, extra) { var fl = S.fleets[k]; return '<span class="chip' + (fl.key === "RJ" ? " lt" : "") + (extra || "") + '" style="background:' + FC[fl.key] + '">' + esc(fl.short) + "</span>"; }
+      function typeName(k) { var fl = S.fleets[k]; return fl.short + "-seat " + fl.name.toLowerCase(); }
+
+      var data, highs = null;
+      var S = { preset: null, level: null, seed: 0, rule: "largest", view: "opt", sel: 0, recap: 0, fleets: null, dems: null, edited: {},
+        I: null, opt: null, gr: null, simSeed: 0, busy: false };
+
+      // ---------- loading ----------
+      function loadSolver() {
+        if (typeof Module !== "function") return Promise.reject(new Error("highs.js"));
+        var factory = Module;
+        return factory({ locateFile: function (f) { return HIGHS_BASE + f; } });
+      }
+      fetch(DATA_URL).then(function (r) { if (!r.ok) throw new Error("fleetassign.json " + r.status); return r.json(); })
+        .then(function (d) {
+          data = d;
+          if (typeof d3 === "undefined") throw new Error("the chart library");
+          return loadSolver().catch(function () { throw new Error("the solver"); });
+        })
+        .then(function (h) { highs = h; start(); })
+        .catch(function (e) { $("loading").outerHTML = '<p class="err">Couldn\'t load ' + esc(e.message || e) + ". Check your connection and reload the page.</p>"; });
+
+      function start() {
+        S.flights = FAM.schedule(data);
+        S.cl = FAM.mins(data.countLine);
+        S.recap = data.recapture || 0;
+        $("recap").value = Math.round(S.recap * 100); $("recap-o").textContent = pct(S.recap);
+        resetScenario();
+        renderSwitches();
+        wire();
+        $("loading").remove();
+        $("main").hidden = false;
+        regenDemand();
+        solveAll();
+      }
+      function resetScenario() {
+        S.preset = data.fleetPresets[0].key; S.level = data.demandLevels[0].key; S.seed = data.demand.seed;
+        S.simSeed = data.simSeed; S.rule = "largest"; S.view = "opt"; S.edited = {};
+        S.sel = Math.max(0, S.flights.findIndex(function (f) { return f.id === data.demand.pinned.flight; }));
+        resetFleet();
+      }
+      function resetFleet() {
+        var p = FAM.find(data.fleetPresets, S.preset);
+        S.fleets = data.fleets.map(function (f) { return Object.assign({}, f, { count: p.counts[f.key] || 0 }); });
+      }
+      function regenDemand() {
+        var lv = FAM.find(data.demandLevels, S.level);
+        S.dems = FAM.demand(data, S.flights, S.seed, lv.mult);
+        S.edited = {};
+      }
+
+      // ---------- switches ----------
+      function pills(id, items, cur, onPick) {
+        var el = $(id);
+        el.innerHTML = items.map(function (o) { return '<button type="button" data-k="' + o.key + '" aria-pressed="' + (cur === o.key) + '" class="' + (cur === o.key ? "on" : "") + '">' + esc(o.name) + "</button>"; }).join("");
+        el.onclick = function (e) {
+          var b = e.target.closest("button"); if (!b) return;
+          el.querySelectorAll("button").forEach(function (x) { var on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on); });
+          onPick(b.dataset.k);
+        };
+      }
+      function renderSwitches() {
+        pills("sw-fleet", data.fleetPresets, S.preset, function (k) { if (k === S.preset) return; S.preset = k; resetFleet(); solveAll(); });
+        pills("sw-dem", data.demandLevels, S.level, function (k) { if (k === S.level) return; S.level = k; regenDemand(); solveAll(); });
+        pills("sw-view", VIEWS, S.view, function (k) { S.view = k; renderNetwork(); });
+        pills("sw-rule", RULES, S.rule, function (k) { if (k === S.rule) return; S.rule = k; solveAll(true); });
+      }
+      function renderBlurb() {
+        var p = FAM.find(data.fleetPresets, S.preset), lv = FAM.find(data.demandLevels, S.level);
+        var ed = Object.keys(S.edited).length;
+        $("preset-blurb").innerHTML = "<b>" + esc(p.name) + ".</b> " + esc(p.blurb) + " <b>" + esc(lv.name) + ".</b> " + esc(lv.blurb) +
+          (S.seed !== data.demand.seed ? " Demand draw " + (S.seed - data.demand.seed) + "." : "") + (ed ? " You changed the demand on " + ed + (ed === 1 ? " flight." : " flights.") : "");
+      }
+
+      function wire() {
+        $("new-draw").onclick = function () { S.seed += 1; regenDemand(); solveAll(); };
+        $("reset-all").onclick = function () { resetScenario(); renderSwitches(); $("recap").value = 0; S.recap = data.recapture || 0; $("recap-o").textContent = pct(S.recap); regenDemand(); solveAll(); };
+        $("reset-fleet").onclick = function () { resetFleet(); solveAll(); };
+        var rt = null;
+        $("recap").addEventListener("input", function () {
+          S.recap = +this.value / 100; $("recap-o").textContent = pct(S.recap);
+          clearTimeout(rt); rt = setTimeout(function () { solveAll(); }, 150);
+        });
+        $("sim-new").onclick = function () { S.simSeed += 1; renderSim(); };
+        var rw = window.innerWidth;
+        window.addEventListener("resize", function () {
+          if (Math.abs(window.innerWidth - rw) < 30) return; rw = window.innerWidth;
+          clearTimeout(S.rz); S.rz = setTimeout(function () { renderAll(true); }, 150);
+        });
+      }
+
+      // ---------- solving ----------
+      var solveT = null;
+      function solveAll(greedyOnly) {
+        renderBlurb();
+        $("solver-line").innerHTML = "Solving…";
+        clearTimeout(solveT);
+        solveT = setTimeout(function () {
+          S.I = FAM.instance(S.flights, S.dems, S.fleets, S.recap, S.cl);
+          if (!greedyOnly || !S.opt) S.opt = runSafe(function () { return FAM.optimum(highs, S.I); });
+          S.gr = S.opt && S.opt.ok ? runSafe(function () { return FAM.greedy(highs, S.I, S.rule); }) : null;
+          renderAll();
+        }, 30);
+      }
+      function runSafe(fn) {
+        try { return fn(); } catch (e) {
+          return { ok: false, status: "Solver error (" + (e && e.message ? e.message : e) + ")" };
+        }
+      }
+
+      function renderAll(resizeOnly) {
+        renderNetwork();
+        renderEditor();
+        renderCost();
+        renderCostTable();
+        renderFleet();
+        renderResults();
+        if (!resizeOnly || S.simOut) renderSim(resizeOnly);
+      }
+      function ok() { return S.opt && S.opt.ok && S.gr && S.gr.ok; }
+      function planOf(key) { return key === "opt" ? (S.opt && S.opt.ok ? S.opt.plan : null) : key === "gr" ? (S.gr && S.gr.ok ? S.gr.plan : null) : null; }
+      function ruleName() { return FAM.find(RULES, S.rule).name.toLowerCase(); }
+
+      // ---------- tooltip ----------
+      var tip = $("tip");
+      function showTip(html, ev) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var x = ev.clientX + 14, y = ev.clientY + 14, r = tip.getBoundingClientRect();
+        if (x + r.width > window.innerWidth - 8) x = ev.clientX - r.width - 14;
+        if (y + r.height > window.innerHeight - 8) y = ev.clientY - r.height - 14;
+        tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      function chartWidth(el, min) { return Math.max(min || 280, Math.floor(el.getBoundingClientRect().width - 12)); }
+      function svgIn(el, W, H) {
+        el.innerHTML = "";
+        return d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("width", W).attr("height", H).attr("role", "img");
+      }
+      function legendHtml(items) {
+        return '<div class="legend">' + items.map(function (it) {
+          return "<span><i class=\"" + (it.cls || "") + "\" style=\"" + (it.cls && it.cls.indexOf("ln") >= 0 ? "border-color:" : "background:") + it.c + "\"></i>" + esc(it.t) + "</span>";
+        }).join("") + "</div>";
+      }
+      function flightTip(i) {
+        var f = S.flights[i], dm = S.dems[i], h = '<div class="t">' + fname(f) + " · " + ftimes(f) + "</div>" +
+          '<div class="r">Demand<b>' + dm.mean + " ± " + dm.sd + "</b></div>" + '<div class="r">Block time<b>' + hrs(f.block) + "</b></div>" + '<div class="r">Average fare<b>' + money(f.fare) + "</b></div>";
+        ["opt", "gr"].forEach(function (p) {
+          var plan = planOf(p); if (!plan) return;
+          var c = S.I.C[i][plan[i]];
+          h += '<div class="r"><i style="background:' + PLAN[p].hex + '"></i>' + PLAN[p].name + "<b>" + esc(S.fleets[plan[i]].short) + " seats, " + money(c.total) + "</b></div>";
+        });
+        return h;
+      }
+
+      // ---------- section 1: time-space network ----------
+      function renderNetwork() {
+        var el = $("ch-ts"), plan = planOf(S.view), I = S.I;
+        var active = plan ? S.fleets.map(function (f, k) { return k; }).filter(function (k) { return S.fleets[k].count > 0; }) : [null];
+        if (plan) active.sort(function (a, b) { return S.fleets[b].seats - S.fleets[a].seats; });
+        var W = Math.max(760, chartWidth(el, 760)), m = { l: 84, r: 16, t: 26, b: 30 };
+        var LH = plan ? 17 : 22, PAD = 10, GAP = plan ? 14 : 18;
+        var rowH = active.length * LH + 2 * PAD, H = m.t + ROWS.length * rowH + (ROWS.length - 1) * GAP + m.b;
+        var svg = svgIn(el, W, H).attr("aria-label", "Time-space network: airports as rows, time across, flights as arcs and ground arcs between them");
+        svg.attr("style", "min-width:" + W + "px");
+        var x = d3.scaleLinear().domain([0, 1440]).range([m.l, W - m.r]);
+        var rel = function (t) { return ((t - S.cl) % 1440 + 1440) % 1440; };
+        var rowTop = {}; ROWS.forEach(function (s, r) { rowTop[s] = m.t + r * (rowH + GAP); });
+        function laneY(st, k) { var li = plan ? active.indexOf(k) : 0; return rowTop[st] + PAD + li * LH + LH / 2; }
+        // time grid
+        var ticks = d3.range(0, 1441, 180);
+        svg.append("g").selectAll("line").data(ticks).join("line").attr("x1", x).attr("x2", x).attr("y1", m.t - 6).attr("y2", H - m.b + 4).attr("stroke", "#f0f0f0");
+        svg.append("g").attr("class", "axis").selectAll("text").data(ticks).join("text").attr("x", x).attr("y", H - 10).attr("text-anchor", "middle").text(function (t) { return FAM.hhmm(t + S.cl); });
+        // rows
+        ROWS.forEach(function (st) {
+          var info = st === data.hub ? null : FAM.find(data.stations, st);
+          svg.append("rect").attr("x", m.l).attr("y", rowTop[st]).attr("width", W - m.l - m.r).attr("height", rowH).attr("rx", 6).attr("fill", st === data.hub ? "#f3f5f9" : "#f8f8f8");
+          svg.append("text").attr("x", m.l - 10).attr("y", rowTop[st] + rowH / 2 - (info ? 2 : -4)).attr("text-anchor", "end").attr("font-size", 12.5).attr("font-weight", 600).attr("fill", "#222").text(st === data.hub ? "Hub" : "Spoke " + st);
+          if (info) svg.append("text").attr("x", m.l - 10).attr("y", rowTop[st] + rowH / 2 + 12).attr("text-anchor", "end").attr("font-size", 10.5).attr("fill", "#888").text(hrs(info.block) + " · $" + info.fare);
+        });
+        // count line at both edges
+        [0, 1440].forEach(function (t, j) {
+          svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", m.t - 8).attr("y2", H - m.b + 2).attr("stroke", "#7c6fcd").attr("stroke-width", 1.4).attr("stroke-dasharray", "4 3");
+          if (j === 0) svg.append("text").attr("x", x(t) + 4).attr("y", m.t - 10).attr("font-size", 11).attr("fill", "#7c6fcd").text("count line, " + data.countLine);
+        });
+        var flows = plan ? FAM.planFlows(I, plan) : null;
+        // lanes and ground arcs
+        active.forEach(function (k) {
+          var col = k === null ? "#999" : FC[S.fleets[k].key];
+          ROWS.forEach(function (st) {
+            var y = laneY(st, k);
+            svg.append("line").attr("x1", x(0)).attr("x2", x(1440)).attr("y1", y).attr("y2", y).attr("stroke", "#e2e2e2").attr("stroke-width", 1);
+            if (k === null) {
+              // schedule view: every event at this airport is a node (arrival node at touchdown)
+              return;
+            }
+            var stf = flows[k].stations[st]; if (!stf) return;
+            var nodes = stf.nodes, on = stf.onGround, n = nodes.length;
+            var segs = [];
+            for (var j = 0; j < n; j++) {
+              var a = nodes[j].t, b = j + 1 < n ? nodes[j + 1].t : 1440;
+              segs.push({ a: a, b: b, c: on[j] });
+            }
+            if (n) segs.unshift({ a: 0, b: nodes[0].t, c: on[n - 1] });
+            segs.forEach(function (sg) {
+              if (!(sg.c > 0)) return;
+              svg.append("line").attr("x1", x(sg.a)).attr("x2", x(sg.b)).attr("y1", y).attr("y2", y).attr("stroke", col).attr("stroke-opacity", 0.32).attr("stroke-width", Math.min(9, 1.5 + 2 * sg.c)).attr("stroke-linecap", "butt");
+              if (x(sg.b) - x(sg.a) > 16) svg.append("text").attr("x", (x(sg.a) + x(sg.b)) / 2).attr("y", y - 5.5).attr("text-anchor", "middle").attr("font-size", 10).attr("fill", "#555").text(sg.c);
+            });
+          });
+        });
+        if (!plan) {
+          ROWS.forEach(function (st) {
+            var y = laneY(st, null);
+            svg.append("line").attr("x1", x(0)).attr("x2", x(1440)).attr("y1", y).attr("y2", y).attr("stroke", "#bbb").attr("stroke-width", 1.4);
+          });
+        }
+        // flights
+        var defs = svg.append("defs");
+        var cols = plan ? active.map(function (k) { return FC[S.fleets[k].key]; }) : ["#9aa3ad"];
+        cols.forEach(function (c, j) {
+          defs.append("marker").attr("id", "ah" + j).attr("viewBox", "0 0 10 10").attr("refX", 9).attr("refY", 5).attr("markerWidth", 5.5).attr("markerHeight", 5.5).attr("orient", "auto-start-reverse")
+            .append("path").attr("d", "M0,0 L10,5 L0,10 z").attr("fill", c);
+        });
+        var g = svg.append("g");
+        S.flights.forEach(function (f, i) {
+          var k = plan ? plan[i] : null, ci = plan ? active.indexOf(k) : 0, col = cols[ci];
+          var turn = plan ? S.fleets[k].turn : 0;
+          var x1 = x(rel(f.dep)), y1 = laneY(f.org, k), x2 = x(rel(f.arr)), y2 = laneY(f.dst, k), sel = i === S.sel;
+          var grp = g.append("g").attr("class", "flt").attr("tabindex", 0).attr("role", "button").attr("aria-label", fname(f) + " " + ftimes(f));
+          if (sel) grp.append("line").attr("x1", x1).attr("y1", y1).attr("x2", x2).attr("y2", y2).attr("stroke", "#f2b84b").attr("stroke-width", 7).attr("stroke-linecap", "round").attr("opacity", 0.75);
+          grp.append("line").attr("x1", x1).attr("y1", y1).attr("x2", x2).attr("y2", y2).attr("stroke", "#fff").attr("stroke-width", 4);
+          grp.append("line").attr("x1", x1).attr("y1", y1).attr("x2", x2).attr("y2", y2).attr("stroke", col).attr("stroke-width", sel ? 2.4 : 1.7).attr("marker-end", "url(#ah" + ci + ")");
+          if (turn) grp.append("line").attr("x1", x2).attr("x2", x(rel(f.arr + turn))).attr("y1", y2).attr("y2", y2).attr("stroke", col).attr("stroke-width", 1.6).attr("stroke-dasharray", "1.5 2.5");
+          grp.append("circle").attr("cx", x1).attr("cy", y1).attr("r", 2.6).attr("fill", "#fff").attr("stroke", col).attr("stroke-width", 1.2);
+          grp.append("circle").attr("cx", x(rel(f.arr + turn))).attr("cy", y2).attr("r", 2.6).attr("fill", "#fff").attr("stroke", col).attr("stroke-width", 1.2);
+          grp.append("line").attr("class", "hit").attr("x1", x1).attr("y1", y1).attr("x2", x2).attr("y2", y2);
+          grp.on("mousemove", function (ev) { showTip(flightTip(i), ev); }).on("mouseleave", hideTip)
+            .on("click", function () { select(i); })
+            .on("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); select(i); } });
+        });
+        // legend and count-line summary
+        var leg = plan ? active.map(function (k) { return { t: S.fleets[k].short + " seats", c: FC[S.fleets[k].key], cls: "ln" }; }) : [{ t: "flight", c: "#9aa3ad", cls: "ln" }];
+        leg.push({ t: "ground arc, aircraft on the ground", c: "rgba(36,85,230,.32)" });
+        leg.push({ t: "count line", c: "#7c6fcd", cls: "ln dash" });
+        el.insertAdjacentHTML("beforeend", legendHtml(plan ? leg : [leg[0], leg[2]]));
+        if (plan) {
+          var parts = active.map(function (k) {
+            var where = [];
+            ROWS.forEach(function (st) { var o = flows[k].stations[st] ? flows[k].stations[st].overnight : 0; if (o > 0) where.push(o + (st === data.hub ? " at the hub" : " at " + st)); });
+            return "<b>" + flows[k].used + "</b> × " + esc(S.fleets[k].short) + " seats (" + (where.length ? where.join(", ") : "none") + ")";
+          });
+          var tot = active.reduce(function (s, k) { return s + flows[k].used; }, 0);
+          $("ts-hint").innerHTML = (S.view === "opt" ? "The optimum" : "The greedy rule (" + ruleName() + ")") + " needs <b>" + tot + "</b> aircraft across the count line: " + parts.join("; ") + ". Every arrival of a type at an airport is matched by a departure of the same type, so each lane balances over the day.";
+        } else if (S.view !== "sched") {
+          $("ts-hint").textContent = "No plan to show: the fleet can't fly this schedule (see section 3).";
+        } else {
+          $("ts-hint").innerHTML = "30 flights, " + nf0.format(d3.sum(S.flights, function (f) { return f.block; }) / 60) + " block hours. Arrival nodes here sit at touchdown; in a plan they move to the end of the turn, which depends on the aircraft type.";
+        }
+      }
+
+      function select(i) { S.sel = i; renderNetwork(); renderEditor(); renderCost(); renderCostTable(); }
+
+      // ---------- selected-flight editor ----------
+      function renderEditor() {
+        var i = S.sel, f = S.flights[i], dm = S.dems[i], el = $("editor");
+        var picks = ["opt", "gr"].map(function (p) {
+          var plan = planOf(p); if (!plan) return "";
+          return '<span><span class="sw" style="background:' + PLAN[p].hex + '"></span>' + PLAN[p].name + ": " + chip(plan[i]) + "</span>";
+        }).join("");
+        el.innerHTML = '<div class="who">' + fname(f) + " · " + ftimes(f) + "<small>" + hrs(f.block) + " block · average fare " + money(f.fare) + (S.edited[i] ? " · demand changed by you" : "") + "</small></div>" +
+          '<label for="ed-mu">Demand <input type="number" id="ed-mu" min="0" max="400" step="5" value="' + dm.mean + '"></label>' +
+          '<label for="ed-sd">± <input type="number" id="ed-sd" min="0" max="150" step="1" value="' + dm.sd + '"> passengers</label>' +
+          '<span class="picks">' + picks + "</span>" +
+          '<button class="btn" type="button" id="ed-reset"' + (S.edited[i] ? "" : " disabled") + ">Undo demand changes</button>";
+        var t = null;
+        function onEdit() {
+          var mu = parseFloat($("ed-mu").value), sd = parseFloat($("ed-sd").value);
+          if (!isFinite(mu) || !isFinite(sd) || mu < 0 || sd < 0) return;
+          S.dems[i] = { mean: Math.min(400, mu), sd: Math.min(150, sd) };
+          S.edited[i] = true;
+          clearTimeout(t); t = setTimeout(function () { solveAll(); }, 350);
+        }
+        $("ed-mu").addEventListener("input", onEdit);
+        $("ed-sd").addEventListener("input", onEdit);
+        $("ed-reset").onclick = function () {
+          var lv = FAM.find(data.demandLevels, S.level);
+          Object.keys(S.edited).forEach(function (j) { S.dems[j] = FAM.demand(data, S.flights, S.seed, lv.mult)[j]; });
+          S.edited = {}; solveAll();
+        };
+      }
+
+      // ---------- section 2: cost of one flight by type ----------
+      function renderCost() {
+        var el = $("ch-cost"), i = S.sel, f = S.flights[i], dm = S.dems[i], cv = dm.mean > 0 ? dm.sd / dm.mean : 0.2;
+        var ks = S.fleets.map(function (fl, k) { return k; }).filter(function (k) { return S.fleets[k].count > 0; });
+        if (!ks.length) ks = [0, 1, 2];
+        var W = chartWidth(el), H = Math.round(Math.min(330, Math.max(240, W * 0.6))), m = { l: 58, r: 14, t: 12, b: 40 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Operating plus spill cost of the selected flight on each aircraft type, against its mean demand");
+        var xmax = Math.max(260, Math.ceil(dm.mean * 1.35 / 20) * 20);
+        var xs = d3.range(0, xmax + 1, 2);
+        function cost(k, mu) { return FAM.legCost(f, { mean: mu, sd: cv * mu }, S.fleets[k], S.recap).total; }
+        var x = d3.scaleLinear().domain([0, xmax]).range([m.l, W - m.r]);
+        var ymax = d3.max(ks, function (k) { return cost(k, xmax); });
+        var y = d3.scaleLinear().domain([0, Math.min(ymax, d3.max(ks, function (k) { return cost(k, 0); }) * 2.6)]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(6));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return "$" + d3.format("~s")(v); }));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Mean demand (spread " + pct(cv) + " of it)");
+        svg.append("defs").append("clipPath").attr("id", "clip-cost").append("rect").attr("x", m.l).attr("y", m.t - 2).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b + 2);
+        var g = svg.append("g").attr("clip-path", "url(#clip-cost)");
+        ks.forEach(function (k) {
+          var fl = S.fleets[k];
+          g.append("path").attr("d", d3.line().x(function (v) { return x(v); }).y(function (v) { return y(cost(k, v)); })(xs)).attr("fill", "none").attr("stroke", FC[fl.key]).attr("stroke-width", 2.2);
+          g.append("line").attr("x1", x(fl.seats)).attr("x2", x(fl.seats)).attr("y1", y(cost(k, fl.seats)) + 4).attr("y2", H - m.b).attr("stroke", FC[fl.key]).attr("stroke-dasharray", "2 3").attr("opacity", 0.6);
+        });
+        var xm = x(Math.min(dm.mean, xmax));
+        svg.append("line").attr("x1", xm).attr("x2", xm).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#f2b84b").attr("stroke-width", 2);
+        svg.append("text").attr("x", xm + 4).attr("y", m.t + 10).attr("font-size", 11).attr("fill", "#8a6414").text("this flight: " + dm.mean);
+        ks.forEach(function (k) {
+          var c = cost(k, dm.mean);
+          if (y(c) >= m.t) svg.append("circle").attr("cx", xm).attr("cy", y(c)).attr("r", 4.5).attr("fill", FC[S.fleets[k].key]).attr("stroke", "#fff").attr("stroke-width", 1.5);
+        });
+        svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+          .on("mousemove", function (ev) {
+            var mu = Math.max(0, Math.round(x.invert(d3.pointer(ev)[0])));
+            showTip('<div class="t">Mean demand ' + mu + " ± " + Math.round(cv * mu) + "</div>" + ks.map(function (k) {
+              var c = FAM.legCost(f, { mean: mu, sd: cv * mu }, S.fleets[k], S.recap);
+              return '<div class="r"><i style="background:' + FC[S.fleets[k].key] + '"></i>' + esc(S.fleets[k].short) + " seats<b>" + money(c.total) + "</b></div>";
+            }).join(""), ev);
+          }).on("mouseleave", hideTip);
+        el.insertAdjacentHTML("beforeend", legendHtml(ks.map(function (k) { return { t: S.fleets[k].short + " seats: operating + spill", c: FC[S.fleets[k].key], cls: "ln" }; }).concat([{ t: "seat count", c: "#999", cls: "ln dash" }])));
+        $("cost-sub").textContent = fname(f) + " · " + ftimes(f);
+
+        // the note
+        var rows = ks.map(function (k) { return { k: k, c: S.I.C[i][k] }; }).sort(function (a, b) { return a.c.total - b.c.total; });
+        var best = rows[0], html = "<p style=\"margin:0 0 8px\">At <b>" + dm.mean + " ± " + dm.sd + "</b> passengers and a " + money(f.fare) + " fare" + (S.recap ? " (" + pct(S.recap) + " of spill recaptured)" : "") + ":</p><div class=\"tbl-wrap\"><table class=\"res\"><thead><tr><th class=\"l\">Type</th><th>Operating</th><th>Expected spill</th><th>Spill cost</th><th>Total</th></tr></thead><tbody>";
+        ks.forEach(function (k) {
+          var c = S.I.C[i][k];
+          html += '<tr><td class="l">' + chip(k) + " " + esc(S.fleets[k].name) + "</td><td>" + money(c.op) + "</td><td>" + nf1.format(c.spill) + " pax</td><td>" + money(c.spillCost) + '</td><td class="' + (k === best.k ? "best" : "") + '">' + money(c.total) + "</td></tr>";
+        });
+        html += "</tbody></table></div>";
+        var po = planOf("opt");
+        if (po) {
+          var ko = po[i];
+          if (ko === best.k) html += "<p style=\"margin:10px 0 0\">On its own, the <b>" + esc(typeName(best.k)) + "</b> is the cheapest, by " + money(rows[1].c.total - best.c.total) + ", and the optimum gives it this flight.</p>";
+          else html += "<p style=\"margin:10px 0 0\">On its own, the <b>" + esc(typeName(best.k)) + "</b> would be cheapest, by " + money(S.I.C[i][ko].total - best.c.total) + ". The optimum still flies it with the <b>" + esc(typeName(ko)) + "</b>: " + (S.fleets[best.k].seats > S.fleets[ko].seats ? "the larger aircraft are worth more on other flights, or can't be where this one needs them at that time." : "the smaller aircraft are busy elsewhere, or can't be where this one needs them at that time.") + " That is what solving the day as a whole means: as OR 101 puts it, the bigger aircraft wins only if the network has one free at that time and place.</p>";
+        }
+        $("cost-note").innerHTML = html;
+      }
+
+      function renderCostTable() {
+        var ks = S.fleets.map(function (fl, k) { return k; }).filter(function (k) { return S.fleets[k].count > 0; });
+        var po = planOf("opt"), pg = planOf("gr");
+        var html = '<thead><tr><th class="l">Flight</th><th class="l">Time</th><th>Demand</th>' + ks.map(function (k) { return "<th>" + chip(k) + "</th>"; }).join("") + '<th class="c">Optimum</th><th class="c">Greedy</th><th>Greedy − optimum</th></tr></thead><tbody>';
+        var order = S.flights.map(function (f, i) { return i; }).sort(function (a, b) { var A = S.flights[a], B = S.flights[b]; return A.spoke.localeCompare(B.spoke) || A.dep - B.dep; });
+        var tot = { opt: 0, gr: 0 };
+        order.forEach(function (i) {
+          var f = S.flights[i], dm = S.dems[i], best = ks.reduce(function (b, k) { return S.I.C[i][k].total < S.I.C[i][b].total ? k : b; }, ks[0]);
+          var d = po && pg ? S.I.C[i][pg[i]].total - S.I.C[i][po[i]].total : 0;
+          if (po) tot.opt += S.I.C[i][po[i]].total; if (pg) tot.gr += S.I.C[i][pg[i]].total;
+          html += '<tr class="pick' + (i === S.sel ? " sel" : "") + '" data-i="' + i + '"><td class="l">' + fname(f) + '</td><td class="l">' + ftimes(f) + "</td><td>" + dm.mean + " ± " + dm.sd + (S.edited[i] ? " ✎" : "") + "</td>" +
+            ks.map(function (k) { return '<td class="' + (k === best ? "best" : "") + '">' + money(S.I.C[i][k].total) + "</td>"; }).join("") +
+            '<td class="c">' + (po ? chip(po[i]) : "–") + '</td><td class="c">' + (pg ? chip(pg[i], po && pg[i] !== po[i] ? " diff" : "") : "–") + '</td><td class="' + (d > 0.5 ? "neg" : d < -0.5 ? "pos" : "") + '">' + (po && pg ? (Math.abs(d) < 0.5 ? "·" : signedMoney(d)) : "") + "</td></tr>";
+        });
+        if (po && pg) html += '<tr class="sum"><td class="l" colspan="' + (3 + ks.length) + '">Total for the day</td><td class="c">' + money(tot.opt) + '</td><td class="c">' + money(tot.gr) + '</td><td class="neg">' + signedMoney(tot.gr - tot.opt) + "</td></tr>";
+        $("cost-table").innerHTML = html + "</tbody>";
+        $("cost-table").onclick = function (e) { var tr = e.target.closest("tr.pick"); if (tr) select(+tr.dataset.i); };
+      }
+
+      // ---------- section 3: fleet table, results ----------
+      function renderFleet() {
+        var po = planOf("opt"), pg = planOf("gr");
+        var fo = po ? FAM.planFlows(S.I, po) : null, fg = pg ? FAM.planFlows(S.I, pg) : null;
+        var html = '<thead><tr><th class="l">Type</th><th>Seats</th><th>Cost per block hour</th><th>Turn</th><th>Available</th><th>Used by the optimum</th><th>Used by the greedy rule</th></tr></thead><tbody>';
+        S.fleets.forEach(function (fl, k) {
+          html += '<tr><td class="l"><span class="sw" style="background:' + FC[fl.key] + '"></span>' + esc(fl.name) + "</td>" +
+            '<td><input type="number" data-k="' + k + '" data-f="seats" min="20" max="450" step="1" value="' + fl.seats + '" aria-label="' + esc(fl.name) + ' seats"></td>' +
+            '<td>$<input type="number" data-k="' + k + '" data-f="costBH" min="500" max="40000" step="100" value="' + fl.costBH + '" style="width:84px" aria-label="' + esc(fl.name) + ' cost per block hour"></td>' +
+            "<td>" + fl.turn + " min</td>" +
+            '<td><input type="number" data-k="' + k + '" data-f="count" min="0" max="12" step="1" value="' + fl.count + '" style="width:56px" aria-label="' + esc(fl.name) + ' aircraft available"></td>' +
+            "<td>" + (fo && fl.count > 0 ? fo[k].used : "–") + "</td><td>" + (fg && fl.count > 0 ? fg[k].used : "–") + "</td></tr>";
+        });
+        $("fleet-table").innerHTML = html + "</tbody>";
+        var t = null;
+        $("fleet-table").querySelectorAll("input").forEach(function (inp) {
+          inp.addEventListener("input", function () {
+            var v = parseFloat(inp.value), k = +inp.dataset.k, fld = inp.dataset.f;
+            if (!isFinite(v) || v < +inp.min || v > +inp.max) return;
+            S.fleets[k][fld] = fld === "count" || fld === "seats" ? Math.round(v) : v;
+            clearTimeout(t); t = setTimeout(function () { solveAll(); }, 400);
+          });
+        });
+      }
+
+      function minFleet() {
+        // fewest aircraft that can fly the schedule if every flight used the type with the shortest turn
+        var k0 = 0; S.fleets.forEach(function (f, k) { if (f.turn < S.fleets[k0].turn) k0 = k; });
+        var plan = S.flights.map(function () { return k0; });
+        return FAM.planFlows(S.I, plan)[k0].used;
+      }
+
+      function renderResults() {
+        var o = S.opt, gr = S.gr, avail = d3.sum(S.fleets, function (f) { return f.count; });
+        if (!o || !o.ok) {
+          $("solver-line").innerHTML = "";
+          var need = minFleet();
+          $("infeasible").hidden = false;
+          $("infeasible").innerHTML = o && /error/i.test(o.status) ? "The solver stopped with an error (" + esc(o.status) + "). Reload the page to try again." :
+            "No plan flies every flight with this fleet. The schedule needs at least <b>" + need + "</b> aircraft in all, even with the shortest turn time, and the right mix of sizes to balance at every airport; you have " + avail + ". Add aircraft or reset the fleet.";
+          ["tiles", "type-table", "res-hint", "sim-tiles", "sim-hint"].forEach(function (id) { $(id).innerHTML = ""; });
+          $("ch-bars").innerHTML = ""; $("ch-sim").innerHTML = "";
+          return;
+        }
+        $("infeasible").hidden = true;
+        var I = S.I, co = FAM.planCost(I, o.plan), cg = FAM.planCost(I, gr.plan);
+        var ks = S.fleets.map(function (fl, k) { return k; }).filter(function (k) { return S.fleets[k].count > 0; });
+        var lb = { op: 0, spillCost: 0, total: 0 };
+        S.flights.forEach(function (f, i) { var b = ks.reduce(function (bb, k) { return I.C[i][k].total < I.C[i][bb].total ? k : bb; }, ks[0]); lb.op += I.C[i][b].op; lb.spillCost += I.C[i][b].spillCost; lb.total += I.C[i][b].total; });
+        var lpTxt = o.lpObj === null ? "" : o.lpFractional === 0 ? " Its LP relaxation, with every <var>x</var> free between 0 and 1, came out whole already: the same plan, without branching." :
+          " Its LP relaxation, with every <var>x</var> free between 0 and 1, splits " + o.lpFractional + " values and costs " + money(o.lpObj) + ", " + money(o.obj - o.lpObj) + " below the whole-number optimum (" + pct1((o.obj - o.lpObj) / o.obj) + "): branch and bound closes the gap.";
+        $("solver-line").innerHTML = "HiGHS solved the day in <b>" + nf0.format(Math.max(1, o.ms)) + " ms</b>: " + o.nVars + " variables, " + o.nRows + " constraints." + lpTxt +
+          " The greedy rule called the solver " + gr.solves + " times to check that each choice left a flyable plan.";
+
+        var save = cg.total - co.total;
+        var tiles = [
+          { k: "Optimum, cost per day", v: money(co.total), s: money(co.op) + " operating + " + money(co.spillCost) + " spill" },
+          { k: "Greedy rule (" + ruleName() + ")", v: money(cg.total), s: money(cg.op) + " operating + " + money(cg.spillCost) + " spill" },
+          { k: "What the optimum saves", v: money(save), s: pct1(save / cg.total) + " of the greedy cost; " + moneyK(save * 365) + " a year if every day were like this one" },
+          { k: "Each flight on its own cheapest type", v: money(lb.total), s: "Not flyable: " + money(co.total - lb.total) + " below the optimum. That is what the network's constraints cost." }
+        ];
+        $("tiles").innerHTML = tiles.map(function (t) { return '<div class="tile"><span class="k">' + t.k + "</span><b>" + t.v + '</b><span class="s">' + t.s + "</span></div>"; }).join("");
+
+        // bars
+        var el = $("ch-bars"), W = chartWidth(el), bars = [
+          { n: "Optimum", c: co, hex: PLAN.opt.hex },
+          { n: "Greedy rule", c: cg, hex: PLAN.gr.hex },
+          { n: "Cheapest each, not flyable", c: lb, hex: "#9aa3ad" }
+        ];
+        var m = { l: W < 420 ? 112 : 190, r: 64, t: 6, b: 30 }, bh = 26, H = m.t + bars.length * (bh + 14) + m.b;
+        var svg = svgIn(el, W, H).attr("aria-label", "Operating and spill cost per day of each plan");
+        var x = d3.scaleLinear().domain([0, d3.max(bars, function (b) { return b.c.total; }) * 1.02]).nice().range([m.l, W - m.r]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(5).tickSize(-(H - m.t - m.b)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(5).tickFormat(function (v) { return "$" + d3.format("~s")(v); }));
+        bars.forEach(function (b, j) {
+          var y = m.t + j * (bh + 14);
+          svg.append("rect").attr("x", x(0)).attr("y", y).attr("width", x(b.c.op) - x(0)).attr("height", bh).attr("fill", "#5B80EC").attr("rx", 2);
+          svg.append("rect").attr("x", x(b.c.op)).attr("y", y).attr("width", Math.max(0, x(b.c.op + b.c.spillCost) - x(b.c.op))).attr("height", bh).attr("fill", "#C2378F").attr("rx", 2);
+          svg.append("rect").attr("x", m.l - 10).attr("y", y + bh / 2 - 4).attr("width", 8).attr("height", 8).attr("rx", 2).attr("fill", b.hex);
+          var lab = W < 420 ? b.n.replace("Cheapest each, not flyable", "Cheapest each") : b.n;
+          svg.append("text").attr("x", m.l - 16).attr("y", y + bh / 2 + 4).attr("text-anchor", "end").attr("font-size", 12).attr("fill", "#333").text(lab);
+          svg.append("text").attr("x", x(b.c.total) + 5).attr("y", y + bh / 2 + 4).attr("font-size", 11.5).attr("font-weight", 600).attr("fill", "#222").text(moneyK(b.c.total));
+          svg.append("rect").attr("x", x(0)).attr("y", y).attr("width", x(b.c.total) - x(0)).attr("height", bh).attr("fill", "transparent")
+            .on("mousemove", function (ev) { showTip('<div class="t">' + esc(b.n) + '</div><div class="r"><i style="background:#5B80EC"></i>Operating<b>' + money(b.c.op) + '</b></div><div class="r"><i style="background:#C2378F"></i>Spill<b>' + money(b.c.spillCost) + '</b></div><div class="r">Total<b>' + money(b.c.total) + "</b></div>", ev); })
+            .on("mouseleave", hideTip);
+        });
+        el.insertAdjacentHTML("beforeend", legendHtml([{ t: "operating cost", c: "#5B80EC" }, { t: "spill cost (fare × expected spill)", c: "#C2378F" }]));
+
+        // per-type table
+        var fo = FAM.planFlows(I, o.plan), fg = FAM.planFlows(I, gr.plan);
+        function agg(plan, k) { var n = 0, bh = 0, sp = 0; plan.forEach(function (kk, i) { if (kk === k) { n++; bh += S.flights[i].block; sp += I.C[i][k].spill; } }); return { n: n, bh: bh / 60, sp: sp }; }
+        var html = '<thead><tr><th class="l">Type</th><th>Flights</th><th>Block hours</th><th>Aircraft</th><th>Expected spill</th></tr></thead><tbody>';
+        ks.forEach(function (k) {
+          var a = agg(o.plan, k), b = agg(gr.plan, k);
+          html += '<tr><td class="l">' + chip(k) + " " + esc(S.fleets[k].name) + "</td><td>" + a.n + " · " + b.n + "</td><td>" + nf1.format(a.bh) + " · " + nf1.format(b.bh) + "</td><td>" + fo[k].used + " · " + fg[k].used + " of " + S.fleets[k].count + "</td><td>" + nf0.format(a.sp) + " · " + nf0.format(b.sp) + "</td></tr>";
+        });
+        html += '<tr class="sum"><td class="l">All</td><td>30 · 30</td><td>' + nf1.format(d3.sum(S.flights, function (f) { return f.block; }) / 60) + "</td><td>" + d3.sum(ks, function (k) { return fo[k].used; }) + " · " + d3.sum(ks, function (k) { return fg[k].used; }) + "</td><td>" + nf0.format(co.spill) + " · " + nf0.format(cg.spill) + "</td></tr>";
+        $("type-table").innerHTML = html + "</tbody>";
+        var diff = o.plan.filter(function (k, i) { return k !== gr.plan[i]; }).length;
+        $("res-hint").innerHTML = "Each cell: optimum · greedy rule. Spill in passengers per day. The two plans differ on <b>" + diff + "</b> of 30 flights (ringed in orange in the table of section 2). " +
+          (S.rule === "largest" ? "The greedy rule fills the busiest flights first and keeps reaching for the largest type, so it ends up flying large aircraft on quiet flights too: low spill, high operating cost." : "Cheapest flight by flight does better than largest first, but the first choices use up aircraft that later flights needed more, and the rule can't go back.");
+      }
+
+      // ---------- section 4: simulated days ----------
+      function renderSim(resizeOnly) {
+        if (!ok()) return;
+        var N = data.simDays;
+        if (!resizeOnly || !S.simOut) {
+          S.simOut = FAM.simulate(S.I, [S.opt.plan, S.gr.plan], N, S.simSeed, S.recap);
+        }
+        var so = S.simOut[0], sg = S.simOut[1], diff = sg.map(function (v, j) { return v - so[j]; });
+        var co = FAM.planCost(S.I, S.opt.plan).total, cg = FAM.planCost(S.I, S.gr.plan).total;
+        var mo = d3.mean(so), mg = d3.mean(sg), win = diff.filter(function (d) { return d > 0; }).length / N;
+        var tiles = [
+          { k: "Optimum, average realised", v: money(mo), s: "Expected " + money(co) + " (" + (mo >= co ? "+" : "−") + pct1(Math.abs(mo / co - 1)) + ")" },
+          { k: "Greedy rule, average realised", v: money(mg), s: "Expected " + money(cg) + " (" + (mg >= cg ? "+" : "−") + pct1(Math.abs(mg / cg - 1)) + ")" },
+          { k: "Days the optimum is cheaper", v: pct(win), s: "of " + nf0.format(N) + " days" },
+          { k: "Saving on a bad day and a good one", v: moneyK(d3.quantile(diff.slice().sort(d3.ascending), 0.1)) + " to " + moneyK(d3.quantile(diff.slice().sort(d3.ascending), 0.9)), s: "10th to 90th percentile of the daily saving" }
+        ];
+        $("sim-tiles").innerHTML = tiles.map(function (t) { return '<div class="tile"><span class="k">' + t.k + "</span><b>" + t.v + '</b><span class="s">' + t.s + "</span></div>"; }).join("");
+        $("sim-status").textContent = "Seed " + S.simSeed;
+        $("sim-sub").textContent = nf0.format(N) + " days, same demand draws for both plans";
+
+        var el = $("ch-sim"), W = chartWidth(el), H = Math.round(Math.min(280, Math.max(200, W * 0.32))), m = { l: 46, r: 14, t: 12, b: 40 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Histogram of the daily cost of the greedy plan minus the optimum");
+        var ext = d3.extent(diff), x = d3.scaleLinear().domain([Math.min(0, ext[0]), Math.max(0, ext[1])]).nice().range([m.l, W - m.r]);
+        var bins = d3.bin().domain(x.domain()).thresholds(x.ticks(Math.max(16, Math.min(40, Math.round(W / 22)))))(diff);
+        var y = d3.scaleLinear().domain([0, d3.max(bins, function (b) { return b.length; })]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(4).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(6).tickFormat(function (v) { return (v < 0 ? "−$" : "$") + d3.format("~s")(Math.abs(v)); }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(4));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Greedy cost minus optimum cost, one day");
+        svg.append("text").attr("class", "axis-title").attr("transform", "rotate(-90)").attr("x", -m.t).attr("y", 11).attr("text-anchor", "end").text("Days");
+        svg.append("g").selectAll("rect").data(bins).join("rect")
+          .attr("x", function (b) { return x(b.x0) + 0.5; }).attr("width", function (b) { return Math.max(0, x(b.x1) - x(b.x0) - 1); })
+          .attr("y", function (b) { return y(b.length); }).attr("height", function (b) { return y(0) - y(b.length); })
+          .attr("fill", function (b) { return b.x1 <= 0 ? PLAN.gr.hex : PLAN.opt.hex; }).attr("opacity", 0.85)
+          .on("mousemove", function (ev, b) { showTip('<div class="t">Greedy − optimum ' + money(b.x0) + " to " + money(b.x1) + '</div><div class="r">Days<b>' + b.length + "</b></div>", ev); })
+          .on("mouseleave", hideTip);
+        svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-width", 1);
+        var md = d3.mean(diff);
+        svg.append("line").attr("x1", x(md)).attr("x2", x(md)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-dasharray", "4 3");
+        svg.append("text").attr("x", x(md) + 4).attr("y", m.t + 10).attr("font-size", 11).attr("fill", "#222").text("average " + signedMoney(md));
+        el.insertAdjacentHTML("beforeend", legendHtml([{ t: "optimum cheaper that day", c: PLAN.opt.hex }, { t: "greedy rule cheaper that day", c: PLAN.gr.hex }]));
+        $("sim-hint").innerHTML = "The average realised saving, " + money(md) + " a day, is close to the expected " + money(cg - co) + ". On a given day the greedy plan can still come out ahead" + (win < 1 ? ", on " + pct(1 - win) + " of days here, when demand happens to fill its large aircraft" : "") + ": the optimum is best on average, not every day.";
+      }
+    });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "about": "Inputs for bellycapacity.html. Aircraft limits and standard masses come from the public sources named in 'sources'; everything else is an illustrative assumption, not any airline's data.",
+  "currency": "US$",
+  "aircraft": {
+    "name": "Boeing 787-9",
+    "mtow": 254692,
+    "mlw": 192776,
+    "mzfw": 181436,
+    "fuelCap": 101522,
+    "ld3": 36,
+    "ld3M3": 4.5,
+    "bulkM3": 11.4,
+    "holdM3": 172.4,
+    "seats": 290,
+    "source": "Boeing, 787 Airplane Characteristics for Airport Planning, D6-58333 Rev P (December 2024), section 2.1.2, page 2-3: maximum design takeoff, landing and zero fuel weights, usable fuel, lower deck volume (20 + 16 LD-3 containers of 4.5 m3 and 11.4 m3 bulk), 290 seats in the dual-class layout."
+  },
+  "dow": 132000,
+  "dowNote": "Dry operating weight (empty aircraft with crew, catering and water). Not in the Boeing document; illustrative.",
+  "paxMass": 84,
+  "bagMass": 15,
+  "massSource": "EASA AMC1 CAT.POL.MAB.100(e), Annex to ED Decision 2012/018/R: standard mass 84 kg per adult passenger including hand baggage, 15 kg per checked bag on intercontinental flights.",
+  "route": { "km": 9800, "tas": 900, "extraHours": 0.4,
+    "note": "Illustrative: a 9,800 km sector flown westbound, into the prevailing westerlies, at a true airspeed of 900 km/h, plus 0.4 hours for taxi, climb and descent." },
+  "fuel": { "k": 0.025, "reserveKg": 7000, "contingency": 0.05,
+    "note": "Illustrative: each hour of flight burns 2.5% of the aircraft's weight (Breguet range equation); 7,000 kg kept for the alternate airport and final reserve, plus 5% of the trip fuel for contingency." },
+  "wind": {
+    "winter": 100, "summer": 15, "peakDay": 25, "sd": 30, "ar": 0.75,
+    "skill": [[0, 1], [1, 0.9], [2, 0.8], [3, 0.7], [5, 0.5], [7, 0.3], [10, 0.1], [14, 0], [30, 0]],
+    "note": "Illustrative: average headwind component on the route, in km/h, from 100 in late January to 15 in late July, day-to-day spread 30 km/h with weather spells that last a few days. 'skill' is the share of the day-to-day spread a forecast made that many days ahead explains."
+  },
+  "pax": {
+    "auth": 300, "show": 0.96, "demandLow": 260, "demandHigh": 300, "peakDay": 200, "cv": 0.12, "h50": 35, "beta": 1.6,
+    "note": "Illustrative: the airline accepts up to 300 bookings for 290 seats; 96% turn up. Average demand ranges from 260 bookings in the quiet season to 300 at the July peak, 12% spread from one departure to the next. Half the bookings are made by 35 days out."
+  },
+  "bags": { "low": 1.05, "high": 1.25, "sd": 0.08, "bulkBags": 70, "perLd3": 40,
+    "note": "Illustrative: 1.05 checked bags per passenger in winter to 1.25 in summer, 0.08 spread from flight to flight, known only at check-in. The first 70 bags go in the bulk hold, the rest 40 to an LD-3." },
+  "cargo": { "packing": 0.8, "density": 165, "rate": 2.6, "offloadCost": 4.0,
+    "tender": { "mean": 0.82, "sd": 0.07 },
+    "demandMult": 1.6, "demandCv": 0.25, "g50": 5, "gamma": 1.6,
+    "note": "Illustrative: freight fills 80% of a container's volume; cargo on the route averages 165 kg per m3; US$2.60 per kg flown and US$4.00 per kg offloaded (the cargorm.html defaults). Booked cargo turns up at 82% of its booked weight on average, 7 points spread from flight to flight. Requests total 1.6 times the average capacity, half of them in the last 5 days." },
+  "horizons": [30, 21, 14, 10, 7, 5, 3, 2, 1],
+  "draws": 400,
+  "seed": 2027
+}

@@ -1,0 +1,1208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Freighter rotation</title>
+    <meta name="description" content="Where to fly one freighter for a week: back and forth on one lane, a triangle or a round-the-world loop. Block hours, payload per leg, cost per block hour and weekly contribution across six cargo regions, why triangles beat shuttles on unbalanced lanes, and what fifth-freedom rights are worth.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/freighterrotation.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Freighter rotation · Airline Economics">
+    <meta property="og:description" content="Where to fly one freighter for a week: back and forth on one lane, a triangle or a round-the-world loop. Block hours, payload per leg, cost per block hour and weekly contribution across six cargo regions, why triangles beat shuttles on unbalanced lanes, and what fifth-freedom rights are worth.">
+    <meta property="og:url" content="https://gregoiremaillard.com/freighterrotation.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/freighterrotation.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Freighter rotation · Airline Economics">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as cargorm.html / bookinglimits.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* Rotation types */
+        --t-shuttle: #d9480f;
+        --t-triangle: #2455E6;
+        --t-rtw: #12A150;
+        /* Cargo on a leg */
+        --c-local: #2a7fb5;
+        --c-thru: #8fc1e3;
+      }
+
+      .content {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 26px 30px 60px;
+      }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; }
+      .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
+
+      /* ── Pill switchers (same as cargorm / bidprice) ── */
+      .switch { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 20px 0 6px; }
+      .switch .grp { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .switch .grp > span { font-size: 12px; color: var(--muted); }
+      .views {
+        display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff;
+        flex-wrap: wrap; gap: 2px;
+      }
+      .views button {
+        border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text);
+        padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .preset-blurb { font-size: 13px; color: var(--text); margin: 8px 0 0; max-width: 860px; }
+
+      .btn {
+        font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff;
+        border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink);
+        display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+      }
+      .btn:hover { border-color: #cfcfcf; }
+      select {
+        font: inherit; font-size: 13px; color: var(--ink); border: 1px solid var(--line); border-radius: 6px;
+        padding: 5px 8px; background: #fff; max-width: 100%; min-width: 0;
+      }
+      select:focus { outline: 2px solid #9cc7df; outline-offset: 0; border-color: #9cc7df; }
+
+      /* ── Sections ── */
+      section.sec { width: auto; float: none; padding: 0; border: 0; }
+      .sec { margin: 38px 0 0; }
+      .sec > h3 { font-size: 20px; margin: 0 0 6px; color: var(--ink); }
+      .sec > p.lead { margin: 0 0 14px; font-size: 13.5px; max-width: 820px; }
+      .block { margin: 0 0 28px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h4 { margin: 0; font-size: 15px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+
+      /* ── Controls row ── */
+      .ctl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin: 0 0 12px; font-size: 12.5px; color: var(--text); }
+      .ctl-row label { display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; }
+      .ctl-row .views button { font-size: 13px; }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table.res { border-collapse: collapse; width: 100%; font-size: 13px; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: bottom; }
+      table.res td { padding: 5px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res td.l, table.res th.l { text-align: left; }
+      table.res td.hl { color: var(--ink); font-weight: 600; }
+      table.res tbody tr:hover td { background: var(--soft); }
+      table.res .neg { color: #b4441a; }
+      table.res .pos { color: #2e7a4d; }
+      table.res tr.sum td { border-top: 1px solid var(--line); color: var(--ink); font-weight: 600; }
+      table.res tr.click { cursor: pointer; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+      .lbar { display: inline-block; position: relative; width: 120px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 8px;
+        background: repeating-linear-gradient(45deg, #eceff3 0 3px, #f7f8fa 3px 6px); box-shadow: inset 0 0 0 1px #e3e6ea; overflow: hidden; }
+      .lbar i { position: absolute; top: 0; bottom: 0; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 6px 0 0; max-width: 860px; }
+      .status { font-size: 12px; color: var(--muted); }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin: 14px 0 18px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile .k { font-size: 12px; }
+      .tile b { display: block; font-size: 22px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; margin-top: 4px; }
+      .tile span.s { font-size: 11.5px; line-height: 1.35; display: block; margin-top: 3px; }
+      .tile.key { border-color: #cfd8e8; background: #fbfcff; }
+
+      /* ── Charts ── */
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart svg text { font-family: inherit; }
+      .chart.map { padding: 0; overflow: hidden; background: #fbfcfd; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .axis-title { font-size: 11px; fill: #767676; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .legend i.empty { background: repeating-linear-gradient(45deg, #e3e6ea 0 3px, #f7f8fa 3px 6px); box-shadow: inset 0 0 0 1px #d9dde3; }
+      .map .land { fill: #e9ecf1; stroke: none; }
+      .map .sphere { fill: #fbfcfd; }
+      .rank g.row { cursor: pointer; }
+      .rank g.row:hover rect.bar { opacity: .8; }
+
+      /* ── Tooltip ── */
+      .tip {
+        position: fixed; pointer-events: none; z-index: 20;
+        background: #fff; border: 1px solid #ddd; border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,.08);
+        padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45;
+        max-width: 290px; display: none;
+      }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: center; gap: 7px; }
+      .tip .r i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 10px; }
+
+      .loading { font-size: 13px; color: var(--muted); padding: 30px 0; }
+      .err { font-size: 13px; color: #9a3b0b; background: #fff6f2; border: 1px solid #f3c9b5; border-radius: 8px; padding: 10px 12px; margin: 16px 0; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+
+      @media (max-width: 1080px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+      @media (max-width: 980px) { .two { grid-template-columns: minmax(0, 1fr); } }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 20px; }
+        .views button { padding: 6px 11px; font-size: 13px; }
+        .ctl-row label { flex-wrap: wrap; }
+      }
+    </style>
+
+    <!-- Airline Economics header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 4px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
+      @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
+      /* breadcrumb: "Airline Economics · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
+    </style>
+    <style>
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; }
+    </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline economics"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline Economics">
+          <a class="at-tab" href="/airlinetools.html#rm">Revenue management</a>
+          <a class="at-tab" href="/airlinetools.html#network">Network planning</a>
+          <a class="at-tab" href="/airlinetools.html#loyalty">Loyalty</a>
+          <a class="at-tab" href="/airlinetools.html#cargo" aria-current="page">Cargo</a>
+          <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>24</b> tools · <b>8</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Cargo</div>
+        <h2>Freighter rotation</h2>
+        <p class="lede">Where should one freighter fly this week: back and forth on one lane, around a triangle, or around the world?</p>
+        <p>Passengers mostly fly return trips, but goods flow one way: much more cargo leaves Asia than goes back. A freighter that shuttles between two airports fills up in the busy direction (the <b>headhaul</b>) and flies the other one (the <b>backhaul</b>) half empty, yet pays for the whole aircraft both ways. Below, one freighter picks a rotation among six cargo regions. For each one you see the block hours, the payload on every leg, the revenue, the cost per block hour and the <b>weekly contribution</b> (revenue minus operating cost, before the aircraft's ownership cost). A switch turns <b>fifth-freedom</b> rights on and off: without them, the freighter can't carry cargo between two foreign countries, so a triangle loses most of what makes it pay. It builds on <a href="/cargo101.html#ch09">Cargo 101, chapter 09</a>.</p>
+        <p class="note-line">The airports and distances are real, and so are the aircraft figures and trade-lane tonnages cited in How it works. Every demand, rate and cost on this page is <b>illustrative</b>: made up, but shaped like real headhaul and backhaul lanes.</p>
+      </div>
+
+      <div class="switch" role="group" aria-label="Scenario">
+        <div class="grp"><span id="l-home">Home base</span><div class="views" id="sw-home" role="group" aria-labelledby="l-home"></div></div>
+        <div class="grp"><span id="l-fifth">Fifth freedom</span><div class="views" id="sw-fifth" role="group" aria-labelledby="l-fifth"></div></div>
+      </div>
+      <p class="preset-blurb" id="preset-blurb"></p>
+
+      <div id="app"><p class="loading" id="loading">Loading the lanes…</p></div>
+
+      <div id="main" hidden>
+        <!-- ═══════════════════════════ LANES ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-lanes">
+          <h3 id="h-lanes">1. Six regions, thirty lanes</h3>
+          <p class="lead">Each region stands for one big cargo airport. A lane's demand is the cargo this airline could sell on it in an average week, at that lane's rate per kilo (illustrative). The thicker the line on the map, the more cargo the lane carries in both directions together.</p>
+          <div class="block">
+            <div class="chart map" id="ch-lanes"></div>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>Each lane, both ways</h4><span>Tonnes a week this airline could sell, average week (illustrative)</span></div>
+            <div class="chart" id="ch-pairs"></div>
+            <p class="hint" id="pairs-hint"></p>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ ROTATION ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-rot">
+          <h3 id="h-rot">2. Build a rotation</h3>
+          <p class="lead">The freighter leaves home, calls at each station in turn and comes back. It flies the rotation as many times a week as its hours allow, or fewer if fewer departures fly fuller and earn more. Every week the cargo is chosen by a small linear program: each leg carries its own lane's cargo, plus cargo that stays on board through one stop when the detour is short. Legs longer than the aircraft's range stop on the way for fuel.</p>
+          <div class="ctl-row">
+            <div class="views" id="sw-type" role="group" aria-label="Rotation type"></div>
+            <label for="sel-rot">Route <select id="sel-rot"></select></label>
+            <span class="status" id="rot-rank"></span>
+          </div>
+          <div class="block">
+            <div class="chart map" id="ch-rot"></div>
+            <div class="legend" id="rot-legend"></div>
+          </div>
+          <div class="tiles" id="tiles"></div>
+          <div class="block">
+            <div class="block-head"><h4>Leg by leg</h4><span>Per departure, average week</span></div>
+            <div class="tbl-wrap"><table class="res" id="leg-table"></table></div>
+            <p class="hint" id="leg-hint"></p>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>Week by week</h4><span id="wk-sub">Weekly contribution over one simulated year</span></div>
+            <div class="chart" id="ch-weeks"></div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ WHY TRIANGLES ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-why">
+          <h3 id="h-why">3. Why triangles beat shuttles</h3>
+          <p class="lead">Take one lane from home. The out-and-back flies the lane both ways. The triangle keeps the busy direction and, instead of flying the quiet one, goes on to a third station that has cargo of its own. It flies more hours per rotation, so fewer rotations a week, but much less of its capacity flies empty.</p>
+          <div class="ctl-row">
+            <label for="sel-lane">Lane <select id="sel-lane"></select></label>
+            <label for="sel-via">Third station <select id="sel-via"></select></label>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>Capacity flown and cargo carried in a week</h4><span>Width: block hours. Height: the aircraft's 100 t</span></div>
+            <div class="chart" id="ch-strip"></div>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>How unbalanced the lane must be</h4><span id="be-sub"></span></div>
+            <div class="chart" id="ch-be"></div>
+            <p class="hint" id="be-hint"></p>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ FIFTH FREEDOM ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-ff">
+          <h3 id="h-ff">4. What fifth freedom is worth</h3>
+          <p class="lead">Every rotation from home, run with and without fifth-freedom rights over the same simulated year (precomputed with the same model). Without them, a leg between two foreign stations can only carry cargo that is staying on board to or from home.</p>
+          <div class="block">
+            <div class="block-head"><h4>Best rotation of each kind</h4><span id="ff-sub"></span></div>
+            <div class="tbl-wrap"><table class="res" id="ff-table"></table></div>
+            <p class="hint" id="ff-hint"></p>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>The twelve best rotations</h4><span id="rank-sub"></span></div>
+            <div class="chart rank" id="ch-rank"></div>
+            <p class="hint">Click a rotation to open it in section 2.</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>The regions and the aircraft</h4>
+        <p>Six regions, each represented by one airport: East Asia (Hong Kong, HKG), Middle East (Dubai, DXB), Europe (Frankfurt, FRA), Africa (Nairobi, NBO), North America (Chicago O'Hare, ORD) and Latin America (Bogotá, BOG). Distances are great-circle distances between the airports' coordinates. The aircraft is a large twin-engine freighter in the class of the Boeing 777 Freighter, for which Boeing lists a maximum structural payload of 107 tonnes and a range of 9,260 km. The page assumes <b>100 tonnes</b> of usable payload (a hold rarely fills to its structural limit, because pallets are contoured and cargo has a density) and a nonstop range of 9,260 km whatever the load. A leg longer than that stops for fuel at evenly spaced points on the way (in practice at airports such as Anchorage on the Pacific).</p>
+        <p>Block time for a leg of <var>d</var> km with <var>s</var> fuel stops is <var>d</var> / 820 + 0.5 (<var>s</var> + 1) hours: 820 km/h on average from takeoff to landing, plus half an hour of taxi, climb and approach for each flight segment. Each station call takes 4 hours on the ground, each fuel stop 1.5 hours. The aircraft has 151 hours a week to fly and turn, after maintenance. All of these are illustrative round numbers.</p>
+
+        <h4>Demand and rates</h4>
+        <p>For each of the 30 lanes, the data file (<a href="assets/data/freighterrotation.json">freighterrotation.json</a>) gives the tonnes this airline could sell in an average week and the rate per kilo. Both are made up, but shaped like real lanes: East Asia to North America carries about twice as much as the reverse and at more than twice the rate; East Asia to Europe is less unbalanced in tonnes but still pays much more westbound; Africa and Latin America send flowers and perishables north; Europe exports machinery and pharma to the Gulf; Asia sends four times as much to Africa as it receives. For scale, Boeing's World Air Cargo Forecast 2022 counts 3.5 million tonnes flown from East Asia to North America in 2021 against 1.9 million the other way, 2.9 million from East Asia to Europe against 2.6 million back, and nearly four times as much air cargo from Asia into Africa as out of it.</p>
+        <p>One year of 52 weeks is drawn with a seeded generator (mulberry32, seed 2026), so the page always opens on the same year. Each week, a lane's demand is its average times a seasonal factor (Asian exports dip around Lunar New Year and peak from October to mid-December; flower lanes peak before Valentine's Day and Mother's Day), times a factor common to all lanes (lognormal, 6% spread) and a factor of its own (lognormal, 15% spread).</p>
+
+        <h4>The cargo each leg carries</h4>
+        <p>A rotation is a loop of stations starting and ending at home: an out-and-back has two stations, a triangle three, and a round-the-world loop four or more, every leg heading the same way round the globe. A shipment from <var>o</var> to <var>d</var> can fly on the leg between them, or stay on board through one intermediate station if the route is at most 30% longer than the direct one; such a shipment sells for 15% less than a nonstop, because it arrives later. Cargo never stays on board through home, where each rotation ends. Without fifth freedom, only shipments that start or end at home are allowed.</p>
+        <p>If the freighter flies the rotation <var>f</var> times a week, each departure can take a share 1/<var>f</var> of each lane's demand that week. The page then solves, for each week, the linear program</p>
+        <p>maximise Σ<sub>k</sub> <var>m</var><sub>k</sub> <var>x</var><sub>k</sub> subject to Σ<sub>k uses leg l</sub> <var>x</var><sub>k</sub> ≤ 100 t on every leg <var>l</var>, and 0 ≤ <var>x</var><sub>k</sub> ≤ <var>D</var><sub>k</sub> / <var>f</var>,</p>
+        <p>where <var>x</var><sub>k</sub> is the tonnes of shipment type <var>k</var> carried per departure and <var>m</var><sub>k</sub> its margin per tonne: the rate, minus handling at both ends, minus the extra fuel of carrying a tonne for the block hours it is on board. A shipment type with a negative margin is left behind. The LP is solved with a small simplex, checked against brute-force enumeration.</p>
+
+        <h4>Cost and contribution</h4>
+        <p>Operating cost per departure = block hours × (fuel + crew + maintenance per block hour) + landing and navigation charges per station call and per fuel stop + handling per tonne at both ends + the payload's extra fuel. Fuel is 6.8 tonnes an hour at US$750 a tonne, plus 0.012 tonnes per tonne of payload per hour; crew US$1,300 and maintenance US$2,400 per block hour; landing and navigation US$7,000 per call and US$4,500 per fuel stop; handling US$90 per tonne at each end (all illustrative). <b>Cost per block hour</b> is the week's operating cost divided by its block hours, so it rises with short legs and many stops. <b>Weekly contribution</b> = revenue − operating cost, averaged over the 52 weeks. It is what is left to pay for the aircraft itself, overheads and profit, which are the same whatever rotation the aircraft flies.</p>
+        <p>The weekly frequency is chosen by trying 100%, 90%, … down to 30% of the maximum the aircraft's hours allow and keeping the one with the highest contribution. On busy lanes that is the maximum; on thin ones, flying less often fills each departure better. Sections 1 to 3 run live in your browser. Section 4 runs every rotation from every home with and without fifth freedom (284 rotations, twice) and is precomputed by <code>scripts/freighterrotation/precompute.js</code> with the same code as this page, into <a href="assets/data/freighterrotation-rotations.json">freighterrotation-rotations.json</a>.</p>
+        <p>The break-even chart in section 3 keeps every other lane as it is and multiplies both the tonnes and the rate of the chosen lane's quiet direction by the same factor, so that it earns (tonnes × rate) from 5% to 100% of what the busy direction earns.</p>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>Boeing, <a href="https://www.boeing.com/commercial/freighters" target="_blank" rel="noopener">Freighters</a>: 777 Freighter maximum structural payload 107 tonnes, range 9,260 km (checked October 2026).</li>
+          <li>Boeing, <a href="https://www.boeing.com/content/dam/boeing/boeingdotcom/market/assets/downloads/Boeing_World_Air_Cargo_Forecast_2022.pdf" target="_blank" rel="noopener">World Air Cargo Forecast 2022</a>: 2021 tonnages by direction between East Asia and North America and between East Asia and Europe, and the imbalance between Asia and Africa (checked October 2026).</li>
+          <li>ICAO, <a href="https://www.icao.int/Pages/freedomsAir.aspx" target="_blank" rel="noopener">Freedoms of the Air</a>, from the Manual on the Regulation of International Air Transport (Doc 9626). The fifth freedom is "the right or privilege, in respect of scheduled international air services, granted by one State to another State to put down and to take on, in the territory of the first State, traffic coming from or destined to a third State" (checked October 2026).</li>
+          <li>Airport coordinates: public aeronautical data for HKG, DXB, FRA, NBO, ORD and BOG, rounded to three decimals.</li>
+          <li>Map: <a href="https://github.com/topojson/world-atlas" target="_blank" rel="noopener">world-atlas</a> 2.0.2 (Natural Earth, 1:110m). Charts drawn with <a href="https://d3js.org" target="_blank" rel="noopener">D3</a> 7.9.0.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>Payload is weight only. A real hold can fill by volume first (see the <a href="/cargorm.html">cargo revenue management</a> page), and a freighter's range falls as its payload rises: a lightly loaded backhaul can often fly a leg nonstop that a full headhaul can't. Winds are ignored, although eastbound flights across the Pacific and the Atlantic are noticeably faster than westbound ones.</li>
+          <li>Demand and rates are given. In reality, rates fall when an airline adds capacity on a lane, backhaul rates are partly set by how much empty space is flying back, and the space a single freighter can sell depends on what competitors and passenger bellies offer.</li>
+          <li>One aircraft, one rotation, repeated. Real freighter networks mix rotations, schedule them in weekly patterns at fixed times, connect them at hubs, and fill gaps with trucks, partner airlines and belly space. Fractional frequencies here are averages, not a timetable.</li>
+          <li>Traffic rights are all or nothing. Real air service agreements grant fifth-freedom rights point by point and sometimes cap them in frequencies; some grant cargo-only rights more freely, including the right to fly between two foreign countries without touching home (the seventh freedom), which is not modelled. Sixth-freedom cargo (between two foreign stations via home) is not carried either, because every rotation ends at home.</li>
+          <li>Contribution excludes the aircraft's ownership, insurance and overheads. It ranks rotations for an aircraft the airline already has; it doesn't say whether the aircraft is worth having.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+// <fr-engine>
+// Freighter rotation engine: distances and block hours, fuel stops, the cargo each leg can carry (a small LP),
+// weekly demand with a seeded generator, and the weekly economics of one freighter. Pure functions, no DOM.
+// Shared by freighterrotation.html and scripts/freighterrotation/run-model.js.
+var FR = (function () {
+  "use strict";
+
+  // ---------- random ----------
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function gaussFactory(rng) {
+    var spare = null;
+    return function () {
+      if (spare !== null) { var s = spare; spare = null; return s; }
+      var u, v, q;
+      do { u = rng() * 2 - 1; v = rng() * 2 - 1; q = u * u + v * v; } while (q === 0 || q >= 1);
+      var m = Math.sqrt(-2 * Math.log(q) / q);
+      spare = v * m; return u * m;
+    };
+  }
+
+  // ---------- geometry ----------
+  var RAD = Math.PI / 180, R_EARTH = 6371;
+  function dist(a, b) {
+    var dLat = (b.lat - a.lat) * RAD, dLon = (b.lon - a.lon) * RAD;
+    var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(a.lat * RAD) * Math.cos(b.lat * RAD) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return 2 * R_EARTH * Math.asin(Math.min(1, Math.sqrt(h)));
+  }
+  // signed change in longitude along the great circle, in degrees (east positive)
+  function dLon(a, b) { var d = b.lon - a.lon; while (d > 180) d -= 360; while (d <= -180) d += 360; return d; }
+  function region(data, key) { for (var i = 0; i < data.regions.length; i++) if (data.regions[i].key === key) return data.regions[i]; return null; }
+
+  // One leg flown by the freighter: distance, fuel stops, block hours, ground time, landings.
+  function legInfo(data, a, b) {
+    var A = region(data, a), B = region(data, b), ac = data.aircraft, d = dist(A, B);
+    var stops = Math.max(0, Math.ceil(d / ac.rangeKm - 1e-9) - 1), segs = stops + 1;
+    var bh = d / ac.blockSpeedKmh + segs * ac.segmentOverheadH;
+    return { from: a, to: b, dist: d, stops: stops, segs: segs, bh: bh, groundStops: stops * ac.fuelStopGroundH };
+  }
+
+  // ---------- rotations ----------
+  // Every rotation that starts and ends at home: out-and-back (2 stations), triangle (3), and round-the-world loops
+  // (4 or more stations, every leg heading the same way, circling the globe once).
+  function rotations(data, home) {
+    var keys = data.regions.map(function (r) { return r.key; }).filter(function (k) { return k !== home; }), out = [];
+    keys.forEach(function (b) { out.push({ type: "shuttle", stops: [home, b] }); });
+    keys.forEach(function (b) { keys.forEach(function (c) { if (b !== c) out.push({ type: "triangle", stops: [home, b, c] }); }); });
+    // round the world: choose a subset of 3+ other stations, order them by longitude heading east or west from home
+    var H = region(data, home), n = keys.length;
+    for (var mask = 1; mask < (1 << n); mask++) {
+      var sub = keys.filter(function (k, i) { return mask & (1 << i); });
+      if (sub.length < 3) continue;
+      [1, -1].forEach(function (dir) {
+        var ord = sub.slice().sort(function (p, q) {
+          var dp = ((region(data, p).lon - H.lon) * dir + 720) % 360, dq = ((region(data, q).lon - H.lon) * dir + 720) % 360;
+          return dp - dq;
+        });
+        var st = [home].concat(ord), ok = true, sum = 0;
+        for (var i = 0; i < st.length; i++) {
+          var dl = dLon(region(data, st[i]), region(data, st[(i + 1) % st.length]));
+          if (dl * dir <= 0) { ok = false; break; }
+          sum += dl;
+        }
+        if (ok && Math.abs(Math.abs(sum) - 360) < 1) out.push({ type: "rtw", stops: st, dir: dir > 0 ? "east" : "west" });
+      });
+    }
+    out.forEach(function (r) {
+      r.id = r.stops.join("-");
+      var s = 0;
+      for (var i = 0; i < r.stops.length; i++) s += dLon(region(data, r.stops[i]), region(data, r.stops[(i + 1) % r.stops.length]));
+      r.circles = Math.abs(Math.abs(s) - 360) < 1;
+    });
+    return out;
+  }
+
+  // ---------- demand ----------
+  function lane(data, a, b) { return data.lanes[a + ">" + b] || { t: 0, rate: 0 }; }
+  // A season is a list of periods [first week, last week, multiplier] (weeks numbered 1 to 52).
+  function seasonMult(periods, w) {
+    var m = 1; (periods || []).forEach(function (p) { if (w + 1 >= p[0] && w + 1 <= p[1]) m *= p[2]; }); return m;
+  }
+  // Weekly demand for every lane over one year: lane base × the lane group's season × a common weekly factor × lane noise.
+  function year(data, seed) {
+    var rng = mulberry32(seed), g = gaussFactory(rng), dm = data.demandNoise, weeks = [];
+    var lk = Object.keys(data.lanes).sort();
+    for (var w = 0; w < 52; w++) {
+      var common = Math.exp(dm.commonSd * g() - dm.commonSd * dm.commonSd / 2), wk = {};
+      lk.forEach(function (k) {
+        var L = data.lanes[k], m = seasonMult(data.seasons[L.season], w);
+        wk[k] = L.t * m * common * Math.exp(dm.laneSd * g() - dm.laneSd * dm.laneSd / 2);
+      });
+      weeks.push(wk);
+    }
+    return weeks;
+  }
+
+  // ---------- LP: max c·x subject to A x ≤ b, x ≥ 0 (b ≥ 0). Dense tableau simplex, Bland's rule. ----------
+  function simplex(c, A, b) {
+    var m = A.length, n = c.length, i, j, T = [];
+    for (i = 0; i < m; i++) {
+      var row = A[i].slice();
+      for (j = 0; j < m; j++) row.push(i === j ? 1 : 0);
+      row.push(b[i]); T.push(row);
+    }
+    var z = c.map(function (v) { return -v; }); for (j = 0; j < m; j++) z.push(0); z.push(0);
+    var basis = []; for (i = 0; i < m; i++) basis.push(n + i);
+    var W = n + m, it = 0;
+    for (;;) {
+      if (++it > 500) break;
+      var pc = -1; for (j = 0; j < W; j++) if (z[j] < -1e-9) { pc = j; break; }
+      if (pc < 0) break;
+      var pr = -1, best = Infinity;
+      for (i = 0; i < m; i++) if (T[i][pc] > 1e-12) {
+        var r = T[i][W] / T[i][pc];
+        if (r < best - 1e-12 || (Math.abs(r - best) <= 1e-12 && basis[i] < basis[pr])) { best = r; pr = i; }
+      }
+      if (pr < 0) break; // unbounded (cannot happen here: every variable has an upper bound)
+      var pv = T[pr][pc];
+      for (j = 0; j <= W; j++) T[pr][j] /= pv;
+      for (i = 0; i < m; i++) if (i !== pr && T[i][pc] !== 0) { var f = T[i][pc]; for (j = 0; j <= W; j++) T[i][j] -= f * T[pr][j]; }
+      if (z[pc] !== 0) { var fz = z[pc]; for (j = 0; j <= W; j++) z[j] -= fz * T[pr][j]; }
+      basis[pr] = pc;
+    }
+    var x = []; for (j = 0; j < n; j++) x.push(0);
+    for (i = 0; i < m; i++) if (basis[i] < n) x[basis[i]] = T[i][W];
+    var y = []; for (i = 0; i < m; i++) y.push(z[n + i]); // shadow prices of the constraints
+    return { x: x, obj: z[W], y: y };
+  }
+
+  // ---------- one rotation ----------
+  // Shipments a rotation can carry: every origin-destination pair along it, flown on one leg or staying on board
+  // through one intermediate station. Cargo never stays on board through home, where every rotation ends.
+  // Without fifth freedom, only shipments to or from home are allowed.
+  function paths(data, stops, fifth) {
+    var n = stops.length, home = stops[0], out = [];
+    for (var i = 0; i < n; i++) for (var len = 1; len <= Math.min(2, n - 1); len++) {
+      if (i + len > n) continue;              // would pass through home
+      var o = stops[i], d = stops[(i + len) % n];
+      if (o === d) continue;
+      if (!fifth && o !== home && d !== home) continue;
+      var legs = [], km = 0;
+      for (var k = 0; k < len; k++) { legs.push(i + k); km += dist(region(data, stops[(i + k) % n]), region(data, stops[(i + k + 1) % n])); }
+      var direct = dist(region(data, o), region(data, d)), ln = lane(data, o, d);
+      // a shipment stays on board through a stop only if the detour is short, and it sells for less than a nonstop
+      if (len > 1 && km / direct > data.through.maxDetour) continue;
+      out.push({ o: o, d: d, legs: legs, local: len === 1, ln: ln, km: km, detour: km / direct,
+        rate: ln.rate * (len > 1 ? data.through.rateFactor : 1) });
+    }
+    return out.filter(function (p) { return p.ln.t > 0; });
+  }
+
+  function costs(data, opts) {
+    var c = data.costs, fp = opts && opts.fuelPrice != null ? opts.fuelPrice : c.fuelPrice;
+    return { perBH: c.fuelBurnTph * fp + c.crewPerBH + c.mxPerBH, perTonneBH: c.fuelPerTonneHour * fp,
+      landing: c.landing, fuelStopLanding: c.fuelStopLanding, handling: c.handlingPerTonne, fuelPrice: fp };
+  }
+
+  // Evaluate a rotation over the weeks of demand given. Returns per-leg averages and per-week totals.
+  // freq: rotations flown per week (default: as many as the aircraft's hours allow).
+  function evaluate(data, stops, opts, weeks, freq) {
+    var ac = data.aircraft, C = costs(data, opts), fifth = !opts || opts.fifth !== false;
+    var n = stops.length, legs = [], i;
+    for (i = 0; i < n; i++) legs.push(legInfo(data, stops[i], stops[(i + 1) % n]));
+    var bhRot = 0, ground = 0, landings = 0, fuelStops = 0, distRot = 0;
+    legs.forEach(function (L) { bhRot += L.bh; ground += ac.turnGroundH + L.groundStops; landings += 1; fuelStops += L.stops; distRot += L.dist; });
+    var elapsed = bhRot + ground, fmax = ac.hoursPerWeek / elapsed;
+    if (!(freq > 0) || freq > fmax) freq = fmax;
+    var P = paths(data, stops, fifth);
+    // margin per tonne of each path, before space: rate minus handling at both ends minus the extra fuel of carrying it
+    P.forEach(function (p) {
+      var bh = 0; p.legs.forEach(function (li) { bh += legs[li].bh; });
+      p.margin = p.rate * 1000 - 2 * C.handling - C.perTonneBH * bh;
+    });
+    var fixedRot = C.perBH * bhRot + C.landing * landings + C.fuelStopLanding * fuelStops;
+    var agg = { legs: legs.map(function () { return { local: 0, through: 0, rev: 0, varCost: 0, pi: 0 }; }), paths: P.map(function () { return 0; }) };
+    var weekly = [];
+    weeks.forEach(function (wk) {
+      // per departure: each path's demand this week split over the departures, capped by the payload on every leg it uses
+      var c = [], A = [], b = [];
+      P.forEach(function (p) { c.push(Math.max(0, p.margin)); });
+      legs.forEach(function (L, li) { A.push(P.map(function (p) { return p.legs.indexOf(li) >= 0 ? 1 : 0; })); b.push(ac.payloadT); });
+      P.forEach(function (p, k) { var row = P.map(function (q, j) { return j === k ? 1 : 0; }); A.push(row); b.push(Math.max(0, wk[p.o + ">" + p.d] || 0) / freq); });
+      var sol = P.length ? simplex(c, A, b) : { x: [], y: legs.map(function () { return 0; }) };
+      var rev = 0, varCost = 0;
+      P.forEach(function (p, k) {
+        var x = p.margin > 0 ? sol.x[k] : 0;
+        if (x < 1e-9) x = 0;
+        agg.paths[k] += x;
+        rev += x * p.rate * 1000;
+        varCost += x * (2 * C.handling);
+        p.legs.forEach(function (li) {
+          agg.legs[li][p.local ? "local" : "through"] += x;
+          agg.legs[li].rev += x * p.rate * 1000 / p.legs.length;
+          varCost += x * C.perTonneBH * legs[li].bh;
+          agg.legs[li].varCost += x * (C.perTonneBH * legs[li].bh + 2 * C.handling / p.legs.length);
+        });
+      });
+      legs.forEach(function (L, li) { agg.legs[li].pi += sol.y[li] || 0; });
+      var costRot = fixedRot + varCost;
+      weekly.push({ rev: rev * freq, cost: costRot * freq, contrib: (rev - costRot) * freq });
+    });
+    var nW = weeks.length;
+    var out = { stops: stops, legs: legs, freq: freq, fmax: fmax, hoursUsed: freq * elapsed, bhRot: bhRot, elapsed: elapsed, ground: ground, distRot: distRot, fuelStops: fuelStops,
+      bhWeek: bhRot * freq, weekly: weekly, paths: P, fifth: fifth, costs: C };
+    legs.forEach(function (L, li) {
+      var a = agg.legs[li];
+      L.local = a.local / nW; L.through = a.through / nW; L.payload = L.local + L.through; L.lf = L.payload / ac.payloadT;
+      L.rev = a.rev / nW;
+      L.cost = C.perBH * L.bh + C.landing + C.fuelStopLanding * L.stops + a.varCost / nW;
+      L.contrib = L.rev - L.cost; L.pi = a.pi / nW / 1000; // value of one more kg of payload on this leg, US$
+      L.emptyTkm = (ac.payloadT - L.payload) * L.dist;
+    });
+    P.forEach(function (p, k) { p.carried = agg.paths[k] / nW; });
+    var s = { rev: 0, cost: 0, contrib: 0 };
+    weekly.forEach(function (w) { s.rev += w.rev; s.cost += w.cost; s.contrib += w.contrib; });
+    out.rev = s.rev / nW; out.cost = s.cost / nW; out.contrib = s.contrib / nW;
+    out.costPerBH = out.cost / out.bhWeek;
+    var tk = 0, ck = 0, tonnes = 0; legs.forEach(function (L) { tk += L.payload * L.dist; ck += ac.payloadT * L.dist; tonnes += L.payload; });
+    out.lf = tk / ck;                                // load factor, tonne-km carried over tonne-km offered
+    out.tonnesWeek = 0; P.forEach(function (p) { out.tonnesWeek += p.carried * freq; });
+    out.emptyTkmWeek = (ck - tk) * freq;
+    out.yieldPerTkm = out.rev / (tk * freq);         // US$ per tonne-km
+    return out;
+  }
+
+  // The airline can fly a rotation less often than the aircraft allows: on thin lanes, fewer departures fly fuller.
+  // Try 100%, 90%, ..., 30% of the maximum and keep the frequency with the highest weekly contribution.
+  function best(data, stops, opts, weeks) {
+    var top = evaluate(data, stops, opts, weeks), fmax = top.fmax;
+    for (var k = 9; k >= 3; k--) {
+      var e = evaluate(data, stops, opts, weeks, fmax * k / 10);
+      if (e.contrib > top.contrib + 1) top = e;
+    }
+    return top;
+  }
+
+  return { best: best, mulberry32: mulberry32, dist: dist, dLon: dLon, region: region, legInfo: legInfo, rotations: rotations,
+    lane: lane, year: year, seasonMult: seasonMult, simplex: simplex, paths: paths, costs: costs, evaluate: evaluate };
+})();
+if (typeof module !== "undefined") module.exports = FR;
+// </fr-engine>
+    </script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var DATA_URL = "assets/data/freighterrotation.json", ROT_URL = "assets/data/freighterrotation-rotations.json";
+      var LAND_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/land-110m.json";
+      var TYPES = [
+        { key: "shuttle", name: "Out-and-back", c: "#d9480f" },
+        { key: "triangle", name: "Triangle", c: "#2455E6" },
+        { key: "rtw", name: "Round the world", c: "#12A150" }
+      ];
+      var TC = { shuttle: "#d9480f", triangle: "#2455E6", rtw: "#12A150" };
+      var C_LOCAL = "#2a7fb5", C_THRU = "#8fc1e3", C_HEAD = "#2455E6", C_BACK = "#a9bdf5";
+
+      var $ = function (id) { return document.getElementById(id); };
+      var nf0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+      var nf1 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      var nf2 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      function sign(v) { return v < 0 ? "−" : ""; }
+      function money(v) { return sign(v) + "$" + nf0.format(Math.abs(Math.round(v))); }
+      function moneyK(v) { var a = Math.abs(v); if (a < 500) return "$0"; return sign(v) + "$" + (a >= 1e6 ? nf2.format(a / 1e6) + "M" : nf0.format(Math.round(a / 1e3)) + "k"); }
+      function signedK(v) { var a = Math.abs(v), s = v > 500 ? "+" : v < -500 ? "−" : ""; if (a < 500) return "$0"; return s + "$" + (a >= 1e6 ? nf2.format(a / 1e6) + "M" : nf0.format(Math.round(a / 1e3)) + "k"); }
+      function rate(v) { return "$" + nf2.format(v); }
+      function t0(v) { return nf0.format(Math.round(v)) + " t"; }
+      function pct(v) { return nf0.format(Math.round(v * 100)) + "%"; }
+      function km(v) { return nf0.format(Math.round(v / 10) * 10) + " km"; }
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+      var data, pre, land = null, weeks;
+      function getJson(u) { return fetch(u).then(function (r) { if (!r.ok) throw new Error(u.split("/").pop() + " " + r.status); return r.json(); }); }
+      Promise.all([getJson(DATA_URL), getJson(ROT_URL)]).then(function (res) {
+        data = res[0]; pre = res[1];
+        if (typeof d3 === "undefined") { $("loading").outerHTML = '<p class="err">Couldn\'t load the chart library. Reload the page.</p>'; return; }
+        // the land outline is decoration: draw the maps without it if it can't load
+        return getJson(LAND_URL).then(function (w) {
+          if (window.topojson) land = topojson.feature(w, w.objects.land);
+        }).catch(function () {}).then(start);
+      }).catch(function (e) {
+        $("loading").outerHTML = '<p class="err">Couldn\'t load the lanes (' + esc(e.message || e) + '). Check your connection and reload the page.</p>';
+      });
+
+      // ---------- state ----------
+      var S = { home: "asia", fifth: true, type: "triangle", rot: null, lane: null, via: null, cache: {} };
+      function R(k) { return FR.region(data, k); }
+      function code(k) { return R(k).code; }
+      function routeLabel(stops, arrow) { var a = arrow || " → "; return stops.concat([stops[0]]).map(code).join(a); }
+      function evalStops(stops, fifth) {
+        var f = fifth == null ? S.fifth : fifth, key = (f ? "on|" : "off|") + stops.join("-");
+        if (!S.cache[key]) S.cache[key] = FR.best(data, stops, { fifth: f }, weeks);
+        return S.cache[key];
+      }
+      function preList(home, fifth) { return pre.homes[home][fifth ? "on" : "off"]; }
+      function preFind(id, fifth) { var l = preList(S.home, fifth); for (var i = 0; i < l.length; i++) if (l[i].id === id) return l[i]; return null; }
+      function bestOfType(type, fifth) { var l = preList(S.home, fifth == null ? S.fifth : fifth); for (var i = 0; i < l.length; i++) if (l[i].type === type) return l[i]; return null; }
+
+      function start() {
+        weeks = FR.year(data, data.seed);
+        renderSwitches();
+        wire();
+        $("loading").remove();
+        $("main").hidden = false;
+        setHome(true);
+      }
+
+      function setHome() {
+        var b = bestOfType(S.type);
+        S.rot = b ? b.id : null;
+        S.lane = defaultLane(); S.via = null;
+        renderBlurb();
+        renderLanes();
+        renderPairs();
+        renderRotation();
+        renderWhy();
+        renderFifth();
+      }
+      function setFifth() {
+        renderBlurb();
+        renderRotation();
+        renderWhy();
+        renderFifth();
+      }
+
+      // ---------- switches ----------
+      function pills(el, items, cur, onPick) {
+        el.innerHTML = items.map(function (o) {
+          return '<button type="button" data-k="' + o.key + '" aria-pressed="' + (cur === o.key) + '" class="' + (cur === o.key ? "on" : "") + '">' + esc(o.name) + "</button>";
+        }).join("");
+        el.onclick = function (e) {
+          var b = e.target.closest("button"); if (!b) return;
+          el.querySelectorAll("button").forEach(function (x) { var on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on); });
+          onPick(b.dataset.k);
+        };
+      }
+      function renderSwitches() {
+        pills($("sw-home"), data.regions.map(function (r) { return { key: r.key, name: r.name }; }), S.home, function (k) { if (k === S.home) return; S.home = k; setHome(); });
+        pills($("sw-fifth"), [{ key: "on", name: "With" }, { key: "off", name: "Without" }], "on", function (k) { var f = k === "on"; if (f === S.fifth) return; S.fifth = f; setFifth(); });
+        pills($("sw-type"), TYPES, S.type, function (k) { if (k === S.type) return; S.type = k; var b = bestOfType(k); S.rot = b ? b.id : null; renderRotation(); });
+      }
+      function renderBlurb() {
+        var h = R(S.home);
+        $("preset-blurb").innerHTML = "<b>Home: " + esc(h.name) + " (" + esc(h.city) + ", " + h.code + ").</b> Every rotation starts and ends here. " +
+          (S.fifth ? "<b>With fifth freedom</b>, the freighter can carry cargo between any two of its stations, such as Frankfurt to Chicago for an airline based in Hong Kong."
+                   : "<b>Without fifth freedom</b>, it can only carry cargo to or from " + esc(h.name) + ": a leg between two foreign stations carries nothing but cargo staying on board from or to home.");
+      }
+
+      function wire() {
+        $("sel-rot").addEventListener("change", function () { S.rot = this.value; renderRotation(true); });
+        $("sel-lane").addEventListener("change", function () { S.lane = this.value; S.via = null; renderWhy(); });
+        $("sel-via").addEventListener("change", function () { S.via = this.value; renderWhy(); });
+        var rw = window.innerWidth;
+        window.addEventListener("resize", function () {
+          if (Math.abs(window.innerWidth - rw) < 30) return; rw = window.innerWidth;
+          clearTimeout(S.rt); S.rt = setTimeout(function () { renderLanes(); renderPairs(); renderRotation(true); renderWhy(); renderFifth(); }, 150);
+        });
+      }
+
+      // ---------- tooltip ----------
+      var tip = $("tip");
+      function showTip(html, ev) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var x = ev.clientX + 14, y = ev.clientY + 14, r = tip.getBoundingClientRect();
+        if (x + r.width > window.innerWidth - 8) x = ev.clientX - r.width - 14;
+        if (y + r.height > window.innerHeight - 8) y = ev.clientY - r.height - 14;
+        tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      function chartWidth(el, min) { return Math.max(min || 280, Math.floor(el.getBoundingClientRect().width - 12)); }
+      function svgIn(el, W, H) {
+        el.innerHTML = "";
+        return d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("width", W).attr("height", H).attr("role", "img");
+      }
+      function legendHtml(items) {
+        return items.map(function (it) {
+          return "<span><i class=\"" + (it.cls || "") + "\" style=\"" + (it.cls && it.cls.indexOf("ln") >= 0 ? "border-color:" : "background:") + (it.c || "transparent") + "\"></i>" + esc(it.t) + "</span>";
+        }).join("");
+      }
+
+      // ---------- maps ----------
+      // Equal Earth centred on the Atlantic, cropped to the latitudes the regions use. The Pacific crossing is cut at the map's edge.
+      function mapFrame(el) {
+        var W = el.getBoundingClientRect().width || 600;
+        W = Math.max(280, Math.floor(W));
+        var proj = d3.geoEqualEarth().rotate([-12, 0]).fitWidth(W, { type: "Sphere" });
+        var top = proj([12, 76])[1], bot = proj([12, -33])[1], H = Math.round(bot - top);
+        var tr = proj.translate(); proj.translate([tr[0], tr[1] - top]);
+        el.innerHTML = "";
+        var svg = d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("width", W).attr("height", H).attr("role", "img");
+        var path = d3.geoPath(proj);
+        if (land) svg.append("path").attr("class", "land").attr("d", path(land));
+        svg.append("path").attr("d", path({ type: "Sphere" })).attr("fill", "none").attr("stroke", "#d9dde3");
+        return { svg: svg, proj: proj, path: path, W: W, H: H };
+      }
+      function gc(a, b) { return { type: "LineString", coordinates: [[a.lon, a.lat], [b.lon, b.lat]] }; }
+      function drawStations(F, keys, opts) {
+        var small = F.W < 560, g = F.svg.append("g");
+        keys.forEach(function (k) {
+          var r = R(k), p = F.proj([r.lon, r.lat]), home = k === S.home;
+          if (home) g.append("circle").attr("cx", p[0]).attr("cy", p[1]).attr("r", small ? 7 : 9).attr("fill", "none").attr("stroke", "#151A23").attr("stroke-width", 1.5);
+          g.append("circle").attr("cx", p[0]).attr("cy", p[1]).attr("r", small ? 3.6 : 4.5).attr("fill", (opts && opts.dim && opts.dim.indexOf(k) >= 0) ? "#b9bec7" : "#151A23").attr("stroke", "#fff").attr("stroke-width", 1.2);
+          var below = r.lat < 10, dx = r.key === "europe" ? -8 : r.key === "mideast" ? 8 : 0, anchor = dx < 0 ? "end" : dx > 0 ? "start" : "middle";
+          var t = g.append("text").attr("x", p[0] + dx).attr("y", p[1] + (below ? (small ? 15 : 18) : (small ? -8 : -11))).attr("text-anchor", anchor)
+            .attr("font-size", small ? 10 : 11.5).attr("font-weight", 600).attr("fill", "#151A23").attr("paint-order", "stroke").attr("stroke", "#fbfcfd").attr("stroke-width", 3).text(r.code);
+          if (!small) t.append("tspan").attr("font-weight", 400).attr("fill", "#5B6272").text(" " + r.name);
+        });
+      }
+
+      // ---------- section 1: lanes ----------
+      function pairsList() {
+        var keys = data.regions.map(function (r) { return r.key; }), out = [];
+        for (var i = 0; i < keys.length; i++) for (var j = i + 1; j < keys.length; j++) {
+          var a = keys[i], b = keys[j], ab = FR.lane(data, a, b), ba = FR.lane(data, b, a);
+          var head = ab.t >= ba.t ? { o: a, d: b, L: ab } : { o: b, d: a, L: ba }, back = ab.t >= ba.t ? { o: b, d: a, L: ba } : { o: a, d: b, L: ab };
+          out.push({ a: a, b: b, head: head, back: back, tot: ab.t + ba.t });
+        }
+        return out.sort(function (p, q) { return q.tot - p.tot; });
+      }
+      function laneTip(p) {
+        return '<div class="t">' + code(p.a) + " ⇄ " + code(p.b) + " · average week (illustrative)</div>" +
+          '<div class="r"><i style="background:' + C_HEAD + '"></i>' + code(p.head.o) + " → " + code(p.head.d) + "<b>" + t0(p.head.L.t) + " at " + rate(p.head.L.rate) + "/kg</b></div>" +
+          '<div class="r" style="font-size:11.5px;color:#767676">' + esc(p.head.L.why) + "</div>" +
+          '<div class="r"><i style="background:' + C_BACK + '"></i>' + code(p.back.o) + " → " + code(p.back.d) + "<b>" + t0(p.back.L.t) + " at " + rate(p.back.L.rate) + "/kg</b></div>" +
+          '<div class="r" style="font-size:11.5px;color:#767676">' + esc(p.back.L.why) + "</div>" +
+          '<div class="r">Busy direction ÷ quiet<b>' + nf1.format(p.head.L.t / Math.max(1, p.back.L.t)) + "×</b></div>";
+      }
+      function renderLanes() {
+        var el = $("ch-lanes"), F = mapFrame(el), P = pairsList();
+        F.svg.attr("aria-label", "World map of the six cargo regions and the lanes between them");
+        var w = d3.scaleSqrt().domain([0, d3.max(P, function (p) { return p.tot; })]).range([0, F.W < 560 ? 7 : 11]);
+        F.svg.append("g").selectAll("path").data(P.slice().reverse()).join("path")
+          .attr("d", function (p) { return F.path(gc(R(p.a), R(p.b))); })
+          .attr("fill", "none").attr("stroke", function (p) { return p.a === S.home || p.b === S.home ? "#2455E6" : "#8b93a3"; })
+          .attr("stroke-opacity", function (p) { return p.a === S.home || p.b === S.home ? 0.55 : 0.32; })
+          .attr("stroke-width", function (p) { return Math.max(1, w(p.tot)); }).attr("stroke-linecap", "round")
+          .on("mousemove", function (ev, p) { d3.select(this).attr("stroke-opacity", 0.9); showTip(laneTip(p), ev); })
+          .on("mouseleave", function (ev, p) { d3.select(this).attr("stroke-opacity", p.a === S.home || p.b === S.home ? 0.55 : 0.32); hideTip(); });
+        drawStations(F, data.regions.map(function (r) { return r.key; }));
+      }
+      function renderPairs() {
+        var el = $("ch-pairs"), P = pairsList(), W = chartWidth(el), small = W < 560;
+        var m = { l: small ? 70 : 96, r: small ? 6 : 112, t: 24, b: 6 }, rowH = 24, H = m.t + P.length * rowH + m.b;
+        var svg = svgIn(el, W, H).attr("aria-label", "Tonnes a week in each direction of every lane");
+        var cx = m.l + (W - m.l - m.r) / 2, half = (W - m.l - m.r) / 2 - 4;
+        var x = d3.scaleLinear().domain([0, d3.max(P, function (p) { return p.head.L.t; })]).range([0, half]);
+        svg.append("text").attr("x", cx - 6).attr("y", 12).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text(small ? "← quiet way" : "← quiet direction (backhaul)");
+        svg.append("text").attr("x", cx + 6).attr("y", 12).attr("text-anchor", "start").attr("font-size", 11).attr("fill", "#767676").text(small ? "busy way →" : "busy direction (headhaul) →");
+        if (!small) svg.append("text").attr("x", W - 4).attr("y", 12).attr("text-anchor", "end").attr("font-size", 11).attr("fill", "#767676").text("Rate per kg, busy / quiet");
+        var g = svg.append("g").selectAll("g").data(P).join("g").attr("transform", function (p, i) { return "translate(0," + (m.t + i * rowH) + ")"; });
+        g.append("rect").attr("x", 0).attr("width", W).attr("height", rowH).attr("fill", function (p) { return p.a === S.home || p.b === S.home ? "#f4f7fe" : "transparent"; });
+        g.append("text").attr("x", 0).attr("y", rowH / 2 + 4).attr("font-size", small ? 11 : 12).attr("fill", "#222").attr("font-weight", function (p) { return p.a === S.home || p.b === S.home ? 600 : 400; })
+          .text(function (p) { return code(p.head.o) + " ⇄ " + code(p.head.d); });
+        g.append("rect").attr("x", function (p) { return cx - x(p.back.L.t); }).attr("y", 5).attr("height", rowH - 10).attr("width", function (p) { return x(p.back.L.t); }).attr("fill", C_BACK).attr("rx", 2);
+        g.append("rect").attr("x", cx).attr("y", 5).attr("height", rowH - 10).attr("width", function (p) { return x(p.head.L.t); }).attr("fill", C_HEAD).attr("rx", 2);
+        g.append("text").attr("y", rowH / 2 + 4).attr("font-size", 10.5).attr("fill", "#5B6272")
+          .attr("x", function (p) { return cx - x(p.back.L.t) - 4; }).attr("text-anchor", "end").text(function (p) { return nf0.format(p.back.L.t); });
+        g.append("text").attr("y", rowH / 2 + 4).attr("font-size", 10.5)
+          .attr("x", function (p) { var w = x(p.head.L.t); return w > 34 ? cx + w - 4 : cx + w + 4; })
+          .attr("text-anchor", function (p) { return x(p.head.L.t) > 34 ? "end" : "start"; })
+          .attr("fill", function (p) { return x(p.head.L.t) > 34 ? "#fff" : "#5B6272"; }).text(function (p) { return nf0.format(p.head.L.t); });
+        if (!small) g.append("text").attr("x", W - 4).attr("y", rowH / 2 + 4).attr("text-anchor", "end").attr("font-size", 11.5).attr("fill", "#444")
+          .text(function (p) { return rate(p.head.L.rate) + " / " + rate(p.back.L.rate); });
+        g.append("line").attr("x1", cx).attr("x2", cx).attr("y1", 0).attr("y2", rowH).attr("stroke", "#d4d4d4");
+        g.append("rect").attr("x", 0).attr("width", W).attr("height", rowH).attr("fill", "transparent")
+          .on("mousemove", function (ev, p) { showTip(laneTip(p), ev); }).on("mouseleave", hideTip);
+        var h = R(S.home), mine = P.filter(function (p) { return p.a === S.home || p.b === S.home; }).sort(function (p, q) { return (q.head.L.t - q.back.L.t) - (p.head.L.t - p.back.L.t); })[0];
+        $("pairs-hint").textContent = "Lanes touching " + h.name + " are highlighted. Its most unbalanced one is " + code(mine.head.o) + " to " + code(mine.head.d) + ": " +
+          nf0.format(mine.head.L.t) + " t a week at " + rate(mine.head.L.rate) + " per kg one way, " + nf0.format(mine.back.L.t) + " t at " + rate(mine.back.L.rate) + " the other. " +
+          "A shuttle on it would fly the quiet direction with most of its 100 t empty. Hover or tap a lane for the cargo behind it.";
+      }
+
+      // ---------- section 2: one rotation ----------
+      function rotOptions() {
+        var l = preList(S.home, S.fifth).filter(function (r) { return r.type === S.type; });
+        return l;
+      }
+      function renderRotation(keepSel) {
+        var opts = rotOptions(), sel = $("sel-rot");
+        if (!opts.length) { S.rot = null; }
+        if (!opts.some(function (o) { return o.id === S.rot; })) S.rot = opts.length ? opts[0].id : null;
+        sel.innerHTML = opts.map(function (o, i) {
+          return '<option value="' + o.id + '"' + (o.id === S.rot ? " selected" : "") + ">" + esc(routeLabel(o.stops)) + " · " + moneyK(o.contrib) + (i === 0 ? " (best)" : "") + "</option>";
+        }).join("");
+        $("sw-type").querySelectorAll("button").forEach(function (x) { var on = x.dataset.k === S.type; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on); });
+        if (!S.rot) return;
+        var stops = S.rot.split("-"), e = evalStops(stops), all = preList(S.home, S.fifth), rank = 0;
+        for (var i = 0; i < all.length; i++) if (all[i].id === S.rot) { rank = i + 1; break; }
+        $("rot-rank").textContent = "Ranks " + rank + " of " + all.length + " rotations from " + R(S.home).city;
+        renderRotMap(e);
+        renderTiles(e);
+        renderLegTable(e);
+        renderWeeks(e);
+      }
+
+      function renderRotMap(e) {
+        var el = $("ch-rot"), F = mapFrame(el), small = F.W < 560;
+        F.svg.attr("aria-label", "Map of the rotation " + routeLabel(e.stops));
+        var wS = d3.scaleLinear().domain([0, 100]).range([1.2, small ? 6 : 9]);
+        var gL = F.svg.append("g"), gA = F.svg.append("g"), gT = F.svg.append("g");
+        e.legs.forEach(function (L, li) {
+          var A = R(L.from), B = R(L.to), col = TC[S.type];
+          gL.append("path").attr("d", F.path(gc(A, B))).attr("fill", "none").attr("stroke", col).attr("stroke-opacity", 0.18).attr("stroke-width", wS(100)).attr("stroke-linecap", "round");
+          gL.append("path").attr("d", F.path(gc(A, B))).attr("fill", "none").attr("stroke", col).attr("stroke-opacity", 0.9).attr("stroke-width", wS(L.payload)).attr("stroke-linecap", "round")
+            .on("mousemove", function (ev) { showTip(legTip(e, L), ev); }).on("mouseleave", hideTip);
+          var interp = d3.geoInterpolate([A.lon, A.lat], [B.lon, B.lat]);
+          // fuel stops
+          for (var s = 1; s <= L.stops; s++) {
+            var q = F.proj(interp(s / (L.stops + 1)));
+            gA.append("circle").attr("cx", q[0]).attr("cy", q[1]).attr("r", small ? 3 : 3.8).attr("fill", "#fff").attr("stroke", col).attr("stroke-width", 1.5);
+          }
+          // arrow and label where the leg isn't cut by the map edge
+          var tA = [0.5, 0.38, 0.62, 0.28, 0.72];
+          for (var k = 0; k < tA.length; k++) {
+            var p1 = F.proj(interp(tA[k] - 0.02)), p2 = F.proj(interp(tA[k] + 0.02));
+            if (Math.hypot(p2[0] - p1[0], p2[1] - p1[1]) > 40) continue;
+            var ang = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]) * 180 / Math.PI, pm = F.proj(interp(tA[k]));
+            gA.append("path").attr("d", "M-5,-4.5L5,0L-5,4.5Z").attr("transform", "translate(" + pm[0] + "," + pm[1] + ") rotate(" + ang + ")").attr("fill", col);
+            var nx = -Math.sin(ang * Math.PI / 180), ny = Math.cos(ang * Math.PI / 180), off = small ? 11 : 14;
+            gT.append("text").attr("x", pm[0] + nx * off).attr("y", pm[1] + ny * off + 4).attr("text-anchor", "middle").attr("font-size", small ? 10 : 11.5).attr("font-weight", 600)
+              .attr("fill", "#151A23").attr("paint-order", "stroke").attr("stroke", "#fbfcfd").attr("stroke-width", 3).text(nf0.format(L.payload) + " t");
+            break;
+          }
+        });
+        var others = data.regions.map(function (r) { return r.key; }).filter(function (k) { return e.stops.indexOf(k) < 0; });
+        drawStations(F, e.stops.concat(others), { dim: others });
+        $("rot-legend").innerHTML = legendHtml([
+          { t: "Line width: average payload per departure (pale band: the 100 t the aircraft can carry)", c: TC[S.type], cls: "ln" },
+          { t: "Fuel stop", c: "#fff", cls: "dot" }
+        ]).replace('style="background:#fff"', 'style="background:#fff;box-shadow:inset 0 0 0 1.5px ' + TC[S.type] + '"');
+      }
+      function legTip(e, L) {
+        return '<div class="t">' + code(L.from) + " → " + code(L.to) + " · per departure, average week</div>" +
+          '<div class="r">Distance<b>' + km(L.dist) + (L.stops ? ", " + L.stops + " fuel stop" + (L.stops > 1 ? "s" : "") : "") + "</b></div>" +
+          '<div class="r">Block hours<b>' + nf1.format(L.bh) + "</b></div>" +
+          '<div class="r"><i style="background:' + C_LOCAL + '"></i>Local cargo<b>' + t0(L.local) + "</b></div>" +
+          '<div class="r"><i style="background:' + C_THRU + '"></i>Staying on board<b>' + t0(L.through) + "</b></div>" +
+          '<div class="r">Load factor<b>' + pct(L.lf) + "</b></div>" +
+          '<div class="r">Revenue<b>' + moneyK(L.rev) + "</b></div>" +
+          '<div class="r">Operating cost<b>' + moneyK(L.cost) + "</b></div>" +
+          '<div class="r">Contribution<b>' + signedK(L.contrib) + "</b></div>";
+      }
+      function renderTiles(e) {
+        var ac = data.aircraft;
+        var tiles = [
+          { k: "Rotations per week", v: nf1.format(e.freq), s: e.freq < e.fmax - 0.01 ? "fewer than the " + nf1.format(e.fmax) + " it could fly: thin lanes fill better" : nf1.format(e.elapsed) + " hours per rotation, ground time included" },
+          { k: "Block hours per week", v: nf0.format(e.bhWeek), s: nf1.format(e.bhWeek / 7) + " a day; " + nf0.format(e.hoursUsed) + " of " + ac.hoursPerWeek + " hours used" },
+          { k: "Load factor", v: pct(e.lf), s: "tonne-km carried ÷ tonne-km flown; " + nf0.format(e.tonnesWeek) + " t a week" },
+          { k: "Revenue per week", v: moneyK(e.rev), s: "illustrative rates; " + rate(e.yieldPerTkm) + " per tonne-km" },
+          { k: "Cost per block hour", v: money(e.costPerBH), s: "fuel, crew, maintenance, landings, handling" },
+          { k: "Weekly contribution", v: moneyK(e.contrib), s: "revenue − operating cost, before ownership", key: true }
+        ];
+        $("tiles").innerHTML = tiles.map(function (t) { return '<div class="tile' + (t.key ? " key" : "") + '"><span class="k">' + t.k + "</span><b>" + t.v + '</b><span class="s">' + t.s + "</span></div>"; }).join("");
+      }
+      function renderLegTable(e) {
+        var html = '<thead><tr><th class="l">Leg</th><th>Distance</th><th>Fuel stops</th><th>Block hours</th><th class="l">Payload (of 100 t)</th><th>Load factor</th><th>Revenue</th><th>Operating cost</th><th>Contribution</th></tr></thead><tbody>';
+        var sum = { bh: 0, rev: 0, cost: 0, contrib: 0, dist: 0 };
+        e.legs.forEach(function (L) {
+          sum.bh += L.bh; sum.rev += L.rev; sum.cost += L.cost; sum.contrib += L.contrib; sum.dist += L.dist;
+          var bar = '<span class="lbar"><i style="left:0;width:' + Math.min(100, L.local) + '%;background:' + C_LOCAL + '"></i><i style="left:' + Math.min(100, L.local) + '%;width:' + Math.min(100 - L.local, L.through) + '%;background:' + C_THRU + '"></i></span>';
+          html += '<tr><td class="l">' + code(L.from) + " → " + code(L.to) + "</td><td>" + km(L.dist) + "</td><td>" + (L.stops || "") + "</td><td>" + nf1.format(L.bh) +
+            '</td><td class="l">' + bar + t0(L.payload) + (L.through > 0.5 ? ' <span style="color:#767676">(' + nf0.format(L.through) + " on board)</span>" : "") + "</td><td>" + pct(L.lf) + "</td><td>" + moneyK(L.rev) + "</td><td>" + moneyK(L.cost) +
+            '</td><td class="' + (L.contrib < 0 ? "neg" : "hl") + '">' + signedK(L.contrib) + "</td></tr>";
+        });
+        html += '<tr class="sum"><td class="l">One rotation</td><td>' + km(sum.dist) + "</td><td>" + (e.fuelStops || "") + "</td><td>" + nf1.format(sum.bh) + '</td><td class="l"></td><td>' + pct(e.lf) + "</td><td>" + moneyK(sum.rev) + "</td><td>" + moneyK(sum.cost) + "</td><td>" + signedK(sum.contrib) + "</td></tr>";
+        $("leg-table").innerHTML = html + "</tbody>";
+        var neg = e.legs.filter(function (L) { return L.contrib < 0; }), thr = e.legs.some(function (L) { return L.through > 0.5; });
+        var txt = "Bar: " + '<span class="sw" style="background:' + C_LOCAL + '"></span>cargo for that leg\'s own lane, <span class="sw" style="background:' + C_THRU + '"></span>cargo staying on board through the stop, hatched: empty. ';
+        if (neg.length) txt += neg.map(function (L) { return code(L.from) + " → " + code(L.to); }).join(" and ") + (neg.length > 1 ? " lose" : " loses") + " money on its own: it is the price of getting the aircraft back to where the cargo is. ";
+        else txt += "Every leg covers its own cost. ";
+        if (!S.fifth && e.stops.length > 2) txt += "Without fifth freedom, legs between two foreign stations only carry cargo staying on board to or from " + R(S.home).city + ". ";
+        txt += "A leg's revenue counts each shipment's revenue split equally over the legs it flies.";
+        $("leg-hint").innerHTML = txt;
+      }
+      function renderWeeks(e) {
+        var el = $("ch-weeks"), W = chartWidth(el), H = Math.round(Math.min(280, Math.max(200, W * 0.3)));
+        var m = { l: 56, r: 14, t: 14, b: 32 };
+        var bs = bestOfType("shuttle"), sh = bs && bs.id !== S.rot ? evalStops(bs.stops) : null;
+        var series = [{ name: routeLabel(e.stops), v: e.weekly.map(function (w) { return w.contrib; }), c: TC[S.type], dash: false }];
+        if (sh) series.push({ name: "Best out-and-back, " + routeLabel(sh.stops), v: sh.weekly.map(function (w) { return w.contrib; }), c: "#767676", dash: true });
+        var all = []; series.forEach(function (s) { all = all.concat(s.v); });
+        var svg = svgIn(el, W, H).attr("aria-label", "Weekly contribution over 52 weeks");
+        var x = d3.scaleLinear().domain([1, 52]).range([m.l, W - m.r]);
+        var y = d3.scaleLinear().domain([Math.min(0, d3.min(all)), d3.max(all)]).nice().range([H - m.b, m.t]);
+        [[5, 7, "Lunar New Year"], [40, 50, "peak season"]].forEach(function (b) {
+          svg.append("rect").attr("x", x(b[0] - 0.5)).attr("width", x(b[1] + 0.5) - x(b[0] - 0.5)).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "#f3f5f9");
+          if (W > 420 || b[2] === "peak season") svg.append("text").attr("x", x((b[0] + b[1]) / 2)).attr("y", m.t + 11).attr("text-anchor", "middle").attr("font-size", 10.5).attr("fill", "#767676").text(b[2]);
+        });
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues([1, 9, 18, 27, 36, 45, 52]).tickFormat(function (v) { return "wk " + v; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return moneyK(v); }));
+        if (y.domain()[0] < 0) svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "#999");
+        series.slice().reverse().forEach(function (s) {
+          svg.append("path").attr("d", d3.line().x(function (v, i) { return x(i + 1); }).y(function (v) { return y(v); }).curve(d3.curveMonotoneX)(s.v))
+            .attr("fill", "none").attr("stroke", s.c).attr("stroke-width", s.dash ? 1.6 : 2.4).attr("stroke-dasharray", s.dash ? "5 4" : null);
+        });
+        var hov = svg.append("line").attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-opacity", 0);
+        svg.append("rect").attr("x", m.l).attr("width", W - m.l - m.r).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
+          .on("mousemove", function (ev) {
+            var p = d3.pointer(ev), wk = Math.max(1, Math.min(52, Math.round(x.invert(p[0]))));
+            hov.attr("x1", x(wk)).attr("x2", x(wk)).attr("stroke-opacity", 0.3);
+            showTip('<div class="t">Week ' + wk + "</div>" + series.map(function (s) { return '<div class="r"><i style="background:' + s.c + '"></i>' + esc(s.dash ? "Best out-and-back" : "This rotation") + "<b>" + moneyK(s.v[wk - 1]) + "</b></div>"; }).join(""), ev);
+          })
+          .on("mouseleave", function () { hov.attr("stroke-opacity", 0); hideTip(); });
+        el.insertAdjacentHTML("beforeend", '<div class="legend">' + legendHtml(series.map(function (s) { return { t: s.name, c: s.c, cls: s.dash ? "ln dash" : "ln" }; })) + "</div>");
+        $("wk-sub").textContent = "Weekly contribution over one simulated year (seed " + data.seed + ", illustrative)";
+      }
+
+      // ---------- section 3: why triangles ----------
+      function defaultLane() {
+        var best = null, bv = -Infinity;
+        data.regions.forEach(function (r) {
+          if (r.key === S.home) return;
+          var a = FR.lane(data, S.home, r.key).t, b = FR.lane(data, r.key, S.home).t, v = Math.abs(a - b);
+          if (v > bv) { bv = v; best = r.key; }
+        });
+        return best;
+      }
+      function laneDirs(B) {
+        var H = S.home, ab = FR.lane(data, H, B), ba = FR.lane(data, B, H), hb = ab.t > ba.t || (ab.t === ba.t && ab.rate >= ba.rate);
+        return hb ? { strong: [H, B], weak: [B, H], Ls: ab, Lw: ba, Ds: ab.t, Dw: ba.t } : { strong: [B, H], weak: [H, B], Ls: ba, Lw: ab, Ds: ba.t, Dw: ab.t };
+      }
+      function triStops(B, C) { var d = laneDirs(B); return d.strong[0] === S.home ? [S.home, B, C] : [S.home, C, B]; }
+      // Scale one lane's tonnes and rate by the same factor g: a copy of the data and of the year of demand.
+      function scaled(key, g) {
+        var d2 = Object.assign({}, data, { lanes: Object.assign({}, data.lanes) });
+        d2.lanes[key] = Object.assign({}, data.lanes[key], { rate: data.lanes[key].rate * g });
+        return { data: d2, weeks: weeks.map(function (wk) { var o = {}; for (var k in wk) o[k] = wk[k]; o[key] = wk[key] * g; return o; }) };
+      }
+
+      function renderWhy() {
+        var H = S.home, others = data.regions.map(function (r) { return r.key; }).filter(function (k) { return k !== H; });
+        if (others.indexOf(S.lane) < 0) S.lane = defaultLane();
+        $("sel-lane").innerHTML = others.map(function (k) {
+          var d = laneDirs(k);
+          return '<option value="' + k + '"' + (k === S.lane ? " selected" : "") + ">" + code(H) + " ⇄ " + code(k) + " (busy way " + code(d.strong[0]) + " → " + code(d.strong[1]) + ", " + nf1.format(d.Ds / Math.max(1, d.Dw)) + "×)</option>";
+        }).join("");
+        var vias = others.filter(function (k) { return k !== S.lane; }).map(function (k) {
+          var st = triStops(S.lane, k), p = preFind(st.join("-"), S.fifth);
+          return { k: k, stops: st, contrib: p ? p.contrib : -Infinity };
+        }).sort(function (a, b) { return b.contrib - a.contrib; });
+        if (!vias.some(function (v) { return v.k === S.via; })) S.via = vias[0].k;
+        $("sel-via").innerHTML = vias.map(function (v, i) {
+          return '<option value="' + v.k + '"' + (v.k === S.via ? " selected" : "") + ">" + esc(R(v.k).city) + ": " + esc(routeLabel(v.stops)) + (i === 0 ? " (best)" : "") + "</option>";
+        }).join("");
+        var shStops = [H, S.lane], trStops = triStops(S.lane, S.via);
+        var sh = evalStops(shStops), tr = evalStops(trStops);
+        renderStrip(sh, tr);
+        renderBreakEven(shStops, trStops, sh, tr);
+      }
+
+      function renderStrip(sh, tr) {
+        var el = $("ch-strip"), W = chartWidth(el), small = W < 560;
+        var m = { l: 4, r: 8, t: 6, b: 30 }, bandH = small ? 54 : 64, labH = small ? 48 : 34, rowsH = 2 * (labH + bandH) + 14, Ht = m.t + rowsH + m.b;
+        var svg = svgIn(el, W, Ht).attr("aria-label", "Capacity flown and cargo carried per week, out-and-back against triangle");
+        var maxBH = Math.max(sh.bhWeek, tr.bhWeek, data.aircraft.hoursPerWeek * 0.8);
+        var x = d3.scaleLinear().domain([0, maxBH]).range([m.l, W - m.r]);
+        var defs = svg.append("defs");
+        defs.append("pattern").attr("id", "hatch").attr("patternUnits", "userSpaceOnUse").attr("width", 6).attr("height", 6).attr("patternTransform", "rotate(45)")
+          .call(function (p) { p.append("rect").attr("width", 6).attr("height", 6).attr("fill", "#f7f8fa"); p.append("rect").attr("width", 3).attr("height", 6).attr("fill", "#e3e6ea"); });
+        [{ e: sh, type: "shuttle" }, { e: tr, type: "triangle" }].forEach(function (row, ri) {
+          var y0 = m.t + ri * (labH + bandH + 14), e = row.e, g = svg.append("g").attr("transform", "translate(0," + y0 + ")");
+          var name = (row.type === "shuttle" ? "Out-and-back " : "Triangle ") + routeLabel(e.stops);
+          g.append("text").attr("x", m.l).attr("y", 13).attr("font-size", 12.5).attr("font-weight", 600).attr("fill", TC[row.type]).text(name);
+          var l1 = nf1.format(e.freq) + " a week · load factor " + pct(e.lf), l2 = nf1.format(e.emptyTkmWeek / 1e6) + " million empty tonne-km · " + moneyK(e.contrib) + " contribution";
+          if (small) {
+            g.append("text").attr("x", m.l).attr("y", 28).attr("font-size", 11).attr("fill", "#5B6272").text(l1);
+            g.append("text").attr("x", m.l).attr("y", 42).attr("font-size", 11).attr("fill", "#5B6272").text(l2);
+          } else g.append("text").attr("x", m.l).attr("y", 28).attr("font-size", 11.5).attr("fill", "#5B6272").text(l1 + " · " + l2);
+          var cx = m.l, k = 0;
+          // repeat the legs freq times, with whole rotations first and the remainder last
+          var nFull = Math.floor(e.freq + 1e-9), rem = e.freq - nFull, reps = [];
+          for (var i = 0; i < nFull; i++) reps.push(1);
+          if (rem > 0.02) reps.push(rem);
+          reps.forEach(function (share, ri2) {
+            e.legs.forEach(function (L) {
+              var w = (x(L.bh * share) - x(0)), gy = labH, cap = bandH;
+              var fillH = cap * Math.min(1, L.payload / 100), locH = cap * Math.min(1, L.local / 100);
+              g.append("rect").attr("x", cx).attr("y", gy).attr("width", Math.max(0, w - 1)).attr("height", cap).attr("fill", "url(#hatch)");
+              g.append("rect").attr("x", cx).attr("y", gy + cap - fillH).attr("width", Math.max(0, w - 1)).attr("height", fillH - locH).attr("fill", C_THRU);
+              g.append("rect").attr("x", cx).attr("y", gy + cap - locH).attr("width", Math.max(0, w - 1)).attr("height", locH).attr("fill", C_LOCAL);
+              if (ri2 === 0 && w > (small ? 46 : 62)) g.append("text").attr("x", cx + 4).attr("y", gy + 12).attr("font-size", small ? 9.5 : 10.5).attr("fill", "#151A23")
+                .attr("paint-order", "stroke").attr("stroke", "#fff").attr("stroke-width", 2.5).text(code(L.from) + "→" + code(L.to));
+              g.append("rect").attr("x", cx).attr("y", gy).attr("width", Math.max(0, w - 1)).attr("height", cap).attr("fill", "transparent")
+                .on("mousemove", function (ev) { showTip(legTip(e, L), ev); }).on("mouseleave", hideTip);
+              cx += w; k++;
+            });
+          });
+          g.append("rect").attr("x", m.l).attr("y", labH).attr("width", cx - m.l).attr("height", bandH).attr("fill", "none").attr("stroke", "#c9ced6");
+        });
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (m.t + rowsH) + ")").call(d3.axisBottom(x).ticks(small ? 5 : 8));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", Ht - 2).attr("text-anchor", "end").text("Block hours per week");
+        el.insertAdjacentHTML("beforeend", '<div class="legend">' + legendHtml([{ t: "Cargo for the leg's own lane", c: C_LOCAL }, { t: "Staying on board through a stop", c: C_THRU }, { t: "Empty capacity", cls: "empty" }]) + "</div>");
+      }
+
+      function renderBreakEven(shStops, trStops, sh, tr) {
+        var el = $("ch-be"), W = chartWidth(el), H = Math.round(Math.min(300, Math.max(220, W * 0.32)));
+        var m = { l: 56, r: 16, t: 14, b: 40 }, d = laneDirs(S.lane), wkey = d.weak[0] + ">" + d.weak[1];
+        // x: what the quiet direction earns (tonnes × rate) as a share of the busy one; tonnes and rate scale together
+        var now = (d.Lw.t * d.Lw.rate) / (d.Ls.t * d.Ls.rate);
+        var ks = []; for (var k = 0.05; k <= 1.0001; k += 0.05) ks.push(Math.round(k * 100) / 100);
+        var pts = ks.map(function (k) {
+          var g = Math.sqrt(k / now), sc = scaled(wkey, g);
+          return { k: k, t: d.Lw.t * g, rate: d.Lw.rate * g, sh: FR.best(sc.data, shStops, { fifth: S.fifth }, sc.weeks).contrib, tr: FR.best(sc.data, trStops, { fifth: S.fifth }, sc.weeks).contrib };
+        });
+        var svg = svgIn(el, W, H).attr("aria-label", "Weekly contribution of the out-and-back and the triangle as the quiet direction shrinks");
+        var x = d3.scaleLinear().domain([0.05, 1]).range([m.l, W - m.r]);
+        var vals = []; pts.forEach(function (p) { vals.push(p.sh, p.tr); });
+        var y = d3.scaleLinear().domain([Math.min(0, d3.min(vals)), d3.max(vals)]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 500 ? 5 : 9).tickFormat(d3.format(".0%")));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return moneyK(v); }));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 6).attr("text-anchor", "end").text((W < 500 ? "" : "What ") + code(d.weak[0]) + " → " + code(d.weak[1]) + (W < 500 ? " earns, % of " : " earns, as a share of what ") + code(d.strong[0]) + " → " + code(d.strong[1]) + (W < 500 ? "" : " earns"));
+        if (y.domain()[0] < 0) svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "#999");
+        // crossing
+        var cross = null;
+        for (var i = 1; i < pts.length; i++) {
+          var a = pts[i - 1].tr - pts[i - 1].sh, b = pts[i].tr - pts[i].sh;
+          if (a > 0 && b <= 0) { cross = pts[i - 1].k + (pts[i].k - pts[i - 1].k) * a / (a - b); break; }
+        }
+        if (cross != null) svg.append("rect").attr("x", m.l).attr("width", x(cross) - m.l).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", TC.triangle).attr("opacity", 0.05);
+        [{ k: "sh", c: TC.shuttle, t: "Out-and-back" }, { k: "tr", c: TC.triangle, t: "Triangle" }].forEach(function (s) {
+          svg.append("path").attr("d", d3.line().x(function (p) { return x(p.k); }).y(function (p) { return y(p[s.k]); })(pts)).attr("fill", "none").attr("stroke", s.c).attr("stroke-width", 2.4);
+        });
+        if (now >= 0.05 && now <= 1) {
+          svg.append("line").attr("x1", x(now)).attr("x2", x(now)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-dasharray", "3 3");
+          svg.append("text").attr("x", x(now) + (x(now) > W - 110 ? -4 : 4)).attr("y", m.t + 10).attr("text-anchor", x(now) > W - 110 ? "end" : "start").attr("font-size", 11).attr("fill", "#222").text("this lane: " + pct(now));
+          [[sh.contrib, TC.shuttle], [tr.contrib, TC.triangle]].forEach(function (q) { svg.append("circle").attr("cx", x(now)).attr("cy", y(q[0])).attr("r", 4).attr("fill", q[1]).attr("stroke", "#fff").attr("stroke-width", 1.2); });
+        }
+        var hov = svg.append("line").attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-opacity", 0);
+        svg.append("rect").attr("x", m.l).attr("width", W - m.l - m.r).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
+          .on("mousemove", function (ev) {
+            var kx = x.invert(d3.pointer(ev)[0]), p = pts.reduce(function (a, b) { return Math.abs(b.k - kx) < Math.abs(a.k - kx) ? b : a; });
+            hov.attr("x1", x(p.k)).attr("x2", x(p.k)).attr("stroke-opacity", 0.3);
+            showTip('<div class="t">' + code(d.weak[0]) + " → " + code(d.weak[1]) + " earning " + pct(p.k) + " of " + code(d.strong[0]) + " → " + code(d.strong[1]) + ": " + t0(p.t) + " a week at " + rate(p.rate) + "/kg</div>" +
+              '<div class="r"><i style="background:' + TC.shuttle + '"></i>Out-and-back<b>' + moneyK(p.sh) + "</b></div>" +
+              '<div class="r"><i style="background:' + TC.triangle + '"></i>Triangle<b>' + moneyK(p.tr) + "</b></div>", ev);
+          })
+          .on("mouseleave", function () { hov.attr("stroke-opacity", 0); hideTip(); });
+        el.insertAdjacentHTML("beforeend", '<div class="legend">' + legendHtml([{ t: "Out-and-back " + routeLabel(shStops), c: TC.shuttle, cls: "ln" }, { t: "Triangle " + routeLabel(trStops), c: TC.triangle, cls: "ln" }]) + "</div>");
+        $("be-sub").textContent = "Weekly contribution as the quiet direction earns more or less, all else equal";
+        var gap = tr.contrib - sh.contrib, txt;
+        var head = code(d.strong[0]) + " → " + code(d.strong[1]), quiet = code(d.weak[0]) + " → " + code(d.weak[1]);
+        txt = "Each point scales the tonnes and the rate of " + quiet + " by the same factor, from almost nothing up to the point where it earns as much as " + head + ". ";
+        if (cross != null) txt += "The triangle earns more as long as " + quiet + " earns less than about " + pct(cross) + " of what " + head + " earns. ";
+        else if (pts[pts.length - 1].tr > pts[pts.length - 1].sh) txt += "Here the triangle earns more even on a balanced lane: its other legs are good lanes in their own right. ";
+        else txt += "Here the out-and-back earns more at every level shown: the triangle's other legs don't carry enough to pay for the extra hours. ";
+        txt += "Today it earns " + pct(now) + ", and the triangle makes " + (gap >= 0 ? signedK(gap) + " a week more" : moneyK(-gap) + " a week less") + " than the out-and-back. " +
+          "The out-and-back line falls as the quiet direction gets poorer; the triangle's barely moves, because it doesn't fly " + quiet + " at all and picks up only some of that cargo staying on board through the stop.";
+        if (!S.fifth) txt += " Without fifth freedom, the triangle's middle leg can only carry cargo staying on board to or from home, which is why it loses most of its edge.";
+        $("be-hint").textContent = txt;
+      }
+
+      // ---------- section 4: fifth freedom ----------
+      function renderFifth() {
+        var H = R(S.home), on = preList(S.home, true), off = preList(S.home, false);
+        var html = '<thead><tr><th class="l">Kind of rotation</th><th class="l">Best with fifth freedom</th><th>Per week</th><th class="l">Best without</th><th>Per week</th><th>What the right is worth</th></tr></thead><tbody>';
+        TYPES.forEach(function (t) {
+          var a = on.filter(function (r) { return r.type === t.key; })[0], b = off.filter(function (r) { return r.type === t.key; })[0];
+          if (!a) return;
+          html += '<tr><td class="l"><span class="sw" style="background:' + t.c + '"></span>' + t.name + '</td><td class="l">' + esc(routeLabel(a.stops)) + '</td><td class="hl">' + moneyK(a.contrib) + '</td><td class="l">' + esc(routeLabel(b.stops)) + '</td><td class="hl">' + moneyK(b.contrib) + "</td><td>" + signedK(a.contrib - b.contrib) + "</td></tr>";
+        });
+        html += '<tr class="sum"><td class="l">Best of all</td><td class="l">' + esc(routeLabel(on[0].stops)) + "</td><td>" + moneyK(on[0].contrib) + '</td><td class="l">' + esc(routeLabel(off[0].stops)) + "</td><td>" + moneyK(off[0].contrib) + "</td><td>" + signedK(on[0].contrib - off[0].contrib) + "</td></tr>";
+        $("ff-table").innerHTML = html + "</tbody>";
+        $("ff-sub").textContent = "From " + H.city + ", weekly contribution (illustrative)";
+        var bs = on.filter(function (r) { return r.type === "shuttle"; })[0], bo = off.filter(function (r) { return r.type === "shuttle"; })[0];
+        var share = (on[0].contrib - off[0].contrib) / Math.abs(on[0].contrib);
+        var homeT = 0; data.regions.forEach(function (r) { if (r.key !== S.home) homeT += FR.lane(data, S.home, r.key).t + FR.lane(data, r.key, S.home).t; });
+        $("ff-hint").textContent = "With fifth freedom, the best rotation from " + H.city + " is " + aType(on[0].type) + "; without it, " + aType(off[0].type) + ". " +
+          "An out-and-back never needs the right, so its value is the same both ways (" + moneyK(bs.contrib) + "). The right is worth " + signedK(on[0].contrib - off[0].contrib) + " a week here, " + pct(share) + " of the best contribution. " +
+          (homeT < 900 ? H.name + "'s own lanes are thin (" + nf0.format(homeT) + " t a week both ways), so without the right the aircraft can't even fill a week of flying: this is why carriers from small home markets depend on fifth freedom." :
+                         H.name + " has big lanes of its own (" + nf0.format(homeT) + " t a week both ways), so an out-and-back from home is a decent fallback without the right.");
+        renderRank(on, off);
+      }
+      function aType(t) { return (t === "shuttle" ? "an " : "a ") + typeName(t); }
+      function typeName(t) { return t === "shuttle" ? "out-and-back" : t === "triangle" ? "triangle" : "round-the-world loop"; }
+      function renderRank(on, off) {
+        var cur = S.fifth ? on : off, other = S.fifth ? off : on, top = cur.slice(0, 12), el = $("ch-rank"), W = chartWidth(el), small = W < 560;
+        var otherBy = {}; other.forEach(function (r) { otherBy[r.id] = r.contrib; });
+        var m = { l: 4, r: small ? 50 : 64, t: 4, b: 26 }, rowH = 34, H = m.t + top.length * rowH + m.b;
+        var svg = svgIn(el, W, H).attr("aria-label", "The twelve best rotations by weekly contribution");
+        var vals = top.map(function (r) { return r.contrib; }).concat(top.map(function (r) { return otherBy[r.id]; }));
+        var x = d3.scaleLinear().domain([Math.min(0, d3.min(vals)), d3.max(vals)]).nice().range([m.l, W - m.r]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(small ? 4 : 6).tickSize(-(H - m.t - m.b)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(small ? 4 : 6).tickFormat(function (v) { return moneyK(v); }));
+        var g = svg.append("g").selectAll("g").data(top).join("g").attr("class", "row").attr("transform", function (r, i) { return "translate(0," + (m.t + i * rowH) + ")"; })
+          .on("click", function (ev, r) { S.type = r.type; S.rot = r.id; renderRotation(); $("h-rot").scrollIntoView({ behavior: "smooth", block: "start" }); });
+        g.append("rect").attr("x", 0).attr("width", W).attr("height", rowH).attr("fill", function (r) { return r.id === S.rot ? "#f4f7fe" : "transparent"; });
+        g.append("text").attr("x", m.l).attr("y", 13).attr("font-size", small ? 11 : 12).attr("fill", "#222").text(function (r, i) { return (i + 1) + ". " + routeLabel(r.stops); });
+        g.append("rect").attr("class", "bar").attr("x", function (r) { return x(Math.min(0, r.contrib)); }).attr("y", 18).attr("height", 11).attr("rx", 2)
+          .attr("width", function (r) { return Math.abs(x(r.contrib) - x(0)); }).attr("fill", function (r) { return TC[r.type]; });
+        g.append("line").attr("x1", function (r) { return x(otherBy[r.id]); }).attr("x2", function (r) { return x(otherBy[r.id]); }).attr("y1", 15).attr("y2", 32).attr("stroke", "#151A23").attr("stroke-width", 2);
+        g.append("text").attr("x", function (r) { return Math.max(x(r.contrib), x(otherBy[r.id])) + 6; }).attr("y", 28).attr("font-size", 11).attr("fill", "#444").text(function (r) { return moneyK(r.contrib); });
+        g.on("mousemove", function (ev, r) {
+          showTip('<div class="t">' + esc(routeLabel(r.stops)) + " · " + typeName(r.type) + "</div>" +
+            '<div class="r">Rotations per week<b>' + nf1.format(r.freq) + "</b></div>" +
+            '<div class="r">Block hours per week<b>' + nf0.format(r.bh) + "</b></div>" +
+            '<div class="r">Load factor<b>' + pct(r.lf) + "</b></div>" +
+            '<div class="r">Cost per block hour<b>' + money(r.costPerBH) + "</b></div>" +
+            '<div class="r">Contribution, ' + (S.fifth ? "with" : "without") + " fifth freedom<b>" + moneyK(r.contrib) + "</b></div>" +
+            '<div class="r">' + (S.fifth ? "Without" : "With") + " fifth freedom<b>" + moneyK(otherBy[r.id]) + "</b></div>", ev);
+        }).on("mouseleave", hideTip);
+        el.insertAdjacentHTML("beforeend", '<div class="legend">' + legendHtml(TYPES.map(function (t) { return { t: t.name, c: t.c }; }).concat([{ t: (S.fifth ? "Without" : "With") + " fifth freedom", c: "#151A23", cls: "ln" }])).replace(/border-color:#151A23"/, 'border-color:#151A23;width:2px;height:12px;border-top:0;border-left:2px solid #151A23;vertical-align:-2px"') + "</div>");
+        $("rank-sub").textContent = "From " + R(S.home).city + ", " + (S.fifth ? "with" : "without") + " fifth freedom; the black tick is the same rotation " + (S.fifth ? "without" : "with") + " it";
+      }
+    });
+    </script>
+  </body>
+</html>

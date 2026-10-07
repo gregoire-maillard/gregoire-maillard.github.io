@@ -1,0 +1,319 @@
+{
+  "about": "Illustrative assumptions for freighterrotation.html. Not any airline's data. Airport coordinates are public; demand, rates and costs are made up, shaped like real headhaul and backhaul lanes.",
+  "currency": "US$",
+  "seed": 2026,
+  "aircraft": {
+    "name": "Large twin-engine freighter",
+    "payloadT": 100,
+    "rangeKm": 9260,
+    "blockSpeedKmh": 820,
+    "segmentOverheadH": 0.5,
+    "turnGroundH": 4,
+    "fuelStopGroundH": 1.5,
+    "hoursPerWeek": 151
+  },
+  "costs": {
+    "fuelBurnTph": 6.8,
+    "fuelPerTonneHour": 0.012,
+    "fuelPrice": 750,
+    "crewPerBH": 1300,
+    "mxPerBH": 2400,
+    "landing": 7000,
+    "fuelStopLanding": 4500,
+    "handlingPerTonne": 90
+  },
+  "demandNoise": {
+    "commonSd": 0.06,
+    "laneSd": 0.15
+  },
+  "through": {
+    "maxDetour": 1.3,
+    "rateFactor": 0.85
+  },
+  "seasons": {
+    "asiaExport": [
+      [
+        5,
+        7,
+        0.75
+      ],
+      [
+        36,
+        39,
+        1.1
+      ],
+      [
+        40,
+        50,
+        1.25
+      ]
+    ],
+    "flowers": [
+      [
+        5,
+        6,
+        1.45
+      ],
+      [
+        17,
+        19,
+        1.25
+      ]
+    ],
+    "general": [
+      [
+        40,
+        50,
+        1.1
+      ],
+      [
+        52,
+        52,
+        0.8
+      ],
+      [
+        1,
+        1,
+        0.8
+      ]
+    ]
+  },
+  "regions": [
+    {
+      "key": "asia",
+      "name": "East Asia",
+      "short": "Asia",
+      "code": "HKG",
+      "city": "Hong Kong",
+      "lat": 22.308,
+      "lon": 113.918
+    },
+    {
+      "key": "mideast",
+      "name": "Middle East",
+      "short": "Mid. East",
+      "code": "DXB",
+      "city": "Dubai",
+      "lat": 25.253,
+      "lon": 55.364
+    },
+    {
+      "key": "europe",
+      "name": "Europe",
+      "short": "Europe",
+      "code": "FRA",
+      "city": "Frankfurt",
+      "lat": 50.033,
+      "lon": 8.571
+    },
+    {
+      "key": "africa",
+      "name": "Africa",
+      "short": "Africa",
+      "code": "NBO",
+      "city": "Nairobi",
+      "lat": -1.319,
+      "lon": 36.928
+    },
+    {
+      "key": "namerica",
+      "name": "North America",
+      "short": "N. America",
+      "code": "ORD",
+      "city": "Chicago",
+      "lat": 41.978,
+      "lon": -87.905
+    },
+    {
+      "key": "latam",
+      "name": "Latin America",
+      "short": "Lat. Am.",
+      "code": "BOG",
+      "city": "Bogotá",
+      "lat": 4.702,
+      "lon": -74.147
+    }
+  ],
+  "lanes": {
+    "asia>namerica": {
+      "t": 420,
+      "rate": 5.0,
+      "season": "asiaExport",
+      "why": "electronics, e-commerce, parts"
+    },
+    "namerica>asia": {
+      "t": 200,
+      "rate": 2.0,
+      "season": "general",
+      "why": "perishables, pharma, machinery"
+    },
+    "asia>europe": {
+      "t": 400,
+      "rate": 4.2,
+      "season": "asiaExport",
+      "why": "electronics, e-commerce, fashion"
+    },
+    "europe>asia": {
+      "t": 300,
+      "rate": 2.3,
+      "season": "general",
+      "why": "machinery, pharma, luxury goods"
+    },
+    "europe>namerica": {
+      "t": 260,
+      "rate": 3.1,
+      "season": "general",
+      "why": "pharma, machinery, auto parts"
+    },
+    "namerica>europe": {
+      "t": 170,
+      "rate": 2.4,
+      "season": "general",
+      "why": "pharma, aerospace parts, e-commerce"
+    },
+    "asia>mideast": {
+      "t": 200,
+      "rate": 3.0,
+      "season": "asiaExport",
+      "why": "consumer goods, electronics"
+    },
+    "mideast>asia": {
+      "t": 60,
+      "rate": 1.7,
+      "season": "general",
+      "why": "re-exports, perishables"
+    },
+    "mideast>europe": {
+      "t": 90,
+      "rate": 2.3,
+      "season": "general",
+      "why": "re-exports, perishables"
+    },
+    "europe>mideast": {
+      "t": 180,
+      "rate": 2.9,
+      "season": "general",
+      "why": "machinery, pharma, food"
+    },
+    "latam>namerica": {
+      "t": 240,
+      "rate": 2.7,
+      "season": "flowers",
+      "why": "cut flowers, fruit, seafood"
+    },
+    "namerica>latam": {
+      "t": 170,
+      "rate": 2.6,
+      "season": "general",
+      "why": "machinery, electronics, pharma"
+    },
+    "latam>europe": {
+      "t": 170,
+      "rate": 3.0,
+      "season": "flowers",
+      "why": "cut flowers, fruit"
+    },
+    "europe>latam": {
+      "t": 100,
+      "rate": 2.6,
+      "season": "general",
+      "why": "machinery, pharma"
+    },
+    "africa>europe": {
+      "t": 170,
+      "rate": 2.6,
+      "season": "flowers",
+      "why": "cut flowers, vegetables"
+    },
+    "europe>africa": {
+      "t": 130,
+      "rate": 2.5,
+      "season": "general",
+      "why": "machinery, pharma, spares"
+    },
+    "asia>africa": {
+      "t": 120,
+      "rate": 3.4,
+      "season": "asiaExport",
+      "why": "consumer goods, phones, parts"
+    },
+    "africa>asia": {
+      "t": 30,
+      "rate": 1.8,
+      "season": "general",
+      "why": "perishables, seafood"
+    },
+    "mideast>africa": {
+      "t": 90,
+      "rate": 2.4,
+      "season": "general",
+      "why": "re-exports, consumer goods"
+    },
+    "africa>mideast": {
+      "t": 60,
+      "rate": 2.0,
+      "season": "flowers",
+      "why": "flowers, vegetables, meat"
+    },
+    "namerica>mideast": {
+      "t": 70,
+      "rate": 2.8,
+      "season": "general",
+      "why": "machinery, aerospace parts"
+    },
+    "mideast>namerica": {
+      "t": 40,
+      "rate": 2.2,
+      "season": "general",
+      "why": "re-exports"
+    },
+    "asia>latam": {
+      "t": 140,
+      "rate": 4.8,
+      "season": "asiaExport",
+      "why": "electronics, phones"
+    },
+    "latam>asia": {
+      "t": 40,
+      "rate": 2.0,
+      "season": "general",
+      "why": "seafood, fruit"
+    },
+    "africa>namerica": {
+      "t": 30,
+      "rate": 2.4,
+      "season": "flowers",
+      "why": "flowers, textiles"
+    },
+    "namerica>africa": {
+      "t": 40,
+      "rate": 2.8,
+      "season": "general",
+      "why": "machinery, aid cargo"
+    },
+    "latam>africa": {
+      "t": 10,
+      "rate": 2.2,
+      "season": "general",
+      "why": "small flows"
+    },
+    "africa>latam": {
+      "t": 10,
+      "rate": 2.2,
+      "season": "general",
+      "why": "small flows"
+    },
+    "latam>mideast": {
+      "t": 20,
+      "rate": 2.4,
+      "season": "general",
+      "why": "meat, fruit"
+    },
+    "mideast>latam": {
+      "t": 20,
+      "rate": 2.6,
+      "season": "general",
+      "why": "re-exports"
+    }
+  }
+}

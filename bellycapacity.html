@@ -1,0 +1,1280 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Belly cargo capacity</title>
+    <meta name="description" content="How much cargo a passenger widebody can carry on a long route once passengers, bags and fuel are loaded, how the forecast of it narrows from 30 days to 2 days out, which days are payload restricted, and how much cargo to sell before the capacity is known. A Boeing 787-9 over a year of departures.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/bellycapacity.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Belly cargo capacity · Airline Economics">
+    <meta property="og:description" content="How much cargo a passenger widebody can carry on a long route once passengers, bags and fuel are loaded, how the forecast of it narrows from 30 days to 2 days out, which days are payload restricted, and how much cargo to sell before the capacity is known. A Boeing 787-9 over a year of departures.">
+    <meta property="og:url" content="https://gregoiremaillard.com/bellycapacity.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/bellycapacity.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Belly cargo capacity · Airline Economics">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as cargorm.html: this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* weight build-up */
+        --c-dow: #b8bfc8;
+        --c-pax: #2a7fb5;
+        --c-bag: #8fbfdf;
+        --c-cargo: #3a8f5c;
+        --c-fuel: #e8a33d;
+        /* what sets the cargo capacity */
+        --b-volume: #2a7fb5;
+        --b-mtow: #d9480f;
+        --b-mzfw: #7a5ab8;
+      }
+
+      .content { max-width: 1180px; margin: 0 auto; padding: 26px 30px 60px; }
+      .intro h2 { margin: 0 0 6px; }
+      .intro p { margin: 0 0 4px; }
+
+      /* ── Pill switchers (same as cargorm) ── */
+      .switch { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 20px 0 6px; }
+      .switch .grp { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .switch .grp > span { font-size: 12px; color: var(--muted); }
+      .views { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff; flex-wrap: wrap; gap: 2px; }
+      .views button { border: 0; background: transparent; font: inherit; font-size: 13.5px; color: var(--text); padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+      .views button:hover { color: var(--ink); }
+      .views button.on { background: var(--ink); color: #fff; }
+      .views.small button { font-size: 12.5px; padding: 4px 11px; }
+      .preset-blurb { font-size: 13px; color: var(--text); margin: 8px 0 0; max-width: 900px; }
+      .preset-blurb b { color: var(--ink); }
+
+      .btn { font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 5px 11px; cursor: pointer; color: var(--ink); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+      .btn:hover { border-color: #cfcfcf; }
+
+      /* ── Sections ── */
+      section.sec { width: auto; float: none; padding: 0; border: 0; }
+      .sec { margin: 38px 0 0; }
+      .sec > h3 { font-size: 20px; margin: 0 0 6px; color: var(--ink); }
+      .sec > p.lead { margin: 0 0 14px; font-size: 13.5px; max-width: 820px; }
+      .block { margin: 0 0 28px; }
+      .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 8px; }
+      .block-head h4 { margin: 0; font-size: 15px; color: var(--ink); }
+      .block-head span { color: var(--muted); font-size: 12px; }
+      .block > p.lead { margin: 0 0 10px; font-size: 13px; max-width: 800px; }
+      .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+      .wide-narrow { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 16px; }
+
+      /* ── Tables ── */
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table.res { border-collapse: collapse; width: 100%; font-size: 13px; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 12px; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: bottom; }
+      table.res td { padding: 5px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res td.l, table.res th.l { text-align: left; }
+      table.res td.hl { color: var(--ink); font-weight: 600; }
+      table.res tbody tr:hover td { background: var(--soft); }
+      table.res .neg { color: #b4441a; }
+      table.res .pos { color: #2e7a4d; }
+      table.res tr.sum td { border-top: 1px solid var(--line); color: var(--ink); font-weight: 600; }
+      table.res tr.cur td { background: #f4f9f6; }
+      table.res tr.bind td { background: #fff4ee; }
+      table.res tr.bind td:first-child { font-weight: 600; color: var(--ink); }
+      table.res td.src { color: var(--muted); font-size: 11.5px; white-space: normal; text-align: left; min-width: 140px; }
+      .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+      input[type=number] { font: inherit; font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; background: #fff; min-width: 0; box-sizing: border-box; width: 70px; }
+      input[type=number]:focus { outline: 2px solid #9cc7df; outline-offset: 0; border-color: #9cc7df; }
+      .hint { font-size: 11.5px; color: var(--muted); line-height: 1.45; margin: 6px 0 0; max-width: 860px; }
+      .status { font-size: 12px; color: var(--muted); }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 18px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile .k { font-size: 12px; }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; margin-top: 4px; }
+      .tile span.s { font-size: 12px; line-height: 1.35; display: block; margin-top: 3px; }
+
+      /* ── Controls row ── */
+      .ctl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin: 0 0 8px; font-size: 12.5px; color: var(--text); }
+      .ctl-row label { display: inline-flex; align-items: center; gap: 8px; }
+      .opt-line { font-size: 12.5px; color: var(--text); margin: 0 0 16px; max-width: 900px; }
+      .opt-line b { color: var(--ink); }
+
+      /* ── Charts ── */
+      .chart { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 6px 4px; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart svg text { font-family: inherit; }
+      .axis text { font-size: 11px; fill: #767676; }
+      .axis path, .axis line { stroke: #d4d4d4; }
+      .grid line { stroke: #efefef; }
+      .grid path { display: none; }
+      .axis-title { font-size: 11px; fill: #767676; }
+      .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text); padding: 4px 8px 6px; }
+      .legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+      .legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+      .legend i.ln { height: 0; border-top: 2px solid; border-radius: 0; vertical-align: 3px; width: 16px; }
+      .legend i.ln.dash { border-top-style: dashed; }
+      .pick { cursor: pointer; }
+
+      /* ── Tooltip ── */
+      .tip { position: fixed; pointer-events: none; z-index: 20; background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.08); padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.45; max-width: 290px; display: none; }
+      .tip .t { color: var(--muted); font-size: 12px; margin-bottom: 3px; }
+      .tip .r { display: flex; align-items: center; gap: 7px; }
+      .tip .r i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+      .tip .r b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 10px; }
+
+      .loading { font-size: 13px; color: var(--muted); padding: 30px 0; }
+      .err { font-size: 13px; color: #9a3b0b; background: #fff6f2; border: 1px solid #f3c9b5; border-radius: 8px; padding: 10px 12px; margin: 16px 0; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; max-width: 820px; }
+      .method h3 { font-size: 14px; margin-bottom: 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method var { font-family: "Times New Roman", Georgia, serif; font-style: italic; font-size: 1.08em; color: var(--ink); }
+
+      @media (max-width: 980px) { .two, .wide-narrow { grid-template-columns: minmax(0, 1fr); } }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        table.res .src { display: none; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .tile b { font-size: 21px; }
+        .views button { padding: 6px 11px; font-size: 13px; }
+      }
+    </style>
+
+    <!-- Airline Economics header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 4px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
+      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
+      @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
+      /* breadcrumb: "Airline Economics · group", same on every tool page */
+      .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
+      .crumbs a { color: var(--muted, #6f6f6f); text-decoration: none; }
+      .crumbs a:hover { color: var(--link, #267CB9); }
+    </style>
+    <style>
+      .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; }
+    </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline economics"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline Economics">
+          <a class="at-tab" href="/airlinetools.html#rm">Revenue management</a>
+          <a class="at-tab" href="/airlinetools.html#network">Network planning</a>
+          <a class="at-tab" href="/airlinetools.html#loyalty">Loyalty</a>
+          <a class="at-tab" href="/airlinetools.html#cargo" aria-current="page">Cargo</a>
+          <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
+        </nav>
+        <div class="at-grow"></div>
+        <span class="at-pill"><b>23</b> tools · <b>8</b> courses</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Cargo</div>
+        <h2>Belly cargo capacity</h2>
+        <p class="lede">How much cargo a passenger widebody can take on a long route, how well that is known a month ahead, and how much of it to sell before it is.</p>
+        <p>A passenger aircraft's hold is not a fixed amount of space. Cargo gets whatever weight and volume are left once the passengers, their bags and the fuel are on board, and on a long route flown into the wind the fuel can eat into it badly. Below, a Boeing 787-9 flies a 9,800 km route once a day for a year. Each departure's passengers come from a booking curve, its bags from the passengers, and its fuel from the headwind of the day, all within the aircraft's maximum take-off, zero fuel and landing weights from <b>Boeing's airport planning document</b>. The page shows the capacity that results on every departure, how the forecast of it narrows as departure gets closer, which days are payload restricted, and then the decision: how much cargo to sell at each point, when selling too much means offloading it at a cost. That last part reuses the overbooking rule of the <a href="/cargorm.html">cargo revenue management</a> page. It is the hands-on companion to <a href="/cargo101.html#ch10">Air Cargo 101, chapter 10</a>. The route, demand and costs are illustrative; the aircraft limits and standard masses are public figures, cited at the bottom.</p>
+      </div>
+
+      <div class="switch" role="group" aria-label="Departure">
+        <div class="grp"><span id="l-dep">Departure</span><div class="views" id="sw-dep" role="group" aria-labelledby="l-dep"></div></div>
+        <span class="status">or click any day in sections 2 and 4</span>
+      </div>
+      <p class="preset-blurb" id="dep-blurb"></p>
+
+      <div id="app"><p class="loading" id="loading">Loading the route…</p></div>
+
+      <div id="main" hidden>
+        <!-- ═══════════════════════════ 1. ONE DEPARTURE ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-one">
+          <h3 id="h-one">1. Where the payload goes</h3>
+          <p class="lead">One departure on the day, once everything is known. The aircraft can be loaded until the first of five limits is reached: the maximum take-off weight, the maximum zero fuel weight (the aircraft without its fuel), the maximum landing weight, the fuel tanks, or the space in the lower deck. Whatever the first limit leaves is the cargo capacity.</p>
+          <div class="tiles" id="s1-tiles"></div>
+          <div class="wide-narrow">
+            <div class="block">
+              <div class="block-head"><h4>Weight against the three weight limits</h4><span>Axis starts at 100 t</span></div>
+              <div class="chart" id="ch-weights"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>The lower deck</h4><span id="hold-sub">36 LD-3 positions and the bulk hold</span></div>
+              <div class="chart" id="ch-hold"></div>
+            </div>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>What each limit leaves for cargo</h4><span>The lowest one sets the capacity</span></div>
+            <div class="tbl-wrap"><table class="res" id="lim-table"></table></div>
+            <p class="hint" id="lim-hint"></p>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ 2. THE YEAR ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-year">
+          <h3 id="h-year">2. Cargo capacity, departure by departure</h3>
+          <p class="lead">The same calculation for all 365 departures of the year, each with its own passengers, bags and headwind. In summer the passengers and bags are at their peak but the winds are light, so the hold's volume is what runs out. In winter the jet stream is stronger, the flight takes longer and needs more fuel, and the take-off weight cuts into the cargo.</p>
+          <div class="tiles" id="s2-tiles"></div>
+          <div class="block">
+            <div class="block-head"><h4>Cargo capacity of each departure</h4><span>Colour: the limit that sets it · click a day to see it in sections 1 and 3</span></div>
+            <div class="chart" id="ch-year"></div>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>How capacity is distributed</h4><span>365 departures, by the limit that sets it</span></div>
+            <div class="chart" id="ch-hist"></div>
+            <p class="hint" id="hist-hint"></p>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ 3. FORECAST ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-fc">
+          <h3 id="h-fc">3. How the forecast narrows</h3>
+          <p class="lead">Cargo is sold before the capacity is known. Thirty days out, about half the passengers have booked and the weather of the day is anyone's guess; two days out, nearly all the bookings are in and the wind forecast is good; the bags are only known at check-in. Each day the forecaster redraws everything still unknown, 600 times, and gets a range for the capacity.</p>
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>Forecast of this departure's cargo capacity</h4><span id="fan-sub"></span></div>
+              <div class="chart" id="ch-fan"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>Where the uncertainty comes from</h4><span>Spread (standard deviation) from each source alone</span></div>
+              <div class="chart" id="ch-split"></div>
+            </div>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>Width of the forecast range, all departures</h4><span id="narrow-sub">Average distance between the 10th and 90th percentiles</span></div>
+            <div class="chart" id="ch-narrow"></div>
+            <p class="hint" id="narrow-hint"></p>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ 4. RESTRICTED DAYS ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-restr">
+          <h3 id="h-restr">4. Payload-restricted days</h3>
+          <p class="lead">A departure is payload restricted here when the maximum take-off weight, not the space in the hold, sets the cargo capacity: the fuel for the day's headwind leaves less weight than the hold could take. The cargo that doesn't fit by weight is the first thing left behind.</p>
+          <div class="block">
+            <div class="block-head"><h4>The year at a glance</h4><span>Colour: cargo lost to the take-off weight · click a day</span></div>
+            <div class="chart" id="ch-cal"></div>
+          </div>
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>Headwind against the cargo the take-off weight allows</h4><span>Each dot is a departure</span></div>
+              <div class="chart" id="ch-wind"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>Restricted days by month, and whether the forecast saw them coming</h4><span id="restr-sub"></span></div>
+              <div class="tbl-wrap"><table class="res" id="restr-table"></table></div>
+              <p class="hint" id="restr-hint"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══════════════════════════ 5. HOW MUCH TO SELL ═══════════════════════════ -->
+        <section class="sec" aria-labelledby="h-sell">
+          <h3 id="h-sell">5. How much to sell, and when</h3>
+          <p class="lead">Booked cargo turns up at about 82% of its booked weight, so the airline sells more than it expects to fly. Sell too little and space flies empty; sell too much and cargo is offloaded, at a cost. It is the overbooking trade-off of <a href="/cargorm.html">cargo revenue management</a>, section 4, with one more uncertainty: the capacity itself. Keep accepting bookings while the chance that the last kilo accepted won't fit stays below <b>rate ÷ (rate + offload cost)</b>, with that chance worked out over the capacity forecast of the moment and the uncertain tender.</p>
+          <div class="ctl-row">
+            <label for="rate">Revenue US$ <input type="number" id="rate" min="0.5" max="10" step="0.1" value="2.60"> per kg flown</label>
+            <label for="cost">Offload cost US$ <input type="number" id="cost" min="0" max="20" step="0.25" value="4.00"> per kg</label>
+            <button class="btn" id="reset-cost">Reset</button>
+            <span class="status" id="sim-status" role="status" aria-live="polite"></span>
+          </div>
+          <p class="opt-line" id="opt-line"></p>
+          <div class="tiles" id="s5-tiles"></div>
+          <div class="two">
+            <div class="block">
+              <div class="block-head"><h4>Booking limit for this departure, day by day</h4><span id="limit-sub"></span></div>
+              <div class="chart" id="ch-limit"></div>
+            </div>
+            <div class="block">
+              <div class="block-head"><h4>Expected net revenue against kilos sold</h4><span>This departure, forecast at three points</span></div>
+              <div class="chart" id="ch-curve"></div>
+            </div>
+          </div>
+          <div class="block">
+            <div class="block-head"><h4>Five ways to sell, over the year</h4><span>Average per departure, 365 departures</span></div>
+            <p class="lead">Cargo requests arrive mostly in the last week, totalling 1.6 times the average capacity. Each policy accepts them until what is booked reaches its booking limit, which the last three re-set at 30, 21, 14, 10, 7, 5, 3, 2 and 1 days out. A limit that falls can't cancel what is already sold.</p>
+            <div class="tbl-wrap"><table class="res" id="pol-table"></table></div>
+            <p class="hint" id="pol-hint"></p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
+      <div class="method">
+        <h3>How it works</h3>
+
+        <h4>The aircraft and the route</h4>
+        <p>A Boeing 787-9 in a 290-seat, two-class layout. Its limits come from Boeing's airport planning document: maximum design take-off weight 254,692 kg, maximum design landing weight 192,776 kg, maximum design zero fuel weight 181,436 kg, usable fuel 101,522 kg, and a lower deck of 20 LD-3 container positions forward and 16 aft (4.5 m³ each) plus an 11.4 m³ bulk hold. The document doesn't give an operating empty weight, which depends on the airline's cabin; the page assumes a dry operating weight (aircraft, crew, catering and water) of 132,000 kg, which is illustrative. Passengers and bags use EASA's standard masses: 84 kg per adult including hand baggage and 15 kg per checked bag on an intercontinental flight. The route, 9,800 km flown at a true airspeed of 900 km/h, is illustrative, as is everything below except where a source is named. All inputs are in <a href="assets/data/bellycapacity.json">bellycapacity.json</a>.</p>
+
+        <h4>Fuel</h4>
+        <p>The flight time is <var>t</var> = distance ÷ (900 − headwind) + 0.4 h for taxi, climb and descent. The fuel model is the Breguet range equation in its simplest form: each hour of flight burns a fixed share <var>k</var> = 2.5% of the aircraft's weight, so take-off weight ÷ landing weight = <var>e</var><sup><var>kt</var></sup>. The aircraft lands with a reserve <var>R</var> = 7,000 kg (alternate airport and final reserve) plus a 5% contingency it usually doesn't use. With <var>a</var> = (<var>e</var><sup><var>kt</var></sup> − 1) ÷ (1 − 0.05 (<var>e</var><sup><var>kt</var></sup> − 1)), the trip fuel for a zero fuel weight <var>Z</var> is <var>a</var> (<var>Z</var> + <var>R</var>), the take-off weight is (<var>Z</var> + <var>R</var>)(1 + 1.05 <var>a</var>) and the landing weight (<var>Z</var> + <var>R</var>)(1 + 0.05 <var>a</var>). Each weight limit then gives a highest zero fuel weight, and the cargo it allows is that minus the dry operating weight, the passengers and the bags. With a full cabin, its bags, no cargo and no wind, the model's aircraft could fly about 13,700 km at its maximum take-off weight, under the 15,370 km Boeing quotes for the 787-9 (Boeing doesn't say what load that figure assumes).</p>
+        <p><b>Volume.</b> The first 70 bags go in the bulk hold and the rest 40 to an LD-3; every other position takes cargo, filled to 80% of its volume because freight never packs perfectly. At the route's average density of 165 kg per m³, a position holds about 594 kg. The cargo capacity is the smaller of what the weight limits allow and the volume times that density. A real load planner works in both dimensions at once (see <a href="/cargorm.html">cargo revenue management</a>); one number in kilos keeps this page readable.</p>
+
+        <h4>The year of departures</h4>
+        <p><b>Passengers.</b> The airline accepts up to 300 bookings for the 290 seats. A departure's demand is a Poisson draw whose mean varies with the season (260 bookings in late January to 300 in late July) times a gamma factor with a 12% coefficient of variation. Each request's booking time follows the curve: the share made at least <var>h</var> days out is 1 ÷ (1 + (<var>h</var> ÷ 35)<sup>1.6</sup>), so half are made by 35 days out, 56% by 30, 93% by 7 and over 99% by 1. 96% of those booked turn up, and no more than 290 board. See the <a href="/bookingcurve.html">booking curve</a> page for how real ones are built.</p>
+        <p><b>Bags.</b> 1.05 checked bags per passenger in winter to 1.25 in summer, with a 0.08 spread from flight to flight, known only at check-in.</p>
+        <p><b>Headwind.</b> The average headwind component on the route goes from 100 km/h in late January to 15 km/h in late July. Each day adds an anomaly with a 30 km/h spread that carries over from one day to the next (correlation 0.75), so windy days come in spells.</p>
+
+        <h4>The forecast</h4>
+        <p>At <var>h</var> days out the forecaster knows the bookings so far, <var>B</var><sub><var>h</var></sub>, and draws everything else 600 times (400 for the year-long sections, 1,500 for the revenue curves in section 5). <b>Passengers still to book:</b> the demand level is updated from the bookings so far (a gamma prior and Poisson bookings give a gamma posterior with shape <var>k</var> + <var>B</var><sub><var>h</var></sub> and rate <var>k</var> + <var>μ</var> <var>F</var>(<var>h</var>), where <var>F</var>(<var>h</var>) is the booking curve and <var>k</var> = 1 ÷ 0.12²), then the remaining bookings are a Poisson draw, then the no-shows a binomial one. <b>Bags</b> are drawn from the season's bag rate. <b>Wind:</b> a forecast made <var>h</var> days ahead explains a share <var>s</var>(<var>h</var>) of the day's anomaly: 90% at 1 day, 80% at 2, 50% at 5, 30% at 7, 10% at 10 and nothing from 14 days on. The forecaster's headwind is the season's average plus <var>s</var> times the forecast anomaly, with the remaining spread √(1 − <var>s</var>) × 30 km/h. The forecasts are built so that they only ever sharpen as departure gets closer. These skill figures are illustrative, but the shape, useful to about a week and good at two days, is how weather forecasts behave. "Where the uncertainty comes from" redraws one source at a time with the other two held at their averages.</p>
+
+        <h4>How much to sell</h4>
+        <p>Selling <var>L</var> kilos earns <var>r</var> per kilo flown and costs <var>c</var> per kilo offloaded. The cargo tendered is <var>T</var> <var>L</var>, where the tender ratio <var>T</var> (no-shows and short tenders together) averages 0.82 with a 0.07 spread, and the capacity <var>C</var> is the forecast. Net revenue is <var>r</var> min(<var>T L</var>, <var>C</var>) − <var>c</var> (<var>T L</var> − <var>C</var>)<sup>+</sup>. One more kilo sold adds <var>r</var> × <var>T</var> when it fits and loses <var>c</var> × <var>T</var> when it doesn't, so the best limit <var>L</var>* is the point where the tender-weighted chance that it doesn't fit, P(<var>T</var> <var>L</var> &gt; <var>C</var>), equals <var>r</var> ÷ (<var>r</var> + <var>c</var>). The page finds it exactly from the forecast draws: sort them by <var>C</var> ÷ <var>T</var> and take the tender-weighted quantile at <var>r</var> ÷ (<var>r</var> + <var>c</var>). It is the critical-fractile rule of <a href="/bookinglimits.html">booking limits</a> (overbooking) and of the cargo overbooking in <a href="/cargorm.html">cargo revenue management</a>, here in one dimension.</p>
+        <p>The five policies in section 5: <b>sell to the forecast</b> (limit = average forecast capacity, no overbooking); <b>overbook to the average</b> (average forecast capacity ÷ 0.82, the worked example in Air Cargo 101, chapter 08); <b>the rule, set once 30 days out</b>; <b>the rule, re-set at each checkpoint</b> (30, 21, 14, 10, 7, 5, 3, 2 and 1 days out); and, as a benchmark no airline has, <b>the rule with the capacity known in advance</b>, where only the tender is uncertain. Cargo requests for a departure total 1.6 times the year's average capacity times a lognormal factor with a 25% spread, and arrive late: the share that has arrived by <var>h</var> days out is 1 ÷ (1 + (<var>h</var> ÷ 5)<sup>1.6</sup>), so 5% by 30 days, 37% by 7 and half in the last 5 days. Each departure's actual tender ratio is drawn once and shared by all five policies.</p>
+        <p>Everything runs in your browser from a seeded generator (mulberry32), so the page opens on the same year every time. <code>scripts/bellycapacity/check.js</code> runs the same code, copied from this page, in Node: it prints the year's figures and checks the booking-limit rule against a brute-force search.</p>
+
+        <h4>Sources</h4>
+        <ul>
+          <li>Boeing, <a href="https://www.boeing.com/content/dam/boeing/v2/airports/acaps/787_Rev_P.pdf" target="_blank" rel="noopener">787 Airplane Characteristics for Airport Planning</a>, D6-58333 Rev P, December 2024, section 2.1.2 (787-9), page 2-3: maximum design take-off, landing and zero fuel weights, usable fuel, lower deck volume and containers, 290 seats in the dual-class layout (checked October 2026).</li>
+          <li>Boeing, <a href="https://www.boeing.com/commercial/787" target="_blank" rel="noopener">787 Dreamliner</a>: 787-9 range up to 15,370 km (checked October 2026).</li>
+          <li>EASA, AMC1 CAT.POL.MAB.100(e), standard masses for passengers and baggage, Tables 1 and 3, in the <a href="https://skybrary.aero/sites/default/files/bookshelf/2136.pdf" target="_blank" rel="noopener">Annex to ED Decision 2012/018/R</a> (via SKYbrary), page 224: 84 kg per adult, 15 kg per checked bag on intercontinental flights.</li>
+          <li>Amaruchkul, K., Cooper, W. L. and Gupta, D. (2007), "<a href="https://doi.org/10.1287/trsc.1060.0177" target="_blank" rel="noopener">Single-leg air-cargo revenue management</a>", Transportation Science 41(4), 457–469: booking control when capacity and tendered cargo are both random, with offloading costs.</li>
+          <li>Kasilingam, R. G. (1997), "<a href="https://www.sciencedirect.com/science/article/abs/pii/0377221795003290" target="_blank" rel="noopener">Air cargo revenue management: characteristics and complexities</a>", European Journal of Operational Research 96(1), 36–44: why a belly's capacity is uncertain until departure.</li>
+          <li>Charts drawn with <a href="https://d3js.org" target="_blank" rel="noopener">D3</a> 7.9.0.</li>
+        </ul>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>The fuel model is deliberately simple: one burn rate, no step climbs, no temperature, no cost index and no tankering. Real flight planning also limits the take-off weight by the runway, the airport's temperature and altitude, and obstacles, which can bite well below the structural maximum used here.</li>
+          <li>The dry operating weight is assumed, not sourced, and real ones differ by a tonne or more between airlines and even between aircraft. The whole capacity curve moves with it, kilo for kilo.</li>
+          <li>Capacity is one number in kilos at an average density. In reality the hold runs out by weight or volume depending on the cargo booked, positions are lost to the centre of gravity and to dangerous goods segregation, and mail, company material and late bags take space too.</li>
+          <li>Passengers always come first here. Airlines can also stop selling a few seats on a payload-restricted flight to keep high-value cargo, a joint decision this page doesn't make (see Air Cargo 101, chapter 10).</li>
+          <li>The forecast knows the model's true structure, so it is as good as it can be. A real one is estimated from history and is worse, especially far out.</li>
+          <li>Cargo requests are one stream at one rate. Allotments, shipment sizes, two dimensions and bid prices are on the <a href="/cargorm.html">cargo revenue management</a> and <a href="/allotments.html">allotments vs spot</a> pages; the limit set here would be the capacity those pages sell against.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+    <script src="javascripts/scale.fix.js"></script>
+    <script>
+// <bcap-engine>
+// Belly cargo capacity engine: passengers from a booking curve, bags, fuel for a seasonal headwind, the 787-9 weight limits
+// and the lower-deck volume give the cargo capacity of each departure; forecasts of it 30 days to 1 day out; booking limits
+// from the critical-fractile rule of cargorm.html; and five selling policies over a year of departures.
+// Pure functions, no DOM. Shared by bellycapacity.html and scripts/bellycapacity/check.js.
+var BCAP = (function () {
+  "use strict";
+
+  // ---------- random ----------
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function gaussFactory(rng) {
+    var spare = null;
+    return function () {
+      if (spare !== null) { var s = spare; spare = null; return s; }
+      var u, v, q;
+      do { u = rng() * 2 - 1; v = rng() * 2 - 1; q = u * u + v * v; } while (q === 0 || q >= 1);
+      var m = Math.sqrt(-2 * Math.log(q) / q);
+      spare = v * m; return u * m;
+    };
+  }
+  // Gamma(k, 1) for k >= 1 (Marsaglia-Tsang)
+  function gamma(rng, g, k) {
+    var d = k - 1 / 3, c = 1 / Math.sqrt(9 * d);
+    for (;;) {
+      var x, v;
+      do { x = g(); v = 1 + c * x; } while (v <= 0);
+      v = v * v * v;
+      var u = rng();
+      if (u < 1 - 0.0331 * x * x * x * x) return d * v;
+      if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+    }
+  }
+  function poisson(rng, g, lam) {
+    if (lam <= 0) return 0;
+    if (lam > 40) return Math.max(0, Math.round(lam + Math.sqrt(lam) * g()));
+    var L = Math.exp(-lam), k = 0, p = 1;
+    do { k++; p *= rng(); } while (p > L);
+    return k - 1;
+  }
+  function binom(rng, g, n, p) {
+    if (n <= 0) return 0;
+    if (n > 60) return Math.max(0, Math.min(n, Math.round(n * p + Math.sqrt(n * p * (1 - p)) * g())));
+    var k = 0; for (var i = 0; i < n; i++) if (rng() < p) k++;
+    return k;
+  }
+  function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
+
+  // ---------- scenario ----------
+  function model(data) {
+    var ac = data.aircraft, P = data.pax, B = data.bags, Wd = data.wind;
+    var M = { data: data, ac: ac, dow: data.dow, paxMass: data.paxMass, bagMass: data.bagMass,
+      km: data.route.km, tas: data.route.tas, extraH: data.route.extraHours,
+      k: data.fuel.k, R0: data.fuel.reserveKg, cont: data.fuel.contingency,
+      wind: Wd, pax: P, bags: B, cargo: data.cargo, H: data.horizons, n: data.draws, seed: data.seed, days: 365 };
+    return M;
+  }
+  function season(d, peak) { return Math.cos(2 * Math.PI * (d - peak) / 365); } // 1 at the peak, -1 six months later
+  function windMean(M, d) { var w = M.wind; return (w.winter + w.summer) / 2 + (w.winter - w.summer) / 2 * season(d, w.peakDay); }
+  function paxMean(M, d) { var p = M.pax; return (p.demandLow + p.demandHigh) / 2 + (p.demandHigh - p.demandLow) / 2 * season(d, p.peakDay); }
+  function bagMean(M, d) { var b = M.bags; return (b.low + b.high) / 2 + (b.high - b.low) / 2 * season(d, M.pax.peakDay); }
+  // share of a departure's passenger bookings made at least h days before departure
+  function paxCurve(M, h) { return h <= 0 ? 1 : 1 / (1 + Math.pow(h / M.pax.h50, M.pax.beta)); }
+  // share of its cargo requests that arrive at least h days before departure
+  function cargoCurve(M, h) { return h <= 0 ? 1 : 1 / (1 + Math.pow(h / M.cargo.g50, M.cargo.gamma)); }
+  function skill(M, h) {
+    var s = M.wind.skill;
+    if (h <= s[0][0]) return s[0][1];
+    for (var i = 1; i < s.length; i++) if (h <= s[i][0]) { var a = s[i - 1], b = s[i]; return a[1] + (b[1] - a[1]) * (h - a[0]) / (b[0] - a[0]); }
+    return s[s.length - 1][1];
+  }
+
+  // ---------- one departure's cargo capacity ----------
+  // pax boarded, bags checked, headwind in km/h -> the weight and volume left for cargo, and which limit binds.
+  function capacity(M, pax, bags, hw) {
+    var ac = M.ac, load = M.dow + pax * M.paxMass + bags * M.bagMass;
+    var hours = M.km / Math.max(300, M.tas - hw) + M.extraH;
+    var e = Math.exp(M.k * hours);                       // take-off weight / landing weight (Breguet)
+    var a = (e - 1) / (1 - M.cont * (e - 1));            // trip fuel = a × (zero fuel weight + reserves)
+    var R0 = M.R0, c1 = 1 + M.cont;
+    var z = {
+      mzfw: ac.mzfw,
+      mtow: ac.mtow / (1 + c1 * a) - R0,                 // ZFW + R0 + (1 + cont) trip <= MTOW
+      mlw: ac.mlw / (1 + M.cont * a) - R0,               // ZFW + R0 + cont × trip <= MLW
+      fuel: (ac.fuelCap - R0) / (c1 * a) - R0            // R0 + (1 + cont) trip <= tank capacity
+    };
+    var lim = {}, wMin = Infinity, wBind = "";
+    ["mzfw", "mtow", "mlw", "fuel"].forEach(function (key) { lim[key] = z[key] - load; if (lim[key] < wMin) { wMin = lim[key]; wBind = key; } });
+    var W = Math.max(0, wMin);
+    var inCont = Math.max(0, bags - M.bags.bulkBags), bagPos = Math.ceil(inCont / M.bags.perLd3);
+    var cargoPos = Math.max(0, ac.ld3 - bagPos), V = cargoPos * ac.ld3M3 * M.cargo.packing;
+    var Vkg = V * M.cargo.density;
+    var C = Math.min(W, Vkg), bind = Vkg <= W ? "volume" : wBind;
+    var zfw = load + C, trip = a * (zfw + R0), tow = zfw + R0 + c1 * trip;
+    return { C: C, W: W, V: V, Vkg: Vkg, bind: bind, lim: lim, hours: hours, load: load, trip: trip, fuel: R0 + c1 * trip,
+      tow: tow, lw: zfw + R0 + M.cont * trip, zfw: zfw, bagPos: bagPos, cargoPos: cargoPos, pax: pax, bags: bags, hw: hw };
+  }
+
+  // ---------- a year of departures (what actually happens) ----------
+  function year(M) {
+    var rng = mulberry32(M.seed), g = gaussFactory(rng), deps = [], P = M.pax, w = M.wind;
+    var k = 1 / (P.cv * P.cv), eps = w.sd * g();
+    var hs = []; for (var h = 0; h <= 30; h++) hs.push(h);
+    for (var d = 0; d < M.days; d++) {
+      if (d > 0) eps = w.ar * eps + Math.sqrt(1 - w.ar * w.ar) * w.sd * g();
+      var mu = paxMean(M, d), theta = gamma(rng, g, k) / k, n = poisson(rng, g, mu * theta);
+      // booking times of the requests, earliest first; accepted up to the authorisation level
+      var times = [];
+      for (var i = 0; i < n; i++) { var u = Math.max(1e-9, rng()); times.push(P.h50 * Math.pow(1 / u - 1, 1 / P.beta)); }
+      times.sort(function (x, y) { return y - x; });
+      times = times.slice(0, P.auth);
+      var Bk = hs.map(function (hh) { var c = 0; for (var j = 0; j < times.length; j++) if (times[j] >= hh) c++; else break; return c; });
+      var final = times.length, shows = binom(rng, g, final, P.show), boarded = Math.min(M.ac.seats, shows);
+      var bagRate = clamp(bagMean(M, d) + M.bags.sd * g(), 0.6, 2), bags = Math.round(boarded * bagRate);
+      // wind forecasts: y_h = eps + noise whose variance grows with the horizon (nested, so forecasts only sharpen)
+      var y = [eps], Wb = 0, tPrev = 0;
+      for (var h2 = 1; h2 <= 30; h2++) {
+        var s = skill(M, h2);
+        if (s <= 0) { y.push(null); continue; }
+        var tau = (1 - s) / s; Wb += Math.sqrt(Math.max(0, tau - tPrev)) * g(); tPrev = tau;
+        y.push(eps + w.sd * Wb);
+      }
+      var T = clamp(M.cargo.tender.mean + M.cargo.tender.sd * g(), 0.5, 1.1);
+      var dem = Math.exp(M.cargo.demandCv * g() - M.cargo.demandCv * M.cargo.demandCv / 2);
+      var hw = windMean(M, d) + eps;
+      deps.push({ d: d, mu: mu, theta: theta, B: Bk, final: final, boarded: boarded, bagRate: bagRate, bags: bags,
+        eps: eps, y: y, hw: hw, T: T, demF: dem, cap: capacity(M, boarded, bags, hw) });
+    }
+    var meanC = 0; deps.forEach(function (x) { meanC += x.cap.C; }); meanC /= deps.length;
+    deps.forEach(function (x) { x.demand = M.cargo.demandMult * meanC * x.demF; });
+    return { deps: deps, meanC: meanC };
+  }
+
+  // ---------- the forecast of one departure's capacity, h days before departure ----------
+  // Monte Carlo draws of everything still unknown: passengers still to book and no-shows, bags, headwind, and the
+  // cargo's tender ratio. Returns arrays of draws. With split = true it also returns the spread from each source alone.
+  function forecast(M, dep, h, n, seed, split) {
+    var rng = mulberry32(seed), g = gaussFactory(rng), P = M.pax, w = M.wind, d = dep.d;
+    var k = 1 / (P.cv * P.cv), B = dep.B[Math.min(30, Math.round(h))], F = paxCurve(M, h), mu = dep.mu;
+    var s = skill(M, h), wm = windMean(M, d), yh = dep.y[Math.min(30, Math.round(h))];
+    var out = { C: new Float64Array(n), T: new Float64Array(n), pax: new Float64Array(n), bags: new Float64Array(n), hw: new Float64Array(n), rate: new Float64Array(n), bind: [] };
+    for (var i = 0; i < n; i++) {
+      var pax, rate, hw;
+      if (h <= 0) { pax = dep.boarded; rate = dep.bagRate; hw = dep.hw; }
+      else {
+        var final;
+        if (B >= P.auth) final = P.auth;
+        else {
+          var th = gamma(rng, g, k + B) / (k + mu * F);           // posterior demand level given B bookings so far
+          final = Math.min(P.auth, B + poisson(rng, g, th * mu * (1 - F)));
+        }
+        pax = Math.min(M.ac.seats, binom(rng, g, final, P.show));
+        rate = clamp(bagMean(M, d) + M.bags.sd * g(), 0.6, 2);
+        hw = s > 0 && yh !== null ? wm + s * yh + w.sd * Math.sqrt(1 - s) * g() : wm + w.sd * g();
+      }
+      var cp = capacity(M, pax, Math.round(pax * rate), hw);
+      out.C[i] = cp.C; out.pax[i] = pax; out.rate[i] = rate; out.bags[i] = Math.round(pax * rate); out.hw[i] = hw; out.bind.push(cp.bind);
+      out.T[i] = clamp(M.cargo.tender.mean + M.cargo.tender.sd * g(), 0.5, 1.1);
+    }
+    if (split && h > 0) {
+      var mp = mean(out.pax), mr = mean(out.rate), mh = mean(out.hw), sp = { pax: [], bags: [], wind: [] };
+      for (var j = 0; j < n; j++) {
+        sp.pax.push(capacity(M, out.pax[j], Math.round(out.pax[j] * mr), mh).C);
+        sp.bags.push(capacity(M, Math.round(mp), Math.round(Math.round(mp) * out.rate[j]), mh).C);
+        sp.wind.push(capacity(M, Math.round(mp), Math.round(Math.round(mp) * mr), out.hw[j]).C);
+      }
+      out.split = { pax: sd(sp.pax), bags: sd(sp.bags), wind: sd(sp.wind) };
+    }
+    return out;
+  }
+  function mean(a) { var s = 0; for (var i = 0; i < a.length; i++) s += a[i]; return s / a.length; }
+  function sd(a) { var m = mean(a), s = 0; for (var i = 0; i < a.length; i++) s += (a[i] - m) * (a[i] - m); return Math.sqrt(s / a.length); }
+  function quantile(a, p) { var b = Array.prototype.slice.call(a).sort(function (x, y) { return x - y; }); var i = (b.length - 1) * p, lo = Math.floor(i), hi = Math.ceil(i); return b[lo] + (b[hi] - b[lo]) * (i - lo); }
+
+  // ---------- how much to sell ----------
+  // Booking B kilos earns r per kilo that flies and costs c per kilo offloaded; tendered = T × B against capacity C.
+  // One more booked kilo is worth r·E[T; fits] − c·E[T; offloaded], so the best B is where the T-weighted share of draws
+  // with C/T below B reaches r/(r + c): the critical fractile of cargorm.html and bookinglimits.html.
+  function prepLimit(fc) {
+    var n = fc.C.length, idx = [];
+    for (var i = 0; i < n; i++) idx.push(i);
+    var th = idx.map(function (i) { return fc.C[i] / fc.T[i]; });
+    idx.sort(function (a, b) { return th[a] - th[b]; });
+    var x = new Float64Array(n), cw = new Float64Array(n), tot = 0;
+    for (var j = 0; j < n; j++) { x[j] = th[idx[j]]; tot += fc.T[idx[j]]; cw[j] = tot; }
+    for (var j2 = 0; j2 < n; j2++) cw[j2] /= tot;
+    return { x: x, cw: cw };
+  }
+  function bestLimit(pl, r, c) {
+    var q = r / (r + c), lo = 0, hi = pl.x.length - 1;
+    while (lo < hi) { var m = (lo + hi) >> 1; if (pl.cw[m] >= q) hi = m; else lo = m + 1; }
+    return pl.x[lo];
+  }
+  function expNet(fc, B, r, c) {
+    var s = 0, off = 0, pOff = 0, n = fc.C.length;
+    for (var i = 0; i < n; i++) { var t = fc.T[i] * B, C = fc.C[i]; if (t <= C) s += r * t; else { s += r * C - c * (t - C); off += t - C; pOff++; } }
+    return { net: s / n, off: off / n, pOff: pOff / n };
+  }
+
+  // ---------- selling policies over the year ----------
+  var POLICIES = ["noob", "avg", "static", "dynamic", "perfect"];
+  // fcs[d][i]: forecast for departure d at horizon M.H[i], with .pl = prepLimit(draws) and .mC = mean capacity.
+  // pf = perfectFactor(tender draws, r, c): the limit per kilo of capacity when the capacity itself is known.
+  function simulate(M, Y, fcs, r, c, pf) {
+    var H = M.H, res = {};
+    POLICIES.forEach(function (p) { res[p] = []; });
+    Y.deps.forEach(function (dep, di) {
+      var F = fcs[di], mT = M.cargo.tender.mean;
+      var lims = {
+        noob: H.map(function (h, i) { return F[i].mC; }),
+        avg: H.map(function (h, i) { return F[i].mC / mT; }),
+        static: H.map(function () { return bestLimit(F[0].pl, r, c); }),
+        dynamic: H.map(function (h, i) { return bestLimit(F[i].pl, r, c); }),
+        perfect: H.map(function () { return dep.cap.C * pf; })
+      };
+      POLICIES.forEach(function (p) {
+        var booked = 0, path = [];
+        for (var i = 0; i < H.length; i++) {
+          var g0 = i === 0 ? 0 : cargoCurve(M, H[i - 1]), g1 = i + 1 < H.length ? cargoCurve(M, H[i + 1]) : 1;
+          var arrive = dep.demand * ((i === 0 ? cargoCurve(M, H[0]) : 0) + (g1 - cargoCurve(M, H[i])));
+          booked += Math.min(arrive, Math.max(0, lims[p][i] - booked));
+          path.push(booked);
+        }
+        var ten = dep.T * booked, C = dep.cap.C, flown = Math.min(ten, C), off = Math.max(0, ten - C);
+        res[p].push({ booked: booked, path: path, lim: lims[p], ten: ten, flown: flown, off: off, rev: r * flown, cost: c * off, net: r * flown - c * off, unused: C - flown, C: C });
+      });
+    });
+    return res;
+  }
+  // With the capacity known, only the tender ratio is uncertain, so the best limit is C times the best limit for C = 1.
+  function perfectFactor(T, r, c) { return bestLimit(prepLimit({ C: new Float64Array(T.length).fill(1), T: T }), r, c); }
+  function tenderSample(M, n, seed) {
+    var rng = mulberry32(seed), g = gaussFactory(rng), T = new Float64Array(n);
+    for (var i = 0; i < n; i++) T[i] = clamp(M.cargo.tender.mean + M.cargo.tender.sd * g(), 0.5, 1.1);
+    return T;
+  }
+
+  return { mulberry32: mulberry32, model: model, capacity: capacity, year: year, forecast: forecast, prepLimit: prepLimit,
+    bestLimit: bestLimit, expNet: expNet, simulate: simulate, perfectFactor: perfectFactor, tenderSample: tenderSample, POLICIES: POLICIES, windMean: windMean, paxMean: paxMean,
+    bagMean: bagMean, paxCurve: paxCurve, cargoCurve: cargoCurve, skill: skill, quantile: quantile, mean: mean, sd: sd };
+})();
+if (typeof module !== "undefined") module.exports = BCAP;
+// </bcap-engine>
+
+    </script>
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var DATA_URL = "assets/data/bellycapacity.json";
+      var FAN_DRAWS = 600, CURVE_DRAWS = 1500;
+      var BIND = {
+        volume: { name: "Lower-deck volume", short: "Volume", hex: "#2a7fb5" },
+        mtow: { name: "Max take-off weight", short: "Take-off weight", hex: "#d9480f" },
+        mzfw: { name: "Max zero fuel weight", short: "Zero fuel weight", hex: "#7a5ab8" },
+        mlw: { name: "Max landing weight", short: "Landing weight", hex: "#1f9e89" },
+        fuel: { name: "Fuel tanks", short: "Fuel tanks", hex: "#151A23" }
+      };
+      var POL = [
+        { key: "noob", name: "Sell to the forecast", hex: "#9aa3ad", note: "no overbooking" },
+        { key: "avg", name: "Overbook to the average", hex: "#7a5ab8", note: "forecast ÷ 0.82" },
+        { key: "static", name: "The rule, set 30 days out", hex: "#2a7fb5", note: "critical fractile, once" },
+        { key: "dynamic", name: "The rule, re-set at each checkpoint", hex: "#3a8f5c", note: "critical fractile, 9 times" },
+        { key: "perfect", name: "The rule, capacity known", hex: "#151A23", note: "benchmark" }
+      ];
+      var SEG = { dow: "#b8bfc8", pax: "#2a7fb5", bag: "#8fbfdf", cargo: "#3a8f5c", fuel: "#e8a33d", fuelLeft: "#f3cf93" };
+      var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      var MSTART = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
+
+      var $ = function (id) { return document.getElementById(id); };
+      var nf0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+      var nf1 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      var nf2 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      function money(v) { return (v < -0.5 ? "−$" : "$") + nf0.format(Math.abs(Math.round(v))); }
+      function money2(v) { return (v < 0 ? "−$" : "$") + nf2.format(Math.abs(v)); }
+      function signedMoney(v) { var r = Math.round(v); return (r > 0 ? "+$" : r < 0 ? "−$" : "$") + nf0.format(Math.abs(r)); }
+      function kg(v) { return nf0.format(Math.round(v)) + " kg"; }
+      function kg100(v) { return nf0.format(Math.round(v / 100) * 100) + " kg"; }
+      function tt(v) { return nf1.format(v / 1000) + " t"; }
+      function m3(v) { return nf0.format(v) + " m³"; }
+      function pct(v) { return nf0.format(Math.round(v * 100)) + "%"; }
+      function signedPct(v) { var s = nf1.format(Math.abs(v * 100)); return (v >= 0.0005 ? "+" : v <= -0.0005 ? "−" : "") + s + "%"; }
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+      function month(d) { for (var m = 0; m < 12; m++) if (d < MSTART[m + 1]) return m; return 11; }
+      function dateLabel(d) { var m = month(d); return (d - MSTART[m] + 1) + " " + ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m]; }
+      function shortDate(d) { var m = month(d); return (d - MSTART[m] + 1) + " " + MONTHS[m]; }
+      function wind(hw) { return hw < -0.5 ? "a " + nf0.format(-hw) + " km/h tailwind" : "a " + nf0.format(hw) + " km/h headwind"; }
+      function signedKmh(v) { return (v < -0.5 ? "−" : "") + nf0.format(Math.abs(v)) + " km/h"; }
+      function daysOut(h) { return h === 0 ? "departure day" : h === 1 ? "1 day out" : h + " days out"; }
+
+      var data, M, Y;
+      fetch(DATA_URL).then(function (r) { if (!r.ok) throw new Error("bellycapacity.json " + r.status); return r.json(); })
+        .then(function (j) {
+          data = j;
+          if (typeof d3 === "undefined") { $("loading").outerHTML = '<p class="err">Couldn\'t load the chart library. Reload the page.</p>'; return; }
+          start();
+        }).catch(function (e) {
+          $("loading").outerHTML = '<p class="err">Couldn\'t load the route (' + esc(e.message || e) + '). Check your connection and reload the page.</p>';
+        });
+
+      // ---------- state ----------
+      var S = { sel: 0, preset: "stormy", presets: {}, r: 2.6, c: 4, fcs: null, fcToken: 0, sim: null, fan: null, curveH: [30, 7, 2] };
+
+      function start() {
+        M = BCAP.model(data);
+        Y = BCAP.year(M);
+        S.r = data.cargo.rate; S.c = data.cargo.offloadCost;
+        $("rate").value = S.r.toFixed(2); $("cost").value = S.c.toFixed(2);
+        findPresets();
+        S.sel = S.presets[S.preset].d;
+        renderSwitch();
+        wire();
+        $("loading").remove();
+        $("main").hidden = false;
+        renderAllStatic();
+        selectDep(S.sel, S.preset);
+        runForecasts();
+      }
+
+      // three example departures, picked from the year: the calmest high-summer day, the stormiest restricted day
+      // of late winter, and the departure closest to the year's median capacity in spring
+      function findPresets() {
+        var D = Y.deps, med = d3.median(D, function (x) { return x.cap.C; });
+        var calm = D.filter(function (x) { return x.d >= 181 && x.d < 243; }).sort(function (a, b) { return a.hw - b.hw; })[0];
+        var storm = D.filter(function (x) { return x.d < 90 && x.cap.bind === "mtow"; }).sort(function (a, b) { return a.cap.C - b.cap.C; })[0];
+        var typ = D.filter(function (x) { return x.d >= 90 && x.d < 151; }).sort(function (a, b) { return Math.abs(a.cap.C - med) - Math.abs(b.cap.C - med); })[0];
+        S.presets = { calm: { name: "A calm summer day", d: calm.d }, typical: { name: "A typical spring day", d: typ.d }, stormy: { name: "A stormy winter day", d: storm.d } };
+      }
+      function renderSwitch() {
+        var el = $("sw-dep");
+        el.innerHTML = ["calm", "typical", "stormy"].map(function (k) {
+          var on = S.preset === k;
+          return '<button type="button" data-k="' + k + '" aria-pressed="' + on + '" class="' + (on ? "on" : "") + '">' + esc(S.presets[k].name) + "</button>";
+        }).join("");
+        el.onclick = function (e) { var b = e.target.closest("button"); if (!b) return; selectDep(S.presets[b.dataset.k].d, b.dataset.k); };
+      }
+      function selectDep(d, preset) {
+        S.sel = d; S.preset = preset || null;
+        $("sw-dep").querySelectorAll("button").forEach(function (b) { var on = b.dataset.k === S.preset; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); });
+        S.fan = buildFan(Y.deps[d]);
+        renderBlurb(); renderOne(); renderYear(); renderFan(); renderSplit(); renderCal(); renderWind();
+        if (S.sim) { renderLimit(); renderCurve(); }
+      }
+
+      function wire() {
+        function onCost() {
+          var r = parseFloat($("rate").value), c = parseFloat($("cost").value);
+          if (!isFinite(r) || r <= 0 || !isFinite(c) || c < 0) return;
+          S.r = Math.min(20, r); S.c = Math.min(50, c);
+          if (S.fcs) { runSim(); renderLimit(); renderCurve(); }
+        }
+        $("rate").addEventListener("input", onCost);
+        $("cost").addEventListener("input", onCost);
+        $("reset-cost").addEventListener("click", function () { $("rate").value = data.cargo.rate.toFixed(2); $("cost").value = data.cargo.offloadCost.toFixed(2); onCost(); });
+        var rw = window.innerWidth;
+        window.addEventListener("resize", function () {
+          if (Math.abs(window.innerWidth - rw) < 30) return; rw = window.innerWidth;
+          clearTimeout(S.rt); S.rt = setTimeout(function () {
+            renderOne(); renderYear(); renderHist(); renderFan(); renderSplit(); renderCal(); renderWind();
+            if (S.fcs) renderNarrow();
+            if (S.sim) { renderLimit(); renderCurve(); }
+          }, 150);
+        });
+      }
+
+      // ---------- tooltip and chart helpers ----------
+      var tip = $("tip");
+      function showTip(html, ev) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var x = ev.clientX + 14, y = ev.clientY + 14, r = tip.getBoundingClientRect();
+        if (x + r.width > window.innerWidth - 8) x = ev.clientX - r.width - 14;
+        if (y + r.height > window.innerHeight - 8) y = ev.clientY - r.height - 14;
+        tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+      function chartWidth(el, min) { return Math.max(min || 280, Math.floor(el.getBoundingClientRect().width - 12)); }
+      function svgIn(el, W, H) {
+        el.innerHTML = "";
+        return d3.select(el).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("width", W).attr("height", H).attr("role", "img");
+      }
+      function legendHtml(items) {
+        return '<div class="legend">' + items.map(function (it) {
+          return "<span><i class=\"" + (it.cls || "") + "\" style=\"" + (it.cls && it.cls.indexOf("ln") >= 0 ? "border-color:" : "background:") + it.c + "\"></i>" + esc(it.t) + "</span>";
+        }).join("") + "</div>";
+      }
+      function depTip(x) {
+        var c = x.cap;
+        return '<div class="t">' + dateLabel(x.d) + "</div>" +
+          '<div class="r">Cargo capacity<b>' + kg100(c.C) + "</b></div>" +
+          '<div class="r"><i style="background:' + BIND[c.bind].hex + '"></i>Set by<b>' + BIND[c.bind].short + "</b></div>" +
+          '<div class="r">Passengers<b>' + x.boarded + "</b></div>" +
+          '<div class="r">Bags<b>' + x.bags + "</b></div>" +
+          '<div class="r">Headwind<b>' + signedKmh(x.hw) + "</b></div>" +
+          '<div class="r">Flight time<b>' + nf1.format(c.hours) + " h</b></div>";
+      }
+      function xYear(W, m) { return d3.scaleLinear().domain([0, 365]).range([m.l, W - m.r]); }
+      function monthAxis(svg, x, y0, W) {
+        var g = svg.append("g").attr("class", "axis").attr("transform", "translate(0," + y0 + ")");
+        g.append("line").attr("x1", x(0)).attr("x2", x(365)).attr("stroke", "#d4d4d4");
+        MSTART.slice(0, 12).forEach(function (s, i) {
+          g.append("line").attr("x1", x(s)).attr("x2", x(s)).attr("y2", 5).attr("stroke", "#d4d4d4");
+          if (W >= 520 || i % 2 === 0) g.append("text").attr("x", x(s + (MSTART[i + 1] - s) / 2)).attr("y", 16).attr("text-anchor", "middle").text(MONTHS[i]);
+        });
+      }
+
+      // ---------- blurb ----------
+      function renderBlurb() {
+        var x = Y.deps[S.sel], c = x.cap, wm = BCAP.windMean(M, x.d);
+        $("dep-blurb").innerHTML = "<b>" + dateLabel(x.d) + ".</b> " + x.final + " bookings accepted, " + x.boarded + " passengers boarded with " + x.bags + " checked bags. The route has " + wind(x.hw) + " (the average headwind for the date is " + nf0.format(wm) + " km/h), so the flight takes " + nf1.format(c.hours) + " hours. Cargo capacity on the day: <b>" + kg100(c.C) + "</b>, set by the " + BIND[c.bind].name.toLowerCase() + ".";
+      }
+
+      // ---------- section 1: one departure ----------
+      function renderOne() {
+        var x = Y.deps[S.sel], c = x.cap, ac = M.ac;
+        var tiles = [
+          { k: "Cargo capacity", v: kg100(c.C), s: "Set by the " + BIND[c.bind].name.toLowerCase() },
+          { k: "Weight allowed for cargo", v: kg100(c.W), s: "Lowest of the four weight limits" },
+          { k: "Hold space for cargo", v: m3(c.V), s: c.cargoPos + " of 36 positions × 4.5 m³ × 80% = " + kg100(c.Vkg) + " at 165 kg/m³" },
+          { k: "Fuel at take-off", v: kg100(c.fuel), s: nf1.format(c.hours) + " hours with " + wind(x.hw) }
+        ];
+        $("s1-tiles").innerHTML = tiles.map(function (t) { return '<div class="tile"><span class="k">' + t.k + "</span><b>" + t.v + '</b><span class="s">' + t.s + "</span></div>"; }).join("");
+        renderWeights(x); renderHold(x); renderLimTable(x);
+      }
+
+      function renderWeights(x) {
+        var c = x.cap, ac = M.ac, el = $("ch-weights");
+        var paxKg = c.pax * M.paxMass, bagKg = c.bags * M.bagMass, fuelLeft = M.R0 + M.cont * c.trip;
+        var rows = [
+          { k: "Take-off", lim: ac.mtow, limName: "Max take-off weight", segs: [["Dry operating weight", M.dow, SEG.dow], ["Passengers", paxKg, SEG.pax], ["Bags", bagKg, SEG.bag], ["Cargo", c.C, SEG.cargo], ["Fuel", c.fuel, SEG.fuel]] },
+          { k: "Zero fuel", lim: ac.mzfw, limName: "Max zero fuel weight", segs: [["Dry operating weight", M.dow, SEG.dow], ["Passengers", paxKg, SEG.pax], ["Bags", bagKg, SEG.bag], ["Cargo", c.C, SEG.cargo]] },
+          { k: "Landing", lim: ac.mlw, limName: "Max landing weight", segs: [["Dry operating weight", M.dow, SEG.dow], ["Passengers", paxKg, SEG.pax], ["Bags", bagKg, SEG.bag], ["Cargo", c.C, SEG.cargo], ["Fuel left", fuelLeft, SEG.fuelLeft]] }
+        ];
+        var W = chartWidth(el), narrow = W < 480, m = { l: narrow ? 66 : 78, r: 14, t: 10, b: 34 }, rowH = 40, H = m.t + rows.length * rowH + m.b;
+        var svg = svgIn(el, W, H).attr("aria-label", "Take-off, zero fuel and landing weight of this departure against the aircraft's limits");
+        var X0 = 100000, x = d3.scaleLinear().domain([X0, 262000]).range([m.l, W - m.r]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(narrow ? 4 : 8).tickSize(-(H - m.t - m.b)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(narrow ? 4 : 8).tickFormat(function (v) { return v / 1000 + " t"; }));
+        rows.forEach(function (row, i) {
+          var y = m.t + i * rowH + 8, h = rowH - 18, acc = 0;
+          svg.append("text").attr("x", m.l - 8).attr("y", y + h / 2).attr("dy", "0.35em").attr("text-anchor", "end").attr("font-size", 12).attr("fill", "#222").text(row.k);
+          row.segs.forEach(function (s) {
+            var a = Math.max(X0, acc), b = acc + s[1]; acc = b;
+            if (b <= X0) return;
+            svg.append("rect").attr("x", x(a)).attr("y", y).attr("width", Math.max(0, x(b) - x(a))).attr("height", h).attr("fill", s[2]).attr("stroke", "#fff").attr("stroke-width", 1)
+              .on("mousemove", function (ev) { showTip('<div class="t">' + row.k + " weight</div><div class=\"r\"><i style=\"background:" + s[2] + '"></i>' + s[0] + "<b>" + kg100(s[1]) + '</b></div><div class="r">Total<b>' + kg100(acc) + '</b></div><div class="r">' + row.limName + "<b>" + kg(row.lim) + "</b></div>", ev); })
+              .on("mouseleave", hideTip);
+          });
+          svg.append("line").attr("x1", x(row.lim)).attr("x2", x(row.lim)).attr("y1", y - 5).attr("y2", y + h + 5).attr("stroke", "#222").attr("stroke-width", 2);
+          var slack = row.lim - acc;
+          svg.append("text").attr("x", x(row.lim) + (narrow ? -4 : 5)).attr("y", y - 1).attr("text-anchor", narrow ? "end" : "start").attr("font-size", 10.5).attr("fill", slack < 1 ? "#d9480f" : "#555")
+            .text(narrow ? (slack < 1 ? "at limit" : "−" + tt(slack)) : (slack < 1 ? "at the limit" : tt(slack) + " spare"));
+        });
+        // zigzag at the axis start: the bars begin at 100 t
+        svg.append("path").attr("d", "M" + (m.l - 3) + "," + (H - m.b - 6) + " l3,-3 l3,6 l3,-3").attr("fill", "none").attr("stroke", "#999");
+        el.insertAdjacentHTML("beforeend", legendHtml([
+          { t: "Dry operating weight", c: SEG.dow }, { t: "Passengers", c: SEG.pax }, { t: "Bags", c: SEG.bag }, { t: "Cargo capacity", c: SEG.cargo }, { t: "Fuel", c: SEG.fuel }, { t: "Fuel left at landing", c: SEG.fuelLeft }, { t: "Limit", c: "#222", cls: "ln" }
+        ]));
+      }
+
+      function renderHold(x) {
+        var c = x.cap, el = $("ch-hold"), W = chartWidth(el, 260), narrow = W < 420;
+        var cols = 18, gap = 3, padL = 8, bulkW = narrow ? 30 : 40, aftGap = 10;
+        var cell = Math.min(26, (W - padL * 2 - bulkW - aftGap - 10 - (cols - 1) * gap) / cols), H = cell * 2 + gap + 54;
+        var svg = svgIn(el, W, H).attr("aria-label", "The lower deck's container positions, with bags and cargo");
+        // positions: 20 forward (10 × 2), 16 aft (8 × 2); bags fill from the aft end, next to the bulk hold
+        var perPos = M.ac.ld3M3 * M.cargo.packing * M.cargo.density, full = Math.min(c.cargoPos, c.C / perPos);
+        var pos = [];
+        for (var i = 0; i < 36; i++) pos.push(i);
+        var y0 = 22;
+        svg.append("text").attr("x", padL).attr("y", 13).attr("font-size", 11).attr("fill", "#767676").text("Forward hold, 20 positions");
+        svg.append("text").attr("x", padL + 10 * (cell + gap) + aftGap).attr("y", 13).attr("font-size", 11).attr("fill", "#767676").text(narrow ? "Aft, 16" : "Aft hold, 16 positions");
+        var cargoIdx = 0;
+        pos.forEach(function (p) {
+          var aft = p >= 20, k = aft ? p - 20 : p, col = Math.floor(k / 2), row = k % 2;
+          var xx = padL + (aft ? 10 * (cell + gap) + aftGap : 0) + col * (cell + gap), yy = y0 + row * (cell + gap);
+          var isBag = p >= 36 - c.bagPos, fill, label;
+          if (isBag) { fill = SEG.bag; label = "Bags (about 40 per container)"; }
+          else {
+            var f = Math.max(0, Math.min(1, full - cargoIdx)); cargoIdx++;
+            fill = f >= 0.999 ? SEG.cargo : f > 0 ? "url(#hatch)" : "#eef0f2";
+            label = f >= 0.999 ? "Cargo, full at 165 kg/m³" : f > 0 ? "Cargo, partly filled: the weight runs out first" : "No weight left for cargo here";
+          }
+          svg.append("rect").attr("x", xx).attr("y", yy).attr("width", cell).attr("height", cell).attr("rx", 3).attr("fill", fill).attr("stroke", isBag ? "#fff" : "#d6dade").attr("stroke-width", 1)
+            .on("mousemove", function (ev) { showTip('<div class="t">Position ' + (p + 1) + (aft ? " (aft)" : " (forward)") + "</div>" + esc(label), ev); }).on("mouseleave", hideTip);
+        });
+        var defs = svg.append("defs"), pat = defs.append("pattern").attr("id", "hatch").attr("width", 5).attr("height", 5).attr("patternUnits", "userSpaceOnUse").attr("patternTransform", "rotate(45)");
+        pat.append("rect").attr("width", 5).attr("height", 5).attr("fill", "#cfe5d7"); pat.append("rect").attr("width", 2.2).attr("height", 5).attr("fill", SEG.cargo);
+        var bx = padL + 10 * (cell + gap) + aftGap + 8 * (cell + gap) + 4;
+        svg.append("rect").attr("x", bx).attr("y", y0).attr("width", bulkW).attr("height", cell * 2 + gap).attr("rx", 3).attr("fill", SEG.bag).attr("opacity", 0.75)
+          .on("mousemove", function (ev) { showTip('<div class="t">Bulk hold, 11.4 m³</div>The first ' + M.bags.bulkBags + " bags, loose", ev); }).on("mouseleave", hideTip);
+        svg.append("text").attr("x", bx + bulkW / 2).attr("y", y0 + cell + 4).attr("text-anchor", "middle").attr("font-size", 10).attr("fill", "#fff").text("bulk");
+        var yl = y0 + cell * 2 + gap + 18;
+        svg.append("text").attr("x", padL).attr("y", yl).attr("font-size", 11.5).attr("fill", "#444")
+          .text(narrow ? c.bagPos + " for bags, " + c.cargoPos + " for cargo" + (c.bind === "volume" ? ", all full" : ", weight for " + nf1.format(full))
+            : c.bagPos + " positions of bags, " + c.cargoPos + " for cargo" + (c.bind === "volume" ? ", all of them full" : ": weight for about " + nf1.format(full) + " of them"));
+        el.insertAdjacentHTML("beforeend", legendHtml([{ t: "Bags", c: SEG.bag }, { t: "Cargo", c: SEG.cargo }, { t: "Space the weight can't use", c: "#eef0f2" }]));
+        $("hold-sub").textContent = x.bags + " bags · " + kg100(c.Vkg) + " of cargo by volume";
+      }
+
+      function renderLimTable(x) {
+        var c = x.cap, ac = M.ac;
+        var rows = [
+          ["mtow", "Max take-off weight", kg(ac.mtow), "Take-off weight = dry operating weight + passengers + bags + cargo + " + kg100(c.fuel) + " of fuel"],
+          ["mzfw", "Max zero fuel weight", kg(ac.mzfw), "The aircraft and everything in it except the fuel"],
+          ["mlw", "Max landing weight", kg(ac.mlw), "Take-off weight minus the trip fuel; only binds on short flights"],
+          ["fuel", "Fuel tanks", kg(ac.fuelCap), "The fuel the flight needs, plus reserves, must fit in the tanks"],
+          ["volume", "Lower-deck volume", c.cargoPos + " × 4.5 m³", "Positions left after bags, 80% filled, at 165 kg per m³"]
+        ];
+        var html = '<thead><tr><th class="l">Limit</th><th>Value</th><th>Cargo it allows</th><th class="l src">How</th></tr></thead><tbody>';
+        rows.forEach(function (r) {
+          var allow = r[0] === "volume" ? c.Vkg : c.lim[r[0]];
+          html += "<tr" + (c.bind === r[0] ? ' class="bind"' : "") + '><td class="l"><span class="sw" style="background:' + BIND[r[0]].hex + '"></span>' + r[1] + "</td><td>" + r[2] + "</td><td" + (c.bind === r[0] ? ' class="hl"' : "") + ">" + (allow > 60000 ? "more than 60 t" : kg100(Math.max(0, allow))) + (c.bind === r[0] ? " ← capacity" : "") + '</td><td class="src">' + r[3] + "</td></tr>";
+        });
+        $("lim-table").innerHTML = html + "</tbody>";
+        $("lim-hint").textContent = "Weights from Boeing's 787 airport planning document; the dry operating weight (" + kg(M.dow) + ") and the route are illustrative. Passengers count " + M.paxMass + " kg each including hand baggage and bags " + M.bagMass + " kg each, EASA's standard masses for an intercontinental flight. The landing weight limit is far from binding on a long flight, because most of the fuel is burnt by the time the aircraft lands.";
+      }
+
+      // ---------- section 2: the year ----------
+      function renderAllStatic() { renderS2Tiles(); renderHist(); }
+      function renderS2Tiles() {
+        var C = Y.deps.map(function (x) { return x.cap.C; }).sort(d3.ascending), nR = Y.deps.filter(function (x) { return x.cap.bind === "mtow"; }).length;
+        var lo = Y.deps.slice().sort(function (a, b) { return a.cap.C - b.cap.C; })[0];
+        var tiles = [
+          { k: "Average cargo capacity", v: kg100(d3.mean(C)), s: "Per departure, over the year" },
+          { k: "Middle 80% of departures", v: tt(d3.quantile(C, 0.1)) + "–" + tt(d3.quantile(C, 0.9)), s: "10th to 90th percentile" },
+          { k: "Payload-restricted departures", v: String(nR), s: pct(nR / C.length) + " of the year: the take-off weight, not the hold, sets the capacity" },
+          { k: "Lowest departure", v: kg100(lo.cap.C), s: dateLabel(lo.d) + ", " + wind(lo.hw) }
+        ];
+        $("s2-tiles").innerHTML = tiles.map(function (t) { return '<div class="tile"><span class="k">' + t.k + "</span><b>" + t.v + '</b><span class="s">' + t.s + "</span></div>"; }).join("");
+      }
+
+      function renderYear() {
+        var el = $("ch-year"), W = chartWidth(el), narrow = W < 520, H = narrow ? 240 : 300, m = { l: 48, r: 12, t: 12, b: 30 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Cargo capacity of each departure over the year, coloured by the limit that sets it");
+        var x = xYear(W, m), y = d3.scaleLinear().domain([Math.min(8000, d3.min(Y.deps, function (d) { return d.cap.C; }) - 500), 20000]).range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return v / 1000 + " t"; }));
+        monthAxis(svg, x, H - m.b, W);
+        // on restricted days, a line up to what the hold could have taken by volume
+        svg.append("g").selectAll("line").data(Y.deps.filter(function (d) { return d.cap.bind === "mtow"; })).join("line")
+          .attr("x1", function (d) { return x(d.d + 0.5); }).attr("x2", function (d) { return x(d.d + 0.5); })
+          .attr("y1", function (d) { return y(d.cap.C); }).attr("y2", function (d) { return y(Math.min(20000, d.cap.Vkg)); }).attr("stroke", "#d9480f").attr("stroke-opacity", 0.28).attr("stroke-width", 1.2);
+        svg.append("g").selectAll("circle").data(Y.deps).join("circle").attr("class", "pick")
+          .attr("cx", function (d) { return x(d.d + 0.5); }).attr("cy", function (d) { return y(d.cap.C); }).attr("r", narrow ? 2.2 : 2.8)
+          .attr("fill", function (d) { return BIND[d.cap.bind].hex; }).attr("fill-opacity", 0.85)
+          .on("mousemove", function (ev, d) { showTip(depTip(d), ev); }).on("mouseleave", hideTip)
+          .on("click", function (ev, d) { hideTip(); selectDep(d.d); });
+        var s = Y.deps[S.sel];
+        svg.append("circle").attr("cx", x(s.d + 0.5)).attr("cy", y(s.cap.C)).attr("r", 7).attr("fill", "none").attr("stroke", "#222").attr("stroke-width", 1.8).attr("pointer-events", "none");
+        var used = {}; Y.deps.forEach(function (d) { used[d.cap.bind] = 1; });
+        el.insertAdjacentHTML("beforeend", legendHtml(Object.keys(BIND).filter(function (k) { return used[k]; }).map(function (k) { return { t: BIND[k].name, c: BIND[k].hex, cls: "dot" }; })
+          .concat([{ t: "Up to what the hold could take by volume", c: "rgba(217,72,15,.4)", cls: "ln" }, { t: "Selected departure", c: "#fff;box-shadow:inset 0 0 0 1.6px #222", cls: "dot" }])));
+      }
+
+      function renderHist() {
+        var el = $("ch-hist"), W = chartWidth(el), H = 214, m = { l: 44, r: 12, t: 26, b: 34 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Histogram of cargo capacity over the year");
+        var C = Y.deps.map(function (d) { return d.cap.C; });
+        var x = d3.scaleLinear().domain([Math.floor((d3.min(C) - 250) / 500) * 500, Math.ceil((d3.max(C) + 1) / 500) * 500]).range([m.l, W - m.r]);
+        var th = d3.range(x.domain()[0], x.domain()[1] + 1, 500);
+        var keys = Object.keys(BIND).filter(function (k) { return Y.deps.some(function (d) { return d.cap.bind === k; }); });
+        var bins = th.slice(0, -1).map(function (a, i) {
+          var b = { x0: a, x1: th[i + 1] }; keys.forEach(function (k) { b[k] = 0; });
+          Y.deps.forEach(function (d) { if (d.cap.C >= a && d.cap.C < th[i + 1]) b[d.cap.bind]++; });
+          return b;
+        });
+        var stack = d3.stack().keys(keys)(bins);
+        var y = d3.scaleLinear().domain([0, d3.max(bins, function (b) { return d3.sum(keys, function (k) { return b[k]; }); })]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(4).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 480 ? 5 : 10).tickFormat(function (v) { return v / 1000 + " t"; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(4));
+        svg.append("text").attr("class", "axis-title").attr("transform", "rotate(-90)").attr("x", -m.t).attr("y", 11).attr("text-anchor", "end").text("Departures");
+        stack.forEach(function (layer) {
+          svg.append("g").selectAll("rect").data(layer).join("rect")
+            .attr("x", function (d) { return x(d.data.x0) + 0.5; }).attr("width", function (d) { return Math.max(0, x(d.data.x1) - x(d.data.x0) - 1); })
+            .attr("y", function (d) { return y(d[1]); }).attr("height", function (d) { return y(d[0]) - y(d[1]); }).attr("fill", BIND[layer.key].hex).attr("opacity", 0.85)
+            .on("mousemove", function (ev, d) { showTip('<div class="t">' + tt(d.data.x0) + " to " + tt(d.data.x1) + "</div>" + keys.map(function (k) { return '<div class="r"><i style="background:' + BIND[k].hex + '"></i>' + BIND[k].short + "<b>" + d.data[k] + "</b></div>"; }).join(""), ev); })
+            .on("mouseleave", hideTip);
+        });
+        var sC = C.slice().sort(d3.ascending);
+        var lastX = -Infinity, row = 0;
+        [[0.1, "P10"], [0.5, "P50"], [0.9, "P90"]].forEach(function (q) {
+          var v = d3.quantile(sC, q[0]), xv = x(v);
+          row = xv - lastX < 34 ? 1 - row : 0; lastX = xv;
+          svg.append("line").attr("x1", xv).attr("x2", xv).attr("y1", m.t - 4 - row * 11).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-dasharray", "3 3");
+          svg.append("text").attr("x", xv).attr("y", m.t - 7 - row * 11).attr("text-anchor", "middle").attr("font-size", 10.5).attr("fill", "#222").text(q[1] + " " + tt(v));
+        });
+        el.insertAdjacentHTML("beforeend", legendHtml(keys.map(function (k) { return { t: BIND[k].name, c: BIND[k].hex }; })));
+        var rest = Y.deps.filter(function (d) { return d.cap.bind === "mtow"; }), vol = Y.deps.filter(function (d) { return d.cap.bind === "volume"; });
+        $("hist-hint").textContent = "When the hold's volume sets the capacity, it sits in a narrow band (" + tt(d3.min(vol, function (d) { return d.cap.C; })) + " to " + tt(d3.max(vol, function (d) { return d.cap.C; })) + ") that moves only with the number of bag containers. When the take-off weight sets it, it spreads out with the wind, down to " + tt(d3.min(rest, function (d) { return d.cap.C; })) + ". The long left tail is what makes belly capacity hard to sell.";
+      }
+
+      // ---------- section 3: forecast ----------
+      function buildFan(dep) {
+        var out = [];
+        for (var h = 30; h >= 0; h--) {
+          var f = BCAP.forecast(M, dep, h, FAN_DRAWS, M.seed + dep.d * 7919 + 5, true), s = Array.prototype.slice.call(f.C).sort(d3.ascending);
+          out.push({ h: h, q10: d3.quantile(s, 0.1), q25: d3.quantile(s, 0.25), q50: d3.quantile(s, 0.5), q75: d3.quantile(s, 0.75), q90: d3.quantile(s, 0.9),
+            sd: BCAP.sd(f.C), split: f.split || { pax: 0, bags: 0, wind: 0 }, pR: f.bind.filter(function (b) { return b === "mtow"; }).length / FAN_DRAWS, B: dep.B[h] });
+        }
+        return out;
+      }
+      function renderFan() {
+        var el = $("ch-fan"), dep = Y.deps[S.sel], F = S.fan, W = chartWidth(el), H = Math.round(Math.min(300, Math.max(230, W * 0.55))), m = { l: 48, r: 14, t: 12, b: 36 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Forecast range of this departure's cargo capacity from 30 days out to departure");
+        var x = d3.scaleLinear().domain([30, 0]).range([m.l, W - m.r]);
+        var lo = d3.min(F, function (f) { return f.q10; }), hi = d3.max(F, function (f) { return f.q90; });
+        var y = d3.scaleLinear().domain([Math.min(lo, dep.cap.C) - 600, Math.max(hi, dep.cap.C) + 400]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues([30, 25, 20, 15, 10, 7, 5, 2, 0]).tickFormat(function (v) { return v === 0 ? "dep." : v; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return v / 1000 + " t"; }));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Days before departure");
+        var area = function (a, b) { return d3.area().x(function (f) { return x(f.h); }).y0(function (f) { return y(f[a]); }).y1(function (f) { return y(f[b]); }).curve(d3.curveMonotoneX); };
+        svg.append("path").attr("d", area("q10", "q90")(F)).attr("fill", "#3a8f5c").attr("opacity", 0.14);
+        svg.append("path").attr("d", area("q25", "q75")(F)).attr("fill", "#3a8f5c").attr("opacity", 0.24);
+        svg.append("path").attr("d", d3.line().x(function (f) { return x(f.h); }).y(function (f) { return y(f.q50); }).curve(d3.curveMonotoneX)(F)).attr("fill", "none").attr("stroke", "#2e7a4d").attr("stroke-width", 2);
+        svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(dep.cap.C)).attr("y2", y(dep.cap.C)).attr("stroke", "#222").attr("stroke-dasharray", "4 4");
+        svg.append("circle").attr("cx", x(0)).attr("cy", y(dep.cap.C)).attr("r", 5).attr("fill", "#222");
+        svg.append("text").attr("x", m.l + 4).attr("y", y(dep.cap.C) + (dep.cap.C > F[0].q50 ? -6 : 13)).attr("font-size", 11).attr("fill", "#222").text("actual on the day: " + kg100(dep.cap.C));
+        svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+          .on("mousemove", function (ev) {
+            var h = Math.max(0, Math.min(30, Math.round(x.invert(d3.pointer(ev)[0])))), f = F[30 - h];
+            showTip('<div class="t">' + daysOut(h) + " · " + f.B + " passenger bookings</div>" +
+              '<div class="r">90th percentile<b>' + kg100(f.q90) + '</b></div><div class="r">Median<b>' + kg100(f.q50) + '</b></div><div class="r">10th percentile<b>' + kg100(f.q10) + "</b></div>" +
+              '<div class="r">Chance of a restriction<b>' + pct(f.pR) + "</b></div>", ev);
+          }).on("mouseleave", hideTip);
+        el.insertAdjacentHTML("beforeend", legendHtml([{ t: "Median forecast", c: "#2e7a4d", cls: "ln" }, { t: "Middle 50%", c: "rgba(58,143,92,.38)" }, { t: "Middle 80%", c: "rgba(58,143,92,.16)" }, { t: "Actual", c: "#222", cls: "ln dash" }]));
+        var f30 = F[0], f2 = F[28];
+        $("fan-sub").textContent = "Middle 80%: " + tt(f30.q90 - f30.q10) + " wide 30 days out, " + tt(f2.q90 - f2.q10) + " at 2 days";
+      }
+      function renderSplit() {
+        var el = $("ch-split"), F = S.fan.filter(function (f) { return f.h > 0; }), W = chartWidth(el), H = Math.round(Math.min(300, Math.max(230, W * 0.55))), m = { l: 60, r: 14, t: 12, b: 36 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Spread of the capacity forecast from passengers, bags and wind alone, by days out");
+        var x = d3.scaleLinear().domain([30, 0]).range([m.l, W - m.r]);
+        var ser = [{ k: "sd", t: "All together", c: "#222", get: function (f) { return f.sd; } }, { k: "wind", t: "Headwind", c: "#d9480f", get: function (f) { return f.split.wind; } },
+          { k: "pax", t: "Passengers", c: "#2a7fb5", get: function (f) { return f.split.pax; } }, { k: "bags", t: "Bags", c: "#8fbfdf", get: function (f) { return f.split.bags; } }];
+        var y = d3.scaleLinear().domain([0, d3.max(F, function (f) { return Math.max(f.sd, f.split.wind, f.split.pax, f.split.bags); }) * 1.08 || 1]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues([30, 25, 20, 15, 10, 7, 5, 2, 1]));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return d3.format(",")(v) + " kg"; }));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Days before departure");
+        ser.forEach(function (s) {
+          svg.append("path").attr("d", d3.line().x(function (f) { return x(f.h); }).y(function (f) { return y(s.get(f)); }).curve(d3.curveMonotoneX)(F))
+            .attr("fill", "none").attr("stroke", s.c).attr("stroke-width", s.k === "sd" ? 2.4 : 1.8);
+        });
+        svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+          .on("mousemove", function (ev) {
+            var h = Math.max(1, Math.min(30, Math.round(x.invert(d3.pointer(ev)[0])))), f = S.fan[30 - h];
+            showTip('<div class="t">' + daysOut(h) + "</div>" + ser.map(function (s) { return '<div class="r"><i style="background:' + s.c + '"></i>' + s.t + "<b>" + kg(s.get(f)) + "</b></div>"; }).join(""), ev);
+          }).on("mouseleave", hideTip);
+        el.insertAdjacentHTML("beforeend", legendHtml(ser.map(function (s) { return { t: s.t, c: s.c, cls: "ln" }; })));
+      }
+      function renderNarrow() {
+        var el = $("ch-narrow"), H0 = M.H, W = chartWidth(el), H = 220, m = { l: 48, r: 14, t: 12, b: 36 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Average width of the capacity forecast range by days out, for winter, summer and the whole year");
+        var groups = [
+          { t: "Whole year", c: "#222", f: function () { return true; } },
+          { t: "Dec–Mar", c: "#d9480f", f: function (d) { return d < 90 || d >= 334; } },
+          { t: "Jun–Sep", c: "#2a7fb5", f: function (d) { return d >= 151 && d < 273; } }
+        ];
+        groups.forEach(function (g) {
+          g.pts = H0.map(function (h, i) { var w = []; S.fcs.forEach(function (F, d) { if (g.f(d)) w.push(F[i].q90 - F[i].q10); }); return { h: h, w: d3.mean(w) }; });
+          g.pts.push({ h: 0, w: 0 });
+        });
+        var x = d3.scaleLinear().domain([30, 0]).range([m.l, W - m.r]);
+        var y = d3.scaleLinear().domain([0, d3.max(groups, function (g) { return d3.max(g.pts, function (p) { return p.w; }); }) * 1.08]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues(W < 480 ? [30, 21, 14, 10, 7, 3, 1, 0] : H0.concat([0])).tickFormat(function (v) { return v === 0 ? "dep." : v; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return v / 1000 + " t"; }));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Days before departure");
+        groups.forEach(function (g) {
+          svg.append("path").attr("d", d3.line().x(function (p) { return x(p.h); }).y(function (p) { return y(p.w); })(g.pts)).attr("fill", "none").attr("stroke", g.c).attr("stroke-width", 2);
+          svg.append("g").selectAll("circle").data(g.pts.slice(0, -1)).join("circle").attr("cx", function (p) { return x(p.h); }).attr("cy", function (p) { return y(p.w); }).attr("r", 3).attr("fill", g.c).attr("stroke", "#fff")
+            .on("mousemove", function (ev, p) { showTip('<div class="t">' + g.t + " · " + daysOut(p.h) + '</div><div class="r">10th to 90th percentile<b>' + kg100(p.w) + "</b></div>", ev); }).on("mouseleave", hideTip);
+        });
+        el.insertAdjacentHTML("beforeend", legendHtml(groups.map(function (g) { return { t: g.t, c: g.c, cls: "ln" }; })));
+        var a = groups[0].pts, w1 = groups[1].pts, s1 = groups[2].pts, i7 = H0.indexOf(7), i2 = H0.indexOf(2);
+        $("narrow-hint").textContent = "Over the year the range is " + tt(a[0].w) + " wide 30 days out, " + tt(a[i7].w) + " a week out and " + tt(a[i2].w) + " two days out; on departure day it is known exactly. It barely narrows in the first two weeks, while the wind can't be forecast and the passengers still to book are a minority, then closes fast. Winter departures stay about " + nf1.format(w1[0].w / s1[0].w) + " times as uncertain as summer ones, because on a day near the take-off weight limit every km/h of headwind costs cargo, while a volume-limited summer day hardly moves.";
+      }
+
+      // ---------- section 4: restricted days ----------
+      function renderCal() {
+        var el = $("ch-cal"), W = chartWidth(el), narrow = W < 560, m = { l: narrow ? 30 : 36, r: 6, t: 16, b: 6 };
+        var cw = (W - m.l - m.r) / 31, ch = Math.max(12, Math.min(20, cw)), H = m.t + 12 * ch + m.b + 2;
+        var svg = svgIn(el, W, H).attr("aria-label", "Calendar of payload-restricted departures");
+        var maxCut = d3.max(Y.deps, function (d) { return d.cap.bind === "mtow" ? d.cap.Vkg - d.cap.C : 0; }) || 1;
+        var col = d3.scaleSequential(d3.interpolateRgb("#fcd9c4", "#a6330a")).domain([0, maxCut]);
+        [1, 5, 10, 15, 20, 25, 31].forEach(function (dd) { if (!narrow || dd % 10 === 0 || dd === 1) svg.append("text").attr("x", m.l + (dd - 0.5) * cw).attr("y", m.t - 5).attr("text-anchor", "middle").attr("font-size", 10).attr("fill", "#767676").text(dd); });
+        MONTHS.forEach(function (mn, i) { svg.append("text").attr("x", m.l - 5).attr("y", m.t + i * ch + ch / 2).attr("dy", "0.35em").attr("text-anchor", "end").attr("font-size", 10.5).attr("fill", "#767676").text(narrow ? mn[0] : mn); });
+        svg.append("g").selectAll("rect").data(Y.deps).join("rect").attr("class", "pick")
+          .attr("x", function (d) { return m.l + (d.d - MSTART[month(d.d)]) * cw + 0.5; }).attr("y", function (d) { return m.t + month(d.d) * ch + 0.5; })
+          .attr("width", Math.max(1, cw - 1.5)).attr("height", ch - 1.5).attr("rx", 2)
+          .attr("fill", function (d) { return d.cap.bind === "mtow" ? col(d.cap.Vkg - d.cap.C) : "#eef1f4"; })
+          .on("mousemove", function (ev, d) { showTip(depTip(d) + (d.cap.bind === "mtow" ? '<div class="r">Lost to take-off weight<b>' + kg100(d.cap.Vkg - d.cap.C) + "</b></div>" : ""), ev); }).on("mouseleave", hideTip)
+          .on("click", function (ev, d) { hideTip(); selectDep(d.d); });
+        var s = S.sel;
+        svg.append("rect").attr("x", m.l + (s - MSTART[month(s)]) * cw - 0.5).attr("y", m.t + month(s) * ch - 0.5).attr("width", cw + 0.5).attr("height", ch + 0.5).attr("rx", 3).attr("fill", "none").attr("stroke", "#222").attr("stroke-width", 2).attr("pointer-events", "none");
+        el.insertAdjacentHTML("beforeend", '<div class="legend"><span><i style="background:#eef1f4"></i>Not restricted</span><span>Restricted, cargo lost: a little <i style="width:70px;background:linear-gradient(90deg,#fcd9c4,#a6330a);margin:0 4px"></i> ' + kg100(maxCut) + "</span></div>");
+      }
+      function renderWind() {
+        var el = $("ch-wind"), W = chartWidth(el), H = Math.round(Math.min(300, Math.max(230, W * 0.6))), m = { l: 48, r: 14, t: 12, b: 36 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Headwind against the cargo weight the take-off weight allows, each departure");
+        var x = d3.scaleLinear().domain(d3.extent(Y.deps, function (d) { return d.hw; })).nice().range([m.l, W - m.r]);
+        var y = d3.scaleLinear().domain([Math.min(8000, d3.min(Y.deps, function (d) { return d.cap.lim.mtow; })), d3.max(Y.deps, function (d) { return d.cap.lim.mtow; }) + 500]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 480 ? 4 : 7));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return v / 1000 + " t"; }));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Headwind on the day, km/h (below 0: tailwind)");
+        var vk = Y.deps.map(function (d) { return d.cap.Vkg; });
+        svg.append("rect").attr("x", m.l).attr("width", W - m.l - m.r).attr("y", y(d3.max(vk))).attr("height", Math.max(1, y(d3.min(vk)) - y(d3.max(vk)))).attr("fill", "#2a7fb5").attr("opacity", 0.12);
+        svg.append("text").attr("x", W - m.r - 4).attr("y", y(d3.max(vk)) - 5).attr("text-anchor", "end").attr("font-size", 10.5).attr("fill", "#2a7fb5").text("what the hold takes by volume");
+        svg.append("g").selectAll("circle").data(Y.deps).join("circle").attr("class", "pick")
+          .attr("cx", function (d) { return x(d.hw); }).attr("cy", function (d) { return y(d.cap.lim.mtow); }).attr("r", 2.8)
+          .attr("fill", function (d) { return d.cap.bind === "mtow" ? "#d9480f" : "#9aa3ad"; }).attr("fill-opacity", 0.8)
+          .on("mousemove", function (ev, d) { showTip(depTip(d) + '<div class="r">Allowed by take-off weight<b>' + kg100(d.cap.lim.mtow) + "</b></div>", ev); }).on("mouseleave", hideTip)
+          .on("click", function (ev, d) { hideTip(); selectDep(d.d); });
+        var s = Y.deps[S.sel];
+        svg.append("circle").attr("cx", x(s.hw)).attr("cy", y(s.cap.lim.mtow)).attr("r", 7).attr("fill", "none").attr("stroke", "#222").attr("stroke-width", 1.8).attr("pointer-events", "none");
+        el.insertAdjacentHTML("beforeend", legendHtml([{ t: "Restricted", c: "#d9480f", cls: "dot" }, { t: "Not restricted", c: "#9aa3ad", cls: "dot" }, { t: "Hold volume range", c: "rgba(42,127,181,.25)" }]));
+      }
+      function renderRestrTable() {
+        var i7 = M.H.indexOf(7), i2 = M.H.indexOf(2);
+        var html = '<thead><tr><th class="l">Month</th><th>Restricted</th><th>Lost per day</th><th>Seen 7 days out</th><th>Seen 2 days out</th><th>False alarms</th></tr></thead><tbody>';
+        var tot = { n: 0, cut: 0, h7: 0, h2: 0, fa: 0 }, miss = [], hit = [];
+        MONTHS.forEach(function (mn, mi) {
+          var ds = Y.deps.slice(MSTART[mi], MSTART[mi + 1]), R = ds.filter(function (d) { return d.cap.bind === "mtow"; });
+          var cut = d3.sum(R, function (d) { return d.cap.Vkg - d.cap.C; }), h7 = 0, h2 = 0, fa = 0;
+          ds.forEach(function (d) {
+            var r = d.cap.bind === "mtow", p7 = S.fcs[d.d][i7].pR > 0.5, p2 = S.fcs[d.d][i2].pR > 0.5;
+            if (r && p7) h7++; if (r && p2) { h2++; hit.push(d.cap.Vkg - d.cap.C); } if (r && !p2) miss.push(d.cap.Vkg - d.cap.C); if (!r && p2) fa++;
+          });
+          tot.n += R.length; tot.cut += cut; tot.h7 += h7; tot.h2 += h2; tot.fa += fa;
+          html += "<tr" + (month(S.sel) === mi ? ' class="cur"' : "") + '><td class="l">' + mn + "</td><td>" + R.length + "</td><td>" + (R.length ? kg100(cut / R.length) : "–") + "</td><td>" + (R.length ? h7 + " of " + R.length : "–") + "</td><td>" + (R.length ? h2 + " of " + R.length : "–") + "</td><td>" + fa + "</td></tr>";
+        });
+        html += '<tr class="sum"><td class="l">Year</td><td>' + tot.n + "</td><td>" + kg100(tot.cut / Math.max(1, tot.n)) + "</td><td>" + tot.h7 + " (" + pct(tot.h7 / tot.n) + ")</td><td>" + tot.h2 + " (" + pct(tot.h2 / tot.n) + ")</td><td>" + tot.fa + "</td></tr>";
+        $("restr-table").innerHTML = html + "</tbody>";
+        $("restr-sub").textContent = "Seen: the forecast gave a restriction a better than even chance";
+        $("restr-hint").textContent = "A week out the forecast sees " + pct(tot.h7 / tot.n) + " of the restricted days coming; two days out, " + pct(tot.h2 / tot.n) + ", with " + tot.fa + " false alarms (a restriction forecast that didn't happen) over the year. The days it still misses two days out lose " + kg100(d3.mean(miss) || 0) + " on average, against " + kg100(d3.mean(hit) || 0) + " for the ones it sees: mostly borderline days.";
+      }
+
+      // ---------- year forecasts (in chunks, so the page stays responsive) ----------
+      function runForecasts() {
+        var tok = ++S.fcToken, out = [], d = 0, CH = 20;
+        $("sim-status").textContent = "Forecasting 365 departures…";
+        ["ch-narrow", "pol-table"].forEach(function (id) { $(id).innerHTML = '<p class="loading" style="padding:14px 8px">Forecasting 365 departures…</p>'; });
+        (function chunk() {
+          if (tok !== S.fcToken) return;
+          var end = Math.min(365, d + CH);
+          for (; d < end; d++) {
+            var dep = Y.deps[d];
+            out.push(M.H.map(function (h) {
+              var f = BCAP.forecast(M, dep, h, M.n, M.seed + d * 7919), s = Array.prototype.slice.call(f.C).sort(d3.ascending);
+              return { pl: BCAP.prepLimit(f), mC: BCAP.mean(f.C), q10: d3.quantile(s, 0.1), q50: d3.quantile(s, 0.5), q90: d3.quantile(s, 0.9),
+                pR: f.bind.filter(function (b) { return b === "mtow"; }).length / f.bind.length };
+            }));
+          }
+          if (d < 365) { $("sim-status").textContent = "Forecasting " + d + " of 365 departures…"; setTimeout(chunk, 0); return; }
+          S.fcs = out; S.tSample = BCAP.tenderSample(M, 4000, M.seed + 17);
+          $("sim-status").textContent = "";
+          renderNarrow(); renderRestrTable();
+          runSim(); renderLimit(); renderCurve();
+        })();
+      }
+
+      // ---------- section 5: how much to sell ----------
+      function runSim() {
+        var pf = BCAP.perfectFactor(S.tSample, S.r, S.c);
+        S.pf = pf;
+        S.sim = BCAP.simulate(M, Y, S.fcs, S.r, S.c, pf);
+        var q = S.r / (S.r + S.c);
+        $("opt-line").innerHTML = "Critical ratio: " + money2(S.r) + " ÷ (" + money2(S.r) + " + " + money2(S.c) + ") = <b>" + pct(q) + "</b>. Keep selling while the chance that the last kilo sold doesn't fit stays below " + pct(q) + ". With the capacity known, that means selling <b>" + nf0.format(pf * 100) + "%</b> of it, because of the uncertain tender alone.";
+        renderPolicies();
+      }
+      function agg(list) {
+        var o = { booked: 0, flown: 0, off: 0, rev: 0, cost: 0, net: 0, unused: 0, offFl: 0, C: 0 };
+        list.forEach(function (r) { ["booked", "flown", "off", "rev", "cost", "net", "unused", "C"].forEach(function (k) { o[k] += r[k]; }); if (r.off > 1) o.offFl++; });
+        Object.keys(o).forEach(function (k) { o[k] /= list.length; });
+        return o;
+      }
+      function renderPolicies() {
+        var A = {}; POL.forEach(function (p) { A[p.key] = agg(S.sim[p.key]); });
+        var dyn = A.dynamic, st = A.static;
+        var tiles = [
+          { k: "Net revenue per departure", v: money(dyn.net), s: "Rule re-set at each checkpoint; " + signedPct(dyn.net / st.net - 1) + " against setting it once" },
+          { k: "Cargo flown", v: kg100(dyn.flown), s: pct(dyn.flown / dyn.C) + " of the capacity on the day" },
+          { k: "Departures with an offload", v: pct(dyn.offFl), s: kg100(dyn.off) + " offloaded per departure on average" },
+          { k: "Left on the table", v: money(A.perfect.net - dyn.net), s: "per departure, against knowing the capacity in advance" }
+        ];
+        $("s5-tiles").innerHTML = tiles.map(function (t) { return '<div class="tile"><span class="k">' + t.k + "</span><b>" + t.v + '</b><span class="s">' + t.s + "</span></div>"; }).join("");
+        var html = '<thead><tr><th class="l">Policy</th><th>Booked</th><th>Flown</th><th>Capacity left empty</th><th>Offloaded</th><th>Flights with an offload</th><th>Offload cost</th><th>Net revenue</th><th>vs re-set rule</th></tr></thead><tbody>';
+        POL.forEach(function (p) {
+          var a = A[p.key], dlt = a.net - dyn.net;
+          html += "<tr" + (p.key === "dynamic" ? ' class="cur"' : "") + '><td class="l" style="white-space:normal;min-width:170px"><span class="sw" style="background:' + p.hex + '"></span>' + p.name + '<br><span style="color:var(--muted);font-size:11.5px;margin-left:16px">' + p.note + "</span></td><td>" + kg100(a.booked) + "</td><td>" + kg100(a.flown) + "</td><td>" + kg100(a.unused) + "</td><td>" + kg(a.off) + "</td><td>" + pct(a.offFl) + "</td><td>" + money(a.cost) + '</td><td class="hl">' + money(a.net) + '</td><td class="' + (Math.abs(dlt) < 0.5 ? "" : dlt > 0 ? "pos" : "neg") + '">' + (p.key === "dynamic" ? "–" : signedMoney(dlt)) + "</td></tr>";
+        });
+        $("pol-table").innerHTML = html + "</tbody>";
+        var best = POL.slice(0, 4).sort(function (a, b) { return A[b.key].net - A[a.key].net; })[0];
+        $("pol-hint").textContent = "Selling only up to the forecast flies " + pct(A.noob.flown / A.noob.C) + " of the capacity: no-shows and short tenders leave the rest empty. Overbooking to the average fills more but offloads on " + pct(A.avg.offFl) + " of departures, about half, as Air Cargo 101 warns. Set 30 days out, the rule has to cover the whole width of a month-out forecast, so on the windy days it can't foresee it sells too much and on the calm ones too little. Re-set as the forecast narrows, it earns " + money(dyn.net - st.net) + " more per departure, about " + money(Math.round((dyn.net - st.net) * 365 / 1000) * 1000) + " a year on one daily flight. " + (best.key === "dynamic" ? "It is the best of the four policies an airline can run" : "At these costs, " + best.name.toLowerCase() + " does best") + "; knowing the capacity in advance would be worth another " + money(A.perfect.net - dyn.net) + " per departure, which is what a better capacity forecast is worth.";
+      }
+
+      function renderLimit() {
+        var el = $("ch-limit"), dep = Y.deps[S.sel], F = S.fcs[S.sel], H0 = M.H, W = chartWidth(el), H = Math.round(Math.min(300, Math.max(240, W * 0.58))), m = { l: 48, r: 14, t: 12, b: 36 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Booking limit and capacity forecast for this departure by days out");
+        var x = d3.scaleLinear().domain([30, 0]).range([m.l, W - m.r]);
+        var dyn = S.sim.dynamic[S.sel], st = S.sim.static[S.sel], avg = S.sim.avg[S.sel];
+        var pts = H0.map(function (h, i) { return { h: h, q10: F[i].q10, q50: F[i].q50, q90: F[i].q90, L: dyn.lim[i], Ls: st.lim[i], La: avg.lim[i], bk: dyn.path[i] }; });
+        var ymax = d3.max(pts, function (p) { return Math.max(p.q90, p.L, p.Ls, p.La); }), ymin = d3.min(pts, function (p) { return Math.min(p.q10, p.bk); });
+        var y = d3.scaleLinear().domain([Math.min(ymin, dep.cap.C, 0), ymax * 1.06]).nice().range([H - m.b, m.t]);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).tickValues(W < 480 ? [30, 21, 14, 10, 7, 3, 1, 0] : H0.concat([0])).tickFormat(function (v) { return v === 0 ? "dep." : v; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return v / 1000 + " t"; }));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Days before departure");
+        // capacity forecast band
+        svg.append("path").attr("d", d3.area().x(function (p) { return x(p.h); }).y0(function (p) { return y(p.q10); }).y1(function (p) { return y(p.q90); })(pts.concat([{ h: 0, q10: dep.cap.C, q90: dep.cap.C }]))).attr("fill", "#3a8f5c").attr("opacity", 0.14);
+        svg.append("path").attr("d", d3.line().x(function (p) { return x(p.h); }).y(function (p) { return y(p.q50); })(pts.concat([{ h: 0, q50: dep.cap.C }]))).attr("fill", "none").attr("stroke", "#2e7a4d").attr("stroke-width", 1.5);
+        // booked so far under the re-set rule: each interval's requests arrive between one checkpoint and the next
+        var bkPts = [{ h: 30, v: 0 }]; pts.forEach(function (p, i) { bkPts.push({ h: i + 1 < pts.length ? pts[i + 1].h : 0, v: p.bk }); });
+        svg.append("path").attr("d", d3.area().x(function (p) { return x(p.h); }).y0(y(0)).y1(function (p) { return y(p.v); })(bkPts)).attr("fill", "#9aa3ad").attr("opacity", 0.3);
+        function stepLine(key, color, dash, w) {
+          var s = []; pts.forEach(function (p, i) { var hn = i + 1 < pts.length ? pts[i + 1].h : 0; s.push([p.h, p[key]]); s.push([hn, p[key]]); });
+          svg.append("path").attr("d", d3.line().x(function (d) { return x(d[0]); }).y(function (d) { return y(d[1]); })(s)).attr("fill", "none").attr("stroke", color).attr("stroke-width", w || 2).attr("stroke-dasharray", dash || null);
+        }
+        stepLine("La", "#7a5ab8", "2 3", 1.6);
+        stepLine("Ls", "#2a7fb5", "6 4", 1.8);
+        stepLine("L", "#3a8f5c", null, 2.4);
+        svg.append("circle").attr("cx", x(0)).attr("cy", y(dep.cap.C)).attr("r", 5).attr("fill", "#222");
+        svg.append("circle").attr("cx", x(0)).attr("cy", y(dyn.ten)).attr("r", 5).attr("fill", "#fff").attr("stroke", dyn.ten > dep.cap.C ? "#d9480f" : "#3a8f5c").attr("stroke-width", 2);
+        svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+          .on("mousemove", function (ev) {
+            var hx = x.invert(d3.pointer(ev)[0]), i = 0; for (var k = 0; k < H0.length; k++) if (H0[k] >= hx) i = k;
+            var p = pts[i];
+            showTip('<div class="t">Set ' + daysOut(p.h) + '</div><div class="r">Capacity forecast, median<b>' + kg100(p.q50) + '</b></div><div class="r">Middle 80%<b>' + tt(p.q10) + "–" + tt(p.q90) + '</b></div><div class="r"><i style="background:#3a8f5c"></i>Limit, re-set rule<b>' + kg100(p.L) + '</b></div><div class="r"><i style="background:#2a7fb5"></i>Limit, set 30 days out<b>' + kg100(p.Ls) + '</b></div><div class="r"><i style="background:#7a5ab8"></i>Overbook to the average<b>' + kg100(p.La) + '</b></div><div class="r">Booked by then (re-set rule)<b>' + kg100(p.bk) + "</b></div>", ev);
+          }).on("mouseleave", hideTip);
+        el.insertAdjacentHTML("beforeend", legendHtml([{ t: "Limit, re-set rule", c: "#3a8f5c", cls: "ln" }, { t: "Limit, set 30 days out", c: "#2a7fb5", cls: "ln dash" }, { t: "Overbook to the average", c: "#7a5ab8", cls: "ln dash" }, { t: "Booked so far (re-set rule)", c: "rgba(154,163,173,.45)" }, { t: "Capacity forecast, middle 80%", c: "rgba(58,143,92,.15)" }, { t: "Actual capacity", c: "#222", cls: "dot" }, { t: "Tendered (orange: more than fits)", c: "#fff;box-shadow:inset 0 0 0 2px #3a8f5c", cls: "dot" }]));
+        $("limit-sub").textContent = "Booked " + kg100(dyn.booked) + ", tendered " + kg100(dyn.ten) + (dyn.off > 1 ? ", " + kg100(dyn.off) + " offloaded" : ", all of it flown");
+      }
+
+      function renderCurve() {
+        var el = $("ch-curve"), dep = Y.deps[S.sel], W = chartWidth(el), H = Math.round(Math.min(300, Math.max(240, W * 0.58))), m = { l: 52, r: 14, t: 12, b: 36 };
+        var svg = svgIn(el, W, H).attr("aria-label", "Expected net revenue against the booking limit, forecast 30, 7 and 2 days out");
+        var cols = { 30: "#9aa3ad", 7: "#2a7fb5", 2: "#3a8f5c" };
+        var grid = d3.range(0, 30001, 250);
+        var series = S.curveH.map(function (h) {
+          var f = BCAP.forecast(M, dep, h, CURVE_DRAWS, M.seed + dep.d * 7919 + 99), pl = BCAP.prepLimit(f), L = BCAP.bestLimit(pl, S.r, S.c);
+          return { h: h, pts: grid.map(function (b) { return { b: b, v: BCAP.expNet(f, b, S.r, S.c).net }; }), L: L, best: BCAP.expNet(f, L, S.r, S.c) };
+        });
+        var x = d3.scaleLinear().domain([0, 30000]).range([m.l, W - m.r]);
+        var lo = d3.min(series, function (s) { return d3.min(s.pts, function (p) { return p.v; }); }), hi = d3.max(series, function (s) { return s.best.net; });
+        var y = d3.scaleLinear().domain([Math.max(lo, -hi * 0.25), hi * 1.08]).nice().range([H - m.b, m.t]).clamp(true);
+        svg.append("g").attr("class", "grid").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(0," + (H - m.b) + ")").call(d3.axisBottom(x).ticks(W < 480 ? 4 : 6).tickFormat(function (v) { return v / 1000 + " t"; }));
+        svg.append("g").attr("class", "axis").attr("transform", "translate(" + m.l + ",0)").call(d3.axisLeft(y).ticks(5).tickFormat(function (v) { return (v < 0 ? "−$" : "$") + d3.format("~s")(Math.abs(v)); }));
+        svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Cargo sold (booking limit)");
+        svg.append("line").attr("x1", x(dep.cap.C)).attr("x2", x(dep.cap.C)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", "#222").attr("stroke-dasharray", "3 3");
+        svg.append("text").attr("x", x(dep.cap.C) + 4).attr("y", H - m.b - 6).attr("font-size", 10.5).attr("fill", "#222").text("actual capacity");
+        series.forEach(function (s) {
+          svg.append("path").attr("d", d3.line().x(function (p) { return x(p.b); }).y(function (p) { return y(p.v); })(s.pts)).attr("fill", "none").attr("stroke", cols[s.h]).attr("stroke-width", 2);
+          svg.append("path").attr("d", d3.symbol(d3.symbolStar, 90)()).attr("transform", "translate(" + x(s.L) + "," + y(s.best.net) + ")").attr("fill", cols[s.h]).attr("stroke", "#fff").attr("stroke-width", 1)
+            .on("mousemove", function (ev) { showTip('<div class="t">Forecast ' + daysOut(s.h) + '</div><div class="r">Best limit<b>' + kg100(s.L) + '</b></div><div class="r">Expected net revenue<b>' + money(s.best.net) + '</b></div><div class="r">Chance of an offload<b>' + pct(s.best.pOff) + "</b></div>", ev); })
+            .on("mouseleave", hideTip);
+        });
+        el.insertAdjacentHTML("beforeend", legendHtml(series.map(function (s) { return { t: "Forecast " + daysOut(s.h) + ": sell " + kg100(s.L), c: cols[s.h], cls: "ln" }; })));
+      }
+    });
+
+    </script>
+  </body>
+</html>

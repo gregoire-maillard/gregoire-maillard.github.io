@@ -134,6 +134,7 @@ main { padding-top: 48px; }
 @media (max-width: 839px) { .tool { grid-column: 1 / -1; } }
 
 /* topics: one section per topic, its course first, then its tools in course order (quarters, then thirds, halves, full) */
+.topic .sec-head span { max-width: 640px; }
 .area-row { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gutter); counter-reset: step; }
 .area-row .tool { grid-column: span 3; counter-increment: step; }
 .area-row .tool .viz { height: 144px; }
@@ -531,6 +532,38 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the chart<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
+        <a class="panel tool" href="/fleetassign.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- a small time-space network: three airports as rows, flights as arcs coloured by aircraft type, ground arcs and the count line -->
+              <g fill="rgb(15 23 42 / .04)"><rect x="70" y="30" width="460" height="34" rx="6"/><rect x="70" y="91" width="460" height="34" rx="6"/><rect x="70" y="152" width="460" height="34" rx="6"/></g>
+              <g stroke-linecap="butt" fill="none">
+                <path d="M70 47 H150 M300 47 H360" stroke="#2455E6" stroke-width="5" opacity=".28"/>
+                <path d="M70 108 H180 M250 108 H330 M410 108 H530" stroke="#151A23" stroke-width="7" opacity=".22"/>
+                <path d="M200 169 H270 M430 169 H530" stroke="#8FA9F2" stroke-width="5" opacity=".45"/>
+              </g>
+              <g fill="none" stroke-width="2.4" stroke-linecap="round">
+                <path d="M150 47 L196 106" stroke="#2455E6"/><path d="M212 108 L262 49" stroke="#2455E6"/><path d="M360 47 L410 106" stroke="#2455E6"/>
+                <path d="M180 108 L230 167" stroke="#151A23"/><path d="M270 169 L322 110" stroke="#151A23"/><path d="M330 108 L382 167" stroke="#8FA9F2"/><path d="M400 169 L450 110" stroke="#8FA9F2"/>
+              </g>
+              <g fill="#fff" stroke="#151A23" stroke-width="1.4">
+                <circle cx="150" cy="47" r="3.5"/><circle cx="262" cy="49" r="3.5"/><circle cx="360" cy="47" r="3.5"/><circle cx="196" cy="106" r="3.5"/><circle cx="212" cy="108" r="3.5"/>
+                <circle cx="180" cy="108" r="3.5"/><circle cx="322" cy="110" r="3.5"/><circle cx="330" cy="108" r="3.5"/><circle cx="410" cy="106" r="3.5"/><circle cx="450" cy="110" r="3.5"/>
+                <circle cx="230" cy="167" r="3.5"/><circle cx="270" cy="169" r="3.5"/><circle cx="382" cy="167" r="3.5"/><circle cx="400" cy="169" r="3.5"/>
+              </g>
+              <line x1="86" y1="20" x2="86" y2="196" stroke="#7c6fcd" stroke-width="1.6" stroke-dasharray="5 4"/>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Integer program</span>
+              <span class="pill">Time-space network</span>
+            </div>
+            <h3>Fleet assignment</h3>
+            <p>Which aircraft type should fly each of 30 flights at a hub: an integer program solved in your browser, against a greedy rule and on 1,000 simulated days.</p>
+            <div class="cta"><span class="btn dark">Open the solver<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
         <a class="panel tool" href="/rangemap.html">
           <div class="viz" aria-hidden="true">
             <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
@@ -814,75 +847,6 @@ main { padding-top: 48px; }
           <h3>Air Cargo</h3>
           <p>How airlines sell the space in the hold: weight and volume, forwarders and allotments, and why cargo is harder to sell than seats.</p>
           <span class="go">Read the course<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span>
-        </a>
-        <a class="panel tool" href="/uldbuild.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- a lower deck from above: LD3s two abreast and two pallets, each filled by volume with dense (navy), standard (teal) and light (amber) cargo, weight used on the right edge; below, the cargo's centre of gravity inside its window -->
-              <rect x="118" y="50" width="250" height="116" rx="8" fill="#F4F6F9" stroke="rgb(15 23 42 / .08)"/>
-              <rect x="384" y="50" width="98" height="116" rx="8" fill="#F4F6F9" stroke="rgb(15 23 42 / .08)"/>
-              <rect x="124" y="56" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="124" y="75.0" width="30" height="31.0" fill="#e9a03b"/>
-              <rect x="124" y="66.0" width="30" height="9.0" fill="#2a9d8f"/>
-              <rect x="156" y="95.0" width="3" height="11.0" fill="#151A23"/>
-              <rect x="124" y="110" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="124" y="120.0" width="30" height="40.0" fill="#e9a03b"/>
-              <rect x="156" y="151.0" width="3" height="9.0" fill="#151A23"/>
-              <rect x="164" y="56" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="164" y="91.0" width="30" height="15.0" fill="#1d3f8f"/>
-              <rect x="164" y="67.0" width="30" height="24.0" fill="#e9a03b"/>
-              <rect x="196" y="58.5" width="3" height="47.5" fill="#151A23"/>
-              <rect x="164" y="110" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="164" y="119.0" width="30" height="41.0" fill="#2a9d8f"/>
-              <rect x="196" y="140.0" width="3" height="20.0" fill="#151A23"/>
-              <rect x="204" y="56" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="204" y="67.0" width="30" height="39.0" fill="#e9a03b"/>
-              <rect x="236" y="96.0" width="3" height="10.0" fill="#151A23"/>
-              <rect x="204" y="110" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="204" y="149.0" width="30" height="11.0" fill="#1d3f8f"/>
-              <rect x="204" y="121.5" width="30" height="27.5" fill="#2a9d8f"/>
-              <rect x="236" y="125.0" width="3" height="35.0" fill="#151A23"/>
-              <rect x="244" y="56" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="244" y="65.5" width="30" height="40.5" fill="#e9a03b"/>
-              <rect x="276" y="95.5" width="3" height="10.5" fill="#151A23"/>
-              <rect x="244" y="110" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="244" y="140.0" width="30" height="20.0" fill="#2a9d8f"/>
-              <rect x="244" y="120.0" width="30" height="20.0" fill="#e9a03b"/>
-              <rect x="276" y="141.0" width="3" height="19.0" fill="#151A23"/>
-              <rect x="284" y="56" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="284" y="83.5" width="30" height="22.5" fill="#1d3f8f"/>
-              <rect x="284" y="68.5" width="30" height="15.0" fill="#e9a03b"/>
-              <rect x="316" y="57.0" width="3" height="49.0" fill="#151A23"/>
-              <rect x="284" y="110" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="284" y="125.0" width="30" height="35.0" fill="#e9a03b"/>
-              <rect x="316" y="151.5" width="3" height="8.5" fill="#151A23"/>
-              <rect x="324" y="56" width="36" height="50" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="324" y="66.5" width="30" height="39.5" fill="#2a9d8f"/>
-              <rect x="356" y="85.0" width="3" height="21.0" fill="#151A23"/>
-              <rect x="324" y="110" width="36" height="50" rx="3" fill="#fff" stroke="#cfd5dc" stroke-dasharray="3 3"/>
-              <rect x="390" y="56" width="42" height="104" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="390" y="116.3" width="36" height="43.7" fill="#1d3f8f"/>
-              <rect x="390" y="80.9" width="36" height="35.4" fill="#2a9d8f"/>
-              <rect x="428" y="82.0" width="3" height="78.0" fill="#151A23"/>
-              <rect x="436" y="56" width="42" height="104" rx="3" fill="#fff" stroke="#c3cad3"/>
-              <rect x="436" y="128.8" width="36" height="31.2" fill="#2a9d8f"/>
-              <rect x="436" y="76.8" width="36" height="52.0" fill="#e9a03b"/>
-              <rect x="474" y="122.6" width="3" height="37.4" fill="#151A23"/>
-              <rect x="118" y="182" width="364" height="6" rx="3" fill="#E6EAF0"/>
-              <rect x="262" y="176" width="64" height="18" rx="3" fill="#3a8f5c" opacity=".16"/>
-              <path d="M286 176l-6 -9h12z" fill="#2e7a4d"/><line x1="286" y1="176" x2="286" y2="194" stroke="#2e7a4d" stroke-width="2"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Simulator</span>
-              <span class="pill"><b>40</b> shipments</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Chargeable weight &amp; ULD build-up</h3>
-            <p>Load 40 dense, standard and light shipments into a widebody's lower deck of LD3 containers and pallets, by hand or with a packing rule. Chargeable against actual weight, how full the hold is by weight and by volume, and why loading the best rate first loses to mixing dense and light cargo.</p>
-            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
         </a>
         <a class="panel tool" href="/cargorm.html">
           <div class="viz" aria-hidden="true">

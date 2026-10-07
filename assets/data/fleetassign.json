@@ -1,0 +1,295 @@
+{
+  "about": "Inputs for fleetassign.html. One day of flights at a hub and four spokes, three aircraft types and a demand generator. Everything here is illustrative: invented airports, times, costs, fares and demand, chosen to be plausible in size and to match the worked examples in NP 101 and OR 101, chapter 05 (150 and 190 seats, $250 average fare, $18,000 and $21,500 to fly a 2.5-hour leg). Not any airline's data.",
+  "version": "2026-10-07",
+  "countLine": "03:00",
+  "hub": "H",
+  "stations": [
+    {
+      "code": "A",
+      "name": "Spoke A",
+      "block": 60,
+      "fare": 150,
+      "size": 85
+    },
+    {
+      "code": "B",
+      "name": "Spoke B",
+      "block": 90,
+      "fare": 190,
+      "size": 120
+    },
+    {
+      "code": "C",
+      "name": "Spoke C",
+      "block": 120,
+      "fare": 220,
+      "size": 135
+    },
+    {
+      "code": "D",
+      "name": "Spoke D",
+      "block": 150,
+      "fare": 250,
+      "size": 150
+    }
+  ],
+  "schedule": {
+    "note": "Each entry is a flight: origin, destination and departure time. Arrival = departure + the spoke's block time.",
+    "flights": [
+      [
+        "A",
+        "H",
+        "06:00"
+      ],
+      [
+        "H",
+        "A",
+        "07:45"
+      ],
+      [
+        "A",
+        "H",
+        "09:30"
+      ],
+      [
+        "H",
+        "A",
+        "14:45"
+      ],
+      [
+        "A",
+        "H",
+        "16:30"
+      ],
+      [
+        "H",
+        "A",
+        "18:15"
+      ],
+      [
+        "A",
+        "H",
+        "20:00"
+      ],
+      [
+        "H",
+        "A",
+        "21:45"
+      ],
+      [
+        "B",
+        "H",
+        "05:30"
+      ],
+      [
+        "H",
+        "B",
+        "07:45"
+      ],
+      [
+        "B",
+        "H",
+        "10:05"
+      ],
+      [
+        "H",
+        "B",
+        "11:15"
+      ],
+      [
+        "B",
+        "H",
+        "13:35"
+      ],
+      [
+        "H",
+        "B",
+        "18:15"
+      ],
+      [
+        "B",
+        "H",
+        "20:35"
+      ],
+      [
+        "H",
+        "B",
+        "21:45"
+      ],
+      [
+        "C",
+        "H",
+        "05:00"
+      ],
+      [
+        "H",
+        "C",
+        "07:45"
+      ],
+      [
+        "C",
+        "H",
+        "10:35"
+      ],
+      [
+        "H",
+        "C",
+        "11:15"
+      ],
+      [
+        "C",
+        "H",
+        "14:05"
+      ],
+      [
+        "H",
+        "C",
+        "14:45"
+      ],
+      [
+        "C",
+        "H",
+        "17:35"
+      ],
+      [
+        "H",
+        "C",
+        "21:45"
+      ],
+      [
+        "H",
+        "D",
+        "07:45"
+      ],
+      [
+        "D",
+        "H",
+        "11:10"
+      ],
+      [
+        "H",
+        "D",
+        "11:15"
+      ],
+      [
+        "D",
+        "H",
+        "14:40"
+      ],
+      [
+        "H",
+        "D",
+        "14:45"
+      ],
+      [
+        "D",
+        "H",
+        "18:10"
+      ]
+    ]
+  },
+  "fleetPresets": [
+    {
+      "key": "three",
+      "name": "Three types",
+      "blurb": "Seven aircraft: two 76-seat regional jets, three 150-seat and two 190-seat narrowbodies. Small aircraft cost less per trip but more per seat, so they suit the quiet flights.",
+      "counts": {
+        "RJ": 2,
+        "M": 3,
+        "L": 2
+      }
+    },
+    {
+      "key": "two",
+      "name": "Two types",
+      "blurb": "Only the 150-seat and 190-seat aircraft of the course examples, still seven aircraft: two regional jets become two more 150-seaters.",
+      "counts": {
+        "RJ": 0,
+        "M": 5,
+        "L": 2
+      }
+    }
+  ],
+  "fleets": [
+    {
+      "key": "RJ",
+      "name": "Regional jet",
+      "short": "76",
+      "seats": 76,
+      "costBH": 3900,
+      "turn": 30
+    },
+    {
+      "key": "M",
+      "name": "Narrowbody",
+      "short": "150",
+      "seats": 150,
+      "costBH": 7200,
+      "turn": 40
+    },
+    {
+      "key": "L",
+      "name": "Large narrowbody",
+      "short": "190",
+      "seats": 190,
+      "costBH": 8600,
+      "turn": 45
+    }
+  ],
+  "demandLevels": [
+    {
+      "key": "typical",
+      "name": "Typical day",
+      "mult": 1.0,
+      "blurb": "Average demand on every flight, with a busy morning and evening."
+    },
+    {
+      "key": "peak",
+      "name": "Peak day",
+      "mult": 1.2,
+      "blurb": "20% more passengers on every flight, like a holiday Friday: the large aircraft are short."
+    },
+    {
+      "key": "quiet",
+      "name": "Quiet day",
+      "mult": 0.8,
+      "blurb": "20% fewer passengers: spill matters less, and the cheap small aircraft win more flights."
+    }
+  ],
+  "demand": {
+    "seed": 20261007,
+    "cv": 0.2,
+    "noiseSd": 0.12,
+    "timeOfDay": [
+      {
+        "from": "00:00",
+        "mult": 1.2
+      },
+      {
+        "from": "09:00",
+        "mult": 0.95
+      },
+      {
+        "from": "12:00",
+        "mult": 0.8
+      },
+      {
+        "from": "15:00",
+        "mult": 1.1
+      },
+      {
+        "from": "19:00",
+        "mult": 0.9
+      }
+    ],
+    "pinned": {
+      "flight": "H-D-0745",
+      "mean": 160,
+      "sd": 30,
+      "note": "The OR 101 example leg: demand 160 ± 30, $250 fare, 2.5 hours."
+    }
+  },
+  "recapture": 0,
+  "simDays": 1000,
+  "simSeed": 7
+}
