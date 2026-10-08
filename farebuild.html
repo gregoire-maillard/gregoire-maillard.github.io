@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>How a fare is built</title>
     <meta name="description" content="From a filed fare to the price a customer sees: fare basis and rules, fare construction, taxes, airport charges and carrier surcharges, built up one layer at a time on a Montréal–Paris or New York–Paris return.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -257,9 +255,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -280,7 +275,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -289,7 +283,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Revenue management</div>
         <h1>How a fare is built</h1>
         <p class="lede">From the fare an airline files to the price on the booking screen, one layer at a time.</p>
-        <p>An airline ticket price is a stack: one or more filed fares, each with its own code and rules, joined together by the rules of fare construction; then the airline's own surcharges; then taxes and charges set by the governments and airports at each end; and on top, the fare family and the extras the customer chooses. Step through a return trip in economy and watch the ticket fill up, then decode a fare basis and see how offer-based pricing changes the picture.</p>
+        <p>A ticket price is a stack: filed fares and their rules, the airline's surcharges, government and airport taxes at each end, then the fare family and extras. Step through a return trip in economy as the ticket fills up, then decode a fare basis and see how offer-based pricing changes the picture.</p>
       </div>
 
       <!-- ═══════════════════════════ WORKED EXAMPLE ═══════════════════════════ -->
@@ -401,7 +395,6 @@
       </div>
     </div>
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
-    <script src="javascripts/scale.fix.js"></script>
     <script>
     window.addEventListener("DOMContentLoaded", function () {
       "use strict";

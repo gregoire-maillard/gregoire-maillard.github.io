@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Booking limits</title>
     <meta name="description" content="From two fares to many: Littlewood's rule seat by seat, EMSR-a and EMSR-b protection levels tested on 2,000 simulated flights, and optimal overbooking.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -252,9 +250,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -338,7 +333,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -347,7 +341,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Revenue management</div>
         <h1>Booking limits</h1>
         <p class="lede">How airlines keep seats for passengers who book late and pay more, starting from one flight with two fares, and how many seats they sell twice.</p>
-        <p>Cheap fares sell first and expensive ones sell last, so a flight left to itself fills up with the cheapest passengers. Revenue management sets a cap on each fare class and keeps the rest for later, higher-paying bookings. The page builds this up in three steps. <b>Two fares</b> starts where the field started: in 1972 Ken Littlewood, at BOAC, showed that you should <b>keep protecting one more seat as long as the chance that high-fare demand reaches it is greater than the low fare divided by the high fare.</b> <b>Many fares</b> applies that rule down a ladder of six classes with EMSR-a and EMSR-b and tests the caps on thousands of simulated flights. <b>Overbooking</b> decides how many extra bookings to accept for no-shows. This is the hands-on companion to <a href="/rm101.html#littlewood">Revenue Management 101, chapter 03</a>.</p>
+        <p>Cheap fares sell first and expensive ones last, so revenue management caps each fare class and keeps seats for later, higher-paying bookings. Three steps: <b>two fares</b> with Littlewood's rule, <b>many fares</b> with EMSR-a and EMSR-b on thousands of simulated flights, and <b>overbooking</b> for no-shows. The hands-on companion to <a href="/rm101.html#littlewood">Revenue Management 101, chapter 03</a>.</p>
       </div>
 
       <div class="switch">
@@ -589,6 +583,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>Cheap fares sell first and expensive ones sell last, so a flight left to itself fills up with the cheapest passengers. Revenue management sets a cap on each fare class and keeps the rest for later, higher-paying bookings. The field started there: in 1972 Ken Littlewood, at BOAC, showed that you should <b>keep protecting one more seat as long as the chance that high-fare demand reaches it is greater than the low fare divided by the high fare.</b> The second step applies that rule down a ladder of six classes with EMSR-a and EMSR-b and tests the caps on thousands of simulated flights; the third decides how many extra bookings to accept for no-shows.</p>
 
         <h4>Two fares: Littlewood's rule</h4>
         <p>One flight leg with <var>C</var> seats and two fares, <var>f</var><sub>H</sub> &gt; <var>f</var><sub>L</sub>. Low-fare customers book first and are plentiful. High-fare demand <var>D</var><sub>H</sub> is uncertain: a normal draw with average <var>μ</var> and spread <var>σ</var>, rounded down to whole passengers (a negative draw counts as zero). Protecting <var>y</var> seats means the low fare is sold until <var>C</var> − <var>y</var> seats are gone (its <b>booking limit</b>), and the last <var>y</var> are kept for the high fare.</p>
@@ -631,7 +627,6 @@
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
     <div class="tip" id="lw-tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
     window.addEventListener("DOMContentLoaded", function () {
       "use strict";

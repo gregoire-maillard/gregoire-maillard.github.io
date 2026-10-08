@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Buy-down simulator</title>
     <meta name="description" content="A buy-down simulator: how EMSR-b seat control spirals down when fares lose their restrictions, and how Q-forecasting with fare adjustment fixes it.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -212,9 +210,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -238,7 +233,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -247,7 +241,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Revenue management</div>
         <h1>Buy-down and the spiral-down effect</h1>
         <p class="lede">What happens to seat control when passengers can always pick the cheapest fare on the screen.</p>
-        <p>When fare classes are fenced by rules, each class has its own passengers. Take the rules away and many passengers simply buy the cheapest fare still open. A seat-control system that forecasts each class from its own past bookings then sees high-fare demand vanish, protects fewer seats, sells more cheap fares, and sees even less high-fare demand the next season. This page runs one flight through twelve seasons with standard EMSR-b and with the fix airlines use: Q-forecasting with fare adjustment. It's the hands-on companion to <a href="/rm101.html#ch05">Revenue Management 101, chapter 05</a>; the seat-protection maths is on the <a href="/bookinglimits.html">booking limits</a> page.</p>
+        <p>Take the fences away and many passengers buy the cheapest fare still open. A system that forecasts each class from its own bookings then protects fewer seats every season: the spiral-down. This page runs one flight through twelve seasons with EMSR-b and with Q-forecasting and fare adjustment. It goes with <a href="/rm101.html#ch05">RM 101, chapter 05</a> and the <a href="/bookinglimits.html">booking limits</a> page.</p>
       </div>
 
       <div class="stage">
@@ -337,6 +331,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method" id="how">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>When fare classes are fenced by rules, each class has its own passengers. Take the rules away and many passengers simply buy the cheapest fare still open. A seat-control system that forecasts each class from its own past bookings then sees high-fare demand vanish, protects fewer seats, sells more cheap fares, and sees even less high-fare demand the next season. The page runs one flight through twelve seasons with standard EMSR-b and with the fix airlines use: Q-forecasting with fare adjustment.</p>
 
         <h4>Customers</h4>
         <p>Each departure gets <var>N</var> customers, drawn from a normal distribution with mean <var>demand</var> × <var>seats</var> and a 20% coefficient of variation. Each customer arrives at a random time in the booking window, which is split into four booking periods covering 30%, 25%, 25% and 20% of it. Every customer is willing to pay at least the lowest fare <var>f</var><sub>V</sub>, and in period <var>k</var> the share willing to pay at least <var>f</var> is</p>
@@ -377,7 +373,6 @@
 
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
     window.addEventListener("DOMContentLoaded", function () {
       "use strict";

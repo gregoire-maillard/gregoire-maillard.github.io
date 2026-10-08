@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Continuous pricing simulator</title>
     <meta name="description" content="A continuous pricing simulator: a ladder of fare classes controlled with EMSR-b against prices set at any amount, on thousands of simulated departures, and where the extra revenue comes from.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -219,9 +217,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -245,7 +240,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -254,7 +248,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Revenue management</div>
         <h1>Continuous pricing</h1>
         <p class="lede">What a ladder of fare classes leaves on the table when a price can be set at any amount.</p>
-        <p>For decades an airline's price could only move in steps: a flight is sold in a handful of fare classes, each filed in advance at a fixed amount, and revenue management decides which of them are open. Continuous pricing lets the price land anywhere, $287 instead of $243 or $332, and it's the main pricing argument behind offer-based distribution (NDC). This page sells the same shoppers on the same flight twice, once through a class ladder controlled with EMSR-b and once with a price set at any amount from the same forecast, over 2,000 simulated departures. It's the hands-on companion to <a href="/rm101.html#ch07">Revenue Management 101, chapter 07</a>.</p>
+        <p>For decades a price could only move in steps: a few fare classes, each filed at a fixed amount, opened and closed by revenue management. Continuous pricing lets it land anywhere, the main pricing argument behind NDC. Here the same shoppers buy the same flight both ways, over 2,000 simulated departures. Companion to <a href="/rm101.html#ch07">RM 101, chapter 07</a>.</p>
       </div>
 
       <div class="stage">
@@ -331,6 +325,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method" id="how">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>For decades an airline's price could only move in steps: a flight is sold in a handful of fare classes, each filed in advance at a fixed amount, and revenue management decides which of them are open. Continuous pricing lets the price land anywhere, $287 instead of $243 or $332, and it's the main pricing argument behind offer-based distribution (NDC). The page sells the same shoppers on the same flight twice, once through a class ladder controlled with EMSR-b and once with a price set at any amount from the same forecast, over 2,000 simulated departures.</p>
 
         <h4>Shoppers</h4>
         <p>The flight has <span id="how-seats">150</span> economy seats and a 180-day booking period. Each departure gets a number of shoppers drawn from a Poisson distribution whose mean is <var>shoppers per seat</var> × <var>seats</var>, scaled for each departure by a gamma factor with a 25% coefficient of variation so that some departures are much busier than others. Shoppers arrive at a rate proportional to exp(−<var>t</var> / 55), <var>t</var> being days before departure, so about 40% of them come in the last 30 days.</p>
@@ -381,7 +377,6 @@
 
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
     // ═════════════════════════════════════════ model (no DOM, no d3)
     var CPModel = (function () {

@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Allotments vs spot</title>
     <meta name="description" content="An air cargo capacity simulator: how much of a weekly freighter to sell under allotment contracts with forwarders and how much to keep for the spot market, over a 26-week season.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -250,9 +248,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -276,7 +271,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -285,7 +279,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Cargo</div>
         <h1>Allotments vs spot</h1>
         <p class="lede">How much of a cargo flight to sell in advance to forwarders, and how much to keep for the spot market.</p>
-        <p>Cargo airlines sell much of their space months ahead as <b>allotments</b> (block space agreements): a forwarder commits to a number of kilos on every flight at a fixed contract rate. The rest goes on the <b>spot market</b>, one shipment at a time, at whatever the market pays that week. Allotments steady the revenue, but they lock in a rate that can look cheap when the market jumps, and forwarders often hand back space they don't need, sometimes too late to sell again. This page simulates one weekly freighter over a 26-week season, a thousand times, for every allotment share from 0% to 100%. It is the hands-on companion to <a href="/cargo101.html#ch06">Cargo 101, chapter 06</a>.</p>
+        <p>Cargo airlines sell much of their space months ahead as <b>allotments</b> to forwarders at a fixed rate, the rest on the <b>spot market</b> week by week. Allotments steady revenue but lock in a rate, and forwarders return space too late to resell. One weekly freighter, 26 weeks, every allotment share from 0% to 100%. Companion to <a href="/cargo101.html#ch06">Cargo 101, chapter 06</a>.</p>
       </div>
 
       <div class="switch">
@@ -401,6 +395,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>Cargo airlines sell much of their space months ahead as <b>allotments</b> (block space agreements): a forwarder commits to a number of kilos on every flight at a fixed contract rate. The rest goes on the <b>spot market</b>, one shipment at a time, at whatever the market pays that week. Allotments steady the revenue, but they lock in a rate that can look cheap when the market jumps, and forwarders often hand back space they don't need, sometimes too late to sell again. The page simulates one weekly freighter over a 26-week season, a thousand times, for every allotment share from 0% to 100%.</p>
 
         <h4>The lane</h4>
         <p>One weekly freighter rotation with 100 tonnes of payload (weight only; volume and density are ignored), over a 26-week season from July to December, week 1 to week 26. A share <var>a</var> of the capacity, <var>A</var> = <var>a</var> × 100 t, is sold as allotments at the contract rate <var>r</var>. The rest, plus any allotment space released back, is sold on the spot market. The carrier takes the spot rate as given: it sells as much spot space as there is demand for, at that week's market rate.</p>
@@ -444,7 +440,6 @@
 
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
     window.addEventListener("DOMContentLoaded", function () {
       "use strict";

@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Airline subscription pricer</title>
     <meta name="description" content="Design and price an airline subscription: an all-you-can-fly pass, a commuter route pass or a bundle of bags, seats and Wi-Fi. See who signs up, what revenue it displaces, what capacity control protects, and the price that maximises profit.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -256,9 +254,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
     </style>
     <style>
@@ -278,7 +273,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -287,7 +281,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Loyalty</div>
         <h1>Subscription pricer</h1>
         <p class="lede">Design an airline subscription, set its price, and see who signs up and whether it pays.</p>
-        <p>An all-you-can-fly pass, a route pass for commuters or a monthly bundle of bags, seats and Wi-Fi all promise the same thing: recurring revenue from loyal customers. The catch is who buys it. The customers who gain most from a flat price are the ones who already fly a lot and would have paid you anyway, and they tend to expect to use it even more than they will. This page builds a synthetic customer base, lets each customer decide whether your product is worth its price, and then adds up what the airline gains and gives away.</p>
+        <p>An all-you-can-fly pass, a commuter route pass or a bundle of bags, seats and Wi-Fi all promise recurring revenue. The catch is who buys: the customers who gain most from a flat price already fly a lot. This page builds a synthetic customer base, lets each one decide, and adds up what the airline gains and gives away.</p>
       </div>
 
       <div class="steps" aria-label="The logic in three steps">
@@ -402,6 +396,8 @@
 
       <div class="method" id="how">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>An all-you-can-fly pass, a route pass for commuters or a monthly bundle of bags, seats and Wi-Fi all promise the same thing: recurring revenue from loyal customers. The catch is who buys it. The customers who gain most from a flat price are the ones who already fly a lot and would have paid you anyway, and they tend to expect to use it even more than they will. The page builds a synthetic customer base, lets each customer decide whether your product is worth its price, and then adds up what the airline gains and gives away.</p>
 
         <h4>The customers</h4>
         <p>Each market is a synthetic sample of customers (20,000 for the two networks, 12,000 for YUL–YYZ), drawn once with a fixed seed so the page always shows the same people, then scaled up to the market size. Customers belong to segments (occasional leisure, frequent leisure and visiting friends and relatives, business, road warriors or weekly commuters), and within a segment each one gets their own draw of:</p>
@@ -462,7 +458,6 @@ p(L) = 1 / (1 + e^−(L − 0.93)/0.025)                        chance that one 
 
     <div class="tip" id="tip"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
     window.addEventListener("DOMContentLoaded", function () {
       var DATA_URL = "assets/data/subscription.json";

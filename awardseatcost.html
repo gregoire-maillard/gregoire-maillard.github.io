@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Award seat cost</title>
     <meta name="description" content="What does an award seat really cost the airline? The larger of the marginal cost of one more passenger and the revenue the seat displaces, compared with what the loyalty programme pays for it.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -223,9 +221,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -246,7 +241,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -255,7 +249,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Loyalty</div>
         <h1>Award seat cost</h1>
         <p class="lede">What does an award seat really cost the airline? Almost nothing on an empty flight, and a paying passenger's fare on a full one.</p>
-        <p>When a member books a seat with points, the airline carries one more passenger and, if the flight would have filled, loses the sale of that seat. So the cost of an award seat is the larger of two numbers: the <b>marginal cost</b> of carrying one more person (fuel, catering, fees) and the <b>displacement cost</b>, the revenue the seat would otherwise have earned. That second number is the bid price of the last seat, the same opportunity cost that revenue management uses to accept or reject any booking. Compare it with what the loyalty programme pays the airline for the seat, and you know when releasing award seats helps both sides.</p>
+        <p>An award seat costs the airline the larger of two numbers: the <b>marginal cost</b> of one more passenger, and the <b>displacement cost</b>, the fare the seat would otherwise have sold for, which is the bid price revenue management uses. Compare it with what the loyalty programme pays for the seat to see when releasing award seats helps both sides.</p>
       </div>
 
       <div class="switch">
@@ -365,6 +359,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>When a member books a seat with points, the airline carries one more passenger and, if the flight would have filled, loses the sale of that seat. So the cost of an award seat is the larger of two numbers: the <b>marginal cost</b> of carrying one more person (fuel, catering, fees) and the <b>displacement cost</b>, the revenue the seat would otherwise have earned. That second number is the bid price of the last seat, the same opportunity cost that revenue management uses to accept or reject any booking.</p>
 
         <h4>The flight and its demand</h4>
         <p>An invented 3½-hour domestic flight with 150 economy seats and five fare classes. Each example flight has its own fare level (85%, 100% and 130% of a base fare ladder of CA$620, 450, 340, 250 and 180), class mix and demand variability. Expected demand in class <var>j</var> is <var>μ</var><sub>j</sub> = <var>L</var> · 150 · <var>s</var><sub>j</sub>, where <var>L</var> is the expected demand as a share of seats and <var>s</var><sub>j</sub> the class share. Demand is a negative binomial draw (a Poisson whose mean has a gamma-distributed error with coefficient of variation <var>cv</var>), so its variance is <var>μ</var> + (<var>cv</var> · <var>μ</var>)². The inputs are in <a href="/assets/data/awardseatcost.json">assets/data/awardseatcost.json</a>.</p>
@@ -406,7 +402,6 @@
 
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
     window.addEventListener("DOMContentLoaded", function () {
       "use strict";

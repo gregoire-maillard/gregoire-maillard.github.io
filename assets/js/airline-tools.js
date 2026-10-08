@@ -1,9 +1,9 @@
 /* Airline Economics (/airlinetools.html): small shared helper loaded by the hub, every tool and every course.
 
-   1. Header counts. The "N tools · M courses" pill is counted from the hub page itself
-      (one card per tool, one per course), so adding a card to airlinetools.html is the only
-      thing needed to keep every page right. The pill ships hidden with no number in the HTML
-      and only appears once the count is known, so it can never show a stale figure.
+   1. Header counts. The "N tools · M courses" pill in the hub's header is counted from the hub
+      itself (one card per tool, one per course), so adding a card is the only thing needed to keep
+      it right. It ships hidden with no number in the HTML and only appears once the count is known.
+      (Tool and course pages no longer show the pill; the code still fills one if a page has it.)
    2. Breadcrumb. A tool page without a breadcrumb gets "Airline Economics · <topic>" at the top
       of its intro, using the topic section (data-area) its card sits in on the hub.
    3. On the hub, each course card shows how many tools follow it in its topic.

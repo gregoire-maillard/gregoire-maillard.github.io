@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Fleet assignment</title>
     <meta name="description" content="Which aircraft type should fly each flight? A one-day schedule of 30 flights at a hub and four spokes, drawn as a time-space network and solved as an integer program in your browser: operating cost plus expected spill, with flight coverage, aircraft balance and fleet counts. The optimum against a greedy rule, and on 1,000 simulated days.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -217,9 +215,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -243,7 +238,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -253,7 +247,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Network planning</div>
         <h1>Fleet assignment</h1>
         <p class="lede">Which aircraft type should fly each flight, when every aircraft that lands has to take off again from the same airport, and the airline only has so many of each.</p>
-        <p>A bigger aircraft carries the passengers a smaller one would turn away, but it costs more to fly. Flight by flight the choice is easy. Across a day it isn't: the aircraft that flies a busy morning departure is then away until it comes back, and there are only a few of each type. Below, one day of 30 flights between a hub and four spokes is drawn as a <b>time-space network</b> and solved as an <b>integer program</b> in your browser, with the HiGHS solver: every flight gets exactly one type, aircraft are balanced at every airport at every moment, no type is used more than the airline has, and the total of operating cost and expected spill is as low as possible. The optimum is then compared with a <b>greedy rule</b> that gives the largest aircraft to the busiest flights. This is the hands-on companion to <a href="/np101.html#ch05">Network Planning 101, chapter 05</a> and <a href="/or101.html#ch04">Operations Research 101, chapters 04 and 05</a>, with their numbers. The schedule, costs, fares and demand are illustrative.</p>
+        <p>A bigger aircraft spills fewer passengers but costs more, and there are only so many of each type. Below, 30 flights at a hub are solved as an <b>integer program</b> in your browser and compared with a <b>greedy rule</b>. Companion to <a href="/np101.html#ch05">NP 101, chapter 05</a> and <a href="/or101.html#ch04">OR 101, chapters 04 and 05</a>. The schedule, costs, fares and demand are illustrative.</p>
       </div>
 
       <div class="switch" role="group" aria-label="Scenario">
@@ -353,6 +347,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>A bigger aircraft carries the passengers a smaller one would turn away, but it costs more to fly. Flight by flight the choice is easy. Across a day it isn't: the aircraft that flies a busy morning departure is then away until it comes back, and there are only a few of each type. The day of 30 flights between a hub and four spokes is drawn as a <b>time-space network</b> and solved as an <b>integer program</b> in your browser, with the HiGHS solver: every flight gets exactly one type, aircraft are balanced at every airport at every moment, no type is used more than the airline has, and the total of operating cost and expected spill is as low as possible. The optimum is then compared with a <b>greedy rule</b> that gives the largest aircraft to the busiest flights.</p>
 
         <h4>The schedule and the fleet</h4>
         <p>One day of 30 flights between a hub (H) and four spokes, A to D, with block times of 1, 1.5, 2 and 2.5 hours and average fares of $150, $190, $220 and $250 (all in <a href="assets/data/fleetassign.json">fleetassign.json</a>). Three spokes keep an aircraft overnight for an early flight to the hub, and the hub sends one back to each of them late in the evening. The fleet has up to three types: a 76-seat regional jet at $3,900 per block hour with a 30-minute turn, a 150-seat narrowbody at $7,200 with 40 minutes, and a 190-seat narrowbody at $8,600 with 45 minutes. The two narrowbodies are those of NP 101 and OR 101: on the 2.5-hour leg to D they cost $18,000 and $21,500 to fly, the operating costs of OR 101's worked example. Every number here is illustrative; real costs per block hour vary a lot between airlines and include or leave out different items (ownership, crew, maintenance, fuel).</p>
@@ -411,7 +407,6 @@
 
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
 // <fam-engine>
 // Fleet assignment engine: schedule, seeded demand, leg-fleet costs, the time-space network, the integer program

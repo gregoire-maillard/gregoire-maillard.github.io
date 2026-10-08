@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Cargo revenue management</title>
     <meta name="description" content="Why cargo revenue management differs from passenger RM: weight and volume capacity, shipments of every size and density, late bookings and allotments, tendered weight that differs from booked, no-shows, overbooking and offloads. Bid-price control against first come, first served over 1,000 simulated flights.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -267,9 +265,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -293,7 +288,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -302,7 +296,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Cargo</div>
         <h1>Cargo revenue management</h1>
         <p class="lede">Why selling space in the hold is harder than selling seats, and what a bid price per kilo and per cubic metre does about it.</p>
-        <p>Passenger RM sells identical seats, booked weeks ahead by people who mostly turn up. Cargo RM sells one space that can run out by weight or by volume, to shipments of every size and density, booked in the last few days by forwarders who often hold space in advance, and who then tender more or less than they booked, or nothing at all. Below, one flight's hold is sold to four kinds of shipper under two policies: first come, first served, and <b>bid-price control</b>, which values each kilo and each cubic metre with a small linear program and accepts a shipment only if it pays for the space it takes. Both overbook, and both pay for any cargo they have to offload. It is the hands-on companion to <a href="/cargo101.html#ch07">Cargo 101, chapters 07 and 08</a>, and builds on bid prices in <a href="/rm101.html#ch04">RM 101, chapter 04</a> and the network version on the <a href="/bidprice.html">network bid prices</a> page.</p>
+        <p>Passenger RM sells identical seats booked weeks ahead. Cargo RM sells space that runs out by weight or by volume, booked late and often tendered heavier, lighter or not at all. Below, one flight's hold is sold under first come, first served and <b>bid-price control</b>. Companion to <a href="/cargo101.html#ch07">Cargo 101, chapters 07 and 08</a>; builds on <a href="/rm101.html#ch04">RM 101, chapter 04</a>.</p>
       </div>
 
       <div class="switch" role="group" aria-label="Scenario">
@@ -420,6 +414,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>Passenger RM sells identical seats, booked weeks ahead by people who mostly turn up. Cargo RM sells one space that can run out by weight or by volume, to shipments of every size and density, booked in the last few days by forwarders who often hold space in advance, and who then tender more or less than they booked, or nothing at all. The page sells one flight's hold to four kinds of shipper under two policies: first come, first served, and <b>bid-price control</b>, which values each kilo and each cubic metre with a small linear program and accepts a shipment only if it pays for the space it takes. Both overbook, and both pay for any cargo they have to offload. The network version of bid prices is on the <a href="/bidprice.html">network bid prices</a> page.</p>
 
         <h4>The flight and its demand</h4>
         <p>One flight, either the belly of a long-haul passenger widebody (16,000 kg and 110 m³ available for cargo) or a large main-deck freighter (95,000 kg and 580 m³ usable). Both are assumptions in round numbers: a belly's cargo capacity depends on the passenger load, bags and fuel on the day, and a freighter's usable volume is well below its gross hold volume because pallets are contoured and never packed perfectly. For scale, Boeing lists a maximum structural payload of 107 tonnes for the 777 Freighter.</p>
@@ -470,7 +466,6 @@
 
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
 // <crm-engine>
 // Cargo RM engine: shipment generator, two-resource LP bid prices, FCFS and bid-price acceptance,

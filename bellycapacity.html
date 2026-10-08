@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Belly cargo capacity</title>
     <meta name="description" content="How much cargo a passenger widebody can carry on a long route once passengers, bags and fuel are loaded, how the forecast of it narrows from 30 days to 2 days out, which days are payload restricted, and how much cargo to sell before the capacity is known. A Boeing 787-9 over a year of departures.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -197,9 +195,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -223,7 +218,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -232,7 +226,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Cargo</div>
         <h1>Belly cargo capacity</h1>
         <p class="lede">How much cargo a passenger widebody can take on a long route, how well that is known a month ahead, and how much of it to sell before it is.</p>
-        <p>A passenger aircraft's hold is not a fixed amount of space. Cargo gets whatever weight and volume are left once the passengers, their bags and the fuel are on board, and on a long route flown into the wind the fuel can eat into it badly. Below, a Boeing 787-9 flies a 9,800 km route once a day for a year. Each departure's passengers come from a booking curve, its bags from the passengers, and its fuel from the headwind of the day, all within the aircraft's maximum take-off, zero fuel and landing weights from <b>Boeing's airport planning document</b>. The page shows the capacity that results on every departure, how the forecast of it narrows as departure gets closer, which days are payload restricted, and then the decision: how much cargo to sell at each point, when selling too much means offloading it at a cost. That last part reuses the overbooking rule of the <a href="/cargorm.html">cargo revenue management</a> page. It is the hands-on companion to <a href="/cargo101.html#ch10">Air Cargo 101, chapter 10</a>. The route, demand and costs are illustrative; the aircraft limits and standard masses are public figures, cited at the bottom.</p>
+        <p>Cargo gets whatever weight and volume are left once passengers, bags and fuel are on board. A Boeing 787-9 flies a 9,800 km route daily for a year: see each departure's capacity, how its forecast narrows, and how much cargo to sell ahead. Companion to <a href="/cargo101.html#ch10">Air Cargo 101, chapter 10</a>. Route, demand and costs are illustrative; aircraft limits are public.</p>
       </div>
 
       <div class="switch" role="group" aria-label="Departure">
@@ -358,6 +352,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>A passenger aircraft's hold is not a fixed amount of space. Cargo gets whatever weight and volume are left once the passengers, their bags and the fuel are on board, and on a long route flown into the wind the fuel can eat into it badly. A Boeing 787-9 flies a 9,800 km route once a day for a year. Each departure's passengers come from a booking curve, its bags from the passengers, and its fuel from the headwind of the day, all within the aircraft's maximum take-off, zero fuel and landing weights from <b>Boeing's airport planning document</b>. The page shows the capacity that results on every departure, how the forecast of it narrows as departure gets closer, which days are payload restricted, and then the decision: how much cargo to sell at each point, when selling too much means offloading it at a cost. That last part reuses the overbooking rule of the <a href="/cargorm.html">cargo revenue management</a> page.</p>
 
         <h4>The aircraft and the route</h4>
         <p>A Boeing 787-9 in a 290-seat, two-class layout. Its limits come from Boeing's airport planning document: maximum design take-off weight 254,692 kg, maximum design landing weight 192,776 kg, maximum design zero fuel weight 181,436 kg, usable fuel 101,522 kg, and a lower deck of 20 LD-3 container positions forward and 16 aft (4.5 m³ each) plus an 11.4 m³ bulk hold. The document doesn't give an operating empty weight, which depends on the airline's cabin; the page assumes a dry operating weight (aircraft, crew, catering and water) of 132,000 kg, which is illustrative. Passengers and bags use EASA's standard masses: 84 kg per adult including hand baggage and 15 kg per checked bag on an intercontinental flight. The route, 9,800 km flown at a true airspeed of 900 km/h, is illustrative, as is everything below except where a source is named. All inputs are in <a href="assets/data/bellycapacity.json">bellycapacity.json</a>.</p>
@@ -404,7 +400,6 @@
 
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
 // <bcap-engine>
 // Belly cargo capacity engine: passengers from a booking curve, bags, fuel for a seasonal headwind, the 787-9 weight limits

@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Chargeable weight &amp; ULD build-up</title>
     <meta name="description" content="Load 40 shipments into a widebody's lower deck of LD3 containers and pallets, by hand or with a packing heuristic. Chargeable against actual weight, weight and volume fill, wasted space, and why loading the best rate first loses to mixing dense and light cargo.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -245,9 +243,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -271,7 +266,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -280,7 +274,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Cargo</div>
         <h1>Chargeable weight &amp; ULD build-up</h1>
         <p class="lede">Which shipments to put in a widebody's lower deck, and why loading the best-paying cargo first can leave weight or space unused.</p>
-        <p>Air cargo pays on its <b>chargeable weight</b>: the actual weight, or its volume counted at 166.67 kg per cubic metre, whichever is higher. But the hold fills with real kilos and real cubic metres, packed into containers and onto pallets of fixed sizes, called unit load devices (ULDs). Below, 40 generated shipments, some dense, some standard, some light, compete for a lower deck laid out like an A350-900's. Load them by hand, or let one of two simple rules do it: <b>best rate first</b>, or <b>mix dense and light</b> so that the weight and the space run out together. It goes with <a href="/cargo101.html#ch03">Cargo 101, chapter 03</a>; the <a href="/cargorm.html">cargo revenue management</a> page makes the same trade-off booking by booking, with bid prices.</p>
+        <p>Cargo pays on its <b>chargeable weight</b>, actual or volumetric, whichever is higher, but the hold fills with real kilos and cubic metres in containers and pallets (ULDs). Load 40 shipments into an A350-900 lower deck by hand, or with <b>best rate first</b> or <b>mix dense and light</b>. It goes with <a href="/cargo101.html#ch03">Cargo 101, chapter 03</a>.</p>
         <p class="note-line">The shipments, their rates, tonight's weight allowance, the positions' distances from the reference point and the centre-of-gravity window are all illustrative. The sizes and weights of the containers and pallets, and the number of each that fit in the hold, come from the manufacturers' sources listed at the bottom.</p>
       </div>
 
@@ -376,6 +370,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>Air cargo pays on its <b>chargeable weight</b>: the actual weight, or its volume counted at 166.67 kg per cubic metre, whichever is higher. But the hold fills with real kilos and real cubic metres, packed into containers and onto pallets of fixed sizes, called unit load devices (ULDs). 40 generated shipments, some dense, some standard, some light, compete for a lower deck laid out like an A350-900's. Load them by hand, or let one of two simple rules do it: <b>best rate first</b>, or <b>mix dense and light</b> so that the weight and the space run out together. The <a href="/cargorm.html">cargo revenue management</a> page makes the same trade-off booking by booking, with bid prices.</p>
 
         <h4>Chargeable weight</h4>
         <p>IATA's general rule is to divide a shipment's volume in cm³ by 6,000 to get its volume weight, and to charge on whichever is higher, the volume weight or the actual weight. For a shipment of <var>w</var> kg and <var>v</var> m³: <var>cw</var> = max(<var>w</var>, 166.67 <var>v</var>), and revenue = rate × <var>cw</var>. Cargo denser than 166.67 kg per m³ pays on its weight; lighter cargo pays on its volume. No rounding is applied (in practice, carriers round chargeable weight up to the next half kilo or kilo).</p>
@@ -425,7 +421,6 @@
 
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
 // <uld-engine>
 // ULD build-up engine: shipment generator, chargeable weight, piece-by-piece build-up into LD3s and pallets,

@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Promotion ROI calculator</title>
     <meta name="description" content="Did the bonus-points campaign pay for itself? Incremental trips against a holdout, the cost of rewarding trips that would have happened anyway, ROI with confidence intervals, and how big a holdout you need.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -239,9 +237,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
     </style>
     <style>
@@ -261,7 +256,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -270,7 +264,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Loyalty</div>
         <h1>Promotion ROI calculator</h1>
         <p class="lede">Did the bonus-points campaign pay for itself?</p>
-        <p>"Double points on flights booked this month" looks like a success when lots of members book. But many of them would have booked anyway, and they collect the bonus too. This calculator compares the members who got the offer with a random holdout who didn't, counts only the extra trips the offer caused, charges the campaign for every bonus it paid, and tells you whether the difference is real or just noise. The statistics behind it are in <a href="/impact101.html#ch04">Impact Evaluation 101, chapters 04 and 13</a>.</p>
+        <p>“Double points this month” looks like a success when lots of members book, but many would have booked anyway. This calculator compares the members who got the offer with a random holdout, counts only the extra trips, charges every bonus paid, and tests whether the difference is real. The statistics are in <a href="/impact101.html#ch04">Impact Evaluation 101, chapters 04 and 13</a>.</p>
       </div>
 
       <div class="steps" aria-label="The logic in three steps">
@@ -410,7 +404,6 @@ Interval on ROI            (N × m × u_low − C) / C  to  (N × m × u_high �
 
     <div class="tip" id="tip"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
     window.addEventListener("DOMContentLoaded", function () {
       var DATA_URL = "assets/data/promoroi.json";

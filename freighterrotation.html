@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Freighter rotation</title>
     <meta name="description" content="Where to fly one freighter for a week: back and forth on one lane, a triangle or a round-the-world loop. Block hours, payload per leg, cost per block hour and weekly contribution across six cargo regions, why triangles beat shuttles on unbalanced lanes, and what fifth-freedom rights are worth.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -222,9 +220,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -248,7 +243,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -257,7 +251,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Cargo</div>
         <h1>Freighter rotation</h1>
         <p class="lede">Where should one freighter fly this week: back and forth on one lane, around a triangle, or around the world?</p>
-        <p>Passengers mostly fly return trips, but goods flow one way: much more cargo leaves Asia than goes back. A freighter that shuttles between two airports fills up in the busy direction (the <b>headhaul</b>) and flies the other one (the <b>backhaul</b>) half empty, yet pays for the whole aircraft both ways. Below, one freighter picks a rotation among six cargo regions. For each one you see the block hours, the payload on every leg, the revenue, the cost per block hour and the <b>weekly contribution</b> (revenue minus operating cost, before the aircraft's ownership cost). A switch turns <b>fifth-freedom</b> rights on and off: without them, the freighter can't carry cargo between two foreign countries, so a triangle loses most of what makes it pay. It builds on <a href="/cargo101.html#ch09">Cargo 101, chapter 09</a>.</p>
+        <p>Goods flow one way: much more cargo leaves Asia than goes back. A freighter shuttling between two airports flies its <b>backhaul</b> half empty but pays for both legs. Pick a rotation among six cargo regions and compare block hours, payload, cost and <b>weekly contribution</b>, with or without <b>fifth-freedom</b> rights. It builds on <a href="/cargo101.html#ch09">Cargo 101, chapter 09</a>.</p>
         <p class="note-line">The airports and distances are real, and so are the aircraft figures and trade-lane tonnages cited in How it works. Every demand, rate and cost on this page is <b>illustrative</b>: made up, but shaped like real headhaul and backhaul lanes.</p>
       </div>
 
@@ -348,6 +342,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>Passengers mostly fly return trips, but goods flow one way: much more cargo leaves Asia than goes back. A freighter that shuttles between two airports fills up in the busy direction (the <b>headhaul</b>) and flies the other one (the <b>backhaul</b>) half empty, yet pays for the whole aircraft both ways. One freighter picks a rotation among six cargo regions. For each one you see the block hours, the payload on every leg, the revenue, the cost per block hour and the <b>weekly contribution</b> (revenue minus operating cost, before the aircraft's ownership cost). A switch turns <b>fifth-freedom</b> rights on and off: without them, the freighter can't carry cargo between two foreign countries, so a triangle loses most of what makes it pay.</p>
 
         <h4>The regions and the aircraft</h4>
         <p>Six regions, each represented by one airport: East Asia (Hong Kong, HKG), Middle East (Dubai, DXB), Europe (Frankfurt, FRA), Africa (Nairobi, NBO), North America (Chicago O'Hare, ORD) and Latin America (Bogotá, BOG). Distances are great-circle distances between the airports' coordinates. The aircraft is a large twin-engine freighter in the class of the Boeing 777 Freighter, for which Boeing lists a maximum structural payload of 107 tonnes and a range of 9,260 km. The page assumes <b>100 tonnes</b> of usable payload (a hold rarely fills to its structural limit, because pallets are contoured and cargo has a density) and a nonstop range of 9,260 km whatever the load. A leg longer than that stops for fuel at evenly spaced points on the way (in practice at airports such as Anchorage on the Pacific).</p>
@@ -391,7 +387,6 @@
 
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
 // <fr-engine>
 // Freighter rotation engine: distances and block hours, fuel stops, the cargo each leg can carry (a small LP),

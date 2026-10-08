@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Network bid prices</title>
     <meta name="description" content="A network revenue management demo: leg bid prices from a linear program, and a booking simulation comparing leg-based EMSR-b control with origin-destination bid-price control.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -263,9 +261,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
       /* breadcrumb: "Airline Economics · group", same on every tool page */
       .crumbs { font-size: 12.5px; line-height: 1.4; color: var(--muted, #6f6f6f); margin: 0 0 10px; }
@@ -289,7 +284,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -298,7 +292,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Revenue management</div>
         <h1>Network bid prices</h1>
         <p class="lede">Why airlines stopped controlling seats one flight at a time, and started pricing a seat by the whole journey it is part of.</p>
-        <p>At a hub, one seat on a long-haul flight can go to a local passenger or to a passenger connecting from a smaller city, who also needs a seat on the feeder flight. Leg-based revenue management decides flight by flight and fare class by fare class, so it can't tell the two apart. Origin-destination (O&amp;D) control gives every flight a <b>bid price</b>, the value of its last seat across the whole network, and accepts a booking only if the fare covers the bid prices of every flight it uses. Below, a linear program works out those bid prices for a small hub at Montréal, then one stream of booking requests is run through three kinds of control. This is the hands-on companion to <a href="/rm101.html#ch06">RM 101, chapter 06</a>.</p>
+        <p>At a hub, a long-haul seat can go to a local passenger or a connecting one, and leg-based control can't tell them apart. Origin-destination control gives each flight a <b>bid price</b> and takes a booking only if its fare covers them all. A small Montréal hub shows three kinds of control at work. Companion to <a href="/rm101.html#ch06">RM 101, chapter 06</a>.</p>
       </div>
 
       <div class="switch">
@@ -434,6 +428,8 @@
       <!-- ═══════════════════════════ HOW IT WORKS ═══════════════════════════ -->
       <div class="method">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>At a hub, one seat on a long-haul flight can go to a local passenger or to a passenger connecting from a smaller city, who also needs a seat on the feeder flight. Leg-based revenue management decides flight by flight and fare class by fare class, so it can't tell the two apart. Origin-destination (O&amp;D) control gives every flight a <b>bid price</b>, the value of its last seat across the whole network, and accepts a booking only if the fare covers the bid prices of every flight it uses. On this page, a linear program works out those bid prices for a small hub at Montréal, then one stream of booking requests is run through three kinds of control.</p>
 
         <h4>The network</h4>
         <p>An invented airline with a hub at Montréal (YUL): two feeder flights in from Québec City (YQB) and Ottawa (YOW), two long-haul flights out to Paris (CDG) and London (LHR), one direction and one departure day, economy cabin only. That gives eight itineraries: four local (one flight) and four connecting (a feeder plus a long-haul flight), each sold in three fare classes, Y (flexible), M (standard) and Q (discount). Fares, forecasts and capacities come from <a href="assets/data/bidprice.json">bidprice.json</a> and are illustrative assumptions.</p>
@@ -475,7 +471,6 @@
 
     <div class="tip" id="tip" role="status" aria-live="polite"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script type="module">
     import GLPK from "https://cdn.jsdelivr.net/npm/glpk.js@5.0.0/dist/index.js";
 

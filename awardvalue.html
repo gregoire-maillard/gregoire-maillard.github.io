@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Award value comparator</title>
     <meta name="description" content="How many points Aeroplan, MileagePlus, Flying Blue and Etihad Guest ask for the same trips, and what that's worth in cents per point: a snapshot of public award prices and cash fares.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -188,6 +186,13 @@
         .big { font-size: 28px; }
         .cmp li { grid-template-columns: 96px 1fr 52px; }
       }
+          /* ── The two programme comparators, shown as two tabs of one tool ── */
+      .pair { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 14px 0 0; }
+      .pair-lbl { font-size: 12.5px; color: var(--muted); }
+      .pair-tabs { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: #fff; }
+      .pair-tabs a { padding: 5px 14px; border-radius: 999px; font-size: 13.5px; color: var(--text); text-decoration: none; }
+      .pair-tabs a:hover { color: var(--ink); background: var(--soft); }
+      .pair-tabs a[aria-current="page"] { background: var(--ink); color: #fff; }
     </style>
 
     <!-- Airline Economics header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
@@ -220,9 +225,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
     </style>
     <style>
@@ -242,7 +244,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -253,6 +254,7 @@
         <p class="lede">What an airline point is worth when you spend it.</p>
         <p>The same ten trips, priced in points by four programmes: Aeroplan, United MileagePlus, Flying Blue and Etihad Guest. Divide what the ticket would cost in cash by the points asked, after taxes, and you get the value of a point in cents. Two programmes publish charts; two price every flight dynamically.</p>
         <span class="asof" id="asof">Prices as of <b>28 Sep 2026</b></span>
+        <nav class="pair" aria-label="Programme comparator"><span class="pair-lbl">Compare programmes:</span><span class="pair-tabs"><a href="/loyaltybenchmark.html">Earning &amp; status</a><a href="/awardvalue.html" aria-current="page">Spending points</a></span></nav>
       </div>
 
       <div class="panel" id="controls">
@@ -352,7 +354,6 @@
 
     <div class="tip" id="tip"></div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
     window.addEventListener("DOMContentLoaded", function () {
       var DATA_URL = "assets/data/award-value.json";

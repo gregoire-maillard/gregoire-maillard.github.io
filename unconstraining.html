@@ -11,12 +11,10 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Demand unconstraining</title>
     <meta name="description" content="Recorded bookings understate demand whenever a flight or fare class closes. Five ways to recover the true demand, compared on a synthetic history, and what the recovered demand says about spill, recapture and aircraft size.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width">
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
@@ -247,9 +245,6 @@
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
       .at-hdr .at-grow { flex: 1; }
-      .at-hdr .at-pill { display: inline-flex; align-items: baseline; gap: 4px; height: 24px; padding: 4px 8px; border-radius: 6px; font-size: 12px; line-height: 16px; white-space: nowrap; background: rgb(255 255 255 / .92); box-shadow: 0 0 0 1px var(--at-hair), inset 0 1px 0 #fff; color: var(--at-ink-2); }
-      .at-hdr .at-pill b { color: var(--at-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
-      @media (max-width: 1099px) { .at-hdr .at-pill { display: none; } }
       @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
     </style>
     <style>
@@ -269,7 +264,6 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
@@ -278,7 +272,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Revenue management</div>
         <h1>Demand unconstraining</h1>
         <p class="lede">How airlines recover the demand they never saw, and what it is worth.</p>
-        <p>An airline only records the bookings it accepted. Once a flight or a fare class closes, every later request disappears from the data, so on the busiest departures the history shows the booking limit, not the demand. Forecasts built on that history come out too low, and fleet decisions built on those forecasts put too few seats where they are needed. This page generates a booking history where the true demand is known, runs five classic ways of recovering it, then turns the recovered demand into spill, recapture and the case for a bigger aircraft. The theory is in <a href="/rm101.html#ch02">Revenue Management 101, Chapter 02</a>.</p>
+        <p>Once a flight or fare class closes, later requests vanish from the data, so the busiest departures record the booking limit, not the demand. This page builds a history where true demand is known, recovers it five ways, then turns it into spill, recapture and the case for a bigger aircraft. The theory is in <a href="/rm101.html#ch02">Revenue Management 101, Chapter 02</a>.</p>
         <p class="load-err" id="load-err"></p>
       </div>
 
@@ -418,6 +412,8 @@
 
       <div class="method">
         <h3>How it works</h3>
+        <h4>Background</h4>
+        <p>An airline only records the bookings it accepted. Once a flight or a fare class closes, every later request disappears from the data, so on the busiest departures the history shows the booking limit, not the demand. Forecasts built on that history come out too low, and fleet decisions built on those forecasts put too few seats where they are needed.</p>
 
         <h4>Why bookings are censored</h4>
         <p>A booking record is what the airline sold, not what customers asked for. While a flight or fare class is open, every request that fits becomes a booking. Once its bookings reach the booking limit, later requests are turned away and leave no trace in the data (or at best a search log that is hard to tie to one flight). Statisticians call the resulting observation <b>censored</b>: for a closed departure you know demand was <em>at least</em> the limit, not what it was. Averaging those numbers as if they were demand biases the forecast down. A lower forecast protects fewer seats for later passengers or plans fewer seats in the first place, the flight closes earlier, and next season's data is censored even more. <a href="/rm101.html#ch02">Revenue Management 101, Chapter 02</a> calls this the unconstraining problem.</p>
@@ -459,7 +455,6 @@
       </div>
     </div>
 
-    <script src="javascripts/scale.fix.js"></script>
     <script>
     // ───────────────────────────── Unconstraining engine (pure functions, no DOM)
     // Synthetic censored booking history, five unconstraining methods, a sweep over the share of
