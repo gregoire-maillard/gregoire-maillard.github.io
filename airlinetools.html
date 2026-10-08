@@ -134,7 +134,6 @@ main { padding-top: 48px; }
 @media (max-width: 839px) { .tool { grid-column: 1 / -1; } }
 
 /* topics: one section per topic, its course first, then its tools in course order (quarters, then thirds, halves, full) */
-.topic .sec-head span { max-width: 640px; }
 .area-row { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gutter); counter-reset: step; }
 .area-row .tool { grid-column: span 3; counter-increment: step; }
 .area-row .tool .viz { height: 144px; }
@@ -200,7 +199,7 @@ main { padding-top: 48px; }
       <a class="tab" href="#courses">Other courses</a>
     </nav>
     <div class="grow"></div>
-    <span class="pill" data-at-count><b>23</b> tools · <b>8</b> courses</span>
+    <span class="pill" data-at-count><b>25</b> tools · <b>8</b> courses</span>
   </div>
 </header>
 
@@ -949,6 +948,55 @@ main { padding-top: 48px; }
             </div>
             <h3>Allotments vs spot</h3>
             <p>How much of a freighter to sell to forwarders under block space agreements and how much to keep for the spot market, what to do with space they hand back, and how the answer changes in a 2020–21 market.</p>
+            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/freighterrotation.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- one freighter, two ways to fly it: an out-and-back (orange) full one way and a third full on the way back, against a triangle (blue) full on every leg; pale bands are the aircraft's capacity -->
+              <g fill="none" stroke-linecap="round">
+                <g stroke="#E3E7EE" stroke-width="13"><path d="M172 156 Q186 76 282 62"/><path d="M282 62 Q274 150 172 156"/><path d="M326 156 Q338 84 392 54"/><path d="M392 54 Q446 82 456 150"/><path d="M456 150 Q392 184 326 156"/></g>
+                <path d="M172 156 Q186 76 282 62" stroke="#d9480f" stroke-width="10"/>
+                <path d="M282 62 Q274 150 172 156" stroke="#d9480f" stroke-width="3.5"/>
+                <g stroke="#2455E6"><path d="M326 156 Q338 84 392 54" stroke-width="10"/><path d="M392 54 Q446 82 456 150" stroke-width="9"/><path d="M456 150 Q392 184 326 156" stroke-width="7.5"/></g>
+              </g>
+              <g fill="#151A23" stroke="#fff" stroke-width="2"><circle cx="172" cy="156" r="6.5"/><circle cx="282" cy="62" r="6.5"/><circle cx="326" cy="156" r="6.5"/><circle cx="392" cy="54" r="6.5"/><circle cx="456" cy="150" r="6.5"/></g>
+              <g fill="none" stroke="#151A23" stroke-width="1.6"><circle cx="172" cy="156" r="11"/><circle cx="326" cy="156" r="11"/></g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Simulator</span>
+              <span class="pill"><b>6</b> regions, <b>30</b> lanes</span>
+              <span class="pill">Illustrative data</span>
+            </div>
+            <h3>Freighter rotation</h3>
+            <p>Where to fly one freighter for a week: back and forth on one lane, a triangle or a round-the-world loop. Block hours, payload per leg, cost per block hour and weekly contribution, why triangles beat shuttles on unbalanced lanes, and what fifth-freedom rights are worth.</p>
+            <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
+          </div>
+        </a>
+        <a class="panel tool" href="/bellycapacity.html">
+          <div class="viz" aria-hidden="true">
+            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
+              <!-- one departure's cargo capacity forecast narrowing from 30 days out to departure (green bands, median, actual dot), with the booking limit stepping down above it -->
+              <line x1="140" y1="184" x2="466" y2="184" stroke="rgb(15 23 42 / .12)"/>
+              <path d="M140,58 C250,56 330,66 380,92 C410,108 432,124 452,138 L452,142 C432,152 410,166 380,174 C330,186 250,180 140,176 Z" fill="#3a8f5c" opacity=".14"/>
+              <path d="M140,84 C250,82 330,90 380,110 C410,122 432,132 452,138 L452,142 C432,146 410,154 380,158 C330,164 250,160 140,150 Z" fill="#3a8f5c" opacity=".24"/>
+              <path d="M140,117 C180,122 220,112 260,116 C300,120 330,106 360,122 C390,136 420,128 452,140" fill="none" stroke="#2e7a4d" stroke-width="2.5"/>
+              <path d="M140,40 H290 V48 H350 V64 H396 V86 H428 V104 H452" fill="none" stroke="#151A23" stroke-width="2" stroke-dasharray="5 4"/>
+              <circle cx="452" cy="140" r="6" fill="#151A23"/>
+              <g font-size="12" font-weight="600" fill="#5B6272"><text x="140" y="202">30 days out</text><text x="452" y="202" text-anchor="end">departure</text></g>
+            </svg>
+          </div>
+          <div class="body">
+            <div class="meta">
+              <span class="pill">Simulator</span>
+              <span class="pill"><b>365</b> departures</span>
+              <span class="pill">Boeing 787-9 limits</span>
+            </div>
+            <h3>Belly cargo capacity</h3>
+            <p>What a passenger widebody can carry once passengers, bags and fuel for the day's headwind are on board, how the forecast narrows from 30 days to 2 days out, the payload-restricted days, and how much cargo to sell before the capacity is known.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
