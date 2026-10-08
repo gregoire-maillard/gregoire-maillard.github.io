@@ -14,14 +14,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#EEF1F5">
 <title>Airline Economics</title>
-<meta name="description" content="Visualizations and strategic tools for the airline industry, built on open data, plus short courses on how airlines work.">
+<meta name="description" content="Interactive tools and short courses on how airlines plan, price and sell: simulators on illustrative numbers, maps and benchmarks on public data.">
 <link rel="icon" type="image/png" href="/assets/img/favicon.png">
 <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
 <link rel="canonical" href="https://gregoiremaillard.com/airlinetools.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Grégoire Maillard">
 <meta property="og:title" content="Airline Economics · Grégoire Maillard">
-<meta property="og:description" content="Visualizations and strategic tools for the airline industry, built on open data, plus short courses on how airlines work.">
+<meta property="og:description" content="Interactive tools and short courses on how airlines plan, price and sell: simulators on illustrative numbers, maps and benchmarks on public data.">
 <meta property="og:url" content="https://gregoiremaillard.com/airlinetools.html">
 <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/airlinetools.jpg">
 <meta property="og:image:width" content="1200">
@@ -102,9 +102,22 @@ a { color: inherit; text-decoration: none; }
 .tabs { display: flex; align-self: stretch; gap: 4px; }
 .tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--ink-2); font-weight: 500; }
 .tab:hover { color: var(--ink); }
+.tab[aria-current]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; border-radius: 2px; background: var(--ink); }
+.tab[aria-current] { color: var(--ink); }
 .grow { flex: 1; }
 @media (max-width: 1099px) { .hdr .pill { display: none; } }
-@media (max-width: 899px) { .tabs { display: none; } }
+/* phones and small tablets: the section tabs drop to a second row of chips that scrolls sideways */
+@media (max-width: 899px) {
+  :root { --hdr: 104px; }
+  .hdr .wrap { height: auto; flex-wrap: wrap; column-gap: 16px; row-gap: 0; }
+  .home { height: 56px; }
+  .tabs { order: 3; flex: 0 0 auto; width: calc(100% + 2 * var(--margin)); margin-inline: calc(-1 * var(--margin)); padding: 0 var(--margin) 12px;
+          gap: 8px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: none; height: 32px; padding: 0 12px; border-radius: 999px; font-size: 13px; background: var(--glass-2); box-shadow: 0 0 0 1px var(--hair), inset 0 1px 0 #fff; }
+  .tab[aria-current] { background: var(--ink); color: #fff; box-shadow: none; }
+  .tab[aria-current]::after { display: none; }
+}
 
 /* hero */
 main { padding-top: 48px; }
@@ -119,6 +132,8 @@ main { padding-top: 48px; }
 .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; }
 .sec-head h2 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; }
 .sec-head span { color: var(--ink-2); font-size: 14px; }
+@media (max-width: 839px) { .sec-head { flex-direction: column; align-items: flex-start; gap: 4px; } }
+@media (max-width: 599px) { .sec-head h2 { font-size: 20px; line-height: 28px; } }
 
 /* tool cards: halves */
 .tool { grid-column: span 6; display: grid; grid-template-rows: auto 1fr; overflow: hidden; transition: box-shadow .2s, transform .2s; }
@@ -143,8 +158,41 @@ main { padding-top: 48px; }
   font-size: 12px; line-height: 16px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink);
   background: var(--glass-2); box-shadow: 0 0 0 1px var(--hair), inset 0 1px 0 #fff;
 }
-@media (max-width: 1099px) { .area-row .tool, .area-row .course { grid-column: span 4; } }
-@media (max-width: 599px)  { .area-row .tool, .area-row .course { grid-column: 1 / -1; } }
+@media (max-width: 1099px) { .area-row .tool, .area-row .course, .area-row .course.lead { grid-column: span 4; } }
+@media (max-width: 599px)  { .area-row .tool, .area-row .course, .area-row .course.lead { grid-column: 1 / -1; } }
+
+/* the last tool of a topic takes what is left of its row, so no row ends with a gap.
+   Wide enough for two columns, its illustration sits beside the text, drawn whole at its own proportions;
+   otherwise it stays on top, a little taller so the wider crop doesn't cut it. */
+@media (min-width: 1100px) {
+  .area-row > .tool:last-child:nth-child(4n+1) { grid-column: 1 / -1; }
+  .area-row > .tool:last-child:nth-child(4n+2) { grid-column: span 9; }
+  .area-row > .tool:last-child:nth-child(4n+3) { grid-column: span 6; }
+  .area-row > .tool:last-child:nth-child(4n+3) .viz { height: 216px; }
+  .area-row > .tool:last-child:is(:nth-child(4n+1), :nth-child(4n+2)) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: none; }
+  .area-row > .tool:last-child:is(:nth-child(4n+1), :nth-child(4n+2)) .viz { height: auto; min-height: 216px; border-bottom: 0; border-right: 1px solid var(--hair); }
+  .area-row > .tool:last-child:is(:nth-child(4n+1), :nth-child(4n+2)) .viz svg { inset: 50% 0 auto; height: auto; aspect-ratio: 600 / 216; transform: translateY(-50%); }
+}
+@media (min-width: 840px) and (max-width: 1099px) {
+  .area-row > .tool:last-child:nth-child(3n+1) { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: none; }
+  .area-row > .tool:last-child:nth-child(3n+1) .viz { height: auto; min-height: 216px; border-bottom: 0; border-right: 1px solid var(--hair); }
+  .area-row > .tool:last-child:nth-child(3n+1) .viz svg { inset: 50% 0 auto; height: auto; aspect-ratio: 600 / 216; transform: translateY(-50%); }
+  .area-row > .tool:last-child:nth-child(3n+2) { grid-column: span 8; }
+  .area-row > .tool:last-child:nth-child(3n+2) .viz { height: 216px; }
+}
+@media (min-width: 600px) and (max-width: 839px) {
+  .area-row > .tool:last-child:nth-child(2n+1) { grid-column: 1 / -1; }
+  .area-row > .tool:last-child:nth-child(2n+1) .viz { height: 216px; }
+}
+
+/* phones: compact tool cards (smaller illustration, three lines of text, the button becomes a text link) */
+@media (max-width: 599px) {
+  .area-row .tool .viz { height: 104px; }
+  .tool .body { padding: 16px 16px 20px; gap: 8px; }
+  .tool h3 { font-size: 20px; line-height: 28px; }
+  .tool p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+  .tool .cta .btn.dark, .tool:hover .cta .btn.dark { height: auto; padding: 0; background: none; box-shadow: none; color: var(--ink); }
+}
 
 /* course cards */
 .course { grid-column: span 6; padding: 24px; display: flex; flex-direction: column; gap: 12px; transition: box-shadow .2s, transform .2s; }
@@ -168,6 +216,16 @@ main { padding-top: 48px; }
 .course.lead:hover { box-shadow: 0 2px 4px rgb(15 23 42 / .25), 0 24px 48px -20px rgb(15 23 42 / .55), inset 0 1px 0 rgb(255 255 255 / .14); }
 .course.lead .kicker { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--air-2); }
 .course.lead .num { color: #fff; font-size: 32px; line-height: 40px; margin-top: auto; }
+.course.lead .facts { margin-top: 12px; display: grid; }
+.course.lead .facts > span { display: flex; align-items: baseline; gap: 8px; padding: 8px 0; box-shadow: inset 0 1px 0 rgb(255 255 255 / .1); font-size: 12px; line-height: 16px; color: rgb(255 255 255 / .6); }
+.course.lead .facts b { min-width: 28px; font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; color: #fff; font-variant-numeric: tabular-nums; }
+.course.lead .facts > span:empty { display: none; }
+@media (max-width: 599px) {
+  .course.lead .num { margin-top: 16px; }
+  .course.lead .facts { grid-auto-flow: column; justify-content: start; column-gap: 24px; }
+  .course.lead .facts > span { box-shadow: none; padding: 0; }
+  .course.lead .facts b { min-width: 0; font-size: 20px; line-height: 28px; }
+}
 .course.lead .num small { color: rgb(255 255 255 / .6); }
 .course.lead h3 { font-size: 24px; line-height: 32px; letter-spacing: -0.02em; }
 .course.lead p { color: rgb(255 255 255 / .72); flex: 0; }
@@ -199,7 +257,7 @@ main { padding-top: 48px; }
       <a class="tab" href="#courses">Other courses</a>
     </nav>
     <div class="grow"></div>
-    <span class="pill" data-at-count><b>25</b> tools · <b>8</b> courses</span>
+    <span class="pill" data-at-count style="display:none"><b></b> tools · <b></b> courses</span>
   </div>
 </header>
 
@@ -207,7 +265,7 @@ main { padding-top: 48px; }
   <div class="hero grid">
     <div class="t">
       <h1>Airline Economics</h1>
-      <p>Visualizations and strategic tools that make the airline business easier to see: where the planes are, where people want to fly, and how the commercial side works. Built on open data, with short courses from my years in Revenue Management and Loyalty. Organized by topic: each one opens with its course, then the tools in the order the course covers them.</p>
+      <p>Interactive tools that make the airline business easier to see: where the planes are, where people want to fly, and how seats, points and cargo space are sold. Simulators run on illustrative numbers, maps and benchmarks on public data, and each topic starts with a short course drawn from my years in Revenue Management and Loyalty.</p>
     </div>
   </div>
 
@@ -217,6 +275,7 @@ main { padding-top: 48px; }
     <div class="area-row">
         <a class="panel course lead" href="/rm101.html">
           <span class="kicker">Start with the course</span>
+          <span class="facts"><span><b>10</b>chapters</span><span><b>30</b>min read</span><span data-tools></span></span>
           <div class="num">RM<small>101</small></div>
           <h3>Revenue Management</h3>
           <p>How airlines price seats and fill planes as profitably as possible: a mix of economics, statistics and a bit of psychology.</p>
@@ -266,12 +325,12 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
-              <span class="pill">Designer</span>
+              <span class="pill">Simulator</span>
               <span class="pill">Choice model</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Fare family designer</h3>
-            <p>Build Basic, Standard and Flex from bags, seats, changes, refunds and points, or start from Air Canada, United or Air France. See which customers pick which family, the upsell, the buy-down, and the step to Standard that earns the most.</p>
+            <p>Build Basic, Standard and Flex from bags, seats, changes and refunds, and see which customers pick which family and what the upsell earns.</p>
             <div class="cta"><span class="btn dark">Open the designer<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -305,10 +364,10 @@ main { padding-top: 48px; }
             <div class="meta">
               <span class="pill">Explainer</span>
               <span class="pill">Fare basis decoder</span>
-              <span class="pill">Illustrative fares</span>
+              <span class="pill">Illustrative data</span>
             </div>
             <h3>How a fare is built</h3>
-            <p>From a filed fare to the price on screen, one layer at a time: fare basis and rules, fare construction, carrier surcharges, Canadian, US and French taxes, then fare families and extras. With a fare basis decoder.</p>
+            <p>From a filed fare to the price on screen, one layer at a time: fare rules, surcharges and taxes, then fare families and extras.</p>
             <div class="cta"><span class="btn dark">Open the explainer<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -327,11 +386,12 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
-              <span class="pill">Forecaster</span>
+              <span class="pill">Simulator</span>
+              <span class="pill">Forecasting</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Booking curve forecaster</h3>
-            <p>Watch a flight's bookings build up and compare five ways airlines forecast where they'll finish: pickup, smoothing and regression, scored across a year of simulated departures.</p>
+            <p>Watch a flight's bookings build up and compare five ways airlines forecast where they'll finish, scored on a year of departures.</p>
             <div class="cta"><span class="btn dark">Open the forecaster<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -354,7 +414,7 @@ main { padding-top: 48px; }
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Demand unconstraining</h3>
-            <p>Bookings stop at the limit when a flight closes. Five ways to recover the demand that was turned away, how they hold up as more departures close, and what spill and recapture say about a bigger aircraft.</p>
+            <p>Bookings stop when a flight closes. Five ways to recover the demand that was turned away, and what it says about a bigger aircraft.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -376,12 +436,12 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
-              <span class="pill">Explainer</span>
               <span class="pill">Simulator</span>
-              <span class="pill"><b>2,000</b> simulated flights</span>
+              <span class="pill">EMSR</span>
+              <span class="pill">Illustrative data</span>
             </div>
             <h3>Booking limits</h3>
-            <p>How many seats to keep for late, high-fare passengers. Start with one flight and two fares, Littlewood's rule seat by seat, then six classes with EMSR-a and EMSR-b, and how many extra bookings to accept for no-shows.</p>
+            <p>How many seats to keep for late, high-fare passengers: Littlewood's rule on two fares, EMSR on six, then overbooking.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -400,10 +460,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Simulator</span>
+              <span class="pill">Q-forecasting</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Buy-down simulator</h3>
-            <p>Why seat control that forecasts from its own bookings spirals down once fares lose their restrictions, and how Q-forecasting with fare adjustment stops it.</p>
+            <p>Why seat control spirals down once fares lose their restrictions, and how Q-forecasting with fare adjustment stops it.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -432,11 +493,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Simulator</span>
-              <span class="pill">LP in the browser</span>
+              <span class="pill">Linear program</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Network bid prices</h3>
-            <p>Why airlines moved from fare-class limits on each flight to origin-destination control: leg bid prices from a linear program, then one stream of bookings run through leg-based and O&amp;D control, request by request.</p>
+            <p>Why airlines moved from fare-class limits on each flight to origin-destination control, with bid prices from a linear program.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -456,11 +517,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Simulator</span>
-              <span class="pill"><b>2,000</b> simulated flights</span>
+              <span class="pill">Dynamic pricing</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Continuous pricing</h3>
-            <p>A ladder of fare classes controlled with EMSR-b against a price that can be set at any amount, the argument behind NDC offers: how much more it earns, shopper by shopper, and how much a finer ladder already captures.</p>
+            <p>A ladder of fare classes against a price that can be set at any amount: how much more it earns, and how much a finer ladder captures.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -472,6 +533,7 @@ main { padding-top: 48px; }
     <div class="area-row">
         <a class="panel course lead" href="/np101.html">
           <span class="kicker">Start with the course</span>
+          <span class="facts"><span><b>12</b>chapters</span><span><b>25</b>min read</span><span data-tools></span></span>
           <div class="num">NP<small>101</small></div>
           <h3>Network Planning</h3>
           <p>How airlines decide where to fly, how often, when, and with what aircraft.</p>
@@ -499,8 +561,9 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
-              <span class="pill">Interactive map</span>
-              <span class="pill">Passenger markets</span>
+              <span class="pill">Explorer</span>
+              <span class="pill">O&amp;D markets</span>
+              <span class="pill">Public data · 2025–26</span>
             </div>
             <h3>Air travel flows</h3>
             <p>The biggest city-pair markets by passengers actually travelling, and which ones still have no nonstop flight.</p>
@@ -523,8 +586,9 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
-              <span class="pill">Interactive chart</span>
-              <span class="pill">Published schedules</span>
+              <span class="pill">Explorer</span>
+              <span class="pill">Schedule analysis</span>
+              <span class="pill">Public data · Sep 2026</span>
             </div>
             <h3>Hub banks</h3>
             <p>How Air Canada and WestJet time their hubs in waves of arrivals and departures, and how many connections each wave creates.</p>
@@ -555,11 +619,12 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
+              <span class="pill">Solver</span>
               <span class="pill">Integer program</span>
-              <span class="pill">Time-space network</span>
+              <span class="pill">Illustrative data</span>
             </div>
             <h3>Fleet assignment</h3>
-            <p>Which aircraft type should fly each of 30 flights at a hub: an integer program solved in your browser, against a greedy rule and on 1,000 simulated days.</p>
+            <p>Which aircraft type should fly each of 30 flights at a hub: an integer program solved in your browser, against a simple greedy rule.</p>
             <div class="cta"><span class="btn dark">Open the solver<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -580,8 +645,9 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
+              <span class="pill">Explorer</span>
               <span class="pill">Payload-range model</span>
-              <span class="pill"><b>14</b> aircraft</span>
+              <span class="pill">Public data · Sep 2026</span>
             </div>
             <h3>Aircraft range map</h3>
             <p>Which destinations an aircraft reaches from any airport, and with how many passengers. Compare two types, like the A321XLR and the 737-8.</p>
@@ -601,8 +667,9 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
-              <span class="pill">Monthly data</span>
-              <span class="pill">Airbus &amp; Boeing</span>
+              <span class="pill">Explorer</span>
+              <span class="pill">Order books</span>
+              <span class="pill">Public data · monthly</span>
             </div>
             <h3>Fleet orders &amp; backlog</h3>
             <p>What each airline has on order from Airbus and Boeing, how old its fleet is, and what it could look like in 2030.</p>
@@ -633,11 +700,12 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
-              <span class="pill"><i class="dot" style="--c:var(--air)"></i>Live positions</span>
-              <span class="pill"><b>4</b> airlines</span>
+              <span class="pill">Tracker</span>
+              <span class="pill">ADS-B positions</span>
+              <span class="pill"><i class="dot" style="--c:var(--air)"></i>Live</span>
             </div>
             <h3>Fleet tracker</h3>
-            <p>Every Air Canada, United, Air France and Etihad aircraft on a live globe: in the air with its route, parked at an airport, or likely in maintenance.</p>
+            <p>Every Air Canada, United, Air France and Etihad aircraft on a live globe: flying, parked at an airport, or likely in maintenance.</p>
             <div class="cta"><span class="btn dark">Open the tracker<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -649,6 +717,7 @@ main { padding-top: 48px; }
     <div class="area-row">
         <a class="panel course lead" href="/loyalty101.html">
           <span class="kicker">Start with the course</span>
+          <span class="facts"><span><b>12</b>chapters</span><span><b>25</b>min read</span><span data-tools></span></span>
           <div class="num">Loyalty<small>101</small></div>
           <h3>Loyalty programs</h3>
           <p>Why airlines give away miles and still come out ahead, and how the points currency behind a loyalty program is managed.</p>
@@ -676,11 +745,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Calculator</span>
-              <span class="pill"><b>13</b> programmes</span>
-              <span class="pill">Rules · Sep 2026</span>
+              <span class="pill">Earn &amp; status rules</span>
+              <span class="pill">Public data · Sep 2026</span>
             </div>
             <h3>Loyalty benchmark</h3>
-            <p>What an airline status is worth on partner airlines across Star Alliance, oneworld and SkyTeam, and how many points the same trip earns in each of 13 programmes.</p>
+            <p>What an airline status is worth on partner airlines, and how many points the same trip earns in each of 13 programmes.</p>
             <div class="cta"><span class="btn dark">Open the benchmark<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -704,11 +773,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Calculator</span>
-              <span class="pill"><b>4</b> programmes</span>
-              <span class="pill">Snapshot · Sep 2026</span>
+              <span class="pill">Cents per point</span>
+              <span class="pill">Public data · Sep 2026</span>
             </div>
             <h3>Award value comparator</h3>
-            <p>How many points Aeroplan, MileagePlus, Flying Blue and Etihad Guest ask for the same trips, what that's worth in cents per point, and how your own redemption compares.</p>
+            <p>How many points Aeroplan, MileagePlus, Flying Blue and Etihad Guest ask for the same trips, and what that's worth in cents per point.</p>
             <div class="cta"><span class="btn dark">Open the comparator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -728,12 +797,12 @@ main { padding-top: 48px; }
           </div>
           <div class="body">
             <div class="meta">
-              <span class="pill">Model</span>
+              <span class="pill">Calculator</span>
               <span class="pill">IFRS 15</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Breakage &amp; liability</h3>
-            <p>How points become deferred revenue and then revenue, what breakage is, and what a revised breakage estimate or a new expiry rule does to the numbers.</p>
+            <p>How points become deferred revenue and then revenue, and what a new breakage estimate or expiry rule does to the numbers.</p>
             <div class="cta"><span class="btn dark">Open the model<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -756,7 +825,7 @@ main { padding-top: 48px; }
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Member lifetime value</h3>
-            <p>What a member is worth over the years, by tier: margin from flying, the co-brand card and partners, tier moves as a Markov chain, the levers that matter most, and what better retention or more cardholders add up to.</p>
+            <p>What a member is worth over the years, tier by tier, and which levers move it most: retention, tier moves or the co-brand card.</p>
             <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -778,11 +847,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Calculator</span>
-              <span class="pill">A/B test statistics</span>
+              <span class="pill">Holdout test</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Promotion ROI</h3>
-            <p>Did "double points this month" pay for itself? Incremental trips against a holdout, the bonus paid on trips that would have happened anyway, ROI with confidence intervals, and how big the holdout needs to be.</p>
+            <p>Did "double points this month" pay for itself? Incremental trips against a holdout, ROI with a confidence interval, and holdout size.</p>
             <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -806,7 +875,7 @@ main { padding-top: 48px; }
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Award seat cost</h3>
-            <p>What an award seat really costs the airline: almost nothing on an empty flight, a paying fare on a full one. How many award seats to release, and why saver awards vanish on peak dates.</p>
+            <p>What an award seat really costs the airline: almost nothing on an empty flight, a paying fare on a full one.</p>
             <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -826,11 +895,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Simulator</span>
-              <span class="pill">Synthetic customers</span>
+              <span class="pill">Choice model</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Subscription pricer</h3>
-            <p>Design an all-you-can-fly pass, a commuter route pass or a bundle of bags, seats and Wi-Fi, set its price, and see who signs up, what revenue it gives away, and what capacity control protects.</p>
+            <p>Price an all-you-can-fly pass, a route pass or a bundle of extras, and see who signs up and what revenue it gives away.</p>
             <div class="cta"><span class="btn dark">Open the pricer<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -842,6 +911,7 @@ main { padding-top: 48px; }
     <div class="area-row">
         <a class="panel course lead" href="/cargo101.html">
           <span class="kicker">Start with the course</span>
+          <span class="facts"><span><b>12</b>chapters</span><span><b>25</b>min read</span><span data-tools></span></span>
           <div class="num">Cargo<small>101</small></div>
           <h3>Air Cargo</h3>
           <p>How airlines sell the space in the hold: weight and volume, forwarders and allotments, and why cargo is harder to sell than seats.</p>
@@ -864,11 +934,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Simulator</span>
-              <span class="pill"><b>1,000</b> simulated flights</span>
+              <span class="pill">Bid prices per kg and m³</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Cargo revenue management</h3>
-            <p>Why selling the hold is harder than selling seats: weight and volume, late bookings and allotments, no-shows and short tenders. Bid prices per kg and per m³ against first come, first served, and how much to overbook.</p>
+            <p>Why the hold is harder to sell than seats, and how bid prices per kg and per m³ compare with first come, first served.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -943,11 +1013,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Simulator</span>
-              <span class="pill"><b>1,000</b> simulated seasons</span>
+              <span class="pill">Monte Carlo</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Allotments vs spot</h3>
-            <p>How much of a freighter to sell to forwarders under block space agreements and how much to keep for the spot market, what to do with space they hand back, and how the answer changes in a 2020–21 market.</p>
+            <p>How much of a freighter to sell to forwarders in advance and how much to keep for the spot market, in a normal year and in 2020–21.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -968,11 +1038,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Simulator</span>
-              <span class="pill"><b>6</b> regions, <b>30</b> lanes</span>
+              <span class="pill">Route economics</span>
               <span class="pill">Illustrative data</span>
             </div>
             <h3>Freighter rotation</h3>
-            <p>Where to fly one freighter for a week: back and forth on one lane, a triangle or a round-the-world loop. Block hours, payload per leg, cost per block hour and weekly contribution, why triangles beat shuttles on unbalanced lanes, and what fifth-freedom rights are worth.</p>
+            <p>Where to fly one freighter for a week: a shuttle, a triangle or a round-the-world loop, and why triangles win on unbalanced lanes.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -992,11 +1062,11 @@ main { padding-top: 48px; }
           <div class="body">
             <div class="meta">
               <span class="pill">Simulator</span>
-              <span class="pill"><b>365</b> departures</span>
-              <span class="pill">Boeing 787-9 limits</span>
+              <span class="pill">Payload forecast</span>
+              <span class="pill">Illustrative data</span>
             </div>
             <h3>Belly cargo capacity</h3>
-            <p>What a passenger widebody can carry once passengers, bags and fuel for the day's headwind are on board, how the forecast narrows from 30 days to 2 days out, the payload-restricted days, and how much cargo to sell before the capacity is known.</p>
+            <p>How much cargo a passenger widebody can carry once passengers, bags and fuel are on board, and how much to sell before that is known.</p>
             <div class="cta"><span class="btn dark">Open the simulator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
@@ -1039,5 +1109,29 @@ main { padding-top: 48px; }
   </footer>
 </main>
 
+<script>
+/* Marks the header tab of the topic in view, and keeps that chip visible when the tabs scroll sideways on phones. */
+(function () {
+  var tabs = [].slice.call(document.querySelectorAll(".tabs .tab"));
+  if (!tabs.length || !("IntersectionObserver" in window)) return;
+  var row = document.querySelector(".tabs");
+  var byId = {};
+  tabs.forEach(function (t) { byId[t.getAttribute("href").slice(1)] = t; });
+  function mark(id) {
+    tabs.forEach(function (t) { t.removeAttribute("aria-current"); });
+    var t = byId[id];
+    if (!t) return;
+    t.setAttribute("aria-current", "true");
+    if (row.scrollWidth > row.clientWidth) {
+      var left = t.offsetLeft - (row.clientWidth - t.offsetWidth) / 2;
+      row.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+    }
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) mark(e.target.id); });
+  }, { rootMargin: "-30% 0px -60% 0px" });
+  Object.keys(byId).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
+})();
+</script>
 </body>
 </html>

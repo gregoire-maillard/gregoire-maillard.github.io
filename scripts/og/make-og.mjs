@@ -65,7 +65,7 @@ function vizSvg(v, mode) { return v.replace('preserveAspectRatio="xMidYMid slice
 function page(o) {
   let eye, title, desc, pills, right;
   if (o.file === 'airlinetools') {
-    eye = 'Airline Economics'; title = 'Airline Economics'; desc = `${tools.length} interactive tools and ${courses.length} short courses on how airlines plan, price and fly. Built on open data.`;
+    eye = 'Airline Economics'; title = 'Airline Economics'; desc = `${tools.length} interactive tools and ${courses.length} short courses on how airlines plan, price and fly: simulators on illustrative numbers, maps and benchmarks on public data.`;
     pills = ['Revenue management', 'Network planning', 'Loyalty', 'Cargo'];
     const pick = ['bookinglimits', 'fleettracker', 'airflows', 'memberclv', 'cargorm', 'hubbanks'].map(f => tools.find(t => t.file === f));
     right = `<div class="panel"><div class="mosaic">${pick.map(t => `<div>${vizSvg(t.viz, 'slice')}</div>`).join('')}</div></div>`;

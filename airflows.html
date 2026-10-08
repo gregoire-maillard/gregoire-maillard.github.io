@@ -13,7 +13,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Air travel flows</title>
-    <meta name="description" content="The largest US city-pair air travel markets on a map, and which of them have no nonstop flight.">
+    <meta name="description" content="The largest air travel markets from the US, Canada and Latin America on a map, domestic and international, and which big city pairs still have no nonstop flight.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -24,7 +24,7 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Grégoire Maillard">
     <meta property="og:title" content="Air travel flows · Airline Economics">
-    <meta property="og:description" content="The largest US city-pair air travel markets on a map, and which of them have no nonstop flight.">
+    <meta property="og:description" content="The largest air travel markets from the US, Canada and Latin America on a map, domestic and international, and which big city pairs still have no nonstop flight.">
     <meta property="og:url" content="https://gregoiremaillard.com/airflows.html">
     <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/airflows.jpg">
     <meta property="og:image:width" content="1200">
@@ -60,7 +60,7 @@
         margin: 0 auto;
         padding: 26px 30px 60px;
       }
-      .intro h2 { margin: 0 0 6px; }
+      .intro h1 { margin: 0 0 6px; font-size: 1.5em; }
       .intro p { margin: 0 0 4px; }
       .stamp { color: var(--muted); font-size: 12px; margin-top: 8px; }
 
@@ -246,6 +246,8 @@
         background: #fff; padding: 8px 14px; display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; line-height: 1.5;
       }
       .map-legend .grp { white-space: nowrap; }
+      .map-legend .nw { white-space: nowrap; }
+      @media (max-width: 720px) { .map-legend .grp { white-space: normal; } }
       .zoom-ctl { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 4; }
       .zoom-ctl button {
         width: 30px; height: 30px; border: 1px solid var(--line); background: rgba(255,255,255,.95); border-radius: 6px;
@@ -343,16 +345,17 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>22</b> tools · <b>7</b> courses</span>
+        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Network planning</div>
-        <h2>Air travel flows</h2>
+        <h1>Air travel flows</h1>
         <p class="lede">Where do people fly, and which big markets still have no nonstop?</p>
         <p id="intro-text">Loading…</p>
+        <p>The hands-on companion to <a href="/np101.html#ch03">Network Planning 101, chapter 03</a>.</p>
         <div class="stamp" id="stamp"></div>
       </div>
 
@@ -897,7 +900,7 @@
       }
       function legendWidths(vals) {
         return vals.map(function (v) {
-          return '<span class="w" style="height:' + Math.max(1, wScale(v)).toFixed(1) + 'px"></span>' + fmt(v);
+          return '<span class="nw"><span class="w" style="height:' + Math.max(1, wScale(v)).toFixed(1) + 'px"></span>' + fmt(v) + '</span>';
         }).join(" ");
       }
 

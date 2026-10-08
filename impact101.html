@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
 
 <!-- Google tag (gtag.js) -->
@@ -226,6 +226,12 @@
       }
       .sim-stats b { display: block; font-size: 1.3em; margin-bottom: 1px; }
       .sim-note { font-size: 0.78em; color: #888; font-style: italic; margin-top: 8px; line-height: 1.5; }
+    
+      /* phones: a wide table scrolls sideways instead of widening the page */
+      @media (max-width: 600px) { .data-table, .rm-table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; } }
+          /* the course title is the page's h1; same look as the old section h2 */
+      section > h1 { margin: 2.2rem 0 1.05rem; font-size: 1.6rem; font-weight: 620; letter-spacing: -0.03em; }
+      @media (max-width: 35rem) { section > h1 { font-size: 1.4rem; } }
     </style>
 
     <!-- KaTeX -->
@@ -352,14 +358,14 @@
           <a class="at-tab" href="/airlinetools.html#courses" aria-current="page">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>22</b> tools · <b>7</b> courses</span>
+        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
     <div class="wrapper">
 
       <!-- ── Sidebar ── -->
       <header class="crs-rail">
-        <a class="crs-back" href="/airlinetools.html#knowledge"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg>All courses</a>
+        <a class="crs-back" href="/airlinetools.html#courses"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg>Airline Economics</a>
         <div class="crs-badge"><b>Impact</b><small>101</small></div>
         <p class="crs-desc">A beginner's guide to measuring what actually worked in RM and loyalty, with simulations you can play with.</p>
         <p class="crs-meta"><span>14 chapters</span><span>about 20 min read</span></p>
@@ -385,7 +391,7 @@
       <!-- ── Content ── -->
       <section>
 
-        <h2>Airline Impact Evaluation 101</h2>
+        <h1>Airline Impact Evaluation 101</h1>
         <p>Every airline changes things all the time: a new forecasting model, a bonus-points campaign, a new status tier, a price test. And after every change someone asks: did it work? Answering that honestly is harder than it looks, and most of the numbers that circulate in companies after a launch are wrong in a predictable direction. This page covers the statistics of answering it well, applied to the two areas I know best, <a href="/rm101.html">revenue management</a> and <a href="/loyalty101.html">loyalty</a>. It goes deeper than the short chapter on incrementality in <a href="/loyalty101.html#ch09">Loyalty 101</a>, and most chapters come with a simulation you can play with: every result is generated in your browser from made-up data, so you can see the methods succeed and fail.</p>
 
         <p><hr/></p>

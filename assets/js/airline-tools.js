@@ -2,12 +2,13 @@
 
    1. Header counts. The "N tools · M courses" pill is counted from the hub page itself
       (one card per tool, one per course), so adding a card to airlinetools.html is the only
-      thing needed to keep every page right. The number written in each page's HTML is only
-      a fallback for when this script can't run.
+      thing needed to keep every page right. The pill ships hidden with no number in the HTML
+      and only appears once the count is known, so it can never show a stale figure.
    2. Breadcrumb. A tool page without a breadcrumb gets "Airline Economics · <topic>" at the top
       of its intro, using the topic section (data-area) its card sits in on the hub.
+   3. On the hub, each course card shows how many tools follow it in its topic.
 
-   No dependencies. Fails silently: if the hub can't be fetched, pages keep their static text. */
+   No dependencies. Fails silently: if the hub can't be fetched, the pill stays hidden. */
 (function () {
   "use strict";
   var HUB = "/airlinetools.html";
@@ -31,7 +32,7 @@
     var pills = document.querySelectorAll(".at-pill, [data-at-count]");
     for (var i = 0; i < pills.length; i++) {
       var b = pills[i].querySelectorAll("b");
-      if (b.length >= 2) { b[0].textContent = info.tools; b[1].textContent = info.courses; }
+      if (b.length >= 2) { b[0].textContent = info.tools; b[1].textContent = info.courses; pills[i].style.display = ""; }
     }
   }
 
@@ -49,10 +50,24 @@
     intro.insertBefore(div, intro.firstChild);
   }
 
+  function countTopicTools() {
+    var slots = document.querySelectorAll(".course.lead [data-tools]");
+    for (var i = 0; i < slots.length; i++) {
+      var row = slots[i].closest(".area-row");
+      var n = row ? row.querySelectorAll("a.tool").length : 0;
+      if (!n) continue;
+      var b = document.createElement("b");
+      b.textContent = n;
+      slots[i].textContent = "";
+      slots[i].appendChild(b);
+      slots[i].appendChild(document.createTextNode(n === 1 ? "tool" : "tools"));
+    }
+  }
+
   function apply(info) { setCounts(info); addCrumb(info); }
 
   function run() {
-    if (document.querySelector("a.tool")) { apply(readHub(document)); return; } // on the hub itself
+    if (document.querySelector("a.tool")) { apply(readHub(document)); countTopicTools(); return; } // on the hub itself
     var cached = null;
     try { cached = JSON.parse(sessionStorage.getItem(KEY)); } catch (e) {}
     if (cached && cached.tools) apply(cached);

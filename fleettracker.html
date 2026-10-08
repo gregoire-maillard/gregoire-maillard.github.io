@@ -459,9 +459,9 @@ td .arrow { color: var(--ink-3); margin: 0 4px; }
 
 /* ───────── rules board ───────── */
 .rb-head { align-items: end; row-gap: 16px; }
-.rb-head h1 { grid-column: span 6; }
+.rb-head h2 { grid-column: span 6; }
 .rb-head .specs { grid-column: span 6; justify-self: end; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
-@media (max-width: 839px) { .rb-head h1, .rb-head .specs { grid-column: 1 / -1; justify-self: start; justify-content: flex-start; } }
+@media (max-width: 839px) { .rb-head h2, .rb-head .specs { grid-column: 1 / -1; justify-self: start; justify-content: flex-start; } }
 .rb-row { margin-top: 48px; row-gap: var(--gutter); }
 .rb-row + .rb-row { margin-top: var(--gutter); }
 .stepcol { grid-column: span 3; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
@@ -5095,7 +5095,8 @@ function renderFoot() {
   $("foot").innerHTML = `<div class="l"><span>Fleet: ${esc(d && d.json.sources ? d.json.sources.fleet.replace(/\s*\(.*\)$/, "") : "")}</span>
     <span>Positions: <a href="https://adsb.lol" target="_blank" rel="noopener">adsb.lol</a>, ODbL</span>
     <span>Routes: <a href="https://www.adsbdb.com" target="_blank" rel="noopener">adsbdb</a></span>
-    <span>Part of <a href="/airlinetools.html">Airline Economics</a> by <a href="/">Grégoire Maillard</a></span></div>
+    <span>Part of <a href="/airlinetools.html">Airline Economics</a> by <a href="/">Grégoire Maillard</a></span>
+    <span>Background: <a href="/np101.html#ch08">Network Planning 101, chapter 08</a></span></div>
     <div class="r">Not affiliated with any airline.</div>`;
 }
 
@@ -5214,7 +5215,7 @@ function renderRules() {
       ${bad ? "" : deltaLine(dl) || `<p class="delta">▲ <b>${group(Math.max(1, st.out))}</b> more in the air than at ${esc(hhmm((d ? d.json.updated : Date.now()) - HOUR))}</p>`}
       <i class="baseline-guide" style="top:${16 + 38}px"></i></div>`;
   $("rules").innerHTML = `
-    <div class="rb-head grid"><h1 class="t24">One grid, consistent components</h1>
+    <div class="rb-head grid"><h2 class="t24">One grid, consistent components</h2>
       <div class="specs"><span class="pill">Base <b>8${NNBSP}px</b></span><span class="pill">Columns <b>12 × 88</b></span><span class="pill">Gutter <b>24${NNBSP}px</b></span><span class="pill">Inset <b>24${NNBSP}px</b></span><span class="pill">Radius <b>16 / 10 / 6</b></span></div></div>
 
     <div class="rb-row grid">

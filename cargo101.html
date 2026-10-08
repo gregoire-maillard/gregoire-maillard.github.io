@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
 
 <!-- Google tag (gtag.js) -->
@@ -169,6 +169,12 @@
         margin-top: 4px;
         font-style: italic;
       }
+    
+      /* phones: a wide table scrolls sideways instead of widening the page */
+      @media (max-width: 600px) { .data-table, .rm-table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; } }
+          /* the course title is the page's h1; same look as the old section h2 */
+      section > h1 { margin: 2.2rem 0 1.05rem; font-size: 1.6rem; font-weight: 620; letter-spacing: -0.03em; }
+      @media (max-width: 35rem) { section > h1 { font-size: 1.4rem; } }
     </style>
 
     <!-- KaTeX -->
@@ -295,14 +301,14 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>22</b> tools · <b>8</b> courses</span>
+        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
     <div class="wrapper">
 
       <!-- ── Sidebar ── -->
       <header class="crs-rail">
-        <a class="crs-back" href="/airlinetools.html#knowledge"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg>All courses</a>
+        <a class="crs-back" href="/airlinetools.html#cargo"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"/></svg>Airline Economics</a>
         <div class="crs-badge"><b>Cargo</b><small>101</small></div>
         <p class="crs-desc">A beginner's guide to air cargo, covering the intuitions behind how airlines sell the space under the passengers' feet and on the main deck of freighters.</p>
         <p class="crs-meta"><span>12 chapters</span><span>about 25 min read</span></p>
@@ -326,7 +332,7 @@
       <!-- ── Content ── -->
       <section>
 
-        <h2>Air Cargo 101</h2>
+        <h1>Air Cargo 101</h1>
         <p>Most people who fly never think about what travels underneath them. On a long-haul passenger flight, the lower deck usually carries several tonnes of someone else's freight: car parts, phones, medicines, fresh fish, online orders. On a freighter, the whole aircraft is cargo. This page explains how that business works and how airlines sell it, in the same spirit as <a href="/rm101.html">RM 101</a>, <a href="/np101.html">NP 101</a> and <a href="/loyalty101.html">Loyalty 101</a>: the key ideas, a few worked examples, and as little jargon as I can get away with. It describes the industry in general, not how any particular airline runs its cargo business, and every number in the examples is made up for illustration unless a source is given.</p>
 
         <p><hr/></p>
@@ -765,6 +771,11 @@
           <div class="callout-label">The backhaul is a pricing problem</div>
           On a backhaul, the opportunity cost of a kilo is close to zero for most of the booking period, so bid prices are low and almost any shipment is worth taking. The risk is training the market: if backhaul rates are always low, forwarders learn to wait for them. The same tension between filling space and protecting price runs through all of revenue management.
         </div>
+
+        <aside class="try-it" aria-label="Tools for this chapter">
+          <div class="try-label">Try it</div>
+          <a href="/freighterrotation.html"><b>Freighter rotation</b><span>Where to fly one freighter for a week: a shuttle on one lane, a triangle or a round-the-world loop, and why triangles beat shuttles on unbalanced lanes.</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
+        </aside>
 
         <p><hr/></p>
 

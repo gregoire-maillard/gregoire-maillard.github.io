@@ -55,7 +55,7 @@
       }
 
       .content { max-width: 1180px; margin: 0 auto; padding: 26px 30px 60px; }
-      .intro h2 { margin: 0 0 6px; }
+      .intro h1 { margin: 0 0 6px; font-size: 1.5em; }
       .intro .lede { margin: 0 0 8px; color: var(--ink); font-size: 1.05em; line-height: 1.5; }
       .intro p { margin: 0 0 4px; }
       .note-line { margin: 12px 0 0; font-size: 12.5px; color: #7a5a1f; background: #fffaf1; border: 1px solid #f0dcb8; border-radius: 8px; padding: 8px 12px; max-width: 900px; }
@@ -280,14 +280,14 @@
           <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
         </nav>
         <div class="at-grow"></div>
-        <span class="at-pill"><b>22</b> tools · <b>7</b> courses</span>
+        <span class="at-pill" style="display:none"><b></b> tools · <b></b> courses</span>
       </div>
     </div>
 
     <div class="content">
       <div class="intro">
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Revenue management</div>
-        <h2>How a fare is built</h2>
+        <h1>How a fare is built</h1>
         <p class="lede">From the fare an airline files to the price on the booking screen, one layer at a time.</p>
         <p>An airline ticket price is a stack: one or more filed fares, each with its own code and rules, joined together by the rules of fare construction; then the airline's own surcharges; then taxes and charges set by the governments and airports at each end; and on top, the fare family and the extras the customer chooses. Step through a return trip in economy and watch the ticket fill up, then decode a fare basis and see how offer-based pricing changes the picture.</p>
       </div>
@@ -702,10 +702,9 @@
         $("how-checked").textContent = new Date(D.checked + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
       }
 
-      // ── Links to the related pages; the offer builder only if it exists ──
-      function renderOfferLinks(hasBuilder) {
-        $("offer-links").innerHTML = "More on this: offers and orders in <a href=\"/rm101.html#ch08\">Revenue Management 101, chapter 08</a>; pricing at any amount in the <a href=\"/continuouspricing.html\">continuous pricing simulator</a>; branded bundles in the <a href=\"/farefamilies.html\">fare family designer</a>" +
-          (hasBuilder ? "; and build an offer yourself in the <a href=\"/offerbuilder.html\">offer builder</a>." : ".");
+      // ── Links to the related pages (add the offer builder here once it exists) ──
+      function renderOfferLinks() {
+        $("offer-links").innerHTML = "More on this: offers and orders in <a href=\"/rm101.html#ch08\">Revenue Management 101, chapter 08</a>; pricing at any amount in the <a href=\"/continuouspricing.html\">continuous pricing simulator</a>; branded bundles in the <a href=\"/farefamilies.html\">fare family designer</a>.";
       }
 
       // ── Wiring ──
@@ -726,8 +725,7 @@
         $("restart").addEventListener("click", function () { S.step = 1; render(); });
         $("fbc").addEventListener("input", renderDecoder);
         var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { renderBreakdown(D.itineraries[S.trip], lines(D.itineraries[S.trip])); }, 120); });
-        render(); renderTaxes(); renderDecoder(); renderSources(); renderOfferLinks(false);
-        fetch("/offerbuilder.html", { method: "HEAD" }).then(function (r) { renderOfferLinks(r.ok); }).catch(function () {});
+        render(); renderTaxes(); renderDecoder(); renderSources(); renderOfferLinks();
       }).catch(function (e) {
         $("step-body").innerHTML = '<p class="err">Couldn\'t load the data (' + esc(e.message) + "). Try reloading the page.</p>";
       });
