@@ -1,0 +1,238 @@
+{
+  "id": "a1-u03-l04",
+  "unit": "a1-u03",
+  "order": 4,
+  "title": "Nice to meet you, Ayşe Hanım",
+  "goal": "Introduce yourself and others, politely or casually, in a short conversation.",
+  "points": ["gp-copula-present", "gp-personal-pronouns", "gp-buffer-letters", "gp-harmony-4way"],
+  "intro": {
+    "text": "Polite Turkish puts *Bey* (Mr) or *Hanım* (Ms) **after** the first name: *Mehmet Bey*, *Ayşe Hanım*. In writing and formal speech you'll also see `-DIr` for **is**: *Ayşe Hanım doktordur*.",
+    "see": "gp-copula-present"
+  },
+  "vocab": [
+    {
+      "tr": "Bey",
+      "en": "Mr (after a first name)",
+      "pos": "noun"
+    },
+    {
+      "tr": "Hanım",
+      "en": "Ms, Mrs (after a first name)",
+      "pos": "noun"
+    },
+    {
+      "tr": "arkadaş",
+      "en": "friend",
+      "pos": "noun"
+    },
+    {
+      "tr": "hemşire",
+      "en": "nurse",
+      "pos": "noun"
+    },
+    {
+      "tr": "aşçı",
+      "en": "cook",
+      "pos": "noun"
+    },
+    {
+      "tr": "evli",
+      "en": "married",
+      "pos": "adj"
+    },
+    {
+      "tr": "Türkiye",
+      "en": "Turkey",
+      "pos": "noun"
+    },
+    {
+      "tr": "Kanada",
+      "en": "Canada",
+      "pos": "noun"
+    },
+    {
+      "tr": "Fransa",
+      "en": "France",
+      "pos": "noun"
+    },
+    {
+      "tr": "Almanya",
+      "en": "Germany",
+      "pos": "noun"
+    },
+    {
+      "tr": "İngiltere",
+      "en": "England",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u03-l04-e01",
+      "type": "mcq",
+      "question": "How do you address Ayşe politely?",
+      "options": ["Ayşe Hanım", "Hanım Ayşe"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Hanım* and *Bey* follow the first name, not the other way round."
+      },
+      "explain": "*Hanım* (Ms) and *Bey* (Mr) come after the first name: *Ayşe Hanım*, *Mehmet Bey*."
+    },
+    {
+      "id": "a1-u03-l04-e02",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Memnun oldum, Mehmet Bey.",
+      "en": "Nice to meet you, Mehmet."
+    },
+    {
+      "id": "a1-u03-l04-e03",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-copula-present"],
+      "prompt": "Selin is a nurse.",
+      "accept": ["Selin hemşire.", "Selin hemşiredir."]
+    },
+    {
+      "id": "a1-u03-l04-e04",
+      "type": "mcq",
+      "points": ["gp-buffer-letters", "gp-copula-present"],
+      "context": [
+        {
+          "who": "Ayşe",
+          "tr": "Merhaba, ben Ayşe Yılmaz. Öğretmenim.",
+          "en": "Hello, I'm Ayşe Yılmaz. I'm a teacher."
+        },
+        {
+          "who": "Murat",
+          "tr": "Memnun oldum, Ayşe Hanım. Ben Murat Demir. Aşçıyım.",
+          "en": "Nice to meet you, Ayşe. I'm Murat Demir. I'm a cook."
+        }
+      ],
+      "question": "What is Murat's job?",
+      "options": ["cook", "teacher", "doctor"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Aşçıyım*: *aşçı* (cook) + buffer *y* + *-ım*, I am a cook."
+    },
+    {
+      "id": "a1-u03-l04-e05",
+      "type": "translate",
+      "from": "tr",
+      "prompt": "Ayşe Hanım evli, Mehmet Bey bekâr.",
+      "accept": ["Ayşe is married, Mehmet is single.", "Ayşe is married and Mehmet is single.", "Ayşe Hanım is married[,| and] Mehmet Bey is single."]
+    },
+    {
+      "id": "a1-u03-l04-e06",
+      "type": "cloze",
+      "points": ["gp-buffer-letters", "gp-harmony-4way"],
+      "text": "Biz Kanadalı___, onlar Alman.",
+      "en": "We are Canadian, they are German.",
+      "blanks": [
+        {
+          "accept": ["yız"],
+          "reject": [
+            {
+              "answer": "ız",
+              "why": "*Kanadalı* ends in a vowel: add the buffer *y* first, *Kanadalıyız*."
+            },
+            {
+              "answer": "yiz",
+              "why": "The last vowel is ı, so the ending is *-yız*."
+            }
+          ]
+        }
+      ],
+      "explain": "Vowel at the end (ı), so buffer *y*, then `-Iz` with ı: *Kanadalıyız*."
+    },
+    {
+      "id": "a1-u03-l04-e07",
+      "type": "listen",
+      "mode": "choose",
+      "points": ["gp-copula-present"],
+      "tr": "Biz arkadaşız.",
+      "en": "We are friends.",
+      "options": ["Biz arkadaşız.", "Biz evliyiz.", "Biz öğrenciyiz."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u03-l04-e08",
+      "type": "mcq",
+      "points": ["gp-copula-present"],
+      "question": "Which sentence sounds formal, like a line from an official letter?",
+      "options": ["Mehmet Bey doktordur.", "Mehmet Bey doktor."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "explain": "`-DIr` marks the third person in formal or written statements. In conversation, *Mehmet Bey doktor* is the usual form."
+    },
+    {
+      "id": "a1-u03-l04-e09",
+      "type": "wordbank",
+      "from": "tr",
+      "prompt": "Merhaba, ben Deniz. Hemşireyim.",
+      "text": "Hello, I am Deniz. I am a nurse.",
+      "answer": ["Hello", "I", "am", "Deniz", "I", "am", "a", "nurse"],
+      "distractors": ["you", "are", "doctor"]
+    },
+    {
+      "id": "a1-u03-l04-e10",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-buffer-letters"],
+      "prompt": "We are married.",
+      "accept": ["Evliyiz.", "Biz evliyiz."],
+      "reject": [
+        {
+          "answer": "Evliiz.",
+          "why": "*evli* ends in a vowel, so a buffer *y* comes before the ending: *evliyiz*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u03-l04-e11",
+      "type": "translate",
+      "from": "tr",
+      "prompt": "Türkiye çok güzel.",
+      "accept": ["Turkey is very beautiful.", "Türkiye is very beautiful.", "[Turkey|Türkiye] is very [nice|lovely|pretty]."]
+    },
+    {
+      "id": "a1-u03-l04-e12",
+      "type": "conjugate",
+      "points": ["gp-copula-present", "gp-harmony-4way"],
+      "base": "Alman",
+      "form": "copula-present",
+      "label": "*Alman* (German) + **to be**: I am German, you are German…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["Alman'ım"]
+        },
+        {
+          "p": "sen",
+          "accept": ["Alman'sın"]
+        },
+        {
+          "p": "biz",
+          "accept": ["Alman'ız"]
+        },
+        {
+          "p": "siz",
+          "accept": ["Alman'sınız"]
+        }
+      ],
+      "explain": "a is back and unrounded, so the vowel is ı: *-ım, -sın, -ız, -sınız*, each after an apostrophe because *Alman* is a nation name."
+    },
+    {
+      "id": "a1-u03-l04-e13",
+      "type": "match",
+      "pairs": [
+        ["Türkiye", "Turkey"],
+        ["Kanada", "Canada"],
+        ["Fransa", "France"],
+        ["Almanya", "Germany"],
+        ["İngiltere", "England"]
+      ]
+    }
+  ]
+}

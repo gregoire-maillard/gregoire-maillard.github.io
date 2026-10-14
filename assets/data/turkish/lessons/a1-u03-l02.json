@@ -1,0 +1,243 @@
+{
+  "id": "a1-u03-l02",
+  "unit": "a1-u03",
+  "order": 2,
+  "title": "Jobs: we, you and they",
+  "goal": "Say what people do for a living, with all six personal pronouns.",
+  "points": ["gp-personal-pronouns", "gp-copula-present", "gp-harmony-4way"],
+  "intro": {
+    "text": "The six pronouns are *ben, sen, o, biz, siz, onlar*. *O* is he, she or it. *Siz* is you for several people, or for one person you address politely. Each person has its ending: *öğretmenim, öğretmensin, öğretmen, öğretmeniz, öğretmensiniz, öğretmenler*.",
+    "see": "gp-personal-pronouns"
+  },
+  "vocab": [
+    {
+      "tr": "o",
+      "en": "he, she, it",
+      "pos": "pron"
+    },
+    {
+      "tr": "biz",
+      "en": "we",
+      "pos": "pron"
+    },
+    {
+      "tr": "onlar",
+      "en": "they",
+      "pos": "pron"
+    },
+    {
+      "tr": "öğretmen",
+      "en": "teacher",
+      "pos": "noun"
+    },
+    {
+      "tr": "doktor",
+      "en": "doctor",
+      "pos": "noun"
+    },
+    {
+      "tr": "mühendis",
+      "en": "engineer",
+      "pos": "noun"
+    },
+    {
+      "tr": "avukat",
+      "en": "lawyer",
+      "pos": "noun"
+    },
+    {
+      "tr": "mimar",
+      "en": "architect",
+      "pos": "noun"
+    },
+    {
+      "tr": "garson",
+      "en": "waiter, server",
+      "pos": "noun"
+    },
+    {
+      "tr": "polis",
+      "en": "police officer; the police",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u03-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["öğretmen", "teacher"],
+        ["doktor", "doctor"],
+        ["mühendis", "engineer"],
+        ["avukat", "lawyer"],
+        ["mimar", "architect"],
+        ["garson", "waiter"]
+      ]
+    },
+    {
+      "id": "a1-u03-l02-e02",
+      "type": "mcq",
+      "points": ["gp-personal-pronouns"],
+      "question": "You are talking to your new manager. Which word for **you** do you use?",
+      "options": ["siz", "sen", "onlar"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*sen* is for friends, family, children and people your own age in relaxed settings.",
+        "2": "*onlar* means they."
+      },
+      "explain": "*siz* is for several people, and for one person you address politely, such as a manager or a stranger."
+    },
+    {
+      "id": "a1-u03-l02-e03",
+      "type": "conjugate",
+      "points": ["gp-copula-present", "gp-harmony-4way"],
+      "base": "doktor",
+      "form": "copula-present",
+      "label": "*doktor* + **to be**: I am a doctor, you are a doctor…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["doktorum"]
+        },
+        {
+          "p": "sen",
+          "accept": ["doktorsun"]
+        },
+        {
+          "p": "o",
+          "accept": ["doktor", "doktordur"]
+        },
+        {
+          "p": "biz",
+          "accept": ["doktoruz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["doktorsunuz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["doktorlar", "doktor"]
+        }
+      ],
+      "explain": "The last vowel is o, so the four-way vowel is u: *-um, -sun, -uz, -sunuz*. The third person has no ending, and **they** takes *-lar*."
+    },
+    {
+      "id": "a1-u03-l02-e04",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Biz öğretmeniz.",
+      "en": "We are teachers."
+    },
+    {
+      "id": "a1-u03-l02-e05",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-personal-pronouns", "gp-copula-present"],
+      "prompt": "She is a lawyer.",
+      "accept": ["O avukat.", "Avukat.", "O avukattır.", "Avukattır."]
+    },
+    {
+      "id": "a1-u03-l02-e06",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-personal-pronouns", "gp-copula-present"],
+      "prompt": "Onlar mühendis.",
+      "accept": ["They are engineers."],
+      "explain": "With *onlar* in the sentence, the ending `-lAr` is often left out: *Onlar mühendis* and *Onlar mühendisler* both mean they are engineers."
+    },
+    {
+      "id": "a1-u03-l02-e07",
+      "type": "mcq",
+      "points": ["gp-personal-pronouns"],
+      "question": "*Siz mimarsınız.* Who could hear this sentence?",
+      "options": ["One person addressed politely, or several people", "Only a close friend", "Only the speaker"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*siz* and its ending `-sInIz` are both the plural you and the polite you: you are an architect, or you are architects."
+    },
+    {
+      "id": "a1-u03-l02-e08",
+      "type": "cloze",
+      "points": ["gp-copula-present", "gp-harmony-4way"],
+      "text": "Sen garson___, ben polis___.",
+      "en": "You are a waiter, I am a police officer.",
+      "blanks": [
+        {
+          "accept": ["sun"],
+          "reject": [
+            {
+              "answer": "sın",
+              "why": "The last vowel of *garson* is o, a rounded back vowel, so the ending takes u: *garsonsun*."
+            }
+          ]
+        },
+        {
+          "accept": ["im"],
+          "reject": [
+            {
+              "answer": "ım",
+              "why": "*polis* ends in i, a front vowel, so the ending is *-im*: *polisim*."
+            }
+          ]
+        }
+      ],
+      "explain": "Each ending copies the last vowel of its word: o → u (*garsonsun*), i → i (*polisim*)."
+    },
+    {
+      "id": "a1-u03-l02-e09",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Onlar avukat.",
+      "en": "They are lawyers.",
+      "options": ["Onlar avukat.", "Biz avukatız.", "O avukat."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u03-l02-e10",
+      "type": "wordbank",
+      "from": "tr",
+      "prompt": "Siz mühendissiniz.",
+      "text": "You are engineers.",
+      "answer": ["You", "are", "engineers"],
+      "distractors": ["we", "an", "engineer"],
+      "accept": ["You are an engineer."]
+    },
+    {
+      "id": "a1-u03-l02-e11",
+      "type": "morph",
+      "points": ["gp-copula-present", "gp-harmony-4way"],
+      "base": "öğretmen",
+      "gloss": "we are teachers",
+      "parts": ["öğretmen", "iz"],
+      "distractors": ["ız", "yiz", "ler"],
+      "result": "öğretmeniz",
+      "explain": "`-(y)Iz`: no *y* after a consonant, and e is followed by i. *-ler* would mean **they are** teachers."
+    },
+    {
+      "id": "a1-u03-l02-e12",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-copula-present"],
+      "prompt": "We are architects.",
+      "accept": ["Mimarız.", "Biz mimarız."],
+      "reject": [
+        {
+          "answer": "Biz mimarlar.",
+          "why": "*-lar* is the ending for **they**. For **we**, use `-(y)Iz`: *mimarız*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u03-l02-e13",
+      "type": "mcq",
+      "points": ["gp-personal-pronouns"],
+      "question": "In *O doktor*, who is the doctor?",
+      "options": ["A man or a woman", "Only a man", "Only a woman"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "Turkish has no grammatical gender: *o* is he, she or it. Context tells you who is meant."
+    }
+  ]
+}

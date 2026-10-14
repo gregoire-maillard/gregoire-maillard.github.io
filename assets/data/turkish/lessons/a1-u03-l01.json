@@ -1,0 +1,226 @@
+{
+  "id": "a1-u03-l01",
+  "unit": "a1-u03",
+  "order": 1,
+  "title": "I'm tired, I'm hungry",
+  "goal": "Say how you feel, and how the person you're talking to feels, with four-way harmony.",
+  "points": ["gp-harmony-4way", "gp-copula-present"],
+  "intro": {
+    "text": "To say **I am**, add `-Im` to the adjective: *aç* → *açım* (I am hungry). The vowel follows four-way harmony and copies the last vowel: *hazırım*, *sakinim*, *yorgunum*, *üzgünüm*. For **you are**, add `-sIn`: *yorgunsun*.",
+    "see": "gp-harmony-4way"
+  },
+  "vocab": [
+    {
+      "tr": "yorgun",
+      "en": "tired",
+      "pos": "adj"
+    },
+    {
+      "tr": "aç",
+      "en": "hungry",
+      "pos": "adj"
+    },
+    {
+      "tr": "tok",
+      "en": "full (not hungry)",
+      "pos": "adj"
+    },
+    {
+      "tr": "hazır",
+      "en": "ready",
+      "pos": "adj"
+    },
+    {
+      "tr": "üzgün",
+      "en": "sad",
+      "pos": "adj"
+    },
+    {
+      "tr": "kızgın",
+      "en": "angry",
+      "pos": "adj"
+    },
+    {
+      "tr": "sakin",
+      "en": "calm",
+      "pos": "adj"
+    },
+    {
+      "tr": "memnun",
+      "en": "pleased, satisfied",
+      "pos": "adj"
+    },
+    {
+      "tr": "bekâr",
+      "en": "single, not married",
+      "pos": "adj"
+    },
+    {
+      "tr": "biraz",
+      "en": "a little",
+      "pos": "adv"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u03-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["yorgun", "tired"],
+        ["aç", "hungry"],
+        ["tok", "full"],
+        ["hazır", "ready"],
+        ["üzgün", "sad"],
+        ["kızgın", "angry"]
+      ]
+    },
+    {
+      "id": "a1-u03-l01-e02",
+      "type": "mcq",
+      "points": ["gp-harmony-4way", "gp-copula-present"],
+      "question": "How do you say **I am hungry**?",
+      "options": ["Açım.", "Açim.", "Açum."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*i* follows the front vowels e and i. The last vowel of *aç* is a, a back vowel.",
+        "2": "*u* follows o and u, the back rounded vowels. a is unrounded."
+      },
+      "explain": "a is back and unrounded, so the suffix takes ı: *aç* + `-Im` = *açım*."
+    },
+    {
+      "id": "a1-u03-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-copula-present", "gp-harmony-4way"],
+      "base": "yorgun",
+      "form": "copula-present",
+      "label": "*yorgun* + **to be**: I am tired, you are tired",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["yorgunum"]
+        },
+        {
+          "p": "sen",
+          "accept": ["yorgunsun"]
+        }
+      ],
+      "explain": "The last vowel is u, back and rounded, so the endings take u: *-um*, *-sun*."
+    },
+    {
+      "id": "a1-u03-l01-e04",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Çok yorgunum.",
+      "en": "I am very tired."
+    },
+    {
+      "id": "a1-u03-l01-e05",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-copula-present"],
+      "prompt": "I am ready.",
+      "accept": ["Hazırım.", "Ben hazırım."],
+      "reject": [
+        {
+          "answer": "Hazırum.",
+          "why": "u only follows o and u. The last vowel of *hazır* is ı, so the ending is *-ım*: *hazırım*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u03-l01-e06",
+      "type": "cloze",
+      "points": ["gp-harmony-4way", "gp-copula-present"],
+      "text": "Biraz üzgün___.",
+      "en": "I am a little sad.",
+      "blanks": [
+        {
+          "accept": ["üm"],
+          "reject": [
+            {
+              "answer": "um",
+              "why": "The last vowel of *üzgün* is ü, a front rounded vowel, so the ending is *-üm*."
+            },
+            {
+              "answer": "im",
+              "why": "i follows e and i. After ü, the ending takes ü: *üzgünüm*."
+            }
+          ]
+        }
+      ],
+      "hint": "Front or back? Rounded or not? Look at the last vowel of *üzgün*.",
+      "explain": "ü is front and rounded, so `-Im` becomes *-üm*: *üzgünüm*."
+    },
+    {
+      "id": "a1-u03-l01-e07",
+      "type": "mcq",
+      "points": ["gp-harmony-4way"],
+      "question": "Which ending makes *sakin* (calm) into **I am calm**?",
+      "options": ["-im", "-ım", "-um", "-üm"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "ı follows a and ı, the back unrounded vowels.",
+        "2": "u follows o and u.",
+        "3": "ü follows ö and ü."
+      },
+      "explain": "The last vowel of *sakin* is i, front and unrounded, so the ending is *-im*: *sakinim*."
+    },
+    {
+      "id": "a1-u03-l01-e08",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Tokum.",
+      "en": "I am full.",
+      "options": ["Tokum.", "Toksun.", "Açım."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u03-l01-e09",
+      "type": "translate",
+      "from": "tr",
+      "prompt": "Yorgunsun.",
+      "accept": ["You are tired."]
+    },
+    {
+      "id": "a1-u03-l01-e10",
+      "type": "wordbank",
+      "from": "en",
+      "prompt": "I am very pleased.",
+      "text": "Çok memnunum.",
+      "answer": ["Çok", "memnunum"],
+      "distractors": ["biraz", "memnunsun", "memnun"]
+    },
+    {
+      "id": "a1-u03-l01-e11",
+      "type": "morph",
+      "points": ["gp-harmony-4way", "gp-copula-present"],
+      "base": "kızgın",
+      "gloss": "I am angry",
+      "parts": ["kızgın", "ım"],
+      "distractors": ["im", "um", "sın"],
+      "result": "kızgınım",
+      "explain": "The last vowel of *kızgın* is ı, so `-Im` becomes *-ım*. *-sın* would mean **you are** angry."
+    },
+    {
+      "id": "a1-u03-l01-e12",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-copula-present"],
+      "prompt": "I am single.",
+      "accept": ["Bekârım.", "Ben bekârım."],
+      "explain": "*bekâr* has a circumflex, but its vowel is still a: the ending is *-ım*. *Bekarım* without the circumflex is also accepted."
+    },
+    {
+      "id": "a1-u03-l01-e13",
+      "type": "mcq",
+      "points": ["gp-copula-present"],
+      "question": "What does *Hazırsın* mean?",
+      "options": ["You are ready.", "I am ready.", "We are ready."],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "`-sIn` is **you are**, for one person you know well: *hazır* + *-sın*."
+    }
+  ]
+}

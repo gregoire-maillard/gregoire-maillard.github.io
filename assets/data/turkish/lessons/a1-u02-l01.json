@@ -1,0 +1,198 @@
+{
+  "id": "a1-u02-l01",
+  "unit": "a1-u02",
+  "order": 1,
+  "title": "What is this?",
+  "goal": "Ask what something is and answer with this, that and a.",
+  "points": ["gp-demonstratives", "gp-bir-indefinite"],
+  "intro": {
+    "text": "Point and ask *Bu ne?* (What is this?). Answer *Bu bir kitap* (This is a book). *Bu* is this, near you; *şu* is that, a little farther; *o* is that over there. *Bir* means one, and also a or an.",
+    "see": "gp-demonstratives"
+  },
+  "vocab": [
+    {
+      "tr": "bu",
+      "en": "this",
+      "pos": "det"
+    },
+    {
+      "tr": "şu",
+      "en": "that (nearby)",
+      "pos": "det"
+    },
+    {
+      "tr": "o",
+      "en": "that (farther away)",
+      "pos": "det"
+    },
+    {
+      "tr": "ne",
+      "en": "what",
+      "pos": "pron"
+    },
+    {
+      "tr": "bir",
+      "en": "a, an; one",
+      "pos": "det"
+    },
+    {
+      "tr": "kitap",
+      "en": "book",
+      "pos": "noun"
+    },
+    {
+      "tr": "kalem",
+      "en": "pen, pencil",
+      "pos": "noun"
+    },
+    {
+      "tr": "defter",
+      "en": "notebook",
+      "pos": "noun"
+    },
+    {
+      "tr": "çanta",
+      "en": "bag",
+      "pos": "noun"
+    },
+    {
+      "tr": "masa",
+      "en": "table",
+      "pos": "noun"
+    },
+    {
+      "tr": "sandalye",
+      "en": "chair",
+      "pos": "noun"
+    },
+    {
+      "tr": "sözlük",
+      "en": "dictionary",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u02-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["kitap", "book"],
+        ["kalem", "pen"],
+        ["defter", "notebook"],
+        ["çanta", "bag"],
+        ["masa", "table"],
+        ["sandalye", "chair"]
+      ]
+    },
+    {
+      "id": "a1-u02-l01-e02",
+      "type": "mcq",
+      "points": ["gp-demonstratives"],
+      "question": "What does *Bu ne?* mean?",
+      "options": ["What is this?", "Where is this?", "Is this a book?"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*bu* is this and *ne* is what. Turkish needs no word for **is** here: *Bu ne?* is literally “this what?”."
+    },
+    {
+      "id": "a1-u02-l01-e03",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Bu bir kalem.",
+      "en": "This is a pen."
+    },
+    {
+      "id": "a1-u02-l01-e04",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-demonstratives", "gp-bir-indefinite"],
+      "prompt": "This is a book.",
+      "accept": ["Bu bir kitap.", "Bu kitap."]
+    },
+    {
+      "id": "a1-u02-l01-e05",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-demonstratives", "gp-bir-indefinite"],
+      "prompt": "Şu bir sözlük.",
+      "accept": ["That is a dictionary."],
+      "reject": [
+        {
+          "answer": "This is a dictionary.",
+          "why": "*Şu* is that, something a little away from you. This is *bu*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u02-l01-e06",
+      "type": "mcq",
+      "points": ["gp-demonstratives"],
+      "question": "Which word means **this**, for something right next to you?",
+      "options": ["bu", "şu", "o"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*şu* is that: something a little farther away, often something you point at.",
+        "2": "*o* is that over there, farther away or out of sight."
+      },
+      "explain": "*bu* is near the speaker, *şu* a little farther, *o* farthest."
+    },
+    {
+      "id": "a1-u02-l01-e07",
+      "type": "cloze",
+      "points": ["gp-bir-indefinite"],
+      "text": "Bu ___ masa.",
+      "en": "This is a table.",
+      "blanks": [
+        {
+          "accept": ["bir"]
+        }
+      ],
+      "explain": "*bir* works like **a**: *Bu bir masa*, this is a table."
+    },
+    {
+      "id": "a1-u02-l01-e08",
+      "type": "wordbank",
+      "from": "en",
+      "points": ["gp-demonstratives"],
+      "prompt": "What is that?",
+      "text": "Şu ne?",
+      "answer": ["Şu", "ne"],
+      "distractors": ["bu", "bir", "o"],
+      "accept": ["O ne?"]
+    },
+    {
+      "id": "a1-u02-l01-e09",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Bu bir sandalye.",
+      "en": "This is a chair.",
+      "options": ["Bu bir sandalye.", "Bu bir masa.", "Şu bir sandalye."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u02-l01-e10",
+      "type": "translate",
+      "from": "tr",
+      "prompt": "Bu ne? Bu bir defter.",
+      "accept": ["What is this? This is a notebook.", "What is this? It is a notebook."]
+    },
+    {
+      "id": "a1-u02-l01-e11",
+      "type": "translate",
+      "from": "en",
+      "prompt": "That is a bag.",
+      "accept": ["Şu bir çanta.", "O bir çanta.", "[Şu|O] çanta."]
+    },
+    {
+      "id": "a1-u02-l01-e12",
+      "type": "mcq",
+      "points": ["gp-bir-indefinite"],
+      "question": "Turkish has no word for **the**. What does *bir* mean?",
+      "options": ["a, or one", "the", "this"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*bir* is the number one, and it also works as the article **a**: *bir kitap*, a book or one book."
+    }
+  ]
+}

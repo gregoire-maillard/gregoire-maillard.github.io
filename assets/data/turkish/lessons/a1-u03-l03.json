@@ -1,0 +1,253 @@
+{
+  "id": "a1-u03-l03",
+  "unit": "a1-u03",
+  "order": 3,
+  "title": "Where are you from?",
+  "goal": "Give your nationality and describe people with words ending in a vowel, using the buffer letter y.",
+  "points": ["gp-buffer-letters", "gp-copula-present", "gp-harmony-4way"],
+  "intro": {
+    "text": "When a word ends in a vowel, a *y* joins it to `-Im` and `-Iz`: *öğrenci* → *öğrenciyim*, *Kanadalı* → *Kanadalıyız*. Names of nations are proper nouns, so their ending comes after an apostrophe: *Türk'üm*, *Fransız'ım*.",
+    "see": "gp-buffer-letters"
+  },
+  "vocab": [
+    {
+      "tr": "öğrenci",
+      "en": "student",
+      "pos": "noun"
+    },
+    {
+      "tr": "hasta",
+      "en": "ill, sick",
+      "pos": "adj"
+    },
+    {
+      "tr": "mutlu",
+      "en": "happy",
+      "pos": "adj"
+    },
+    {
+      "tr": "Türk",
+      "en": "Turkish (person); a Turk",
+      "pos": "noun"
+    },
+    {
+      "tr": "Fransız",
+      "en": "French (person)",
+      "pos": "noun"
+    },
+    {
+      "tr": "İngiliz",
+      "en": "English, British (person)",
+      "pos": "noun"
+    },
+    {
+      "tr": "Alman",
+      "en": "German (person)",
+      "pos": "noun"
+    },
+    {
+      "tr": "İtalyan",
+      "en": "Italian (person)",
+      "pos": "noun"
+    },
+    {
+      "tr": "Kanadalı",
+      "en": "Canadian",
+      "pos": "noun"
+    },
+    {
+      "tr": "Amerikalı",
+      "en": "American",
+      "pos": "noun"
+    },
+    {
+      "tr": "Nerelisin?",
+      "en": "Where are you from?",
+      "pos": "phrase"
+    },
+    {
+      "tr": "Nerelisiniz?",
+      "en": "Where are you from? (polite or plural)",
+      "pos": "phrase"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u03-l03-e01",
+      "type": "mcq",
+      "points": ["gp-buffer-letters"],
+      "question": "How do you say **I am a student**?",
+      "options": ["Öğrenciyim.", "Öğrenciim.", "Öğrencim."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "Two vowels can't meet at the join: a buffer *y* goes between *öğrenci* and *-im*.",
+        "2": "The ending keeps its own vowel; the buffer *y* goes in front of it."
+      },
+      "explain": "*öğrenci* ends in a vowel, so the buffer *y* comes first: *öğrenci* + *y* + *-im*."
+    },
+    {
+      "id": "a1-u03-l03-e02",
+      "type": "conjugate",
+      "points": ["gp-copula-present", "gp-buffer-letters"],
+      "base": "öğrenci",
+      "form": "copula-present",
+      "label": "*öğrenci* + **to be**: I am a student, you are a student…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["öğrenciyim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["öğrencisin"]
+        },
+        {
+          "p": "o",
+          "accept": ["öğrenci", "öğrencidir"]
+        },
+        {
+          "p": "biz",
+          "accept": ["öğrenciyiz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["öğrencisiniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["öğrenciler", "öğrenci"]
+        }
+      ],
+      "explain": "The *y* appears only before the endings that start with a vowel: *-yim*, *-yiz*. *-sin* and *-siniz* need no buffer."
+    },
+    {
+      "id": "a1-u03-l03-e03",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Ben Kanadalıyım.",
+      "en": "I am Canadian."
+    },
+    {
+      "id": "a1-u03-l03-e04",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-copula-present", "gp-harmony-4way"],
+      "prompt": "I am Turkish.",
+      "accept": ["Türk'üm.", "Ben Türk'üm."],
+      "explain": "The last vowel of *Türk* is ü, so the ending is *-üm*. *Türk* is a proper noun, so an apostrophe goes before the ending: *Türk'üm*."
+    },
+    {
+      "id": "a1-u03-l03-e05",
+      "type": "translate",
+      "from": "tr",
+      "prompt": "Nerelisin?",
+      "accept": ["Where are you from?", "Where do you come from?"]
+    },
+    {
+      "id": "a1-u03-l03-e06",
+      "type": "cloze",
+      "points": ["gp-buffer-letters", "gp-harmony-4way"],
+      "text": "Biz çok mutlu___.",
+      "en": "We are very happy.",
+      "blanks": [
+        {
+          "accept": ["yuz"],
+          "reject": [
+            {
+              "answer": "uz",
+              "why": "*mutlu* ends in a vowel, so the buffer *y* comes first: *mutluyuz*."
+            },
+            {
+              "answer": "yız",
+              "why": "After u the ending takes u: *-yuz*."
+            }
+          ]
+        }
+      ],
+      "explain": "*mutlu* ends in the vowel u: buffer *y*, then `-Iz` with u: *mutluyuz*."
+    },
+    {
+      "id": "a1-u03-l03-e07",
+      "type": "mcq",
+      "points": ["gp-copula-present"],
+      "question": "Which sentence is spelled correctly?",
+      "options": ["Fransız'ım.", "Fransızım."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Fransız* is the name of a nation, a proper noun, so the ending follows an apostrophe."
+      },
+      "explain": "Nation names take an apostrophe before the ending: *Fransız'ım*, *Türk'üm*. *Kanadalıyım* needs none, because `-lI` makes a new word."
+    },
+    {
+      "id": "a1-u03-l03-e08",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Onlar hasta.",
+      "en": "They are ill.",
+      "options": ["Onlar hasta.", "Biz hastayız.", "Sen hastasın."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u03-l03-e09",
+      "type": "wordbank",
+      "from": "en",
+      "points": ["gp-buffer-letters", "gp-personal-pronouns"],
+      "prompt": "You are Canadian, I am American.",
+      "text": "Sen Kanadalısın, ben Amerikalıyım.",
+      "answer": ["Sen", "Kanadalısın", "ben", "Amerikalıyım"],
+      "distractors": ["Siz", "Kanadalısınız", "Amerikalısın"],
+      "accept": ["Siz Kanadalısınız, ben Amerikalıyım."]
+    },
+    {
+      "id": "a1-u03-l03-e10",
+      "type": "translate",
+      "from": "tr",
+      "prompt": "Zeynep hasta, Emre mutlu.",
+      "accept": ["Zeynep is ill, Emre is happy.", "Zeynep is sick, Emre is happy.", "Zeynep is [ill|sick] and Emre is happy."]
+    },
+    {
+      "id": "a1-u03-l03-e11",
+      "type": "morph",
+      "points": ["gp-buffer-letters", "gp-harmony-4way"],
+      "base": "hasta",
+      "gloss": "I am ill",
+      "parts": ["hasta", "y", "ım"],
+      "distractors": ["s", "n", "im"],
+      "result": "hastayım",
+      "explain": "*hasta* + buffer *y* + `-Im`, with ı after the back vowel a. The buffers *s* and *n* belong to other suffixes."
+    },
+    {
+      "id": "a1-u03-l03-e12",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-buffer-letters"],
+      "prompt": "We are students.",
+      "accept": ["Öğrenciyiz.", "Biz öğrenciyiz."],
+      "reject": [
+        {
+          "answer": "Biz öğrenciler.",
+          "why": "*öğrenciler* is **students** or **they are students**. For **we are**, use `-(y)Iz`: *öğrenciyiz*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u03-l03-e13",
+      "type": "mcq",
+      "points": ["gp-buffer-letters"],
+      "question": "What is the *y* in *hastayım* for?",
+      "options": ["It keeps two vowels apart", "It marks the plural", "It makes the word polite"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*hasta* ends in a and the ending starts with ı. Turkish doesn't let them touch, so a buffer *y* goes between."
+    },
+    {
+      "id": "a1-u03-l03-e14",
+      "type": "translate",
+      "from": "tr",
+      "prompt": "Emma İngiliz, Marco İtalyan.",
+      "accept": ["Emma is English, Marco is Italian.", "Emma is British, Marco is Italian.", "Emma is [English|British] and Marco is Italian."]
+    }
+  ]
+}

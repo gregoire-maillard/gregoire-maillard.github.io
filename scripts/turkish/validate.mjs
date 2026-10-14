@@ -228,7 +228,9 @@ function norm(s, lang) {
 }
 const loose = (s, lang) => fold(norm(s, lang).replace(/'/g, ""));
 
-function checkAccept(list, lang, where, rejects) {
+// mode: the exercise's diacritics mode (PROJECT.md 6.4). Folding Turkish letters (step 6) only happens in
+// lenient mode, so in strict mode a reject that differs from an accepted answer only by ı/i, u/ü… is meaningful.
+function checkAccept(list, lang, where, rejects, mode = "lenient") {
   const all = new Map(); // normalized → entry index
   list.forEach((entry, k) => {
     const w = `${where}.accept[${k}]`;
@@ -244,12 +246,14 @@ function checkAccept(list, lang, where, rejects) {
       else all.set(n, k);
     }
   });
-  const looseSet = new Set([...all.keys()].map(n => fold(n.replace(/'/g, ""))));
+  const folds = lang === "tr" && mode === "lenient";
+  const relax = n => (folds ? fold(n.replace(/'/g, "")) : n.replace(/'/g, ""));
+  const looseSet = new Set([...all.keys()].map(relax));
   (rejects || []).forEach((r, k) => {
     const w = `${where}.reject[${k}]`;
     const n = norm(r.answer, lang);
     if (all.has(n)) err(w, `rejected answer “${r.answer}” is also accepted (accept[${all.get(n)}])`);
-    else if (looseSet.has(fold(n.replace(/'/g, "")))) warn(w, `rejected answer “${r.answer}” differs from an accepted one only by apostrophes or Turkish letters`);
+    else if (looseSet.has(relax(n))) warn(w, `rejected answer “${r.answer}” differs from an accepted one only by apostrophes${folds ? " or Turkish letters" : ""}`);
   });
   return all;
 }
@@ -656,7 +660,7 @@ function checkExercise(e, w, unitId, cx) {
           dupes(b.options.map(o => norm(o, "tr")), `${bw}.options`);
           filled = filled.replace("___", b.options[b.answer] ?? "");
         } else {
-          checkAccept(b.accept, "tr", bw, b.reject);
+          checkAccept(b.accept, "tr", bw, b.reject, e.diacritics || "strict");
           filled = filled.replace("___", b.accept[0] ?? "");
         }
       });
@@ -666,7 +670,7 @@ function checkExercise(e, w, unitId, cx) {
     case "translate": {
       const to = e.from === "tr" ? "en" : "tr";
       checkText(e.prompt, e.from, `${w}.prompt`);
-      checkAccept(e.accept, to, w, e.reject);
+      checkAccept(e.accept, to, w, e.reject, e.diacritics || "lenient");
       if (norm(e.prompt, e.from) === norm(e.accept[0], to)) warn(`${w}.prompt`, "prompt and answer are identical");
       break;
     }

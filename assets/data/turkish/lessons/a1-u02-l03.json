@@ -1,0 +1,241 @@
+{
+  "id": "a1-u02-l03",
+  "unit": "a1-u02",
+  "order": 3,
+  "title": "Colours, these and those",
+  "goal": "Describe things by colour and size, in the singular and the plural.",
+  "points": ["gp-plural", "gp-demonstratives", "gp-bir-indefinite", "gp-harmony-2way"],
+  "intro": {
+    "text": "Adjectives go before the noun and never change: *kırmızı bir çanta* (a red bag), *kırmızı çantalar* (red bags). *Bir* sits between the adjective and the noun. To point at several things, use *bunlar* (these).",
+    "see": "gp-bir-indefinite"
+  },
+  "vocab": [
+    {
+      "tr": "kırmızı",
+      "en": "red",
+      "pos": "adj"
+    },
+    {
+      "tr": "mavi",
+      "en": "blue",
+      "pos": "adj"
+    },
+    {
+      "tr": "yeşil",
+      "en": "green",
+      "pos": "adj"
+    },
+    {
+      "tr": "sarı",
+      "en": "yellow",
+      "pos": "adj"
+    },
+    {
+      "tr": "beyaz",
+      "en": "white",
+      "pos": "adj"
+    },
+    {
+      "tr": "siyah",
+      "en": "black",
+      "pos": "adj"
+    },
+    {
+      "tr": "büyük",
+      "en": "big",
+      "pos": "adj"
+    },
+    {
+      "tr": "küçük",
+      "en": "small",
+      "pos": "adj"
+    },
+    {
+      "tr": "yeni",
+      "en": "new",
+      "pos": "adj"
+    },
+    {
+      "tr": "eski",
+      "en": "old (of things)",
+      "pos": "adj"
+    },
+    {
+      "tr": "güzel",
+      "en": "beautiful, nice",
+      "pos": "adj"
+    },
+    {
+      "tr": "bunlar",
+      "en": "these",
+      "pos": "pron"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u02-l03-e01",
+      "type": "match",
+      "pairs": [
+        ["kırmızı", "red"],
+        ["mavi", "blue"],
+        ["yeşil", "green"],
+        ["sarı", "yellow"],
+        ["beyaz", "white"],
+        ["siyah", "black"]
+      ]
+    },
+    {
+      "id": "a1-u02-l03-e02",
+      "type": "mcq",
+      "points": ["gp-bir-indefinite"],
+      "question": "How do you say **a red bag**?",
+      "options": ["kırmızı bir çanta", "bir çanta kırmızı", "çanta kırmızı bir"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Bir çanta kırmızı* is not a phrase. The adjective comes before the noun.",
+        "2": "In Turkish the noun comes last in the phrase."
+      },
+      "explain": "Adjective, then *bir*, then the noun: *kırmızı bir çanta*."
+    },
+    {
+      "id": "a1-u02-l03-e03",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-bir-indefinite"],
+      "prompt": "This is a new phone.",
+      "accept": ["Bu yeni bir telefon."],
+      "reject": [
+        {
+          "answer": "Bu bir yeni telefon.",
+          "why": "*bir* goes after the adjective: *yeni bir telefon*. *Bir yeni* sounds like one new phone."
+        },
+        {
+          "answer": "Bu yeni telefon.",
+          "why": "Without *bir* this reads as **this is the new phone** or **this new phone**. For **a** new phone, add *bir* after the adjective."
+        }
+      ]
+    },
+    {
+      "id": "a1-u02-l03-e04",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Kalemler mavi.",
+      "en": "The pens are blue."
+    },
+    {
+      "id": "a1-u02-l03-e05",
+      "type": "cloze",
+      "points": ["gp-plural", "gp-harmony-2way"],
+      "text": "Çanta___ büyük, defter___ küçük.",
+      "en": "The bags are big, the notebooks are small.",
+      "blanks": [
+        {
+          "accept": ["lar"],
+          "reject": [
+            {
+              "answer": "ler",
+              "why": "The last vowel of *çanta* is a, a back vowel: *-lar*."
+            }
+          ]
+        },
+        {
+          "accept": ["ler"],
+          "reject": [
+            {
+              "answer": "lar",
+              "why": "The last vowel of *defter* is e, a front vowel: *-ler*."
+            }
+          ]
+        }
+      ],
+      "explain": "*çanta* ends in back a → *çantalar*; *defter* ends in front e → *defterler*."
+    },
+    {
+      "id": "a1-u02-l03-e06",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-demonstratives"],
+      "prompt": "Bunlar ne?",
+      "accept": ["What are these?"]
+    },
+    {
+      "id": "a1-u02-l03-e07",
+      "type": "mcq",
+      "points": ["gp-demonstratives", "gp-plural"],
+      "question": "Which one means **these books**?",
+      "options": ["bu kitaplar", "bunlar kitaplar"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Bunlar* stands on its own, as in *Bunlar ne?*. Before a noun, use *bu*."
+      },
+      "explain": "Before a noun, *bu* never changes, even in the plural: *bu kitaplar*."
+    },
+    {
+      "id": "a1-u02-l03-e08",
+      "type": "morph",
+      "points": ["gp-demonstratives"],
+      "base": "bu",
+      "gloss": "these (on its own)",
+      "parts": ["bu", "nlar"],
+      "distractors": ["lar", "nler"],
+      "result": "bunlar",
+      "explain": "As a pronoun, *bu* takes an extra *n* before the plural: *bunlar*, like *şunlar* and *onlar*. u is back, so *-lar*."
+    },
+    {
+      "id": "a1-u02-l03-e09",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Bunlar yeşil.",
+      "en": "These are green.",
+      "options": ["Bunlar yeşil.", "Bunlar sarı.", "Bu yeşil."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u02-l03-e10",
+      "type": "wordbank",
+      "from": "en",
+      "points": ["gp-plural", "gp-demonstratives"],
+      "prompt": "These are big tables.",
+      "text": "Bunlar büyük masalar.",
+      "answer": ["Bunlar", "büyük", "masalar"],
+      "distractors": ["bu", "bir", "masa"]
+    },
+    {
+      "id": "a1-u02-l03-e11",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-bir-indefinite"],
+      "prompt": "Şu güzel bir ev.",
+      "accept": ["That is a beautiful house.", "That is a beautiful home.", "That is a [nice|lovely|pretty] [house|home]."]
+    },
+    {
+      "id": "a1-u02-l03-e12",
+      "type": "mcq",
+      "question": "Which word is the opposite of *eski* (old)?",
+      "options": ["yeni", "büyük", "güzel"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*büyük* (big) is the opposite of *küçük* (small).",
+        "2": "*güzel* means beautiful or nice."
+      },
+      "explain": "*yeni* (new) and *eski* (old) are a pair, like *büyük* (big) and *küçük* (small)."
+    },
+    {
+      "id": "a1-u02-l03-e13",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-plural"],
+      "prompt": "The keys are small.",
+      "accept": ["Anahtarlar küçük."],
+      "reject": [
+        {
+          "answer": "Anahtarler küçük.",
+          "why": "The last vowel of *anahtar* is a, a back vowel: *anahtarlar*."
+        }
+      ]
+    }
+  ]
+}
