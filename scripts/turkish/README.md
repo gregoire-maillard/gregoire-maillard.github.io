@@ -1,4 +1,4 @@
-# Turkish course — validator
+# Turkish course — validator and tests
 
 `validate.mjs` checks the content behind `/turkish.html` (all of `assets/data/turkish/`) against the schemas in `turkish/PROJECT.md` and the registry of units, grammar points and batches in `turkish/CURRICULUM.md`. It also generates `assets/data/turkish/index.json`, the manifest the hub reads. Node 18 or later, no dependencies. Run it from the repo root:
 
@@ -20,5 +20,16 @@ What it checks:
 - **Turkish text**: NFC, no U+0307 (from lowercasing İ without the Turkish locale), the `'` apostrophe, inline markup, `seg` segmentation; warnings for a likely mistyped dotless *I* (*Istanbul*), a question particle glued to its verb, non-Turkish letters, and sentences that start in lowercase.
 - **Targets** (warnings): lesson sizes and exercise mixes, guide and interlude lengths, interlude sources, flashcard examples that don't contain their word.
 - **index.json**: up to date with the content (rewrite it with `--index`, which refuses while there are errors).
+
+## Tests for turkish.js
+
+`test.mjs` tests `assets/js/turkish.js`, the script every page of the section shares: the answer checker (PROJECT.md 6.4), the flashcard scheduler (6.6) and the progress logic around them (5.9, 6.1, 6.3). Node 18 or later, no dependencies:
+
+```
+node scripts/turkish/test.mjs            # exit 1 on a failure
+node scripts/turkish/test.mjs --verbose  # also list the tests that pass
+```
+
+Besides hand-written cases it marks every accepted answer in the content correct and every rejected one wrong with its feedback, renders every Rich text and resolves every link, compares the checker's normalization with this validator's (taken from its source), runs `validate.mjs --progress` on an exported file, and repeats the date tests under America/Toronto and Australia/Lord_Howe.
 
 A content conversation is done when `--batch <id>` reports its units complete with no errors and `--index` has been run. See `turkish/PROJECT.md`, section 9.

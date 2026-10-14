@@ -46,7 +46,8 @@ assets/data/turkish/
   flashcards/fc-0001-0200.json   five files of 200 cards
 scripts/turkish/
   validate.mjs                   the validator
-  README.md                      how to run it
+  test.mjs                       tests for turkish.js: answer checker, scheduler, progress
+  README.md                      how to run them
 turkish/
   PROJECT.md                     this file
   CURRICULUM.md                  scope, registry of IDs, batches
@@ -57,9 +58,9 @@ File names equal IDs: `units/a1-u05.json` holds unit `a1-u05`; `grammar/a1-u05.j
 ### Page conventions (for the build conversations)
 
 - Pages sit at the site root like every other page. Copy the `<head>` pattern from `mtlmobility.html`: Google tag snippet, `meta description`, `canonical`, `og:` tags, favicon, viewport. `<html lang="en">`.
-- The sticky glass header `.at-hdr` from `mtlmobility.html`, with the section's own tabs: **Course** (`turkish.html`), **Grammar** (`turkishguide.html`), **Flashcards** (`turkishcards.html`), `aria-current="page"` on the active one. The existing CSS hides tabs below 600 px; this section needs a mobile alternative (UI-1 decides).
+- The sticky glass header `.at-hdr` from `mtlmobility.html`, with the section's own tabs: **Course** (`turkish.html`), **Grammar** (`turkishguide.html`), **Flashcards** (`turkishcards.html`), `aria-current="page"` on the active one. Mobile (decided in UI-1): below 600 px the bar is 56 px high, the name next to the mark is visually hidden (it stays the link's accessible name) and the three tabs stay in the bar, right-aligned, each at least 44 px wide. Copy the header markup and its first `<style>` block from `turkish.html` as they are.
 - Hub, player and flashcards: inline `<style>` per page, using the site's tokens (`--blue: #287a9e`, `--ink`, `--line`…), white page, hairline borders, cards like the Mobility Lab's. The grammar reader uses `stylesheets/styles.css` (left rail and reading column, like `turkish101.html`) and its harmony classes `.back`, `.front`, `.suf`, `.stem`.
-- `assets/js/turkish.js` is a classic script loaded with `defer`, exposes `window.TRK`, and also exports itself with `module.exports` when run in Node so its checker and scheduler can be tested.
+- `assets/js/turkish.js` is a classic script loaded with `defer`, exposes `window.TRK`, and also exports itself with `module.exports` when run in Node so its checker and scheduler can be tested (`scripts/turkish/test.mjs`). A page's own script is inline at the end of `<body>` and runs in a `DOMContentLoaded` handler, which fires after deferred scripts. What `TRK` offers is listed in 6.7.
 - No framework and no CDN dependency unless a page truly needs one; if it does, pin an exact version on jsdelivr, as with `d3@7.9.0` elsewhere on the site.
 - Every element holding Turkish text gets `lang="tr"`, so text-to-speech, hyphenation and CSS `text-transform` treat i/İ and ı/I correctly.
 - Data is fetched from `/assets/data/turkish/…` with `?v=<index.version>` for cache-busting, after fetching `index.json` with `cache: "no-cache"`.
@@ -679,7 +680,8 @@ interface CardsProgress {
   schema: 1;
   updated: string;
   cards: { [cardIdAndDirection: string]: CardState };   // key "fc-0042:tr-en" or "fc-0042:en-tr"; no entry = new
-  days: { [day: string]: { new: number; reviews: number; again: number } };   // kept for 400 days
+  days: { [day: string]: { new: number; reviews: number; again: number } };   // per learning day: new cards started, answers to
+                                                                              // cards in review, Again presses; kept for 400 days
 }
 interface CardState {
   s: "learning" | "review" | "relearning" | "suspended";
@@ -793,11 +795,12 @@ What the build conversations implement. Constants live at the top of `assets/js/
 ### 6.3 XP and streak
 
 - +1 XP per exercise correct on the first try; +5 for finishing a lesson; +5 more for a perfect lesson; +10 for passing a unit review. Repeating a lesson earns half.
-- The daily goal (`settings.dailyGoal`) is met by XP. A day counts toward the streak if the learner finishes at least one lesson or reviews at least 10 cards that day. Missing a day resets `streak.current` to 0.
+- A unit review and a mistakes practice earn +1 XP per exercise correct on the first try (plus the +10 for a passed review), never the finishing bonus. A "jump here" test earns no XP.
+- The daily goal (`settings.dailyGoal`) is met by XP. A day counts toward the streak if the learner finishes at least one lesson (a unit review or a mistakes practice counts too; a test doesn't) or studies at least 10 cards that day (`new + reviews` in `cards.days`). Missing a day resets `streak.current` to 0.
 
 ### 6.4 Answer checking
 
-`TRK.check(answer, accepted[], rejected[], lang, mode)` returns `{ verdict: "correct" | "almost" | "wrong", note?, matched? }`. The validator uses the same normalization to check accept lists.
+`TRK.check(answer, accepted[], rejected[], lang, mode)` returns `{ verdict: "correct" | "almost" | "wrong", note?, matched?, why?, canonical }`: `matched` is the accepted expansion that matched or nearly matched, `why` the feedback of a rejected answer, `canonical` is `accepted[0]`. The validator uses the same normalization to check accept lists, and `scripts/turkish/test.mjs` fails if the two drift apart.
 
 1. **Expand** every accepted entry: `[a|b]` means exactly one of a or b; `(a)` means optional a; `(a|b)` means nothing, a or b. No nesting. Expansion is capped at 200 strings per entry.
 2. **Normalize** both sides (stage 1):
@@ -810,8 +813,9 @@ What the build conversations implement. Constants live at the top of `assets/js/
 3. If the answer equals a normalized **rejected** answer → `wrong`, with its `why`.
 4. If it equals an accepted expansion → `correct`.
 5. Ignoring apostrophes, if it equals an accepted expansion → `almost`, note "apostrophe" (*İstanbulda* for *İstanbul'da*).
-6. Turkish in lenient mode only: folding `ç ğ ı ö ş ü → c g i o s u` on both sides, if equal → `almost`, note "Turkish letters".
-7. English only: same number of words and exactly one word of five or more letters at edit distance 1 → `almost`, note "typo".
+6. Turkish in lenient mode only: folding `ç ğ ı ö ş ü → c g i o s u` on both sides (apostrophes ignored), if equal → `almost`, note "Turkish letters".
+   6b. If it equals a rejected answer once apostrophes are ignored (and, in lenient Turkish, letters folded) → `wrong`, with that answer's `why`: *Hazirum* still gets the feedback written for *Hazırum*.
+7. English only: same number of words and exactly one word of five or more letters at edit distance 1 → `almost`, note "typo". A swap of two neighbouring letters counts as one edit (*offcie*).
 8. Otherwise `wrong`.
 
 Defaults: `translate` and `listen` are lenient; `cloze` and `conjugate` are strict, because they test the letters themselves (ı versus i is a harmony error, not a typo). An exercise can override with `diacritics`. `wordbank`, `morph`, `match`, `mcq` and `reading` compare tiles or indexes, not text.
@@ -833,11 +837,26 @@ Constants: learning steps 1 min and 10 min; relearning step 10 min; graduating i
   - Easy: `ivl' = max(good' + 1, (ivl + d) × ease × 1.3)`, ease + 0.15
   - Again: lapses + 1, ease − 0.20, state relearning at step 0, and the review interval becomes 1 day; at 8 lapses set `leech` (show it in the deck browser; don't suspend).
 - Round intervals to whole days and cap them at 3,650. From 3 days up, add a random fuzz of ±5% (at least ±1 day).
-- **Relearning card.** Again → step 0; Good on the last step → back to review with the new interval; Easy → back to review with that interval + 1.
+- **Relearning card.** Again → step 0 (not another lapse); Hard → repeat the step; Good on the last step → back to review with the new interval; Easy → back to review with that interval + 1.
 - **Due.** Learning cards are due at their exact time. Review cards are due on their day, from `dayStartHour`.
-- **Daily session.** Due learning cards first, then due reviews (oldest first, up to `reviewsPerDay`), with new cards mixed in, one after every few reviews, up to `newPerDay`. New cards come in rank order; with `onlyTaughtWords`, only cards whose `unit` is done.
-- **Directions.** `tr-en` (see Turkish, recall English) and `en-tr` (see English and the part of speech, recall Turkish) are scheduled separately. A word's `en-tr` card is introduced only after its `tr-en` card has graduated, and once one direction has been answered, the other waits until the next day (Anki's sibling burying).
+- **Daily session.** Due learning cards first, then due reviews (oldest first, up to `reviewsPerDay`), with new cards mixed in, one after every few reviews, up to `newPerDay`. New cards come in rank order; with `onlyTaughtWords`, only cards whose `unit` is done. The limits count `days[today].new` and `days[today].reviews`, so learning steps don't use them up. New cards are spread evenly among the reviews. When nothing else is left, learning cards due within the next 20 minutes are shown early (Anki's learn-ahead limit).
+- **Directions.** `tr-en` (see Turkish, recall English) and `en-tr` (see English and the part of speech, recall Turkish) are scheduled separately. A word's `en-tr` card is introduced only after its `tr-en` card has graduated (it has an interval: review or relearning), unless `directions` holds `en-tr` alone, and once one direction has been answered, the other waits until the next day (Anki's sibling burying). Learning cards are never buried, but a word with a card in learning today doesn't also get a new or review card that day.
 - Self-graded, as in Anki: show the front, "Show answer", then Again, Hard, Good and Easy with the next interval printed on each button. The back shows glosses, the example with its translation, the forms and the note.
+
+### 6.7 turkish.js reference
+
+Built in UI-1; the other pages use these instead of writing their own. Constants (XP, pass mark, scheduler settings, page URLs) are in `TRK.C`.
+
+| Area | What to call |
+|---|---|
+| Data | `TRK.data.index()`: index.json, fetched with `cache: "no-cache"`. `TRK.data.get(id)`: any content file by its ID (`a1`, `a1-u05`, `a1-u05-l01`, `a1-u05-grammar`, `a1-u05-culture`), with `?v=<index.version>`. `TRK.data.deck()`: every flashcard, sorted by rank. All return promises and share requests. |
+| Markup (5.1) | `TRK.rich(text, { index })` → HTML, links resolved and unwritten targets shown as "coming soon"; `TRK.trRich(text, { index })` → `<p lang="tr">` paragraphs; `TRK.seg(seg)` → `.stem` and `.suf` spans; `TRK.plain(text)`; `TRK.href(ref, index)` → `{ href, ready }`; `TRK.esc(text)`. |
+| Checker (6.4) | `TRK.check(answer, accepted, rejected, lang, mode)`. `TRK.answerSpec(exercise, i)` gives `{ accept, reject, lang, mode }` with the default modes for `translate`, `listen` (type), cloze blank `i` and conjugate cell `i`; `TRK.checkExercise(exercise, answer, i)` runs it. |
+| Path (6.1) | `TRK.path.flatten(index)` (units in order, ready lessons in order), `lessonUnlocked(index, course, settings, id)`, `unitState(index, course, settings, unit)` (planned, locked, open, started or done; counts; mastered), `unitDone`, `nextLesson(index, course)`, `nextPlanned(index)`, `testLessons(index, course, unit)` (what a passed jump test marks done). |
+| Progress (5.9, 6.3) | `TRK.store` is the page's store on `localStorage` (memory when that fails; `store.problem` says why): `course()`, `cards()`, `settings()`, `setSettings(patch)`, `answered(exerciseId, correct)` after each answer, `finishLesson(id, { correct, counted })`, `finishReview(unit, { correct, counted })`, `finishTest(unit, lessonIds, { correct, counted })`, `finishPractice({ correct })`, `markRead(unit, "guide" or "culture")`, `cardSession(deck, { index })`, `exportData()`, `importData(file)`, `reset()`, `onChange(fn)`. The finish calls return the XP earned, the score, the streak and whether the daily goal was just met. The pure functions behind them are in `TRK.progress` (also `mistakesDue(course)`, `streak`, `goal`, `validate(file)`). |
+| Scheduler (6.6) | `TRK.srs.answer(state or null, grade, now, settings)` → new state; `preview(state, now, settings)` and `format(p)` for the four buttons' labels; `isDue`; `queue(o, now).counts`; `session(o)` with `next(now)` and `answer(key, grade, now)`. `store.cardSession` wires a session to the store, so answers are saved and the 10th card of the day credits the streak. |
+| Speech and typing (6.5) | `TRK.tts.ready()` → the Turkish voice or `null`; `TRK.tts.speak(text, { slow })` (false without a Turkish voice); `TRK.tts.button(text, { slow })` → a speaker button that stays hidden without a voice or with speech off; `TRK.tts.on()`; `TRK.tts.HELP`, the notice for a device without a Turkish voice. `TRK.prepInput(input, lang)` sets the input attributes; `TRK.insertText(input, "ş")` types a letter of the bar at the caret; the letters are `TRK.C.LETTERS` and `TRK.C.LETTERS_UP`. |
+| Analytics | `TRK.track("trk_lesson_complete", { lesson, score })` and `TRK.track("trk_cards_session", { reviewed })`; other events and other fields are dropped. |
 
 ## 7. Content style rules
 
@@ -924,7 +943,10 @@ node scripts/turkish/validate.mjs --examples         # validate the JSON example
 node scripts/turkish/validate.mjs --vocab            # list the words taught so far, unit by unit
 node scripts/turkish/validate.mjs --progress f.json  # validate an exported progress file
    add --strict to turn warnings into errors, --quiet to hide warnings
+node scripts/turkish/test.mjs                        # test turkish.js (checker, scheduler, progress); exit 1 on a failure
 ```
+
+`test.mjs` also checks the real content (every accepted answer is marked correct, every rejected one wrong with its feedback, every Rich text renders and every link resolves), that the checker's normalization equals the validator's, that an exported progress file passes `--progress`, and reruns the date tests under two time zones with daylight saving time. Run it after any change to `turkish.js`, to the checker in the validator, or to content with accept lists.
 
 **Errors** (must be fixed): invalid JSON or schema; wrong or duplicate IDs; file names that don't match IDs; references to missing units, lessons, guides, interludes, grammar points or cards; units, titles or grammar-point lists that differ from CURRICULUM.md; grammar points used before the unit that introduces them; guide sections that don't cover the unit's points in order; accept lists with syntax errors, duplicates or overlaps with `reject`; `cloze` blanks, `wordbank` tiles, `morph` parts or `seg` text that don't add up; forbidden characters (U+0307, `’` in Turkish, HTML tags); a stale `index.json`.
 
@@ -935,7 +957,7 @@ node scripts/turkish/validate.mjs --progress f.json  # validate an exported prog
 1. Read this file in full, the CURRICULUM.md sections for your batch, and the progress log below. Run `node scripts/turkish/validate.mjs --vocab` to see which words have been taught.
 2. Check that the repo is reachable: it lives on Grégoire's Mac at `/Users/gregoire/Documents/GitHub/gregoire-maillard.github.io`. If the Mac can't be reached, tell him before writing anything. Work in the repo directly when a shell on the Mac is available; otherwise write the files elsewhere, copy them in, and compare checksums after copying.
 3. For each unit, write the grammar guide first, then the lessons, then the interlude, then the unit file. Content batches never edit `turkish.html` or the other pages, and build conversations never rewrite content except to fix bugs they find (logged).
-4. Run `node scripts/turkish/validate.mjs --batch <id>` until there are no errors, and fix the warnings or note why they stay.
+4. Run `node scripts/turkish/validate.mjs --batch <id>` until there are no errors, and fix the warnings or note why they stay. Build conversations (UI, QA) also run `node scripts/turkish/test.mjs`.
 5. Run `node scripts/turkish/validate.mjs --index`.
 6. Re-read every file you wrote from disk (earlier writes have silently landed as old versions).
 7. Add one row to the progress log: date, batch, what was written (files and counts), validator result, and open issues for later conversations.
@@ -950,3 +972,4 @@ One row per conversation, newest at the bottom.
 | Date | Batch | What was done | Validator | Notes for later |
 |---|---|---|---|---|
 | 2026-10-14 | A1-1 | Content for a1-u01, a1-u02, a1-u03: 3 unit files, 12 lessons (155 exercises: 50, 52, 53), 3 grammar guides (about 1,300, 1,250 and 1,100 words), 3 interludes (the 1928 alphabet reform, the nazar boncuğu, the 1934 Surname Law), index.json regenerated. Schema test: the section 5 schemas fitted the real content unchanged, so section 5 and its examples are untouched. Two fixes: validate.mjs now makes the "reject differs from an accepted answer only by Turkish letters" warning follow the exercise's diacritics mode (strict cloze blanks must be able to reject ı/i or u/ü harmony errors, as 6.4 intends); 7.6 now notes that the present of "to be" is shown positive only in a1-u03, since değil and mI belong to a1-u04. | `--batch A1-1 --strict`: complete, 0 errors, 0 warnings. `--examples`: 9 pass. | Native-speaker check still to do (list given to Grégoire): plural predicates after bunlar/şunlar, "Onlar mühendis", apostrophes on nation names with "to be" (Türk'üm, Alman'sınız, as in the TDK guide), the stress table. No shell on the Mac in this session: files were written in a cloud copy, copied in through the bridge and checked by SHA-256. A1-2: the a1-u04 guide adds değil and mI to the copula paradigm; a1-u05 can point back to Türk'üm for the apostrophe; reuse siz and Nerelisiniz?, listed in vocab but not yet practised. UI-2: a wordbank answer can repeat a tile (a1-u03-l04-e09 has I and am twice); mcq options that differ only in letter case count as duplicates, so stress options carry words ("On the last syllable: ay-ŞE"); listen/choose minimal pairs on single words (cam/çam, su/şu) need checking with real TTS voices. |
+| 2026-10-14 | UI-1 | `assets/js/turkish.js` (about 1,100 lines in 11 sections: data loading through index.json and its ?v= version, inline markup renderer, answer checker, path and unlocking, XP, streak and mistakes, progress store on localStorage with an in-memory fallback and export-file checks, SM-2 scheduler with the daily session and sibling burying, text-to-speech, typing helpers, the two analytics events); `scripts/turkish/test.mjs` (62 tests); the hub `turkish.html` (A1→C2 path from index.json with planned units as coming soon, continue button, daily goal, streak, cards due, mistakes to practise, settings, export, import and reset of progress; on phones the header keeps its three tabs and drops the name). PROJECT.md: 3 (mobile header, page scripts, test.mjs), 5.9 (what the cards.days counters count), 6.3 (XP and streak for unit reviews, mistakes practice and jump tests), 6.4 (returned fields, step 6b, a letter swap counts as one typo), 6.6 (Hard while relearning, how the limits count, learn-ahead, en-tr gating and burying details), new 6.7 (turkish.js reference), 8 and 9 (test.mjs); scripts/turkish/README.md. No content changed. index.html not touched: entry proposed to Grégoire, waiting for his OK. | `--strict`: 0 errors, 0 warnings. `--examples`: 9 pass. `test.mjs`: 62/62, date tests also pass under America/Toronto and Australia/Lord_Howe. Hub checked in headless Chromium at 1280 and 360 px (no horizontal scroll, no script errors, export → reset → import round trip, notices for blocked storage, unreadable progress and a failed load). | Until UI-2, UI-3 and UI-4 exist, the Grammar and Flashcards tabs and every lesson, review, test and practice link from the hub are 404s; the hub is linked from nowhere and stays out of the sitemap (make-sitemap skips pages that don't exist yet). Not tested yet: real Turkish voices (headless Chromium has none), Safari and iOS. UI-2: call `store.answered` after each answer and `store.finishLesson(id, { correct, counted })` at the end, then `TRK.track`; jump tests use `TRK.path.testLessons` and `store.finishTest`; mistakes practice uses `TRK.progress.mistakesDue` and `store.finishPractice`; with `settings.tts` off or no voice from `TRK.tts.ready()`, hide speaker buttons and skip listen exercises; the letter bar follows `settings.keyboardBar`. UI-3: render with `TRK.rich(text, { index })`, `TRK.trRich` and `TRK.seg`, and call `store.markRead`. UI-4: `store.cardSession(deck, { index })`, button labels from `TRK.srs.preview` and `format`; nothing sets a card to suspended yet (decide whether the deck browser offers it) and `leech` needs showing. |
