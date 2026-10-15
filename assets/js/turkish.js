@@ -12,7 +12,8 @@
      6. The path: order, unlocking, what comes next (6.1)
      7. Progress: defaults, XP, streak, mistakes, export file checks (5.9, 6.3)
      8. Progress store: localStorage, or memory when it is unavailable (3, 5.9)
-     9. Flashcard scheduler: Anki SM-2 with Anki's default settings, and the daily session (6.6)
+     9. Flashcard scheduler: Anki SM-2 with Anki's default settings, the daily session with undo, suspending,
+        and the statistics of the flashcards page (6.6)
     10. Text-to-speech and typed input (6.5)
     11. Analytics: the two allowed events (3)
 
@@ -52,7 +53,8 @@
       learn: [1, 10], relearn: [10], graduate: 1, easy: 4,
       ease: 2.5, minEase: 1.3, hard: 1.2, easyBonus: 1.3, lapse: 0,
       maxIvl: 3650, leech: 8, fuzzFrom: 3, fuzz: 0.05,
-      learnAhead: 20       // minutes: at the end of a session, learning cards due this soon are shown early (Anki's learn-ahead limit)
+      learnAhead: 20,      // minutes: at the end of a session, learning cards due this soon are shown early (Anki's learn-ahead limit)
+      mature: 21           // days: a review card with an interval this long or longer is mature, shorter is young (as in Anki's stats)
     },
     // 5.9 settings defaults
     SETTINGS: {
@@ -497,9 +499,11 @@
     schema: S.lit(1), updated: T_ISO,
     cards: S.map(RE.cardKey, S.obj({
       s: S.one(["learning", "review", "relearning", "suspended"]), due: S.int(0), ivl: S.num(0, 36500), ease: S.num(1.3, 10),
-      step: S.int(0), reps: S.int(0), lapses: S.int(0), last: S.int(0), leech: S.opt(S.lit(true))
+      step: S.int(0), reps: S.int(0), lapses: S.int(0), last: S.int(0), leech: S.opt(S.lit(true)),
+      was: S.opt(S.one(["learning", "review", "relearning"]))
     }), "a card key (fc-0042:tr-en)"),
-    days: S.map(RE.day, S.obj({ "new": S.int(0), reviews: S.int(0), again: S.int(0) }), "a day")
+    days: S.map(RE.day, S.obj({ "new": S.int(0), reviews: S.int(0), again: S.int(0),
+                                lapses: S.opt(S.int(0)), mature: S.opt(S.int(0)), matureLapses: S.opt(S.int(0)) }), "a day")
   });
   SPEC.settings = S.obj({
     schema: S.lit(1), dailyGoal: S.one(C.GOALS), newPerDay: S.int(0, 100), reviewsPerDay: S.int(10, 9999),
@@ -782,6 +786,23 @@
         onCredit: function (now) { store.update("course", function (c) { creditDay(c, get("settings"), now); }, now); }
       });
     };
+    // Suspends (on = true) or unsuspends flashcards by key ("fc-0042:tr-en"); returns how many changed.
+    // A suspended card keeps its schedule and returns to it; a card never studied goes back to new.
+    store.setSuspended = function (keys, on, now) {
+      now = ms(now);
+      return store.update("cards", function (c) {
+        var n = 0;
+        (keys || []).forEach(function (k) {
+          if (!RE.cardKey.test(k)) return;
+          var s = c.cards[k], susp = !!s && s.s === "suspended";
+          if (!!on === susp) return;
+          if (on) c.cards[k] = suspend(s || null, now);
+          else { var u = unsuspend(s); if (u) c.cards[k] = u; else delete c.cards[k]; }
+          n++;
+        });
+        return n;
+      }, now);
+    };
 
     if (storage && root && root.localStorage === storage && typeof root.addEventListener === "function") {
       root.addEventListener("storage", function (e) {
@@ -882,6 +903,79 @@
   }
   function siblingKey(key) { return key.slice(0, 7) + ":" + (key.slice(8) === "tr-en" ? "en-tr" : "tr-en"); }
 
+  // Suspending (deck browser): the card leaves every session but keeps its schedule; `was` remembers the state
+  // to go back to. A card never studied is stored as suspended with reps 0 and no `was`, and unsuspend() → null
+  // (new again). Neither function changes its input.
+  function suspend(prev, now) {
+    if (prev && prev.s === "suspended") return clone(prev);
+    if (!prev) return { s: "suspended", due: ms(now), ivl: 0, ease: C.SRS.ease, step: 0, reps: 0, lapses: 0, last: 0 };
+    var s = clone(prev);
+    s.was = s.s; s.s = "suspended";
+    return s;
+  }
+  function unsuspend(prev) {
+    if (!prev) return null;
+    if (prev.s !== "suspended") return clone(prev);
+    if (!prev.was && !prev.reps) return null;
+    var s = clone(prev);
+    s.s = prev.was || (prev.ivl > 0 ? "review" : "learning");   // a file without `was`: guess from the interval
+    delete s.was;
+    return s;
+  }
+
+  // Statistics for the flashcards page. o: { deck, cards: CardsProgress, settings }; only the directions turned on count.
+  function dirsOf(settings) { return C.DIRS.filter(function (d) { return ((settings && settings.directions) || C.DIRS).indexOf(d) >= 0; }); }
+  // How many cards are new (never studied), learning, relearning, young, mature or suspended; leeches counted apart.
+  function cardCounts(o) {
+    var c = { "new": 0, learning: 0, relearning: 0, young: 0, mature: 0, suspended: 0, leech: 0, total: 0 };
+    var dirs = dirsOf(o.settings), all = o.cards.cards;
+    o.deck.forEach(function (card) {
+      dirs.forEach(function (dir) {
+        var s = all[card.id + ":" + dir];
+        c.total++;
+        if (!s) { c["new"]++; return; }
+        if (s.s === "review") c[s.ivl >= C.SRS.mature ? "mature" : "young"]++;
+        else c[s.s]++;
+        if (s.leech) c.leech++;
+      });
+    });
+    return c;
+  }
+  // The next n learning days (0 = today): review cards due each day, young and mature, and learning cards due.
+  // Overdue cards count for today. Daily limits and burying are not applied: this is what falls due.
+  function forecast(o, now, n) {
+    now = ms(now); n = n || 30;
+    var hour = hourOf(o.settings), today = dayOf(now, hour), out = [], dirs = dirsOf(o.settings), all = o.cards.cards;
+    for (var i = 0; i < n; i++) out.push({ day: addDays(today, i), young: 0, mature: 0, learning: 0 });
+    o.deck.forEach(function (card) {
+      dirs.forEach(function (dir) {
+        var s = all[card.id + ":" + dir];
+        if (!s || s.s === "suspended") return;
+        var k = Math.max(0, daysBetween(today, dayOf(s.due, hour)));
+        if (k >= n) return;
+        out[k][s.s === "review" ? (s.ivl >= C.SRS.mature ? "mature" : "young") : "learning"]++;
+      });
+    });
+    return out;
+  }
+  // Retention over the last n learning days, today included (n null: every day kept): the share of answers to
+  // cards in review that weren't Again, for young cards, mature cards and all. rate is null without answers.
+  // Days saved before the lapse counters existed (5.9) are left out.
+  function retention(prog, now, settings, n) {
+    var today = dayOf(now, hourOf(settings)), from = n ? addDays(today, -(n - 1)) : "";
+    var r = { young: { reviews: 0, lapses: 0 }, mature: { reviews: 0, lapses: 0 }, all: { reviews: 0, lapses: 0 } };
+    Object.keys(prog.days).forEach(function (d) {
+      var x = prog.days[d];
+      if (d < from || d > today || typeof x.lapses !== "number") return;
+      var m = x.mature || 0, ml = x.matureLapses || 0;
+      r.all.reviews += x.reviews; r.all.lapses += x.lapses;
+      r.mature.reviews += m; r.mature.lapses += ml;
+      r.young.reviews += x.reviews - m; r.young.lapses += x.lapses - ml;
+    });
+    ["young", "mature", "all"].forEach(function (k) { r[k].rate = r[k].reviews ? round3(1 - r[k].lapses / r[k].reviews) : null; });
+    return r;
+  }
+
   // queue(o, now): what the daily session holds right now (6.6).
   //   o: { deck: cards sorted by rank, cards: CardsProgress, settings, course?, index? }
   //   → { learnNow, learnToday, reviews, news, main (reviews with new cards spread among them), counts }
@@ -937,12 +1031,15 @@
   // session(o): one review session. o as for queue(), plus save(cards, now), onCredit(now), rng.
   //   next(now) → { key, id, dir, kind: "new" | "learning" | "review", card } or { done: true, waitUntil }
   //   answer(key, grade, now) → the card's new state
+  //   undo(now) → the key of the last answer, put back as it was (card, day counters, queue) and shown next; null if none.
+  //     One step only; a streak day already credited stays credited.
   function session(o) {
     var st = o.settings, hour = hourOf(st), prog = o.cards;
     var byId = {};
     o.deck.forEach(function (c) { byId[c.id] = c; });
     var main = queue(o, o.now).main.slice();
     var stats = { answered: 0, again: 0, "new": 0, reviews: 0 };
+    var last = null, redo = null;   // what undo() restores; the key it put back
     var dirsOn = function (key) { return st.directions.indexOf(key.slice(8)) >= 0 && byId[key.slice(0, 7)]; };
     var learning = function (until) {
       return Object.keys(prog.cards).filter(function (k) {
@@ -965,6 +1062,7 @@
       stats: stats,
       next: function (now) {
         now = ms(now);
+        if (redo) { var r = prog.cards[redo]; if ((!r || r.s !== "suspended") && dirsOn(redo)) return item(redo); redo = null; }
         var l = learning(now);
         if (l.length) return item(l[0]);
         while (main.length) { if (stillOk(main[0], now)) return item(main[0]); main.shift(); }
@@ -977,12 +1075,19 @@
         now = ms(now);
         var prev = prog.cards[key] || null, g = gradeOf(grade);
         var s = answer(prev, g, now, st, o.rng);
-        prog.cards[key] = s;
         var day = dayOf(now, hour);
-        var d = prog.days[day] || (prog.days[day] = { "new": 0, reviews: 0, again: 0 });
+        last = { key: key, prev: prev ? clone(prev) : null, day: day, rec: clone(prog.days[day]) || null, main: main.slice(), stats: clone(stats) };
+        redo = null;
+        prog.cards[key] = s;
+        var d = prog.days[day] || (prog.days[day] = { "new": 0, reviews: 0, again: 0, lapses: 0, mature: 0, matureLapses: 0 });
         var before = d["new"] + d.reviews;
         if (!prev) { d["new"] += 1; stats["new"] += 1; }
-        else if (prev.s === "review") { d.reviews += 1; stats.reviews += 1; }
+        else if (prev.s === "review") {                  // retention counters (5.9): Again on a card in review is a lapse
+          var mature = prev.ivl >= C.SRS.mature;
+          d.reviews += 1; stats.reviews += 1;
+          d.lapses = (d.lapses || 0) + (g === 1 ? 1 : 0);
+          if (mature) { d.mature = (d.mature || 0) + 1; d.matureLapses = (d.matureLapses || 0) + (g === 1 ? 1 : 0); }
+        }
         if (g === 1) { d.again += 1; stats.again += 1; }
         stats.answered += 1;
         main = main.filter(function (k) { return k !== key; });
@@ -990,6 +1095,19 @@
         if (before < C.STREAK_CARDS && d["new"] + d.reviews >= C.STREAK_CARDS && o.onCredit) o.onCredit(now);
         return s;
       },
+      undo: function (now) {
+        if (!last) return null;
+        var u = last;
+        last = null;
+        if (u.prev) prog.cards[u.key] = u.prev; else delete prog.cards[u.key];
+        if (u.rec) prog.days[u.day] = u.rec; else delete prog.days[u.day];
+        main = u.main;
+        Object.keys(u.stats).forEach(function (k) { stats[k] = u.stats[k]; });
+        redo = u.key;
+        if (o.save) o.save(prog, ms(now));
+        return u.key;
+      },
+      canUndo: function () { return !!last; },
       counts: function (now) { return queue(o, now == null ? Date.now() : now).counts; }
     };
   }
@@ -1100,7 +1218,8 @@
                 addXp: addXp, creditDay: creditDay, streak: streakView, goal: goalView, validate: validateProgress, repair: repair, SPEC: SPEC },
     createStore: createStore,
     // 6.6 scheduler
-    srs: { answer: answer, preview: preview, format: formatInterval, isDue: isDue, queue: queue, session: session, sibling: siblingKey, GRADES: GRADES },
+    srs: { answer: answer, preview: preview, format: formatInterval, isDue: isDue, queue: queue, session: session, sibling: siblingKey, GRADES: GRADES,
+           suspend: suspend, unsuspend: unsuspend, cardCounts: cardCounts, forecast: forecast, retention: retention },
     // 6.5
     tts: tts, prepInput: prepInput, insertText: insertText,
     track: track

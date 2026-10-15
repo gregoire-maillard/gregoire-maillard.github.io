@@ -517,7 +517,7 @@ test("session: learning cards come back when due, ahead of the queue; learn-ahea
   sess.answer(it.key, "good", NOW + 4 * MIN);
   const end = sess.next(NOW + 5 * MIN);
   assert.deepEqual(end, { done: true, waitUntil: null });
-  assert.deepEqual(cards.days["2026-10-14"], { new: 2, reviews: 0, again: 1 });
+  assert.deepEqual(cards.days["2026-10-14"], { new: 2, reviews: 0, again: 1, lapses: 0, mature: 0, matureLapses: 0 });
   assert.equal(sess.stats.answered, 5);
 });
 test("session: the 10th card studied in a day credits the streak once; save is called after every answer", () => {
@@ -538,6 +538,114 @@ test("session: answering one direction buries the other for the rest of the day"
   assert.equal(sess.next(NOW).done, true);
   assert.equal(sess.counts(NOW).total, 0);
 });
+
+test("session: undo puts the last answer back (card, day counters, queue) and shows that card again", () => {
+  const deck = deckOf(3), cards = emptyCards();
+  cards.cards["fc-0003:tr-en"] = reviewState(30, at(2026, 10, 14, 4));
+  const sess = TRK.srs.session({ deck, cards, settings: { ...SETTINGS(), newPerDay: 2 }, now: NOW, rng: rngMid });
+  assert.equal(sess.undo(NOW), null, "nothing to undo yet");
+  let it = sess.next(NOW);
+  const first = it.key, before = JSON.stringify(cards);
+  sess.answer(first, "again", NOW);
+  assert.equal(sess.canUndo(), true);
+  assert.equal(sess.undo(NOW + 1000), first);
+  assert.equal(JSON.stringify({ ...cards, updated: null }), JSON.stringify({ ...JSON.parse(before), updated: null }), "cards and days exactly as before");
+  assert.deepEqual([sess.canUndo(), sess.undo(NOW), sess.stats.answered], [false, null, 0]);
+  it = sess.next(NOW + 2000);
+  assert.equal(it.key, first, "the undone card comes back first");
+  sess.answer(first, "good", NOW + 2000);
+  const seen = [];
+  for (let i = 0; i < 5; i++) { it = sess.next(NOW + 3000 + i); if (it.done || it.kind === "learning") break; seen.push(it.key); sess.answer(it.key, "good", NOW + 3000 + i); }
+  assert.deepEqual(seen.sort(), ["fc-0001:tr-en", "fc-0002:tr-en", "fc-0003:tr-en"].filter(k => k !== first), "the rest of the queue is intact");
+});
+test("session: retention counters: answers and lapses of cards in review, mature ones apart", () => {
+  const deck = deckOf(4), cards = emptyCards();
+  cards.cards["fc-0001:tr-en"] = reviewState(5, at(2026, 10, 14, 4));
+  cards.cards["fc-0002:tr-en"] = reviewState(5, at(2026, 10, 14, 4));
+  cards.cards["fc-0003:tr-en"] = reviewState(21, at(2026, 10, 14, 4));
+  cards.cards["fc-0004:tr-en"] = reviewState(40, at(2026, 10, 14, 4));
+  const sess = TRK.srs.session({ deck, cards, settings: SETTINGS(), now: NOW, rng: rngMid });
+  const grades = { "fc-0001:tr-en": "again", "fc-0002:tr-en": "good", "fc-0003:tr-en": "again", "fc-0004:tr-en": "hard" };
+  for (let i = 0; i < 4; i++) { const it = sess.next(NOW); sess.answer(it.key, grades[it.key], NOW); }
+  const relearn = sess.next(NOW + 11 * MIN);
+  assert.equal(relearn.kind, "learning");
+  sess.answer(relearn.key, "good", NOW + 11 * MIN);                    // relearning answers are not review answers
+  assert.deepEqual(cards.days["2026-10-14"], { new: 0, reviews: 4, again: 2, lapses: 2, mature: 2, matureLapses: 1 });
+  const r = TRK.srs.retention(cards, NOW, SETTINGS(), 1);
+  assert.deepEqual([r.all, r.young, r.mature], [{ reviews: 4, lapses: 2, rate: 0.5 }, { reviews: 2, lapses: 1, rate: 0.5 }, { reviews: 2, lapses: 1, rate: 0.5 }]);
+});
+test("retention: over the last n learning days or all of them; old day records without counters are left out", () => {
+  const cards = emptyCards();
+  cards.days["2026-10-14"] = { new: 3, reviews: 10, again: 3, lapses: 1, mature: 4, matureLapses: 0 };
+  cards.days["2026-10-10"] = { new: 0, reviews: 20, again: 2, lapses: 2, mature: 10, matureLapses: 1 };
+  cards.days["2026-09-01"] = { new: 0, reviews: 10, again: 5, lapses: 5, mature: 0, matureLapses: 0 };
+  cards.days["2026-10-12"] = { new: 5, reviews: 8, again: 4 };                                      // before the counters
+  const st = SETTINGS();
+  assert.deepEqual(TRK.srs.retention(cards, NOW, st, 1).all, { reviews: 10, lapses: 1, rate: 0.9 });
+  assert.deepEqual(TRK.srs.retention(cards, NOW, st, 7).all, { reviews: 30, lapses: 3, rate: 0.9 });
+  assert.deepEqual(TRK.srs.retention(cards, NOW, st, 7).young, { reviews: 16, lapses: 2, rate: 0.875 });
+  assert.deepEqual(TRK.srs.retention(cards, NOW, st, null).all, { reviews: 40, lapses: 8, rate: 0.8 });
+  assert.equal(TRK.srs.retention(emptyCards(), NOW, st, 30).mature.rate, null);
+  assert.deepEqual(TRK.progress.validate({ app: TRK.C.APP, schema: 1, exported: TRK.iso(NOW), course: TRK.progress.defaults("course", NOW), cards, settings: st }), []);
+});
+test("suspend: the card keeps its schedule and returns to it; a card never studied goes back to new", () => {
+  const rev = reviewState(12, at(2026, 10, 20, 4), { lapses: 8, leech: true });
+  const s = TRK.srs.suspend(rev, NOW);
+  assert.deepEqual([s.s, s.was, s.ivl, s.due, s.leech, rev.s], ["suspended", "review", 12, rev.due, true, "review"]);
+  assert.deepEqual(TRK.srs.unsuspend(s), rev);
+  const rl = { s: "relearning", due: NOW + 10 * MIN, ivl: 1, ease: 1.3, step: 0, reps: 20, lapses: 8, last: NOW, leech: true };
+  assert.deepEqual(TRK.srs.unsuspend(TRK.srs.suspend(rl, NOW)), rl, "a leech in relearning goes back to relearning");
+  const fresh = TRK.srs.suspend(null, NOW);
+  assert.deepEqual([fresh.s, fresh.reps, fresh.last, "was" in fresh, TRK.srs.unsuspend(fresh)], ["suspended", 0, 0, false, null]);
+  assert.deepEqual(TRK.srs.suspend(s, NOW), s, "suspending twice changes nothing");
+  assert.equal(TRK.srs.unsuspend({ ...s, was: undefined }).s, "review", "no was: an interval means review");
+  assert.equal(TRK.srs.unsuspend({ ...TRK.srs.suspend({ ...rl, s: "learning", ivl: 0 }, NOW), was: undefined }).s, "learning");
+  assert.equal(TRK.srs.isDue(s, at(2026, 11, 30), SETTINGS()), false);
+});
+test("suspend: suspended cards leave the queue and the session; store.setSuspended saves and counts changes", () => {
+  const store = TRK.createStore(fakeStorage()), deck = deckOf(4);
+  store.update("cards", c => {
+    c.cards["fc-0001:tr-en"] = reviewState(4, at(2026, 10, 13, 4));
+    c.cards["fc-0002:tr-en"] = { s: "learning", due: NOW - MIN, ivl: 0, ease: 2.5, step: 1, reps: 1, lapses: 0, last: NOW - 11 * MIN };
+  }, NOW);
+  assert.equal(store.setSuspended(["fc-0001:tr-en", "fc-0002:tr-en", "fc-0003:tr-en", "bad-key"], true, NOW), 3);
+  assert.equal(store.setSuspended(["fc-0001:tr-en"], true, NOW), 0, "already suspended");
+  const q = TRK.srs.queue({ deck, cards: store.cards(), settings: { ...SETTINGS(), directions: ["tr-en"] } }, NOW);
+  assert.deepEqual([q.reviews, q.learnNow, q.news], [[], [], ["fc-0004:tr-en"]]);
+  const sess = store.cardSession(deck, { now: NOW, rng: rngMid });
+  const keys = [];
+  for (let it = sess.next(NOW); !it.done; it = sess.next(NOW)) { keys.push(it.key); sess.answer(it.key, "easy", NOW); }
+  assert.ok(!keys.some(k => /fc-000[123]:tr-en/.test(k)), keys.join());
+  assert.equal(store.setSuspended(["fc-0001:tr-en", "fc-0002:tr-en", "fc-0003:tr-en"], false, NOW), 3);
+  const c = store.cards().cards;
+  assert.deepEqual([c["fc-0001:tr-en"].s, c["fc-0002:tr-en"].s, "fc-0003:tr-en" in c], ["review", "learning", false]);
+  const file = store.exportData(NOW);
+  store.setSuspended(["fc-0001:tr-en"], true, NOW);
+  assert.deepEqual(TRK.progress.validate(store.exportData(NOW)), [], "a suspended card exports cleanly");
+  assert.ok(file);
+});
+test("cardCounts and forecast: states by direction, young under 21 days, overdue cards due today", () => {
+  const deck = deckOf(6), cards = emptyCards(), st = SETTINGS();
+  cards.cards["fc-0001:tr-en"] = reviewState(5, at(2026, 10, 12, 4));            // young, overdue → today
+  cards.cards["fc-0002:tr-en"] = reviewState(30, at(2026, 10, 16, 4));           // mature, in 2 days
+  cards.cards["fc-0003:tr-en"] = reviewState(20, at(2026, 10, 15, 4));           // young, tomorrow
+  cards.cards["fc-0004:tr-en"] = { s: "learning", due: NOW + 5 * MIN, ivl: 0, ease: 2.5, step: 1, reps: 1, lapses: 0, last: NOW };
+  cards.cards["fc-0005:tr-en"] = TRK.srs.suspend(reviewState(40, at(2026, 10, 14, 4), { leech: true, lapses: 8 }), NOW);
+  cards.cards["fc-0001:en-tr"] = { s: "relearning", due: NOW + 10 * MIN, ivl: 1, ease: 2.3, step: 0, reps: 5, lapses: 1, last: NOW };
+  cards.cards["fc-0006:tr-en"] = reviewState(100, at(2027, 3, 1, 4));            // beyond the forecast
+  assert.deepEqual(TRK.srs.cardCounts({ deck, cards, settings: st }),
+    { new: 5, learning: 1, relearning: 1, young: 2, mature: 2, suspended: 1, leech: 1, total: 12 });
+  assert.deepEqual(TRK.srs.cardCounts({ deck, cards, settings: { ...st, directions: ["tr-en"] } }),
+    { new: 0, learning: 1, relearning: 0, young: 2, mature: 2, suspended: 1, leech: 1, total: 6 });
+  const f = TRK.srs.forecast({ deck, cards, settings: st }, NOW, 30);
+  assert.equal(f.length, 30);
+  assert.deepEqual(f.slice(0, 3), [
+    { day: "2026-10-14", young: 1, mature: 0, learning: 2 },
+    { day: "2026-10-15", young: 1, mature: 0, learning: 0 },
+    { day: "2026-10-16", young: 0, mature: 1, learning: 0 }]);
+  assert.equal(f.reduce((n, d) => n + d.young + d.mature + d.learning, 0), 5, "suspended and far-off cards are left out");
+  assert.equal(TRK.srs.forecast({ deck, cards, settings: { ...st, directions: ["en-tr"] } }, NOW, 7)[0].learning, 1);
+}, { tz: true });
 
 // ─────────────────────────── 6.1 the path ───────────────────────────
 test("path: lessons open one after another; the jump test covers what's not done before a unit", () => {

@@ -388,8 +388,8 @@ const COURSE_PROGRESS = S.obj({
   xp: S.obj({ total: S.int({ min: 0 }), days: S.map(RE.day, S.int({ min: 0 })) }),
   streak: S.obj({ current: S.int({ min: 0 }), best: S.int({ min: 0 }), last: (v, p, cx) => (v === null ? undefined : S.str({ re: RE.day })(v, p, cx)) }),
 });
-const CARD_STATE = S.obj({ s: S.oneOfLit(["learning", "review", "relearning", "suspended"]), due: S.int({ min: 0 }), ivl: S.num({ min: 0, max: 36500 }), ease: S.num({ min: 1.3, max: 10 }), step: S.int({ min: 0 }), reps: S.int({ min: 0 }), lapses: S.int({ min: 0 }), last: S.int({ min: 0 }), "leech?": S.lit(true) });
-const CARDS_PROGRESS = S.obj({ schema: S.lit(1), updated: isoTime, cards: S.map(/^fc-\d{4}:(?:tr-en|en-tr)$/, CARD_STATE), days: S.map(RE.day, S.obj({ new: S.int({ min: 0 }), reviews: S.int({ min: 0 }), again: S.int({ min: 0 }) })) });
+const CARD_STATE = S.obj({ s: S.oneOfLit(["learning", "review", "relearning", "suspended"]), due: S.int({ min: 0 }), ivl: S.num({ min: 0, max: 36500 }), ease: S.num({ min: 1.3, max: 10 }), step: S.int({ min: 0 }), reps: S.int({ min: 0 }), lapses: S.int({ min: 0 }), last: S.int({ min: 0 }), "leech?": S.lit(true), "was?": S.oneOfLit(["learning", "review", "relearning"]) });
+const CARDS_PROGRESS = S.obj({ schema: S.lit(1), updated: isoTime, cards: S.map(/^fc-\d{4}:(?:tr-en|en-tr)$/, CARD_STATE), days: S.map(RE.day, S.obj({ new: S.int({ min: 0 }), reviews: S.int({ min: 0 }), again: S.int({ min: 0 }), "lapses?": S.int({ min: 0 }), "mature?": S.int({ min: 0 }), "matureLapses?": S.int({ min: 0 }) })) });
 const SETTINGS = S.obj({ schema: S.lit(1), dailyGoal: S.oneOfLit([10, 20, 30, 50]), newPerDay: S.int({ min: 0, max: 100 }), reviewsPerDay: S.int({ min: 10, max: 9999 }), directions: S.arr(S.oneOfLit(["tr-en", "en-tr"]), { min: 1, max: 2, unique: true }), dayStartHour: S.int({ min: 0, max: 23 }), tts: S.bool(), ttsRate: S.num({ min: 0.5, max: 1.2 }), keyboardBar: S.bool(), unlockAll: S.bool(), onlyTaughtWords: S.bool() });
 SCHEMA.progress = S.obj({ app: S.lit("gregoiremaillard.com/turkish"), schema: S.lit(1), exported: isoTime, course: COURSE_PROGRESS, cards: CARDS_PROGRESS, settings: SETTINGS });
 

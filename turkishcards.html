@@ -1,0 +1,1315 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Turkish flashcards: the 1,000 most useful words</title>
+    <meta name="description" content="The 1,000 most useful Turkish words on spaced repetition, Anki-style: review in both directions, browse and search the deck, and follow your forecast and retention. Free, no account.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link rel="canonical" href="https://gregoiremaillard.com/turkishcards.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Turkish flashcards: the 1,000 most useful words">
+    <meta property="og:description" content="The 1,000 most useful Turkish words, reviewed Anki-style in both directions, with a deck browser and statistics.">
+    <meta property="og:url" content="https://gregoiremaillard.com/turkishcards.html">
+
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      /* Header: the site's sticky glass bar (mtlmobility.html), with this section's three tabs.
+         Below 600 px the name collapses to the mark so the tabs stay in the bar (PROJECT.md 3). */
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; flex: none; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: -2px; border-radius: 6px; }
+      @media (max-width: 599px) {
+        .at-hdr .at-wrap { height: 56px; gap: 8px; }
+        .at-hdr .at-home { min-width: 44px; min-height: 44px; justify-content: center; margin-left: -10px; }
+        .at-hdr .at-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+        .at-hdr .at-tabs { margin-left: auto; gap: 0; }
+        .at-hdr .at-tab { min-width: 44px; justify-content: center; padding: 0 10px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 10px; right: 10px; }
+      }
+    </style>
+    <style>
+      /* Page: the site's tokens (stylesheets/styles.css), white page, hairline borders, cards like the Mobility Lab's. */
+      :root {
+        color-scheme: light;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+        --paper: #fff; --ink: #242424; --body: #555; --muted: #6f6f6f; --faint: #b5b5b0;
+        --blue: #287a9e; --blue-dark: #155b7c; --blue-wash: rgb(40 122 158 / 11%); --blue-tint: rgb(40 122 158 / 5%);
+        --line: #e4e3df; --panel: #fafaf8; --warm: #b35a12; --warm-wash: rgb(196 106 27 / 10%); --danger: #a3261b; --danger-wash: rgb(163 38 27 / 7%);
+        --grid: #eeede9;
+        --young: #7cb3cd; --mature: #155b7c;   /* forecast: one hue, light → dark (an ordinal pair, validated against white) */
+        --r: 8px;
+      }
+      *, *::before, *::after { box-sizing: border-box; }
+      html { background: var(--paper); -webkit-text-size-adjust: 100%; scroll-padding-top: 80px; }
+      body { margin: 0; color: var(--body); background: var(--paper); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+      a { color: var(--blue); text-decoration: none; }
+      a:hover { color: var(--blue-dark); }
+      :focus-visible { outline: 2px solid var(--blue-dark); outline-offset: 2px; }
+      h1, h2, h3, h4 { color: var(--ink); margin: 0; }
+      p { margin: 0; }
+      i[lang="tr"], .tr { font-style: italic; }
+      code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em; }
+      .trk-soon { color: var(--muted); }
+      .trk-soon small { font-size: .85em; }
+      [hidden] { display: none !important; }
+      .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+      .num { font-variant-numeric: tabular-nums; }
+
+      .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 24px 64px; }
+      @media (max-width: 599px) { .wrap { padding: 16px 16px 40px; } }
+
+      /* notices */
+      .notices:empty { display: none; }
+      .notice { border: 1px solid #ecd6b3; background: #fdf7ee; color: #5e4210; border-radius: var(--r); padding: 10px 14px; margin: 0 0 12px; font-size: 14px; }
+      .notice.err { border-color: #efc4be; background: #fdf3f2; color: #6e1d15; }
+      .notice button, .notice a { font: inherit; color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; background: none; border: 0; padding: 0; cursor: pointer; }
+
+      /* page head: title and the four views */
+      .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 24px; }
+      .kicker { font-size: 12px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 4px; }
+      .head h1 { font-size: 28px; line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; }
+      .views { display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+      .views a { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 14px; border-radius: 7px; color: var(--body); font-weight: 600; font-size: 14px; }
+      .views a:hover { color: var(--ink); background: #fff; }
+      .views a[aria-current="page"] { background: #fff; color: var(--ink); box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgb(0 0 0 / 5%); }
+      @media (max-width: 599px) {
+        .head { margin-bottom: 16px; }
+        .head h1 { font-size: 24px; }
+        .views { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .views a { min-height: 40px; padding: 0 4px; }
+        body.studying .head { display: none; }
+      }
+
+      /* cards and buttons */
+      .card { border: 1px solid var(--line); border-radius: var(--r); background: #fff; padding: 16px 18px; }
+      .eyebrow { font-size: 12px; color: var(--muted); letter-spacing: .02em; }
+      .sub { font-size: 13.5px; color: var(--muted); }
+      .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: var(--r);
+             border: 1px solid var(--line); background: #fff; color: var(--ink); font: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer; text-decoration: none; transition: background-color .15s, border-color .15s; }
+      .btn:hover { border-color: #cfcfcb; color: var(--ink); background: var(--panel); }
+      .btn:disabled { opacity: .5; cursor: default; }
+      .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+      .btn.primary:hover { background: var(--blue-dark); border-color: var(--blue-dark); color: #fff; }
+      .btn.ghost { border-color: transparent; background: none; color: var(--body); padding: 0 10px; }
+      .btn.ghost:hover { background: var(--panel); color: var(--ink); }
+      .btn.small { min-height: 36px; padding: 0 12px; font-size: 13.5px; }
+      .btn svg { flex: none; }
+      .tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; font-size: 11.5px; font-weight: 600; letter-spacing: .01em; white-space: nowrap; vertical-align: 1px; background: var(--panel); color: var(--muted); border: 1px solid var(--line); }
+      .tag.leech { background: var(--danger-wash); color: var(--danger); border-color: #efc4be; }
+      .tag.susp { background: #fbf4e4; color: #6b4d0c; border-color: #ecd6b3; }
+      .tag.due { background: var(--blue-wash); color: var(--blue-dark); border-color: transparent; }
+      .tag.lrn { background: var(--warm-wash); color: var(--warm); border-color: transparent; }
+      .trk-say { display: inline-grid; place-items: center; width: 44px; height: 44px; margin: -6px 0; border: 0; border-radius: 50%; background: none; color: var(--blue); cursor: pointer; vertical-align: middle; flex: none; }
+      .trk-say:hover { background: var(--blue-tint); color: var(--blue-dark); }
+
+      /* ── review ── */
+      .review { max-width: 680px; margin: 0 auto; }
+      .ov { padding: 22px 22px 20px; }
+      .ov h2 { font-size: 20px; font-weight: 650; margin-top: 2px; }
+      .due3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 18px 0 4px; border: 1px solid var(--line); border-radius: var(--r); }
+      .due3 > div { padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+      .due3 > div + div { border-left: 1px solid var(--line); }
+      .due3 b { font-size: 26px; line-height: 1.1; font-weight: 650; color: var(--ink); }
+      .due3 span { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+      .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; display: inline-block; }
+      .dot.new { background: var(--blue); } .dot.lrn { background: var(--warm); } .dot.rev { background: #3d8b4f; }
+      .ov .btn.primary { width: 100%; margin-top: 16px; min-height: 48px; font-size: 15.5px; }
+      .ov .sub { margin-top: 12px; }
+      .ov-more { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+      .ov-more .card { padding: 14px 16px; }
+      .ov-more h3 { font-size: 15px; font-weight: 620; }
+      .ov-more p { font-size: 13.5px; margin-top: 4px; }
+      .ov-more .links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; font-size: 13.5px; font-weight: 600; }
+      .ov-more .links a { display: inline-flex; align-items: center; min-height: 32px; }
+      @media (max-width: 599px) { .ov { padding: 18px 16px 16px; } .ov-more { grid-template-columns: minmax(0, 1fr); } .due3 b { font-size: 22px; } .due3 > div { padding: 10px 10px; } .due3 span { white-space: nowrap; font-size: 12.5px; } }
+
+      .sbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 10px; }
+      .left { display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 650; color: var(--ink); }
+      .left > span { display: inline-flex; align-items: baseline; gap: 5px; padding-bottom: 2px; border-bottom: 2px solid transparent; }
+      .left > span .dot { align-self: center; }
+      .left > span.cur { border-bottom-color: currentColor; }
+      .left .lbl { font-weight: 500; color: var(--muted); font-size: 12.5px; }
+      @media (max-width: 599px) { .left { gap: 10px; } .left .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+
+      .fc { position: relative; border: 1px solid var(--line); border-radius: 12px; background: #fff; padding: 26px 28px 28px; min-height: 260px; outline: none; }
+      .fc:focus-visible { box-shadow: 0 0 0 2px var(--blue-wash); }
+      .fc .dir { font-size: 12px; color: var(--muted); letter-spacing: .02em; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+      .fc .face { text-align: center; padding: 28px 0 6px; }
+      .fc .word { font-size: 40px; line-height: 1.15; font-weight: 650; color: var(--ink); letter-spacing: -0.01em; overflow-wrap: anywhere; }
+      .fc .word.en { font-size: 28px; font-weight: 600; line-height: 1.25; }
+      .fc .pos { display: block; margin-top: 8px; font-size: 13.5px; color: var(--muted); font-style: italic; }
+      .fc .sayrow { display: inline-flex; align-items: center; gap: 2px; max-width: 100%; }
+      .fc hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0 18px; }
+      .fc .answer { text-align: center; }
+      .fc .answer .word { font-size: 34px; }
+      .fc .answer .word.en { font-size: 24px; }
+      .fc .det { margin-top: 20px; display: grid; gap: 14px; font-size: 14.5px; }
+      .ex { border-left: 3px solid var(--blue-wash); padding: 2px 0 2px 12px; }
+      .ex .tr { font-style: normal; color: var(--ink); font-size: 15.5px; display: flex; align-items: center; gap: 2px; }
+      .ex .en { color: var(--muted); font-size: 14px; }
+      .forms { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; font-size: 14px; }
+      .forms div { display: flex; gap: 6px; align-items: baseline; }
+      .forms dt { color: var(--muted); font-size: 12.5px; }
+      .forms dd { margin: 0; color: var(--ink); font-weight: 600; }
+      .note { color: var(--body); }
+      .meta { font-size: 12.5px; color: var(--muted); }
+      @media (max-width: 599px) {
+        .fc { padding: 18px 16px 20px; min-height: 220px; border-radius: 10px; }
+        .fc .face { padding-top: 20px; }
+        .fc .word { font-size: 34px; } .fc .answer .word { font-size: 30px; }
+        .fc .word.en { font-size: 24px; } .fc .answer .word.en { font-size: 21px; }
+      }
+
+      .dock { position: sticky; bottom: 0; z-index: 5; background: linear-gradient(rgb(255 255 255 / 0), #fff 14px); padding: 18px 0 calc(10px + env(safe-area-inset-bottom)); }
+      .dock .show { width: 100%; min-height: 52px; font-size: 16px; }
+      .grades { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+      .grade { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-height: 56px; padding: 6px 4px; border-radius: var(--r); border: 1px solid var(--line); background: #fff; color: var(--ink); font: inherit; cursor: pointer; transition: background-color .15s, border-color .15s; }
+      .grade b { font-size: 15px; font-weight: 650; }
+      .grade small { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+      .grade:hover { background: var(--panel); border-color: #cfcfcb; }
+      .grade.again { color: var(--danger); border-color: #efc4be; }
+      .grade.again:hover { background: var(--danger-wash); }
+      .grade.good { background: var(--blue); border-color: var(--blue); color: #fff; }
+      .grade.good small { color: rgb(255 255 255 / .85); }
+      .grade.good:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
+      .grade.easy { color: var(--blue-dark); border-color: rgb(40 122 158 / 40%); }
+      .grade.easy:hover { background: var(--blue-tint); }
+      .grade kbd { font: inherit; font-size: 11px; color: inherit; opacity: .6; }
+      .acts { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: -4px; }
+      .keys { font-size: 12.5px; color: var(--muted); }
+      .keys kbd { font: inherit; font-size: 11.5px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: var(--panel); color: var(--body); }
+      @media (hover: none), (max-width: 599px) { .keys, .grade kbd { display: none; } }
+
+      .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 50; display: flex; align-items: center; gap: 14px; max-width: min(560px, calc(100vw - 32px)); padding: 10px 12px 10px 16px; border-radius: 10px; background: #242424; color: #fff; font-size: 14px; box-shadow: 0 6px 24px rgb(0 0 0 / 18%); }
+      .toast button { flex: none; min-height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid rgb(255 255 255 / 30%); background: none; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+      .toast button:hover { background: rgb(255 255 255 / 10%); }
+      body.studying .toast { bottom: calc(150px + env(safe-area-inset-bottom)); }
+
+      .done { text-align: center; padding: 30px 22px 26px; }
+      .done .big { font-size: 44px; line-height: 1; margin-bottom: 10px; color: var(--blue); }
+      .done h2 { font-size: 22px; font-weight: 650; }
+      .done p { margin-top: 8px; }
+      .done .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+      .tally { display: inline-grid; grid-template-columns: repeat(3, auto); gap: 4px 22px; margin-top: 16px; text-align: left; }
+      .tally b { display: block; font-size: 22px; color: var(--ink); font-weight: 650; }
+      .tally span { font-size: 12.5px; color: var(--muted); }
+
+      /* ── browse ── */
+      .tools { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
+      .search { position: relative; }
+      .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+      .search input { width: 100%; height: 44px; padding: 0 12px 0 38px; font: inherit; font-size: 15px; border: 1px solid var(--line); border-radius: var(--r); color: var(--ink); background: #fff; }
+      .search input:focus { outline: 2px solid var(--blue-wash); border-color: var(--blue); }
+      .tools select { height: 44px; font: inherit; font-size: 14px; border: 1px solid var(--line); border-radius: var(--r); padding: 0 10px; background: #fff; color: var(--ink); max-width: 100%; }
+      .tools label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+      @media (max-width: 699px) { .bmeta span + span { display: none; } .tools { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .tools .search { grid-column: 1 / -1; } .tools label { min-width: 0; } .tools select { width: 100%; } }
+      .bmeta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 14px 0 8px; font-size: 13px; color: var(--muted); }
+      .bnote { margin: 12px 0 0; }
+      .rows { border-top: 1px solid var(--line); }
+      .wrow { border-bottom: 1px solid var(--line); }
+      .wrow > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 40px minmax(120px, 1.1fr) minmax(0, 1.6fr) auto 20px; gap: 4px 14px; align-items: center; min-height: 52px; padding: 6px 4px; }
+      .wrow > summary::-webkit-details-marker { display: none; }
+      .wrow > summary:hover { background: var(--blue-tint); }
+      .wrow[open] > summary { background: var(--panel); }
+      .rk { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+      .ww { min-width: 0; }
+      .ww b { color: var(--ink); font-size: 15.5px; font-weight: 650; }
+      .ww .pos { font-size: 12.5px; color: var(--muted); font-style: italic; margin-left: 6px; }
+      .wg { min-width: 0; font-size: 14px; color: var(--body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .wst { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+      .wst .tag { font-weight: 600; gap: 5px; }
+      .wst .tag .cd { font-weight: 500; opacity: .75; }
+      .chev { width: 18px; height: 18px; color: var(--muted); transition: transform .2s; }
+      .wrow[open] .chev { transform: rotate(180deg); }
+      @media (max-width: 699px) {
+        .wrow > summary { grid-template-columns: minmax(0, 1fr) 18px; gap: 2px 8px; padding: 10px 2px; }
+        .rk { display: none; }
+        .ww { grid-column: 1; }
+        .wg { grid-column: 1; white-space: normal; font-size: 13.5px; }
+        .wst { grid-column: 1; justify-content: flex-start; margin-top: 4px; }
+        .chev { grid-column: 2; grid-row: 1 / span 3; }
+      }
+      .wdet { padding: 6px 4px 20px 58px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 28px; }
+      @media (max-width: 899px) { .wdet { grid-template-columns: minmax(0, 1fr); padding-left: 4px; } }
+      .wdet .glosses { font-size: 15px; color: var(--ink); }
+      .wdet .wtr { font-size: 20px; font-weight: 650; color: var(--ink); display: flex; align-items: center; gap: 2px; }
+      .wdet .det { display: grid; gap: 12px; }
+      table.st { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+      table.st th, table.st td { text-align: left; padding: 6px 8px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+      table.st thead th { font-size: 12.5px; font-weight: 650; color: var(--ink); }
+      table.st tbody th { font-weight: 500; color: var(--muted); width: 32%; }
+      table.st td { color: var(--ink); font-variant-numeric: tabular-nums; }
+      table.st tr:last-child th, table.st tr:last-child td { border-bottom: 0; }
+      .susp-acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+      .more { display: flex; justify-content: center; margin-top: 16px; }
+      .empty { padding: 28px 4px; text-align: center; color: var(--muted); }
+
+      /* ── stats ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--r); }
+      .tile { padding: 14px 16px; min-width: 0; }
+      .tile + .tile { border-left: 1px solid var(--line); }
+      .tile .lbl { font-size: 12.5px; color: var(--muted); }
+      .tile .val { font-size: 24px; font-weight: 650; color: var(--ink); line-height: 1.2; margin-top: 2px; }
+      .tile .val small { font-size: 13px; font-weight: 600; color: var(--muted); }
+      .tile .sub { font-size: 12.5px; margin-top: 2px; }
+      @media (max-width: 799px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tile:nth-child(3) { border-left: 0; } .tile:nth-child(n+3) { border-top: 1px solid var(--line); } }
+      .sgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 16px; }
+      .sgrid .wide { grid-column: 1 / -1; }
+      @media (max-width: 899px) { .sgrid { grid-template-columns: minmax(0, 1fr); } }
+      .panel { border: 1px solid var(--line); border-radius: var(--r); background: #fff; padding: 16px 18px 14px; min-width: 0; }
+      .panel h2 { font-size: 16px; font-weight: 650; }
+      .panel .ph { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+      .panel .pl { font-size: 13px; color: var(--muted); margin-top: 2px; }
+      .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--body); }
+      .legend span { display: inline-flex; align-items: center; gap: 6px; }
+      .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+      .chart { position: relative; margin-top: 12px; }
+      .chart svg { display: block; width: 100%; overflow: visible; }
+      .chart svg:focus { outline: none; }
+      .chart svg:focus-visible { outline: 2px solid var(--blue-dark); outline-offset: 4px; border-radius: 4px; }
+      .chart .ax { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .chart .gl { stroke: var(--grid); stroke-width: 1; shape-rendering: crispEdges; }
+      .chart .base { stroke: #d6d5d0; stroke-width: 1; shape-rendering: crispEdges; }
+      .chart .col.on path { filter: brightness(1.12); }
+      .chart .hl { fill: var(--blue-tint); }
+      .tip { position: absolute; z-index: 3; pointer-events: none; min-width: 140px; padding: 8px 10px; border-radius: 8px; background: #fff; border: 1px solid var(--line); box-shadow: 0 4px 16px rgb(0 0 0 / 10%); font-size: 12.5px; color: var(--body); white-space: nowrap; }
+      .tip .t { font-weight: 650; color: var(--ink); margin-bottom: 4px; }
+      .tip .r { display: flex; align-items: center; gap: 8px; }
+      .tip .r i { width: 12px; height: 2px; border-radius: 1px; display: inline-block; }
+      .tip .r b { color: var(--ink); font-variant-numeric: tabular-nums; min-width: 22px; }
+      .psum { display: flex; gap: 6px 18px; flex-wrap: wrap; margin-top: 10px; font-size: 13px; color: var(--muted); }
+      .psum b { color: var(--ink); font-variant-numeric: tabular-nums; }
+      details.tbl { margin-top: 10px; font-size: 13px; }
+      details.tbl > summary { cursor: pointer; color: var(--blue); font-weight: 600; display: inline-flex; align-items: center; min-height: 32px; }
+      details.tbl .scroll { max-height: 260px; overflow: auto; margin-top: 6px; border: 1px solid var(--line); border-radius: 6px; }
+      details.tbl table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+      details.tbl th, details.tbl td { padding: 4px 10px; text-align: right; border-bottom: 1px solid var(--grid); }
+      details.tbl th:first-child, details.tbl td:first-child { text-align: left; }
+      details.tbl thead th { position: sticky; top: 0; background: var(--panel); color: var(--ink); font-weight: 650; }
+      table.ret { width: 100%; border-collapse: collapse; margin-top: 10px; font-variant-numeric: tabular-nums; }
+      table.ret th, table.ret td { padding: 8px 6px; text-align: right; border-bottom: 1px solid var(--line); font-size: 14px; }
+      table.ret th:first-child { text-align: left; }
+      table.ret thead th { font-size: 12px; color: var(--muted); font-weight: 600; }
+      table.ret tbody th { color: var(--ink); font-weight: 600; }
+      table.ret td b { color: var(--ink); font-weight: 650; }
+      table.ret td small { display: block; color: var(--muted); font-size: 11.5px; }
+      table.ret tr:last-child th, table.ret tr:last-child td { border-bottom: 0; }
+      @media (max-width: 599px) { table.ret th, table.ret td { padding: 8px 3px; font-size: 13.5px; } table.ret .rw { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+      .bars { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+      .bars li { display: grid; grid-template-columns: 124px minmax(0, 1fr) 72px; align-items: center; gap: 10px; font-size: 13.5px; }
+      .bars .bl { color: var(--ink); }
+      .bars .bl small { display: block; color: var(--muted); font-size: 11.5px; line-height: 1.25; }
+      .bars .bt { height: 10px; background: var(--grid); border-radius: 0 4px 4px 0; overflow: hidden; }
+      .bars .bt i { display: block; height: 100%; background: var(--blue); border-radius: 0 4px 4px 0; min-width: 0; }
+      .bars .bv { text-align: right; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      .bars .bv small { color: var(--muted); font-weight: 500; }
+      .pnote { font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+
+      /* ── settings ── */
+      @media (max-width: 599px) { .set-grid { gap: 12px; } fieldset.set { padding: 12px 14px 14px; } }
+      .set-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+      .set-grid .wide { grid-column: 1 / -1; }
+      @media (max-width: 899px) { .set-grid { grid-template-columns: minmax(0, 1fr); } }
+      fieldset.set { margin: 0; min-width: 0; border: 1px solid var(--line); border-radius: var(--r); padding: 14px 18px 16px; }
+      fieldset.set:disabled { opacity: .6; }
+      fieldset.set legend { padding: 0 6px; margin-left: -6px; font-size: 14px; font-weight: 650; color: var(--ink); }
+      .help { font-size: 13px; color: var(--muted); margin-top: 8px; }
+      .help.warn { color: #6b4d0c; }
+      .field { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 48px; border-bottom: 1px solid var(--line); font-size: 14.5px; color: var(--ink); }
+      .field:last-of-type { border-bottom: 0; }
+      .field .ctl { display: flex; align-items: center; gap: 10px; flex: none; }
+      .check { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; color: var(--ink); cursor: pointer; }
+      .check input { width: 20px; height: 20px; margin: 0; accent-color: var(--blue); flex: none; }
+      .check small { display: block; color: var(--muted); font-size: 12.5px; }
+      .set input[type=number], .set select { font: inherit; font-size: 15px; height: 40px; border: 1px solid var(--line); border-radius: 6px; padding: 0 10px; background: #fff; color: var(--ink); }
+      .set input[type=number] { width: 92px; text-align: right; font-variant-numeric: tabular-nums; }
+      .set input[type=range] { width: 150px; height: 32px; margin: 0; accent-color: var(--blue); }
+      .set output { min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; color: var(--body); font-size: 14px; }
+      .btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+      .confirm { margin-top: 12px; border: 1px solid var(--line); background: var(--panel); border-radius: var(--r); padding: 12px 14px; font-size: 14px; color: var(--ink); }
+      .confirm.err { border-color: #efc4be; background: #fdf3f2; color: #6e1d15; }
+      .confirm ul { margin: 6px 0 0; padding-left: 18px; font-size: 13px; }
+      .confirm .btns { margin-top: 10px; }
+
+      .foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); max-width: 820px; }
+      .foot p + p { margin-top: 6px; }
+      body.studying .foot { display: none; }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { transition: none !important; animation: none !important; }
+        html { scroll-behavior: auto; }
+      }
+    </style>
+    <script defer src="/assets/js/turkish.js"></script>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/" aria-label="Grégoire Maillard, home"><span class="at-mk"><i></i></span><span class="at-name">Grégoire Maillard</span></a>
+        <nav class="at-tabs" aria-label="Turkish course">
+          <a class="at-tab" href="/turkish.html">Course</a>
+          <a class="at-tab" href="/turkishguide.html">Grammar</a>
+          <a class="at-tab" href="/turkishcards.html" aria-current="page">Flashcards</a>
+        </nav>
+      </div>
+    </div>
+
+    <main class="wrap">
+      <div class="notices" id="notices" role="status" aria-live="polite"></div>
+
+      <div class="head">
+        <div>
+          <p class="kicker">Turkish · 1,000 words</p>
+          <h1 id="h1">Flashcards</h1>
+        </div>
+        <nav class="views" id="views" aria-label="Flashcards">
+          <a href="/turkishcards.html" data-view="review">Review</a>
+          <a href="/turkishcards.html?view=browse" data-view="browse">Browse</a>
+          <a href="/turkishcards.html?view=stats" data-view="stats">Stats</a>
+          <a href="/turkishcards.html?view=settings" data-view="settings">Settings</a>
+        </nav>
+      </div>
+
+      <section class="review" id="v-review" aria-labelledby="h1">
+        <div class="card ov"><p class="eyebrow">Loading the deck…</p></div>
+      </section>
+
+      <section id="v-browse" aria-label="Browse the deck" hidden>
+        <div class="tools">
+          <div class="search">
+            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M13 13l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <input type="search" id="b-q" placeholder="Search Turkish or English" aria-label="Search the deck">
+          </div>
+          <label for="b-filter"><span class="sr">Show</span><select id="b-filter"></select></label>
+          <label for="b-sort"><span class="sr">Sort by</span><select id="b-sort">
+            <option value="rank">By rank</option>
+            <option value="due">By due date</option>
+            <option value="ivl">By interval</option>
+            <option value="ease">By ease, hardest first</option>
+            <option value="lapses">By lapses, most first</option>
+            <option value="az">A to Z</option>
+          </select></label>
+        </div>
+        <div id="b-note"></div>
+        <div class="bmeta"><span id="b-count" aria-live="polite"></span><span>Rank = how common the word is</span></div>
+        <div class="rows" id="b-rows"></div>
+        <div class="more" id="b-more" hidden><button type="button" class="btn" id="b-more-btn">Show more</button></div>
+      </section>
+
+      <section id="v-stats" aria-label="Statistics" hidden>
+        <div id="s-body"><p class="sub">Loading…</p></div>
+      </section>
+
+      <section id="v-settings" aria-label="Settings" hidden>
+        <div class="set-grid">
+          <fieldset class="set" id="f-cards">
+            <legend>Daily limits</legend>
+            <label class="field" for="s-new">New cards a day<span class="ctl"><input type="number" id="s-new" min="0" max="100" step="1" inputmode="numeric"></span></label>
+            <label class="field" for="s-rev">Reviews a day, at most<span class="ctl"><input type="number" id="s-rev" min="10" max="9999" step="1" inputmode="numeric"></span></label>
+            <label class="field" for="s-hour">A new day starts at<span class="ctl"><select id="s-hour"></select></span></label>
+            <p class="help">A card started today comes back after 1 and 10 minutes, then the next day, then at growing intervals: Anki's settings.</p>
+          </fieldset>
+
+          <fieldset class="set" id="f-dirs">
+            <legend>Directions</legend>
+            <label class="check"><input type="checkbox" id="s-dir-tren"><span>Turkish → English<small>See the Turkish word, recall its meaning</small></span></label>
+            <label class="check"><input type="checkbox" id="s-dir-entr"><span>English → Turkish<small>Starts once the Turkish → English card is learned</small></span></label>
+            <label class="check" style="border-bottom:0"><input type="checkbox" id="s-taught"><span>Only words from units I've finished<small>New cards come from lessons you have done</small></span></label>
+            <p class="help" id="s-taught-help" hidden></p>
+          </fieldset>
+
+          <fieldset class="set" id="f-speech">
+            <legend>Speech</legend>
+            <label class="check"><input type="checkbox" id="s-tts"><span>Read Turkish aloud<small>Each Turkish word is read when it appears</small></span></label>
+            <label class="field" for="s-rate">Speed<span class="ctl"><input type="range" id="s-rate" min="0.5" max="1.2" step="0.05"><output id="s-rate-out" for="s-rate"></output></span></label>
+            <div class="btns"><button type="button" class="btn" id="s-test">
+              <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 8v4h3l4 3V5L6 8H3z" fill="currentColor"/><path d="M13 7.5c1.2 1.2 1.2 3.8 0 5M15.5 5.5c2.3 2.3 2.3 6.7 0 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Test the voice</button></div>
+            <p class="help" id="s-voice">Looking for a Turkish voice…</p>
+          </fieldset>
+
+          <fieldset class="set">
+            <legend>Your progress</legend>
+            <p class="help" id="p-status" style="margin-top:0">Your lessons and cards are saved in this browser only. Export them to keep a copy or to carry on from another device.</p>
+            <div class="btns">
+              <button type="button" class="btn" id="p-export">
+                <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M10 3v9m0 0 3.5-3.5M10 12 6.5 8.5M4 14v2h12v-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Export progress</button>
+              <button type="button" class="btn" id="p-import">
+                <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M10 12V3m0 0L6.5 6.5M10 3l3.5 3.5M4 14v2h12v-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Import progress…</button>
+              <input type="file" id="p-file" accept="application/json,.json" hidden>
+            </div>
+            <div class="confirm" id="p-confirm" role="alert" hidden></div>
+            <p class="help">The daily XP goal, the letter bar and unlocking lessons are on the <a href="/turkish.html#settings">course page</a>, which can also reset everything.</p>
+          </fieldset>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <p>The deck follows a frequency list of Turkish film and TV subtitles: the order is adapted from <a href="https://github.com/hermitdave/FrequencyWords" rel="noopener">FrequencyWords</a> by Hermit Dave (<a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>), built from the OpenSubtitles2018 corpus. Meanings, examples and notes are our own.</p>
+        <p>Scheduling follows Anki's SM-2 with its default settings. No account and no server: your progress lives in this browser's storage, so export a copy now and then.</p>
+      </footer>
+      <noscript><p class="notice">The flashcards need JavaScript to show cards and save your progress.</p></noscript>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var T = window.TRK;
+      if (!T) { document.getElementById("notices").innerHTML = '<p class="notice err">The flashcard script didn\'t load. Reload the page to try again.</p>'; return; }
+      var store = T.store, esc = T.esc, P = T.C.PAGES, MATURE = T.C.SRS.mature;
+      var $ = function (id) { return document.getElementById(id); };
+      store.course(); store.cards(); store.settings();   // read all three now, so a problem with any of them shows at once
+      var reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+      var S = {
+        view: "review", index: null, deck: null, byId: {}, error: null, voice: undefined,
+        mode: "overview",                 // review view: overview → study → done
+        sess: null, prog: null, setObj: null, item: null, back: false, revealedAt: 0,
+        run: { answered: 0, "new": 0, reviews: 0, again: 0 }, sent: 0, lastDelta: null,
+        waitTimer: null, saving: 0,
+        browse: { q: "", filter: "all", sort: "rank", limit: 100, open: {} },
+        charts: []
+      };
+
+      // ── words and labels ──
+      var POS = { noun: "noun", verb: "verb", adj: "adjective", adv: "adverb", pron: "pronoun", num: "number", postp: "postposition",
+                  conj: "conjunction", interj: "interjection", det: "determiner", particle: "particle", phrase: "phrase" };
+      var FORMS = [["acc", "accusative"], ["poss3", "his, her, its"], ["pl", "plural"], ["aor", "aorist"], ["prog", "present"], ["past", "past"], ["fut", "future"]];
+      var DIR = { "tr-en": "Turkish → English", "en-tr": "English → Turkish" };
+      var DIR_SHORT = { "tr-en": "TR → EN", "en-tr": "EN → TR" };
+      var VIEWS = ["review", "browse", "stats", "settings"];
+      var TITLES = { review: "Turkish flashcards: the 1,000 most useful words", browse: "Browse the deck · Turkish flashcards", stats: "Statistics · Turkish flashcards", settings: "Settings · Turkish flashcards" };
+      var ICON = {
+        chev: '<svg class="chev" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        undo: '<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M7 5 3.5 8.5 7 12M4 8.5h7.5a4.5 4.5 0 0 1 0 9H9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        pause: '<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="5" y="4" width="3" height="12" rx="1" fill="currentColor"/><rect x="12" y="4" width="3" height="12" rx="1" fill="currentColor"/></svg>'
+      };
+      var plural = function (n, one, many) { return fmt(n) + " " + (n === 1 ? one : (many || one + "s")); };
+      var fmt = function (n) { return Number(n).toLocaleString("en-CA"); };
+      var pct = function (x) { return x == null ? "—" : Math.round(x * 100) + "%"; };
+      var dayDate = function (day) { var p = day.split("-"); return new Date(+p[0], p[1] - 1, +p[2], 12); };
+      var shortDate = function (day) { return dayDate(day).toLocaleDateString("en-CA", { month: "short", day: "numeric" }); };
+      var longDate = function (day) { return dayDate(day).toLocaleDateString("en-CA", { weekday: "short", month: "short", day: "numeric" }); };
+      var clock = function (t) { return new Date(t).toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit" }); };
+      var dateLabel = function (isoStr) { try { return new Date(isoStr).toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return isoStr.slice(0, 10); } };
+      var glosses = function (c) { return c.en.join("; "); };
+      var say = function (text) { return '<span data-say="' + esc(text) + '"></span>'; };
+      function mountSay(root) {
+        root.querySelectorAll("[data-say]").forEach(function (s) { s.replaceWith(T.tts.button(s.getAttribute("data-say"), { label: "Listen: " + s.getAttribute("data-say") })); });
+      }
+      function speak(text) { if (T.tts.on()) T.tts.speak(text); }
+
+      // Nothing is written to a part of the progress the store couldn't read, so the course page can still recover it (as the reader does).
+      function blocked(part) { return !!(store.corrupt && store.corrupt[part]); }
+      function canStudy() { return !blocked("cards") && !blocked("course"); }
+      function deckObj() { return { deck: S.deck, cards: store.cards(), settings: store.settings(), course: store.course(), index: S.index }; }
+      function stateOf(key) { return store.cards().cards[key] || null; }
+
+      // ── notices ──
+      function renderNotices() {
+        var out = [];
+        if (S.error) {
+          var fileHint = location.protocol === "file:" ? " Open the page through a web server (for example <code>python3 -m http.server</code> in the repo) rather than as a file." : "";
+          out.push('<p class="notice err">The deck couldn\'t be loaded (' + esc(S.error) + ")." + fileHint + ' <button type="button" data-act="retry">Try again</button></p>');
+        }
+        if (store.problem === "unavailable") out.push('<p class="notice">This browser isn\'t letting the page save anything (private browsing, or storage blocked), so your progress will be lost when you close it.</p>');
+        if (store.problem === "quota") out.push('<p class="notice">Your latest answers couldn\'t be saved: the browser\'s storage for this site is full. <button type="button" data-act="export">Export your progress</button> to keep it.</p>');
+        var bad = Object.keys(store.corrupt || {});
+        if (bad.length) {
+          var what = bad.map(function (k) { return { cards: "your flashcards", course: "your lessons", settings: "your settings" }[k] || k; }).join(" and ");
+          out.push('<p class="notice">The saved progress for ' + esc(what) + " couldn't be read, so this page won't change it. " +
+            '<button type="button" data-act="corrupt">Download what was found</button>, then import a good copy in <a href="?view=settings" data-view="settings">Settings</a> or reset on the <a href="' + P.hub + '#settings">course page</a>.</p>');
+        }
+        $("notices").innerHTML = out.join("");
+      }
+      $("notices").addEventListener("click", function (e) {
+        var a = e.target.closest("a[data-view]");
+        if (a) { e.preventDefault(); setView(a.dataset.view, true); return; }
+        var b = e.target.closest("button[data-act]");
+        if (!b) return;
+        if (b.dataset.act === "retry") { S.error = null; renderNotices(); boot(); }
+        if (b.dataset.act === "export") exportProgress();
+        if (b.dataset.act === "corrupt") download("turkish-progress-unreadable.txt", JSON.stringify(store.corrupt, null, 2), "text/plain");
+      });
+
+      // ── toast ──
+      var toastTimer = null, toastAct = null;
+      function toast(text, actLabel, act) {
+        var el = $("toast");
+        clearTimeout(toastTimer);
+        toastAct = act || null;
+        el.innerHTML = "<span>" + esc(text) + "</span>" + (actLabel ? '<button type="button">' + esc(actLabel) + "</button>" : "");
+        el.hidden = false;
+        toastTimer = setTimeout(hideToast, actLabel ? 8000 : 4000);
+      }
+      function hideToast() { clearTimeout(toastTimer); $("toast").hidden = true; toastAct = null; }
+      $("toast").addEventListener("click", function (e) {
+        if (!e.target.closest("button")) return;
+        var f = toastAct;
+        hideToast();
+        if (f) f();
+      });
+
+      // ── views ──
+      function viewFromUrl() { var v = new URLSearchParams(location.search).get("view"); return VIEWS.indexOf(v) > 0 ? v : "review"; }
+      function viewUrl(v) {
+        var q = v === "browse" && S.browse.q ? "&q=" + encodeURIComponent(S.browse.q) : "";
+        return P.cards + (v === "review" ? "" : "?view=" + v + q);
+      }
+      function setView(v, push) {
+        if (VIEWS.indexOf(v) < 0) v = "review";
+        var was = S.view;
+        S.view = v;
+        VIEWS.forEach(function (x) { $("v-" + x).hidden = x !== v; });
+        document.querySelectorAll("#views a").forEach(function (a) { if (a.dataset.view === v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+        document.title = TITLES[v];
+        if (push) history.pushState({ view: v }, "", viewUrl(v));
+        if (was === "review" && v !== "review" && S.mode === "done") S.mode = "overview";
+        hideToast();
+        renderView();
+      }
+      $("views").addEventListener("click", function (e) {
+        var a = e.target.closest("a[data-view]");
+        if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        if (a.dataset.view !== S.view) { setView(a.dataset.view, true); window.scrollTo(0, 0); }
+      });
+      window.addEventListener("popstate", function () { readQuery(); setView(viewFromUrl(), false); });
+      function readQuery() { S.browse.q = new URLSearchParams(location.search).get("q") || ""; $("b-q").value = S.browse.q; }
+      function renderView() {
+        document.body.classList.toggle("studying", S.view === "review" && S.mode === "study");
+        if (S.view === "review") renderReview();
+        else if (S.view === "browse") renderBrowse();
+        else if (S.view === "stats") renderStats();
+        else renderSettings();
+      }
+
+      // ── review: overview ──
+      function renderReview() {
+        if (S.mode === "study") { if (S.item) renderStudy(); else showNext(); return; }
+        if (S.mode === "done") { showNext(); return; }
+        renderOverview();
+      }
+      function renderOverview() {
+        var el = $("v-review");
+        if (!S.deck) { el.innerHTML = '<div class="card ov"><p class="eyebrow">' + (S.error ? "The deck couldn't be loaded." : "Loading the deck…") + "</p></div>"; return; }
+        if (!S.deck.length) { el.innerHTML = '<div class="card ov"><p class="eyebrow">Coming soon</p><h2>The deck is being written</h2><p class="sub">A deck of the 1,000 most useful words, reviewed Anki-style, is on its way.</p><p class="sub"><a href="' + P.hub + '">Back to the course</a></p></div>'; return; }
+        var now = Date.now(), set = store.settings(), cards = store.cards(), course = store.course(), o = deckObj();
+        var q = T.srs.queue(o, now), today = T.today(set, now), rec = cards.days[today] || { "new": 0, reviews: 0, again: 0 };
+        var soon = q.learnToday.filter(function (k) { return cards.cards[k].due <= now + T.C.SRS.learnAhead * 60000; }).length;
+        var avail = q.learnNow.length + q.reviews.length + q.news.length + soon;
+        var studied = rec["new"] + rec.reviews, s = T.progress.streak(course, set, now);
+        var h = '<div class="card ov"><p class="eyebrow">' + esc(longDate(today)) + "</p><h2>" + (avail ? "Ready to study" : q.counts.total ? "Nothing due right now" : "All caught up for today") + "</h2>" +
+          '<div class="due3" role="group" aria-label="Cards for today">' +
+          '<div><b class="num">' + q.counts["new"] + '</b><span><i class="dot new"></i>New</span></div>' +
+          '<div><b class="num">' + q.counts.learning + '</b><span><i class="dot lrn"></i>Learning</span></div>' +
+          '<div><b class="num">' + q.counts.review + '</b><span><i class="dot rev"></i>To review</span></div></div>' +
+          '<button type="button" class="btn primary" data-act="study"' + (avail && canStudy() ? "" : " disabled") + ">" + (studied ? "Study now" : "Start studying") + "</button>";
+        var notes = [];
+        if (!canStudy()) notes.push("Studying is paused while part of your saved progress can't be read (see above).");
+        if (!avail && q.learnToday.length) {
+          var nextDue = Math.min.apply(null, q.learnToday.map(function (k) { return cards.cards[k].due; }));
+          notes.push(plural(q.learnToday.length, "card") + " you're learning " + (q.learnToday.length === 1 ? "comes" : "come") + " back later today, the first at " + esc(clock(nextDue)) + ".");
+        } else if (!q.counts.total) {
+          var f = T.srs.forecast(o, now, 2)[1], tomorrow = f.young + f.mature + f.learning;
+          notes.push(tomorrow ? "Tomorrow: " + plural(tomorrow, "review") + (set.newPerDay ? " and up to " + plural(set.newPerDay, "new card") : "") + "." : set.newPerDay ? "Tomorrow: up to " + plural(set.newPerDay, "new card") + "." : "");
+        }
+        if (!q.news.length) {
+          if (set.newPerDay > 0 && rec["new"] >= set.newPerDay) notes.push("You've started today's " + plural(set.newPerDay, "new card") + ". You can raise the limit in <a href=\"?view=settings\" data-view=\"settings\">Settings</a>.");
+          else if (set.onlyTaughtWords) notes.push("No new cards: “Only words from units I've finished” is on in <a href=\"?view=settings\" data-view=\"settings\">Settings</a>" + (S.deck.some(function (c) { return c.unit; }) ? ", and the words of the units you've finished are all started." : ", and no word is linked to a unit yet."));
+          else if (set.newPerDay === 0) notes.push("New cards are off: the limit is 0 in <a href=\"?view=settings\" data-view=\"settings\">Settings</a>.");
+        }
+        notes.push(s.done ? "Today counts toward your " + (s.current > 1 ? s.current + "-day " : "") + "streak." : studied < T.C.STREAK_CARDS ? "Study " + plural(T.C.STREAK_CARDS - studied, "more card") + " today to count it toward your streak." : "");
+        h += notes.filter(Boolean).map(function (n) { return '<p class="sub">' + n + "</p>"; }).join("") + "</div>";
+        var cc = T.srs.cardCounts(o), words = S.deck.length;
+        var started = S.deck.filter(function (c) { return cards.cards[c.id + ":tr-en"] || cards.cards[c.id + ":en-tr"]; }).length;
+        var dirs = set.directions.length === 2 ? "both directions" : DIR[set.directions[0]] + " only";
+        h += '<div class="ov-more"><div class="card"><h3>The deck</h3><p>' + plural(words, "word") + ", " + fmt(started) + " started · " + esc(dirs) + "." +
+          (cc.leech ? ' <span class="tag leech">' + plural(cc.leech, "leech", "leeches") + "</span>" : "") + "</p>" +
+          '<p class="links"><a href="?view=browse" data-view="browse">Browse the deck</a><a href="?view=stats" data-view="stats">Statistics</a></p></div>' +
+          '<div class="card"><h3>Today</h3><p>' + plural(studied, "card") + " studied" + (rec.again ? " · " + rec.again + " Again" : "") + ". New cards: " + set.newPerDay + " a day.</p>" +
+          '<p class="links"><a href="?view=settings" data-view="settings">Settings</a><a href="' + P.hub + '">The course</a></p></div></div>';
+        el.innerHTML = h;
+      }
+      $("v-review").addEventListener("click", function (e) {
+        var a = e.target.closest("a[data-view]");
+        if (a && !e.metaKey && !e.ctrlKey) { e.preventDefault(); setView(a.dataset.view, true); window.scrollTo(0, 0); return; }
+        var b = e.target.closest("[data-act]");
+        if (!b || b.disabled) return;
+        var act = b.dataset.act;
+        if (act === "study") startStudy();
+        else if (act === "show") reveal();
+        else if (act === "grade") grade(+b.dataset.g);
+        else if (act === "undo") undo();
+        else if (act === "suspend") suspendCurrent();
+        else if (act === "end") endStudy();
+        else if (act === "again-today") { S.mode = "study"; showNext(); }
+      });
+
+      // ── review: the session (PROJECT.md 6.6) ──
+      function newSession() {
+        S.prog = store.cards(); S.setObj = store.settings();
+        S.sess = store.cardSession(S.deck, { index: S.index });
+      }
+      // The session works on the store's objects; after another tab or a new day replaces them, start a fresh one.
+      function ensureSession() { if (!S.sess || store.cards() !== S.prog || store.settings() !== S.setObj) newSession(); }
+      function startStudy() {
+        if (!canStudy() || !S.deck) return;
+        if (T.tts.on()) T.tts.speak(" ");   // iOS lets speech start only inside a tap; this first, silent one unlocks it
+        S.run = { answered: 0, "new": 0, reviews: 0, again: 0 }; S.sent = 0; S.lastDelta = null;
+        S.mode = "study"; S.sess = null;
+        showNext();
+      }
+      function showNext() {
+        clearTimeout(S.waitTimer);
+        if (!S.deck || !canStudy()) { S.mode = "overview"; renderView(); return; }
+        ensureSession();
+        var now = Date.now(), it = S.sess.next(now);
+        if (it.done) { S.item = null; S.mode = "done"; document.body.classList.remove("studying"); renderDone(it.waitUntil); return; }
+        var fresh = !S.item || S.item.key !== it.key || S.mode !== "study";
+        S.mode = "study"; S.item = it; S.back = false;
+        document.body.classList.toggle("studying", S.view === "review");
+        renderStudy();
+        if (fresh && it.dir === "tr-en") speak(it.card.tr);
+      }
+      function counts(now) { ensureSession(); return S.sess.counts(now); }
+      function renderStudy() {
+        var it = S.item, card = it.card, now = Date.now(), set = store.settings(), st = stateOf(it.key);
+        var c = counts(now), kind = it.kind;
+        var cur = function (k) { return kind === k ? ' class="cur"' : ""; };
+        var h = '<div class="sbar"><button type="button" class="btn ghost small" data-act="end" title="End the session (Esc)">' + ICON.pause + "End</button>" +
+          '<p class="left" aria-label="Left today: ' + c["new"] + " new, " + c.learning + " learning, " + c.review + ' to review">' +
+          "<span" + cur("new") + ' style="color:var(--blue-dark)"><i class="dot new"></i>' + c["new"] + '<span class="lbl">new</span></span>' +
+          "<span" + cur("learning") + ' style="color:var(--warm)"><i class="dot lrn"></i>' + c.learning + '<span class="lbl">learning</span></span>' +
+          "<span" + cur("review") + ' style="color:#2f6e3e"><i class="dot rev"></i>' + c.review + '<span class="lbl">review</span></span></p>' +
+          '<button type="button" class="btn ghost small" data-act="undo"' + (S.sess.canUndo() ? "" : " disabled") + ' title="Undo the last answer (Z)">' + ICON.undo + "Undo</button></div>";
+        var kindLabel = kind === "new" ? "New card" : kind === "review" ? "Review" : st && st.s === "relearning" ? "Relearning" : "Learning";
+        h += '<article class="fc" id="fc" tabindex="-1" aria-label="' + esc(DIR[it.dir]) + ' card">' +
+          '<p class="dir"><span>' + esc(DIR[it.dir]) + " · " + kindLabel + "</span>" + (st && st.leech ? '<span class="tag leech">Leech</span>' : "") + "</p>";
+        if (it.dir === "tr-en") h += '<div class="face"><p class="word" lang="tr"><span class="sayrow">' + esc(card.tr) + say(card.tr) + "</span></p></div>";
+        else h += '<div class="face"><p class="word en">' + esc(glosses(card)) + '</p><span class="pos">' + esc(POS[card.pos] || card.pos) + "</span></div>";
+        if (S.back) {
+          h += '<hr><div class="answer">';
+          if (it.dir === "tr-en") h += '<p class="word en">' + esc(glosses(card)) + '</p><span class="pos">' + esc(POS[card.pos] || card.pos) + "</span>";
+          else h += '<p class="word" lang="tr"><span class="sayrow">' + esc(card.tr) + say(card.tr) + "</span></p>";
+          h += "</div>" + detailsHtml(card);
+        }
+        h += "</article>";
+        h += '<div class="dock">';
+        if (!S.back) h += '<button type="button" class="btn primary show" data-act="show">Show answer</button>';
+        else {
+          var p = T.srs.preview(st, now, set), names = ["Again", "Hard", "Good", "Easy"], cls = ["again", "hard", "good", "easy"];
+          h += '<div class="grades" role="group" aria-label="How well did you remember it?">' + p.map(function (x, i) {
+            var iv = T.srs.format(x);
+            return '<button type="button" class="grade ' + cls[i] + '" data-act="grade" data-g="' + (i + 1) + '" aria-label="' + names[i] + ", next in " + esc(iv) + '"><b>' + names[i] + " <kbd>" + (i + 1) + "</kbd></b><small>" + esc(iv) + "</small></button>";
+          }).join("") + "</div>";
+        }
+        h += '</div><div class="acts"><button type="button" class="btn ghost small" data-act="suspend">Suspend this card</button>' +
+          '<p class="keys">' + (S.back ? "<kbd>1</kbd>–<kbd>4</kbd> to answer, <kbd>Space</kbd> for Good" : "<kbd>Space</kbd> to show the answer") + " · <kbd>Z</kbd> undo" + (T.tts.on() ? " · <kbd>R</kbd> replay" : "") + "</p></div>";
+        var el = $("v-review");
+        el.innerHTML = h;
+        mountSay(el);
+        var fc = $("fc");
+        if (fc.getBoundingClientRect().top < 56) window.scrollTo(0, 0);
+        try { fc.focus({ preventScroll: true }); } catch (e) { fc.focus(); }
+      }
+      function detailsHtml(card) {
+        var h = '<div class="det">';
+        h += '<div class="ex"><p class="tr" lang="tr"><span>' + esc(card.ex.tr) + "</span>" + say(card.ex.tr) + '</p><p class="en">' + esc(card.ex.en) + "</p></div>";
+        var f = card.forms || {}, rows = FORMS.filter(function (x) { return f[x[0]]; });
+        if (rows.length) h += '<dl class="forms" aria-label="Forms">' + rows.map(function (x) { return "<div><dt>" + x[1] + '</dt><dd lang="tr">' + esc(f[x[0]]) + "</dd></div>"; }).join("") + "</dl>";
+        if (card.note) h += '<p class="note">' + T.rich(card.note, { index: S.index }) + "</p>";
+        var meta = ["#" + card.rank + " of 1,000"];
+        if (card.level) meta.push(card.level.toUpperCase());
+        if (card.tags && card.tags.length) meta.push(card.tags.map(function (t) { return t.replace(/-/g, " "); }).join(", "));
+        h += '<p class="meta">' + esc(meta.join(" · ")) + "</p></div>";
+        return h;
+      }
+      function reveal() {
+        if (S.mode !== "study" || !S.item || S.back) return;
+        S.back = true; S.revealedAt = Date.now();
+        renderStudy();
+        if (S.item.dir === "en-tr") speak(S.item.card.tr);
+      }
+      function grade(g) {
+        if (S.mode !== "study" || !S.item || !S.back || !canStudy()) return;
+        if (Date.now() - S.revealedAt < 350) return;   // a double tap on "Show answer" must not land on a grade
+        ensureSession();
+        var key = S.item.key, prev = S.prog.cards[key] || null, s;
+        S.saving++;
+        try { s = S.sess.answer(key, g, Date.now()); } finally { S.saving--; }
+        var d = { answered: 1, "new": prev ? 0 : 1, reviews: prev && prev.s === "review" ? 1 : 0, again: g === 1 ? 1 : 0 };
+        Object.keys(d).forEach(function (k) { S.run[k] += d[k]; });
+        S.lastDelta = d;
+        if (s.leech && !(prev && prev.leech)) toast("This card is now a leech: you've forgotten it " + s.lapses + " times.", "Suspend it", function () { suspendKeys([key]); if (S.item && S.item.key === key) showNext(); });
+        else hideToast();
+        showNext();
+      }
+      function undo() {
+        if (!S.sess || !S.sess.canUndo() || !canStudy()) return;
+        S.saving++;
+        try { S.sess.undo(Date.now()); } finally { S.saving--; }
+        if (S.lastDelta) Object.keys(S.lastDelta).forEach(function (k) { S.run[k] -= S.lastDelta[k]; });
+        S.lastDelta = null;
+        hideToast();
+        S.mode = "study"; S.item = null;
+        showNext();
+      }
+      function suspendKeys(keys, on) {
+        if (blocked("cards")) return 0;
+        S.saving++;
+        try { return store.setSuspended(keys, on !== false, Date.now()); } finally { S.saving--; }
+      }
+      function suspendCurrent() {
+        if (!S.item) return;
+        var key = S.item.key, word = S.item.card.tr;
+        if (!suspendKeys([key])) return;
+        toast("“" + word + "” (" + DIR_SHORT[S.item.dir] + ") is suspended. Unsuspend it in Browse.", "Undo", function () {
+          suspendKeys([key], false);
+          if (S.view === "review" && S.mode === "done") showNext();   // otherwise it comes up again later in the session
+        });
+        showNext();
+      }
+      function endStudy() {
+        clearTimeout(S.waitTimer);
+        sendTrack();
+        S.mode = "overview"; S.item = null; S.sess = null;
+        document.body.classList.remove("studying");
+        renderView();
+        window.scrollTo(0, 0);
+      }
+      function sendTrack() {
+        var n = S.run.answered - S.sent;
+        if (n > 0) { T.track("trk_cards_session", { reviewed: n }); S.sent = S.run.answered; }
+      }
+      function renderDone(waitUntil) {
+        sendTrack();
+        document.body.classList.remove("studying");
+        var now = Date.now(), set = store.settings(), course = store.course(), r = S.run;
+        var h = '<div class="card done"><div class="big" aria-hidden="true">✓</div>';
+        if (waitUntil) {
+          var mins = Math.max(1, Math.round((waitUntil - now) / 60000));
+          h += "<h2>Done for now</h2><p>A card you're learning comes back at " + esc(clock(waitUntil)) + " (in " + plural(mins, "minute") + "). Stay on this page and it will show up, or come back later.</p>";
+          S.waitTimer = setTimeout(function () { if (S.mode === "done" && S.view === "review") showNext(); }, Math.min(waitUntil - now + 500, 2147483000));
+        } else {
+          var f = T.srs.forecast(deckObj(), now, 2)[1], tomorrow = f.young + f.mature + f.learning;
+          h += "<h2>That's all for today</h2><p>" + (tomorrow ? "Tomorrow: " + plural(tomorrow, "review") + (set.newPerDay ? " and up to " + plural(set.newPerDay, "new card") : "") + "." : "Come back tomorrow for " + plural(set.newPerDay, "new card") + ".") + "</p>";
+        }
+        if (r.answered) {
+          h += '<div class="tally"><div><b class="num">' + r["new"] + '</b><span>new</span></div><div><b class="num">' + r.reviews + '</b><span>reviews</span></div><div><b class="num">' + r.again + "</b><span>Again</span></div></div>";
+        }
+        var s = T.progress.streak(course, set, now);
+        if (s.done) h += '<p class="sub">Today counts toward your ' + (s.current > 1 ? s.current + "-day " : "") + "streak.</p>";
+        h += '<div class="row">' + (S.sess && S.sess.canUndo() ? '<button type="button" class="btn" data-act="undo">' + ICON.undo + "Undo the last answer</button>" : "") +
+          '<a class="btn primary" href="' + P.hub + '">Back to the course</a><a class="btn" href="?view=stats" data-view="stats">Statistics</a></div></div>';
+        $("v-review").innerHTML = h;
+      }
+
+      // keyboard (PROJECT.md 3): Space or Enter shows the answer, then 1–4 answer and Space or Enter is Good; Z undoes, R replays, Esc ends
+      document.addEventListener("keydown", function (e) {
+        if (S.view !== "review" || e.altKey || e.repeat) return;
+        var t = e.target, tag = t && t.tagName, k = e.key;
+        if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA" || (t && t.isContentEditable)) return;
+        if ((k === "z" || k === "Z") && !e.shiftKey && (S.mode === "study" || S.mode === "done")) { if (S.sess && S.sess.canUndo()) { e.preventDefault(); undo(); } return; }
+        if (e.ctrlKey || e.metaKey || S.mode !== "study" || !S.item) return;
+        if ((k === " " || k === "Enter") && (tag === "BUTTON" || tag === "A" || tag === "SUMMARY")) return;   // the focused control acts
+        if (k === " " || k === "Enter") { e.preventDefault(); if (!S.back) reveal(); else grade(3); return; }
+        if (S.back && /^[1-4]$/.test(k)) { e.preventDefault(); grade(+k); return; }
+        if (k === "r" || k === "R") { if (S.item.dir === "tr-en" || S.back) { e.preventDefault(); T.tts.speak(S.item.card.tr); } return; }
+        if (k === "Escape") { e.preventDefault(); endStudy(); }
+      });
+
+      // ── browse ──
+      var FILTERS = [["all", "All words"], ["new", "Not started"], ["learning", "Learning"], ["due", "Due today"], ["young", "Young"], ["mature", "Mature"], ["suspended", "Suspended"], ["leech", "Leeches"]];
+      function wordInfo(card, cards, now, set) {
+        var hour = set.dayStartHour, today = T.today(set, now), end = T.dayStart(T.addDays(today, 1), hour);
+        var w = { card: card, states: {}, tags: {} };
+        T.C.DIRS.forEach(function (dir) {
+          var s = cards[card.id + ":" + dir] || null;
+          w.states[dir] = s;
+          if (!s) return;
+          if (s.s === "suspended") w.tags.suspended = true;
+          else if (s.s === "review") { w.tags[s.ivl >= MATURE ? "mature" : "young"] = true; if (T.dayOf(s.due, hour) <= today) w.tags.due = true; }
+          else { w.tags.learning = true; if (s.due < end) w.tags.due = true; }
+          if (s.leech) w.tags.leech = true;
+        });
+        if (!w.states["tr-en"] && !w.states["en-tr"]) w.tags["new"] = true;
+        return w;
+      }
+      var hayCache = {};
+      function hay(card) {
+        if (hayCache[card.id]) return hayCache[card.id];
+        var t = function (s) { return T.fold(T.trLower(String(s))).replace(/â/g, "a").replace(/î/g, "i").replace(/û/g, "u"); };
+        return (hayCache[card.id] = { tr: t(card.tr), en: t(card.en.join(" | ")), more: t((card.tags || []).join(" ") + " " + (POS[card.pos] || "")) });
+      }
+      function matches(card, q) {
+        if (!q) return true;
+        var h = hay(card);
+        return q.split(/\s+/).every(function (term) {
+          if (!term) return true;
+          var m = /^#?(\d{1,4})$/.exec(term);
+          if (m) return card.rank === +m[1];
+          var x = T.fold(T.trLower(term));
+          return h.tr.indexOf(x) >= 0 || h.en.indexOf(x) >= 0 || h.more.indexOf(x) >= 0;
+        });
+      }
+      function sortWords(list, how, now, set) {
+        var by = {
+          rank: function (w) { return w.card.rank; },
+          due: function (w) { var d = Infinity; T.C.DIRS.forEach(function (dir) { var s = w.states[dir]; if (s && s.s !== "suspended") d = Math.min(d, s.s === "review" ? T.dayStart(T.dayOf(s.due, set.dayStartHour), set.dayStartHour) : s.due); }); return d; },
+          ivl: function (w) { var v = -1; T.C.DIRS.forEach(function (dir) { var s = w.states[dir]; if (s) v = Math.max(v, s.ivl); }); return -v; },
+          ease: function (w) { var v = Infinity; T.C.DIRS.forEach(function (dir) { var s = w.states[dir]; if (s && s.reps) v = Math.min(v, s.ease); }); return v; },
+          lapses: function (w) { var v = 0; T.C.DIRS.forEach(function (dir) { var s = w.states[dir]; if (s) v = Math.max(v, s.lapses); }); return -v; }
+        };
+        if (how === "az") return list.sort(function (a, b) { return a.card.tr.localeCompare(b.card.tr, "tr") || a.card.rank - b.card.rank; });
+        var f = by[how] || by.rank;
+        list.forEach(function (w) { w.sk = f(w); });
+        return list.sort(function (a, b) { return a.sk === b.sk ? a.card.rank - b.card.rank : a.sk < b.sk ? -1 : 1; });
+      }
+      function chip(dir, s, now, set) {
+        var lbl = '<span class="sr">' + DIR[dir] + ": </span><span class=\"cd\" aria-hidden=\"true\">" + DIR_SHORT[dir] + "</span>";
+        if (!s) return '<span class="tag">' + lbl + "new</span>";
+        if (s.s === "suspended") return '<span class="tag susp">' + lbl + "suspended</span>";
+        if (s.s !== "review") return '<span class="tag lrn">' + lbl + s.s + "</span>";
+        var days = T.daysBetween(T.today(set, now), T.dayOf(s.due, set.dayStartHour));
+        if (days <= 0) return '<span class="tag due">' + lbl + "due</span>";
+        return '<span class="tag">' + lbl + "in " + esc(T.srs.format({ days: days })) + "</span>";
+      }
+      function dueText(s, now, set) {
+        if (!s) return "—";
+        if (s.s === "suspended") return "Suspended";
+        if (s.s !== "review") return s.due <= now ? "Now" : T.dayOf(s.due, set.dayStartHour) === T.today(set, now) ? "Today at " + clock(s.due) : longDate(T.dayOf(s.due, set.dayStartHour)) + " at " + clock(s.due);
+        var day = T.dayOf(s.due, set.dayStartHour), n = T.daysBetween(T.today(set, now), day);
+        return n < 0 ? "Today (" + plural(-n, "day") + " late)" : n === 0 ? "Today" : n === 1 ? "Tomorrow" : shortDate(day) + " (in " + T.srs.format({ days: n }) + ")";
+      }
+      function stateLabel(s) {
+        if (!s) return "New";
+        var base = s.s === "suspended" ? "Suspended" + (s.was ? " (" + s.was + ")" : " (new)") : s.s === "review" ? (s.ivl >= MATURE ? "Mature" : "Young") : s.s === "learning" ? "Learning" : "Relearning";
+        return base;
+      }
+      function renderBrowse() {
+        var sel = $("b-filter");
+        if (!S.deck) { $("b-count").textContent = S.error ? "The deck couldn't be loaded." : "Loading the deck…"; $("b-rows").innerHTML = ""; return; }
+        var now = Date.now(), set = store.settings(), cards = store.cards().cards, B = S.browse;
+        var all = S.deck.map(function (c) { return wordInfo(c, cards, now, set); });
+        var n = {};
+        FILTERS.forEach(function (f) { n[f[0]] = f[0] === "all" ? all.length : all.filter(function (w) { return w.tags[f[0]]; }).length; });
+        if (FILTERS.every(function (f) { return f[0] !== B.filter; })) B.filter = "all";
+        sel.innerHTML = FILTERS.map(function (f) { return '<option value="' + f[0] + '"' + (f[0] === B.filter ? " selected" : "") + ">" + f[1] + " (" + fmt(n[f[0]]) + ")</option>"; }).join("");
+        $("b-sort").value = B.sort;
+        var list = all.filter(function (w) { return (B.filter === "all" || w.tags[B.filter]) && matches(w.card, B.q.trim()); });
+        sortWords(list, B.sort, now, set);
+        $("b-count").textContent = list.length === all.length ? plural(all.length, "word") : "Showing " + fmt(list.length) + " of " + plural(all.length, "word");
+        $("b-note").innerHTML = n.leech && B.filter !== "leech" ? '<p class="notice bnote">' + plural(n.leech, "word") + " " + (n.leech === 1 ? "is a leech" : "are leeches") + ": forgotten " + T.C.SRS.leech + ' times or more. Read the note and the example, then keep going, or suspend ' + (n.leech === 1 ? "it" : "them") + ' for now. <button type="button" data-act="leeches">Show ' + (n.leech === 1 ? "it" : "them") + "</button></p>" : "";
+        var dirsOn = set.directions;
+        var shown = list.slice(0, B.limit);
+        $("b-rows").innerHTML = shown.length ? shown.map(function (w) {
+          var c = w.card, open = !!B.open[c.id];
+          return '<details class="wrow" data-id="' + c.id + '"' + (open ? " open" : "") + "><summary>" +
+            '<span class="rk">' + c.rank + '</span><span class="ww"><b lang="tr">' + esc(c.tr) + '</b><span class="pos">' + esc(POS[c.pos] || c.pos) + "</span></span>" +
+            '<span class="wg">' + esc(glosses(c)) + "</span>" +
+            '<span class="wst">' + dirsOn.map(function (d) { return chip(d, w.states[d], now, set); }).join("") + (w.tags.leech ? '<span class="tag leech">leech</span>' : "") + "</span>" +
+            ICON.chev + "</summary>" + (open ? rowDetail(w, now, set) : "") + "</details>";
+        }).join("") : '<p class="empty">' + (B.q ? "No word matches “" + esc(B.q) + "”" + (B.filter !== "all" ? " in this list" : "") + "." : "No words in this list yet.") + "</p>";
+        $("b-more").hidden = list.length <= B.limit;
+        $("b-more-btn").textContent = "Show " + fmt(Math.min(100, list.length - B.limit)) + " more";
+        mountSay($("b-rows"));
+      }
+      function rowDetail(w, now, set) {
+        var c = w.card, h = '<div class="wdet"><div class="det"><div><p class="wtr" lang="tr"><span>' + esc(c.tr) + "</span>" + say(c.tr) + "</p>" +
+          '<p class="glosses">' + esc(glosses(c)) + ' <span class="sub">(' + esc(POS[c.pos] || c.pos) + ")</span></p></div>" +
+          detailsHtml(c).replace(/^<div class="det">|<\/div>$/g, "") + "</div><div>";
+        var dirs = T.C.DIRS, on = set.directions;
+        h += '<table class="st"><thead><tr><th scope="col"><span class="sr">Card</span></th>' + dirs.map(function (d) { return '<th scope="col">' + DIR[d] + (on.indexOf(d) < 0 ? ' <span class="sub">(off)</span>' : "") + "</th>"; }).join("") + "</tr></thead><tbody>";
+        var row = function (label, f) { return '<tr><th scope="row">' + label + "</th>" + dirs.map(function (d) { return "<td>" + f(w.states[d], d) + "</td>"; }).join("") + "</tr>"; };
+        h += row("State", function (s) { return esc(stateLabel(s)) + (s && s.leech ? ' <span class="tag leech">leech</span>' : ""); });
+        h += row("Due", function (s) { return esc(dueText(s, now, set)); });
+        h += row("Interval", function (s) { return s && s.ivl ? esc(T.srs.format({ days: s.ivl })) : "—"; });
+        h += row("Ease", function (s) { return s && s.reps ? Math.round(s.ease * 100) + "%" : "—"; });
+        h += row("Answers", function (s) { return s ? fmt(s.reps) : "0"; });
+        h += row("Lapses", function (s) { return s ? fmt(s.lapses) : "0"; });
+        h += "</tbody></table>";
+        var keys = dirs.map(function (d) { return c.id + ":" + d; });
+        var susp = dirs.filter(function (d) { var s = w.states[d]; return s && s.s === "suspended"; });
+        var dis = blocked("cards") ? " disabled" : "";
+        h += '<div class="susp-acts">' + dirs.map(function (d) {
+          var s = w.states[d], isS = s && s.s === "suspended";
+          return '<button type="button" class="btn small" data-act="susp" data-keys="' + c.id + ":" + d + '" data-on="' + (isS ? 0 : 1) + '"' + dis + ">" + (isS ? "Unsuspend " : "Suspend ") + DIR_SHORT[d] + "</button>";
+        }).join("") +
+          (susp.length === 0 ? '<button type="button" class="btn small" data-act="susp" data-keys="' + keys.join(",") + '" data-on="1"' + dis + ">Suspend the word</button>" : "") +
+          (susp.length === 2 ? '<button type="button" class="btn small" data-act="susp" data-keys="' + keys.join(",") + '" data-on="0"' + dis + ">Unsuspend the word</button>" : "") + "</div>";
+        h += '<p class="help">A suspended card stays out of your sessions and keeps its schedule for when you unsuspend it.</p></div></div>';
+        return h;
+      }
+      $("b-rows").addEventListener("toggle", function (e) {
+        var d = e.target;
+        if (!d.classList || !d.classList.contains("wrow")) return;
+        var id = d.dataset.id;
+        S.browse.open[id] = d.open;
+        if (d.open && !d.querySelector(".wdet")) {
+          var w = wordInfo(S.byId[id], store.cards().cards, Date.now(), store.settings());
+          d.insertAdjacentHTML("beforeend", rowDetail(w, Date.now(), store.settings()));
+          mountSay(d);
+        }
+      }, true);
+      $("b-rows").addEventListener("click", function (e) {
+        var b = e.target.closest("button[data-act=susp]");
+        if (!b || b.disabled) return;
+        var keys = b.dataset.keys.split(","), on = b.dataset.on === "1";
+        var n = suspendKeys(keys, on);
+        if (n) {
+          var w = S.byId[keys[0].slice(0, 7)];
+          toast("“" + w.tr + "”: " + plural(n, "card") + " " + (on ? "suspended" : "unsuspended") + ".");
+          renderBrowse();
+          var row = document.querySelector('.wrow[data-id="' + w.id + '"] button[data-act=susp]');
+          if (row) row.focus();
+        }
+      });
+      $("b-note").addEventListener("click", function (e) { if (e.target.closest("[data-act=leeches]")) { S.browse.filter = "leech"; S.browse.limit = 100; renderBrowse(); } });
+      var qTimer = null;
+      $("b-q").addEventListener("input", function () {
+        clearTimeout(qTimer);
+        qTimer = setTimeout(function () {
+          S.browse.q = $("b-q").value; S.browse.limit = 100;
+          history.replaceState({ view: "browse" }, "", viewUrl("browse"));
+          renderBrowse();
+        }, 120);
+      });
+      $("b-filter").addEventListener("change", function () { S.browse.filter = $("b-filter").value; S.browse.limit = 100; renderBrowse(); });
+      $("b-sort").addEventListener("change", function () { S.browse.sort = $("b-sort").value; renderBrowse(); });
+      $("b-more-btn").addEventListener("click", function () { S.browse.limit += 100; renderBrowse(); });
+
+      // ── stats ──
+      function niceStep(x) { var p = Math.pow(10, Math.floor(Math.log10(x))), m = x / p; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p; }
+      // Columns, stacked when there are several series: thin bars (≤ 24 px) with a rounded top, a 2 px gap between
+      // stacked parts, hairline grid, and a tooltip on hover and on keyboard focus (arrow keys). The table below each chart has every value.
+      function columnChart(box, opt) {
+        var W = Math.max(260, box.clientWidth || 600), H = opt.height || 190, L = 34, R = 6, TP = 10, B = 24;
+        var n = opt.cols.length, pw = W - L - R, ph = H - TP - B, band = pw / n, bw = Math.max(2, Math.min(24, band - 2));
+        var totals = opt.cols.map(function (c) { return c.vals.reduce(function (a, b) { return a + b; }, 0); });
+        var max = Math.max.apply(null, totals.concat([1])), step = niceStep(max / 4 || 1), top = Math.max(step, Math.ceil(max / step) * step);
+        if (step < 1) { step = 1; top = Math.max(1, Math.ceil(max)); }
+        var y = function (v) { return TP + ph * (1 - v / top); };
+        var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" tabindex="0" role="img" aria-label="' + esc(opt.label) + '">';
+        for (var v = 0; v <= top + 1e-9; v += step) {
+          var yy = Math.round(y(v)) + 0.5;
+          s += '<line class="' + (v === 0 ? "base" : "gl") + '" x1="' + L + '" x2="' + (W - R) + '" y1="' + yy + '" y2="' + yy + '"/>';
+          s += '<text class="ax" x="' + (L - 6) + '" y="' + (yy + 3.5) + '" text-anchor="end">' + fmt(v) + "</text>";
+        }
+        s += '<rect class="hl" id="' + opt.id + '-hl" x="0" y="' + TP + '" width="' + band + '" height="' + ph + '" opacity="0"/>';
+        opt.cols.forEach(function (c, i) {
+          var x0 = L + i * band + (band - bw) / 2, base = y(0), segs = [];
+          c.vals.forEach(function (val, k) { if (val > 0) segs.push({ val: val, k: k }); });
+          s += '<g class="col" data-i="' + i + '">';
+          segs.forEach(function (sg, j) {
+            var h0 = ph * sg.val / top, gap = j ? 2 : 0, hgt = Math.max(1.5, h0 - gap), yTop = base - hgt;
+            var r = j === segs.length - 1 ? Math.min(4, bw / 2, hgt) : 0;
+            s += '<path fill="' + opt.series[sg.k].color + '" d="M' + x0 + "," + base + "V" + (yTop + r) + (r ? "Q" + x0 + "," + yTop + " " + (x0 + r) + "," + yTop : "") + "H" + (x0 + bw - r) + (r ? "Q" + (x0 + bw) + "," + yTop + " " + (x0 + bw) + "," + (yTop + r) : "") + "V" + base + 'Z"/>';
+            base = yTop - 2;                           // the next part starts above a 2 px gap
+          });
+          s += '<rect x="' + (L + i * band) + '" y="' + TP + '" width="' + band + '" height="' + ph + '" fill="transparent"/></g>';
+        });
+        if (Math.max.apply(null, totals) === 0 && opt.empty) s += '<text class="ax" x="' + (L + pw / 2) + '" y="' + (TP + ph / 2) + '" text-anchor="middle" style="font-size:13px">' + esc(opt.empty) + "</text>";
+        (opt.ticks || []).filter(function (t, i, a) { return W >= 480 || i === 0 || i === a.length - 1 || i === Math.floor(a.length / 2); }).forEach(function (t) {
+          var cx = L + t[0] * band + band / 2, anchor = t[0] === 0 ? "start" : t[0] === n - 1 ? "end" : "middle";
+          if (anchor === "start") cx = L + t[0] * band; if (anchor === "end") cx = L + (t[0] + 1) * band;
+          s += '<text class="ax" x="' + cx + '" y="' + (H - 6) + '" text-anchor="' + anchor + '">' + esc(t[1]) + "</text>";
+        });
+        s += "</svg>";
+        box.innerHTML = s + '<div class="tip" hidden></div>';
+        var svg = box.querySelector("svg"), tip = box.querySelector(".tip"), hl = box.querySelector("#" + opt.id + "-hl"), cur = -1;
+        function show(i) {
+          if (i < 0 || i >= n) return hide();
+          cur = i;
+          var c = opt.cols[i];
+          hl.setAttribute("x", L + i * band); hl.setAttribute("opacity", "1");
+          tip.innerHTML = "";
+          var t = document.createElement("div"); t.className = "t"; t.textContent = c.title; tip.appendChild(t);
+          c.rows.forEach(function (r) {
+            var d = document.createElement("div"); d.className = "r";
+            var key = document.createElement("i"); key.style.background = r.color || "transparent"; d.appendChild(key);
+            var b = document.createElement("b"); b.textContent = r.value; d.appendChild(b);
+            d.appendChild(document.createTextNode(r.name)); tip.appendChild(d);
+          });
+          tip.hidden = false;
+          var x = L + i * band + band / 2, tw = tip.offsetWidth, left = x + 12;
+          if (left + tw > W) left = x - 12 - tw;
+          tip.style.left = Math.max(0, left) + "px"; tip.style.top = "0px";
+        }
+        function hide() { cur = -1; tip.hidden = true; hl.setAttribute("opacity", "0"); }
+        svg.addEventListener("pointermove", function (e) {
+          var r = svg.getBoundingClientRect(), i = Math.floor((e.clientX - r.left - L) / band);
+          if (i !== cur) show(i);
+        });
+        svg.addEventListener("pointerleave", hide);
+        svg.addEventListener("focus", function () { show(cur >= 0 ? cur : opt.focusAt || 0); });
+        svg.addEventListener("blur", hide);
+        svg.addEventListener("keydown", function (e) {
+          var k = e.key, i = cur < 0 ? 0 : cur;
+          if (k === "ArrowRight") i++; else if (k === "ArrowLeft") i--; else if (k === "Home") i = 0; else if (k === "End") i = n - 1; else if (k === "Escape") { hide(); return; } else return;
+          e.preventDefault(); show(Math.max(0, Math.min(n - 1, i)));
+        });
+      }
+      function tableHtml(head, rows) {
+        return '<details class="tbl"><summary>Show as a table</summary><div class="scroll"><table><thead><tr>' + head.map(function (h) { return "<th scope=\"col\">" + esc(h) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+          rows.map(function (r) { return "<tr>" + r.map(function (c, i) { return i ? "<td>" + esc(c) + "</td>" : '<th scope="row">' + esc(c) + "</th>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div></details>";
+      }
+      function renderStats() {
+        var el = $("s-body");
+        if (!S.deck) { el.innerHTML = '<p class="sub">' + (S.error ? "The deck couldn't be loaded." : "Loading…") + "</p>"; return; }
+        var now = Date.now(), set = store.settings(), cards = store.cards(), course = store.course(), o = deckObj();
+        var today = T.today(set, now), rec = cards.days[today] || { "new": 0, reviews: 0, again: 0 };
+        var cc = T.srs.cardCounts(o), fc = T.srs.forecast(o, now, 30), s = T.progress.streak(course, set, now);
+        var R = [1, 7, 30, null].map(function (n) { return T.srs.retention(cards, now, set, n); });
+        var studied = rec["new"] + rec.reviews;
+        var sum = function (a, b, f) { var t = 0; for (var i = a; i < b && i < fc.length; i++) t += f(fc[i]); return t; };
+        var rev = function (d) { return d.young + d.mature; };
+        var tomorrow = rev(fc[1]) + fc[1].learning, week = sum(1, 8, rev), month = sum(0, 30, rev);
+        var h = '<div class="tiles">' +
+          '<div class="tile"><p class="lbl">Studied today</p><p class="val">' + fmt(studied) + '</p><p class="sub">' + rec["new"] + " new · " + plural(rec.reviews, "review") + "</p></div>" +
+          '<div class="tile"><p class="lbl">Retention, last 30 days</p><p class="val">' + pct(R[2].all.rate) + '</p><p class="sub">' + (R[2].all.reviews ? "of " + plural(R[2].all.reviews, "review") : "No reviews yet") + "</p></div>" +
+          '<div class="tile"><p class="lbl">Due tomorrow</p><p class="val">' + fmt(tomorrow) + '</p><p class="sub">' + fmt(week) + " in the next 7 days</p></div>" +
+          '<div class="tile"><p class="lbl">Streak</p><p class="val">' + plural(s.current, "day") + '</p><p class="sub">' + (s.done ? "Today counts" : studied < T.C.STREAK_CARDS ? (T.C.STREAK_CARDS - studied) + " more cards to count today" : "") + (s.best > s.current ? " · best " + s.best : "") + "</p></div></div>";
+        h += '<div class="sgrid">';
+        // forecast
+        h += '<section class="panel wide" aria-labelledby="h-fc"><div class="ph"><div><h2 id="h-fc">Review forecast</h2><p class="pl">Cards falling due each day for the next 30 days, if you answer nothing</p></div>' +
+          '<div class="legend"><span><i style="background:var(--young)"></i>Young</span><span><i style="background:var(--mature)"></i>Mature</span></div></div>' +
+          '<div class="chart" id="c-fc"></div><p class="psum"><span>Today <b>' + fmt(rev(fc[0])) + "</b>" + (fc[0].learning ? " + " + fc[0].learning + " learning" : "") + "</span><span>Tomorrow <b>" + fmt(rev(fc[1])) + "</b></span><span>Next 7 days <b>" + fmt(week) + "</b></span><span>Next 30 days <b>" + fmt(month) + "</b></span><span>Average <b>" + (Math.round(month / 30 * 10) / 10) + "</b> a day</span></p>" +
+          tableHtml(["Day", "Young", "Mature", "Learning"], fc.map(function (d, i) { return [(i === 0 ? "Today" : i === 1 ? "Tomorrow" : longDate(d.day)), d.young, d.mature, d.learning]; })) + "</section>";
+        // retention
+        var cell = function (r) { return r.rate == null ? '<td><b aria-hidden="true">—</b><span class="sr">no reviews</span></td>' : "<td><b>" + pct(r.rate) + "</b><small>" + fmt(r.reviews) + '<span class="rw"> ' + (r.reviews === 1 ? "review" : "reviews") + "</span></small></td>"; };
+        h += '<section class="panel" aria-labelledby="h-ret"><h2 id="h-ret">Retention</h2><p class="pl">Reviews answered Hard, Good or Easy rather than Again</p>' +
+          '<table class="ret"><thead><tr><th scope="col"><span class="sr">Cards</span></th><th scope="col">Today</th><th scope="col">7 days</th><th scope="col">30 days</th><th scope="col">All</th></tr></thead><tbody>' +
+          [["Young", "young"], ["Mature", "mature"], ["All", "all"]].map(function (x) { return '<tr><th scope="row">' + x[0] + "</th>" + R.map(function (r) { return cell(r[x[1]]); }).join("") + "</tr>"; }).join("") +
+          '</tbody></table><p class="pnote">Young cards have an interval under ' + MATURE + " days, mature ones " + MATURE + " days or more. Spaced repetition usually settles around 85–90%; well below that, cards come back too late or too many at once.</p></section>";
+        // card counts
+        var parts = [["New", "new", "never studied"], ["Learning", "learning", "first steps"], ["Relearning", "relearning", "forgotten, relearning"], ["Young", "young", "under " + MATURE + " days"], ["Mature", "mature", MATURE + " days or more"], ["Suspended", "suspended", "kept out of sessions"]];
+        h += '<section class="panel" aria-labelledby="h-cc"><h2 id="h-cc">Cards</h2><p class="pl">' + plural(cc.total, "card") + ": " + plural(S.deck.length, "word") + (set.directions.length === 2 ? " in both directions" : ", " + DIR[set.directions[0]] + " only") + "</p>" +
+          '<ul class="bars">' + parts.map(function (p) {
+            var v = cc[p[1]], w = cc.total ? 100 * v / cc.total : 0;
+            return '<li><span class="bl">' + p[0] + "<small>" + p[2] + '</small></span><span class="bt" aria-hidden="true"><i style="width:' + (v ? Math.max(1, w).toFixed(1) : 0) + '%"></i></span><span class="bv">' + fmt(v) + " <small>" + (v && w < 0.5 ? "&lt;1" : Math.round(w)) + "%</small></span></li>";
+          }).join("") + "</ul>" +
+          '<p class="pnote">' + (cc.leech ? plural(cc.leech, "leech", "leeches") + ", cards forgotten " + T.C.SRS.leech + ' times or more: <a href="?view=browse" data-view="browse" data-filter="leech">see them</a>.' : "No leeches: no card has been forgotten " + T.C.SRS.leech + " times.") + "</p></section>";
+        // activity
+        var act = [];
+        for (var i = 29; i >= 0; i--) { var d = T.addDays(today, -i), x = cards.days[d] || { "new": 0, reviews: 0, again: 0 }; act.push({ day: d, n: x["new"], r: x.reviews, a: x.again }); }
+        var daysOn = act.filter(function (a) { return a.n + a.r > 0; }).length, tot = act.reduce(function (t, a) { return t + a.n + a.r; }, 0);
+        h += '<section class="panel wide" aria-labelledby="h-act"><div class="ph"><div><h2 id="h-act">The last 30 days</h2><p class="pl">Cards studied each day: new cards started and reviews</p></div></div>' +
+          '<div class="chart" id="c-act"></div><p class="psum"><span>Days studied <b>' + daysOn + "</b> of 30</span><span>Cards <b>" + fmt(tot) + "</b></span><span>Average <b>" + (daysOn ? Math.round(tot / daysOn) : 0) + "</b> on a day you studied</span></p>" +
+          tableHtml(["Day", "New", "Reviews", "Again"], act.slice().reverse().map(function (a) { return [a.day === today ? "Today" : longDate(a.day), a.n, a.r, a.a]; })) + "</section>";
+        h += "</div>";
+        el.innerHTML = h;
+        var blue = getComputedStyle(document.documentElement).getPropertyValue("--blue").trim() || "#287a9e";
+        var young = getComputedStyle(document.documentElement).getPropertyValue("--young").trim(), mature = getComputedStyle(document.documentElement).getPropertyValue("--mature").trim();
+        S.charts = [
+          [$("c-fc"), { id: "fc", empty: "Nothing falls due yet", label: "Review forecast for the next 30 days: " + fmt(month) + " reviews, " + fmt(tomorrow) + " tomorrow. The table below lists every day.",
+            series: [{ color: young }, { color: mature }], focusAt: 0,
+            cols: fc.map(function (d, i) { return { vals: [d.young, d.mature], title: (i === 0 ? "Today" : i === 1 ? "Tomorrow" : longDate(d.day) + " · in " + i + " days"),
+              rows: [{ value: fmt(d.young + d.mature), name: "reviews", color: null }, { value: fmt(d.young), name: "young", color: young }, { value: fmt(d.mature), name: "mature", color: mature }].concat(d.learning ? [{ value: fmt(d.learning), name: "learning", color: null }] : []) }; }),
+            ticks: [[0, "Today"], [7, shortDate(fc[7].day)], [14, shortDate(fc[14].day)], [21, shortDate(fc[21].day)], [29, shortDate(fc[29].day)]] }],
+          [$("c-act"), { id: "act", empty: "No cards studied yet", label: "Cards studied over the last 30 days: " + fmt(tot) + " on " + daysOn + " days. The table below lists every day.",
+            series: [{ color: blue }], focusAt: 29,
+            cols: act.map(function (a) { return { vals: [a.n + a.r], title: a.day === today ? "Today" : longDate(a.day),
+              rows: [{ value: fmt(a.n + a.r), name: "cards studied", color: blue }, { value: fmt(a.n), name: "new", color: null }, { value: fmt(a.r), name: "reviews", color: null }, { value: fmt(a.a), name: "Again", color: null }] }; }),
+            ticks: [[0, shortDate(act[0].day)], [7, shortDate(act[7].day)], [14, shortDate(act[14].day)], [21, shortDate(act[21].day)], [29, "Today"]] }]
+        ];
+        drawCharts();
+      }
+      function drawCharts() { S.charts.forEach(function (c) { if (c[0] && c[0].isConnected) columnChart(c[0], c[1]); }); }
+      var lastW = 0;
+      if (typeof ResizeObserver === "function") {
+        new ResizeObserver(function () {
+          var w = $("s-body").clientWidth;
+          if (S.view === "stats" && w && w !== lastW) { lastW = w; drawCharts(); }
+        }).observe($("s-body"));
+      }
+      $("s-body").addEventListener("click", function (e) {
+        var a = e.target.closest("a[data-view]");
+        if (!a || e.metaKey || e.ctrlKey) return;
+        e.preventDefault();
+        if (a.dataset.filter) { S.browse.filter = a.dataset.filter; S.browse.limit = 100; }
+        setView(a.dataset.view, true); window.scrollTo(0, 0);
+      });
+
+      // ── settings ──
+      var hourSel = $("s-hour");
+      for (var hr = 0; hr < 24; hr++) {
+        var op = document.createElement("option");
+        op.value = hr; op.textContent = hr === 0 ? "midnight" : hr === 12 ? "noon" : hr < 12 ? hr + ":00 am" : (hr - 12) + ":00 pm";
+        hourSel.appendChild(op);
+      }
+      function renderSettings() {
+        var s = store.settings(), lock = blocked("settings");
+        ["f-cards", "f-dirs", "f-speech"].forEach(function (id) { $(id).disabled = lock; });
+        $("s-new").value = s.newPerDay; $("s-rev").value = s.reviewsPerDay; hourSel.value = s.dayStartHour;
+        $("s-dir-tren").checked = s.directions.indexOf("tr-en") >= 0; $("s-dir-entr").checked = s.directions.indexOf("en-tr") >= 0;
+        $("s-taught").checked = s.onlyTaughtWords; $("s-tts").checked = s.tts;
+        $("s-rate").value = s.ttsRate; $("s-rate-out").textContent = s.ttsRate.toFixed(2).replace(/0$/, "") + "×";
+        var th = $("s-taught-help");
+        if (S.deck && s.onlyTaughtWords && !S.deck.some(function (c) { return c.unit; })) { th.hidden = false; th.className = "help warn"; th.textContent = "No word of the deck is linked to a unit yet, so with this on no new cards come. Leave it off for now."; }
+        else th.hidden = true;
+        renderVoice();
+      }
+      function renderVoice() {
+        var s = store.settings(), el = $("s-voice"), btn = $("s-test");
+        if (!T.tts.supported()) { el.textContent = "This browser can't read text aloud."; btn.disabled = true; return; }
+        if (S.voice === undefined) { el.textContent = "Looking for a Turkish voice…"; return; }
+        if (!S.voice) { el.textContent = T.tts.HELP; btn.disabled = true; return; }
+        btn.disabled = !s.tts;
+        el.textContent = s.tts ? "Voice: " + S.voice.name + " (" + S.voice.lang + ")." : "Speech is off: words aren't read aloud and speaker buttons are hidden.";
+      }
+      function save(patch) { if (!blocked("settings")) store.setSettings(patch); }
+      function numberSetting(id, key, min, max) {
+        $(id).addEventListener("change", function () {
+          var v = Math.round(+$(id).value);
+          if (!isFinite(v) || $(id).value === "") { renderSettings(); return; }
+          var p = {}; p[key] = Math.min(max, Math.max(min, v)); save(p);
+          renderSettings();
+        });
+      }
+      numberSetting("s-new", "newPerDay", 0, 100);
+      numberSetting("s-rev", "reviewsPerDay", 10, 9999);
+      function dirs() {
+        var d = [];
+        if ($("s-dir-tren").checked) d.push("tr-en");
+        if ($("s-dir-entr").checked) d.push("en-tr");
+        if (!d.length) { renderSettings(); toast("Keep at least one direction."); return; }
+        save({ directions: d });
+      }
+      $("s-dir-tren").addEventListener("change", dirs); $("s-dir-entr").addEventListener("change", dirs);
+      [["s-taught", "onlyTaughtWords"], ["s-tts", "tts"]].forEach(function (p) {
+        $(p[0]).addEventListener("change", function () { var o = {}; o[p[1]] = $(p[0]).checked; save(o); });
+      });
+      $("s-rate").addEventListener("input", function () { $("s-rate-out").textContent = (+$("s-rate").value).toFixed(2).replace(/0$/, "") + "×"; });
+      $("s-rate").addEventListener("change", function () { save({ ttsRate: Math.round(+$("s-rate").value * 100) / 100 }); });
+      hourSel.addEventListener("change", function () { save({ dayStartHour: +hourSel.value }); });
+      $("s-test").addEventListener("click", function () {
+        if (!T.tts.speak("Merhaba! Türkçe öğreniyorum.", { rate: +$("s-rate").value })) renderVoice();
+      });
+
+      // ── export and import (as on the course page) ──
+      function download(name, text, type) {
+        var url = URL.createObjectURL(new Blob([text], { type: type || "application/json" }));
+        var a = document.createElement("a");
+        a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      }
+      function summary(course, cards) {
+        var lessons = Object.keys(course.lessons).length, n = Object.keys(cards.cards).length;
+        return plural(lessons, "lesson") + " done, " + fmt(course.xp.total) + " XP, " + plural(n, "flashcard") + " studied";
+      }
+      function exportProgress() {
+        var data = store.exportData(Date.now());
+        download("turkish-progress-" + T.today(store.settings()) + ".json", JSON.stringify(data, null, 2) + "\n");
+        $("p-status").textContent = "Exported " + summary(data.course, data.cards) + ". Keep the file somewhere safe; import it here or on another device.";
+      }
+      var confirmBox = $("p-confirm"), pending = null;
+      function showConfirm(html, err) { confirmBox.className = "confirm" + (err ? " err" : ""); confirmBox.innerHTML = html; confirmBox.hidden = false; }
+      function hideConfirm() { confirmBox.hidden = true; confirmBox.innerHTML = ""; pending = null; }
+      $("p-export").addEventListener("click", exportProgress);
+      $("p-import").addEventListener("click", function () { $("p-file").value = ""; $("p-file").click(); });
+      $("p-file").addEventListener("change", function () {
+        var file = $("p-file").files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          var obj;
+          try { obj = JSON.parse(reader.result); } catch (e) { showConfirm("<b>This file isn't a progress export</b>: it isn't valid JSON.", true); return; }
+          var errors = T.progress.validate(obj);
+          if (errors.length) {
+            showConfirm("<b>This file can't be imported.</b> It doesn't match the progress format:<ul>" + errors.slice(0, 6).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + (errors.length > 6 ? "<li>and " + (errors.length - 6) + " more</li>" : "") + "</ul>", true);
+            return;
+          }
+          pending = obj;
+          showConfirm("<b>Replace the progress in this browser?</b><br>The file, exported on " + esc(dateLabel(obj.exported)) + ", has " + esc(summary(obj.course, obj.cards)) + ". This browser has " + esc(summary(store.course(), store.cards())) + "." +
+            '<div class="btns"><button type="button" class="btn primary" data-act="import">Replace my progress</button><button type="button" class="btn" data-act="cancel">Cancel</button></div>');
+        };
+        reader.onerror = function () { showConfirm("The file couldn't be read.", true); };
+        reader.readAsText(file);
+      });
+      confirmBox.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-act]");
+        if (!b) return;
+        e.preventDefault();
+        if (b.dataset.act === "cancel") hideConfirm();
+        if (b.dataset.act === "import" && pending) {
+          var r = store.importData(pending);
+          hideConfirm();
+          S.mode = "overview"; S.sess = null; S.item = null;
+          $("p-status").textContent = r.ok ? "Progress imported: " + summary(store.course(), store.cards()) + "." : "Import failed.";
+          renderNotices(); renderSettings();
+        }
+      });
+
+      // ── boot ──
+      // Saves made by this page re-render where they happen; anything else (another tab, an import, a settings change) re-renders here.
+      function external() {
+        renderNotices(); renderSettings();
+        if (S.mode === "study" && S.sess) newSession();
+        if (S.view !== "settings") renderView();
+      }
+      store.onChange(function () { if (!S.saving) external(); });
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) { sendTrack(); return; }
+        store.forget();   // a new day, or progress made in another tab
+        external();
+      });
+      window.addEventListener("pagehide", sendTrack);
+      function boot() {
+        Promise.all([T.data.index(), T.data.deck()]).then(function (r) {
+          S.index = r[0]; S.deck = r[1]; S.byId = {};
+          S.deck.forEach(function (c) { S.byId[c.id] = c; });
+          renderNotices(); renderSettings(); renderView();
+        }).catch(function (e) {
+          S.error = e && e.message ? e.message.replace(/^Could not load /, "") : "network error";
+          renderNotices(); renderView();
+        });
+      }
+      readQuery();
+      setView(viewFromUrl(), false);
+      history.replaceState({ view: S.view }, "", location.href);
+      renderSettings();
+      renderNotices();
+      T.tts.ready().then(function (v) { S.voice = v; renderVoice(); if (S.view === "review" && S.mode === "study" && S.item) renderStudy(); });
+      boot();
+    });
+    </script>
+  </body>
+</html>

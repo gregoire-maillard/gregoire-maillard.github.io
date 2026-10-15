@@ -28,7 +28,7 @@ What it checks:
 
 ## Tests for turkish.js
 
-`test.mjs` tests `assets/js/turkish.js`, the script every page of the section shares: the answer checker (PROJECT.md 6.4), the flashcard scheduler (6.6) and the progress logic around them (5.9, 6.1, 6.3). Node 18 or later, no dependencies:
+`test.mjs` tests `assets/js/turkish.js`, the script every page of the section shares: the answer checker (PROJECT.md 6.4), the flashcard scheduler with its undo, suspending and statistics (6.6), and the progress logic around them (5.9, 6.1, 6.3). Node 18 or later, no dependencies:
 
 ```
 node scripts/turkish/test.mjs            # exit 1 on a failure
