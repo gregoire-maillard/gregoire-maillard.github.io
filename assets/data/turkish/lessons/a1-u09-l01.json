@@ -1,0 +1,252 @@
+{
+  "id": "a1-u09-l01",
+  "unit": "a1-u09",
+  "order": 1,
+  "title": "My family",
+  "goal": "Say whose something is with the possessive suffixes, starting with your family.",
+  "points": ["gp-possessive-suffixes"],
+  "intro": {
+    "text": "Add a suffix for the owner: `-(I)m` my, `-(I)n` your, `-(s)I` his or her. *Annem* (my mother), *baban* (your father), *ablası* (her older sister). After a vowel the I drops: *annem*.",
+    "see": "gp-possessive-suffixes"
+  },
+  "vocab": [
+    {
+      "tr": "aile",
+      "en": "family",
+      "pos": "noun"
+    },
+    {
+      "tr": "anne",
+      "en": "mother, mom",
+      "pos": "noun"
+    },
+    {
+      "tr": "baba",
+      "en": "father, dad",
+      "pos": "noun"
+    },
+    {
+      "tr": "kardeş",
+      "en": "brother or sister, sibling",
+      "pos": "noun"
+    },
+    {
+      "tr": "erkek kardeş",
+      "en": "brother (usually younger)",
+      "pos": "noun"
+    },
+    {
+      "tr": "kız kardeş",
+      "en": "sister (usually younger)",
+      "pos": "noun"
+    },
+    {
+      "tr": "abla",
+      "en": "older sister",
+      "pos": "noun"
+    },
+    {
+      "tr": "ağabey",
+      "en": "older brother (said abi)",
+      "pos": "noun"
+    },
+    {
+      "tr": "eş",
+      "en": "husband or wife, spouse",
+      "pos": "noun"
+    },
+    {
+      "tr": "ad",
+      "en": "name",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u09-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["anne", "mother"],
+        ["baba", "father"],
+        ["kardeş", "sibling"],
+        ["abla", "older sister"],
+        ["ağabey", "older brother"],
+        ["eş", "spouse"]
+      ]
+    },
+    {
+      "id": "a1-u09-l01-e02",
+      "type": "mcq",
+      "points": ["gp-possessive-suffixes"],
+      "question": "How do you say **my mother**?",
+      "options": ["annem", "annim", "anneim", "annen"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "The final e of *anne* stays: *anne* + *-m*.",
+        "2": "After a vowel, the I of `-(I)m` drops: *annem*.",
+        "3": "*Annen* is **your** mother."
+      },
+      "explain": "*Anne* ends in a vowel, so **my** is just *-m*: *annem*."
+    },
+    {
+      "id": "a1-u09-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-possessive-suffixes"],
+      "base": "ev",
+      "form": "possessive",
+      "label": "*ev* (house) with the possessive suffixes: my house, your house…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["evim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["evin"]
+        },
+        {
+          "p": "o",
+          "accept": ["evi"]
+        },
+        {
+          "p": "biz",
+          "accept": ["evimiz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["eviniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["evleri"]
+        }
+      ],
+      "explain": "After a consonant: *-im, -in, -i, -imiz, -iniz*, in harmony with e. **Their** is *-leri*."
+    },
+    {
+      "id": "a1-u09-l01-e04",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-possessive-suffixes", "gp-copula-present"],
+      "prompt": "My father is a doctor.",
+      "accept": ["Babam doktor.", "Babam doktordur.", "Benim babam doktor."],
+      "reject": [
+        {
+          "answer": "Baba doktor.",
+          "why": "**My** father needs the suffix: *babam*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u09-l01-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Ablam İstanbul'da.",
+      "en": "My older sister is in Istanbul."
+    },
+    {
+      "id": "a1-u09-l01-e06",
+      "type": "cloze",
+      "points": ["gp-possessive-suffixes", "gp-locative"],
+      "text": "Ağabey___ ofiste.",
+      "en": "My older brother is at the office.",
+      "blanks": [
+        {
+          "accept": ["im"],
+          "reject": [
+            {
+              "answer": "m",
+              "why": "*Ağabey* ends in a consonant, so the suffix keeps its vowel: *ağabeyim*."
+            },
+            {
+              "answer": "ım",
+              "why": "The last vowel of *ağabey* is e, a front vowel: *-im*."
+            }
+          ]
+        }
+      ],
+      "explain": "A final consonant and the front vowel e: *ağabey* + *-im*."
+    },
+    {
+      "id": "a1-u09-l01-e07",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-possessive-suffixes"],
+      "prompt": "Eşin nerede?",
+      "accept": ["Where is your wife?", "Where is your [husband|spouse]?"]
+    },
+    {
+      "id": "a1-u09-l01-e08",
+      "type": "morph",
+      "points": ["gp-possessive-suffixes"],
+      "base": "araba",
+      "gloss": "her car",
+      "parts": ["araba", "s", "ı"],
+      "distractors": ["y", "i", "n"],
+      "result": "arabası",
+      "explain": "Third person after a vowel: buffer *s*, then *-ı*: *arabası*."
+    },
+    {
+      "id": "a1-u09-l01-e09",
+      "type": "wordbank",
+      "from": "en",
+      "points": ["gp-possessive-suffixes", "gp-apostrophe"],
+      "prompt": "Our family is in Ankara.",
+      "text": "Ailemiz Ankara'da.",
+      "answer": ["Ailemiz", "Ankara'da"],
+      "distractors": ["Ailem", "Ailesi", "Ankara'ya"]
+    },
+    {
+      "id": "a1-u09-l01-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Kız kardeşiniz nerede?",
+      "en": "Where is your sister?",
+      "options": ["Kız kardeşiniz nerede?", "Kız kardeşim nerede?", "Kız kardeşi nerede?"],
+      "answer": 0
+    },
+    {
+      "id": "a1-u09-l01-e11",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-possessive-suffixes"],
+      "prompt": "Their house is very big.",
+      "accept": ["Evleri çok büyük."],
+      "reject": [
+        {
+          "answer": "Evler çok büyük.",
+          "why": "*Evler* means **the houses**. **Their** house is *evleri*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u09-l01-e12",
+      "type": "mcq",
+      "points": ["gp-possessive-suffixes"],
+      "question": "What does *ailesi* mean?",
+      "options": ["his or her family", "my family", "the families"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**My** family is *ailem*.",
+        "2": "**The families** is *aileler*."
+      },
+      "explain": "*Aile* + buffer *s* + *-i*: his or her family."
+    },
+    {
+      "id": "a1-u09-l01-e13",
+      "type": "cloze",
+      "points": ["gp-possessive-suffixes", "gp-question-mi"],
+      "text": "Eş___ Fransız mı?",
+      "en": "Is your wife French?",
+      "blanks": [
+        {
+          "options": ["in", "im", "i"],
+          "answer": 0
+        }
+      ],
+      "explain": "**Your** is `-(I)n`: *eşin*. *Eşim* would be my wife, *eşi* his wife."
+    }
+  ]
+}

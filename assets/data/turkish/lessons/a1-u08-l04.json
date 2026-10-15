@@ -1,0 +1,259 @@
+{
+  "id": "a1-u08-l04",
+  "unit": "a1-u08",
+  "order": 4,
+  "title": "At the greengrocer's",
+  "goal": "Shop for food and put objects in the right place in the sentence.",
+  "points": ["gp-object-word-order", "gp-accusative", "gp-consonant-softening", "gp-ablative"],
+  "intro": {
+    "text": "A bare object sits right before the verb: *Mehmet ekmek alıyor*. A definite one can move: *Ekmeği Mehmet alıyor* (It's Mehmet who's buying the bread). Where you buy takes the ablative: *marketten*.",
+    "see": "gp-object-word-order"
+  },
+  "vocab": [
+    {
+      "tr": "manav",
+      "en": "greengrocer, fruit and vegetable shop",
+      "pos": "noun"
+    },
+    {
+      "tr": "elma",
+      "en": "apple",
+      "pos": "noun"
+    },
+    {
+      "tr": "muz",
+      "en": "banana",
+      "pos": "noun"
+    },
+    {
+      "tr": "meyve",
+      "en": "fruit",
+      "pos": "noun"
+    },
+    {
+      "tr": "taze",
+      "en": "fresh",
+      "pos": "adj"
+    },
+    {
+      "tr": "kilo",
+      "en": "kilo, kilogram",
+      "pos": "noun"
+    },
+    {
+      "tr": "Kaç para?",
+      "en": "How much is it?",
+      "pos": "phrase"
+    },
+    {
+      "tr": "Buyurun.",
+      "en": "Here you are. Can I help you?",
+      "pos": "phrase"
+    },
+    {
+      "tr": "başka",
+      "en": "other; else",
+      "pos": "adj"
+    },
+    {
+      "tr": "şey",
+      "en": "thing",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u08-l04-e01",
+      "type": "mcq",
+      "points": ["gp-object-word-order"],
+      "question": "Which order is natural for **Mehmet is buying bread**?",
+      "options": ["Mehmet ekmek alıyor.", "Ekmek Mehmet alıyor.", "Mehmet alıyor ekmek."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "A bare object can't move away from its verb: *ekmek alıyor* stays together.",
+        "2": "In a neutral sentence the verb comes last."
+      },
+      "explain": "Subject, object, verb, with the bare object right before the verb: *Mehmet ekmek alıyor*."
+    },
+    {
+      "id": "a1-u08-l04-e02",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-demonstratives"],
+      "prompt": "How much are these apples?",
+      "accept": ["Bu elmalar kaç para?"]
+    },
+    {
+      "id": "a1-u08-l04-e03",
+      "type": "cloze",
+      "points": ["gp-object-word-order", "gp-question-words"],
+      "text": "Ekmeği ___ alıyor?",
+      "en": "Who is buying the bread?",
+      "blanks": [
+        {
+          "options": ["kim", "ne", "nerede"],
+          "answer": 0
+        }
+      ],
+      "explain": "The question word sits right before the verb, in the focus slot: *Ekmeği kim alıyor?*"
+    },
+    {
+      "id": "a1-u08-l04-e04",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Bir kilo elma istiyorum.",
+      "en": "I would like a kilo of apples."
+    },
+    {
+      "id": "a1-u08-l04-e05",
+      "type": "mcq",
+      "points": ["gp-accusative", "gp-object-word-order"],
+      "context": [
+        {
+          "who": "Manav",
+          "tr": "Buyurun!",
+          "en": "Can I help you?"
+        },
+        {
+          "who": "Elif",
+          "tr": "Bir kilo elma istiyorum. Bu muzlar taze mi?",
+          "en": "I'd like a kilo of apples. Are these bananas fresh?"
+        },
+        {
+          "who": "Manav",
+          "tr": "Tabii, çok taze.",
+          "en": "Of course, very fresh."
+        },
+        {
+          "who": "Elif",
+          "tr": "Kaç para?",
+          "en": "How much are they?"
+        },
+        {
+          "who": "Manav",
+          "tr": "Çok ucuz, efendim!",
+          "en": "Very cheap, madam!"
+        },
+        {
+          "who": "Elif",
+          "tr": "Tamam, muzları da alıyorum.",
+          "en": "OK, I'll take the bananas too."
+        },
+        {
+          "who": "Manav",
+          "tr": "Başka bir şey?",
+          "en": "Anything else?"
+        },
+        {
+          "who": "Elif",
+          "tr": "Hayır, teşekkürler.",
+          "en": "No, thanks."
+        }
+      ],
+      "question": "What does Elif buy in the end?",
+      "options": ["Apples and bananas", "Only apples", "Only bananas"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Bir kilo elma istiyorum*, then *Muzları da alıyorum*: apples, and the bananas too."
+    },
+    {
+      "id": "a1-u08-l04-e06",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-accusative", "gp-de-also"],
+      "prompt": "Muzları da alıyorum.",
+      "accept": ["I am taking the bananas too.", "I am buying the bananas too.", "I am [taking|buying] the bananas as well.", "I will [take|buy] the bananas [too|as well]."]
+    },
+    {
+      "id": "a1-u08-l04-e07",
+      "type": "wordbank",
+      "from": "en",
+      "points": ["gp-accusative", "gp-ablative", "gp-object-word-order"],
+      "prompt": "I buy the fruit at the greengrocer's.",
+      "text": "Meyveyi manavdan alıyorum.",
+      "answer": ["Meyveyi", "manavdan", "alıyorum"],
+      "distractors": ["Meyve", "manavda", "manava"],
+      "accept": ["Manavdan meyveyi alıyorum."]
+    },
+    {
+      "id": "a1-u08-l04-e08",
+      "type": "cloze",
+      "points": ["gp-accusative", "gp-harmony-4way"],
+      "text": "Muz___ kim istiyor?",
+      "en": "Who wants the banana?",
+      "blanks": [
+        {
+          "accept": ["u"],
+          "reject": [
+            {
+              "answer": "yu",
+              "why": "*Muz* ends in a consonant: no buffer y."
+            },
+            {
+              "answer": "ı",
+              "why": "The last vowel of *muz* is u, rounded and back: *-u*."
+            }
+          ]
+        }
+      ],
+      "explain": "Last vowel u, so the ending is *-u*: *muzu*."
+    },
+    {
+      "id": "a1-u08-l04-e09",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-question-mi"],
+      "prompt": "Do you want anything else?",
+      "accept": ["Başka bir şey istiyor musunuz?", "Başka bir şey istiyor musun?"]
+    },
+    {
+      "id": "a1-u08-l04-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Elmaları ben alıyorum.",
+      "en": "I'm the one buying the apples.",
+      "options": ["Elmaları ben alıyorum.", "Elmaları sen alıyorsun.", "Elma alıyorum."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u08-l04-e11",
+      "type": "mcq",
+      "points": ["gp-object-word-order"],
+      "question": "*Kahveyi Ayşe içiyor.* What does the word order tell you?",
+      "options": ["It's Ayşe who's drinking the coffee", "Ayşe is drinking some coffee", "Ayşe is drinking the coffee right now"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*Kahveyi* is definite: **the** coffee, not some coffee.",
+        "2": "Nothing in the sentence says **now**."
+      },
+      "explain": "The word right before the verb carries the focus: it's **Ayşe** who's drinking the coffee."
+    },
+    {
+      "id": "a1-u08-l04-e12",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-accusative", "gp-ablative"],
+      "prompt": "Domatesleri marketten alıyoruz.",
+      "accept": [
+        "We buy the tomatoes at the supermarket.",
+        "We are buying the tomatoes at the supermarket.",
+        "We [buy|are buying|get] the tomatoes from the [supermarket|grocery store|market].",
+        "We [buy|are buying|get] the tomatoes at the [grocery store|market].",
+        "We get the tomatoes at the supermarket."
+      ]
+    },
+    {
+      "id": "a1-u08-l04-e13",
+      "type": "morph",
+      "points": ["gp-consonant-softening", "gp-accusative"],
+      "base": "kaşık",
+      "gloss": "the spoon (as an object)",
+      "parts": ["kaşığ", "ı"],
+      "distractors": ["kaşık", "i", "yı"],
+      "result": "kaşığı",
+      "explain": "Two syllables ending in k: the k softens to ğ before the vowel, *kaşığı*."
+    }
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "id": "a1-u07-l01",
+  "unit": "a1-u07",
+  "order": 1,
+  "title": "Where are you going?",
+  "goal": "Say where people are going with the dative -a, -e, -ya and -ye.",
+  "points": ["gp-dative", "gp-buffer-y-cases"],
+  "intro": {
+    "text": "Add `-a` or `-e` to say where to: *okula* (to school), *eve* (home). After a vowel, a buffer *y* comes first: *bankaya*, *müzeye*. Names keep their apostrophe: *Ankara'ya*.",
+    "see": "gp-dative"
+  },
+  "vocab": [
+    {
+      "tr": "nereye",
+      "en": "where to",
+      "pos": "adv"
+    },
+    {
+      "tr": "sinema",
+      "en": "cinema, movie theatre",
+      "pos": "noun"
+    },
+    {
+      "tr": "iş",
+      "en": "work; job",
+      "pos": "noun"
+    },
+    {
+      "tr": "tatil",
+      "en": "holiday, vacation",
+      "pos": "noun"
+    },
+    {
+      "tr": "istasyon",
+      "en": "station",
+      "pos": "noun"
+    },
+    {
+      "tr": "tren",
+      "en": "train",
+      "pos": "noun"
+    },
+    {
+      "tr": "metro",
+      "en": "metro, subway",
+      "pos": "noun"
+    },
+    {
+      "tr": "taksi",
+      "en": "taxi",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u07-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["nereye", "where to"],
+        ["sinema", "movie theatre"],
+        ["iş", "work"],
+        ["tatil", "vacation"],
+        ["istasyon", "station"],
+        ["tren", "train"]
+      ]
+    },
+    {
+      "id": "a1-u07-l01-e02",
+      "type": "mcq",
+      "points": ["gp-dative"],
+      "question": "How do you say **to school**?",
+      "options": ["okula", "okulda", "okule", "okuldan"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Okulda* means **at school**, the locative of unit 5.",
+        "2": "The last vowel of *okul* is u, a back vowel, so the ending is *-a*.",
+        "3": "*Okuldan* means **from school**: that's the next lesson."
+      },
+      "explain": "Back vowel u, so *okul* + *-a* = *okula*."
+    },
+    {
+      "id": "a1-u07-l01-e03",
+      "type": "cloze",
+      "points": ["gp-dative", "gp-buffer-y-cases"],
+      "text": "Bu akşam sinema___ gidiyoruz.",
+      "en": "We're going to the movies this evening.",
+      "blanks": [
+        {
+          "accept": ["ya"],
+          "reject": [
+            {
+              "answer": "a",
+              "why": "*Sinema* ends in a vowel, so a buffer y comes first: *sinemaya*."
+            },
+            {
+              "answer": "ye",
+              "why": "The last vowel of *sinema* is a, a back vowel: *-ya*."
+            },
+            {
+              "answer": "da",
+              "why": "*Sinemada* means **at the movies**. With *gitmek*, use the dative: *sinemaya*."
+            }
+          ]
+        }
+      ],
+      "hint": "Does *sinema* end in a vowel or a consonant?",
+      "explain": "*Sinema* ends in a, so buffer *y* + *-a*: *sinemaya*."
+    },
+    {
+      "id": "a1-u07-l01-e04",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-dative"],
+      "prompt": "I am going home.",
+      "accept": ["Eve gidiyorum.", "Ben eve gidiyorum."],
+      "reject": [
+        {
+          "answer": "Evde gidiyorum.",
+          "why": "*Evde* means **at home**. For where you're going, use the dative: *eve*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u07-l01-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Ayşe işe gidiyor.",
+      "en": "Ayşe is going to work."
+    },
+    {
+      "id": "a1-u07-l01-e06",
+      "type": "morph",
+      "points": ["gp-dative", "gp-buffer-y-cases"],
+      "base": "banka",
+      "gloss": "to the bank",
+      "parts": ["banka", "y", "a"],
+      "distractors": ["e", "da", "n"],
+      "result": "bankaya",
+      "explain": "*Banka* ends in a vowel: buffer *y*, then *-a* after the back vowel a."
+    },
+    {
+      "id": "a1-u07-l01-e07",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-dative"],
+      "prompt": "Yarın Ankara'ya gidiyoruz.",
+      "accept": ["We are going to Ankara tomorrow.", "Tomorrow we are going to Ankara.", "We are leaving for Ankara tomorrow.", "We go to Ankara tomorrow."]
+    },
+    {
+      "id": "a1-u07-l01-e08",
+      "type": "mcq",
+      "points": ["gp-dative", "gp-apostrophe"],
+      "question": "Which is right for **to Izmir**?",
+      "options": ["İzmir'e", "İzmir'a", "İzmire", "İzmir'ye"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "The last vowel of *İzmir* is i, a front vowel: *-e*.",
+        "2": "A name keeps an apostrophe before the suffix: *İzmir'e*.",
+        "3": "*İzmir* ends in a consonant, so there's no buffer y."
+      },
+      "explain": "Front vowel i and a final consonant: *İzmir'e*."
+    },
+    {
+      "id": "a1-u07-l01-e09",
+      "type": "wordbank",
+      "from": "en",
+      "points": ["gp-dative"],
+      "prompt": "Where are you going this evening?",
+      "text": "Bu akşam nereye gidiyorsun?",
+      "answer": ["Bu", "akşam", "nereye", "gidiyorsun"],
+      "distractors": ["nerede", "gidiyorum", "yarın"]
+    },
+    {
+      "id": "a1-u07-l01-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "İstasyona gidiyoruz.",
+      "en": "We are going to the station.",
+      "options": ["İstasyona gidiyoruz.", "İstasyonda bekliyoruz.", "İstasyona gidiyorum."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u07-l01-e11",
+      "type": "cloze",
+      "points": ["gp-dative", "gp-harmony-2way"],
+      "text": "Ali ofis___, Elif okul___ gidiyor.",
+      "en": "Ali is going to the office, Elif to school.",
+      "blanks": [
+        {
+          "options": ["e", "a", "ye"],
+          "answer": 0
+        },
+        {
+          "options": ["a", "e", "ya"],
+          "answer": 0
+        }
+      ],
+      "explain": "*Ofis* has the front vowel i: *ofise*. *Okul* has the back vowel u: *okula*. Both end in a consonant, so no y."
+    },
+    {
+      "id": "a1-u07-l01-e12",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-dative", "gp-question-mi"],
+      "prompt": "Are you going on vacation?",
+      "accept": ["Tatile gidiyor musun?", "Tatile gidiyor musunuz?", "Sen tatile gidiyor musun?", "Siz tatile gidiyor musunuz?"],
+      "reject": [
+        {
+          "answer": "Tatilde gidiyor musun?",
+          "why": "*Tatilde* means **on vacation**, where you are. Going takes the dative: *tatile*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u07-l01-e13",
+      "type": "mcq",
+      "points": ["gp-dative"],
+      "context": [
+        {
+          "who": "Can",
+          "tr": "Nereye gidiyorsun?",
+          "en": "Where are you going?"
+        },
+        {
+          "who": "Elif",
+          "tr": "Sinemaya gidiyorum. Sen de geliyor musun?",
+          "en": "I'm going to the movies. Are you coming too?"
+        },
+        {
+          "who": "Can",
+          "tr": "Hayır, eve gidiyorum.",
+          "en": "No, I'm going home."
+        }
+      ],
+      "question": "Where is Can going?",
+      "options": ["Home", "To the movies", "To work"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Eve gidiyorum*: I'm going home. Elif is the one going to the movies."
+    }
+  ]
+}

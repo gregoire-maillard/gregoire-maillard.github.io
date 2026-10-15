@@ -1,0 +1,269 @@
+{
+  "id": "a1-u07-l04",
+  "unit": "a1-u07",
+  "order": 4,
+  "title": "Which way?",
+  "goal": "Ask and give simple directions, and say what is near or far.",
+  "points": ["gp-dative", "gp-ablative", "gp-pronoun-cases-dat-abl", "gp-buffer-y-cases"],
+  "intro": {
+    "text": "*Yakın* (near) takes the dative and *uzak* (far) the ablative: *Otel buraya yakın*, *Müze buradan uzak*. For directions: *sağa* (to the right), *sola* (to the left), *düz* (straight on).",
+    "see": "gp-pronoun-cases-dat-abl"
+  },
+  "vocab": [
+    {
+      "tr": "sağ",
+      "en": "right (side)",
+      "pos": "noun"
+    },
+    {
+      "tr": "sol",
+      "en": "left (side)",
+      "pos": "noun"
+    },
+    {
+      "tr": "düz",
+      "en": "straight; flat",
+      "pos": "adj"
+    },
+    {
+      "tr": "sonra",
+      "en": "then, later; after",
+      "pos": "adv"
+    },
+    {
+      "tr": "yol",
+      "en": "road, way",
+      "pos": "noun"
+    },
+    {
+      "tr": "sokak",
+      "en": "street",
+      "pos": "noun"
+    },
+    {
+      "tr": "yakın",
+      "en": "near, close",
+      "pos": "adj"
+    },
+    {
+      "tr": "uzak",
+      "en": "far",
+      "pos": "adj"
+    },
+    {
+      "tr": "köprü",
+      "en": "bridge",
+      "pos": "noun"
+    },
+    {
+      "tr": "geçmek",
+      "en": "to pass, to cross, to go through",
+      "pos": "verb"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u07-l04-e01",
+      "type": "mcq",
+      "points": ["gp-dative"],
+      "question": "How do you say **to the right**?",
+      "options": ["sağa", "sağda", "sağdan"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Sağda* means **on the right**: where something is.",
+        "2": "*Sağdan* means **from the right**."
+      },
+      "explain": "A direction takes the dative: *sağ* + *-a* = *sağa*."
+    },
+    {
+      "id": "a1-u07-l04-e02",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-dative", "gp-question-mi"],
+      "prompt": "Otel buraya yakın mı?",
+      "accept": ["Is the hotel near here?", "Is the hotel close to here?", "Is the hotel nearby?", "Is the hotel close by?"]
+    },
+    {
+      "id": "a1-u07-l04-e03",
+      "type": "cloze",
+      "points": ["gp-ablative", "gp-pronoun-cases-dat-abl"],
+      "text": "Müze bura___ uzak mı?",
+      "en": "Is the museum far from here?",
+      "blanks": [
+        {
+          "accept": ["dan"],
+          "reject": [
+            {
+              "answer": "ya",
+              "why": "*Uzak* takes the ablative: far **from** here, *buradan*. *Buraya* goes with *yakın*."
+            },
+            {
+              "answer": "da",
+              "why": "*Burada* means **here**. Far **from** here is *buradan uzak*."
+            }
+          ]
+        }
+      ],
+      "explain": "*Uzak* (far) takes the ablative, *buradan uzak*; *yakın* (near) takes the dative, *buraya yakın*."
+    },
+    {
+      "id": "a1-u07-l04-e04",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Sonra sağa dönüyorsunuz.",
+      "en": "Then you turn right."
+    },
+    {
+      "id": "a1-u07-l04-e05",
+      "type": "wordbank",
+      "from": "en",
+      "points": ["gp-ablative", "gp-pronoun-cases-dat-abl"],
+      "prompt": "The station is far from here.",
+      "text": "İstasyon buradan uzak.",
+      "answer": ["İstasyon", "buradan", "uzak"],
+      "distractors": ["buraya", "yakın", "burada"]
+    },
+    {
+      "id": "a1-u07-l04-e06",
+      "type": "mcq",
+      "points": ["gp-dative", "gp-ablative"],
+      "context": [
+        {
+          "who": "Anna",
+          "tr": "Pardon, müze nerede?",
+          "en": "Excuse me, where is the museum?"
+        },
+        {
+          "who": "Selin",
+          "tr": "Müze mi? Buradan çok yakın. Düz gidiyorsunuz, köprüden geçiyorsunuz, sonra sola dönüyorsunuz.",
+          "en": "The museum? It's very close to here. You go straight on, you cross the bridge, then you turn left."
+        },
+        {
+          "who": "Anna",
+          "tr": "Teşekkür ederim!",
+          "en": "Thank you!"
+        },
+        {
+          "who": "Selin",
+          "tr": "Rica ederim.",
+          "en": "You're welcome."
+        }
+      ],
+      "question": "After the bridge, which way does Anna turn?",
+      "options": ["Left", "Right", "She goes straight on"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Sonra sola dönüyorsunuz*: then you turn left. *Sola* is *sol* + *-a*."
+    },
+    {
+      "id": "a1-u07-l04-e07",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-ablative"],
+      "prompt": "We are crossing the bridge.",
+      "accept": ["Köprüden geçiyoruz.", "Biz köprüden geçiyoruz."],
+      "reject": [
+        {
+          "answer": "Köprüde geçiyoruz.",
+          "why": "*Köprüde* means **on the bridge**. Crossing it takes the ablative, the way you go through: *köprüden*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u07-l04-e08",
+      "type": "morph",
+      "points": ["gp-ablative", "gp-consonant-assimilation"],
+      "base": "sokak",
+      "gloss": "from the street",
+      "parts": ["sokak", "tan"],
+      "distractors": ["sokağ", "dan", "a"],
+      "result": "sokaktan",
+      "explain": "k is voiceless, so *-tan*. A suffix that starts with a consonant leaves the stem as it is: *sokaktan*."
+    },
+    {
+      "id": "a1-u07-l04-e09",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-dative"],
+      "prompt": "Okul eve çok yakın.",
+      "accept": ["The school is very close to the house.", "The school is very near [the house|home].", "The school is very close to home.", "School is very close to home."]
+    },
+    {
+      "id": "a1-u07-l04-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Bu yol nereye gidiyor?",
+      "en": "Where does this road go?",
+      "options": ["Bu yol nereye gidiyor?", "Bu yol nereden geliyor?", "Bu yol nerede?"],
+      "answer": 0
+    },
+    {
+      "id": "a1-u07-l04-e11",
+      "type": "cloze",
+      "points": ["gp-ablative", "gp-dative", "gp-consonant-assimilation"],
+      "text": "Sabah___ akşam___ kadar çalışıyorum.",
+      "en": "I work from morning till evening.",
+      "blanks": [
+        {
+          "options": ["tan", "dan", "a"],
+          "answer": 0
+        },
+        {
+          "options": ["a", "dan", "da"],
+          "answer": 0
+        }
+      ],
+      "explain": "From … until: ablative, then dative + *kadar*. *Sabah* ends in voiceless h, so *sabahtan*."
+    },
+    {
+      "id": "a1-u07-l04-e12",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-dative"],
+      "prompt": "Then you turn left.",
+      "accept": ["Sonra sola dönüyorsun.", "Sonra sola dönüyorsunuz."],
+      "reject": [
+        {
+          "answer": "Sonra solda dönüyorsun.",
+          "why": "*Solda* means **on the left**. Turning takes the dative: *sola*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u07-l04-e13",
+      "type": "conjugate",
+      "points": ["gp-pronoun-cases-dat-abl"],
+      "base": "ben",
+      "form": "pronoun-ablative",
+      "label": "The personal pronouns in the ablative: from me, from you…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["benden"]
+        },
+        {
+          "p": "sen",
+          "accept": ["senden"]
+        },
+        {
+          "p": "o",
+          "accept": ["ondan"]
+        },
+        {
+          "p": "biz",
+          "accept": ["bizden"]
+        },
+        {
+          "p": "siz",
+          "accept": ["sizden"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["onlardan"]
+        }
+      ],
+      "explain": "All regular: *-den* after front vowels, *-dan* after back ones. *O* adds an n: *ondan*."
+    }
+  ]
+}

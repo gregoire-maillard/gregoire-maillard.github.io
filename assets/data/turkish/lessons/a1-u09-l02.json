@@ -1,0 +1,270 @@
+{
+  "id": "a1-u09-l02",
+  "unit": "a1-u09",
+  "order": 2,
+  "title": "Do you have…?",
+  "goal": "Say what you have and don't have with a possessive and var or yok.",
+  "points": ["gp-possessive-have", "gp-possessive-suffixes"],
+  "intro": {
+    "text": "Turkish has no verb **to have**. Put the possessive on the thing and add *var* or *yok*: *Arabam var* (I have a car), *Zamanım yok* (I don't have time), *Kardeşin var mı?* (Do you have siblings?)",
+    "see": "gp-possessive-have"
+  },
+  "vocab": [
+    {
+      "tr": "para",
+      "en": "money",
+      "pos": "noun"
+    },
+    {
+      "tr": "zaman",
+      "en": "time",
+      "pos": "noun"
+    },
+    {
+      "tr": "soru",
+      "en": "question",
+      "pos": "noun"
+    },
+    {
+      "tr": "kedi",
+      "en": "cat",
+      "pos": "noun"
+    },
+    {
+      "tr": "dede",
+      "en": "grandfather",
+      "pos": "noun"
+    },
+    {
+      "tr": "problem",
+      "en": "problem",
+      "pos": "noun"
+    },
+    {
+      "tr": "plan",
+      "en": "plan",
+      "pos": "noun"
+    },
+    {
+      "tr": "misafir",
+      "en": "guest, visitor",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u09-l02-e01",
+      "type": "mcq",
+      "points": ["gp-possessive-have"],
+      "question": "How do you say **I have a cat**?",
+      "options": ["Bir kedim var.", "Ben bir kedi var.", "Bir kedi var.", "Bir kedin var."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "Turkish has no verb **to have**: the owner goes into the suffix, *kedim*.",
+        "2": "*Bir kedi var* means **there is a cat**.",
+        "3": "*Kedin* is **your** cat."
+      },
+      "explain": "Owned noun + *var*: *Bir kedim var*, literally a cat of mine exists."
+    },
+    {
+      "id": "a1-u09-l02-e02",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-possessive-have"],
+      "prompt": "I do not have time.",
+      "accept": ["Zamanım yok.", "Benim zamanım yok."],
+      "reject": [
+        {
+          "answer": "Zaman yok.",
+          "why": "*Zaman yok* means **there's no time**. For **I** don't have, add *-ım*: *zamanım yok*."
+        },
+        {
+          "answer": "Zamanım değil.",
+          "why": "Possession takes *yok*, not *değil*: *zamanım yok*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u09-l02-e03",
+      "type": "conjugate",
+      "points": ["gp-possessive-have"],
+      "base": "para",
+      "form": "possessive-var",
+      "label": "*para* (money) + *var*: I have money, you have money…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["param var"]
+        },
+        {
+          "p": "sen",
+          "accept": ["paran var"]
+        },
+        {
+          "p": "o",
+          "accept": ["parası var"]
+        },
+        {
+          "p": "biz",
+          "accept": ["paramız var"]
+        },
+        {
+          "p": "siz",
+          "accept": ["paranız var"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["paraları var"]
+        }
+      ],
+      "explain": "After a vowel: *-m, -n, -sı, -mız, -nız, -ları*, then *var*."
+    },
+    {
+      "id": "a1-u09-l02-e04",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Bir sorum var.",
+      "en": "I have a question."
+    },
+    {
+      "id": "a1-u09-l02-e05",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-possessive-have"],
+      "prompt": "Kardeşin var mı?",
+      "accept": [
+        "Do you have any brothers or sisters?",
+        "Do you have [brothers or sisters|siblings|any siblings]?",
+        "Do you have a brother or (a )sister?",
+        "Have you got (any )[brothers or sisters|siblings]?"
+      ]
+    },
+    {
+      "id": "a1-u09-l02-e06",
+      "type": "cloze",
+      "points": ["gp-possessive-have", "gp-harmony-4way"],
+      "text": "Bu akşam plan___ var mı?",
+      "en": "Do you have plans this evening?",
+      "blanks": [
+        {
+          "accept": ["ın"],
+          "reject": [
+            {
+              "answer": "ım",
+              "why": "*Planım* is **my** plan. The question is about you: *planın*."
+            },
+            {
+              "answer": "in",
+              "why": "The last vowel of *plan* is a: *-ın*."
+            }
+          ]
+        }
+      ],
+      "explain": "*Plan* + *-ın* (your), then *var mı?*: *Planın var mı?*"
+    },
+    {
+      "id": "a1-u09-l02-e07",
+      "type": "wordbank",
+      "from": "tr",
+      "points": ["gp-possessive-have"],
+      "prompt": "Bugün misafirimiz var.",
+      "text": "We have guests today.",
+      "answer": ["We", "have", "guests", "today"],
+      "distractors": ["a", "they", "has"],
+      "accept": ["Today we have guests."]
+    },
+    {
+      "id": "a1-u09-l02-e08",
+      "type": "mcq",
+      "points": ["gp-possessive-have"],
+      "context": [
+        {
+          "who": "Selin",
+          "tr": "Bu akşam zamanın var mı?",
+          "en": "Do you have time this evening?"
+        },
+        {
+          "who": "Emre",
+          "tr": "Hayır, yok. İşim var.",
+          "en": "No, I don't. I have work."
+        },
+        {
+          "who": "Selin",
+          "tr": "Yarın?",
+          "en": "Tomorrow?"
+        },
+        {
+          "who": "Emre",
+          "tr": "Yarın var. Neden?",
+          "en": "Tomorrow I do. Why?"
+        },
+        {
+          "who": "Selin",
+          "tr": "Bir planım var: sinema!",
+          "en": "I have a plan: the movies!"
+        }
+      ],
+      "question": "When is Emre free?",
+      "options": ["Tomorrow", "This evening", "Neither day"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Bu akşam … İşim var* (I have work), but *Yarın var*: tomorrow he has time."
+    },
+    {
+      "id": "a1-u09-l02-e09",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-possessive-have"],
+      "prompt": "Do you have a car?",
+      "accept": ["Arabanız var mı?", "Araban var mı?", "Bir araba[nız|n] var mı?"]
+    },
+    {
+      "id": "a1-u09-l02-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Kedimiz yok.",
+      "en": "We do not have a cat.",
+      "options": ["Kedimiz yok.", "Kedimiz var.", "Kedim yok."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u09-l02-e11",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-possessive-have"],
+      "prompt": "Parası yok ama çok mutlu.",
+      "accept": [
+        "He has no money, but he is very happy.",
+        "She has no money, but she is very happy.",
+        "He does not have (any )money, but he is very happy.",
+        "She does not have (any )money, but she is very happy."
+      ]
+    },
+    {
+      "id": "a1-u09-l02-e12",
+      "type": "morph",
+      "points": ["gp-possessive-suffixes"],
+      "base": "dede",
+      "gloss": "our grandfather",
+      "parts": ["dede", "miz"],
+      "distractors": ["imiz", "si", "niz"],
+      "result": "dedemiz",
+      "explain": "After a vowel, **our** is *-mIz*: *dedemiz*."
+    },
+    {
+      "id": "a1-u09-l02-e13",
+      "type": "mcq",
+      "points": ["gp-possessive-have", "gp-degil"],
+      "question": "Which sentence means **I don't have a car**?",
+      "options": ["Arabam yok.", "Arabam değil.", "Araba yok."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Arabam değil* means **it isn't my car**.",
+        "2": "*Araba yok* means **there's no car**."
+      },
+      "explain": "Having is existing: owned noun + *yok*, *Arabam yok*."
+    }
+  ]
+}

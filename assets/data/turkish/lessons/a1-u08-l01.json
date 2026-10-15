@@ -1,0 +1,229 @@
+{
+  "id": "a1-u08-l01",
+  "unit": "a1-u08",
+  "order": 1,
+  "title": "A coffee or the coffee?",
+  "goal": "Tell a definite object from a bare one, and mark it with -(y)I.",
+  "points": ["gp-accusative"],
+  "intro": {
+    "text": "A bare object means **a** or **some**: *Kahve içiyorum* (I'm having coffee). For **the**, add `-(y)I` in four-way harmony: *Kahveyi içiyorum* (I'm drinking the coffee). Names always take it: *Ayşe'yi*.",
+    "see": "gp-accusative"
+  },
+  "vocab": [
+    {
+      "tr": "almak",
+      "en": "to take; to buy, to get",
+      "pos": "verb"
+    },
+    {
+      "tr": "görmek",
+      "en": "to see",
+      "pos": "verb"
+    },
+    {
+      "tr": "aramak",
+      "en": "to look for; to call (on the phone)",
+      "pos": "verb"
+    },
+    {
+      "tr": "izlemek",
+      "en": "to watch",
+      "pos": "verb"
+    },
+    {
+      "tr": "tanımak",
+      "en": "to know (a person), to recognize",
+      "pos": "verb"
+    },
+    {
+      "tr": "film",
+      "en": "film, movie",
+      "pos": "noun"
+    },
+    {
+      "tr": "peynir",
+      "en": "cheese",
+      "pos": "noun"
+    },
+    {
+      "tr": "zeytin",
+      "en": "olive",
+      "pos": "noun"
+    },
+    {
+      "tr": "yumurta",
+      "en": "egg",
+      "pos": "noun"
+    },
+    {
+      "tr": "domates",
+      "en": "tomato",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u08-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["almak", "to take"],
+        ["görmek", "to see"],
+        ["aramak", "to look for"],
+        ["izlemek", "to watch"],
+        ["peynir", "cheese"],
+        ["yumurta", "egg"]
+      ]
+    },
+    {
+      "id": "a1-u08-l01-e02",
+      "type": "mcq",
+      "points": ["gp-accusative"],
+      "question": "Which sentence means **I'm drinking the coffee**?",
+      "options": ["Kahveyi içiyorum.", "Kahve içiyorum.", "Kahveyi içiyoruz."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "Without an ending, *kahve* means **some coffee**: I'm having coffee.",
+        "2": "*İçiyoruz* means **we are** drinking."
+      },
+      "explain": "A definite object takes `-(y)I`: *kahve* + *y* + *-i* = *kahveyi*."
+    },
+    {
+      "id": "a1-u08-l01-e03",
+      "type": "cloze",
+      "points": ["gp-accusative", "gp-harmony-4way"],
+      "text": "Bu film___ izliyor musun?",
+      "en": "Are you watching this film?",
+      "blanks": [
+        {
+          "accept": ["i"],
+          "reject": [
+            {
+              "answer": "ı",
+              "why": "The last vowel of *film* is i, a front vowel, so the ending is *-i*."
+            },
+            {
+              "answer": "yi",
+              "why": "*Film* ends in a consonant: no buffer y."
+            }
+          ]
+        }
+      ],
+      "hint": "What does *bu* tell you about the object?",
+      "explain": "After *bu*, the object is definite: *bu filmi*. Last vowel i, so *-i*."
+    },
+    {
+      "id": "a1-u08-l01-e04",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-accusative", "gp-apostrophe"],
+      "prompt": "I am looking for Ayşe.",
+      "accept": ["Ayşe'yi arıyorum.", "Ben Ayşe'yi arıyorum."],
+      "reject": [
+        {
+          "answer": "Ayşe arıyorum.",
+          "why": "Names are always definite, so as objects they take the accusative: *Ayşe'yi*."
+        },
+        {
+          "answer": "Ayşe'ye arıyorum.",
+          "why": "*Aramak* takes a direct object, the accusative *Ayşe'yi*, not the dative."
+        }
+      ]
+    },
+    {
+      "id": "a1-u08-l01-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Peyniri alıyorum.",
+      "en": "I am taking the cheese."
+    },
+    {
+      "id": "a1-u08-l01-e06",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-accusative"],
+      "prompt": "Ayşe'yi tanıyor musun?",
+      "accept": ["Do you know Ayşe?", "Do you [recognize|recognise] Ayşe?"]
+    },
+    {
+      "id": "a1-u08-l01-e07",
+      "type": "morph",
+      "points": ["gp-accusative", "gp-buffer-y-cases"],
+      "base": "yumurta",
+      "gloss": "the egg (as an object)",
+      "parts": ["yumurta", "y", "ı"],
+      "distractors": ["i", "da", "yi"],
+      "result": "yumurtayı",
+      "explain": "A vowel at the end, so buffer *y*; the last vowel is a, so *-ı*: *yumurtayı*."
+    },
+    {
+      "id": "a1-u08-l01-e08",
+      "type": "wordbank",
+      "from": "tr",
+      "points": ["gp-accusative"],
+      "prompt": "Zeytinleri kim istiyor?",
+      "text": "Who wants the olives?",
+      "answer": ["Who", "wants", "the", "olives"],
+      "distractors": ["an", "olive", "eats"]
+    },
+    {
+      "id": "a1-u08-l01-e09",
+      "type": "cloze",
+      "points": ["gp-accusative"],
+      "text": "Masada bir gazete var. Gazete___ okuyor musun?",
+      "en": "There's a newspaper on the table. Are you reading the newspaper?",
+      "blanks": [
+        {
+          "options": ["yi", "ye", "de"],
+          "answer": 0
+        }
+      ],
+      "explain": "Now the newspaper is known, the one on the table, so it takes the accusative: *gazeteyi*."
+    },
+    {
+      "id": "a1-u08-l01-e10",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-accusative"],
+      "prompt": "We are watching a film.",
+      "accept": ["Film izliyoruz.", "Bir film izliyoruz.", "Biz (bir )film izliyoruz."],
+      "reject": [
+        {
+          "answer": "Filmi izliyoruz.",
+          "why": "*Filmi* means **the** film. For **a** film, leave the object bare: *film izliyoruz*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u08-l01-e11",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Ali'yi görüyorum.",
+      "en": "I see Ali.",
+      "options": ["Ali'yi görüyorum.", "Ali'yi görüyoruz.", "Ali'ye bakıyorum."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u08-l01-e12",
+      "type": "mcq",
+      "points": ["gp-accusative"],
+      "question": "Why is it *İstanbul'u seviyorum* and not *İstanbul seviyorum*?",
+      "options": ["A name used as an object always takes the accusative", "*İstanbul* is a big city", "*Sevmek* always takes the dative"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Size has nothing to do with it: *Ayşe'yi seviyorum* works the same way.",
+        "2": "*Sevmek* takes a direct object; the dative would be *İstanbul'a*."
+      },
+      "explain": "A name is always definite, so as an object it takes `-(y)I`: *İstanbul'u*."
+    },
+    {
+      "id": "a1-u08-l01-e13",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-accusative"],
+      "prompt": "Ekmek ve peynir alıyoruz.",
+      "accept": ["We are buying bread and cheese.", "We are buying some bread and (some )cheese.", "We buy bread and cheese.", "We are getting (some )bread and (some )cheese."]
+    }
+  ]
+}
