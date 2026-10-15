@@ -30,6 +30,6 @@ node scripts/turkish/test.mjs            # exit 1 on a failure
 node scripts/turkish/test.mjs --verbose  # also list the tests that pass
 ```
 
-Besides hand-written cases it marks every accepted answer in the content correct and every rejected one wrong with its feedback, renders every Rich text and resolves every link, compares the checker's normalization with this validator's (taken from its source), runs `validate.mjs --progress` on an exported file, and repeats the date tests under America/Toronto and Australia/Lord_Howe.
+Besides hand-written cases it marks every accepted answer in the content correct and every rejected one wrong with its feedback, renders every Rich text and every `seg` (which must read back as its own text) and resolves every link, compares the checker's normalization with this validator's (taken from its source), runs `validate.mjs --progress` on an exported file, and repeats the date tests under America/Toronto and Australia/Lord_Howe.
 
 A content conversation is done when `--batch <id>` reports its units complete with no errors and `--index` has been run. See `turkish/PROJECT.md`, section 9.

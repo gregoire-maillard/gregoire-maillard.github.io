@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Turkish grammar guides and interludes</title>
+    <meta name="description" content="The grammar guide and culture interlude of every unit of a free Turkish course from A1 to C2, with an index of every grammar point.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link rel="canonical" href="https://gregoiremaillard.com/turkishguide.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Turkish grammar guides and interludes">
+    <meta property="og:description" content="A grammar guide and a culture interlude for every unit of a free Turkish course from A1 to C2.">
+    <meta property="og:url" content="https://gregoiremaillard.com/turkishguide.html">
+
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/stylesheets/styles.css">
+    <style>
+      /* Header: the site's sticky glass bar (mtlmobility.html), with this section's three tabs.
+         Below 600 px the name collapses to the mark so the tabs stay in the bar (PROJECT.md 3). */
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; flex: none; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: -2px; border-radius: 6px; }
+      @media (max-width: 599px) {
+        .at-hdr .at-wrap { height: 56px; gap: 8px; }
+        .at-hdr .at-home { min-width: 44px; min-height: 44px; justify-content: center; margin-left: -10px; }
+        .at-hdr .at-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+        .at-hdr .at-tabs { margin-left: auto; gap: 0; }
+        .at-hdr .at-tab { min-width: 44px; justify-content: center; padding: 0 10px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 10px; right: 10px; }
+      }
+    </style>
+    <style>
+      /* Reader: the reading layout of stylesheets/styles.css (left rail, reading column; harmony classes
+         .back .front .suf .stem), fitted under the sticky header. PROJECT.md 3 and 5.1. */
+      :root {
+        --warm: #8a5a10; --warm-line: #cf953a; --warm-wash: #fdf7ee;
+        --green: #2e6b4f; --green-line: #3f8f69; --green-wash: rgb(46 125 90 / 6%);
+        --sepia: #6e5232; --sepia-line: #a98656; --sepia-wash: #f8f5ef;
+        --hdr: 64px; --r: 8px;
+      }
+      @media (max-width: 599px) { :root { --hdr: 56px; } }
+      html { scroll-padding-top: calc(var(--hdr) + 24px); -webkit-text-size-adjust: 100%; }
+      [hidden] { display: none !important; }
+      .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+      i[lang="tr"] { color: var(--ink); }
+      code { padding: 0.05em 0.3em; color: #333; font-family: var(--mono); font-size: 0.86em; background: #f2f2f0; border-radius: 4px; }
+      .trk-soon { color: var(--muted); }
+      .trk-soon small { font-size: 0.85em; }
+
+      /* layout: the rail sits below the sticky header */
+      .wrapper { padding-top: 3rem; }
+      .wrapper > header { top: calc(var(--hdr) + 2rem); max-height: calc(100dvh - var(--hdr) - 4rem); }
+      .wrapper > section { min-height: 50vh; }
+
+      /* rail */
+      .rail-kicker, .doc-kicker {
+        margin: 0 0 0.45rem; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue-dark);
+      }
+      .rail-title { margin: 0; color: var(--ink); font-size: 1.05rem; font-weight: 600; line-height: 1.3; }
+      .rail-title a { color: var(--ink); }
+      .rail-title a:hover { color: var(--blue-dark); }
+      .rail-tr { margin: 0.1rem 0 1.1rem; color: var(--blue-dark); font-style: italic; }
+      .rail-blurb { margin: 0 0 1.1rem; font-size: 0.86rem; }
+      .rail-docs { margin-bottom: 0.25rem; }
+      .rail-docs a[aria-current="page"] { color: #fff; background: var(--blue); border-color: var(--blue); box-shadow: none; }
+      .rail-docs a[aria-current="page"]:hover { color: #fff; background: var(--blue-dark); }
+      .rail-docs a.soon { color: var(--muted); background: var(--panel); border-color: var(--line); box-shadow: none; }
+      .toc-btn {
+        display: none; align-self: flex-start; align-items: center; gap: 0.5rem; min-height: 44px; margin-top: 0.9rem; padding: 0 0.95rem;
+        color: var(--ink); font: inherit; font-size: 0.88rem; font-weight: 560; cursor: pointer;
+        background: #fff; border: 1px solid var(--line); border-radius: 999px;
+      }
+      .toc-btn svg { transition: transform 150ms ease; }
+      .toc-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+      .toc-n { color: var(--muted); font-weight: 400; }
+      .chapter-nav a.soon { color: var(--faint); }
+      .chapter-nav a .ch-n { display: inline-block; min-width: 1.4rem; }
+      .legend {
+        margin-top: 0.9rem; padding-top: 0.8rem; color: var(--muted); font-size: 0.76rem; line-height: 1.6; border-top: 1px solid var(--line);
+      }
+      .legend b { display: block; color: var(--ink); font-weight: 560; }
+      .rail-foot { margin-top: 0.9rem; font-size: 0.84rem; }
+      .rail-foot a { display: inline-flex; align-items: center; min-height: 32px; }
+      .wrapper > footer a { white-space: nowrap; }
+
+      /* reading column */
+      .notices:empty { display: none; }
+      .notice { margin: 0 0 1rem; padding: 0.65rem 0.9rem; color: #5e4210; font-size: 0.86rem; background: #fdf7ee; border: 1px solid #ecd6b3; border-radius: var(--r); }
+      .notice.err { color: #6e1d15; background: #fdf3f2; border-color: #efc4be; }
+      .notice button, .notice a { padding: 0; color: inherit; font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; background: none; border: 0; }
+      .loading { color: var(--muted); }
+      .doc-kicker { color: var(--muted); }
+      .doc-kicker .dot { margin: 0 0.35em; color: var(--faint); }
+      .doc-title { margin: 0 0 0.35rem; color: var(--ink); font-size: 2.1rem; font-weight: 620; line-height: 1.12; letter-spacing: -0.035em; }
+      .doc-sub { margin: 0 0 1.1rem; color: var(--muted); font-size: 0.9rem; }
+      .doc-tr { margin: 0 0 1.1rem; color: var(--blue-dark); font-size: 1.05rem; font-style: italic; }
+      .lede { margin-top: 1rem; color: #444; font-size: 1.02rem; line-height: 1.65; }
+      #main h2 {
+        margin: 2.8rem 0 1rem; padding-top: 1.7rem; font-size: 1.42rem; border-top: 1px solid var(--line);
+      }
+      #main h2 .h-n { margin-right: 0.45rem; color: var(--faint); font-size: 0.8em; font-weight: 500; font-variant-numeric: tabular-nums; }
+      #main h3 { margin: 1.6rem 0 0.6rem; font-size: 1.08rem; }
+      .hl { animation: hl 2.2s ease-out; }
+      @keyframes hl { from { background: var(--blue-wash); box-shadow: 0 0 0 0.4rem var(--blue-wash); } to { background: transparent; box-shadow: 0 0 0 0.4rem transparent; } }
+      .blist li::marker { color: var(--faint); }
+
+      /* morpheme colouring (TRK.seg with harmony): stem + suffix, suffix vowels front or back */
+      .trk-seg .suf { margin-left: 0.06em; text-decoration: underline; text-decoration-color: rgb(39 174 96 / 45%); text-decoration-thickness: 1.5px; text-underline-offset: 0.24em; text-decoration-skip-ink: auto; }
+      .trk-seg .stem { font-weight: 450; }
+
+      /* speaker buttons (TRK.tts.button), hidden without a Turkish voice */
+      .trk-say { display: inline-grid; place-items: center; flex: none; width: 34px; height: 34px; padding: 0; color: var(--blue); vertical-align: middle; cursor: pointer; background: #fff; border: 1px solid var(--line); border-radius: 50%; }
+      .trk-say:hover { background: var(--blue-tint); border-color: var(--blue); }
+      @media (pointer: coarse) { .trk-say { width: 44px; height: 44px; } }
+
+      /* tables and rules */
+      .tbl { margin: 1.4rem 0; overflow-x: auto; }
+      .tbl table { margin: 0; }
+      .tbl caption, .para-head { padding: 0 0 0.5rem; color: var(--muted); font-size: 0.82rem; text-align: left; caption-side: top; }
+      .t td.seg { color: var(--ink); font-size: 0.92rem; }
+      .t td.tr { color: var(--blue-dark); }
+      .t th code, .t td code { white-space: nowrap; }
+      .rule pre { margin: 0; font: inherit; white-space: pre; }
+
+      /* examples */
+      .ex-block { padding: 0.75rem 1.1rem 0.35rem; }
+      .ex-list { margin: 0; padding: 0; list-style: none; }
+      .ex-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 0.75rem; align-items: center; margin: 0; padding: 0.55rem 0; border-top: 1px solid var(--line); }
+      .ex-list li:first-child { border-top: 0; padding-top: 0.15rem; }
+      .ex-tr { display: block; color: var(--ink); font-size: 1.08em; line-height: 1.5; }
+      .ex-gloss { display: block; color: var(--muted); font-family: var(--mono); font-size: 0.78em; letter-spacing: 0.02em; }
+      .ex-en { display: block; color: var(--muted); line-height: 1.5; }
+      .ex-note { color: var(--body); }
+      .ex-note::before { content: "·"; margin: 0 0.45em; color: var(--faint); }
+
+      /* paradigm */
+      .para { margin: 1.4rem 0; }
+      .para-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0 0 0.35rem; }
+      .para-head .ttl { color: var(--ink); font-size: 0.9rem; font-weight: 560; }
+      .para table { margin: 0; border-top: 1px solid var(--line); }
+      .para th[scope="row"] { width: 4.6rem; color: var(--muted); font-weight: 450; font-style: italic; }
+      .para td.seg { width: 36%; font-size: 1rem; white-space: nowrap; }
+
+      /* dialogue */
+      .dialogue { margin: 1.4rem 0; padding: 0.75rem 1.1rem 0.35rem; background: var(--panel); border: 1px solid var(--line); }
+      .dl-line { display: grid; grid-template-columns: 5rem minmax(0, 1fr) auto; gap: 0.1rem 0.8rem; align-items: center; padding: 0.55rem 0; border-top: 1px solid var(--line); }
+      .dialogue .example-label + .dl-line { border-top: 0; padding-top: 0.15rem; }
+      .dl-who { align-self: start; padding-top: 0.12rem; color: var(--blue-dark); font-size: 0.84rem; font-weight: 600; overflow-wrap: anywhere; }
+      .dl-tr, .dl-en { margin: 0; }
+      .dl-tr { color: var(--ink); font-size: 1.03em; }
+      .dl-en { color: var(--muted); font-size: 0.92em; }
+
+      /* callouts: styles.css .callout, one colour per kind */
+      .callout p { margin: 0; }
+      .callout .callout-title { margin: 0 0 0.15rem; color: inherit; font-weight: 600; }
+      .callout.k-pitfall { color: #4f3a12; background: var(--warm-wash); border-left-color: var(--warm-line); }
+      .callout.k-pitfall .callout-label { color: var(--warm); }
+      .callout.k-compare { color: var(--body); background: var(--panel); border-left-color: #9a988f; }
+      .callout.k-compare .callout-label { color: var(--muted); }
+      .callout.k-culture { color: #24453a; background: var(--green-wash); border-left-color: var(--green-line); }
+      .callout.k-culture .callout-label { color: var(--green); }
+      .callout.k-history { color: #4a3b28; background: var(--sepia-wash); border-left-color: var(--sepia-line); }
+      .callout.k-history .callout-label { color: var(--sepia); }
+
+      /* parallel text, passage, quote, image, see */
+      .lbl-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 34px; margin-bottom: 0.35rem; }
+      .lbl { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+      .parallel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin: 1.4rem 0; border: 1px solid var(--line); }
+      .parallel > div { min-width: 0; padding: 0.75rem 1.1rem 0.9rem; }
+      .par-tr { background: var(--blue-tint); }
+      .par-tr p { margin: 0 0 0.6rem; color: var(--ink); line-height: 1.7; }
+      .par-en p { margin: 0 0 0.6rem; color: var(--muted); line-height: 1.7; }
+      .parallel p:last-child { margin-bottom: 0; }
+      .par-en { border-left: 1px solid var(--line); }
+      .passage { margin: 1.4rem 0; padding: 0.75rem 1.2rem 1rem; background: #fff; border: 1px solid var(--line); border-left: 2px solid var(--blue); }
+      .passage p[lang="tr"] { margin: 0 0 0.8rem; color: var(--ink); font-size: 1.04rem; line-height: 1.8; }
+      .glossary { display: grid; grid-template-columns: fit-content(45%) minmax(0, 1fr); gap: 0.25rem 1rem; margin: 0.9rem 0 0; padding-top: 0.8rem; font-size: 0.86rem; border-top: 1px solid var(--line); }
+      .glossary dt { color: var(--ink); font-style: italic; }
+      .glossary dd { margin: 0; color: var(--muted); }
+      .quote { margin: 1.6rem 0; padding: 0.2rem 0 0.2rem 1.2rem; border-left: 3px solid var(--blue); }
+      .quote blockquote { margin: 0; }
+      .quote .q-tr { margin: 0 0 0.55rem; color: var(--ink); font-size: 1.06rem; font-style: italic; line-height: 1.7; white-space: pre-line; }
+      .quote .q-en { margin: 0 0 0.45rem; white-space: pre-line; }
+      .quote figcaption { display: flex; align-items: center; gap: 0.6rem; color: var(--muted); font-size: 0.8rem; }
+      .fig { margin: 1.6rem 0; }
+      .fig img { display: block; width: 100%; margin: 0; border: 1px solid var(--line); }
+      .fig figcaption { margin-top: 0.45rem; color: var(--muted); font-size: 0.8rem; }
+      .fig .credit { color: var(--faint); }
+      .see { margin: 1.4rem 0; padding: 0.7rem 0; font-size: 0.9em; border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line); }
+      .see .lbl { margin-right: 0.4rem; }
+      .see-list { margin: 0.35rem 0 0; padding-left: 1.1rem; }
+      .see-list li { margin: 0.15rem 0; }
+
+      /* end of a guide: summary, culture extras, what next */
+      .summary { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+      .summary li { position: relative; margin: 0; padding: 0.6rem 0 0.6rem 2.1rem; border-top: 1px solid var(--line); }
+      .summary li:first-child { border-top: 0; padding-top: 0.2rem; }
+      .summary li::before {
+        counter-increment: s; content: counter(s); position: absolute; left: 0; top: 0.68rem; display: grid; place-items: center;
+        width: 1.35rem; height: 1.35rem; color: var(--blue-dark); font-size: 0.7rem; font-weight: 700; background: var(--blue-wash); border-radius: 50%;
+      }
+      .summary li:first-child::before { top: 0.28rem; }
+      .vocab { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.5rem; margin: 0; padding: 0; list-style: none; }
+      .vocab li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 0.6rem; align-items: center; margin: 0; padding: 0.45rem 0; border-top: 1px solid var(--line); }
+      .vocab .v-tr { display: block; color: var(--ink); font-style: italic; }
+      .vocab .v-en { display: block; color: var(--muted); font-size: 0.86rem; }
+      .quiz-intro { color: var(--muted); font-size: 0.86rem; }
+      .quiz-btn { min-height: 44px; }
+      .quiz-feedback:focus { outline: none; }
+      .sources { padding-left: 1.25rem; font-size: 0.86rem; }
+      .sources li { margin-bottom: 0.55rem; }
+      .sources .src-note { display: block; color: var(--muted); font-size: 0.92em; }
+      .soon-box { margin: 1.4rem 0; padding: 0.9rem 1.1rem; color: var(--body); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); }
+      .soon-box p { margin: 0; }
+      .soon-box p + p { margin-top: 0.5rem; }
+      .soon-list li { color: var(--body); }
+      .next-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; margin: 2.8rem 0 0; padding-top: 1.7rem; border-top: 1px solid var(--line); }
+      .next-card { display: block; min-height: 44px; padding: 0.8rem 1rem; color: var(--ink); line-height: 1.4; border: 1px solid var(--line); border-radius: var(--r); transition: border-color 150ms ease, background 150ms ease; }
+      .next-card small { display: block; margin-bottom: 0.2rem; color: var(--muted); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+      a.next-card:hover { color: var(--ink); background: var(--blue-tint); border-color: var(--blue); }
+      .next-card.soon { color: var(--muted); background: var(--panel); }
+      .read-state { margin: 1rem 0 0; color: var(--muted); font-size: 0.84rem; }
+      .read-state:empty { display: none; }
+      .tick { display: inline-flex; vertical-align: -2px; color: var(--blue); }
+
+      /* index of guides and grammar points */
+      .find { margin: 1.6rem 0 0.4rem; }
+      .find label { display: block; margin-bottom: 0.35rem; color: var(--ink); font-size: 0.84rem; font-weight: 560; }
+      .find input { width: 100%; height: 44px; padding: 0 0.9rem; color: var(--ink); font: inherit; font-size: 1rem; background: #fff; border: 1px solid #d6d5d0; border-radius: var(--r); }
+      .find input:focus-visible { border-color: var(--blue-dark); outline: 2px solid var(--blue-dark); outline-offset: 0; }
+      .find-n { min-height: 1.3em; margin: 0.4rem 0 0; color: var(--muted); font-size: 0.8rem; }
+      .ix-meta { margin: -0.55rem 0 0.9rem; color: var(--muted); font-size: 0.84rem; }
+      .ix-units { margin: 0; padding: 0; list-style: none; }
+      .ix-unit { margin: 0; padding: 0.95rem 0 1rem; border-top: 1px solid var(--line); }
+      .ix-units > .ix-unit:first-child { border-top: 0; padding-top: 0.2rem; }
+      .ix-head { display: grid; grid-template-columns: 3.6rem minmax(0, 1fr) auto; gap: 0 0.5rem; align-items: baseline; }
+      .ix-num { color: var(--muted); font-size: 0.74rem; font-variant-numeric: tabular-nums; }
+      #main .ix-title { margin: 0; font-size: 1.04rem; font-weight: 610; line-height: 1.35; }
+      .ix-tr { color: var(--blue-dark); font-size: 0.9rem; font-style: italic; font-weight: 400; }
+      .ix-body { margin-left: 4.1rem; }
+      .ix-points { margin: 0.4rem 0 0; padding-left: 1.05rem; font-size: 0.9rem; }
+      .ix-points li { margin: 0.12rem 0; }
+      .ix-points li::marker { color: var(--faint); }
+      .ix-docs { display: flex; flex-wrap: wrap; gap: 0.25rem 1.1rem; margin: 0.45rem 0 0; font-size: 0.86rem; }
+      .ix-docs a, .ix-docs span { display: inline-flex; align-items: center; gap: 0.3rem; }
+      .ix-unit.planned .ix-title, .ix-unit.planned .ix-points { color: var(--muted); }
+      .tag-soon { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; color: var(--muted); font-size: 0.7rem; font-weight: 600; white-space: nowrap; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; }
+      mark { padding: 0 0.05em; color: inherit; background: rgb(40 122 158 / 16%); border-radius: 2px; }
+
+      /* tablet and phone (styles.css stacks the rail above the column below 60rem) */
+      @media (max-width: 60rem) {
+        .wrapper { row-gap: 1.6rem; }
+        .wrapper > header { padding-bottom: 1.1rem; border-bottom: 1px solid var(--line); }
+        .toc-btn { display: inline-flex; }
+        .wrapper > header .chapter-nav { max-height: none; margin-top: 0.6rem; -webkit-mask-image: none; mask-image: none; }
+        .wrapper > header .chapter-nav.collapsed { display: none; }
+        .rail-title.dup, .rail-title.dup + .rail-tr { display: none; }
+        .rail-kicker { margin-bottom: 0.7rem; }
+        .rail-tr { margin-bottom: 0.9rem; }
+      }
+      @media (max-width: 35rem) {
+        .wrapper { padding-top: 1.25rem; }
+        .doc-title { font-size: 1.7rem; }
+        .lede { font-size: 0.96rem; }
+        .rule { padding: 0.75rem 0.85rem; font-size: 0.76rem; }
+        #main h2 { margin-top: 2.2rem; padding-top: 1.4rem; font-size: 1.25rem; }
+        .ex-block, .dialogue { padding-left: 0.85rem; padding-right: 0.85rem; }
+        .dl-line { grid-template-columns: minmax(0, 1fr) auto; }
+        .dl-who { grid-column: 1 / -1; padding-top: 0; }
+        .parallel { grid-template-columns: minmax(0, 1fr); }
+        .par-en { border-left: 0; border-top: 1px solid var(--line); }
+        .vocab { grid-template-columns: minmax(0, 1fr); }
+        .next-grid { grid-template-columns: minmax(0, 1fr); }
+        .ix-head { grid-template-columns: minmax(0, 1fr) auto; }
+        .ix-num { grid-column: 1 / -1; }
+        .ix-body { margin-left: 0; }
+        .para th[scope="row"] { width: 3.6rem; }
+        .para td.seg { white-space: normal; }
+      }
+      @media (pointer: coarse), (max-width: 35rem) {
+        .chapter-nav a { display: flex; align-items: center; min-height: 44px; line-height: 1.35; }
+        .profile-links a { min-height: 44px; }
+        .ix-points a, .see-list a { display: inline-flex; align-items: center; min-height: 44px; }
+        .sources a { display: block; padding: 0.75rem 0; }
+        .sources .src-note { margin-top: -0.55rem; }
+        .ix-docs a { min-height: 44px; }
+        .rail-foot a { min-height: 44px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .hl { animation: none; }
+        .toc-btn svg { transition: none; }
+      }
+    </style>
+    <script defer src="/assets/js/turkish.js"></script>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/" aria-label="Grégoire Maillard, home"><span class="at-mk"><i></i></span><span class="at-name">Grégoire Maillard</span></a>
+        <nav class="at-tabs" aria-label="Turkish course">
+          <a class="at-tab" href="/turkish.html">Course</a>
+          <a class="at-tab" href="/turkishguide.html" aria-current="page">Grammar</a>
+          <a class="at-tab" href="/turkishcards.html">Flashcards</a>
+        </nav>
+      </div>
+    </div>
+
+    <main class="wrapper">
+      <header id="rail"></header>
+
+      <section id="doc">
+        <div class="notices" id="notices" role="status" aria-live="polite"></div>
+        <div id="main"><p class="loading">Loading…</p></div>
+        <noscript><p class="notice">The grammar guides need JavaScript to show.</p></noscript>
+      </section>
+
+      <footer>
+        <span>Turkish follows the spelling of the Türk Dil Kurumu.</span>
+        <a href="/turkish.html">Back to the course</a>
+      </footer>
+    </main>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      "use strict";
+      var $ = function (id) { return document.getElementById(id); };
+      var T = window.TRK;
+      if (!T) { $("notices").innerHTML = '<p class="notice err">The course script didn\'t load. Reload the page to try again.</p>'; $("main").innerHTML = ""; return; }
+      var store = T.store, esc = T.esc, P = T.C.PAGES;
+      store.course(); store.settings();   // read now, so a storage problem shows at once
+      var reqId = (new URLSearchParams(location.search).get("id") || "").trim().toLowerCase();
+      var st = { index: null, flat: null, error: null, says: [], questions: [], unit: null, kind: null };
+      var reduced = function () { return !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches); };
+      try { if ("scrollRestoration" in history) history.scrollRestoration = "manual"; } catch (e) { /* keep the default */ }
+
+      var ICON = {
+        tick: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        chev: '<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M5 8l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      };
+      var KIND = { tip: "Tip", pitfall: "Watch out", compare: "Compare", culture: "Culture", history: "History" };
+      var unitLabel = function (u) { return u.cefr + " · Unit " + u.num; };
+      var docHref = function (u, kind) { return P.guide + "?id=" + u.id + "-" + kind; };
+      var pad2 = function (n) { return (n < 10 ? "0" : "") + n; };
+      var dateLabel = function (iso) { try { return new Date(iso).toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return String(iso).slice(0, 10); } };
+      var R = function (s) { return T.rich(s, { index: st.index }); };
+      var TR = function (s) { return T.trRich(s, { index: st.index }); };
+      var SEG = function (s) { return T.seg(s, { harmony: true }); };
+
+      // Speaker buttons: a placeholder in the HTML, replaced by TRK.tts.button once the HTML is in the page.
+      function say(text, label) {
+        st.says.push({ text: text, label: label || "Listen: " + T.plain(text) });
+        return '<span class="say-slot" data-say="' + (st.says.length - 1) + '"></span>';
+      }
+      function mountSays(root) {
+        root.querySelectorAll(".say-slot").forEach(function (el) {
+          var s = st.says[+el.getAttribute("data-say")];
+          if (s) el.replaceWith(T.tts.button(s.text, { label: s.label }));
+        });
+      }
+
+      // ── notices ──
+      function renderNotices() {
+        var out = [];
+        if (st.error) {
+          var fileHint = location.protocol === "file:" ? " Open the page through a web server (for example <code>python3 -m http.server</code> in the repo) rather than as a file." : "";
+          out.push('<p class="notice err">This page couldn\'t be loaded (' + esc(st.error) + ")." + fileHint + ' <button type="button" data-act="retry">Try again</button></p>');
+        }
+        if (store.problem === "unavailable") out.push('<p class="notice">This browser isn\'t letting the page save anything (private browsing, or storage blocked), so what you read won\'t be remembered.</p>');
+        if (store.problem === "quota") out.push('<p class="notice">What you read couldn\'t be saved: the browser\'s storage for this site is full.</p>');
+        if (store.corrupt && store.corrupt.course) out.push('<p class="notice">Part of your saved progress couldn\'t be read, so this page won\'t mark anything as read. Open the <a href="' + P.hub + '">course page</a> to download what was found.</p>');
+        $("notices").innerHTML = out.join("");
+      }
+      $("notices").addEventListener("click", function (e) {
+        var b = e.target.closest("button[data-act]");
+        if (b && b.getAttribute("data-act") === "retry") { st.error = null; renderNotices(); $("main").innerHTML = '<p class="loading">Loading…</p>'; boot(); }
+      });
+
+      // ── links and labels ──
+      function linkTo(labelHtml, ref) {
+        var t = T.href(ref, st.index);
+        if (!t) return labelHtml;
+        if (!t.ready) return '<span class="trk-soon">' + labelHtml + " <small>(coming soon)</small></span>";
+        if (t.external) return '<a class="external" href="' + esc(t.href) + '" target="_blank" rel="noopener">' + labelHtml + "</a>";
+        return '<a href="' + esc(t.href) + '">' + labelHtml + "</a>";
+      }
+      function refLabel(ref) {
+        var f = st.flat, RE = T.RE, u;
+        if (RE.gp.test(ref)) return st.index.points[ref] ? st.index.points[ref].label : ref;
+        if (RE.unit.test(ref)) return f.unit[ref] ? unitLabel(f.unit[ref]) + ": " + f.unit[ref].title : ref;
+        if (RE.lesson.test(ref)) {
+          if (f.lesson[ref]) return "Lesson: " + f.lesson[ref].title;
+          u = f.unit[ref.slice(0, 6)];
+          return u ? unitLabel(u) + ", lesson " + (+ref.slice(8)) : ref;
+        }
+        if (RE.grammar.test(ref)) { u = f.unit[ref.slice(0, 6)]; return u ? "Grammar guide: " + u.title : ref; }
+        if (RE.culture.test(ref)) { u = f.unit[ref.slice(0, 6)]; return u ? "Interlude: " + u.interlude : ref; }
+        if (ref === "cards") return "Flashcards";
+        if (RE.url.test(ref)) { try { return new URL(ref).hostname.replace(/^www\./, ""); } catch (e) { return ref; } }
+        return ref;
+      }
+
+      // ── content blocks (PROJECT.md 5.1) ──
+      function block(b) {
+        switch (b.type) {
+          case "p": return "<p>" + R(b.text) + "</p>";
+          case "list": return (b.ordered ? '<ol class="blist">' : '<ul class="blist">') + b.items.map(function (x) { return "<li>" + R(x) + "</li>"; }).join("") + (b.ordered ? "</ol>" : "</ul>");
+          case "rule": return '<div class="rule">' + (b.label ? '<div class="rule-label">' + esc(b.label) + "</div>" : "") + "<pre>" + b.lines.map(esc).join("\n") + "</pre></div>";
+          case "table": return table(b);
+          case "examples": return examples(b);
+          case "paradigm": return paradigm(b);
+          case "dialogue": return dialogue(b);
+          case "callout": return callout(b);
+          case "parallel": return parallel(b);
+          case "passage": return passage(b);
+          case "quote": return quote(b);
+          case "image": return image(b);
+          case "see": return see(b);
+        }
+        return "";   // the validator rejects unknown block types
+      }
+      function table(b) {
+        var h = '<div class="tbl"><table class="t">' + (b.caption ? "<caption>" + R(b.caption) + "</caption>" : "");
+        h += "<thead><tr>" + b.head.map(function (x) { return '<th scope="col">' + R(x) + "</th>"; }).join("") + "</tr></thead><tbody>";
+        h += b.rows.map(function (row) {
+          return "<tr>" + row.map(function (cell, i) {
+            var c = b.cols[i];
+            if (!cell) return "<td></td>";
+            if (c === "tr") return '<td class="tr" lang="tr">' + esc(cell) + "</td>";
+            if (c === "seg") return '<td class="seg">' + SEG(cell) + "</td>";
+            if (c === "en") return '<td class="en">' + esc(cell) + "</td>";
+            return "<td>" + R(cell) + "</td>";
+          }).join("") + "</tr>";
+        }).join("");
+        return h + "</tbody></table></div>";
+      }
+      function examples(b) {
+        return '<div class="example ex-block"><div class="example-label">' + (b.items.length > 1 ? "Examples" : "Example") + '</div><ul class="ex-list">' +
+          b.items.map(function (x) {
+            return '<li><div><span class="ex-tr">' + (x.seg ? SEG(x.seg) : '<span lang="tr">' + esc(x.tr) + "</span>") + "</span>" +
+              (x.gloss ? '<span class="ex-gloss">' + esc(x.gloss) + "</span>" : "") +
+              '<span class="ex-en">' + esc(x.en) + (x.note ? '<span class="ex-note">' + R(x.note) + "</span>" : "") + "</span></div>" +
+              say(x.tr) + "</li>";
+          }).join("") + "</ul></div>";
+      }
+      function paradigm(b) {
+        var speech = b.rows.map(function (r) { return r.p + " " + r.tr; }).join(". ") + ".";
+        var withEn = b.rows.some(function (r) { return r.en; });
+        return '<figure class="para"><figcaption class="para-head"><span class="ttl">' + (b.title ? R(b.title) : "Forms") + "</span>" + say(speech, "Listen to every form") + "</figcaption>" +
+          '<table class="t"><tbody>' + b.rows.map(function (r) {
+            return '<tr><th scope="row" lang="tr">' + esc(r.p) + '</th><td class="seg">' + T.seg(r.tr, { harmony: true, lastStem: true }) + "</td>" + (withEn ? '<td class="en">' + esc(r.en || "") + "</td>" : "") + "</tr>";
+          }).join("") + "</tbody></table></figure>";
+      }
+      function dialogue(b) {
+        return '<div class="dialogue"><div class="example-label">Dialogue</div>' + b.lines.map(function (l) {
+          return '<div class="dl-line"><span class="dl-who" lang="tr">' + esc(l.who) + '</span><div><p class="dl-tr" lang="tr">' + esc(l.tr) + '</p><p class="dl-en">' + esc(l.en) + "</p></div>" + say(l.tr) + "</div>";
+        }).join("") + "</div>";
+      }
+      function callout(b) {
+        return '<aside class="callout k-' + esc(b.kind) + '"><div class="callout-label">' + esc(KIND[b.kind] || "Note") + "</div>" +
+          (b.title ? '<p class="callout-title">' + esc(b.title) + "</p>" : "") + "<p>" + R(b.text) + "</p></aside>";
+      }
+      function parallel(b) {
+        return '<div class="parallel"><div class="par-tr"><div class="lbl-row"><span class="lbl">Turkish</span>' + say(b.tr, "Listen to the Turkish") + "</div>" + TR(b.tr) + "</div>" +
+          '<div class="par-en"><div class="lbl-row"><span class="lbl">English</span></div>' + String(b.en).split(/\n\n+/).map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") + "</div></div>";
+      }
+      function glossary(list) {
+        return '<dl class="glossary">' + list.map(function (g) { return '<dt lang="tr">' + esc(g.tr) + "</dt><dd>" + esc(g.en) + "</dd>"; }).join("") + "</dl>";
+      }
+      function passage(b) {
+        return '<div class="passage"><div class="lbl-row"><span class="lbl">Read</span>' + say(b.tr, "Listen to the text") + "</div>" + TR(b.tr) + (b.glossary && b.glossary.length ? glossary(b.glossary) : "") + "</div>";
+      }
+      function quote(b) {
+        return '<figure class="quote"><blockquote lang="tr"><p class="q-tr">' + esc(b.tr) + "</p></blockquote>" +
+          '<p class="q-en">' + esc(b.en) + "</p><figcaption><span>" + esc(b.source) + "</span>" + say(b.tr, "Listen to the quotation") + "</figcaption></figure>";
+      }
+      function image(b) {
+        if (!/^\/assets\/img\/[^\s"'<>?#]+$/.test(b.src)) return "";
+        var cap = (b.caption ? R(b.caption) : "") + (b.credit ? (b.caption ? " " : "") + '<span class="credit">' + esc(b.credit) + "</span>" : "");
+        return '<figure class="fig"><img src="' + esc(b.src) + '" alt="' + esc(b.alt) + '" loading="lazy" decoding="async">' + (cap ? "<figcaption>" + cap + "</figcaption>" : "") + "</figure>";
+      }
+      function see(b) {
+        return '<div class="see"><span class="lbl">See also</span>' + (b.text ? R(b.text) : "") +
+          '<ul class="see-list">' + b.refs.map(function (r) { return "<li>" + linkTo(esc(refLabel(r)), r) + "</li>"; }).join("") + "</ul></div>";
+      }
+
+      // ── rail pieces ──
+      function tocHtml(items, label) {
+        if (!items.length) return "";
+        return '<button type="button" class="toc-btn" aria-expanded="false" aria-controls="toc">' + esc(label) + ' <span class="toc-n">' + items.length + "</span>" + ICON.chev + "</button>" +
+          '<nav class="chapter-nav collapsed" id="toc" aria-label="' + esc(label) + '">' + items.map(function (t) {
+            return '<a href="#' + esc(t.id) + '"' + (t.soon ? ' class="soon"' : "") + ">" + (t.n ? '<span class="ch-n">' + t.n + "</span>" : "") + esc(t.label) + "</a>";
+          }).join("") + "</nav>";
+      }
+      var LEGEND = '<div class="legend"><b>Colours in the examples</b><span class="trk-seg" lang="en"><span class="stem">stem</span> + <span class="suf">suffix</span></span>; ' +
+        'a suffix vowel is <span class="front">front</span> (<i lang="tr">e, i, ö, ü</i>) or <span class="back">back</span> (<i lang="tr">a, ı, o, u</i>).</div>';
+      function railUnit(u, kind, toc, dupTitle) {
+        var ready = u.status === "ready";
+        var docLink = function (k, label) {
+          var cur = k === kind ? ' aria-current="page"' : "";
+          return '<a href="' + docHref(u, k) + '"' + cur + (ready ? "" : ' class="soon"') + ">" + label + "</a>";
+        };
+        return '<div class="rail-kicker">' + esc(unitLabel(u)) + "</div>" +
+          '<div class="rail-title' + (dupTitle ? " dup" : "") + '"><a href="' + P.hub + "#" + u.id + '">' + esc(u.title) + "</a></div>" +
+          '<div class="rail-tr" lang="tr">' + esc(u.titleTr) + "</div>" +
+          '<nav class="profile-links rail-docs" aria-label="This unit">' + docLink("grammar", "Grammar guide") + docLink("culture", "Interlude") + "</nav>" +
+          tocHtml(toc, "On this page") + (kind === "grammar" && ready ? LEGEND : "") +
+          '<div class="rail-foot"><a href="' + P.guide + '">All guides and grammar points</a></div>';
+      }
+
+      // ── a guide or an interlude ──
+      function readText(when) { return when ? '<span class="tick">' + ICON.tick + "</span> You read this on " + esc(dateLabel(when)) + "." : ""; }
+      function nextCard(label, title, href, ready) {
+        if (!ready) return '<div class="next-card soon"><small>' + esc(label) + " · coming soon</small>" + esc(title) + "</div>";
+        return '<a class="next-card" href="' + esc(href) + '"><small>' + esc(label) + "</small>" + esc(title) + "</a>";
+      }
+      function nextNav(u, kind) {
+        var f = st.flat, i = f.units.indexOf(u), prev = f.units[i - 1], next = f.units[i + 1], g = kind === "grammar";
+        var name = function (x) { return g ? x.title : x.interlude; };
+        var cards = [
+          g ? nextCard("Interlude", u.interlude, docHref(u, "culture"), true) : nextCard("Grammar guide", u.title, docHref(u, "grammar"), true),
+          nextCard("Practise", unitLabel(u) + ": " + u.lessons.length + " lessons", P.hub + "#" + u.id, true)
+        ];
+        if (prev) cards.push(nextCard("Previous " + (g ? "guide" : "interlude") + " · " + unitLabel(prev), name(prev), docHref(prev, kind), prev.status === "ready"));
+        if (next) cards.push(nextCard("Next " + (g ? "guide" : "interlude") + " · " + unitLabel(next), name(next), docHref(next, kind), next.status === "ready"));
+        return '<nav class="next-grid" aria-label="What next">' + cards.join("") + "</nav>";
+      }
+      function questionHtml(q, i, n) {
+        var order = q.options.map(function (x, k) { return k; });
+        for (var j = order.length - 1; j > 0; j--) { var r = Math.floor(Math.random() * (j + 1)), t = order[j]; order[j] = order[r]; order[r] = t; }
+        return '<div class="quiz" data-q="' + i + '"><div class="quiz-label">Question ' + (i + 1) + " of " + n + '</div><div class="quiz-q">' + R(q.q) + "</div>" +
+          '<div class="quiz-opts" role="group" aria-label="Answers to question ' + (i + 1) + '">' + order.map(function (k) {
+            return '<button type="button" class="quiz-btn" data-k="' + k + '"' + (q.optionsLang === "tr" ? ' lang="tr"' : "") + ">" + esc(q.options[k]) + "</button>";
+          }).join("") + '</div><div class="quiz-feedback" tabindex="-1"></div><button type="button" class="quiz-reset">Try again</button></div>';
+      }
+      function renderDoc(u, kind, doc) {
+        var g = kind === "grammar", course = store.course(), rec = course.units[u.id] || {}, key = g ? "guide" : "culture";
+        var toc = [], h = "";
+        st.says = []; st.questions = [];
+        if (g) {
+          h += '<p class="doc-kicker">Grammar guide<span class="dot">·</span>' + esc(unitLabel(u)) + '<span id="read-min"></span></p>';
+          h += '<h1 class="doc-title" id="top">' + esc(doc.title) + "</h1>";
+          h += '<p class="doc-tr" lang="tr">' + esc(u.titleTr) + "</p>";
+          h += '<p class="lede">' + R(doc.intro) + "</p>";
+          doc.sections.forEach(function (s, i) {
+            toc.push({ id: s.point, label: s.title, n: pad2(i + 1) });
+            h += '<h2 id="' + esc(s.point) + '"><span class="h-n" aria-hidden="true">' + pad2(i + 1) + "</span>" + esc(s.title) + "</h2>" + s.blocks.map(block).join("");
+          });
+          toc.push({ id: "summary", label: "Summary" });
+          h += '<h2 id="summary">Summary</h2><ol class="summary">' + doc.summary.map(function (x) { return "<li>" + R(x) + "</li>"; }).join("") + "</ol>";
+        } else {
+          h += '<p class="doc-kicker">' + esc(doc.kicker) + '<span class="dot">·</span>' + doc.minutes + " min read</p>";
+          h += '<h1 class="doc-title" id="top">' + esc(doc.title) + "</h1>";
+          h += '<p class="doc-sub">The interlude of ' + esc(unitLabel(u)) + ', <a href="' + docHref(u, "grammar") + '">' + esc(u.title) + "</a></p>";
+          toc.push({ id: "top", label: doc.title });
+          h += doc.blocks.map(block).join("");
+          toc.push({ id: "words", label: "Words to know" });
+          h += '<h2 id="words">Words to know</h2><ul class="vocab">' + doc.vocab.map(function (w) {
+            return '<li><div><span class="v-tr" lang="tr">' + esc(w.tr) + '</span><span class="v-en">' + esc(w.en) + "</span></div>" + say(w.tr) + "</li>";
+          }).join("") + "</ul>";
+          if (doc.questions && doc.questions.length) {
+            st.questions = doc.questions;
+            toc.push({ id: "questions", label: "Check your reading" });
+            h += '<h2 id="questions">Check your reading</h2><p class="quiz-intro">' + (doc.questions.length === 1 ? "A question" : doc.questions.length + " questions") + " to check what you read. Just for you: they earn no XP.</p>" +
+              doc.questions.map(function (q, i) { return questionHtml(q, i, doc.questions.length); }).join("");
+          }
+          toc.push({ id: "sources", label: "Sources" });
+          h += '<h2 id="sources">Sources</h2><ol class="sources">' + doc.sources.map(function (s) {
+            var title = s.url && T.RE.url.test(s.url) ? '<a class="external" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + "</a>" : esc(s.title);
+            var meta = [s.publisher, s.note].filter(Boolean).map(esc).join(" · ");
+            return "<li>" + title + (meta ? '<span class="src-note">' + meta + "</span>" : "") + "</li>";
+          }).join("") + "</ol>";
+        }
+        h += '<div id="doc-end"></div>' + nextNav(u, kind) + '<p class="read-state" id="read-state">' + readText(rec[key]) + "</p>";
+        $("rail").innerHTML = railUnit(u, kind, toc, g);
+        $("main").innerHTML = h;
+        mountSays($("main"));
+        if (g) {
+          var words = ($("main").textContent || "").split(/\s+/).filter(Boolean).length;
+          $("read-min").innerHTML = '<span class="dot">·</span>About ' + Math.max(1, Math.round(words / 200)) + " min";
+        }
+        var desc = T.plain(g ? doc.intro : (doc.blocks.filter(function (b) { return b.type === "p"; })[0] || { text: doc.title }).text);
+        setMeta(doc.title + (g ? " · Turkish grammar, " : " · Turkish interlude, ") + unitLabel(u), desc, docHref(u, kind));
+        afterRender();
+        watchRead(u, key);
+      }
+
+      // ── a unit that isn't written yet ──
+      function renderSoon(u, kind) {
+        var g = kind === "grammar", ix = st.index, ready = st.flat.units.filter(function (x) { return x.status === "ready"; });
+        var latest = ready[ready.length - 1];
+        var h = '<p class="doc-kicker">' + (g ? "Grammar guide" : "Interlude") + '<span class="dot">·</span>' + esc(unitLabel(u)) + "</p>" +
+          '<h1 class="doc-title" id="top">' + esc(g ? u.title : u.interlude) + "</h1>" +
+          (g ? '<p class="doc-tr" lang="tr">' + esc(u.titleTr) + "</p>" : '<p class="doc-sub">The interlude of ' + esc(unitLabel(u)) + ", " + esc(u.title) + "</p>") +
+          '<div class="soon-box"><p><strong>Coming soon.</strong> This unit hasn\'t been written yet, so its ' + (g ? "grammar guide" : "interlude") + " isn't here. It will appear with the unit's lessons.</p>" +
+          (g ? "" : "<p>Until then, the interludes written so far are listed in the <a href=\"" + P.guide + '">index</a>.</p>') + "</div>";
+        if (g) {
+          h += '<h2 id="points">What it will cover</h2><ul class="soon-list">' + u.points.map(function (gp) {
+            return '<li id="' + esc(gp) + '">' + esc(ix.points[gp] ? ix.points[gp].label : gp) + "</li>";
+          }).join("") + "</ul>";
+        }
+        var cards = [nextCard("The course", unitLabel(u) + " on the path", P.hub + "#" + u.id, true)];
+        if (latest) cards.push(nextCard("Latest " + (g ? "guide" : "interlude") + " · " + unitLabel(latest), g ? latest.title : latest.interlude, docHref(latest, kind), true));
+        h += '<nav class="next-grid" aria-label="What next">' + cards.join("") + "</nav>";
+        $("rail").innerHTML = railUnit(u, kind, [], false);
+        $("main").innerHTML = h;
+        setMeta((g ? u.title : u.interlude) + " · coming soon", "This part of the Turkish course from A1 to C2 is still being written.", docHref(u, kind));
+        afterRender();
+      }
+
+      function renderNotFound() {
+        $("rail").innerHTML = '<div class="rail-kicker">Turkish · A1 → C2</div><div class="rail-foot"><a href="' + P.guide + '">All guides and grammar points</a></div>';
+        $("main").innerHTML = '<p class="doc-kicker">Not found</p><h1 class="doc-title" id="top">No such guide</h1>' +
+          "<p>There's no grammar guide or interlude called “" + esc(reqId) + "”. Guides are named after their unit, like <code>a1-u02-grammar</code> and <code>a1-u02-culture</code>.</p>" +
+          '<nav class="next-grid" aria-label="What next">' + nextCard("Index", "All guides and grammar points", P.guide, true) + nextCard("The course", "Back to the path", P.hub, true) + "</nav>";
+        setMeta("Guide not found · Learn Turkish", "", P.guide);
+      }
+
+      // ── the index: every guide and grammar point (index.json) ──
+      function fold(s) { return T.fold(T.trLower(String(s))).replace(/â/g, "a").replace(/î/g, "i").replace(/û/g, "u").replace(/\s+/g, " ").trim(); }
+      function renderIndex() {
+        var ix = st.index, f = st.flat, course = store.course();
+        var readyUnits = f.units.filter(function (u) { return u.status === "ready"; });
+        var read = 0;
+        readyUnits.forEach(function (u) { var r = course.units[u.id] || {}; if (r.guide) read++; if (r.culture) read++; });
+        var nPoints = Object.keys(ix.points).length, nReadyPoints = Object.keys(ix.points).filter(function (k) { return ix.points[k].ready; }).length;
+        var levels = ix.levels.map(function (lv) {
+          var units = lv.units.map(function (x) { return f.unit[x.id]; });
+          return { lv: lv, units: units, ready: units.filter(function (u) { return u.status === "ready"; }).length };
+        });
+        var toc = levels.map(function (L) { return { id: L.lv.id, label: L.lv.cefr + " · " + L.lv.title, soon: !L.ready }; });
+        $("rail").innerHTML = '<div class="rail-kicker">Turkish · A1 → C2</div>' +
+          '<div class="rail-title">Grammar and culture</div>' +
+          '<div class="rail-blurb">Each unit has a grammar guide, with a section for every grammar point, and a short culture interlude.</div>' +
+          tocHtml(toc, "Levels") +
+          '<div class="rail-foot"><a href="' + P.hub + '">Back to the course</a></div>';
+        var h = '<p class="doc-kicker">Grammar index</p><h1 class="doc-title" id="top">Grammar guides and interludes</h1>' +
+          '<p class="lede">Every grammar point of the course, unit by unit, from the alphabet to the language of the press. ' +
+          readyUnits.length + " of " + f.units.length + " units are written so far; the rest are listed as they're planned.</p>" +
+          (readyUnits.length ? '<p class="read-state">' + (read ? '<span class="tick">' + ICON.tick + "</span> You've read " + read + " of the " + readyUnits.length * 2 + " guides and interludes written so far." : "You haven't opened a guide yet: start with <a href=\"" + docHref(readyUnits[0], "grammar") + '">' + esc(readyUnits[0].title) + "</a>.") + "</p>" : "") +
+          '<div class="find" role="search"><label for="find">Find a grammar point</label>' +
+          '<input id="find" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="plural, -DA, değil, past tense…" aria-describedby="find-n">' +
+          '<p class="find-n" id="find-n" aria-live="polite">' + nReadyPoints + " of " + nPoints + " grammar points written</p></div>";
+        h += levels.map(function (L) {
+          var lv = L.lv;
+          return '<div class="ix-level" data-level="' + lv.id + '"><h2 id="' + lv.id + '">' + esc(lv.cefr + " · " + lv.title) + "</h2>" +
+            '<p class="ix-meta">' + (L.ready ? L.ready + " of " + L.units.length + " units written" : L.units.length + " units · coming soon") + "</p>" +
+            '<ol class="ix-units">' + L.units.map(function (u) { return indexUnit(u, course); }).join("") + "</ol></div>";
+        }).join("");
+        h += '<p class="read-state" id="no-match" hidden>No grammar point matches. Try a shorter word, or a suffix such as <code>-lar</code>.</p>';
+        $("main").innerHTML = h;
+        setMeta("Turkish grammar guides and interludes · Learn Turkish", "The grammar guide and culture interlude of every unit of a free Turkish course from A1 to C2, with an index of every grammar point.", P.guide);
+        afterRender();
+        var input = $("find"), timer = null;
+        input.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(filter, 80); });
+        input.addEventListener("keydown", function (e) { if (e.key === "Escape" && input.value) { input.value = ""; filter(); } });
+        function filter() {
+          var q = fold(input.value), shown = 0;
+          $("main").querySelectorAll(".ix-unit").forEach(function (li) {
+            var unitHit = q && li.getAttribute("data-k").indexOf(q) >= 0, any = false;
+            li.querySelectorAll(".ix-points > li").forEach(function (p) {
+              var hit = !q || unitHit || p.getAttribute("data-k").indexOf(q) >= 0;
+              p.hidden = !hit; if (hit) { any = true; shown++; }
+              var lab = p.querySelector(".lab");
+              lab.innerHTML = q && !unitHit ? highlight(lab.getAttribute("data-t"), q) : esc(lab.getAttribute("data-t"));
+            });
+            li.hidden = !any;
+          });
+          $("main").querySelectorAll(".ix-level").forEach(function (d) { d.hidden = !d.querySelector(".ix-unit:not([hidden])"); });
+          $("find-n").textContent = q ? (shown === 1 ? "1 grammar point matches" : shown + " grammar points match") : nReadyPoints + " of " + nPoints + " grammar points written";
+          $("no-match").hidden = !(q && !shown);
+        }
+      }
+      // Marks the first match of q (folded) inside text, character for character (folding keeps lengths).
+      function highlight(text, q) {
+        var t = fold(text), k = t.indexOf(q);
+        if (k < 0 || t.length !== text.replace(/\s+/g, " ").trim().length) return esc(text);
+        var s = text.replace(/\s+/g, " ").trim();
+        return esc(s.slice(0, k)) + "<mark>" + esc(s.slice(k, k + q.length)) + "</mark>" + esc(s.slice(k + q.length));
+      }
+      function indexUnit(u, course) {
+        var ix = st.index, ready = u.status === "ready", r = course.units[u.id] || {};
+        var tick = function (on, what) { return on ? '<span class="tick" title="Read">' + ICON.tick + '</span><span class="sr"> (' + what + " read)</span>" : ""; };
+        var head = '<div class="ix-head"><span class="ix-num">Unit ' + u.num + "</span>" +
+          '<h3 class="ix-title">' + (ready ? '<a href="' + docHref(u, "grammar") + '">' + esc(u.title) + "</a>" : esc(u.title)) + ' <span class="ix-tr" lang="tr">' + esc(u.titleTr) + "</span></h3>" +
+          (ready ? "<span></span>" : '<span class="tag-soon">Coming soon</span>') + "</div>";
+        var points = '<ul class="ix-points">' + u.points.map(function (gp) {
+          var p = ix.points[gp] || { label: gp }, k = fold(p.label + " " + gp.replace(/-/g, " "));
+          var lab = '<span class="lab" data-t="' + esc(p.label) + '">' + esc(p.label) + "</span>";
+          return '<li id="' + esc(gp) + '" data-k="' + esc(k) + '">' + (ready ? '<a href="' + docHref(u, "grammar") + "#" + esc(gp) + '">' + lab + "</a>" : lab) + "</li>";
+        }).join("") + "</ul>";
+        var docs = '<p class="ix-docs">' + (ready
+          ? '<a href="' + docHref(u, "grammar") + '">Grammar guide' + tick(r.guide, "guide") + "</a>" + '<a href="' + docHref(u, "culture") + '">Interlude: ' + esc(u.interlude) + tick(r.culture, "interlude") + "</a>"
+          : '<span class="trk-soon">Interlude: ' + esc(u.interlude) + " <small>(coming soon)</small></span>") + "</p>";
+        return '<li class="ix-unit' + (ready ? "" : " planned") + '" id="' + u.id + '" data-k="' + esc(fold(u.title + " " + u.titleTr + " " + u.interlude + " " + u.cefr + " unit " + u.num)) + '">' +
+          head + '<div class="ix-body">' + points + docs + "</div></li>";
+      }
+
+      // ── after every render: speakers, contents, quiz, position ──
+      function setMeta(title, desc, path) {
+        var abs = "https://gregoiremaillard.com" + path;
+        document.title = title;
+        var set = function (sel, attr, v) { var el = document.querySelector(sel); if (el && v) el.setAttribute(attr, v); };
+        set('meta[name="description"]', "content", desc && desc.length > 200 ? desc.slice(0, 197).replace(/\s+\S*$/, "") + "…" : desc);
+        set('meta[property="og:title"]', "content", title.replace(/ · Learn Turkish$/, ""));
+        set('meta[property="og:description"]', "content", desc && desc.length > 200 ? desc.slice(0, 197).replace(/\s+\S*$/, "") + "…" : desc);
+        set('link[rel="canonical"]', "href", abs);
+        set('meta[property="og:url"]', "content", abs);
+      }
+      function afterRender() {
+        mountSays($("rail"));
+        var btn = $("rail").querySelector(".toc-btn"), nav = $("toc");
+        if (btn && nav) {
+          btn.addEventListener("click", function () {
+            var open = btn.getAttribute("aria-expanded") !== "true";
+            btn.setAttribute("aria-expanded", String(open));
+            nav.classList.toggle("collapsed", !open);
+          });
+          spy(nav);
+        }
+        position();
+      }
+      // Highlights the section being read in the rail's contents (as on turkish101.html).
+      function spy(nav) {
+        if (!("IntersectionObserver" in window)) return;
+        var links = {};
+        nav.querySelectorAll("a").forEach(function (a) { links[decodeURIComponent(a.hash.slice(1))] = a; });
+        var heads = Object.keys(links).map(function (k) { return document.getElementById(k); }).filter(Boolean);
+        var activate = function (id) {
+          Object.keys(links).forEach(function (k) { links[k].classList.toggle("active", k === id); });
+          var a = links[id];
+          if (!a || !nav.offsetHeight) return;
+          var r = a.getBoundingClientRect(), n = nav.getBoundingClientRect();
+          if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 3;
+        };
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) { if (e.isIntersecting) activate(e.target.id); });
+        }, { rootMargin: "-90px 0px -70% 0px" });
+        heads.forEach(function (h) { io.observe(h); });
+      }
+      function flash(el) { if (reduced()) return; el.classList.remove("hl"); void el.offsetWidth; el.classList.add("hl"); }
+      // Programmatic jumps are instant: styles.css makes scrolling smooth, which suits clicks, not page loads.
+      function jump(fn) {
+        var html = document.documentElement, prev = html.style.scrollBehavior;
+        html.style.scrollBehavior = "auto";
+        fn();
+        html.style.scrollBehavior = prev;
+      }
+      function toHash() {
+        var id = decodeURIComponent(location.hash.slice(1)), el = id && document.getElementById(id);
+        if (!el) return false;
+        jump(function () { el.scrollIntoView({ block: "start" }); });
+        flash(el);
+        return true;
+      }
+      // Where to land: the saved position after a reload or Back, otherwise the #fragment (content arrives after load).
+      var posKey = "trk:guide:pos:" + (reqId || "index");
+      function position() {
+        var nav = null;
+        try { nav = performance.getEntriesByType("navigation")[0]; } catch (e) { /* older browser */ }
+        var saved = null;
+        try { saved = sessionStorage.getItem(posKey); } catch (e) { /* storage blocked */ }
+        if (nav && (nav.type === "reload" || nav.type === "back_forward") && saved !== null) { jump(function () { window.scrollTo(0, +saved || 0); }); return; }
+        toHash();
+      }
+      window.addEventListener("hashchange", function () { var id = decodeURIComponent(location.hash.slice(1)), el = id && document.getElementById(id); if (el) flash(el); });
+      var saveTimer = null;
+      var savePos = function () { try { sessionStorage.setItem(posKey, String(Math.round(window.scrollY))); } catch (e) { /* storage blocked */ } };
+      window.addEventListener("scroll", function () { clearTimeout(saveTimer); saveTimer = setTimeout(savePos, 250); }, { passive: true });
+      window.addEventListener("pagehide", savePos);
+
+      // A guide counts as read once its end has been on screen (store.markRead, shown on the course page).
+      function watchRead(u, key) {
+        var end = $("doc-end"), done = false;
+        var mark = function () {
+          if (done) return;
+          done = true;
+          if (store.corrupt && store.corrupt.course) return;   // don't overwrite progress the course page can still recover
+          store.markRead(u.id, key);
+          var el = $("read-state");
+          if (el) el.innerHTML = '<span class="tick">' + ICON.tick + "</span> Marked as read" + (store.problem === "unavailable" ? " for now (this browser isn't saving)." : ": it shows on the course page.");
+          renderNotices();
+        };
+        if (!end) return;
+        if (!("IntersectionObserver" in window)) { mark(); return; }
+        var io = new IntersectionObserver(function (entries) {
+          if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); mark(); }
+        });
+        io.observe(end);
+      }
+
+      // Culture questions: pick an answer, see why; no XP (PROJECT.md 5.7).
+      $("main").addEventListener("click", function (e) {
+        var b = e.target.closest(".quiz-btn"), reset = e.target.closest(".quiz-reset"), box, q;
+        if (b && !b.disabled) {
+          box = b.closest(".quiz"); q = st.questions[+box.getAttribute("data-q")];
+          if (!q) return;
+          var k = +b.getAttribute("data-k"), ok = k === q.answer;
+          box.querySelectorAll(".quiz-btn").forEach(function (x) { x.disabled = true; if (+x.getAttribute("data-k") === q.answer) x.classList.add("correct"); });
+          if (!ok) b.classList.add("wrong");
+          var right = q.optionsLang === "tr" ? '<span lang="tr">' + esc(q.options[q.answer]) + "</span>" : esc(q.options[q.answer]);
+          var fb = box.querySelector(".quiz-feedback");
+          fb.innerHTML = (ok ? "<strong>Right.</strong>" : "<strong>Not quite.</strong> The answer is " + right + ".") + (q.explain ? " " + R(q.explain) : "");
+          fb.className = "quiz-feedback show " + (ok ? "ok" : "bad");
+          box.querySelector(".quiz-reset").classList.add("show");
+          fb.focus();
+        } else if (reset) {
+          box = reset.closest(".quiz");
+          box.querySelectorAll(".quiz-btn").forEach(function (x) { x.disabled = false; x.classList.remove("correct", "wrong"); });
+          var f2 = box.querySelector(".quiz-feedback");
+          f2.className = "quiz-feedback"; f2.innerHTML = "";
+          reset.classList.remove("show");
+          box.querySelector(".quiz-btn").focus();
+        }
+      });
+
+      // ── start ──
+      function boot() {
+        T.data.index().then(function (ix) {
+          st.index = ix; st.flat = T.path.flatten(ix);
+          if (!reqId) return renderIndex();
+          var m = /^((?:a1|a2|b1|b2|c1|c2)-u\d{2})-(grammar|culture)$/.exec(reqId), u = m && st.flat.unit[m[1]];
+          if (!u) return renderNotFound();
+          if (u.status !== "ready") return renderSoon(u, m[2]);
+          return T.data.get(reqId).then(function (doc) { renderDoc(u, m[2], doc); });
+        }).catch(function (e) {
+          st.error = (e && e.message) || "network error";
+          $("main").innerHTML = "";
+          renderNotices();
+        });
+      }
+      renderNotices();
+      boot();
+    });
+    </script>
+  </body>
+</html>

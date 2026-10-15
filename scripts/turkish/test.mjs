@@ -268,8 +268,39 @@ test("trRich: paragraphs, bold and links only", () => {
   assert.equal(TRK.trRich("Bu **ev** büyük.\n\nO *ev* değil."), '<p lang="tr">Bu <strong>ev</strong> büyük.</p><p lang="tr">O *ev* değil.</p>');
 });
 test("seg and plain", () => {
-  assert.equal(TRK.seg("Çocuk|lar park|ta."), '<span lang="tr" class="trk-seg"><span class="stem">Çocuk</span><span class="suf">lar</span> <span class="stem">park</span><span class="suf">ta.</span></span>');
+  assert.equal(TRK.seg("Çocuk|lar park|ta."), '<span lang="tr" class="trk-seg"><span class="stem">Çocuk</span><span class="suf">lar</span> <span class="stem">park</span><span class="suf">ta</span>.</span>');
   assert.equal(TRK.plain("*Evde* + **to be** `-DA` [here](a1-u01) ev|de \\*"), "Evde + to be -DA here evde *");
+});
+test("seg: plain words, punctuation outside the spans, harmony classes on suffix vowels", () => {
+  const wrap = h => `<span lang="tr" class="trk-seg">${h}</span>`;
+  assert.equal(TRK.seg("Kalem|ler mavi."), wrap('<span class="stem">Kalem</span><span class="suf">ler</span> mavi.'));
+  assert.equal(TRK.seg("öğretmen"), wrap('<span class="stem">öğretmen</span>'), "a one-word seg is a stem");
+  assert.equal(TRK.seg("“Bu|n|lar ne?”"), wrap('“<span class="stem">Bu</span><span class="suf">n</span><span class="suf">lar</span> ne?”'));
+  assert.equal(TRK.seg("Türk'|üm"), wrap('<span class="stem">Türk&#39;</span><span class="suf">üm</span>'));
+  assert.equal(TRK.seg("hasta|y|ım", { harmony: true }),
+    wrap('<span class="stem">hasta</span><span class="suf">y</span><span class="suf"><span class="back">ı</span>m</span>'));
+  assert.equal(TRK.seg("EV|LER|İN", { harmony: true }),
+    wrap('<span class="stem">EV</span><span class="suf">L<span class="front">E</span>R</span><span class="suf"><span class="front">İ</span>N</span>'));
+  assert.match(TRK.seg("Kitap|lar <b>", { harmony: true }), /&lt;b&gt;/);
+  assert.equal(TRK.seg("öğrenci değil", { lastStem: true }), wrap('öğrenci <span class="stem">değil</span>'), "lastStem: a paradigm's bare form");
+  assert.equal(TRK.seg("yorgun mu|yum?", { lastStem: true }), wrap('yorgun <span class="stem">mu</span><span class="suf">yum</span>?'));
+});
+test("seg: every seg in the real content renders back to its own text", () => {
+  const segs = [];
+  const fromBlocks = (blocks, w) => blocks.forEach((b, i) => {
+    if (b.type === "examples") b.items.forEach(x => x.seg && segs.push([`${w}[${i}]`, x.seg]));
+    if (b.type === "paradigm") b.rows.forEach(r => segs.push([`${w}[${i}]`, r.tr]));
+    if (b.type === "table") b.rows.forEach(r => r.forEach((c, k) => b.cols[k] === "seg" && c && segs.push([`${w}[${i}]`, c])));
+  });
+  GRAMMAR.forEach(g => g.sections.forEach(s => fromBlocks(s.blocks, `${g.id}/${s.point}`)));
+  CULTURE.forEach(c => fromBlocks(c.blocks, c.id));
+  if (GRAMMAR.length) assert.ok(segs.length > 50, `only ${segs.length} segs found`);
+  const unesc = h => h.replace(/<[^>]+>/g, "").replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+  for (const [w, s] of segs) {
+    const h = TRK.seg(s, { harmony: true });
+    assert.equal(unesc(h), s.replace(/\|/g, ""), `${w}: “${s}”`);
+    if (s.includes("|")) assert.match(h, /class="suf"/, `${w}: “${s}” has no suffix span`);
+  }
 });
 test("real content: every Rich text renders without stray markup and every link resolves", () => {
   const all = richStrings();

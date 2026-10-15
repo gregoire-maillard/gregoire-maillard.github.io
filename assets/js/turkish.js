@@ -168,11 +168,28 @@
     var o = { tr: true, index: opts && opts.index };
     return String(s == null ? "" : s).split(/\n\n+/).map(function (p) { return '<p lang="tr">' + richInline(p, o) + "</p>"; }).join("");
   }
-  // Seg ("ev|ler|de") → stem and suffix spans, using the reader's harmony classes .stem and .suf.
-  function seg(s) {
-    return '<span lang="tr" class="trk-seg">' + String(s).split(" ").map(function (word) {
-      var parts = word.split("|");
-      return parts.map(function (p, i) { return p ? '<span class="' + (i ? "suf" : "stem") + '">' + esc(p) + "</span>" : ""; }).join("");
+  // Seg ("ev|ler|de") → stem and suffix spans, with the classes of stylesheets/styles.css: .stem and .suf.
+  // Punctuation stays outside the spans. In a seg of several words, a word without bars is left plain
+  // ("Kalem|ler mavi."); a one-word seg is always a stem, so a paradigm's bare "öğretmen" matches its rows.
+  // opts.harmony also marks every suffix vowel .front (e, i, ö, ü) or .back (a, ı, o, u), as the grammar reader does.
+  // opts.lastStem makes the last word a stem even without bars: a paradigm row's form ("öğrenci değil" beside "öğrenci değil|im").
+  var SEG_WORD = /^([^A-Za-z0-9À-ɏ'|]*)(.*?)([^A-Za-z0-9À-ɏ'|]*)$/;
+  var VOWEL_BACK = "aıouâûAIOUÂÛ", VOWEL_FRONT = "eiöüîEİÖÜÎ";
+  function segPart(p, cls, harmony) {
+    if (!p) return "";
+    var inner = !harmony || cls !== "suf" ? esc(p) : p.split("").map(function (c) {
+      return VOWEL_BACK.indexOf(c) >= 0 ? '<span class="back">' + c + "</span>" : VOWEL_FRONT.indexOf(c) >= 0 ? '<span class="front">' + c + "</span>" : esc(c);
+    }).join("");
+    return '<span class="' + cls + '">' + inner + "</span>";
+  }
+  function seg(s, opts) {
+    var harmony = !!(opts && opts.harmony), words = String(s == null ? "" : s).split(" ");
+    var last = words.length - 1;
+    while (last > 0 && !words[last]) last--;
+    return '<span lang="tr" class="trk-seg">' + words.map(function (word, i) {
+      var m = SEG_WORD.exec(word), parts = m[2].split("|");
+      if (!m[2] || (parts.length === 1 && words.length > 1 && !(opts && opts.lastStem && i === last))) return esc(word);
+      return esc(m[1]) + parts.map(function (p, i) { return segPart(p, i ? "suf" : "stem", harmony); }).join("") + esc(m[3]);
     }).join(" ") + "</span>";
   }
   // Markup removed: for speech, aria-labels and titles.
