@@ -20,6 +20,11 @@ What it checks:
 - **Turkish text**: NFC, no U+0307 (from lowercasing İ without the Turkish locale), the `'` apostrophe, inline markup, `seg` segmentation; warnings for a likely mistyped dotless *I* (*Istanbul*), a question particle glued to its verb, non-Turkish letters, and sentences that start in lowercase.
 - **Targets** (warnings): lesson sizes and exercise mixes, guide and interlude lengths, interlude sources, flashcard examples that don't contain their word.
 - **index.json**: up to date with the content (rewrite it with `--index`, which refuses while there are errors).
+- **Word list**: `wordlist.tsv` well formed (header `rank`, `lemma`, `pos`, ranks 1–1000 in order, no duplicates), and every flashcard's `tr` and `pos` equal to its rank's row.
+
+## The word list
+
+`wordlist.tsv` is the ranked list of the 1,000 lemmas of the flashcard deck, in the order the five flashcard batches follow. It is adapted from the 2018 Turkish list of [FrequencyWords](https://github.com/hermitdave/FrequencyWords) by Hermit Dave, built from the OpenSubtitles2018 corpus (OPUS, subtitles from [opensubtitles.org](https://www.opensubtitles.org)), and is licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) like its source. How it was made is in `turkish/PROJECT.md`, section 7.8.
 
 ## Tests for turkish.js
 

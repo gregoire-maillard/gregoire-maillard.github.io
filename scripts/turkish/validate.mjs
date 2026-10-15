@@ -20,6 +20,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 const DATA = path.join(ROOT, "assets/data/turkish");
 const CURRICULUM = path.join(ROOT, "turkish/CURRICULUM.md");
 const PROJECT = path.join(ROOT, "turkish/PROJECT.md");
+const WORDLIST = path.join(ROOT, "scripts/turkish/wordlist.tsv");
 const rel = p => path.relative(ROOT, p).split(path.sep).join("/");
 
 // ─────────────────────────── command line ───────────────────────────
@@ -888,7 +889,44 @@ function checkFlashFile(rec, cx) {
   }
 }
 
+// scripts/turkish/wordlist.tsv (PROJECT.md 7.8): the ranked 1,000 lemmas that every flashcard batch follows
+function loadWordlist() {
+  if (!fs.existsSync(WORDLIST)) return null;
+  const label = rel(WORDLIST);
+  const raw = fs.readFileSync(WORDLIST, "utf8");
+  if (raw.charCodeAt(0) === 0xfeff) err(label, "starts with a byte-order mark");
+  if (raw !== raw.normalize("NFC")) err(label, "text is not NFC-normalized");
+  if (/\r/.test(raw)) err(label, "use LF line endings");
+  const lines = raw.split("\n");
+  if (lines[lines.length - 1] === "") lines.pop(); else err(label, "must end with a newline");
+  if (lines[0] !== "rank\tlemma\tpos") err(label, "the first line must be the header: rank, lemma, pos (tab-separated)");
+  const list = new Map(), seen = new Map();
+  lines.slice(1).forEach((line, i) => {
+    const where = `${label}:${i + 2}`, rank = i + 1;
+    const f = line.split("\t");
+    if (f.length !== 3) { err(where, "needs exactly three tab-separated fields: rank, lemma, pos"); return; }
+    const [r, lemma, pos] = f;
+    if (r !== String(rank)) err(where, `rank should be ${rank}`);
+    if (!POS.includes(pos)) err(where, `“${pos}” is not a part of speech of PROJECT.md 5.1`);
+    if (!lemma || lemma !== lemma.trim() || / {2,}/.test(lemma)) err(where, "empty lemma or stray spaces");
+    if (pos === "verb" && !/m[ae]k$/.test(lemma)) err(where, "verbs are given as infinitives in -mak or -mek");
+    if (/[A-ZÇĞİÖŞÜ]/.test(lemma)) err(where, "lemmas are lowercase (no proper nouns in the deck)");
+    const key = `${trLower(lemma)}|${pos}`;
+    if (seen.has(key)) err(where, `“${lemma}” (${pos}) is also rank ${seen.get(key)}`);
+    seen.set(key, rank);
+    list.set(rank, { lemma, pos });
+  });
+  if (list.size !== 1000) warn(label, `${list.size} lemmas; the deck has 1,000`);
+  return list;
+}
+
 function checkCardsGlobal() {
+  const wl = loadWordlist();
+  if (wl) for (const { c, file } of C.cards.values()) {
+    const w = wl.get(c.rank);
+    if (!w) err(file, `${c.id}: rank ${c.rank} is not in ${rel(WORDLIST)}`);
+    else if (w.lemma !== c.tr || w.pos !== c.pos) err(file, `${c.id}: rank ${c.rank} is “${w.lemma}” (${w.pos}) in ${rel(WORDLIST)}, not “${c.tr}” (${c.pos})`);
+  }
   const seen = new Map();
   for (const { c, file } of C.cards.values()) {
     const key = `${trLower(c.tr)}|${c.pos}|${c.sense || 1}`;
