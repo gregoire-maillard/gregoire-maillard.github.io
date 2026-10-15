@@ -1,0 +1,220 @@
+{
+  "id": "a1-u05-l02",
+  "unit": "a1-u05",
+  "order": 2,
+  "title": "Is there a pharmacy here?",
+  "goal": "Say what there is and isn't in a place with var and yok, and ask about it.",
+  "points": ["gp-var-yok", "gp-locative"],
+  "intro": {
+    "text": "*Var* means **there is**, *yok* **there isn't**. Put the place first, then the thing, then *var* or *yok*: *Burada bir eczane var* (There's a pharmacy here). To ask, add `mI`: *var mı?*, *yok mu?*",
+    "see": "gp-var-yok"
+  },
+  "vocab": [
+    {
+      "tr": "var",
+      "en": "there is, there are",
+      "pos": "adj"
+    },
+    {
+      "tr": "yok",
+      "en": "there isn't, there aren't; no (casual)",
+      "pos": "adj"
+    },
+    {
+      "tr": "burada",
+      "en": "here",
+      "pos": "adv"
+    },
+    {
+      "tr": "kimse",
+      "en": "anybody; nobody (with yok)",
+      "pos": "pron"
+    },
+    {
+      "tr": "eczane",
+      "en": "pharmacy, drugstore",
+      "pos": "noun"
+    },
+    {
+      "tr": "banka",
+      "en": "bank",
+      "pos": "noun"
+    },
+    {
+      "tr": "market",
+      "en": "supermarket, grocery store",
+      "pos": "noun"
+    },
+    {
+      "tr": "kafe",
+      "en": "café",
+      "pos": "noun"
+    },
+    {
+      "tr": "otel",
+      "en": "hotel",
+      "pos": "noun"
+    },
+    {
+      "tr": "hastane",
+      "en": "hospital",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u05-l02-e01",
+      "type": "mcq",
+      "points": ["gp-var-yok"],
+      "question": "How do you say **There is a pharmacy here**?",
+      "options": ["Burada bir eczane var.", "Burada bir eczane yok.", "Eczane burada."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Yok* means **there isn't**.",
+        "2": "*Eczane burada* means **the pharmacy is here**: a pharmacy you both already know about."
+      },
+      "explain": "Place first, then the new thing, then *var*: *Burada bir eczane var*."
+    },
+    {
+      "id": "a1-u05-l02-e02",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-var-yok", "gp-question-mi"],
+      "prompt": "Is there a bank here?",
+      "accept": ["Burada bir banka var mı?", "Burada banka var mı?"],
+      "explain": "Place, thing, *var*, then the question particle: *var* ends in a, so it is *mı*."
+    },
+    {
+      "id": "a1-u05-l02-e03",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Evde kimse yok.",
+      "en": "There is nobody at home."
+    },
+    {
+      "id": "a1-u05-l02-e04",
+      "type": "cloze",
+      "points": ["gp-var-yok"],
+      "text": "Kafede kimse ___.",
+      "en": "There is nobody in the café.",
+      "blanks": [
+        {
+          "options": ["yok", "var", "değil"],
+          "answer": 0
+        }
+      ],
+      "explain": "*Kimse* (anybody) with *yok* means nobody: *Kafede kimse yok*. *Değil* negates **is**, not **there is**."
+    },
+    {
+      "id": "a1-u05-l02-e05",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-var-yok", "gp-locative"],
+      "prompt": "Hastanede bir kafe var.",
+      "accept": ["There is a café in the hospital.", "There is a cafe in the hospital.", "The hospital has a [café|cafe].", "In the hospital there is a [café|cafe]."]
+    },
+    {
+      "id": "a1-u05-l02-e06",
+      "type": "mcq",
+      "points": ["gp-var-yok", "gp-locative"],
+      "context": [
+        {
+          "who": "Elif",
+          "tr": "Burada bir eczane var mı?",
+          "en": "Is there a pharmacy here?"
+        },
+        {
+          "who": "Murat",
+          "tr": "Evet, var. Eczane hastanede.",
+          "en": "Yes, there is. The pharmacy is in the hospital."
+        }
+      ],
+      "question": "Where is the pharmacy?",
+      "options": ["in the hospital", "in the bank", "in the hotel"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Eczane hastanede*: once it has been mentioned, it is **the** pharmacy, so the locative goes on the place and *var* is no longer needed."
+    },
+    {
+      "id": "a1-u05-l02-e07",
+      "type": "wordbank",
+      "from": "tr",
+      "points": ["gp-var-yok"],
+      "prompt": "Bankada kimse yok.",
+      "text": "There is nobody in the bank.",
+      "answer": ["There", "is", "nobody", "in", "the", "bank"],
+      "distractors": ["a", "are", "hotel"]
+    },
+    {
+      "id": "a1-u05-l02-e08",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-var-yok"],
+      "prompt": "There is no hotel here.",
+      "accept": ["Burada otel yok."],
+      "explain": "With *yok*, the noun usually goes without *bir*: *Burada otel yok*."
+    },
+    {
+      "id": "a1-u05-l02-e09",
+      "type": "cloze",
+      "points": ["gp-var-yok", "gp-question-mi"],
+      "text": "Parkta kimse ___ mu?",
+      "en": "Isn't there anybody in the park?",
+      "blanks": [
+        {
+          "accept": ["yok"],
+          "reject": [
+            {
+              "answer": "var",
+              "why": "*Parkta kimse var mı?* asks **is there anybody**. The English is negative, so use *yok*, which also fits *mu*."
+            }
+          ]
+        }
+      ],
+      "explain": "*Yok mu?* asks a negative question: isn't there…? The particle copies the o of *yok*: *mu*."
+    },
+    {
+      "id": "a1-u05-l02-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Burada market yok.",
+      "en": "There is no supermarket here.",
+      "options": ["Burada market yok.", "Burada market var.", "Burada market var mı?"],
+      "answer": 0
+    },
+    {
+      "id": "a1-u05-l02-e11",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-var-yok"],
+      "prompt": "Kafede kimse var mı?",
+      "accept": ["Is there anybody in the café?", "Is there anyone in the [café|cafe]?", "Is there anybody in the cafe?"]
+    },
+    {
+      "id": "a1-u05-l02-e12",
+      "type": "mcq",
+      "points": ["gp-var-yok", "gp-degil"],
+      "question": "Which sentence means **There is nobody at home**?",
+      "options": ["Evde kimse yok.", "Ali evde değil.", "Evde değil."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Ali evde değil* says where Ali isn't: Ali is not at home.",
+        "2": "*Evde değil* means **he or she is not at home**."
+      },
+      "explain": "*Yok* says that something or someone isn't there at all; *değil* negates **is**."
+    },
+    {
+      "id": "a1-u05-l02-e13",
+      "type": "morph",
+      "points": ["gp-locative"],
+      "base": "banka",
+      "gloss": "in the bank",
+      "parts": ["banka", "da"],
+      "distractors": ["de", "ta", "te"],
+      "result": "bankada",
+      "explain": "Last vowel a, and the word ends in a vowel, so the suffix is *-da*: *bankada*."
+    }
+  ]
+}

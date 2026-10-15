@@ -1,0 +1,254 @@
+{
+  "id": "a1-u06-l01",
+  "unit": "a1-u06",
+  "order": 1,
+  "title": "What are you doing?",
+  "goal": "Find a verb's stem and say what people are doing with -(I)yor.",
+  "points": ["gp-infinitive-stem", "gp-present-continuous"],
+  "intro": {
+    "text": "Take `-mak` or `-mek` off the infinitive to get the stem: *yapmak* → *yap-*. Then add `-Iyor` and the endings of **to be**: *yapıyorum* (I am doing), *yapıyorsun* (you are doing). After *-yor*, the endings always have u.",
+    "see": "gp-present-continuous"
+  },
+  "vocab": [
+    {
+      "tr": "yapmak",
+      "en": "to do, to make",
+      "pos": "verb"
+    },
+    {
+      "tr": "okumak",
+      "en": "to read",
+      "pos": "verb"
+    },
+    {
+      "tr": "yazmak",
+      "en": "to write",
+      "pos": "verb"
+    },
+    {
+      "tr": "içmek",
+      "en": "to drink",
+      "pos": "verb"
+    },
+    {
+      "tr": "çalışmak",
+      "en": "to work; to study",
+      "pos": "verb"
+    },
+    {
+      "tr": "konuşmak",
+      "en": "to speak, to talk",
+      "pos": "verb"
+    },
+    {
+      "tr": "kahve",
+      "en": "coffee",
+      "pos": "noun"
+    },
+    {
+      "tr": "mektup",
+      "en": "letter (that you write)",
+      "pos": "noun"
+    },
+    {
+      "tr": "gazete",
+      "en": "newspaper",
+      "pos": "noun"
+    },
+    {
+      "tr": "Türkçe",
+      "en": "Turkish (the language)",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u06-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["yapmak", "to do"],
+        ["okumak", "to read"],
+        ["yazmak", "to write"],
+        ["içmek", "to drink"],
+        ["çalışmak", "to work"],
+        ["konuşmak", "to speak"]
+      ]
+    },
+    {
+      "id": "a1-u06-l01-e02",
+      "type": "mcq",
+      "points": ["gp-infinitive-stem"],
+      "question": "What is the stem of *yazmak*?",
+      "options": ["yaz-", "yazm-", "yazma-", "ya-"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "The infinitive ending is `-mAk`, so the m goes too.",
+        "2": "*-ma* is part of the infinitive ending `-mAk`.",
+        "3": "Only `-mAk` comes off; the z belongs to the stem."
+      },
+      "explain": "Take `-mAk` off the infinitive: *yazmak* → *yaz-*."
+    },
+    {
+      "id": "a1-u06-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-present-continuous"],
+      "base": "yapmak",
+      "form": "present-continuous",
+      "label": "*yapmak* (to do) in the present continuous: I am doing, you are doing…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["yapıyorum"]
+        },
+        {
+          "p": "sen",
+          "accept": ["yapıyorsun"]
+        },
+        {
+          "p": "o",
+          "accept": ["yapıyor"]
+        },
+        {
+          "p": "biz",
+          "accept": ["yapıyoruz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["yapıyorsunuz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["yapıyorlar"]
+        }
+      ],
+      "explain": "Stem *yap-*, then `-Iyor` with ı after a, then *-um, -sun, -∅, -uz, -sunuz, -lar*."
+    },
+    {
+      "id": "a1-u06-l01-e04",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-present-continuous", "gp-question-words"],
+      "prompt": "What are you doing?",
+      "accept": ["Ne yapıyorsun?", "Ne yapıyorsunuz?", "Sen ne yapıyorsun?", "Siz ne yapıyorsunuz?"],
+      "reject": [
+        {
+          "answer": "Ne yapıyor musun?",
+          "why": "A question word never takes `mI`: *Ne yapıyorsun?*"
+        }
+      ]
+    },
+    {
+      "id": "a1-u06-l01-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Kahve içiyorum.",
+      "en": "I am drinking coffee."
+    },
+    {
+      "id": "a1-u06-l01-e06",
+      "type": "cloze",
+      "points": ["gp-present-continuous", "gp-harmony-4way"],
+      "text": "Ali mektup yaz___.",
+      "en": "Ali is writing a letter.",
+      "blanks": [
+        {
+          "accept": ["ıyor"],
+          "reject": [
+            {
+              "answer": "iyor",
+              "why": "The last vowel of *yaz-* is a, so the vowel before *-yor* is ı: *yazıyor*."
+            },
+            {
+              "answer": "yor",
+              "why": "*Yaz-* ends in a consonant, so it needs a vowel before *-yor*: *yazıyor*."
+            },
+            {
+              "answer": "ıyör",
+              "why": "*-yor* never changes: its o stays o after any vowel."
+            }
+          ]
+        }
+      ],
+      "hint": "Does *yaz-* end in a vowel or a consonant? What is its last vowel?",
+      "explain": "Consonant at the end, so add `-Iyor`; after a, the I is ı: *yazıyor*."
+    },
+    {
+      "id": "a1-u06-l01-e07",
+      "type": "mcq",
+      "points": ["gp-present-continuous"],
+      "question": "What does *Konuşuyoruz* mean?",
+      "options": ["We are talking.", "They are talking.", "You are talking.", "We are working."],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*konuş-* + *-uyor* + *-uz*: we are talking."
+    },
+    {
+      "id": "a1-u06-l01-e08",
+      "type": "wordbank",
+      "from": "tr",
+      "points": ["gp-present-continuous", "gp-locative"],
+      "prompt": "Murat ofiste çalışıyor.",
+      "text": "Murat is working at the office.",
+      "answer": ["Murat", "is", "working", "at", "the", "office"],
+      "distractors": ["are", "in", "reading"],
+      "accept": ["Murat is working in the office."]
+    },
+    {
+      "id": "a1-u06-l01-e09",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-present-continuous"],
+      "prompt": "We are drinking tea.",
+      "accept": ["Çay içiyoruz.", "Biz çay içiyoruz."],
+      "reject": [
+        {
+          "answer": "Çay içiyorum.",
+          "why": "*İçiyorum* is **I am** drinking. For **we**, the ending is *-uz*: *içiyoruz*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u06-l01-e10",
+      "type": "morph",
+      "points": ["gp-present-continuous", "gp-infinitive-stem"],
+      "base": "okumak",
+      "gloss": "she is reading",
+      "parts": ["oku", "yor"],
+      "distractors": ["okum", "iyor", "uyor"],
+      "result": "okuyor",
+      "explain": "*Oku-* ends in u, so *-yor* goes straight on: *okuyor*. Third person, no ending."
+    },
+    {
+      "id": "a1-u06-l01-e11",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Ne yazıyorsun?",
+      "en": "What are you writing?",
+      "options": ["Ne yazıyorsun?", "Ne yapıyorsun?", "Ne okuyorsun?"],
+      "answer": 0
+    },
+    {
+      "id": "a1-u06-l01-e12",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-present-continuous"],
+      "prompt": "Ayşe gazete okuyor.",
+      "accept": ["Ayşe is reading a newspaper.", "Ayşe is reading [the newspaper|a paper|the paper]."]
+    },
+    {
+      "id": "a1-u06-l01-e13",
+      "type": "mcq",
+      "points": ["gp-infinitive-stem"],
+      "question": "*Çalışıyorum* comes from which infinitive?",
+      "options": ["çalışmak", "çalışmek", "çalışıyor"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "The infinitive follows two-way harmony: after ı it is *-mak*.",
+        "2": "*Çalışıyor* is the present continuous for **he** or **she**, not the dictionary form."
+      },
+      "explain": "Stem *çalış-* + `-mAk`: *çalışmak*, the form you find in a dictionary."
+    }
+  ]
+}

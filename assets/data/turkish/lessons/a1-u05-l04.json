@@ -1,0 +1,263 @@
+{
+  "id": "a1-u05-l04",
+  "unit": "a1-u05",
+  "order": 4,
+  "title": "Nobody's home",
+  "goal": "Say where people and things are around the house, and follow a short phone call.",
+  "points": ["gp-locative", "gp-consonant-assimilation", "gp-var-yok", "gp-pronoun-n", "gp-degil"],
+  "intro": {
+    "text": "On the phone, Turks answer with *Alo?* and the first question is often *Neredesin?* (Where are you?). Answer with the locative and **to be**: *Evdeyim*, *Ofisteyim*. If the house is empty: *Evde kimse yok*.",
+    "see": "gp-locative"
+  },
+  "vocab": [
+    {
+      "tr": "salon",
+      "en": "living room",
+      "pos": "noun"
+    },
+    {
+      "tr": "yatak",
+      "en": "bed",
+      "pos": "noun"
+    },
+    {
+      "tr": "dolap",
+      "en": "cupboard, wardrobe",
+      "pos": "noun"
+    },
+    {
+      "tr": "koltuk",
+      "en": "armchair",
+      "pos": "noun"
+    },
+    {
+      "tr": "kanepe",
+      "en": "sofa, couch",
+      "pos": "noun"
+    },
+    {
+      "tr": "lamba",
+      "en": "lamp",
+      "pos": "noun"
+    },
+    {
+      "tr": "yalnız",
+      "en": "alone",
+      "pos": "adj"
+    },
+    {
+      "tr": "Alo?",
+      "en": "Hello? (on the phone)",
+      "pos": "interj"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u05-l04-e01",
+      "type": "mcq",
+      "points": ["gp-locative", "gp-var-yok"],
+      "context": [
+        {
+          "who": "Elif",
+          "tr": "Alo, Can? Neredesin?",
+          "en": "Hello, Can? Where are you?"
+        },
+        {
+          "who": "Can",
+          "tr": "Evdeyim. Sen?",
+          "en": "I'm at home. You?"
+        },
+        {
+          "who": "Elif",
+          "tr": "Ben ofisteyim. Ayşe de evde mi?",
+          "en": "I'm at the office. Is Ayşe at home too?"
+        },
+        {
+          "who": "Can",
+          "tr": "Hayır, evde kimse yok. Ben yalnızım.",
+          "en": "No, there's nobody at home. I'm alone."
+        }
+      ],
+      "question": "Is Ayşe at home?",
+      "options": ["No, Can is alone at home.", "Yes, she is at home with Can.", "No, she is at the office with Elif."],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Evde kimse yok. Ben yalnızım*: there's nobody at home, I'm alone."
+    },
+    {
+      "id": "a1-u05-l04-e02",
+      "type": "cloze",
+      "points": ["gp-locative", "gp-copula-present"],
+      "text": "Alo, Can? Nerede___?",
+      "en": "Hello, Can? Where are you?",
+      "blanks": [
+        {
+          "accept": ["sin"],
+          "reject": [
+            {
+              "answer": "sın",
+              "why": "The last vowel of *nerede* is e, so the ending is *-sin*."
+            },
+            {
+              "answer": "ysin",
+              "why": "The buffer y only comes before an ending that starts with a vowel. *-sin* starts with s: *neredesin*."
+            }
+          ]
+        }
+      ],
+      "explain": "*Nerede* (where) takes the ending of **to be** like any predicate: *Neredesin?*"
+    },
+    {
+      "id": "a1-u05-l04-e03",
+      "type": "match",
+      "pairs": [
+        ["salon", "living room"],
+        ["yatak", "bed"],
+        ["dolap", "cupboard"],
+        ["koltuk", "armchair"],
+        ["kanepe", "sofa"],
+        ["lamba", "lamp"]
+      ]
+    },
+    {
+      "id": "a1-u05-l04-e04",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-locative", "gp-consonant-assimilation", "gp-degil"],
+      "prompt": "The book is not in the living room, it is in the kitchen.",
+      "accept": ["Kitap salonda değil, mutfakta.", "Kitap salonda yok, mutfakta."]
+    },
+    {
+      "id": "a1-u05-l04-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Evde kimse yok, yalnızım.",
+      "en": "There is nobody at home, I am alone."
+    },
+    {
+      "id": "a1-u05-l04-e06",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-pronoun-n", "gp-locative"],
+      "prompt": "Telefon nerede? Orada, kanepede.",
+      "accept": [
+        "Where is the phone? Over there, on the sofa.",
+        "Where is the phone? There, on the sofa.",
+        "Where is the phone? [Over there|There], on the couch.",
+        "Where is the telephone? [Over there|There], on the [sofa|couch]."
+      ]
+    },
+    {
+      "id": "a1-u05-l04-e07",
+      "type": "wordbank",
+      "from": "en",
+      "points": ["gp-var-yok", "gp-bir-indefinite"],
+      "prompt": "There is a big sofa in the living room.",
+      "text": "Salonda büyük bir kanepe var.",
+      "answer": ["Salonda", "büyük", "bir", "kanepe", "var"],
+      "distractors": ["salon", "yok", "küçük"]
+    },
+    {
+      "id": "a1-u05-l04-e08",
+      "type": "cloze",
+      "points": ["gp-consonant-assimilation", "gp-question-mi"],
+      "text": "Anahtar dolap___ mı?",
+      "en": "Is the key in the cupboard?",
+      "blanks": [
+        {
+          "accept": ["ta"],
+          "reject": [
+            {
+              "answer": "da",
+              "why": "*Dolap* ends in p, a voiceless consonant, so the d becomes t: *dolapta*."
+            },
+            {
+              "answer": "te",
+              "why": "The last vowel of *dolap* is a: *-ta*, not *-te*."
+            }
+          ]
+        }
+      ],
+      "explain": "Voiceless p, back vowel a: *dolapta*. The p stays p before a consonant."
+    },
+    {
+      "id": "a1-u05-l04-e09",
+      "type": "conjugate",
+      "points": ["gp-locative", "gp-degil"],
+      "base": "evde değil",
+      "form": "copula-negative",
+      "label": "*evde* + **not**: I am not at home, you are not at home…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["evde değilim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["evde değilsin"]
+        },
+        {
+          "p": "biz",
+          "accept": ["evde değiliz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["evde değilsiniz"]
+        }
+      ],
+      "explain": "The locative stays on the place, and the ending of **to be** moves onto *değil*: *evde değilim*."
+    },
+    {
+      "id": "a1-u05-l04-e10",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-locative", "gp-question-mi"],
+      "prompt": "Is Selin at home?",
+      "accept": ["Selin evde mi?"]
+    },
+    {
+      "id": "a1-u05-l04-e11",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Yatakta mısın?",
+      "en": "Are you in bed?",
+      "options": ["Yatakta mısın?", "Yatakta mıyım?", "Yatakta mı?"],
+      "answer": 0
+    },
+    {
+      "id": "a1-u05-l04-e12",
+      "type": "mcq",
+      "points": ["gp-locative", "gp-de-also"],
+      "context": [
+        {
+          "who": "Ece",
+          "tr": "Alo, Murat? Neredesin?",
+          "en": "Hello, Murat? Where are you?"
+        },
+        {
+          "who": "Murat",
+          "tr": "Ofisteyim. Sen?",
+          "en": "I'm at the office. You?"
+        },
+        {
+          "who": "Ece",
+          "tr": "Ben de ofisteyim!",
+          "en": "I'm at the office too!"
+        }
+      ],
+      "question": "Where is Ece?",
+      "options": ["At the office too", "At home", "In the park"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Ben de ofisteyim*: I'm at the office **too**. *Ofis* ends in s, so the suffix is *-te*."
+    },
+    {
+      "id": "a1-u05-l04-e13",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-var-yok"],
+      "prompt": "Burada kimse yok mu?",
+      "accept": ["Is there nobody here?", "Is there no one here?", "Isn't there [anybody|anyone] here?", "Is [nobody|no one] here?"]
+    }
+  ]
+}

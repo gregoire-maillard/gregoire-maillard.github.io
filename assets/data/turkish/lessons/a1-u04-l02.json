@@ -1,0 +1,265 @@
+{
+  "id": "a1-u04-l02",
+  "unit": "a1-u04",
+  "order": 2,
+  "title": "Are you ready?",
+  "goal": "Ask yes-no questions with mI and answer them with evet, hayır and tabii.",
+  "points": ["gp-question-mi", "gp-answers"],
+  "intro": {
+    "text": "To ask a yes-no question, add *mı*, *mi*, *mu* or *mü* after the word, as a separate word: *Hazır mı?* (Is she ready?). The ending for **you** goes on it: *Hazır mısın?* (Are you ready?). Answer *Evet, hazırım* or *Hayır, hazır değilim*.",
+    "see": "gp-question-mi"
+  },
+  "vocab": [
+    {
+      "tr": "genç",
+      "en": "young",
+      "pos": "adj"
+    },
+    {
+      "tr": "yaşlı",
+      "en": "old (of people)",
+      "pos": "adj"
+    },
+    {
+      "tr": "açık",
+      "en": "open",
+      "pos": "adj"
+    },
+    {
+      "tr": "kapalı",
+      "en": "closed",
+      "pos": "adj"
+    },
+    {
+      "tr": "boş",
+      "en": "empty; free",
+      "pos": "adj"
+    },
+    {
+      "tr": "dolu",
+      "en": "full",
+      "pos": "adj"
+    },
+    {
+      "tr": "temiz",
+      "en": "clean",
+      "pos": "adj"
+    },
+    {
+      "tr": "doğru",
+      "en": "true, right, correct",
+      "pos": "adj"
+    },
+    {
+      "tr": "yanlış",
+      "en": "wrong",
+      "pos": "adj"
+    },
+    {
+      "tr": "tabii",
+      "en": "of course, sure",
+      "pos": "adv"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u04-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["genç", "young"],
+        ["yaşlı", "old"],
+        ["açık", "open"],
+        ["kapalı", "closed"],
+        ["doğru", "true"],
+        ["yanlış", "wrong"]
+      ]
+    },
+    {
+      "id": "a1-u04-l02-e02",
+      "type": "mcq",
+      "points": ["gp-question-mi"],
+      "question": "How do you ask **Are you ready?**",
+      "options": ["Hazır mısın?", "Hazır misin?", "Hazır musun?", "Hazırsın mı?"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "i follows e and i. The last vowel of *hazır* is ı, so the particle is *mı*.",
+        "2": "u follows o and u. After ı, the particle is *mı*.",
+        "3": "The ending for **you** goes on the particle, not on the adjective: *hazır mısın?*"
+      },
+      "explain": "*Hazır* ends in ı, so `mI` is *mı*, and *-sın* goes on it: *Hazır mısın?*"
+    },
+    {
+      "id": "a1-u04-l02-e03",
+      "type": "cloze",
+      "points": ["gp-question-mi"],
+      "text": "Bu çay sıcak ___, soğuk ___?",
+      "en": "Is this tea hot or cold?",
+      "blanks": [
+        {
+          "accept": ["mı"],
+          "reject": [
+            {
+              "answer": "mi",
+              "why": "The last vowel of *sıcak* is a, a back unrounded vowel, so the particle is *mı*."
+            },
+            {
+              "answer": "mu",
+              "why": "u follows o and u. After the a of *sıcak*, the particle is *mı*."
+            }
+          ]
+        },
+        {
+          "accept": ["mu"],
+          "reject": [
+            {
+              "answer": "mı",
+              "why": "Each particle copies the last vowel of the word before it: *soğuk* ends in u, so *mu*."
+            },
+            {
+              "answer": "mü",
+              "why": "u in *soğuk* is a back vowel, so the particle is *mu*, not *mü*."
+            }
+          ]
+        }
+      ],
+      "hint": "Look at the last vowel of *sıcak*, then of *soğuk*.",
+      "explain": "Each particle follows the word right before it: *sıcak mı*, *soğuk mu*. Two questions side by side ask **or**."
+    },
+    {
+      "id": "a1-u04-l02-e04",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-question-mi"],
+      "prompt": "Is the door open?",
+      "accept": ["Kapı açık mı?"],
+      "reject": [
+        {
+          "answer": "Kapı açıkmı?",
+          "why": "The question particle is written as a separate word: *açık mı*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u04-l02-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Hazır mısınız?",
+      "en": "Are you ready?"
+    },
+    {
+      "id": "a1-u04-l02-e06",
+      "type": "mcq",
+      "points": ["gp-answers", "gp-degil"],
+      "context": [
+        {
+          "who": "Elif",
+          "tr": "Doktor musunuz?",
+          "en": "Are you a doctor?"
+        },
+        {
+          "who": "Murat",
+          "tr": "Hayır, doktor değilim. Hemşireyim.",
+          "en": "No, I'm not a doctor. I'm a nurse."
+        }
+      ],
+      "question": "Is Murat a doctor?",
+      "options": ["No, he is a nurse.", "Yes, he is a doctor.", "No, he is a teacher."],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Hayır, doktor değilim*: no, I'm not a doctor. *Hemşireyim*: I'm a nurse."
+    },
+    {
+      "id": "a1-u04-l02-e07",
+      "type": "conjugate",
+      "points": ["gp-question-mi"],
+      "base": "genç",
+      "form": "copula-question",
+      "label": "*genç* + `mI`: am I young?, are you young?…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["genç miyim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["genç misin"]
+        },
+        {
+          "p": "o",
+          "accept": ["genç mi"]
+        },
+        {
+          "p": "biz",
+          "accept": ["genç miyiz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["genç misiniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["gençler mi", "genç mi"]
+        }
+      ],
+      "explain": "*Genç* ends in e, so the particle is *mi*, and the endings go on it, with a buffer y before a vowel: *miyim*, *miyiz*. **They** keeps `-lAr` on the word: *gençler mi*."
+    },
+    {
+      "id": "a1-u04-l02-e08",
+      "type": "translate",
+      "from": "tr",
+      "prompt": "Bu doğru mu?",
+      "accept": ["Is this true?", "Is [that|it] true?", "Is [this|that|it] [right|correct]?"]
+    },
+    {
+      "id": "a1-u04-l02-e09",
+      "type": "wordbank",
+      "from": "en",
+      "points": ["gp-question-mi"],
+      "prompt": "Is the box empty?",
+      "text": "Kutu boş mu?",
+      "answer": ["Kutu", "boş", "mu"],
+      "distractors": ["mı", "dolu", "musun"]
+    },
+    {
+      "id": "a1-u04-l02-e10",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-question-mi"],
+      "prompt": "Is the table clean?",
+      "accept": ["Masa temiz mi?"]
+    },
+    {
+      "id": "a1-u04-l02-e11",
+      "type": "mcq",
+      "points": ["gp-answers", "gp-degil"],
+      "question": "Someone asks *Hazır mısın?* Which answer means **No, I'm not ready**?",
+      "options": ["Hayır, hazır değilim.", "Evet, hazırım.", "Hayır, hazırım.", "Tabii, hazırım."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Evet, hazırım* means **yes, I'm ready**.",
+        "2": "*Hazırım* means **I'm ready**, so it contradicts *hayır*. Use *değilim*.",
+        "3": "*Tabii* means **of course**: this answer says yes."
+      },
+      "explain": "*Hayır* (no), then the negative with *değil*: *hazır değilim*."
+    },
+    {
+      "id": "a1-u04-l02-e12",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Ayşe evli mi?",
+      "en": "Is Ayşe married?",
+      "options": ["Ayşe evli mi?", "Ayşe evli değil.", "Ayşe de evli."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u04-l02-e13",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-answers"],
+      "prompt": "Tabii, kapı açık.",
+      "accept": ["Of course, the door is open.", "[Sure|Certainly], the door is open."]
+    }
+  ]
+}

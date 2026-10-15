@@ -1,0 +1,211 @@
+{
+  "id": "a1-u05-l03",
+  "unit": "a1-u05",
+  "order": 3,
+  "title": "In Istanbul, over there",
+  "goal": "Put suffixes on names with an apostrophe, and use onda, bunda, orada and şurada.",
+  "points": ["gp-apostrophe", "gp-pronoun-n"],
+  "intro": {
+    "text": "On names of people, cities and countries, the suffix follows an apostrophe: *İstanbul'da*, *Ayşe'de*. Common nouns take none: *şehirde*. And *bu*, *şu*, *o* add an n before a case ending: *bunda*, *onda*.",
+    "see": "gp-apostrophe"
+  },
+  "vocab": [
+    {
+      "tr": "şehir",
+      "en": "city",
+      "pos": "noun"
+    },
+    {
+      "tr": "müze",
+      "en": "museum",
+      "pos": "noun"
+    },
+    {
+      "tr": "orada",
+      "en": "there, over there",
+      "pos": "adv"
+    },
+    {
+      "tr": "şurada",
+      "en": "there, right there (near you, or where I'm pointing)",
+      "pos": "adv"
+    },
+    {
+      "tr": "İstanbul",
+      "en": "Istanbul",
+      "pos": "noun"
+    },
+    {
+      "tr": "Ankara",
+      "en": "Ankara",
+      "pos": "noun"
+    },
+    {
+      "tr": "İzmir",
+      "en": "Izmir",
+      "pos": "noun"
+    },
+    {
+      "tr": "Londra",
+      "en": "London",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u05-l03-e01",
+      "type": "mcq",
+      "points": ["gp-apostrophe"],
+      "question": "How do you write **in Istanbul**?",
+      "options": ["İstanbul'da", "İstanbulda", "İstanbul'de"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "City names are proper nouns: the suffix follows an apostrophe.",
+        "2": "The last vowel of *İstanbul* is u, a back vowel, so the suffix is *-da*."
+      },
+      "explain": "Proper noun, apostrophe, then *-da*: *İstanbul'da*."
+    },
+    {
+      "id": "a1-u05-l03-e02",
+      "type": "cloze",
+      "points": ["gp-apostrophe", "gp-locative", "gp-consonant-assimilation"],
+      "text": "Elif Ankara'___, Can İzmir'___.",
+      "en": "Elif is in Ankara, Can is in Izmir.",
+      "blanks": [
+        {
+          "accept": ["da"],
+          "reject": [
+            {
+              "answer": "de",
+              "why": "The last vowel of *Ankara* is a: *-da*."
+            },
+            {
+              "answer": "ta",
+              "why": "*Ankara* ends in a vowel, so the d stays d: *Ankara'da*."
+            }
+          ]
+        },
+        {
+          "accept": ["de"],
+          "reject": [
+            {
+              "answer": "da",
+              "why": "The last vowel of *İzmir* is i, a front vowel: *-de*."
+            },
+            {
+              "answer": "te",
+              "why": "r is voiced, so the d stays d: *İzmir'de*."
+            }
+          ]
+        }
+      ],
+      "explain": "The apostrophe doesn't change the rules: *Ankara'da* (a, vowel), *İzmir'de* (i, voiced r)."
+    },
+    {
+      "id": "a1-u05-l03-e03",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-apostrophe", "gp-locative", "gp-copula-present"],
+      "prompt": "We are in London.",
+      "accept": ["Londra'dayız.", "Biz Londra'dayız."],
+      "explain": "*Londra* + apostrophe + *-da* + buffer *y* + *-ız*."
+    },
+    {
+      "id": "a1-u05-l03-e04",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Mehmet Bey Ankara'da değil.",
+      "en": "Mehmet is not in Ankara."
+    },
+    {
+      "id": "a1-u05-l03-e05",
+      "type": "mcq",
+      "points": ["gp-pronoun-n"],
+      "question": "Which word means **in it** or **on it**?",
+      "options": ["onda", "oda", "oda da"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Oda* means **room**. *O* adds an n before a case ending: *onda*.",
+        "2": "*Oda da* means **the room too**."
+      },
+      "explain": "*o* + n + *-da*: *onda*. The n keeps it apart from *oda* (room)."
+    },
+    {
+      "id": "a1-u05-l03-e06",
+      "type": "morph",
+      "points": ["gp-pronoun-n", "gp-locative"],
+      "base": "bu",
+      "gloss": "in this",
+      "parts": ["bu", "n", "da"],
+      "distractors": ["de", "y", "ta"],
+      "result": "bunda",
+      "explain": "*Bu*, *şu* and *o* add an n before a case ending: *bunda*, *şunda*, *onda*."
+    },
+    {
+      "id": "a1-u05-l03-e07",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-pronoun-n", "gp-locative"],
+      "prompt": "Kitap orada, masada.",
+      "accept": ["The book is over there, on the table.", "The book is there, on the table."]
+    },
+    {
+      "id": "a1-u05-l03-e08",
+      "type": "wordbank",
+      "from": "en",
+      "prompt": "Where is the museum?",
+      "text": "Müze nerede?",
+      "answer": ["Müze", "nerede"],
+      "distractors": ["müzede", "burada", "var"]
+    },
+    {
+      "id": "a1-u05-l03-e09",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-var-yok", "gp-locative"],
+      "prompt": "Is there a museum in this city?",
+      "accept": ["Bu şehirde bir müze var mı?", "Bu şehirde müze var mı?"],
+      "explain": "*Şehir* is a common noun, so the suffix goes straight on: *şehirde*, no apostrophe."
+    },
+    {
+      "id": "a1-u05-l03-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Kalem şurada.",
+      "en": "The pen is right there.",
+      "options": ["Kalem şurada.", "Kalem burada.", "Kalem orada."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u05-l03-e11",
+      "type": "mcq",
+      "points": ["gp-apostrophe"],
+      "question": "Which is spelled correctly?",
+      "options": ["Türkiye'de", "Türkiyede", "şehir'de"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Türkiye* is a proper noun: put an apostrophe before the suffix.",
+        "2": "*Şehir* is a common noun: no apostrophe, *şehirde*."
+      },
+      "explain": "Names of people, places and countries take an apostrophe before a suffix; common nouns don't."
+    },
+    {
+      "id": "a1-u05-l03-e12",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-apostrophe", "gp-var-yok"],
+      "prompt": "İstanbul'da güzel müzeler var.",
+      "accept": ["There are beautiful museums in Istanbul.", "There are [nice|lovely] museums in Istanbul.", "Istanbul has [beautiful|nice|lovely] museums."]
+    },
+    {
+      "id": "a1-u05-l03-e13",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Bunda ne var?",
+      "en": "What is in this?"
+    }
+  ]
+}

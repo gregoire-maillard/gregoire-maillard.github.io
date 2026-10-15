@@ -1,0 +1,240 @@
+{
+  "id": "a1-u05-l01",
+  "unit": "a1-u05",
+  "order": 1,
+  "title": "At home, at school",
+  "goal": "Say where someone is with -de, -da, -te and -ta.",
+  "points": ["gp-locative", "gp-consonant-assimilation"],
+  "intro": {
+    "text": "Add `-de` or `-da` to a noun to say where: *evde* (at home), *okulda* (at school). After a voiceless consonant (f, s, t, k, ç, ş, h, p) the d becomes t: *parkta*, *ofiste*.",
+    "see": "gp-locative"
+  },
+  "vocab": [
+    {
+      "tr": "oda",
+      "en": "room",
+      "pos": "noun"
+    },
+    {
+      "tr": "mutfak",
+      "en": "kitchen",
+      "pos": "noun"
+    },
+    {
+      "tr": "banyo",
+      "en": "bathroom",
+      "pos": "noun"
+    },
+    {
+      "tr": "bahçe",
+      "en": "garden, yard",
+      "pos": "noun"
+    },
+    {
+      "tr": "ofis",
+      "en": "office",
+      "pos": "noun"
+    },
+    {
+      "tr": "park",
+      "en": "park",
+      "pos": "noun"
+    },
+    {
+      "tr": "sınıf",
+      "en": "classroom; class",
+      "pos": "noun"
+    },
+    {
+      "tr": "nerede",
+      "en": "where",
+      "pos": "adv"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u05-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["oda", "room"],
+        ["mutfak", "kitchen"],
+        ["banyo", "bathroom"],
+        ["bahçe", "garden"],
+        ["ofis", "office"],
+        ["nerede", "where"]
+      ]
+    },
+    {
+      "id": "a1-u05-l01-e02",
+      "type": "mcq",
+      "points": ["gp-locative", "gp-consonant-assimilation"],
+      "question": "How do you say **at school**?",
+      "options": ["okulda", "okulde", "okulta"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "The last vowel of *okul* is u, a back vowel, so the suffix takes a.",
+        "2": "The t form only comes after a voiceless consonant, and l is voiced."
+      },
+      "explain": "Back vowel u, voiced l: *okul* + *-da* = *okulda*."
+    },
+    {
+      "id": "a1-u05-l01-e03",
+      "type": "cloze",
+      "points": ["gp-locative", "gp-consonant-assimilation"],
+      "text": "Ali park___, Ayşe ev___.",
+      "en": "Ali is in the park, Ayşe is at home.",
+      "blanks": [
+        {
+          "accept": ["ta"],
+          "reject": [
+            {
+              "answer": "da",
+              "why": "*k* is voiceless, so the d turns into t: *parkta*."
+            },
+            {
+              "answer": "te",
+              "why": "The last vowel of *park* is a, a back vowel: *-ta*, not *-te*."
+            }
+          ]
+        },
+        {
+          "options": ["de", "da", "te"],
+          "answer": 0
+        }
+      ],
+      "hint": "Is the last sound of *park* voiced or voiceless?",
+      "explain": "*Park* ends in voiceless k → *-ta*; *ev* has a front vowel and ends in voiced v → *-de*."
+    },
+    {
+      "id": "a1-u05-l01-e04",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-locative", "gp-copula-present"],
+      "prompt": "I am at home.",
+      "accept": ["Evdeyim.", "Ben evdeyim."],
+      "reject": [
+        {
+          "answer": "Evdesin.",
+          "why": "*Evdesin* means **you are** at home. **I am** takes *-yim*."
+        },
+        {
+          "answer": "Evdeim.",
+          "why": "*Evde* ends in a vowel, so a buffer y comes before the ending: *evdeyim*."
+        }
+      ],
+      "explain": "*ev* + *-de* (at home) + *-yim* (I am)."
+    },
+    {
+      "id": "a1-u05-l01-e05",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-locative", "gp-consonant-assimilation"],
+      "prompt": "Mehmet ofiste.",
+      "accept": ["Mehmet is at the office.", "Mehmet is in the office."]
+    },
+    {
+      "id": "a1-u05-l01-e06",
+      "type": "wordbank",
+      "from": "en",
+      "prompt": "Where is the school?",
+      "text": "Okul nerede?",
+      "answer": ["Okul", "nerede"],
+      "distractors": ["ev", "okulda", "neredesin"]
+    },
+    {
+      "id": "a1-u05-l01-e07",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Öğretmen sınıfta.",
+      "en": "The teacher is in the classroom."
+    },
+    {
+      "id": "a1-u05-l01-e08",
+      "type": "conjugate",
+      "points": ["gp-locative", "gp-consonant-assimilation", "gp-copula-present"],
+      "base": "mutfakta",
+      "form": "copula-present",
+      "label": "*mutfakta* (in the kitchen) + **to be**: I am in the kitchen, you are in the kitchen…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["mutfaktayım"]
+        },
+        {
+          "p": "sen",
+          "accept": ["mutfaktasın"]
+        },
+        {
+          "p": "o",
+          "accept": ["mutfakta", "mutfaktadır"]
+        },
+        {
+          "p": "biz",
+          "accept": ["mutfaktayız"]
+        },
+        {
+          "p": "siz",
+          "accept": ["mutfaktasınız"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["mutfaktalar", "mutfakta"]
+        }
+      ],
+      "explain": "*Mutfakta* ends in a, so the endings take ı: *-yım, -sın, -yız, -sınız*, with a buffer y before a vowel."
+    },
+    {
+      "id": "a1-u05-l01-e09",
+      "type": "morph",
+      "points": ["gp-locative", "gp-consonant-assimilation"],
+      "base": "kitap",
+      "gloss": "in the book",
+      "parts": ["kitap", "ta"],
+      "distractors": ["kitab", "da", "te"],
+      "result": "kitapta",
+      "explain": "p is voiceless, so the suffix is *-ta*. A suffix that starts with a consonant leaves the stem as it is: *kitapta*."
+    },
+    {
+      "id": "a1-u05-l01-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Evdeyiz.",
+      "en": "We are at home.",
+      "options": ["Evdeyiz.", "Evdeyim.", "Evdesiniz."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u05-l01-e11",
+      "type": "mcq",
+      "points": ["gp-locative", "gp-copula-present"],
+      "question": "What does *Bahçedeyiz* mean?",
+      "options": ["We are in the garden.", "They are in the garden.", "Is it in the garden?"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*bahçe* + *-de* + buffer *y* + *-iz*: we are in the garden."
+    },
+    {
+      "id": "a1-u05-l01-e12",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-locative", "gp-consonant-assimilation", "gp-question-mi"],
+      "prompt": "Are you in the office?",
+      "accept": ["Ofiste misin?", "Ofiste misiniz?", "Sen ofiste misin?", "Siz ofiste misiniz?"],
+      "reject": [
+        {
+          "answer": "Ofisde misin?",
+          "why": "*Ofis* ends in s, a voiceless consonant, so the d becomes t: *ofiste*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u05-l01-e13",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-locative", "gp-degil"],
+      "prompt": "Ayşe mutfakta değil, bahçede.",
+      "accept": ["Ayşe is not in the kitchen, she is in the garden.", "Ayşe is in the garden, not in the kitchen.", "Ayşe is not in the kitchen but in the garden."]
+    }
+  ]
+}

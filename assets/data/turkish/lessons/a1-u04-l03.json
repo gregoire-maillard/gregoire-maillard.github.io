@@ -1,0 +1,226 @@
+{
+  "id": "a1-u04-l03",
+  "unit": "a1-u04",
+  "order": 3,
+  "title": "Who is this?",
+  "goal": "Ask who, what, how, which and why, and answer with because.",
+  "points": ["gp-question-words"],
+  "intro": {
+    "text": "Question words make a sentence a question on their own, so they never take `mI`: *Bu kim?* (Who is this?), *Nasılsın?* (How are you?). Like other words, they can carry the ending of **to be**: *Sen kimsin?* (Who are you?).",
+    "see": "gp-question-words"
+  },
+  "vocab": [
+    {
+      "tr": "kim",
+      "en": "who",
+      "pos": "pron"
+    },
+    {
+      "tr": "nasıl",
+      "en": "how; what … like",
+      "pos": "adv"
+    },
+    {
+      "tr": "kaç",
+      "en": "how many, how much",
+      "pos": "det"
+    },
+    {
+      "tr": "hangi",
+      "en": "which",
+      "pos": "det"
+    },
+    {
+      "tr": "neden",
+      "en": "why",
+      "pos": "adv"
+    },
+    {
+      "tr": "niçin",
+      "en": "why (a little formal)",
+      "pos": "adv"
+    },
+    {
+      "tr": "niye",
+      "en": "why (casual)",
+      "pos": "adv"
+    },
+    {
+      "tr": "çünkü",
+      "en": "because",
+      "pos": "conj"
+    },
+    {
+      "tr": "Kaç kişisiniz?",
+      "en": "How many of you are there? (at a restaurant)",
+      "pos": "phrase"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u04-l03-e01",
+      "type": "match",
+      "pairs": [
+        ["kim", "who"],
+        ["ne", "what"],
+        ["nasıl", "how"],
+        ["hangi", "which"],
+        ["neden", "why"],
+        ["çünkü", "because"]
+      ]
+    },
+    {
+      "id": "a1-u04-l03-e02",
+      "type": "mcq",
+      "points": ["gp-question-words"],
+      "question": "How do you ask **Who is this?**",
+      "options": ["Bu kim?", "Bu kim mi?", "Bu ne?", "Bu nasıl?"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "A question word already makes a question, so it never takes `mI`.",
+        "2": "*Bu ne?* asks **what** this is.",
+        "3": "*Bu nasıl?* asks **how** this is, or what it is like."
+      },
+      "explain": "*Kim* means **who**. With a question word, there is no `mI`: *Bu kim?*"
+    },
+    {
+      "id": "a1-u04-l03-e03",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-question-words", "gp-copula-present"],
+      "prompt": "Who are you?",
+      "accept": ["Sen kimsin?", "Kimsin?", "Siz kimsiniz?", "Kimsiniz?"],
+      "reject": [
+        {
+          "answer": "Kim misin?",
+          "why": "A question word never takes `mI`. The ending goes on *kim* itself: *Kimsin?*"
+        }
+      ]
+    },
+    {
+      "id": "a1-u04-l03-e04",
+      "type": "cloze",
+      "points": ["gp-question-words", "gp-harmony-4way"],
+      "text": "Nasıl___? İyiyim, teşekkürler.",
+      "en": "How are you (polite)? I'm fine, thanks.",
+      "blanks": [
+        {
+          "accept": ["sınız"],
+          "reject": [
+            {
+              "answer": "siniz",
+              "why": "The last vowel of *nasıl* is ı, so the ending is *-sınız*."
+            },
+            {
+              "answer": "sın",
+              "why": "*-sın* is for one person you know well. The polite **you** is *-sınız*."
+            }
+          ]
+        }
+      ],
+      "explain": "The ending for *siz* is `-sInIz`, with ı after *nasıl*: *Nasılsınız?*"
+    },
+    {
+      "id": "a1-u04-l03-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Hangi kitap yeni?",
+      "en": "Which book is new?"
+    },
+    {
+      "id": "a1-u04-l03-e06",
+      "type": "mcq",
+      "points": ["gp-question-words"],
+      "question": "Which question means **Why are you sad?**",
+      "options": ["Neden üzgünsün?", "Kim üzgün?", "Hangi öğrenci üzgün?"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Kim üzgün?* means **who is sad?**",
+        "2": "*Hangi öğrenci üzgün?* means **which student is sad?**"
+      },
+      "explain": "*Neden* means **why**. *Niye* and *niçin* mean the same: *Niye üzgünsün?*"
+    },
+    {
+      "id": "a1-u04-l03-e07",
+      "type": "translate",
+      "from": "tr",
+      "prompt": "Niye kızgınsın?",
+      "accept": ["Why are you angry?", "Why are you mad?"]
+    },
+    {
+      "id": "a1-u04-l03-e08",
+      "type": "wordbank",
+      "from": "en",
+      "points": ["gp-question-words"],
+      "prompt": "Which pen is red?",
+      "text": "Hangi kalem kırmızı?",
+      "answer": ["Hangi", "kalem", "kırmızı"],
+      "distractors": ["kim", "kalemler", "mi"]
+    },
+    {
+      "id": "a1-u04-l03-e09",
+      "type": "mcq",
+      "points": ["gp-question-words"],
+      "context": [
+        {
+          "who": "Garson",
+          "tr": "Kaç kişisiniz?",
+          "en": "How many of you are there?"
+        }
+      ],
+      "question": "What is the waiter asking?",
+      "options": ["How many people are in your group", "Who you are", "How you are"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Kaç* asks **how many**. *Kaç kişisiniz?* is what a waiter asks at the door of a restaurant."
+    },
+    {
+      "id": "a1-u04-l03-e10",
+      "type": "translate",
+      "from": "en",
+      "points": ["gp-question-words"],
+      "prompt": "Why are you sad?",
+      "accept": ["Neden üzgünsün?", "[Niye|Niçin] üzgünsün?", "[Neden|Niye|Niçin] üzgünsünüz?", "Sen [neden|niye|niçin] üzgünsün?", "Siz [neden|niye|niçin] üzgünsünüz?"]
+    },
+    {
+      "id": "a1-u04-l03-e11",
+      "type": "cloze",
+      "points": ["gp-question-words"],
+      "text": "Öğretmen ___? Ayşe Hanım.",
+      "en": "Who is the teacher? Ayşe Hanım.",
+      "blanks": [
+        {
+          "options": ["kim", "ne", "nasıl"],
+          "answer": 0
+        }
+      ],
+      "explain": "*Kim* asks **who**. It stands where the answer goes, at the end: *Öğretmen kim? Öğretmen Ayşe Hanım.*"
+    },
+    {
+      "id": "a1-u04-l03-e12",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Neden?",
+      "en": "Why?",
+      "options": ["Neden?", "Ne?", "Kim?"],
+      "answer": 0
+    },
+    {
+      "id": "a1-u04-l03-e13",
+      "type": "translate",
+      "from": "tr",
+      "prompt": "Yeni öğretmen nasıl?",
+      "accept": ["How is the new teacher?", "What is the new teacher like?"]
+    },
+    {
+      "id": "a1-u04-l03-e14",
+      "type": "translate",
+      "from": "tr",
+      "points": ["gp-question-words"],
+      "prompt": "Neden yorgunsun? Çünkü hastayım.",
+      "accept": ["Why are you tired? Because I am ill.", "Why are you tired? Because I am sick."]
+    }
+  ]
+}

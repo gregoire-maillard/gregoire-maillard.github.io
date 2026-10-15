@@ -258,8 +258,11 @@ test("rich: links resolve per PROJECT.md 3; unwritten targets are plain text, co
   assert.equal(TRK.rich("[guide](a1-u02-grammar)", o), '<a href="/turkishguide.html?id=a1-u02-grammar">guide</a>');
   assert.equal(TRK.rich("[story](a1-u03-culture)", o), '<a href="/turkishguide.html?id=a1-u03-culture">story</a>');
   assert.equal(TRK.rich("[TDK](https://sozluk.gov.tr/)", o), '<a href="https://sozluk.gov.tr/" target="_blank" rel="noopener">TDK</a>');
-  assert.match(TRK.rich("[the locative](gp-locative)", o), /^<span class="trk-soon">the locative <small>\(coming soon\)<\/small><\/span>$/);
-  assert.match(TRK.rich("[unit 5](a1-u05)", o), /trk-soon/);
+  // unwritten targets come from the index, so the test keeps working as batches are added
+  const soonPoint = Object.keys(INDEX.points).find(k => !INDEX.points[k].ready);
+  const soonUnit = INDEX.levels.flatMap(l => l.units).find(u => u.status === "planned");
+  if (soonPoint) assert.match(TRK.rich(`[the point](${soonPoint})`, o), /^<span class="trk-soon">the point <small>\(coming soon\)<\/small><\/span>$/);
+  if (soonUnit) assert.match(TRK.rich(`[next unit](${soonUnit.id})`, o), /trk-soon/);
   assert.match(TRK.rich("[flashcards](cards)", o), INDEX.flashcards.count ? /href="\/turkishcards.html"/ : /trk-soon/);
   assert.equal(TRK.rich("[*evde*](a1-u01)", o), '<a href="/turkish.html#a1-u01"><i lang="tr">evde</i></a>');
   assert.equal(TRK.href("nowhere", INDEX), null);
@@ -658,8 +661,12 @@ test("path: lessons open one after another; the jump test covers what's not done
   assert.equal(TRK.path.nextLesson(INDEX, course).id, "a1-u01-l01");
   assert.equal(TRK.path.unitState(INDEX, course, st, "a1-u01").status, "open");
   assert.equal(TRK.path.unitState(INDEX, course, st, "a1-u02").status, "locked");
-  assert.equal(TRK.path.unitState(INDEX, course, st, "a1-u05").status, "planned");
-  assert.equal(TRK.path.nextPlanned(INDEX).id, "a1-u04");
+  // the first planned unit moves on as batches are added, so it is read from the index
+  const planned = INDEX.levels.flatMap(l => l.units).find(u => u.status === "planned");
+  if (planned) {
+    assert.equal(TRK.path.unitState(INDEX, course, st, planned.id).status, "planned");
+    assert.equal(TRK.path.nextPlanned(INDEX).id, planned.id);
+  }
   assert.deepEqual(TRK.path.testLessons(INDEX, course, "a1-u03").length, 8);
   for (const l of ["a1-u01-l01", "a1-u01-l02", "a1-u01-l03", "a1-u01-l04"]) TRK.progress.finishLesson(course, st, l, { correct: 10, counted: 12 }, NOW);
   assert.equal(TRK.path.lessonUnlocked(INDEX, course, st, "a1-u02-l01"), true, "a unit's first lesson opens after the previous unit's last");
