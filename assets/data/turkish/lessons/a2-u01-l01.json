@@ -1,0 +1,266 @@
+{
+  "id": "a2-u01-l01",
+  "unit": "a2-u01",
+  "order": 1,
+  "title": "What did you do at the weekend?",
+  "goal": "Say what you did with the past tense -DI: geldim, yaptık, gittiler.",
+  "points": ["gp-past-di"],
+  "intro": {
+    "text": "Add `-DI` and an ending to the stem to say what happened: *gel-* → *geldim* (I came), *yap-* → *yaptık* (we did). After f, s, t, k, ç, ş, h, p the d becomes t: *gittim*, *içtik*. The vowel follows four-way harmony: *geldi, aldı, okudu, gördü*.",
+    "see": "gp-past-di"
+  },
+  "vocab": [
+    {
+      "tr": "dün",
+      "en": "yesterday",
+      "pos": "adv"
+    },
+    {
+      "tr": "hafta sonu",
+      "en": "weekend; at the weekend",
+      "pos": "noun"
+    },
+    {
+      "tr": "kahvaltı",
+      "en": "breakfast",
+      "pos": "noun"
+    },
+    {
+      "tr": "gezmek",
+      "en": "to go around, to visit (a place), to stroll",
+      "pos": "verb"
+    },
+    {
+      "tr": "uyumak",
+      "en": "to sleep",
+      "pos": "verb"
+    },
+    {
+      "tr": "yüzmek",
+      "en": "to swim",
+      "pos": "verb"
+    },
+    {
+      "tr": "pişirmek",
+      "en": "to cook",
+      "pos": "verb"
+    },
+    {
+      "tr": "temizlemek",
+      "en": "to clean",
+      "pos": "verb"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u01-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["dün", "yesterday"],
+        ["kahvaltı", "breakfast"],
+        ["gezmek", "to go around"],
+        ["uyumak", "to sleep"],
+        ["yüzmek", "to swim"],
+        ["temizlemek", "to clean"]
+      ]
+    },
+    {
+      "id": "a2-u01-l01-e02",
+      "type": "mcq",
+      "points": ["gp-past-di"],
+      "question": "How do you say **I came**?",
+      "options": ["geldim", "geliyorum", "geldin", "gelmek"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Geliyorum* is the present continuous: **I am coming**.",
+        "2": "*Geldin* is **you came**: *-n* is the ending for *sen*.",
+        "3": "*Gelmek* is the dictionary form, **to come**."
+      },
+      "explain": "*gel-* + *-di* + *-m*: the past tense with the ending for *ben*."
+    },
+    {
+      "id": "a2-u01-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-past-di"],
+      "base": "gelmek",
+      "form": "past",
+      "label": "*gelmek* (to come) in the past: I came, you came…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["geldim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["geldin"]
+        },
+        {
+          "p": "o",
+          "accept": ["geldi"]
+        },
+        {
+          "p": "biz",
+          "accept": ["geldik"]
+        },
+        {
+          "p": "siz",
+          "accept": ["geldiniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["geldiler"]
+        }
+      ],
+      "explain": "The past takes the endings *-m, -n, -∅, -k, -nIz, -lAr*. **We** is *-k*: *geldik*."
+    },
+    {
+      "id": "a2-u01-l01-e04",
+      "type": "cloze",
+      "points": ["gp-past-di"],
+      "text": "Dün akşam kitap oku___.",
+      "en": "Yesterday evening I read a book.",
+      "blanks": [
+        {
+          "accept": ["dum"],
+          "reject": [
+            {
+              "answer": "dim",
+              "why": "The last vowel of *oku-* is u, so the suffix takes u: *okudum*."
+            },
+            {
+              "answer": "tum",
+              "why": "t only comes after a voiceless consonant, and *oku-* ends in a vowel."
+            },
+            {
+              "answer": "yorum",
+              "why": "*Okuyorum* is **I am reading**. Yesterday needs the past: *okudum*."
+            }
+          ]
+        }
+      ],
+      "explain": "*oku-* + *-du* + *-m*: the vowel follows the u of the stem."
+    },
+    {
+      "id": "a2-u01-l01-e05",
+      "type": "cloze",
+      "points": ["gp-past-di", "gp-consonant-assimilation"],
+      "text": "Dün ne yap___?",
+      "en": "What did you do yesterday?",
+      "blanks": [
+        {
+          "accept": ["tın", "tınız"],
+          "reject": [
+            {
+              "answer": "dın",
+              "why": "*p* is voiceless, so the d turns into t: *yaptın*."
+            },
+            {
+              "answer": "tin",
+              "why": "The last vowel of *yap-* is a, a back vowel: *-tın*."
+            }
+          ]
+        }
+      ],
+      "hint": "Is the last sound of *yap-* voiced or voiceless?",
+      "explain": "Voiceless p → t; back vowel a → ı; *-n* for **you**: *yaptın*."
+    },
+    {
+      "id": "a2-u01-l01-e06",
+      "type": "translate",
+      "points": ["gp-past-di"],
+      "from": "en",
+      "prompt": "We went to the cinema yesterday.",
+      "accept": ["Dün sinemaya gittik.", "Biz dün sinemaya gittik.", "Sinemaya dün gittik."],
+      "reject": [
+        {
+          "answer": "Dün sinemaya gidtik.",
+          "why": "`-DI` starts with a consonant, so *git-* keeps its t, and after t the suffix is *-ti*: *gittik*."
+        },
+        {
+          "answer": "Dün sinemaya gittiyiz.",
+          "why": "In the past, **we** is *-k*: *gittik*."
+        },
+        {
+          "answer": "Dün sinemaya gidiyoruz.",
+          "why": "That's the present continuous. **Went** is the past: *gittik*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u01-l01-e07",
+      "type": "translate",
+      "points": ["gp-past-di"],
+      "from": "tr",
+      "prompt": "Ayşe dün çok uyudu.",
+      "accept": ["Ayşe slept a lot yesterday.", "Ayşe slept for a long time yesterday.", "Yesterday Ayşe slept [a lot|for a long time]."]
+    },
+    {
+      "id": "a2-u01-l01-e08",
+      "type": "listen",
+      "points": ["gp-past-di"],
+      "mode": "type",
+      "tr": "Hafta sonu İzmir'i gezdik.",
+      "en": "At the weekend we went around Izmir."
+    },
+    {
+      "id": "a2-u01-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-past-di", "gp-de-also"],
+      "from": "en",
+      "prompt": "I cooked, and Can cleaned the house.",
+      "text": "Ben yemek pişirdim, Can da evi temizledi.",
+      "answer": ["Ben", "yemek", "pişirdim", "Can", "da", "evi", "temizledi"],
+      "distractors": ["pişiriyorum", "temizledik", "ev"],
+      "accept": ["Yemek pişirdim, Can da evi temizledi."]
+    },
+    {
+      "id": "a2-u01-l01-e10",
+      "type": "morph",
+      "points": ["gp-past-di"],
+      "base": "içmek",
+      "gloss": "we drank",
+      "parts": ["iç", "ti", "k"],
+      "distractors": ["di", "tı", "iz"],
+      "result": "içtik",
+      "explain": "ç is voiceless, so `-DI` is *-ti*; **we** is *-k*: *içtik*."
+    },
+    {
+      "id": "a2-u01-l01-e11",
+      "type": "translate",
+      "points": ["gp-past-di"],
+      "from": "tr",
+      "prompt": "Dün akşam Elif yemek pişirdi.",
+      "accept": [
+        "Elif cooked yesterday evening.",
+        "Elif cooked [dinner|a meal] [yesterday evening|last night].",
+        "Elif cooked last night.",
+        "[Yesterday evening|Last night] Elif cooked (dinner|a meal)."
+      ]
+    },
+    {
+      "id": "a2-u01-l01-e12",
+      "type": "listen",
+      "points": ["gp-past-di"],
+      "mode": "choose",
+      "tr": "Hafta sonu yüzdük.",
+      "en": "We swam at the weekend.",
+      "options": ["Hafta sonu yüzdük.", "Hafta sonu yüzdün.", "Hafta sonu yüzüyoruz."],
+      "answer": 0
+    },
+    {
+      "id": "a2-u01-l01-e13",
+      "type": "mcq",
+      "points": ["gp-past-di"],
+      "question": "Which sentence means **They had breakfast at home**?",
+      "options": ["Evde kahvaltı yaptılar.", "Evde kahvaltı yaptık.", "Evde kahvaltı yapıyorlar."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Yaptık* is **we** had.",
+        "2": "*Yapıyorlar* is the present continuous: **they are having**."
+      },
+      "explain": "*yap-* + *-tı* + *-lar*: **they** did. Breakfast is *kahvaltı yapmak* or *kahvaltı etmek*."
+    }
+  ]
+}

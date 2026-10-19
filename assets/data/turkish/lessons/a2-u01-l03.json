@@ -1,0 +1,248 @@
+{
+  "id": "a2-u01-l03",
+  "unit": "a2-u01",
+  "order": 3,
+  "title": "I'm hungry",
+  "goal": "Choose between the two sets of personal endings, and say how you feel with acıktım and yoruldum.",
+  "points": ["gp-person-endings-types", "gp-past-di", "gp-past-di-negative-question"],
+  "intro": {
+    "text": "The past uses a second set of endings: *-m, -n, -∅, -k, -nIz, -lAr*. Compare *geliyoruz* and *geldik*, *geliyor musun?* and *geldin mi?* Some changes of state are said in the past: *Acıktım* (I'm hungry), *Yoruldum* (I'm tired).",
+    "see": "gp-person-endings-types"
+  },
+  "vocab": [
+    {
+      "tr": "acıkmak",
+      "en": "to get hungry",
+      "pos": "verb"
+    },
+    {
+      "tr": "susamak",
+      "en": "to get thirsty",
+      "pos": "verb"
+    },
+    {
+      "tr": "yorulmak",
+      "en": "to get tired",
+      "pos": "verb"
+    },
+    {
+      "tr": "geç kalmak",
+      "en": "to be late",
+      "pos": "verb"
+    },
+    {
+      "tr": "uyanmak",
+      "en": "to wake up",
+      "pos": "verb"
+    },
+    {
+      "tr": "doğmak",
+      "en": "to be born",
+      "pos": "verb"
+    },
+    {
+      "tr": "erken",
+      "en": "early",
+      "pos": "adv"
+    },
+    {
+      "tr": "geç",
+      "en": "late",
+      "pos": "adv"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u01-l03-e01",
+      "type": "mcq",
+      "points": ["gp-past-di"],
+      "question": "You've been walking all day. How do you say **I'm tired**?",
+      "options": ["Yoruldum.", "Yoruluyorum.", "Yoruldun."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Yoruluyorum* means **I'm getting tired**, still happening.",
+        "2": "*Yoruldun* is **you're tired**."
+      },
+      "explain": "*Yorulmak* is to get tired; once it has happened, you are tired: *Yoruldum*. *Yorgunum* says the same."
+    },
+    {
+      "id": "a2-u01-l03-e02",
+      "type": "match",
+      "pairs": [
+        ["acıkmak", "to get hungry"],
+        ["susamak", "to get thirsty"],
+        ["yorulmak", "to get tired"],
+        ["uyanmak", "to wake up"],
+        ["doğmak", "to be born"],
+        ["erken", "early"]
+      ]
+    },
+    {
+      "id": "a2-u01-l03-e03",
+      "type": "cloze",
+      "points": ["gp-person-endings-types"],
+      "text": "Şimdi çalışıyor___, dün de çalıştı___.",
+      "en": "We're working now, and we worked yesterday too.",
+      "blanks": [
+        {
+          "options": ["uz", "k", "ız"],
+          "answer": 0
+        },
+        {
+          "options": ["k", "uz", "ık"],
+          "answer": 0
+        }
+      ],
+      "explain": "`-(I)yor` takes type I endings: *çalışıyoruz*. `-DI` takes type II: *çalıştık*."
+    },
+    {
+      "id": "a2-u01-l03-e04",
+      "type": "conjugate",
+      "points": ["gp-past-di"],
+      "base": "acıkmak",
+      "form": "past",
+      "label": "*acıkmak* (to get hungry) in the past: I'm hungry, you're hungry…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["acıktım"]
+        },
+        {
+          "p": "sen",
+          "accept": ["acıktın"]
+        },
+        {
+          "p": "o",
+          "accept": ["acıktı"]
+        },
+        {
+          "p": "biz",
+          "accept": ["acıktık"]
+        },
+        {
+          "p": "siz",
+          "accept": ["acıktınız"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["acıktılar"]
+        }
+      ],
+      "explain": "k is voiceless, so *-tı*. *Acıktım* means **I've got hungry**, so **I'm hungry**."
+    },
+    {
+      "id": "a2-u01-l03-e05",
+      "type": "translate",
+      "points": ["gp-person-endings-types", "gp-past-di-negative-question"],
+      "from": "en",
+      "prompt": "Are you hungry?",
+      "accept": ["Acıktın mı?", "Acıktınız mı?", "Aç mısın?", "Aç mısınız?"],
+      "reject": [
+        {
+          "answer": "Acıktı mısın?",
+          "why": "With `-DI` the ending stays on the verb: *Acıktın mı?*"
+        }
+      ],
+      "explain": "Two ways: the past of *acıkmak*, *Acıktın mı?*, or *aç* with **to be**, *Aç mısın?*"
+    },
+    {
+      "id": "a2-u01-l03-e06",
+      "type": "translate",
+      "points": ["gp-past-di"],
+      "from": "tr",
+      "prompt": "Sabah çok erken uyandım.",
+      "accept": ["I woke up very early this morning.", "I woke up very early in the morning.", "This morning I woke up very early.", "In the morning I woke up very early."]
+    },
+    {
+      "id": "a2-u01-l03-e07",
+      "type": "cloze",
+      "points": ["gp-past-di"],
+      "text": "Geç kal___, özür dilerim.",
+      "en": "I'm late, I'm sorry.",
+      "blanks": [
+        {
+          "accept": ["dım"],
+          "reject": [
+            {
+              "answer": "ıyorum",
+              "why": "*Kalıyorum* is **I'm staying**. Being late has already happened: *Geç kaldım*."
+            },
+            {
+              "answer": "dim",
+              "why": "The last vowel of *kal-* is a: *-dım*."
+            }
+          ]
+        }
+      ],
+      "explain": "Turkish says *Geç kaldım*, literally **I stayed late**, for **I'm late**."
+    },
+    {
+      "id": "a2-u01-l03-e08",
+      "type": "listen",
+      "points": ["gp-past-di"],
+      "mode": "type",
+      "tr": "Çok susadım, su var mı?",
+      "en": "I'm very thirsty, is there any water?"
+    },
+    {
+      "id": "a2-u01-l03-e09",
+      "type": "mcq",
+      "points": ["gp-past-di"],
+      "question": "*Nerede doğdun?* What does it ask?",
+      "options": ["Where were you born?", "Where do you live?", "Where are you from?"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "That would be *Nerede oturuyorsun?* or *Nerede yaşıyorsun?*",
+        "2": "That would be *Nerelisin?*"
+      },
+      "explain": "*Doğmak* is to be born, and Turkish uses the plain past: *Nerede doğdun? İzmir'de doğdum.*"
+    },
+    {
+      "id": "a2-u01-l03-e10",
+      "type": "translate",
+      "points": ["gp-past-di", "gp-apostrophe"],
+      "from": "en",
+      "prompt": "I was born in Ankara.",
+      "accept": ["Ankara'da doğdum.", "Ben Ankara'da doğdum."],
+      "reject": [
+        {
+          "answer": "Ankara'da doğuyorum.",
+          "why": "Being born happened once, in the past: *doğdum*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u01-l03-e11",
+      "type": "wordbank",
+      "points": ["gp-person-endings-types"],
+      "from": "tr",
+      "prompt": "Çocuklar acıktı, ama biz acıkmadık.",
+      "text": "The children are hungry, but we are not.",
+      "answer": ["The", "children", "are", "hungry", "but", "we", "are", "not"],
+      "distractors": ["is", "thirsty", "tired"]
+    },
+    {
+      "id": "a2-u01-l03-e12",
+      "type": "morph",
+      "points": ["gp-person-endings-types"],
+      "base": "susamak",
+      "gloss": "you are thirsty (plural or polite)",
+      "parts": ["susa", "dı", "nız"],
+      "distractors": ["sınız", "tı", "niz"],
+      "result": "susadınız",
+      "explain": "After a vowel `-DI` is *-dı*, and **you** (plural) in type II is *-nız*, not *-sınız*: *susadınız*."
+    },
+    {
+      "id": "a2-u01-l03-e13",
+      "type": "listen",
+      "points": ["gp-past-di"],
+      "mode": "choose",
+      "tr": "Erken kalktık.",
+      "en": "We got up early.",
+      "options": ["Erken kalktık.", "Erken kalkıyoruz.", "Geç kalktık."],
+      "answer": 0
+    }
+  ]
+}

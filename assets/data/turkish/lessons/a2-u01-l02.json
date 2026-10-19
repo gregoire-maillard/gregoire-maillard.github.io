@@ -1,0 +1,257 @@
+{
+  "id": "a2-u01-l02",
+  "unit": "a2-u01",
+  "order": 2,
+  "title": "I didn't see it",
+  "goal": "Say what didn't happen and ask about the past: gelmedim, geldin mi?",
+  "points": ["gp-past-di-negative-question", "gp-past-di"],
+  "intro": {
+    "text": "Negative: `-mA` before `-DI`: *gelmedim*, *yapmadım*. In a question the ending stays on the verb and `mI` comes last: *Geldin mi?* (Did you come?) *Yaptınız mı?* Compare *Geliyor musun?*, where the ending moves onto *mu*.",
+    "see": "gp-past-di-negative-question"
+  },
+  "vocab": [
+    {
+      "tr": "ödev",
+      "en": "homework, assignment",
+      "pos": "noun"
+    },
+    {
+      "tr": "sınav",
+      "en": "exam, test",
+      "pos": "noun"
+    },
+    {
+      "tr": "toplantı",
+      "en": "meeting",
+      "pos": "noun"
+    },
+    {
+      "tr": "mesaj",
+      "en": "message, text",
+      "pos": "noun"
+    },
+    {
+      "tr": "bitirmek",
+      "en": "to finish",
+      "pos": "verb"
+    },
+    {
+      "tr": "kazanmak",
+      "en": "to win; to earn",
+      "pos": "verb"
+    },
+    {
+      "tr": "kaybetmek",
+      "en": "to lose",
+      "pos": "verb"
+    },
+    {
+      "tr": "kaçırmak",
+      "en": "to miss (a bus, a train)",
+      "pos": "verb"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u01-l02-e01",
+      "type": "mcq",
+      "points": ["gp-past-di-negative-question"],
+      "question": "Someone speaks too fast. How do you say **Sorry, I didn't understand**?",
+      "options": ["Pardon, anlamadım.", "Pardon, anladım.", "Pardon, anlamadın.", "Pardon, anlamadık."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Anladım* is positive: **I understood**.",
+        "2": "*Anlamadın* is **you** didn't understand.",
+        "3": "*Anlamadık* is **we** didn't understand."
+      },
+      "explain": "*anla-* + *-ma-* + *-dı* + *-m*. For something just said, Turks use the past: *Anlamadım*."
+    },
+    {
+      "id": "a2-u01-l02-e02",
+      "type": "conjugate",
+      "points": ["gp-past-di-negative-question"],
+      "base": "gitmek",
+      "form": "past-negative",
+      "label": "*gitmek* (to go), negative: I didn't go, you didn't go…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["gitmedim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["gitmedin"]
+        },
+        {
+          "p": "o",
+          "accept": ["gitmedi"]
+        },
+        {
+          "p": "biz",
+          "accept": ["gitmedik"]
+        },
+        {
+          "p": "siz",
+          "accept": ["gitmediniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["gitmediler"]
+        }
+      ],
+      "explain": "`-mA` has two-way harmony: *-me* after the i of *git-*. After its vowel, `-DI` is always *-di*."
+    },
+    {
+      "id": "a2-u01-l02-e03",
+      "type": "cloze",
+      "points": ["gp-past-di-negative-question", "gp-consonant-assimilation"],
+      "text": "Sınavı geç___ ___?",
+      "en": "Did you pass the exam?",
+      "blanks": [
+        {
+          "accept": ["tin", "tiniz"],
+          "reject": [
+            {
+              "answer": "din",
+              "why": "*ç* is voiceless, so the d turns into t: *geçtin*."
+            },
+            {
+              "answer": "ti",
+              "why": "Without an ending, *geçti* is **he** or **she** passed. **You** needs *-n*: *geçtin*."
+            }
+          ]
+        },
+        {
+          "options": ["mi", "mı", "mu"],
+          "answer": 0
+        }
+      ],
+      "explain": "Voiceless ç → *-ti*. The ending *-n* stays on the verb and *mi* follows, in harmony with its i: *geçtin mi?*"
+    },
+    {
+      "id": "a2-u01-l02-e04",
+      "type": "translate",
+      "points": ["gp-past-di-negative-question", "gp-possessive-suffixes", "gp-accusative"],
+      "from": "en",
+      "prompt": "Did you finish your homework?",
+      "accept": ["Ödevini bitirdin mi?", "Ödevlerini bitirdin mi?", "Ödev(ler)inizi bitirdiniz mi?", "Ödevi bitirdin(iz) mi?"],
+      "reject": [
+        {
+          "answer": "Ödevini bitirdi misin?",
+          "why": "With the past tense the ending stays on the verb, and *mi* comes last: *bitirdin mi?*"
+        }
+      ]
+    },
+    {
+      "id": "a2-u01-l02-e05",
+      "type": "translate",
+      "points": ["gp-past-di"],
+      "from": "tr",
+      "prompt": "Otobüsü kaçırdım.",
+      "accept": ["I missed the bus.", "I have missed the bus."]
+    },
+    {
+      "id": "a2-u01-l02-e06",
+      "type": "listen",
+      "points": ["gp-past-di"],
+      "mode": "type",
+      "tr": "Anahtarımı kaybettim.",
+      "en": "I've lost my key."
+    },
+    {
+      "id": "a2-u01-l02-e07",
+      "type": "wordbank",
+      "points": ["gp-past-di-negative-question"],
+      "from": "tr",
+      "prompt": "Ayşe mesajımı gördü mü?",
+      "text": "Did Ayşe see my message?",
+      "answer": ["Did", "Ayşe", "see", "my", "message"],
+      "distractors": ["saw", "does", "your"]
+    },
+    {
+      "id": "a2-u01-l02-e08",
+      "type": "mcq",
+      "points": ["gp-past-di-negative-question"],
+      "question": "Which question means **Did you see the film?**",
+      "options": ["Filmi gördün mü?", "Filmi gördü müsün?", "Filmi görüyor musun?"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "With `-DI` the ending stays on the verb, before the particle: *gördün mü?*",
+        "2": "*Görüyor musun?* is the present continuous: **are you seeing**."
+      },
+      "explain": "Past question: verb + ending + `mI`: *gördün mü?*"
+    },
+    {
+      "id": "a2-u01-l02-e09",
+      "type": "morph",
+      "points": ["gp-past-di-negative-question"],
+      "base": "yapmak",
+      "gloss": "we didn't do",
+      "parts": ["yap", "ma", "dı", "k"],
+      "distractors": ["mı", "tı", "ık"],
+      "result": "yapmadık",
+      "explain": "Negative `-mA` (*-ma* after a), then `-DI` as *-dı* after the vowel, then *-k* for **we**: *yapmadık*."
+    },
+    {
+      "id": "a2-u01-l02-e10",
+      "type": "translate",
+      "points": ["gp-past-di-negative-question"],
+      "from": "tr",
+      "prompt": "Neden toplantıya gelmediniz?",
+      "accept": ["Why did you not come to the meeting?", "Why did you not attend the meeting?"]
+    },
+    {
+      "id": "a2-u01-l02-e11",
+      "type": "listen",
+      "points": ["gp-past-di-negative-question"],
+      "mode": "choose",
+      "tr": "Mesajımı aldın mı?",
+      "en": "Did you get my message?",
+      "options": ["Mesajımı aldın mı?", "Mesajımı aldım mı?", "Mesajımı almadın mı?"],
+      "answer": 0
+    },
+    {
+      "id": "a2-u01-l02-e12",
+      "type": "cloze",
+      "points": ["gp-past-di"],
+      "text": "Biz kazandık, onlar kaybet___.",
+      "en": "We won, they lost.",
+      "blanks": [
+        {
+          "accept": ["tiler"],
+          "reject": [
+            {
+              "answer": "diler",
+              "why": "*kaybet-* ends in voiceless t, so `-DI` is *-ti*: *kaybettiler*."
+            },
+            {
+              "answer": "tılar",
+              "why": "The last vowel of *kaybet-* is e: *-tiler*."
+            }
+          ]
+        }
+      ],
+      "explain": "t is voiceless → *-ti*; front vowel e → *-ler*: *kaybettiler*."
+    },
+    {
+      "id": "a2-u01-l02-e13",
+      "type": "translate",
+      "points": ["gp-past-di-negative-question", "gp-accusative"],
+      "from": "en",
+      "prompt": "We didn't miss the train.",
+      "accept": ["Treni kaçırmadık.", "Biz treni kaçırmadık."],
+      "reject": [
+        {
+          "answer": "Tren kaçırmadık.",
+          "why": "It's **the** train, a definite object: *treni*."
+        },
+        {
+          "answer": "Treni kaçırmadıyız.",
+          "why": "In the past, **we** is *-k*: *kaçırmadık*."
+        }
+      ]
+    }
+  ]
+}

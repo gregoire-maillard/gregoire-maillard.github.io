@@ -1,0 +1,283 @@
+{
+  "id": "a2-u02-l04",
+  "unit": "a2-u02",
+  "order": 4,
+  "title": "Once upon a time",
+  "goal": "Recognize -mIş on verbs in news, discoveries and folk tales: gelmiş, kar yağmış, bir varmış bir yokmuş.",
+  "points": ["gp-mis-intro", "gp-idi-imis", "gp-past-copula"],
+  "intro": {
+    "text": "Verbs take `-mIş` too: *Ali gelmiş* (Ali has come, it seems: you see his coat), *Kar yağmış!* (It's snowed: you wake up to white streets). Folk tales use it all the way through: *Bir varmış, bir yokmuş…* (Once there was, once there wasn't…).",
+    "see": "gp-mis-intro"
+  },
+  "vocab": [
+    {
+      "tr": "masal",
+      "en": "folk tale, fairy tale",
+      "pos": "noun"
+    },
+    {
+      "tr": "padişah",
+      "en": "sultan, king (in tales)",
+      "pos": "noun"
+    },
+    {
+      "tr": "fakir",
+      "en": "poor",
+      "pos": "adj"
+    },
+    {
+      "tr": "zengin",
+      "en": "rich",
+      "pos": "adj"
+    },
+    {
+      "tr": "akıllı",
+      "en": "clever, intelligent",
+      "pos": "adj"
+    },
+    {
+      "tr": "evlenmek",
+      "en": "to marry, to get married",
+      "pos": "verb"
+    },
+    {
+      "tr": "bir gün",
+      "en": "one day",
+      "pos": "phrase"
+    },
+    {
+      "tr": "sonunda",
+      "en": "in the end, finally",
+      "pos": "adv"
+    },
+    {
+      "tr": "adam",
+      "en": "man",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u02-l04-e01",
+      "type": "mcq",
+      "points": ["gp-mis-intro"],
+      "question": "You come home and see your older brother's shoes at the door. What do you say?",
+      "options": ["Ağabeyim gelmiş.", "Ağabeyim geldi.", "Ağabeyim geliyor."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Geldi* fits if you saw him arrive.",
+        "2": "*Geliyor* means he is on his way."
+      },
+      "explain": "You work it out from his shoes, so `-mIş`: *gelmiş*."
+    },
+    {
+      "id": "a2-u02-l04-e02",
+      "type": "cloze",
+      "points": ["gp-mis-intro", "gp-idi-imis"],
+      "text": "Bir var___, bir yok___.",
+      "en": "Once there was, once there wasn't.",
+      "blanks": [
+        {
+          "accept": ["mış"],
+          "reject": [
+            {
+              "answer": "dı",
+              "why": "Folk tales tell what nobody saw, so `-mIş`: *varmış*."
+            }
+          ]
+        },
+        {
+          "accept": ["muş"],
+          "reject": [
+            {
+              "answer": "mış",
+              "why": "The last vowel of *yok* is o, rounded and back: *yokmuş*."
+            }
+          ]
+        }
+      ],
+      "explain": "The opening of Turkish folk tales: *varmış* and *yokmuş*, each in harmony with its word."
+    },
+    {
+      "id": "a2-u02-l04-e03",
+      "type": "translate",
+      "points": ["gp-mis-intro"],
+      "from": "tr",
+      "prompt": "Kar yağmış!",
+      "accept": ["It has snowed!", "It snowed!", "[Oh|Look], it has snowed!", "It has been snowing!"]
+    },
+    {
+      "id": "a2-u02-l04-e04",
+      "type": "morph",
+      "points": ["gp-mis-intro"],
+      "base": "gitmek",
+      "gloss": "he has gone, it seems",
+      "parts": ["git", "miş"],
+      "distractors": ["gid", "mış", "ti"],
+      "result": "gitmiş",
+      "explain": "`-mIş` starts with a consonant, so *git-* keeps its t: *gitmiş*."
+    },
+    {
+      "id": "a2-u02-l04-e05",
+      "type": "listen",
+      "points": ["gp-mis-intro", "gp-vowel-loss"],
+      "mode": "type",
+      "tr": "Keloğlan bir gün şehre gitmiş.",
+      "en": "One day Keloğlan went to the city."
+    },
+    {
+      "id": "a2-u02-l04-e06",
+      "type": "mcq",
+      "points": ["gp-mis-intro", "gp-idi-imis"],
+      "question": "Who did Keloğlan marry?",
+      "context": [
+        {
+          "tr": "Bir varmış, bir yokmuş. Bir köyde fakir bir kadın ve oğlu varmış.",
+          "en": "Once there was, once there wasn't. In a village there lived a poor woman and her son."
+        },
+        {
+          "tr": "Oğlanın adı Keloğlan'mış. Keloğlan çok akıllıymış.",
+          "en": "The boy's name was Keloğlan. Keloğlan was very clever."
+        },
+        {
+          "tr": "Bir gün padişahın kızı köye gelmiş. Keloğlan kızı görmüş.",
+          "en": "One day the sultan's daughter came to the village. Keloğlan saw the girl."
+        },
+        {
+          "tr": "Sonunda Keloğlan padişahın kızıyla evlenmiş.",
+          "en": "In the end Keloğlan married the sultan's daughter."
+        }
+      ],
+      "options": ["the sultan's daughter", "a poor woman from the village", "nobody"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Padişahın kızıyla evlenmiş*: he married the sultan's daughter. *Evlenmek* takes `-(y)lA`: *kızıyla*."
+    },
+    {
+      "id": "a2-u02-l04-e07",
+      "type": "translate",
+      "points": ["gp-mis-intro", "gp-dative"],
+      "from": "en",
+      "prompt": "Apparently Elif has gone to Istanbul.",
+      "accept": ["Elif İstanbul'a gitmiş.", "Galiba Elif İstanbul'a gitmiş."],
+      "reject": [
+        {
+          "answer": "Elif İstanbul'a gitti.",
+          "why": "*Gitti* says you know it first-hand. **Apparently** calls for `-mIş`: *gitmiş*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u02-l04-e08",
+      "type": "cloze",
+      "points": ["gp-idi-imis", "gp-possessive-have"],
+      "text": "Padişahın üç kızı var___.",
+      "en": "The sultan had three daughters, the tale says.",
+      "blanks": [
+        {
+          "accept": ["mış"],
+          "reject": [
+            {
+              "answer": "dı",
+              "why": "In a folk tale, use `-mIş`: *varmış*."
+            },
+            {
+              "answer": "miş",
+              "why": "The last vowel of *var* is a: *-mış*."
+            }
+          ]
+        }
+      ],
+      "explain": "Folk tales use `-mIş` throughout: *varmış*."
+    },
+    {
+      "id": "a2-u02-l04-e09",
+      "type": "wordbank",
+      "points": ["gp-idi-imis"],
+      "from": "tr",
+      "prompt": "Keloğlan çok akıllıymış.",
+      "text": "Keloğlan was very clever.",
+      "answer": ["Keloğlan", "was", "very", "clever"],
+      "distractors": ["is", "rich", "poor"],
+      "accept": ["Keloğlan is very clever."]
+    },
+    {
+      "id": "a2-u02-l04-e10",
+      "type": "translate",
+      "points": ["gp-idi-imis", "gp-bir-indefinite"],
+      "from": "tr",
+      "prompt": "Fakir bir adam varmış.",
+      "accept": ["There was a poor man.", "Once there was a poor man.", "There once was a poor man.", "Once upon a time there was a poor man."]
+    },
+    {
+      "id": "a2-u02-l04-e11",
+      "type": "listen",
+      "points": ["gp-mis-intro"],
+      "mode": "choose",
+      "tr": "Ali gelmiş!",
+      "en": "Ali has come!",
+      "options": ["Ali gelmiş!", "Ali geldi!", "Ali gelmedi!"],
+      "answer": 0
+    },
+    {
+      "id": "a2-u02-l04-e12",
+      "type": "conjugate",
+      "points": ["gp-mis-intro"],
+      "base": "gelmek",
+      "form": "mis-positive",
+      "label": "*gelmek* + `-mIş`: it seems I came, it seems you came…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["gelmişim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["gelmişsin"]
+        },
+        {
+          "p": "o",
+          "accept": ["gelmiş"]
+        },
+        {
+          "p": "biz",
+          "accept": ["gelmişiz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["gelmişsiniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["gelmişler", "gelmiş"]
+        }
+      ],
+      "explain": "`-mIş` takes the present (type I) endings: *-im, -sin, -∅, -iz, -siniz, -ler*."
+    },
+    {
+      "id": "a2-u02-l04-e13",
+      "type": "translate",
+      "points": ["gp-mis-intro"],
+      "from": "en",
+      "prompt": "One day Keloğlan became rich. (in a folk tale)",
+      "accept": ["Bir gün Keloğlan zengin olmuş.", "Keloğlan bir gün zengin olmuş."],
+      "reject": [
+        {
+          "answer": "Bir gün Keloğlan zengin oldu.",
+          "why": "In a folk tale, keep to `-mIş`: *olmuş*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u02-l04-e14",
+      "type": "mcq",
+      "points": ["gp-mis-intro"],
+      "question": "*Uyumuşum.* When do you say it?",
+      "options": ["When you realize you fell asleep without noticing", "When you slept well every night", "When you want to go to sleep"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "With *ben*, `-mIş` means you realize it only afterwards: **I must have fallen asleep**."
+    }
+  ]
+}

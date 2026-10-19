@@ -1,0 +1,248 @@
+{
+  "id": "a2-u02-l01",
+  "unit": "a2-u02",
+  "order": 1,
+  "title": "Where were you?",
+  "goal": "Say where you were and what things were like: evdeydim, hava soğuktu.",
+  "points": ["gp-past-copula"],
+  "intro": {
+    "text": "To say **was** or **were**, add `-(y)DI` and the past endings: *evde* → *evdeydim* (I was at home), *yorgun* → *yorgundu* (he was tired). After a vowel comes the buffer y; after f, s, t, k, ç, ş, h, p the d becomes t: *Hava sıcaktı*.",
+    "see": "gp-past-copula"
+  },
+  "vocab": [
+    {
+      "tr": "hava",
+      "en": "weather; air",
+      "pos": "noun"
+    },
+    {
+      "tr": "güneşli",
+      "en": "sunny",
+      "pos": "adj"
+    },
+    {
+      "tr": "bulutlu",
+      "en": "cloudy",
+      "pos": "adj"
+    },
+    {
+      "tr": "yağmur",
+      "en": "rain",
+      "pos": "noun"
+    },
+    {
+      "tr": "kar",
+      "en": "snow",
+      "pos": "noun"
+    },
+    {
+      "tr": "yağmak",
+      "en": "to fall (of rain or snow)",
+      "pos": "verb"
+    },
+    {
+      "tr": "rüzgâr",
+      "en": "wind",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u02-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["hava", "weather"],
+        ["güneşli", "sunny"],
+        ["bulutlu", "cloudy"],
+        ["yağmur", "rain"],
+        ["kar", "snow"],
+        ["rüzgâr", "wind"]
+      ]
+    },
+    {
+      "id": "a2-u02-l01-e02",
+      "type": "mcq",
+      "points": ["gp-past-copula"],
+      "question": "How do you say **I was at home**?",
+      "options": ["Evdeydim.", "Evdeyim.", "Evdeydin.", "Evdedim."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Evdeyim* is the present: **I am at home**.",
+        "2": "*Evdeydin* is **you were** at home.",
+        "3": "After the vowel of *evde* the buffer y comes first: *evdeydim*."
+      },
+      "explain": "*evde* + *-y-* + *-di* + *-m*."
+    },
+    {
+      "id": "a2-u02-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-past-copula", "gp-locative"],
+      "base": "evde",
+      "form": "past-copula",
+      "label": "*evde* + **was, were**: I was at home, you were at home…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["evdeydim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["evdeydin"]
+        },
+        {
+          "p": "o",
+          "accept": ["evdeydi"]
+        },
+        {
+          "p": "biz",
+          "accept": ["evdeydik"]
+        },
+        {
+          "p": "siz",
+          "accept": ["evdeydiniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["evdeydiler", "evdelerdi", "evdeydi"]
+        }
+      ],
+      "explain": "Buffer y after the vowel, then *-di* and the past endings *-m, -n, -∅, -k, -niz, -ler*."
+    },
+    {
+      "id": "a2-u02-l01-e04",
+      "type": "cloze",
+      "points": ["gp-past-copula", "gp-consonant-assimilation"],
+      "text": "Dün hava çok soğuk___.",
+      "en": "The weather was very cold yesterday.",
+      "blanks": [
+        {
+          "accept": ["tu"],
+          "reject": [
+            {
+              "answer": "du",
+              "why": "*k* is voiceless, so the d turns into t: *soğuktu*."
+            },
+            {
+              "answer": "tı",
+              "why": "The last vowel of *soğuk* is u: *-tu*."
+            }
+          ]
+        }
+      ],
+      "explain": "Voiceless k → t; rounded back vowel u → *-tu*: *soğuktu*."
+    },
+    {
+      "id": "a2-u02-l01-e05",
+      "type": "translate",
+      "points": ["gp-past-copula", "gp-question-words"],
+      "from": "en",
+      "prompt": "Where were you yesterday?",
+      "accept": ["Dün neredeydin?", "Dün neredeydiniz?"],
+      "reject": [
+        {
+          "answer": "Dün nerede miydin?",
+          "why": "Question words don't take *mI*: *Neredeydin?*"
+        }
+      ]
+    },
+    {
+      "id": "a2-u02-l01-e06",
+      "type": "translate",
+      "points": ["gp-past-copula"],
+      "from": "tr",
+      "prompt": "Hafta sonu hava güneşliydi.",
+      "accept": [
+        "The weather was sunny at the weekend.",
+        "It was sunny at the weekend.",
+        "[It|The weather] was sunny [on the weekend|over the weekend].",
+        "At the weekend [it|the weather] was sunny.",
+        "[On|Over] the weekend [it|the weather] was sunny."
+      ]
+    },
+    {
+      "id": "a2-u02-l01-e07",
+      "type": "listen",
+      "points": ["gp-past-di"],
+      "mode": "type",
+      "tr": "Dün çok yağmur yağdı.",
+      "en": "It rained a lot yesterday."
+    },
+    {
+      "id": "a2-u02-l01-e08",
+      "type": "wordbank",
+      "points": ["gp-past-copula"],
+      "from": "en",
+      "prompt": "We were very tired last night.",
+      "text": "Dün gece çok yorgunduk.",
+      "answer": ["Dün", "gece", "çok", "yorgunduk"],
+      "distractors": ["yorgunuz", "yorgundunuz", "yorgun"]
+    },
+    {
+      "id": "a2-u02-l01-e09",
+      "type": "morph",
+      "points": ["gp-past-copula", "gp-consonant-softening"],
+      "base": "sıcak",
+      "gloss": "it was hot",
+      "parts": ["sıcak", "tı"],
+      "distractors": ["sıcağ", "dı", "tu"],
+      "result": "sıcaktı",
+      "explain": "k is voiceless, so *-tı*; and a suffix that starts with a consonant never softens the k: *sıcaktı*."
+    },
+    {
+      "id": "a2-u02-l01-e10",
+      "type": "translate",
+      "points": ["gp-past-copula"],
+      "from": "tr",
+      "prompt": "Çocuklar bahçedeydi.",
+      "accept": ["The children were in the garden.", "The children were in the [yard|backyard]."]
+    },
+    {
+      "id": "a2-u02-l01-e11",
+      "type": "listen",
+      "points": ["gp-past-copula"],
+      "mode": "choose",
+      "tr": "Hava bulutluydu.",
+      "en": "It was cloudy.",
+      "options": ["Hava bulutluydu.", "Hava bulutlu.", "Hava güneşliydi."],
+      "answer": 0
+    },
+    {
+      "id": "a2-u02-l01-e12",
+      "type": "cloze",
+      "points": ["gp-past-copula", "gp-buffer-letters"],
+      "text": "Dün çok mutlu___.",
+      "en": "I was very happy yesterday.",
+      "blanks": [
+        {
+          "accept": ["ydum"],
+          "reject": [
+            {
+              "answer": "dum",
+              "why": "After a vowel, the buffer y comes first: *mutluydum*."
+            },
+            {
+              "answer": "ydım",
+              "why": "The last vowel of *mutlu* is u: *-ydum*."
+            }
+          ]
+        }
+      ],
+      "explain": "*mutlu* ends in a vowel → *-y-*; rounded u → *-du*; *-m* for **I**: *mutluydum*."
+    },
+    {
+      "id": "a2-u02-l01-e13",
+      "type": "translate",
+      "points": ["gp-past-di", "gp-time-past"],
+      "from": "en",
+      "prompt": "It snowed a lot last year.",
+      "accept": ["Geçen yıl çok kar yağdı.", "Geçen yıl kar çok yağdı."],
+      "reject": [
+        {
+          "answer": "Geçen yıl çok kar yağıyor.",
+          "why": "Last year needs the past: *yağdı*."
+        }
+      ]
+    }
+  ]
+}
