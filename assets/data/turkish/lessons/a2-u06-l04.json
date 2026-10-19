@@ -1,0 +1,236 @@
+{
+  "id": "a2-u06-l04",
+  "unit": "a2-u06",
+  "order": 4,
+  "title": "A visit",
+  "goal": "Make a confident guess with olmalı, and get through a home visit: Yorgun olmalısın. Ayakkabılarımı çıkarmalı mıyım?",
+  "points": ["gp-meli-inference", "gp-meli", "gp-gerek-lazim", "gp-zorunda"],
+  "intro": {
+    "text": "`-mAlI` also makes a confident guess: *Evde olmalı* (She must be at home), *Yorgun olmalısın* (You must be tired). With nouns, adjectives and numbers, use *olmalı*: *Saat beş olmalı* (It must be five o'clock).",
+    "see": "gp-meli-inference"
+  },
+  "vocab": [
+    {
+      "tr": "terlik",
+      "en": "slipper, slippers",
+      "pos": "noun"
+    },
+    {
+      "tr": "kolonya",
+      "en": "cologne (offered to guests to freshen their hands)",
+      "pos": "noun"
+    },
+    {
+      "tr": "çıkarmak",
+      "en": "to take off; to take out",
+      "pos": "verb"
+    },
+    {
+      "tr": "ikram etmek",
+      "en": "to offer (food or drink to a guest)",
+      "pos": "verb"
+    },
+    {
+      "tr": "içeri",
+      "en": "in, inside",
+      "pos": "adv"
+    },
+    {
+      "tr": "Ayağınıza sağlık.",
+      "en": "Thank you for coming. (said by the host)",
+      "pos": "phrase"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u06-l04-e01",
+      "type": "mcq",
+      "points": ["gp-meli-inference"],
+      "question": "Ayşe isn't answering the phone, but her car is outside her house. What do you say?",
+      "options": ["Evde olmalı.", "Evde olmak zorunda.", "Evde olabilir mi?"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Evde olmak zorunda* says she is **obliged** to be at home, not that you think she is.",
+        "2": "*Evde olabilir mi?* is a question: **could she be at home?**"
+      },
+      "explain": "A confident guess: *Evde olmalı*, **she must be at home**."
+    },
+    {
+      "id": "a2-u06-l04-e02",
+      "type": "translate",
+      "points": ["gp-meli-inference"],
+      "from": "tr",
+      "prompt": "Çok yorgun olmalısın.",
+      "accept": ["You must be very tired.", "You must be [really|so] tired."]
+    },
+    {
+      "id": "a2-u06-l04-e03",
+      "type": "cloze",
+      "points": ["gp-meli-inference", "gp-telling-time"],
+      "text": "Saat kaç? — Bilmem, beş ol___.",
+      "en": "What time is it? — I don't know, it must be five.",
+      "blanks": [
+        {
+          "accept": ["malı"],
+          "reject": [
+            {
+              "answer": "meli",
+              "why": "The vowel of *ol-* is o, a back vowel: *olmalı*."
+            }
+          ]
+        }
+      ],
+      "explain": "A guess about a time, a number or a state uses *olmalı*: *beş olmalı*."
+    },
+    {
+      "id": "a2-u06-l04-e04",
+      "type": "translate",
+      "points": ["gp-meli-inference", "gp-genitive"],
+      "from": "en",
+      "prompt": "This bag must be Elif's.",
+      "accept": ["Bu çanta Elif'in olmalı.", "Bu Elif'in çantası olmalı."],
+      "reject": [
+        {
+          "answer": "Bu çanta Elif olmalı.",
+          "why": "**Elif's** needs the genitive: *Elif'in olmalı*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u06-l04-e05",
+      "type": "mcq",
+      "points": ["gp-meli-inference", "gp-meli"],
+      "question": "What does Mark guess about Ayşe?",
+      "context": [
+        {
+          "who": "Ayşe",
+          "tr": "Hoş geldiniz! Buyurun, içeri gelin.",
+          "en": "Welcome! Please come in."
+        },
+        {
+          "who": "Mark",
+          "tr": "Hoş bulduk. Ayakkabılarımı çıkarmalı mıyım?",
+          "en": "Glad to be here. Should I take off my shoes?"
+        },
+        {
+          "who": "Ayşe",
+          "tr": "Evet, ama terlik var. Buyurun.",
+          "en": "Yes, but there are slippers. Here you are."
+        },
+        {
+          "who": "Mark",
+          "tr": "Teşekkürler. Çok güzel bir eviniz var.",
+          "en": "Thank you. You have a lovely home."
+        },
+        {
+          "who": "Ayşe",
+          "tr": "Sağ olun. Kolonya? Çay da hazır.",
+          "en": "Thank you. Some cologne? The tea is ready too."
+        },
+        {
+          "who": "Mark",
+          "tr": "Siz çok yorgun olmalısınız: bütün gün yemek yaptınız!",
+          "en": "You must be very tired: you've been cooking all day!"
+        }
+      ],
+      "options": ["that she is tired", "that she is hungry", "that she is busy"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Yorgun olmalısınız*: `-mAlI` for a guess, **you must be** tired."
+    },
+    {
+      "id": "a2-u06-l04-e06",
+      "type": "translate",
+      "points": ["gp-meli", "gp-accusative", "gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "Should I take off my shoes?",
+      "accept": ["Ayakkabılarımı çıkarmalı mıyım?", "Ayakkabıları çıkarmalı mıyım?", "Ayakkabılarımı çıkarmam lazım mı?", "Ayakkabılarımı çıkarmak zorunda mıyım?"],
+      "reject": [
+        {
+          "answer": "Ayakkabılarımı çıkarmalıyım mı?",
+          "why": "The ending goes on `mI`: *çıkarmalı mıyım?*"
+        }
+      ]
+    },
+    {
+      "id": "a2-u06-l04-e07",
+      "type": "listen",
+      "points": ["gp-aorist-uses", "gp-dative"],
+      "mode": "type",
+      "tr": "Misafirlere kolonya ikram ederiz.",
+      "en": "We offer cologne to our guests."
+    },
+    {
+      "id": "a2-u06-l04-e08",
+      "type": "cloze",
+      "points": ["gp-meli-inference"],
+      "text": "Kapı çalıyor. Ali ___: her akşam bu saatte gelir.",
+      "en": "Someone's at the door. It must be Ali: he comes at this time every evening.",
+      "blanks": [
+        {
+          "options": ["olmalı", "olmak zorunda", "olamaz"],
+          "answer": 0
+        }
+      ],
+      "explain": "A guess from what you know: *Ali olmalı*, **it must be Ali**."
+    },
+    {
+      "id": "a2-u06-l04-e09",
+      "type": "translate",
+      "points": ["gp-aorist-uses"],
+      "from": "tr",
+      "prompt": "Ayağınıza sağlık, tekrar bekleriz.",
+      "accept": [
+        "Thank you for coming, come again.",
+        "Thank you for coming, [do come again|come again soon|we hope to see you again|we look forward to seeing you again|we will be expecting you again].",
+        "Thanks for coming, [come again|do come again|come again soon|we hope to see you again]."
+      ]
+    },
+    {
+      "id": "a2-u06-l04-e10",
+      "type": "morph",
+      "points": ["gp-meli-inference"],
+      "base": "olmak",
+      "gloss": "you must be (plural or polite)",
+      "parts": ["ol", "malı", "sınız"],
+      "distractors": ["meli", "siniz", "mak"],
+      "result": "olmalısınız",
+      "explain": "*ol-* + *-malı* + *-sınız*: *Yorgun olmalısınız* (You must be tired)."
+    },
+    {
+      "id": "a2-u06-l04-e11",
+      "type": "wordbank",
+      "points": ["gp-meli", "gp-dative"],
+      "from": "en",
+      "prompt": "We should offer the guests tea.",
+      "text": "Misafirlere çay ikram etmeliyiz.",
+      "answer": ["Misafirlere", "çay", "ikram", "etmeliyiz"],
+      "distractors": ["Misafirleri", "etmeliyim", "ederiz"]
+    },
+    {
+      "id": "a2-u06-l04-e12",
+      "type": "listen",
+      "points": ["gp-meli-inference"],
+      "mode": "choose",
+      "tr": "Işıklar açık, evde olmalılar.",
+      "en": "The lights are on: they must be at home.",
+      "options": ["Işıklar açık, evde olmalılar.", "Işıklar açık, evde değiller.", "Işıklar kapalı, evde değiller."],
+      "answer": 0
+    },
+    {
+      "id": "a2-u06-l04-e13",
+      "type": "translate",
+      "points": ["gp-meli-inference"],
+      "from": "en",
+      "prompt": "You must be hungry.",
+      "accept": ["Aç olmalısın.", "Aç olmalısınız.", "Siz aç olmalısınız.", "Sen aç olmalısın."],
+      "reject": [
+        {
+          "answer": "Açmalısın.",
+          "why": "*Açmalısın* means **you must open**. For a guess about a state, use *olmalı*: *Aç olmalısın*."
+        }
+      ]
+    }
+  ]
+}

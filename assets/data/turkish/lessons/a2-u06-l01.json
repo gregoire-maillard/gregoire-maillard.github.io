@@ -1,0 +1,245 @@
+{
+  "id": "a2-u06-l01",
+  "unit": "a2-u06",
+  "order": 1,
+  "title": "At the doctor's",
+  "goal": "Say what someone must or should do with -mAlI: gitmelisin, dinlenmeliyim, içmemelisin.",
+  "points": ["gp-meli"],
+  "intro": {
+    "text": "Add `-mAlI` and the endings of the present to say what someone must or should do: *gitmeliyim* (I must go), *dinlenmelisin* (you should rest). The negative puts `-mA` first: *gitmemelisin* (you mustn't go). In questions the ending goes on `mI`: *Gitmeli miyim?*",
+    "see": "gp-meli"
+  },
+  "vocab": [
+    {
+      "tr": "ilaç",
+      "en": "medicine, medication",
+      "pos": "noun"
+    },
+    {
+      "tr": "ateş",
+      "en": "fever; fire",
+      "pos": "noun"
+    },
+    {
+      "tr": "grip",
+      "en": "flu",
+      "pos": "noun"
+    },
+    {
+      "tr": "nezle",
+      "en": "a cold",
+      "pos": "noun"
+    },
+    {
+      "tr": "boğaz",
+      "en": "throat",
+      "pos": "noun"
+    },
+    {
+      "tr": "öksürmek",
+      "en": "to cough",
+      "pos": "verb"
+    },
+    {
+      "tr": "dinlenmek",
+      "en": "to rest",
+      "pos": "verb"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u06-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["ilaç", "medicine"],
+        ["ateş", "fever"],
+        ["grip", "flu"],
+        ["boğaz", "throat"],
+        ["öksürmek", "to cough"],
+        ["dinlenmek", "to rest"]
+      ]
+    },
+    {
+      "id": "a2-u06-l01-e02",
+      "type": "mcq",
+      "points": ["gp-meli"],
+      "question": "How do you say **You should rest**?",
+      "options": ["Dinlenmelisin.", "Dinlenmalısın.", "Dinlenmeliyim.", "Dinleniyorsun."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "The last vowel of *dinlen-* is e, a front vowel: *-meli*, then *-sin*.",
+        "2": "*Dinlenmeliyim* is **I** should rest.",
+        "3": "*Dinleniyorsun* is **you are resting**."
+      },
+      "explain": "*dinlen-* + *-meli* + *-sin*: *dinlenmelisin*."
+    },
+    {
+      "id": "a2-u06-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-meli"],
+      "base": "gitmek",
+      "form": "necessitative",
+      "label": "*gitmek* with **must**: I must go, you must go…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["gitmeliyim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["gitmelisin"]
+        },
+        {
+          "p": "o",
+          "accept": ["gitmeli"]
+        },
+        {
+          "p": "biz",
+          "accept": ["gitmeliyiz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["gitmelisiniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["gitmeliler"]
+        }
+      ],
+      "explain": "`-mAlI` + type I endings, with a buffer y before *-im* and *-iz*. The t of *git-* stays: `-mAlI` starts with a consonant."
+    },
+    {
+      "id": "a2-u06-l01-e04",
+      "type": "cloze",
+      "points": ["gp-meli", "gp-possessive-have"],
+      "text": "Ateşin var. Doktora git___.",
+      "en": "You have a fever. You should go to the doctor.",
+      "blanks": [
+        {
+          "accept": ["melisin"],
+          "reject": [
+            {
+              "answer": "malısın",
+              "why": "The vowel of *git-* is i, a front vowel: *-meli*."
+            },
+            {
+              "answer": "meli",
+              "why": "*Gitmeli* is for **he** or **she**. For **you**, add *-sin*: *gitmelisin*."
+            }
+          ]
+        }
+      ],
+      "explain": "*git-* + *-meli* + *-sin*: *gitmelisin*."
+    },
+    {
+      "id": "a2-u06-l01-e05",
+      "type": "translate",
+      "points": ["gp-meli"],
+      "from": "en",
+      "prompt": "You must drink a lot of water.",
+      "accept": ["Çok su içmelisin.", "Çok su içmelisiniz.", "Sen çok su içmelisin.", "Siz çok su içmelisiniz.", "Bol su [içmelisin|içmelisiniz]."],
+      "reject": [
+        {
+          "answer": "Çok su içmalısın.",
+          "why": "The vowel of *iç-* is i, a front vowel: *içmelisin*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u06-l01-e06",
+      "type": "translate",
+      "points": ["gp-meli"],
+      "from": "tr",
+      "prompt": "Sigara içmemelisin.",
+      "accept": ["You should not smoke.", "You must not smoke.", "You ought not to smoke.", "You [should|must] not smoke cigarettes."]
+    },
+    {
+      "id": "a2-u06-l01-e07",
+      "type": "listen",
+      "points": ["gp-meli", "gp-possessive-suffixes"],
+      "mode": "type",
+      "tr": "Boğazım ağrıyor, ilaç almalıyım.",
+      "en": "My throat hurts, I should take some medicine."
+    },
+    {
+      "id": "a2-u06-l01-e08",
+      "type": "morph",
+      "points": ["gp-meli", "gp-buffer-letters"],
+      "base": "dinlenmek",
+      "gloss": "we must rest",
+      "parts": ["dinlen", "meli", "y", "iz"],
+      "distractors": ["malı", "ız", "me"],
+      "result": "dinlenmeliyiz",
+      "explain": "*-meli* after the front e, then a buffer y and *-iz*: *dinlenmeliyiz*."
+    },
+    {
+      "id": "a2-u06-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-meli", "gp-consonant-softening"],
+      "from": "en",
+      "prompt": "Should I take this medicine?",
+      "text": "Bu ilacı almalı mıyım?",
+      "answer": ["Bu", "ilacı", "almalı", "mıyım"],
+      "distractors": ["ilaç", "almalıyım", "miyim"]
+    },
+    {
+      "id": "a2-u06-l01-e10",
+      "type": "mcq",
+      "points": ["gp-meli"],
+      "question": "What does *Çok çalışmamalısın* mean?",
+      "options": ["You shouldn't work too much.", "You don't have to work much.", "You can't work much."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**Don't have to** is *-mAk zorunda değilsin*, in lesson 3.",
+        "2": "**Can't** is *çalışamazsın*."
+      },
+      "explain": "`-mA` + `-mAlI`: *çalışmamalısın*, **you shouldn't** work."
+    },
+    {
+      "id": "a2-u06-l01-e11",
+      "type": "listen",
+      "points": ["gp-meli"],
+      "mode": "choose",
+      "tr": "Çocuklar erken yatmalı.",
+      "en": "Children should go to bed early.",
+      "options": ["Çocuklar erken yatmalı.", "Çocuklar erken yatıyor.", "Çocuklar erken yatar."],
+      "answer": 0
+    },
+    {
+      "id": "a2-u06-l01-e12",
+      "type": "cloze",
+      "points": ["gp-meli", "gp-dative"],
+      "text": "Grip oldum. Bugün işe git___ miyim?",
+      "en": "I've got the flu. Should I go to work today?",
+      "blanks": [
+        {
+          "accept": ["meli"],
+          "reject": [
+            {
+              "answer": "meliyim",
+              "why": "In a question the ending goes on `mI`: *gitmeli miyim?*"
+            }
+          ]
+        }
+      ],
+      "explain": "`-mAlI` takes type I endings, so the ending moves onto `mI`: *gitmeli miyim?*"
+    },
+    {
+      "id": "a2-u06-l01-e13",
+      "type": "translate",
+      "points": ["gp-meli"],
+      "from": "tr",
+      "prompt": "Nezle oldum, biraz dinlenmeliyim.",
+      "accept": [
+        "I have a cold, I should rest a little.",
+        "I have [got|caught] a cold, I [should|must|need to] rest (a little|a bit).",
+        "I have a cold, I [should|must|need to] rest a bit.",
+        "I have a cold, I [must|need to] rest (a little).",
+        "I have a cold, I should rest.",
+        "I caught a cold, I [should|must|need to] rest (a little|a bit)."
+      ]
+    }
+  ]
+}

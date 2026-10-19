@@ -1,0 +1,252 @@
+{
+  "id": "a2-u05-l03",
+  "unit": "a2-u05",
+  "order": 3,
+  "title": "May I come in?",
+  "goal": "Ask for permission, make polite requests and say what may happen: Girebilir miyim? Yağmur yağabilir.",
+  "points": ["gp-abil-uses", "gp-abil", "gp-ama-inability"],
+  "intro": {
+    "text": "`-(y)Abil` also asks for permission (*Girebilir miyim?* May I come in?), makes polite requests (*Tuzu verebilir misiniz?* Could you pass the salt?) and says what may happen (*Yağmur yağabilir*). **May not** is `-mAyAbil`: *Gelmeyebilir* (He may not come).",
+    "see": "gp-abil-uses"
+  },
+  "vocab": [
+    {
+      "tr": "izin",
+      "en": "permission",
+      "pos": "noun"
+    },
+    {
+      "tr": "tuz",
+      "en": "salt",
+      "pos": "noun"
+    },
+    {
+      "tr": "yer",
+      "en": "place; seat; floor, ground",
+      "pos": "noun"
+    },
+    {
+      "tr": "park etmek",
+      "en": "to park",
+      "pos": "verb"
+    },
+    {
+      "tr": "ödünç vermek",
+      "en": "to lend",
+      "pos": "verb"
+    },
+    {
+      "tr": "fırtına",
+      "en": "storm",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u05-l03-e01",
+      "type": "mcq",
+      "points": ["gp-abil-uses"],
+      "question": "You knock at an office door. What do you ask?",
+      "options": ["Girebilir miyim?", "Girebilir misiniz?", "Giremem."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Girebilir misiniz?* asks whether **you** can come in.",
+        "2": "*Giremem* means **I can't come in**."
+      },
+      "explain": "*gir-ebil-ir mi-y-im?*: **May I come in?**"
+    },
+    {
+      "id": "a2-u05-l03-e02",
+      "type": "translate",
+      "points": ["gp-abil-uses", "gp-accusative"],
+      "from": "tr",
+      "prompt": "Tuzu verebilir misiniz?",
+      "accept": [
+        "Could you pass the salt?",
+        "Could you pass me the salt?",
+        "Can you pass (me) the salt?",
+        "[Could|Can|Would] you give me the salt?",
+        "Would you pass (me) the salt?"
+      ]
+    },
+    {
+      "id": "a2-u05-l03-e03",
+      "type": "cloze",
+      "points": ["gp-abil-uses", "gp-abil"],
+      "text": "Buraya park ed___ miyim?",
+      "en": "May I park here?",
+      "blanks": [
+        {
+          "accept": ["ebilir"],
+          "reject": [
+            {
+              "answer": "abilir",
+              "why": "The vowel of *et-* is e, a front vowel: *edebilir*."
+            }
+          ]
+        }
+      ],
+      "explain": "*Et-* softens to *ed-* before a vowel: *park edebilir miyim?*"
+    },
+    {
+      "id": "a2-u05-l03-e04",
+      "type": "translate",
+      "points": ["gp-abil-uses", "gp-dative"],
+      "from": "en",
+      "prompt": "Can I sit here?",
+      "accept": ["Buraya oturabilir miyim?", "Burada oturabilir miyim?"],
+      "reject": [
+        {
+          "answer": "Buraya oturabilirim mi?",
+          "why": "The ending moves onto `mI`: *oturabilir miyim?*"
+        }
+      ]
+    },
+    {
+      "id": "a2-u05-l03-e05",
+      "type": "listen",
+      "points": ["gp-abil-uses"],
+      "mode": "type",
+      "tr": "Yarın fırtına olabilir.",
+      "en": "There may be a storm tomorrow."
+    },
+    {
+      "id": "a2-u05-l03-e06",
+      "type": "mcq",
+      "points": ["gp-abil-uses", "gp-ama-inability"],
+      "question": "What does *Ali gelmeyebilir* mean?",
+      "options": ["Ali may not come.", "Ali can't come.", "Ali didn't come."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**Ali can't come** is *Ali gelemez*.",
+        "2": "**Ali didn't come** is *Ali gelmedi*."
+      },
+      "explain": "`-mA` + y + `-Abil`: *gelmeyebilir*, **may not** come."
+    },
+    {
+      "id": "a2-u05-l03-e07",
+      "type": "wordbank",
+      "points": ["gp-abil-uses", "gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "Could you lend me your pen? (formal)",
+      "text": "Kaleminizi bana ödünç verebilir misiniz?",
+      "answer": ["Kaleminizi", "bana", "ödünç", "verebilir", "misiniz"],
+      "distractors": ["Kalemi", "sana", "verir"],
+      "accept": ["Bana kaleminizi ödünç verebilir misiniz?"]
+    },
+    {
+      "id": "a2-u05-l03-e08",
+      "type": "translate",
+      "points": ["gp-abil-uses", "gp-question-mi"],
+      "from": "tr",
+      "prompt": "Bu yer boş mu? Oturabilir miyim?",
+      "accept": [
+        "Is this seat free? Can I sit down?",
+        "Is this seat free? [May|Could] I sit (down|here)?",
+        "Is this seat free? Can I sit (here)?",
+        "Is this seat [empty|available]? [May|Can|Could] I sit (down|here)?",
+        "Is this place free? [May|Can|Could] I sit (down|here)?"
+      ]
+    },
+    {
+      "id": "a2-u05-l03-e09",
+      "type": "cloze",
+      "points": ["gp-abil-uses"],
+      "text": "Hava çok bulutlu. Yağmur ___.",
+      "en": "It's very cloudy. It might rain.",
+      "blanks": [
+        {
+          "options": ["yağabilir", "yağamaz", "yağar mı"],
+          "answer": 0
+        }
+      ],
+      "explain": "A possibility: *yağabilir*, **it may rain**."
+    },
+    {
+      "id": "a2-u05-l03-e10",
+      "type": "conjugate",
+      "points": ["gp-abil", "gp-abil-uses"],
+      "base": "girmek",
+      "form": "ability-question",
+      "label": "*girmek* with **can**, as a question: can I come in? can you come in?…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["girebilir miyim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["girebilir misin"]
+        },
+        {
+          "p": "o",
+          "accept": ["girebilir mi"]
+        },
+        {
+          "p": "biz",
+          "accept": ["girebilir miyiz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["girebilir misiniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["girebilirler mi"]
+        }
+      ],
+      "explain": "As in every tense with type I endings, the ending goes on `mI`; **they** keeps *-ler* on the verb: *girebilirler mi*."
+    },
+    {
+      "id": "a2-u05-l03-e11",
+      "type": "listen",
+      "points": ["gp-abil-uses"],
+      "mode": "choose",
+      "tr": "Pencereyi açabilir misin?",
+      "en": "Could you open the window?",
+      "options": ["Pencereyi açabilir misin?", "Pencereyi açar mısın?", "Pencereyi açamaz mısın?"],
+      "answer": 0
+    },
+    {
+      "id": "a2-u05-l03-e12",
+      "type": "translate",
+      "points": ["gp-abil-uses", "gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "May I use your phone?",
+      "accept": ["Telefonunuzu kullanabilir miyim?", "Telefonunu kullanabilir miyim?"],
+      "reject": [
+        {
+          "answer": "Telefonunuzu kullanabilirim mi?",
+          "why": "The ending moves onto `mI`: *kullanabilir miyim?*"
+        }
+      ]
+    },
+    {
+      "id": "a2-u05-l03-e13",
+      "type": "morph",
+      "points": ["gp-abil-uses", "gp-buffer-letters"],
+      "base": "gelmek",
+      "gloss": "he may not come",
+      "parts": ["gel", "me", "y", "ebil", "ir"],
+      "distractors": ["eme", "ma", "ez"],
+      "result": "gelmeyebilir",
+      "explain": "`-mA` (not) + a buffer y + `-Abil` (may): *gelmeyebilir*. Compare *gelemez*, **he can't come**."
+    },
+    {
+      "id": "a2-u05-l03-e14",
+      "type": "translate",
+      "points": ["gp-abil-uses", "gp-ama-inability", "gp-past-di"],
+      "from": "tr",
+      "prompt": "Annem izin vermedi, gelemem.",
+      "accept": [
+        "My mother did not let me, I cannot come.",
+        "My [mother|mom|mum] did not [give me permission|allow me|let me go], I cannot come.",
+        "My [mom|mum] did not let me, I cannot come.",
+        "My [mother|mom|mum] [did not|would not] [let me|allow me|give me permission], so I cannot come.",
+        "My [mother|mom|mum] would not [let me|allow me|give me permission], I cannot come."
+      ]
+    }
+  ]
+}

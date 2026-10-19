@@ -1,0 +1,259 @@
+{
+  "id": "a2-u04-l03",
+  "unit": "a2-u04",
+  "order": 3,
+  "title": "I never smoke",
+  "goal": "Say what you don't do and ask questions in the aorist: içmem, içmez, içer misin?",
+  "points": ["gp-aorist-negative", "gp-aorist-forms", "gp-aorist-irregulars"],
+  "intro": {
+    "text": "The negative aorist is `-mAz`: *içmez* (he doesn't drink). For **I** and **we** the z drops: *içmem*, *içmeyiz*. In questions the ending moves onto `mI`: *İçer misin?*, *İçmez misin?* With *hiç* or *asla* it means **never**: *Hiç et yemem*.",
+    "see": "gp-aorist-negative"
+  },
+  "vocab": [
+    {
+      "tr": "asla",
+      "en": "never (with a negative verb)",
+      "pos": "adv"
+    },
+    {
+      "tr": "sigara",
+      "en": "cigarette",
+      "pos": "noun"
+    },
+    {
+      "tr": "sigara içmek",
+      "en": "to smoke",
+      "pos": "verb"
+    },
+    {
+      "tr": "balık",
+      "en": "fish",
+      "pos": "noun"
+    },
+    {
+      "tr": "kullanmak",
+      "en": "to use; to drive (a car)",
+      "pos": "verb"
+    },
+    {
+      "tr": "spor yapmak",
+      "en": "to do sports, to exercise",
+      "pos": "verb"
+    },
+    {
+      "tr": "Bilmem.",
+      "en": "I don't know. I wouldn't know.",
+      "pos": "phrase"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u04-l03-e01",
+      "type": "mcq",
+      "points": ["gp-aorist-negative"],
+      "question": "How do you say **I don't smoke**?",
+      "options": ["Sigara içmem.", "Sigara içmezim.", "Sigara içmez.", "Sigara içmiyor."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "For **I** the z drops: *-mAm*, so *içmem*.",
+        "2": "*İçmez* is **he** or **she** doesn't smoke.",
+        "3": "*İçmiyor* is the present continuous, for **he** or **she**."
+      },
+      "explain": "Negative aorist for **I**: *-mAm*, so *içmem*."
+    },
+    {
+      "id": "a2-u04-l03-e02",
+      "type": "conjugate",
+      "points": ["gp-aorist-negative"],
+      "base": "gelmek",
+      "form": "aorist-negative",
+      "label": "*gelmek* in the negative aorist: I don't come, you don't come…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["gelmem"]
+        },
+        {
+          "p": "sen",
+          "accept": ["gelmezsin"]
+        },
+        {
+          "p": "o",
+          "accept": ["gelmez"]
+        },
+        {
+          "p": "biz",
+          "accept": ["gelmeyiz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["gelmezsiniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["gelmezler"]
+        }
+      ],
+      "explain": "`-mAz`, but *-mAm* for **I** and *-mAyIz* for **we**. The thirteen are regular in the negative: *gelmez*."
+    },
+    {
+      "id": "a2-u04-l03-e03",
+      "type": "cloze",
+      "points": ["gp-aorist-negative"],
+      "text": "Ben et yemem. Elif de hiç et ye___.",
+      "en": "I don't eat meat. Elif never eats meat either.",
+      "blanks": [
+        {
+          "accept": ["mez", "miyor"],
+          "reject": [
+            {
+              "answer": "mem",
+              "why": "*Yemem* is **I** don't eat. For **she**: *yemez*."
+            },
+            {
+              "answer": "mer",
+              "why": "The negative aorist is `-mAz`: *yemez*."
+            }
+          ]
+        }
+      ],
+      "explain": "Negative aorist for **he** or **she**: *-mez*. With *hiç* it means **never**."
+    },
+    {
+      "id": "a2-u04-l03-e04",
+      "type": "translate",
+      "points": ["gp-aorist-negative"],
+      "from": "en",
+      "prompt": "We never drive.",
+      "accept": ["Hiç araba kullanmayız.", "[Asla|Biz hiç|Biz asla] araba kullanmayız.", "[Hiç|Asla|Biz hiç|Biz asla] araba kullanmıyoruz."],
+      "reject": [
+        {
+          "answer": "Hiç araba kullanmazız.",
+          "why": "For **we** the z drops and a buffer y comes in: *kullanmayız*."
+        },
+        {
+          "answer": "Hiç araba kullanırız.",
+          "why": "*Hiç* meaning **never** needs a negative verb: *kullanmayız*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u04-l03-e05",
+      "type": "translate",
+      "points": ["gp-aorist-negative", "gp-possessive-suffixes"],
+      "from": "tr",
+      "prompt": "Babam asla balık yemez.",
+      "accept": ["My father never eats fish.", "My dad never eats fish.", "My [father|dad] does not ever eat fish."]
+    },
+    {
+      "id": "a2-u04-l03-e06",
+      "type": "listen",
+      "points": ["gp-aorist-negative"],
+      "mode": "type",
+      "tr": "Pazar günü çalışmaz mısınız?",
+      "en": "Don't you work on Sundays?"
+    },
+    {
+      "id": "a2-u04-l03-e07",
+      "type": "morph",
+      "points": ["gp-aorist-negative", "gp-buffer-letters"],
+      "base": "yapmak",
+      "gloss": "we don't do",
+      "parts": ["yap", "ma", "y", "ız"],
+      "distractors": ["maz", "me", "ar"],
+      "result": "yapmayız",
+      "explain": "For **we**: `-mA` + a buffer y + *-ız*, with no z: *yapmayız*."
+    },
+    {
+      "id": "a2-u04-l03-e08",
+      "type": "mcq",
+      "points": ["gp-aorist-negative"],
+      "question": "How do you ask **Do you do any sport?**",
+      "options": ["Spor yapar mısın?", "Spor yaparsın mı?", "Spor yapmaz mısın?", "Spor yaptın mı?"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "In the aorist the ending moves onto `mI`: *yapar mısın?*",
+        "2": "*Yapmaz mısın?* asks **don't you** do any sport?",
+        "3": "*Yaptın mı?* is the past: **did you** do sport?"
+      },
+      "explain": "Aorist + `mI` + the ending: *Spor yapar mısın?*"
+    },
+    {
+      "id": "a2-u04-l03-e09",
+      "type": "wordbank",
+      "points": ["gp-aorist-negative", "gp-dative"],
+      "from": "en",
+      "prompt": "Does this bus go to Kadıköy?",
+      "text": "Bu otobüs Kadıköy'e gider mi?",
+      "answer": ["Bu", "otobüs", "Kadıköy'e", "gider", "mi"],
+      "distractors": ["gidiyor", "mı", "Kadıköy'de"]
+    },
+    {
+      "id": "a2-u04-l03-e10",
+      "type": "translate",
+      "points": ["gp-aorist-negative", "gp-aorist-uses"],
+      "from": "tr",
+      "prompt": "Bilmem, belki gelir.",
+      "accept": [
+        "I do not know, maybe he will come.",
+        "I do not know, maybe she will come.",
+        "I do not know, perhaps [he|she] will come.",
+        "Who knows, [maybe|perhaps] [he|she] will come.",
+        "I do not know, [maybe|perhaps] [he|she] [is coming|might come]."
+      ]
+    },
+    {
+      "id": "a2-u04-l03-e11",
+      "type": "listen",
+      "points": ["gp-aorist-negative"],
+      "mode": "choose",
+      "tr": "Kahve içmem, çay içerim.",
+      "en": "I don't drink coffee, I drink tea.",
+      "options": ["Kahve içmem, çay içerim.", "Kahve içerim, çay içmem.", "Kahve içmez, çay içer."],
+      "answer": 0
+    },
+    {
+      "id": "a2-u04-l03-e12",
+      "type": "cloze",
+      "points": ["gp-aorist-negative"],
+      "text": "Çay iç___ misin? — Hayır, teşekkürler. Çay iç___.",
+      "en": "Do you drink tea? — No, thanks. I don't drink tea.",
+      "blanks": [
+        {
+          "options": ["er", "ir", "mez"],
+          "answer": 0
+        },
+        {
+          "accept": ["mem"],
+          "reject": [
+            {
+              "answer": "mez",
+              "why": "*İçmez* is **he** or **she** doesn't. For **I**: *içmem*."
+            },
+            {
+              "answer": "mezim",
+              "why": "For **I** the z drops: *içmem*."
+            }
+          ]
+        }
+      ],
+      "explain": "*İçer misin?* asks; *İçmem* answers for **I**."
+    },
+    {
+      "id": "a2-u04-l03-e13",
+      "type": "translate",
+      "points": ["gp-aorist-negative"],
+      "from": "en",
+      "prompt": "Don't you eat fish?",
+      "accept": ["Balık yemez misin?", "Balık yemez misiniz?", "Sen balık yemez misin?", "Siz balık yemez misiniz?", "Balık yemiyor [musun|musunuz]?"],
+      "reject": [
+        {
+          "answer": "Balık yemezsin mi?",
+          "why": "In the aorist the ending moves onto `mI`: *yemez misin?*"
+        }
+      ]
+    }
+  ]
+}

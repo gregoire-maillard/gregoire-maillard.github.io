@@ -1,0 +1,250 @@
+{
+  "id": "a2-u05-l01",
+  "unit": "a2-u05",
+  "order": 1,
+  "title": "I can swim",
+  "goal": "Say what you can do with -(y)Abil: yüzebilirim, çalabilir, okuyabilir misin?",
+  "points": ["gp-abil"],
+  "intro": {
+    "text": "Add `-(y)Abil` to the stem, then the aorist *-ir* and the endings: *yüz-* → *yüzebilirim* (I can swim), *oku-* → *okuyabilir* (he can read). The first vowel follows two-way harmony (*-ebil*, *-abil*); *bil* never changes: *yapabilirsin*.",
+    "see": "gp-abil"
+  },
+  "vocab": [
+    {
+      "tr": "futbol",
+      "en": "football, soccer",
+      "pos": "noun"
+    },
+    {
+      "tr": "tenis",
+      "en": "tennis",
+      "pos": "noun"
+    },
+    {
+      "tr": "satranç",
+      "en": "chess",
+      "pos": "noun"
+    },
+    {
+      "tr": "gitar",
+      "en": "guitar",
+      "pos": "noun"
+    },
+    {
+      "tr": "çalmak",
+      "en": "to play (an instrument); to ring; to knock (at a door)",
+      "pos": "verb"
+    },
+    {
+      "tr": "şarkı söylemek",
+      "en": "to sing",
+      "pos": "verb"
+    },
+    {
+      "tr": "kayak yapmak",
+      "en": "to ski",
+      "pos": "verb"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u05-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["futbol", "football"],
+        ["tenis", "tennis"],
+        ["satranç", "chess"],
+        ["gitar", "guitar"],
+        ["şarkı söylemek", "to sing"],
+        ["kayak yapmak", "to ski"]
+      ]
+    },
+    {
+      "id": "a2-u05-l01-e02",
+      "type": "mcq",
+      "points": ["gp-abil"],
+      "question": "How do you say **I can swim**?",
+      "options": ["Yüzebilirim.", "Yüzabilirim.", "Yüzebilerim.", "Yüzüyorum."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "The first vowel follows *yüz-*: ü is a front vowel, so *-ebil*.",
+        "2": "After *bil* the aorist is always *-ir*: *-ebilirim*.",
+        "3": "*Yüzüyorum* is **I am swimming**."
+      },
+      "explain": "*yüz-* + *-ebil* + *-ir* + *-im*: *yüzebilirim*."
+    },
+    {
+      "id": "a2-u05-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-abil"],
+      "base": "yapmak",
+      "form": "ability",
+      "label": "*yapmak* with **can**: I can do, you can do…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["yapabilirim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["yapabilirsin"]
+        },
+        {
+          "p": "o",
+          "accept": ["yapabilir"]
+        },
+        {
+          "p": "biz",
+          "accept": ["yapabiliriz"]
+        },
+        {
+          "p": "siz",
+          "accept": ["yapabilirsiniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["yapabilirler"]
+        }
+      ],
+      "explain": "Back a → *-abil*, then *-ir* and the type I endings. *Bil* keeps its i, so the endings are front: *yapabilirsin*."
+    },
+    {
+      "id": "a2-u05-l01-e04",
+      "type": "cloze",
+      "points": ["gp-abil"],
+      "text": "Ece gitar çal___.",
+      "en": "Ece can play the guitar.",
+      "blanks": [
+        {
+          "accept": ["abilir"],
+          "reject": [
+            {
+              "answer": "ebilir",
+              "why": "The last vowel of *çal-* is a, a back vowel: *-abilir*."
+            },
+            {
+              "answer": "abılır",
+              "why": "*Bil* never changes its vowel: *çalabilir*."
+            }
+          ]
+        }
+      ],
+      "explain": "*çal-* + *-abil* + *-ir*: *çalabilir*."
+    },
+    {
+      "id": "a2-u05-l01-e05",
+      "type": "translate",
+      "points": ["gp-abil", "gp-buffer-letters"],
+      "from": "en",
+      "prompt": "My brother can play chess.",
+      "accept": ["Kardeşim satranç oynayabilir.", "[Erkek kardeşim|Ağabeyim|Abim] satranç oynayabilir.", "[Kardeşim|Erkek kardeşim|Ağabeyim|Abim] satranç oynayabiliyor."],
+      "reject": [
+        {
+          "answer": "Kardeşim satranç oynabilir.",
+          "why": "*Oyna-* ends in a vowel, so a buffer y comes in: *oynayabilir*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u05-l01-e06",
+      "type": "translate",
+      "points": ["gp-abil"],
+      "from": "tr",
+      "prompt": "Zeynep İngilizce şarkı söyleyebilir.",
+      "accept": ["Zeynep can sing in English.", "Zeynep can sing English songs.", "Zeynep is able to sing in English."]
+    },
+    {
+      "id": "a2-u05-l01-e07",
+      "type": "listen",
+      "points": ["gp-abil"],
+      "mode": "type",
+      "tr": "Bu hafta sonu kayak yapabiliriz.",
+      "en": "We can go skiing this weekend."
+    },
+    {
+      "id": "a2-u05-l01-e08",
+      "type": "morph",
+      "points": ["gp-abil", "gp-buffer-letters"],
+      "base": "okumak",
+      "gloss": "you can read",
+      "parts": ["oku", "y", "abil", "ir", "sin"],
+      "distractors": ["ebil", "ır", "sın"],
+      "result": "okuyabilirsin",
+      "explain": "A buffer y after the vowel, back u → *-abil*; *bil* keeps its i, so *-ir* and *-sin* are front."
+    },
+    {
+      "id": "a2-u05-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-abil"],
+      "from": "en",
+      "prompt": "Can you play tennis?",
+      "text": "Tenis oynayabilir misin?",
+      "answer": ["Tenis", "oynayabilir", "misin"],
+      "distractors": ["oynabilir", "mısın", "oynuyor"]
+    },
+    {
+      "id": "a2-u05-l01-e10",
+      "type": "listen",
+      "points": ["gp-abil"],
+      "mode": "choose",
+      "tr": "Türkçe konuşabiliyor musun?",
+      "en": "Can you speak Turkish?",
+      "options": ["Türkçe konuşabiliyor musun?", "Türkçe konuşuyor musun?", "Türkçe konuşabilir miyim?"],
+      "answer": 0
+    },
+    {
+      "id": "a2-u05-l01-e11",
+      "type": "cloze",
+      "points": ["gp-abil", "gp-buffer-letters"],
+      "text": "Ben gitar çal___, sen de şarkı söyle___.",
+      "en": "I can play the guitar, and you can sing.",
+      "blanks": [
+        {
+          "options": ["abilirim", "ebilirim", "abilir"],
+          "answer": 0
+        },
+        {
+          "accept": ["yebilirsin"],
+          "reject": [
+            {
+              "answer": "ebilirsin",
+              "why": "*Söyle-* ends in a vowel, so a buffer y comes in: *söyleyebilirsin*."
+            },
+            {
+              "answer": "yabilirsin",
+              "why": "The last vowel of *söyle-* is e, a front vowel: *-yebil*."
+            }
+          ]
+        }
+      ],
+      "explain": "*çal-abil-ir-im*; *söyle-y-ebil-ir-sin*."
+    },
+    {
+      "id": "a2-u05-l01-e12",
+      "type": "translate",
+      "points": ["gp-abil", "gp-dative"],
+      "from": "en",
+      "prompt": "We can go to the cinema tomorrow.",
+      "accept": ["Yarın sinemaya gidebiliriz.", "Sinemaya yarın gidebiliriz.", "Biz yarın sinemaya gidebiliriz."],
+      "reject": [
+        {
+          "answer": "Yarın sinemaya gitebiliriz.",
+          "why": "*Git-* softens to *gid-* before a vowel: *gidebiliriz*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u05-l01-e13",
+      "type": "translate",
+      "points": ["gp-abil"],
+      "from": "tr",
+      "prompt": "Babam on kilometre koşabilir.",
+      "accept": [
+        "My father can run ten kilometres.",
+        "My father can run [10 kilometres|ten kilometers|10 kilometers|10 km|ten km].",
+        "My dad can run [ten|10] [kilometres|kilometers|km]."
+      ]
+    }
+  ]
+}
