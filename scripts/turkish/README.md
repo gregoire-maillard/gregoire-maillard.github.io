@@ -18,7 +18,7 @@ What it checks:
 - **Registry**: units, titles, taglines and grammar-point lists equal to CURRICULUM.md; grammar points never used before the unit that introduces them; one guide section per grammar point, in order; the batch table and the units' `Batch:` lines agree.
 - **Answers**: the `[a|b]`, `(a)` syntax of accepted answers, the plain canonical `accept[0]`, duplicates, rejected answers that are also accepted, `cloze` blanks, `wordbank` tiles, `morph` parts, `match` pairs, `listen` options.
 - **Turkish text**: NFC, no U+0307 (from lowercasing İ without the Turkish locale), the `'` apostrophe, inline markup, `seg` segmentation; warnings for a likely mistyped dotless *I* (*Istanbul*), a question particle glued to its verb, non-Turkish letters, and sentences that start in lowercase.
-- **Targets** (warnings): lesson sizes and exercise mixes, guide and interlude lengths, interlude sources, flashcard examples that don't contain their word.
+- **Targets** (warnings): lesson sizes and exercise mixes, guide and interlude lengths, interlude sources, flashcard examples that don't contain their word, a flashcard `level` that differs from its unit's level, internal IDs (*a1-u07-l02*) in learner-facing text, `wordbank` alternatives without final punctuation.
 - **index.json**: up to date with the content (rewrite it with `--index`, which refuses while there are errors).
 - **Word list**: `wordlist.tsv` well formed (header `rank`, `lemma`, `pos`, ranks 1–1000 in order, no duplicates), and every flashcard's `tr` and `pos` equal to its rank's row.
 

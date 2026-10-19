@@ -123,7 +123,13 @@ function checkTr(s, where, { sentence = true } = {}) {
   if (sentence) sentenceCase(s, where, "tr");
 }
 
-function checkEnText(s, where) { sentenceCase(s, where, "en"); }
+function checkEnText(s, where) { sentenceCase(s, where, "en"); bareId(s, where); }
+
+// learners never see internal IDs: refer to a unit, lesson or grammar point with a [label](ref) link
+function bareId(t, where) {
+  const m = t.match(/(?:^|[^\w-])((?:[abc][12]-u\d\d(?:-l\d\d(?:-e\d\d)?)?|gp-[a-z0-9]+(?:-[a-z0-9]+)*))(?![\w-])/);
+  if (m) warn(where, `internal ID “${m[1]}” in learner-facing text; use a [label](ref) link`);
+}
 
 function checkText(s, lang, where, o) { if (lang === "tr") checkTr(s, where, o); else checkEnText(s, where); }
 
@@ -134,6 +140,7 @@ function checkRich(s, where, cx) {
   if (t.includes("`")) err(where, "unbalanced backtick");
   t = t.replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, (m, label, ref) => { checkRef(ref, where, cx); return label; });
   if (/\]\(/.test(t)) err(where, "malformed [label](ref) link");
+  bareId(t, where);
   t = t.replace(/\*\*([^*\n]+)\*\*/g, (m, inner) => inner);
   t = t.replace(/\*([^*\n]+)\*/g, (m, inner) => { checkTr(inner.trim(), where + " (Turkish in *…*)", { sentence: false }); return "\u0003"; });
   if (t.includes("*")) err(where, "unbalanced * or ** markup (write a literal asterisk as \\*)");
@@ -213,6 +220,14 @@ const CONTRACTIONS = [
   ["she'll", "she will"], ["it'll", "it will"], ["we'll", "we will"], ["they'll", "they will"], ["i've", "i have"], ["you've", "you have"],
   ["we've", "we have"], ["they've", "they have"], ["i'd", "i would"], ["you'd", "you would"], ["he'd", "he would"], ["she'd", "she would"],
   ["we'd", "we would"], ["they'd", "they would"], ["let's", "let us"],
+  // the same without the apostrophe, which phone keyboards leave out (inputs have autocorrect off); not its, lets, were, well, ill, id, hed, shed, wed
+  ["im", "i am"], ["youre", "you are"], ["theyre", "they are"], ["hes", "he is"], ["shes", "she is"], ["thats", "that is"],
+  ["theres", "there is"], ["heres", "here is"], ["whats", "what is"], ["wheres", "where is"], ["whos", "who is"], ["hows", "how is"],
+  ["isnt", "is not"], ["arent", "are not"], ["wasnt", "was not"], ["werent", "were not"], ["dont", "do not"], ["doesnt", "does not"],
+  ["didnt", "did not"], ["havent", "have not"], ["hasnt", "has not"], ["hadnt", "had not"], ["wont", "will not"], ["wouldnt", "would not"],
+  ["cant", "can not"], ["couldnt", "could not"], ["shouldnt", "should not"], ["mustnt", "must not"], ["ive", "i have"], ["youve", "you have"],
+  ["weve", "we have"], ["theyve", "they have"], ["youll", "you will"], ["theyll", "they will"], ["itll", "it will"], ["youd", "you would"],
+  ["theyd", "they would"],
 ].map(([a, b]) => [new RegExp(`(^|\\s)${a.replace("'", "'")}(?=\\s|$)`, "g"), `$1${b}`]);
 
 // stage-1 normalization of PROJECT.md 6.4 (apostrophes kept)
@@ -696,6 +711,7 @@ function checkExercise(e, w, unitId, cx) {
           left.splice(j, 1);
         }
         if (norm(a, to) === norm(e.text, to)) warn(`${w}.accept[${i}]`, "same as text");
+        if (/[.!?…]$/.test(e.text) && !/[.!?…]["”»)]?$/.test(a)) warn(`${w}.accept[${i}]`, `“${a}” should end with punctuation, like text`);
       });
       break;
     }
@@ -874,6 +890,7 @@ function checkFlashFile(rec, cx) {
       if (!c.forms || !c.forms.aor) err(`${w}.forms`, "verbs need forms.aor (third person singular aorist)");
     }
     if (c.unit && !REG.units.has(c.unit)) err(`${w}.unit`, `${c.unit} is not in CURRICULUM.md`);
+    if (c.unit && c.level && !c.unit.startsWith(c.level + "-")) warn(`${w}.level`, `${c.level}, but its unit ${c.unit} is in ${c.unit.slice(0, 2).toUpperCase()}; a card's level follows its unit (PROJECT.md 7.8)`);
     // does the example contain the word?
     const lemma = trLower(c.tr.split(" ")[0]);
     let stem = c.pos === "verb" ? lemma.replace(/m[ae]k$/, "") : lemma;

@@ -145,6 +145,8 @@ test("norm: English contractions and folded Turkish letters in names", () => {
   assert.equal(TRK.norm("Ayşe can’t come.", "en"), "ayse can not come");
   assert.equal(TRK.norm("İzmir is big", "en"), "izmir is big");
   assert.equal(TRK.norm("It cannot be", "en"), "it can not be");
+  assert.equal(TRK.norm("Whats your name? Im Can, I dont know", "en"), "what is your name i am can i do not know");   // apostrophe left out on a phone
+  assert.equal(TRK.norm("Its colour, lets go, we were well", "en"), "its colour lets go we were well");                // real words stay
 });
 test("check: correct, with and without pronoun, punctuation and case ignored", () => {
   const acc = ["Evdeyim.", "Ben evdeyim."];
@@ -181,6 +183,7 @@ test("check: English alternatives, contractions and articles", () => {
   assert.equal(TRK.check("mehmet is at the office", acc, [], "en").verdict, "correct");
   assert.equal(TRK.check("Mehmet is in office", acc, [], "en").verdict, "wrong");
   assert.equal(TRK.check("I'm at home", ["I am at home."], [], "en").verdict, "correct");
+  assert.equal(TRK.check("Whats your name", ["What is your name?"], [], "en").verdict, "correct");
   assert.equal(TRK.check("Ayse is here", ["Ayşe is here."], [], "en").verdict, "correct");
 });
 test("check: one typo in an English word of five letters or more → almost (typo)", () => {
@@ -243,7 +246,11 @@ test("real content: every accepted answer is correct, every rejected answer wron
 // ─────────────────────────── 5.1 the renderer ───────────────────────────
 test("rich: Turkish, bold, code, escaped asterisk", () => {
   const h = TRK.rich("*ev* means **house**; `-DA` is a suffix; 2 \\* 3");
-  assert.equal(h, '<i lang="tr">ev</i> means <strong>house</strong>; <code>-DA</code> is a suffix; 2 * 3');
+  assert.equal(h, '<i lang="tr">ev</i> means <strong>house</strong>; <code class="trk-nw">-DA</code> is a suffix; 2 * 3');
+});
+test("rich: a hyphenated suffix or stem never breaks after its hyphen (trk-nw)", () => {
+  assert.equal(TRK.rich("*oku-* + *-um*"), '<i lang="tr" class="trk-nw">oku-</i> + <i lang="tr" class="trk-nw">-um</i>');
+  assert.equal(TRK.rich("*Bana su lazım* and `-(y)AbIl`"), '<i lang="tr">Bana su lazım</i> and <code class="trk-nw">-(y)AbIl</code>');
 });
 test("rich: escapes HTML, leaves code spans literal", () => {
   assert.equal(TRK.rich('<script>alert("x")</script> & co'), "&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp; co");

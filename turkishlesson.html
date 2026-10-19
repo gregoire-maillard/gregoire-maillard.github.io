@@ -85,6 +85,7 @@
       code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em; }
       .trk-soon { color: var(--muted); }
       .trk-soon small { font-size: .85em; }
+      .trk-nw { white-space: nowrap; }
       [hidden] { display: none !important; }
       .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       button { font: inherit; }
@@ -140,6 +141,8 @@
       .wlist .w-tr { color: var(--ink); font-weight: 600; font-size: 15.5px; }
       .wlist .w-en { color: var(--muted); font-size: 14px; }
       .wlist .w-txt { min-width: 0; display: flex; flex-direction: column; line-height: 1.3; }
+      .wlist .w-card { margin-left: auto; flex: none; font-size: 13px; font-weight: 600; color: var(--muted); padding: 10px 2px 10px 8px; text-decoration: none; }
+      .wlist .w-card:hover, .wlist .w-card:focus-visible { color: var(--blue-dark, var(--ink)); text-decoration: underline; }
       @media (max-width: 599px) { .wlist { grid-template-columns: minmax(0, 1fr); } .start h1, .end h1, .msg h1 { font-size: 24px; } }
       .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; align-items: center; }
       .meta { margin-top: 12px; font-size: 13.5px; color: var(--muted); }
@@ -241,6 +244,7 @@
 
       /* cloze */
       .cloze { font-size: 22px; line-height: 2.1; color: var(--ink); margin-bottom: 6px; }
+      .cz-w { white-space: nowrap; }
       .blank { font: inherit; font-size: 20px; color: var(--ink); border: 0; border-bottom: 2px solid var(--blue); border-radius: 4px 4px 0 0; background: var(--blue-tint); padding: 0 4px; height: 38px; text-align: center; min-width: 3ch; max-width: 100%; vertical-align: baseline; }
       .blank:focus { outline: none; background: var(--blue-wash); }
       .blank.right { border-color: var(--ok); background: var(--ok-wash); }
@@ -598,7 +602,9 @@
               (see && see.ready ? '<a class="more" href="' + esc(see.href) + '">More in the grammar guide: ' + esc(pt ? pt.label : "") + " →</a>" : "") + "</div>";
           }
           var words = L.vocab && L.vocab.length ? '<section class="words" aria-labelledby="h-words"><h2 id="h-words">New words</h2><ul class="wlist">' + L.vocab.map(function (v) {
-            return '<li>' + sayHtml(v.tr) + '<span class="w-txt"><span class="w-tr" lang="tr">' + esc(v.tr) + '</span><span class="w-en">' + esc(v.en) + "</span></span></li>";
+            var rank = v.card ? +v.card.slice(3) : 0;   // fc-0042 → 42: Browse opens the row of a rank searched on its own
+            return '<li>' + sayHtml(v.tr) + '<span class="w-txt"><span class="w-tr" lang="tr">' + esc(v.tr) + '</span><span class="w-en">' + esc(v.en) + "</span></span>" +
+              (rank ? '<a class="w-card" href="' + P.cards + "?view=browse&amp;q=" + rank + '" aria-label="' + esc(v.tr) + ' in the flashcards">Card</a>' : "") + "</li>";
           }).join("") + "</ul></section>" : "";
           var repeat = rec ? (rec.via === "test" ? "You skipped this lesson with a test. Doing it now earns full XP." : "You've done this lesson before (best " + pct(rec.best) + "). A repeat earns half the XP.") : "";
           start(head + tip + words, plural(S.items.length, "exercise") + (repeat ? " · " + repeat : ""), "Start the lesson");
@@ -897,21 +903,24 @@
 
       // cloze: a Turkish sentence with typed blanks and chosen blanks
       RENDER.cloze = function (ex, box) {
-        var parts = ex.text.split("___"), h = '<p class="cloze" lang="tr">', names = [], ords = [], anyTyped = false;
-        parts.forEach(function (p, i) {
-          h += esc(p);
-          if (i >= ex.blanks.length) return;
+        var h = '<p class="cloze" lang="tr">', names = [], ords = [], anyTyped = false, nb = 0;
+        var blankHtml = function (i) {
           var b = ex.blanks[i];
+          if (!b) return "";
           if (b.accept) {
             anyTyped = true;
-            h += '<input type="text" class="blank" data-b="' + i + '" lang="tr" aria-label="Blank ' + (i + 1) + '" style="width:' + (Math.max(3, longest(b.accept)) + 2) + 'ch">';
-          } else {
-            var name = nid("b"), ord = shuffle(range(b.options.length));
-            names[i] = name; ords[i] = ord;
-            h += '<span class="bopts" role="radiogroup" aria-label="Blank ' + (i + 1) + '" data-b="' + i + '">' + ord.map(function (k) {
-              return '<label class="bopt"><input type="radio" name="' + name + '" value="' + k + '"><span>' + esc(b.options[k]) + "</span></label>";
-            }).join("") + "</span>";
+            return '<input type="text" class="blank" data-b="' + i + '" lang="tr" aria-label="Blank ' + (i + 1) + '" style="width:' + (Math.max(3, longest(b.accept)) + 2) + 'ch">';
           }
+          var name = nid("b"), ord = shuffle(range(b.options.length));
+          names[i] = name; ords[i] = ord;
+          return '<span class="bopts" role="radiogroup" aria-label="Blank ' + (i + 1) + '" data-b="' + i + '">' + ord.map(function (k) {
+            return '<label class="bopt"><input type="radio" name="' + name + '" value="' + k + '"><span>' + esc(b.options[k]) + "</span></label>";
+          }).join("") + "</span>";
+        };
+        // a blank stays on one line with the letters and punctuation touching it: "yat___." never leaves the full stop alone on the next line
+        ex.text.replace(/___/g, "\u0001").split(/(\s+)/).forEach(function (w) {
+          if (w.indexOf("\u0001") < 0) { h += esc(w); return; }
+          h += '<span class="cz-w">' + w.split("\u0001").map(function (p, k) { return (k ? blankHtml(nb++) : "") + esc(p); }).join("") + "</span>";
         });
         box.innerHTML = h + '</p><p class="en">' + esc(ex.en) + "</p>" + (anyTyped ? kbar() : "");
         var inputs = [].slice.call(box.querySelectorAll("input.blank"));

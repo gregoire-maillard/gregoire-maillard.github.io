@@ -598,7 +598,7 @@ Modality, evidential nuance, dense written Turkish, the Ottoman layer, idiom and
 - Grammar:
   - `gp-dir-assumption` — -DIr for a confident assumption (*Yorulmuştur*, *Şimdi evdedir*)
   - `gp-dir-general-truth` — -DIr and -mIştIr in encyclopedic and academic style
-  - `gp-epistemic-adverbs` — herhalde, galiba, muhtemelen, büyük ihtimalle, mutlaka, sanırım, belki de
+  - `gp-epistemic-adverbs` — herhâlde, galiba, muhtemelen, büyük ihtimalle, mutlaka, sanırım, belki de
   - `gp-certainty-scale` — -DI, -mIş, -DIr and -mIş olmalı side by side, from certain to guessed
 - Vocabulary: ancient history, empires and treaties
 - Interlude: **The Hittites and Hattusa** — the Bronze Age capital near Boğazkale and its clay-tablet archives (UNESCO 1986)

@@ -143,7 +143,7 @@
     var t = String(s == null ? "" : s).replace(/[\u0002\u0003]/g, "");
     if (!opts.tr) {
       t = t.replace(/\\\*/g, function () { return slot("*"); });
-      t = t.replace(/`([^`\n]*)`/g, function (m, inner) { return slot("<code>" + esc(inner) + "</code>"); });
+      t = t.replace(/`([^`\n]*)`/g, function (m, inner) { return slot("<code" + nw(inner) + ">" + esc(inner) + "</code>"); });
     }
     t = t.replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, function (m, label, ref) { return slot(link(label, ref, opts)); });
     var h = emphasis(esc(t), opts);
@@ -152,9 +152,11 @@
   }
   function emphasis(h, opts) {
     h = h.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
-    if (!opts.tr) h = h.replace(/\*([^*\n]+)\*/g, '<i lang="tr">$1</i>');
+    if (!opts.tr) h = h.replace(/\*([^*\n]+)\*/g, function (m, inner) { return '<i lang="tr"' + nw(inner) + ">" + inner + "</i>"; });
     return h;
   }
+  // A suffix or stem written with a hyphen (-um, oku-, -(y)AbIl) must not break after the hyphen: class trk-nw (white-space: nowrap).
+  function nw(inner) { return /^\S*-\S*$/.test(inner) ? ' class="trk-nw"' : ""; }
   function link(label, ref, opts) {
     var inner = emphasis(esc(label), opts);
     var t = href(ref, opts.index);
@@ -245,7 +247,15 @@
     ["shouldn't", "should not"], ["mustn't", "must not"], ["i'll", "i will"], ["you'll", "you will"], ["he'll", "he will"],
     ["she'll", "she will"], ["it'll", "it will"], ["we'll", "we will"], ["they'll", "they will"], ["i've", "i have"], ["you've", "you have"],
     ["we've", "we have"], ["they've", "they have"], ["i'd", "i would"], ["you'd", "you would"], ["he'd", "he would"], ["she'd", "she would"],
-    ["we'd", "we would"], ["they'd", "they would"], ["let's", "let us"]
+    ["we'd", "we would"], ["they'd", "they would"], ["let's", "let us"],
+    // the same without the apostrophe, which phone keyboards leave out (inputs have autocorrect off); not its, lets, were, well, ill, id, hed, shed, wed
+    ["im", "i am"], ["youre", "you are"], ["theyre", "they are"], ["hes", "he is"], ["shes", "she is"], ["thats", "that is"],
+    ["theres", "there is"], ["heres", "here is"], ["whats", "what is"], ["wheres", "where is"], ["whos", "who is"], ["hows", "how is"],
+    ["isnt", "is not"], ["arent", "are not"], ["wasnt", "was not"], ["werent", "were not"], ["dont", "do not"], ["doesnt", "does not"],
+    ["didnt", "did not"], ["havent", "have not"], ["hasnt", "has not"], ["hadnt", "had not"], ["wont", "will not"], ["wouldnt", "would not"],
+    ["cant", "can not"], ["couldnt", "could not"], ["shouldnt", "should not"], ["mustnt", "must not"], ["ive", "i have"], ["youve", "you have"],
+    ["weve", "we have"], ["theyve", "they have"], ["youll", "you will"], ["theyll", "they will"], ["itll", "it will"], ["youd", "you would"],
+    ["theyd", "they would"]
   ].map(function (p) { return [new RegExp("(^|\\s)" + p[0] + "(?=\\s|$)", "g"), "$1" + p[1]]; });
 
   // Stage-1 normalization (apostrophes kept).
