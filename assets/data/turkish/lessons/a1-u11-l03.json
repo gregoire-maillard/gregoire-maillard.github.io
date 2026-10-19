@@ -1,0 +1,240 @@
+{
+  "id": "a1-u11-l03",
+  "unit": "a1-u11",
+  "order": 3,
+  "title": "What time is it?",
+  "goal": "Tell the time, and say at what time and on which day something happens.",
+  "points": ["gp-telling-time", "gp-dates"],
+  "intro": {
+    "text": "*Saat kaç?* *Saat üç.* (It's three.) *Saat üç buçuk.* (3:30) Past the hour: *üçü çeyrek geçiyor* (3:15). To the hour: *üçe çeyrek var* (2:45). **At** a time: *üçte, üç buçukta, üçü çeyrek geçe, üçe çeyrek kala*.",
+    "see": "gp-telling-time"
+  },
+  "vocab": [
+    {
+      "tr": "buçuk",
+      "en": "half (after a number)",
+      "pos": "noun"
+    },
+    {
+      "tr": "çeyrek",
+      "en": "quarter",
+      "pos": "noun"
+    },
+    {
+      "tr": "dakika",
+      "en": "minute",
+      "pos": "noun"
+    },
+    {
+      "tr": "geçe",
+      "en": "past (at … past the hour)",
+      "pos": "adv"
+    },
+    {
+      "tr": "kala",
+      "en": "to (at … to the hour)",
+      "pos": "adv"
+    },
+    {
+      "tr": "pazartesi",
+      "en": "Monday",
+      "pos": "noun"
+    },
+    {
+      "tr": "salı",
+      "en": "Tuesday",
+      "pos": "noun"
+    },
+    {
+      "tr": "çarşamba",
+      "en": "Wednesday",
+      "pos": "noun"
+    },
+    {
+      "tr": "perşembe",
+      "en": "Thursday",
+      "pos": "noun"
+    },
+    {
+      "tr": "cuma",
+      "en": "Friday",
+      "pos": "noun"
+    },
+    {
+      "tr": "cumartesi",
+      "en": "Saturday",
+      "pos": "noun"
+    },
+    {
+      "tr": "pazar",
+      "en": "Sunday",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u11-l03-e01",
+      "type": "match",
+      "pairs": [
+        ["pazartesi", "Monday"],
+        ["salı", "Tuesday"],
+        ["çarşamba", "Wednesday"],
+        ["perşembe", "Thursday"],
+        ["cuma", "Friday"],
+        ["pazar", "Sunday"]
+      ]
+    },
+    {
+      "id": "a1-u11-l03-e02",
+      "type": "mcq",
+      "points": ["gp-telling-time"],
+      "question": "*Saat dört buçuk.* What time is it?",
+      "options": ["4:30", "4:15", "3:30", "4:45"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "4:15 is *dördü çeyrek geçiyor*.",
+        "2": "*Buçuk* follows the hour it is half past: 3:30 is *üç buçuk*.",
+        "3": "4:45 is *beşe çeyrek var*."
+      },
+      "explain": "*Buçuk* means half past: *dört buçuk*, 4:30."
+    },
+    {
+      "id": "a1-u11-l03-e03",
+      "type": "translate",
+      "points": ["gp-telling-time"],
+      "from": "en",
+      "prompt": "It's ten past three.",
+      "accept": ["Saat üçü on geçiyor.", "Üçü on geçiyor."],
+      "reject": [
+        {
+          "answer": "Saat üçe on geçiyor.",
+          "why": "Minutes **past** take the accusative: *üçü*. The dative goes with *var*: *üçe on var*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u11-l03-e04",
+      "type": "cloze",
+      "points": ["gp-telling-time", "gp-consonant-softening"],
+      "text": "Saat ___ çeyrek var.",
+      "en": "It's a quarter to four.",
+      "blanks": [
+        {
+          "accept": ["dörde"],
+          "reject": [
+            {
+              "answer": "dörte",
+              "why": "Before a vowel the t of *dört* softens: *dörde*."
+            },
+            {
+              "answer": "dördü",
+              "why": "*Dördü* goes with *geçiyor*, past four. **To** four takes the dative: *dörde*."
+            }
+          ]
+        }
+      ],
+      "explain": "**To** the hour: dative + *var*. The t of *dört* softens before the vowel: *dörde çeyrek var*."
+    },
+    {
+      "id": "a1-u11-l03-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Ders saat dokuzda başlıyor.",
+      "en": "The lesson starts at nine."
+    },
+    {
+      "id": "a1-u11-l03-e06",
+      "type": "morph",
+      "points": ["gp-telling-time", "gp-consonant-assimilation"],
+      "base": "beş",
+      "gloss": "at five",
+      "parts": ["beş", "te"],
+      "distractors": ["de", "e", "i"],
+      "result": "beşte",
+      "explain": "*Beş* ends in voiceless ş, so the locative is *-te*: *saat beşte*."
+    },
+    {
+      "id": "a1-u11-l03-e07",
+      "type": "translate",
+      "points": ["gp-dates"],
+      "from": "tr",
+      "prompt": "Cumartesi geliyorum.",
+      "accept": ["I am coming on Saturday.", "I am coming Saturday.", "I will come on Saturday.", "I will come Saturday.", "On Saturday I am coming."]
+    },
+    {
+      "id": "a1-u11-l03-e08",
+      "type": "wordbank",
+      "points": ["gp-telling-time"],
+      "from": "en",
+      "prompt": "The train arrives at twenty past five.",
+      "text": "Tren beşi yirmi geçe geliyor.",
+      "answer": ["Tren", "beşi", "yirmi", "geçe", "geliyor"],
+      "distractors": ["beşe", "kala", "geçiyor"]
+    },
+    {
+      "id": "a1-u11-l03-e09",
+      "type": "cloze",
+      "points": ["gp-telling-time"],
+      "text": "Film saat sekiz___ başlıyor.",
+      "en": "The film starts at eight.",
+      "blanks": [
+        {
+          "options": ["de", "e", "i"],
+          "answer": 0
+        }
+      ],
+      "explain": "**At** a whole hour takes the locative. *Sekiz* ends in voiced z: *sekizde*."
+    },
+    {
+      "id": "a1-u11-l03-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Saat ikiye beş var.",
+      "en": "It's five to two.",
+      "options": ["Saat ikiye beş var.", "Saat ikiyi beş geçiyor.", "Saat iki buçuk."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u11-l03-e11",
+      "type": "translate",
+      "points": ["gp-telling-time"],
+      "from": "en",
+      "prompt": "What time are you coming?",
+      "accept": ["Saat kaçta geliyorsun?", "Saat kaçta geliyorsunuz?", "Kaçta [geliyorsun|geliyorsunuz]?"],
+      "reject": [
+        {
+          "answer": "Saat kaç geliyorsun?",
+          "why": "*Saat kaç?* asks what time it is now. **At** what time takes the locative: *Saat kaçta?*"
+        }
+      ]
+    },
+    {
+      "id": "a1-u11-l03-e12",
+      "type": "mcq",
+      "points": ["gp-dates"],
+      "question": "Which day comes after *cuma*?",
+      "options": ["cumartesi", "pazar", "perşembe"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Pazar* (Sunday) comes after *cumartesi*.",
+        "2": "*Perşembe* (Thursday) comes before *cuma*."
+      },
+      "explain": "*Cumartesi* (Saturday) is *cuma ertesi*, the day after Friday."
+    },
+    {
+      "id": "a1-u11-l03-e13",
+      "type": "translate",
+      "points": ["gp-dates", "gp-telling-time"],
+      "from": "tr",
+      "prompt": "Ders salı günü saat on buçukta.",
+      "accept": [
+        "The lesson is on Tuesday at half past ten.",
+        "The lesson is on Tuesday at [ten thirty|10:30].",
+        "The class is on Tuesday at [half past ten|ten thirty|10:30].",
+        "The [lesson|class] is at [half past ten|ten thirty|10:30] on Tuesday."
+      ]
+    }
+  ]
+}

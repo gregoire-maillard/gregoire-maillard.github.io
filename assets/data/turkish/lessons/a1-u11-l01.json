@@ -1,0 +1,243 @@
+{
+  "id": "a1-u11-l01",
+  "unit": "a1-u11",
+  "order": 1,
+  "title": "Counting",
+  "goal": "Count to ten and beyond, and keep the noun singular after a number.",
+  "points": ["gp-numbers", "gp-numbers-singular"],
+  "intro": {
+    "text": "*Bir, iki, üç, dört, beş, altı, yedi, sekiz, dokuz, on.* Bigger numbers are built in a row: *on bir* (11), *on beş* (15). After a number the noun stays singular: *iki kitap* (two books), *birkaç gün* (a few days).",
+    "see": "gp-numbers-singular"
+  },
+  "vocab": [
+    {
+      "tr": "sıfır",
+      "en": "zero",
+      "pos": "num"
+    },
+    {
+      "tr": "iki",
+      "en": "two",
+      "pos": "num"
+    },
+    {
+      "tr": "üç",
+      "en": "three",
+      "pos": "num"
+    },
+    {
+      "tr": "dört",
+      "en": "four",
+      "pos": "num"
+    },
+    {
+      "tr": "beş",
+      "en": "five",
+      "pos": "num"
+    },
+    {
+      "tr": "altı",
+      "en": "six",
+      "pos": "num"
+    },
+    {
+      "tr": "yedi",
+      "en": "seven",
+      "pos": "num"
+    },
+    {
+      "tr": "sekiz",
+      "en": "eight",
+      "pos": "num"
+    },
+    {
+      "tr": "dokuz",
+      "en": "nine",
+      "pos": "num"
+    },
+    {
+      "tr": "on",
+      "en": "ten",
+      "pos": "num"
+    },
+    {
+      "tr": "birkaç",
+      "en": "a few, several",
+      "pos": "det"
+    },
+    {
+      "tr": "gün",
+      "en": "day",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u11-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["sıfır", "zero"],
+        ["iki", "two"],
+        ["dört", "four"],
+        ["beş", "five"],
+        ["sekiz", "eight"],
+        ["dokuz", "nine"]
+      ]
+    },
+    {
+      "id": "a1-u11-l01-e02",
+      "type": "mcq",
+      "points": ["gp-numbers-singular"],
+      "question": "How do you say **two books**?",
+      "options": ["iki kitap", "iki kitaplar", "iki kitabı", "kitap iki"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "After a number the noun stays singular: the number already says there are several.",
+        "2": "*Kitabı* is the accusative, or **his book**. Here you need the bare noun.",
+        "3": "The number comes before the noun."
+      },
+      "explain": "Number + singular noun: *iki kitap*."
+    },
+    {
+      "id": "a1-u11-l01-e03",
+      "type": "translate",
+      "points": ["gp-numbers-singular", "gp-possessive-have"],
+      "from": "en",
+      "prompt": "I have three brothers and sisters.",
+      "accept": ["Üç kardeşim var.", "Benim üç kardeşim var."],
+      "reject": [
+        {
+          "answer": "Üç kardeşlerim var.",
+          "why": "After a number the noun stays singular: *üç kardeşim*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u11-l01-e04",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Sınıfta on öğrenci var.",
+      "en": "There are ten students in the class."
+    },
+    {
+      "id": "a1-u11-l01-e05",
+      "type": "cloze",
+      "points": ["gp-numbers-singular"],
+      "text": "Üç ___, lütfen.",
+      "en": "Three teas, please.",
+      "blanks": [
+        {
+          "accept": ["çay"],
+          "reject": [
+            {
+              "answer": "çaylar",
+              "why": "After a number the noun stays singular: *üç çay*."
+            }
+          ]
+        }
+      ],
+      "explain": "*Üç* already says how many, so *çay* stays singular."
+    },
+    {
+      "id": "a1-u11-l01-e06",
+      "type": "mcq",
+      "points": ["gp-numbers"],
+      "question": "What is *on yedi*?",
+      "options": ["17", "70", "10"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "70 is *yetmiş*.",
+        "2": "*On* alone is 10; *yedi* adds seven."
+      },
+      "explain": "*On* (10) + *yedi* (7): seventeen. Numbers are built biggest first."
+    },
+    {
+      "id": "a1-u11-l01-e07",
+      "type": "translate",
+      "points": ["gp-numbers-singular"],
+      "from": "tr",
+      "prompt": "Birkaç gün İzmir'de kalıyorum.",
+      "accept": [
+        "I am staying in Izmir for a few days.",
+        "I am staying in Izmir a few days.",
+        "I am staying a few days in Izmir.",
+        "I am staying for a few days in Izmir.",
+        "I will stay in Izmir for a few days."
+      ]
+    },
+    {
+      "id": "a1-u11-l01-e08",
+      "type": "wordbank",
+      "points": ["gp-numbers-singular"],
+      "from": "en",
+      "prompt": "We are here for two days.",
+      "text": "İki gün buradayız.",
+      "answer": ["İki", "gün", "buradayız"],
+      "distractors": ["günler", "burada", "Üç"]
+    },
+    {
+      "id": "a1-u11-l01-e09",
+      "type": "cloze",
+      "points": ["gp-numbers-singular"],
+      "text": "Bu sınıfta ___ öğrenci var.",
+      "en": "There are a few students in this class.",
+      "blanks": [
+        {
+          "options": ["birkaç", "iki", "on"],
+          "answer": 0
+        }
+      ],
+      "explain": "*Birkaç* means a few, and like a number it takes a singular noun: *birkaç öğrenci*."
+    },
+    {
+      "id": "a1-u11-l01-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Altı kişiyiz.",
+      "en": "There are six of us.",
+      "options": ["Altı kişiyiz.", "Yedi kişiyiz.", "Sekiz kişiyiz."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u11-l01-e11",
+      "type": "translate",
+      "points": ["gp-numbers-singular", "gp-possessive-softening"],
+      "from": "en",
+      "prompt": "How many children do you have?",
+      "accept": ["Kaç çocuğun var?", "Kaç çocuğunuz var?"],
+      "reject": [
+        {
+          "answer": "Kaç çocukların var?",
+          "why": "After *kaç* the noun stays singular: *kaç çocuğun*."
+        },
+        {
+          "answer": "Kaç çocukun var?",
+          "why": "Before a vowel the k of *çocuk* softens: *çocuğun*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u11-l01-e12",
+      "type": "translate",
+      "points": ["gp-numbers", "gp-var-yok"],
+      "from": "tr",
+      "prompt": "Evde dört kedi var.",
+      "accept": ["There are four cats in the house.", "There are four cats at home.", "There are 4 cats [in the house|at home]."]
+    },
+    {
+      "id": "a1-u11-l01-e13",
+      "type": "mcq",
+      "points": ["gp-numbers-singular"],
+      "question": "Which sentence is correct?",
+      "options": ["Burada çok kitap var.", "Burada çok kitaplar var."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Çok* (many) works like a number: the noun stays singular."
+      },
+      "explain": "*Çok kitap*: a lot of books. Like *kaç* and *birkaç*, *çok* takes a singular noun."
+    }
+  ]
+}

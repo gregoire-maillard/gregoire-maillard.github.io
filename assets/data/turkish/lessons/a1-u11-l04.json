@@ -1,0 +1,262 @@
+{
+  "id": "a1-u11-l04",
+  "unit": "a1-u11",
+  "order": 4,
+  "title": "On 29 October",
+  "goal": "Give dates and ordinals, and make a plan in a short conversation.",
+  "points": ["gp-dates", "gp-ordinals", "gp-telling-time", "gp-numbers"],
+  "intro": {
+    "text": "A month is lowercase on its own, *ekimde* (in October), but takes a capital and an apostrophe in a date: *29 Ekim'de*. Ordinals add `-(I)ncI`: *birinci* (first), *ikinci*, *üçüncü*, *dördüncü*. *Kaçıncı katta?* (On which floor?)",
+    "see": "gp-ordinals"
+  },
+  "vocab": [
+    {
+      "tr": "ocak",
+      "en": "January",
+      "pos": "noun"
+    },
+    {
+      "tr": "şubat",
+      "en": "February",
+      "pos": "noun"
+    },
+    {
+      "tr": "mart",
+      "en": "March",
+      "pos": "noun"
+    },
+    {
+      "tr": "nisan",
+      "en": "April",
+      "pos": "noun"
+    },
+    {
+      "tr": "mayıs",
+      "en": "May",
+      "pos": "noun"
+    },
+    {
+      "tr": "haziran",
+      "en": "June",
+      "pos": "noun"
+    },
+    {
+      "tr": "temmuz",
+      "en": "July",
+      "pos": "noun"
+    },
+    {
+      "tr": "ağustos",
+      "en": "August",
+      "pos": "noun"
+    },
+    {
+      "tr": "eylül",
+      "en": "September",
+      "pos": "noun"
+    },
+    {
+      "tr": "ekim",
+      "en": "October",
+      "pos": "noun"
+    },
+    {
+      "tr": "kasım",
+      "en": "November",
+      "pos": "noun"
+    },
+    {
+      "tr": "aralık",
+      "en": "December",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u11-l04-e01",
+      "type": "mcq",
+      "points": ["gp-dates", "gp-apostrophe"],
+      "question": "How do you say **in October**?",
+      "options": ["ekimde", "ekim'de", "ekimda"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "A month on its own is a common noun: no apostrophe.",
+        "2": "The last vowel of *ekim* is i, a front vowel: *-de*."
+      },
+      "explain": "On its own, a month is lowercase with no apostrophe: *ekimde*. In a date: *29 Ekim'de*."
+    },
+    {
+      "id": "a1-u11-l04-e02",
+      "type": "match",
+      "pairs": [
+        ["ocak", "January"],
+        ["mart", "March"],
+        ["mayıs", "May"],
+        ["temmuz", "July"],
+        ["eylül", "September"],
+        ["aralık", "December"]
+      ]
+    },
+    {
+      "id": "a1-u11-l04-e03",
+      "type": "morph",
+      "points": ["gp-ordinals"],
+      "base": "üç",
+      "gloss": "third",
+      "parts": ["üç", "üncü"],
+      "distractors": ["ıncı", "inci", "ncü"],
+      "result": "üçüncü",
+      "explain": "After a consonant `-(I)ncI` keeps its first vowel, and ü calls for *-üncü*: *üçüncü*."
+    },
+    {
+      "id": "a1-u11-l04-e04",
+      "type": "translate",
+      "points": ["gp-ordinals", "gp-locative"],
+      "from": "en",
+      "prompt": "Our apartment is on the fourth floor.",
+      "accept": ["Dairemiz dördüncü katta.", "Bizim dairemiz dördüncü katta."],
+      "reject": [
+        {
+          "answer": "Dairemiz dörtüncü katta.",
+          "why": "Before a vowel the t of *dört* softens: *dördüncü*."
+        },
+        {
+          "answer": "Dairemiz dört katta.",
+          "why": "**Fourth** is an ordinal: *dört* + *-üncü* = *dördüncü*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u11-l04-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Mayısta İstanbul'a gidiyoruz.",
+      "en": "We're going to Istanbul in May."
+    },
+    {
+      "id": "a1-u11-l04-e06",
+      "type": "cloze",
+      "points": ["gp-dates", "gp-apostrophe"],
+      "text": "Okullar 23 Nisan'___ kapalı.",
+      "en": "Schools are closed on 23 April.",
+      "blanks": [
+        {
+          "accept": ["da"],
+          "reject": [
+            {
+              "answer": "de",
+              "why": "The suffix follows *nisan*, whose last vowel is a: *Nisan'da*."
+            },
+            {
+              "answer": "ta",
+              "why": "*Nisan* ends in voiced n: *-da*."
+            }
+          ]
+        }
+      ],
+      "explain": "In a date the month takes a capital and an apostrophe: *23 Nisan'da*."
+    },
+    {
+      "id": "a1-u11-l04-e07",
+      "type": "translate",
+      "points": ["gp-ordinals"],
+      "from": "tr",
+      "prompt": "Kaçıncı kattasın?",
+      "accept": ["Which floor are you on?", "What floor are you on?", "On which floor are you?", "On what floor are you?"]
+    },
+    {
+      "id": "a1-u11-l04-e08",
+      "type": "mcq",
+      "points": ["gp-telling-time", "gp-dates"],
+      "context": [
+        {
+          "who": "Can",
+          "tr": "Cumartesi ne yapıyorsun?",
+          "en": "What are you doing on Saturday?"
+        },
+        {
+          "who": "Ece",
+          "tr": "Sabah annemin evine gidiyorum. Neden?",
+          "en": "In the morning I'm going to my mother's house. Why?"
+        },
+        {
+          "who": "Can",
+          "tr": "Akşam sinemaya gidiyoruz. Film saat sekizi çeyrek geçe başlıyor.",
+          "en": "We're going to the cinema in the evening. The film starts at a quarter past eight."
+        },
+        {
+          "who": "Ece",
+          "tr": "Tamam, ben de geliyorum!",
+          "en": "OK, I'm coming too!"
+        }
+      ],
+      "question": "What time does the film start?",
+      "options": ["8:15", "7:45", "8:30"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Sekizi çeyrek geçe*: at a quarter past eight. 7:45 would be *sekize çeyrek kala*."
+    },
+    {
+      "id": "a1-u11-l04-e09",
+      "type": "wordbank",
+      "points": ["gp-dates", "gp-dative"],
+      "from": "en",
+      "prompt": "We are going to Antalya in July.",
+      "text": "Temmuzda Antalya'ya gidiyoruz.",
+      "answer": ["Temmuzda", "Antalya'ya", "gidiyoruz"],
+      "distractors": ["Temmuz'da", "Antalya'da", "geliyoruz"],
+      "accept": ["Antalya'ya temmuzda gidiyoruz."]
+    },
+    {
+      "id": "a1-u11-l04-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Bugün ayın kaçı?",
+      "en": "What's the date today?",
+      "options": ["Bugün ayın kaçı?", "Bugün günlerden ne?", "Saat kaç?"],
+      "answer": 0
+    },
+    {
+      "id": "a1-u11-l04-e11",
+      "type": "translate",
+      "points": ["gp-ordinals"],
+      "from": "en",
+      "prompt": "The second door is the bathroom.",
+      "accept": ["İkinci kapı banyo."],
+      "reject": [
+        {
+          "answer": "İki kapı banyo.",
+          "why": "*İki kapı* is **two doors**. **Second** is the ordinal *ikinci*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u11-l04-e12",
+      "type": "cloze",
+      "points": ["gp-ordinals", "gp-dates"],
+      "text": "Yılın birinci ayı ___.",
+      "en": "The first month of the year is January.",
+      "blanks": [
+        {
+          "options": ["ocak", "aralık", "şubat"],
+          "answer": 0
+        }
+      ],
+      "explain": "*Ocak* is January; *aralık*, December, is the twelfth and last month."
+    },
+    {
+      "id": "a1-u11-l04-e13",
+      "type": "translate",
+      "points": ["gp-dates", "gp-apostrophe"],
+      "from": "tr",
+      "prompt": "Annem 12 Mart'ta geliyor.",
+      "accept": [
+        "My mother is coming on 12 March.",
+        "My mother is coming on [March 12|the 12th of March|March 12th|March the 12th].",
+        "My mom is coming on [12 March|March 12|the 12th of March|March 12th|March the 12th].",
+        "My mother will come on [12 March|March 12|the 12th of March|March 12th]."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+{
+  "id": "a1-u11-l02",
+  "unit": "a1-u11",
+  "order": 2,
+  "title": "How old, how much?",
+  "goal": "Count up to the thousands, and ask about ages and prices.",
+  "points": ["gp-numbers", "gp-age-price"],
+  "intro": {
+    "text": "The tens: *yirmi, otuz, kırk, elli, altmış, yetmiş, seksen, doksan*. Then *yüz* (100) and *bin* (1,000), without *bir*. *Kaç yaşındasın?* (How old are you?) *Yirmi beş yaşındayım.* *Kaç lira?* (How much is it?)",
+    "see": "gp-age-price"
+  },
+  "vocab": [
+    {
+      "tr": "yirmi",
+      "en": "twenty",
+      "pos": "num"
+    },
+    {
+      "tr": "otuz",
+      "en": "thirty",
+      "pos": "num"
+    },
+    {
+      "tr": "kırk",
+      "en": "forty",
+      "pos": "num"
+    },
+    {
+      "tr": "elli",
+      "en": "fifty",
+      "pos": "num"
+    },
+    {
+      "tr": "altmış",
+      "en": "sixty",
+      "pos": "num"
+    },
+    {
+      "tr": "yetmiş",
+      "en": "seventy",
+      "pos": "num"
+    },
+    {
+      "tr": "seksen",
+      "en": "eighty",
+      "pos": "num"
+    },
+    {
+      "tr": "doksan",
+      "en": "ninety",
+      "pos": "num"
+    },
+    {
+      "tr": "yüz",
+      "en": "hundred",
+      "pos": "num"
+    },
+    {
+      "tr": "bin",
+      "en": "thousand",
+      "pos": "num"
+    },
+    {
+      "tr": "yaş",
+      "en": "age; year (of age)",
+      "pos": "noun"
+    },
+    {
+      "tr": "lira",
+      "en": "lira, the Turkish currency",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u11-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["yirmi", "twenty"],
+        ["otuz", "thirty"],
+        ["kırk", "forty"],
+        ["elli", "fifty"],
+        ["seksen", "eighty"],
+        ["doksan", "ninety"]
+      ]
+    },
+    {
+      "id": "a1-u11-l02-e02",
+      "type": "mcq",
+      "points": ["gp-numbers"],
+      "question": "How do you say **100**?",
+      "options": ["yüz", "bir yüz", "on on", "bin"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "No *bir* before *yüz* or *bin*: 100 is just *yüz*.",
+        "2": "Tens don't multiply this way; 100 has its own word.",
+        "3": "*Bin* is 1,000."
+      },
+      "explain": "100 is *yüz* and 1,000 is *bin*; neither takes *bir*."
+    },
+    {
+      "id": "a1-u11-l02-e03",
+      "type": "mcq",
+      "points": ["gp-numbers"],
+      "question": "How do you write *bin dokuz yüz yirmi üç* in digits?",
+      "options": ["1923", "1932", "9123"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*Yirmi üç* is 23, not 32.",
+        "2": "*Bin* comes first: one thousand, nine hundred…"
+      },
+      "explain": "*Bin* (1,000) + *dokuz yüz* (900) + *yirmi üç* (23) = 1923."
+    },
+    {
+      "id": "a1-u11-l02-e04",
+      "type": "conjugate",
+      "points": ["gp-age-price", "gp-copula-present"],
+      "base": "yaşında",
+      "form": "copula-present",
+      "label": "*yaşında* + **to be**: I am … years old, you are …",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["yaşındayım"]
+        },
+        {
+          "p": "sen",
+          "accept": ["yaşındasın"]
+        },
+        {
+          "p": "o",
+          "accept": ["yaşında"]
+        },
+        {
+          "p": "biz",
+          "accept": ["yaşındayız"]
+        },
+        {
+          "p": "siz",
+          "accept": ["yaşındasınız"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["yaşındalar", "yaşında"]
+        }
+      ],
+      "explain": "*Yaşında* ends in a, so the endings take back vowels: *-yım, -sın, -yız, -sınız, -lar*."
+    },
+    {
+      "id": "a1-u11-l02-e05",
+      "type": "translate",
+      "points": ["gp-age-price"],
+      "from": "en",
+      "prompt": "How old are you?",
+      "accept": ["Kaç yaşındasın?", "Kaç yaşındasınız?", "Sen kaç yaşındasın?", "Siz kaç yaşındasınız?"],
+      "reject": [
+        {
+          "answer": "Kaç yaşın var?",
+          "why": "Turkish doesn't **have** an age: *Kaç yaşındasın?*, literally how many years are you in."
+        }
+      ]
+    },
+    {
+      "id": "a1-u11-l02-e06",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Dedem seksen yaşında.",
+      "en": "My grandfather is eighty."
+    },
+    {
+      "id": "a1-u11-l02-e07",
+      "type": "translate",
+      "points": ["gp-age-price"],
+      "from": "tr",
+      "prompt": "Bu ceket kaç lira?",
+      "accept": ["How much is this jacket?", "How much does this jacket cost?", "How many lira is this jacket?", "How many lira does this jacket cost?"]
+    },
+    {
+      "id": "a1-u11-l02-e08",
+      "type": "cloze",
+      "points": ["gp-age-price", "gp-harmony-4way"],
+      "text": "Kaç yaşında___?",
+      "en": "How old are you?",
+      "blanks": [
+        {
+          "accept": ["sın", "sınız"],
+          "reject": [
+            {
+              "answer": "sin",
+              "why": "*Yaşında* ends in a, a back vowel: *-sın*."
+            },
+            {
+              "answer": "yım",
+              "why": "*Yaşındayım* is **I am**. **You are** is *-sın*."
+            }
+          ]
+        }
+      ],
+      "explain": "*Yaşında* + *-sın* (you are): *Kaç yaşındasın?* Politely: *yaşındasınız*."
+    },
+    {
+      "id": "a1-u11-l02-e09",
+      "type": "wordbank",
+      "points": ["gp-age-price", "gp-numbers-singular"],
+      "from": "en",
+      "prompt": "The bread is twenty lira.",
+      "text": "Ekmek yirmi lira.",
+      "answer": ["Ekmek", "yirmi", "lira"],
+      "distractors": ["liralar", "otuz", "yaşında"]
+    },
+    {
+      "id": "a1-u11-l02-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Kahve yetmiş beş lira.",
+      "en": "The coffee is seventy-five lira.",
+      "options": ["Kahve yetmiş beş lira.", "Kahve yetmiş lira.", "Kahve altmış beş lira."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u11-l02-e11",
+      "type": "translate",
+      "points": ["gp-age-price", "gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "My mother is fifty-two years old.",
+      "accept": ["Annem elli iki yaşında.", "Benim annem elli iki yaşında."],
+      "reject": [
+        {
+          "answer": "Annem elli iki yaş.",
+          "why": "An age takes *yaşında*: *elli iki yaşında*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u11-l02-e12",
+      "type": "cloze",
+      "points": ["gp-numbers"],
+      "text": "Bu kitap ___ lira.",
+      "en": "This book is 150 lira.",
+      "blanks": [
+        {
+          "options": ["yüz elli", "bir yüz elli", "yüz beş"],
+          "answer": 0
+        }
+      ],
+      "explain": "150 is *yüz* + *elli*, with no *bir* before *yüz*."
+    },
+    {
+      "id": "a1-u11-l02-e13",
+      "type": "translate",
+      "points": ["gp-age-price", "gp-genitive-possessive"],
+      "from": "tr",
+      "prompt": "Domatesin kilosu kaç lira?",
+      "accept": [
+        "How much is a kilo of tomatoes?",
+        "How much is [one|the] kilo of tomatoes?",
+        "How much are (the) tomatoes [a|per] kilo?",
+        "How many lira is a kilo of tomatoes?"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,267 @@
+{
+  "id": "a1-u10-l04",
+  "unit": "a1-u10",
+  "order": 4,
+  "title": "Whose is this?",
+  "goal": "Ask whose something is and who has it, and talk about your street.",
+  "points": ["gp-whose", "gp-genitive", "gp-genitive-possessive", "gp-pronominal-n"],
+  "intro": {
+    "text": "*Kimin?* means whose: *Bu çanta kimin?* (Whose bag is this?) The answer is a genitive: *Benim.* (It's mine.) *Kimde?* asks who has it on them right now: *Anahtar kimde?* (Who has the key?) *Bende.* (I do.)",
+    "see": "gp-whose"
+  },
+  "vocab": [
+    {
+      "tr": "kimin",
+      "en": "whose",
+      "pos": "pron"
+    },
+    {
+      "tr": "kimde",
+      "en": "who has it, on whom",
+      "pos": "pron"
+    },
+    {
+      "tr": "sahip",
+      "en": "owner",
+      "pos": "noun"
+    },
+    {
+      "tr": "bakkal",
+      "en": "corner shop, convenience store",
+      "pos": "noun"
+    },
+    {
+      "tr": "fırın",
+      "en": "bakery; oven",
+      "pos": "noun"
+    },
+    {
+      "tr": "cadde",
+      "en": "avenue, main street",
+      "pos": "noun"
+    },
+    {
+      "tr": "meydan",
+      "en": "square, plaza",
+      "pos": "noun"
+    },
+    {
+      "tr": "kapıcı",
+      "en": "building caretaker, superintendent",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u10-l04-e01",
+      "type": "mcq",
+      "points": ["gp-whose"],
+      "question": "How do you ask **Whose is this?**",
+      "options": ["Bu kimin?", "Bu kim?", "Bu kimde?", "Bu kimi?"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Bu kim?* means **Who is this?**",
+        "2": "*Kimde?* asks who **has** it right now.",
+        "3": "*Kimi* is **whom**, an object."
+      },
+      "explain": "*Kimin* is the genitive of *kim*: whose."
+    },
+    {
+      "id": "a1-u10-l04-e02",
+      "type": "cloze",
+      "points": ["gp-whose", "gp-pronoun-n"],
+      "text": "Anahtar ___? Bende.",
+      "en": "Who has the key? I do.",
+      "blanks": [
+        {
+          "options": ["kimde", "kimin", "nerede"],
+          "answer": 0
+        }
+      ],
+      "explain": "*Bende* (on me) answers *kimde*, the locative of *kim*."
+    },
+    {
+      "id": "a1-u10-l04-e03",
+      "type": "translate",
+      "points": ["gp-whose"],
+      "from": "en",
+      "prompt": "Whose bag is this?",
+      "accept": ["Bu çanta kimin?", "Bu kimin çantası?", "Kimin çantası bu?"],
+      "reject": [
+        {
+          "answer": "Bu çanta kim?",
+          "why": "*Kim* is **who**; **whose** is the genitive *kimin*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u10-l04-e04",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Bu ev bizim değil.",
+      "en": "This house isn't ours."
+    },
+    {
+      "id": "a1-u10-l04-e05",
+      "type": "mcq",
+      "points": ["gp-whose", "gp-genitive-possessive"],
+      "context": [
+        {
+          "who": "Murat",
+          "tr": "Bu şemsiye kimin?",
+          "en": "Whose umbrella is this?"
+        },
+        {
+          "who": "Deniz",
+          "tr": "Benim değil. Selin'in mi?",
+          "en": "It isn't mine. Is it Selin's?"
+        },
+        {
+          "who": "Selin",
+          "tr": "Hayır, benim şemsiyem kırmızı. Bu, kapıcının şemsiyesi.",
+          "en": "No, my umbrella is red. This is the caretaker's umbrella."
+        },
+        {
+          "who": "Murat",
+          "tr": "Kapıcı nerede?",
+          "en": "Where is the caretaker?"
+        },
+        {
+          "who": "Selin",
+          "tr": "Bakkalda.",
+          "en": "At the corner shop."
+        }
+      ],
+      "question": "Whose umbrella is it?",
+      "options": ["The caretaker's", "Selin's", "Deniz's"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Kapıcının şemsiyesi*: the caretaker's umbrella. Selin's is red."
+    },
+    {
+      "id": "a1-u10-l04-e06",
+      "type": "translate",
+      "points": ["gp-whose", "gp-genitive"],
+      "from": "tr",
+      "prompt": "Bu araba kimin? Komşumuzun mu?",
+      "accept": [
+        "Whose car is this? Is it our neighbour's?",
+        "Whose car is this? Our [neighbour's|neighbor's]?",
+        "Whose is this car? (Is it) our [neighbour's|neighbor's]?",
+        "Whose car is this? Is it our neighbor's?"
+      ]
+    },
+    {
+      "id": "a1-u10-l04-e07",
+      "type": "conjugate",
+      "points": ["gp-whose", "gp-pronoun-n"],
+      "base": "ben",
+      "form": "pronoun-locative",
+      "label": "*Kimde?* Answer with the locative: I've got it, you've got it…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["bende"]
+        },
+        {
+          "p": "sen",
+          "accept": ["sende"]
+        },
+        {
+          "p": "o",
+          "accept": ["onda"]
+        },
+        {
+          "p": "biz",
+          "accept": ["bizde"]
+        },
+        {
+          "p": "siz",
+          "accept": ["sizde"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["onlarda"]
+        }
+      ],
+      "explain": "The locative of the pronouns: *bende, sende*, *onda* with the n of unit 5, *bizde, sizde, onlarda*."
+    },
+    {
+      "id": "a1-u10-l04-e08",
+      "type": "wordbank",
+      "points": ["gp-genitive-possessive", "gp-whose"],
+      "from": "en",
+      "prompt": "Who is the owner of this house?",
+      "text": "Bu evin sahibi kim?",
+      "answer": ["Bu", "evin", "sahibi", "kim"],
+      "distractors": ["ev", "kimin", "sahip"]
+    },
+    {
+      "id": "a1-u10-l04-e09",
+      "type": "cloze",
+      "points": ["gp-whose", "gp-genitive"],
+      "text": "Bu ceket Emre'___ mi?",
+      "en": "Is this jacket Emre's?",
+      "blanks": [
+        {
+          "accept": ["nin"],
+          "reject": [
+            {
+              "answer": "in",
+              "why": "*Emre* ends in a vowel: the genitive starts with n, *Emre'nin*."
+            },
+            {
+              "answer": "de",
+              "why": "*Emre'de* means Emre **has** it on him. **Emre's** is the genitive *Emre'nin*."
+            }
+          ]
+        }
+      ],
+      "explain": "The genitive alone is the predicate: *Bu ceket Emre'nin* (This jacket is Emre's)."
+    },
+    {
+      "id": "a1-u10-l04-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Fırın caddenin köşesinde.",
+      "en": "The bakery is on the corner of the avenue.",
+      "options": ["Fırın caddenin köşesinde.", "Fırın caddede.", "Fırın meydanın köşesinde."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u10-l04-e11",
+      "type": "translate",
+      "points": ["gp-whose", "gp-var-yok"],
+      "from": "en",
+      "prompt": "Who has a pen?",
+      "accept": ["Kimde kalem var?", "Kimin kalemi var?"]
+    },
+    {
+      "id": "a1-u10-l04-e12",
+      "type": "mcq",
+      "points": ["gp-whose", "gp-pronoun-n"],
+      "question": "*Kitap Ayşe'de.* What does it mean?",
+      "options": ["Ayşe has the book right now", "The book belongs to Ayşe", "Ayşe is in the book"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**It belongs to Ayşe** is *Kitap Ayşe'nin*.",
+        "2": "With a person, the locative means **has it on them**."
+      },
+      "explain": "With a person, the locative means **has it**; the genitive means **owns it**."
+    },
+    {
+      "id": "a1-u10-l04-e13",
+      "type": "translate",
+      "points": ["gp-pronominal-n", "gp-var-yok"],
+      "from": "tr",
+      "prompt": "Meydanın köşesinde bir bakkal var.",
+      "accept": [
+        "There is a corner shop on the corner of the square.",
+        "There is a [convenience store|grocery store|shop|store] on the corner of the square.",
+        "On the corner of the square there is a [corner shop|convenience store|grocery store|shop|store]."
+      ]
+    }
+  ]
+}

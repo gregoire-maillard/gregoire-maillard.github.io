@@ -1,0 +1,219 @@
+{
+  "id": "a1-u10-l01",
+  "unit": "a1-u10",
+  "order": 1,
+  "title": "Ayşe's house",
+  "goal": "Name the owner with the genitive: Ayşe'nin evi, binanın kapısı.",
+  "points": ["gp-genitive", "gp-genitive-possessive"],
+  "intro": {
+    "text": "The owner takes the genitive `-(n)In`, the owned thing the possessive `-(s)I`: *Ayşe'nin evi* (Ayşe's house), *Mehmet'in arabası* (Mehmet's car), *binanın kapısı* (the door of the building). After a vowel the genitive starts with n: *Ayşe'nin*.",
+    "see": "gp-genitive-possessive"
+  },
+  "vocab": [
+    {
+      "tr": "komşu",
+      "en": "neighbour",
+      "pos": "noun"
+    },
+    {
+      "tr": "mahalle",
+      "en": "neighbourhood",
+      "pos": "noun"
+    },
+    {
+      "tr": "apartman",
+      "en": "apartment building",
+      "pos": "noun"
+    },
+    {
+      "tr": "bina",
+      "en": "building",
+      "pos": "noun"
+    },
+    {
+      "tr": "daire",
+      "en": "apartment, flat",
+      "pos": "noun"
+    },
+    {
+      "tr": "kat",
+      "en": "floor, storey",
+      "pos": "noun"
+    },
+    {
+      "tr": "balkon",
+      "en": "balcony",
+      "pos": "noun"
+    },
+    {
+      "tr": "duvar",
+      "en": "wall",
+      "pos": "noun"
+    },
+    {
+      "tr": "asansör",
+      "en": "elevator, lift",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u10-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["komşu", "neighbour"],
+        ["mahalle", "neighbourhood"],
+        ["apartman", "apartment building"],
+        ["kat", "floor"],
+        ["balkon", "balcony"],
+        ["duvar", "wall"]
+      ]
+    },
+    {
+      "id": "a1-u10-l01-e02",
+      "type": "mcq",
+      "points": ["gp-genitive", "gp-apostrophe"],
+      "question": "How do you say **Ayşe's**?",
+      "options": ["Ayşe'nin", "Ayşe'in", "Ayşe'nın", "Ayşenin"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Ayşe* ends in a vowel, so the genitive starts with a buffer n: *-nin*.",
+        "2": "The last vowel of *Ayşe* is e, a front vowel: *-nin*, not *-nın*.",
+        "3": "A name keeps its apostrophe before a suffix: *Ayşe'nin*."
+      },
+      "explain": "After a vowel the genitive is `-nIn`, and e calls for i: *Ayşe'nin*."
+    },
+    {
+      "id": "a1-u10-l01-e03",
+      "type": "cloze",
+      "points": ["gp-genitive", "gp-genitive-possessive"],
+      "text": "Mehmet'___ arabası kırmızı.",
+      "en": "Mehmet's car is red.",
+      "blanks": [
+        {
+          "accept": ["in"],
+          "reject": [
+            {
+              "answer": "nin",
+              "why": "*Mehmet* ends in a consonant: no buffer n, just *-in*."
+            },
+            {
+              "answer": "ın",
+              "why": "The last vowel of *Mehmet* is e, a front vowel: *-in*."
+            }
+          ]
+        }
+      ],
+      "explain": "*Mehmet* ends in a consonant and its last vowel is e: *Mehmet'in*. The car takes the possessive: *arabası*."
+    },
+    {
+      "id": "a1-u10-l01-e04",
+      "type": "translate",
+      "points": ["gp-genitive-possessive"],
+      "from": "en",
+      "prompt": "Ayşe's house is very beautiful.",
+      "accept": ["Ayşe'nin evi çok güzel."],
+      "reject": [
+        {
+          "answer": "Ayşe'nin ev çok güzel.",
+          "why": "The house needs the possessive suffix too: *Ayşe'nin evi*."
+        },
+        {
+          "answer": "Ayşe evi çok güzel.",
+          "why": "The owner needs the genitive: *Ayşe'nin evi*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u10-l01-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Komşumuzun köpeği bahçede.",
+      "en": "Our neighbour's dog is in the garden."
+    },
+    {
+      "id": "a1-u10-l01-e06",
+      "type": "morph",
+      "points": ["gp-genitive"],
+      "base": "bina",
+      "gloss": "of the building",
+      "parts": ["bina", "n", "ın"],
+      "distractors": ["y", "in", "nın"],
+      "result": "binanın",
+      "explain": "After a vowel the genitive starts with n: *bina* + *n* + *-ın*."
+    },
+    {
+      "id": "a1-u10-l01-e07",
+      "type": "translate",
+      "points": ["gp-genitive-possessive"],
+      "from": "tr",
+      "prompt": "Binanın kapısı açık.",
+      "accept": ["The door of the building is open.", "The building's door is open.", "The building door is open."]
+    },
+    {
+      "id": "a1-u10-l01-e08",
+      "type": "wordbank",
+      "points": ["gp-genitive-possessive"],
+      "from": "en",
+      "prompt": "The teacher's name is Selin.",
+      "text": "Öğretmenin adı Selin.",
+      "answer": ["Öğretmenin", "adı", "Selin"],
+      "distractors": ["Öğretmen", "adım", "ad"]
+    },
+    {
+      "id": "a1-u10-l01-e09",
+      "type": "mcq",
+      "points": ["gp-genitive-possessive"],
+      "question": "What does *evin kapısı* mean?",
+      "options": ["the door of the house", "the doors of the house", "the door of your house"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**Doors** would need the plural: *evin kapıları*.",
+        "2": "**Your** house's door is *evinin kapısı*: *evin* (your house) takes a genitive of its own."
+      },
+      "explain": "*Evin* is the genitive of *ev*, and *kapısı* is *kapı* + *-sı*: the door of the house."
+    },
+    {
+      "id": "a1-u10-l01-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Zeynep'in dairesi bu binada.",
+      "en": "Zeynep's apartment is in this building.",
+      "options": ["Zeynep'in dairesi bu binada.", "Zeynep'in dairesi şu binada.", "Zeynep dairede."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u10-l01-e11",
+      "type": "translate",
+      "points": ["gp-genitive-possessive", "gp-possessive-have"],
+      "from": "en",
+      "prompt": "Does the building have an elevator?",
+      "accept": ["Binanın asansörü var mı?", "Binada asansör var mı?", "Apartmanın asansörü var mı?", "Apartmanda asansör var mı?"]
+    },
+    {
+      "id": "a1-u10-l01-e12",
+      "type": "cloze",
+      "points": ["gp-genitive"],
+      "text": "Komşu___ balkonu çok büyük.",
+      "en": "The neighbour's balcony is very big.",
+      "blanks": [
+        {
+          "options": ["nun", "un", "yun"],
+          "answer": 0
+        }
+      ],
+      "explain": "*Komşu* ends in a vowel: a buffer n, then *-un* after u. *Komşunun balkonu*."
+    },
+    {
+      "id": "a1-u10-l01-e13",
+      "type": "translate",
+      "points": ["gp-genitive-possessive", "gp-possessive-have"],
+      "from": "tr",
+      "prompt": "Ali'nin bir köpeği var.",
+      "accept": ["Ali has a dog.", "Ali has got a dog."],
+      "explain": "A named owner, the possessive and *var*: *Ali'nin köpeği var*, Ali has a dog."
+    }
+  ]
+}

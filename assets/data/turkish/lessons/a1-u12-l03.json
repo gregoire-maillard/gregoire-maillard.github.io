@@ -1,0 +1,257 @@
+{
+  "id": "a1-u12-l03",
+  "unit": "a1-u12",
+  "order": 3,
+  "title": "With and for",
+  "goal": "Say who you're with, how you travel and who something is for.",
+  "points": ["gp-ile", "gp-icin"],
+  "intro": {
+    "text": "`-(y)lA` means with or by: *annemle* (with my mother), *otobüsle* (by bus), *arabayla* (by car). *İçin* means for: *Ayşe için*. With pronouns both take the genitive: *benimle* (with me), *senin için* (for you).",
+    "see": "gp-ile"
+  },
+  "vocab": [
+    {
+      "tr": "ile",
+      "en": "with; by; and",
+      "pos": "postp"
+    },
+    {
+      "tr": "için",
+      "en": "for",
+      "pos": "postp"
+    },
+    {
+      "tr": "birlikte",
+      "en": "together",
+      "pos": "adv"
+    },
+    {
+      "tr": "hediye",
+      "en": "present, gift",
+      "pos": "noun"
+    },
+    {
+      "tr": "çiçek",
+      "en": "flower",
+      "pos": "noun"
+    },
+    {
+      "tr": "pasta",
+      "en": "cake",
+      "pos": "noun"
+    },
+    {
+      "tr": "çatal",
+      "en": "fork",
+      "pos": "noun"
+    },
+    {
+      "tr": "bıçak",
+      "en": "knife",
+      "pos": "noun"
+    },
+    {
+      "tr": "uçak",
+      "en": "plane, airplane",
+      "pos": "noun"
+    },
+    {
+      "tr": "bisiklet",
+      "en": "bicycle, bike",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u12-l03-e01",
+      "type": "match",
+      "pairs": [
+        ["hediye", "present"],
+        ["çiçek", "flower"],
+        ["pasta", "cake"],
+        ["çatal", "fork"],
+        ["bıçak", "knife"],
+        ["uçak", "plane"]
+      ]
+    },
+    {
+      "id": "a1-u12-l03-e02",
+      "type": "mcq",
+      "points": ["gp-ile", "gp-buffer-letters"],
+      "question": "How do you say **by car**?",
+      "options": ["arabayla", "arabala", "arabada", "arabaya"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "After a vowel, `-(y)lA` takes a buffer y: *arabayla*.",
+        "2": "*Arabada* means **in the car**.",
+        "3": "*Arabaya* means **to the car**."
+      },
+      "explain": "*Araba* + y + *-la*: *arabayla*. You can also write *araba ile*."
+    },
+    {
+      "id": "a1-u12-l03-e03",
+      "type": "translate",
+      "points": ["gp-ile"],
+      "from": "en",
+      "prompt": "I am going to the cinema with my mother.",
+      "accept": [
+        "Annemle sinemaya gidiyorum.",
+        "Annem ile sinemaya gidiyorum.",
+        "Sinemaya annemle gidiyorum.",
+        "Annemle birlikte sinemaya gidiyorum.",
+        "Ben annemle sinemaya gidiyorum."
+      ],
+      "reject": [
+        {
+          "answer": "Annemde sinemaya gidiyorum.",
+          "why": "*Annemde* means **at my mother's** or **my mother has it**. **With** is `-(y)lA`: *annemle*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u12-l03-e04",
+      "type": "cloze",
+      "points": ["gp-ile"],
+      "text": "Ben otobüs___ geliyorum, sen?",
+      "en": "I'm coming by bus, and you?",
+      "blanks": [
+        {
+          "accept": ["le"],
+          "reject": [
+            {
+              "answer": "la",
+              "why": "The last vowel of *otobüs* is ü, a front vowel: *-le*."
+            },
+            {
+              "answer": "yle",
+              "why": "*Otobüs* ends in a consonant: no buffer y."
+            }
+          ]
+        }
+      ],
+      "explain": "`-(y)lA` has only two forms, *-la* and *-le*: *otobüsle*."
+    },
+    {
+      "id": "a1-u12-l03-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Bu çiçekler senin için.",
+      "en": "These flowers are for you."
+    },
+    {
+      "id": "a1-u12-l03-e06",
+      "type": "conjugate",
+      "points": ["gp-ile", "gp-genitive"],
+      "base": "ben",
+      "form": "pronoun-ile",
+      "label": "**with me, with you…**: the pronouns with `-(y)lA`",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["benimle"]
+        },
+        {
+          "p": "sen",
+          "accept": ["seninle"]
+        },
+        {
+          "p": "o",
+          "accept": ["onunla"]
+        },
+        {
+          "p": "biz",
+          "accept": ["bizimle"]
+        },
+        {
+          "p": "siz",
+          "accept": ["sizinle"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["onlarla"]
+        }
+      ],
+      "explain": "The singular pronouns, and *biz* and *siz*, take the genitive first: *benimle*, *onunla*. *Onlar* doesn't: *onlarla*."
+    },
+    {
+      "id": "a1-u12-l03-e07",
+      "type": "translate",
+      "points": ["gp-ile", "gp-accusative"],
+      "from": "tr",
+      "prompt": "Pastayı çatalla yiyoruz.",
+      "accept": ["We are eating the cake with a fork.", "We eat the cake with a fork.", "We [are eating|eat] the cake with forks."]
+    },
+    {
+      "id": "a1-u12-l03-e08",
+      "type": "morph",
+      "points": ["gp-ile"],
+      "base": "uçak",
+      "gloss": "by plane",
+      "parts": ["uçak", "la"],
+      "distractors": ["uçağ", "le", "yla"],
+      "result": "uçakla",
+      "explain": "`-(y)lA` starts with a consonant, so the k doesn't soften: *uçakla*."
+    },
+    {
+      "id": "a1-u12-l03-e09",
+      "type": "wordbank",
+      "points": ["gp-icin"],
+      "from": "en",
+      "prompt": "This present is for Ayşe.",
+      "text": "Bu hediye Ayşe için.",
+      "answer": ["Bu", "hediye", "Ayşe", "için"],
+      "distractors": ["Ayşe'nin", "ile", "hediyesi"]
+    },
+    {
+      "id": "a1-u12-l03-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Kiminle geliyorsun?",
+      "en": "Who are you coming with?",
+      "options": ["Kiminle geliyorsun?", "Kimin için geliyorsun?", "Neyle geliyorsun?"],
+      "answer": 0
+    },
+    {
+      "id": "a1-u12-l03-e11",
+      "type": "translate",
+      "points": ["gp-ile", "gp-question-mi"],
+      "from": "en",
+      "prompt": "Are you coming with us?",
+      "accept": ["Bizimle geliyor musun?", "Bizimle (birlikte) geliyor musunuz?", "Bizimle birlikte geliyor musun?"],
+      "reject": [
+        {
+          "answer": "Biz ile geliyor musun?",
+          "why": "*Biz* takes the genitive before *ile*: *bizim ile*, or in one word *bizimle*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u12-l03-e12",
+      "type": "cloze",
+      "points": ["gp-icin", "gp-genitive"],
+      "text": "Bu kitap ___ için.",
+      "en": "This book is for you.",
+      "blanks": [
+        {
+          "options": ["senin", "sen", "sana"],
+          "answer": 0
+        }
+      ],
+      "explain": "With *için*, the singular pronouns take the genitive: *senin için*, *benim için*, *onun için*."
+    },
+    {
+      "id": "a1-u12-l03-e13",
+      "type": "translate",
+      "points": ["gp-ile", "gp-dative"],
+      "from": "tr",
+      "prompt": "Tatile bisikletle gidiyorlar.",
+      "accept": [
+        "They are going on holiday by bike.",
+        "They are going on holiday by bicycle.",
+        "They are going on vacation by [bike|bicycle].",
+        "They go on [holiday|vacation] by [bike|bicycle]."
+      ]
+    }
+  ]
+}

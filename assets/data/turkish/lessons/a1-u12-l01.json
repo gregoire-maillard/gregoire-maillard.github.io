@@ -1,0 +1,222 @@
+{
+  "id": "a1-u12-l01",
+  "unit": "a1-u12",
+  "order": 1,
+  "title": "Come in, sit down",
+  "goal": "Tell someone what to do: Gel! Oturun, lütfen.",
+  "points": ["gp-imperative"],
+  "intro": {
+    "text": "To tell one friend what to do, use the bare stem: *Gel!* (Come!) *Otur!* (Sit down!) To several people, or politely, add `-(y)In`: *Gelin*, *Oturun*, *Okuyun*. *Lütfen* softens it: *Oturun, lütfen.*",
+    "see": "gp-imperative"
+  },
+  "vocab": [
+    {
+      "tr": "girmek",
+      "en": "to enter, to go in, to come in",
+      "pos": "verb"
+    },
+    {
+      "tr": "kalkmak",
+      "en": "to get up, to stand up; to leave (of a train or bus)",
+      "pos": "verb"
+    },
+    {
+      "tr": "vermek",
+      "en": "to give",
+      "pos": "verb"
+    },
+    {
+      "tr": "getirmek",
+      "en": "to bring",
+      "pos": "verb"
+    },
+    {
+      "tr": "söylemek",
+      "en": "to say, to tell",
+      "pos": "verb"
+    },
+    {
+      "tr": "sormak",
+      "en": "to ask",
+      "pos": "verb"
+    },
+    {
+      "tr": "durmak",
+      "en": "to stop; to stand",
+      "pos": "verb"
+    },
+    {
+      "tr": "tekrar",
+      "en": "again",
+      "pos": "adv"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u12-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["girmek", "to come in"],
+        ["kalkmak", "to stand up"],
+        ["vermek", "to give"],
+        ["getirmek", "to bring"],
+        ["söylemek", "to say"],
+        ["sormak", "to ask"]
+      ]
+    },
+    {
+      "id": "a1-u12-l01-e02",
+      "type": "mcq",
+      "points": ["gp-imperative", "gp-dative"],
+      "question": "How do you tell a friend **Come here!**?",
+      "options": ["Buraya gel!", "Buraya geliyorsun!", "Buraya gelmek!", "Burada gel!"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Geliyorsun* states a fact: **you are coming**.",
+        "2": "*Gelmek* is the dictionary form, **to come**.",
+        "3": "*Burada* is **here**, a place; coming takes the direction, *buraya*."
+      },
+      "explain": "To one friend, the bare stem is the command: *gel*."
+    },
+    {
+      "id": "a1-u12-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-imperative"],
+      "base": "oturmak",
+      "form": "imperative",
+      "label": "*oturmak* (to sit) in the imperative: to one friend, then to several people or politely",
+      "cells": [
+        {
+          "p": "sen",
+          "accept": ["otur"]
+        },
+        {
+          "p": "siz",
+          "accept": ["oturun"]
+        }
+      ],
+      "explain": "*Otur* to one friend; *oturun* to several people, or to someone you'd call *siz*."
+    },
+    {
+      "id": "a1-u12-l01-e04",
+      "type": "translate",
+      "points": ["gp-imperative"],
+      "from": "en",
+      "prompt": "Please sit down. (formal)",
+      "accept": ["Lütfen oturun.", "Oturun, lütfen.", "Lütfen oturunuz.", "Oturunuz, lütfen."],
+      "reject": [
+        {
+          "answer": "Lütfen otur.",
+          "why": "*Otur* is for a friend or a child. To someone you'd call *siz*, say *oturun*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u12-l01-e05",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Kapıyı açın, lütfen.",
+      "en": "Open the door, please."
+    },
+    {
+      "id": "a1-u12-l01-e06",
+      "type": "cloze",
+      "points": ["gp-imperative", "gp-buffer-letters"],
+      "text": "Lütfen bu soruyu tekrar oku___.",
+      "en": "Please read this question again.",
+      "blanks": [
+        {
+          "accept": ["yun"],
+          "reject": [
+            {
+              "answer": "un",
+              "why": "*Oku* ends in a vowel, so `-(y)In` takes its buffer: *okuyun*."
+            },
+            {
+              "answer": "yin",
+              "why": "The last vowel of *oku* is u: *-yun*."
+            }
+          ]
+        }
+      ],
+      "explain": "After a vowel, `-(y)In` starts with y: *oku* + *-yun* = *okuyun*."
+    },
+    {
+      "id": "a1-u12-l01-e07",
+      "type": "translate",
+      "points": ["gp-imperative", "gp-pronoun-cases-dat-abl"],
+      "from": "tr",
+      "prompt": "Bana bir bardak su verin, lütfen.",
+      "accept": ["Give me a glass of water, please.", "Please give me a glass of water."]
+    },
+    {
+      "id": "a1-u12-l01-e08",
+      "type": "morph",
+      "points": ["gp-imperative"],
+      "base": "gitmek",
+      "gloss": "go! (plural or polite)",
+      "parts": ["gid", "in"],
+      "distractors": ["git", "un", "yin"],
+      "result": "gidin",
+      "explain": "Before a vowel the t of *git-* softens: *gidin*, as in *gidiyor*."
+    },
+    {
+      "id": "a1-u12-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-imperative", "gp-accusative"],
+      "from": "en",
+      "prompt": "Bring the bread, please. (to a friend)",
+      "text": "Ekmeği getir, lütfen.",
+      "answer": ["Ekmeği", "getir", "lütfen"],
+      "distractors": ["Ekmek", "getiriyor", "getirmek"],
+      "accept": ["Lütfen ekmeği getir."]
+    },
+    {
+      "id": "a1-u12-l01-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Lütfen kalkın.",
+      "en": "Please stand up.",
+      "options": ["Lütfen kalkın.", "Lütfen kalk.", "Lütfen bakın."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u12-l01-e11",
+      "type": "translate",
+      "points": ["gp-imperative", "gp-dative"],
+      "from": "en",
+      "prompt": "Ask the teacher.",
+      "accept": ["Öğretmene sor.", "Öğretmene sorun.", "Öğretmene sorunuz."],
+      "reject": [
+        {
+          "answer": "Öğretmeni sor.",
+          "why": "*Sormak* takes the dative for the person you ask: *öğretmene*."
+        }
+      ],
+      "explain": "*Sormak* takes the dative for the person you ask: *öğretmene sor*."
+    },
+    {
+      "id": "a1-u12-l01-e12",
+      "type": "mcq",
+      "points": ["gp-imperative"],
+      "question": "*Buyurun!* What is it, grammatically?",
+      "options": ["a polite imperative", "a question", "a greeting for the morning"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "It has no *mI*: it isn't a question.",
+        "2": "Good morning is *Günaydın*."
+      },
+      "explain": "*Buyur-un*: the polite imperative of *buyurmak*, to command. It means **here you are**, **come in** or **go ahead**."
+    },
+    {
+      "id": "a1-u12-l01-e13",
+      "type": "translate",
+      "points": ["gp-imperative"],
+      "from": "tr",
+      "prompt": "Dur! Işık kırmızı.",
+      "accept": ["Stop! The light is red.", "Wait! The light is red."]
+    }
+  ]
+}

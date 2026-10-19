@@ -1,0 +1,257 @@
+{
+  "id": "a1-u10-l02",
+  "unit": "a1-u10",
+  "order": 2,
+  "title": "Mine and yours",
+  "goal": "Use benim, senin, onun… and leave them out when the suffix says it all.",
+  "points": ["gp-genitive", "gp-genitive-possessive"],
+  "intro": {
+    "text": "The pronouns have a genitive too: *benim, senin, onun, bizim, sizin, onların*. *Benim* and *bizim* are irregular. With them the owned thing takes the owner's person: *benim çantam*, *senin ceketin*. Usually the suffix alone is enough: *çantam* (my bag).",
+    "see": "gp-genitive"
+  },
+  "vocab": [
+    {
+      "tr": "cüzdan",
+      "en": "wallet",
+      "pos": "noun"
+    },
+    {
+      "tr": "şemsiye",
+      "en": "umbrella",
+      "pos": "noun"
+    },
+    {
+      "tr": "ceket",
+      "en": "jacket",
+      "pos": "noun"
+    },
+    {
+      "tr": "palto",
+      "en": "coat, overcoat",
+      "pos": "noun"
+    },
+    {
+      "tr": "şapka",
+      "en": "hat",
+      "pos": "noun"
+    },
+    {
+      "tr": "ayakkabı",
+      "en": "shoe",
+      "pos": "noun"
+    },
+    {
+      "tr": "bavul",
+      "en": "suitcase",
+      "pos": "noun"
+    },
+    {
+      "tr": "eşya",
+      "en": "things, belongings",
+      "pos": "noun"
+    },
+    {
+      "tr": "oyuncak",
+      "en": "toy",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u10-l02-e01",
+      "type": "conjugate",
+      "points": ["gp-genitive"],
+      "base": "ben",
+      "form": "pronoun-genitive",
+      "label": "The personal pronouns in the genitive: my, your…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["benim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["senin"]
+        },
+        {
+          "p": "o",
+          "accept": ["onun"]
+        },
+        {
+          "p": "biz",
+          "accept": ["bizim"]
+        },
+        {
+          "p": "siz",
+          "accept": ["sizin"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["onların"]
+        }
+      ],
+      "explain": "*Benim* and *bizim* take `-Im`; the others are regular. *O* adds an n: *onun*."
+    },
+    {
+      "id": "a1-u10-l02-e02",
+      "type": "match",
+      "pairs": [
+        ["cüzdan", "wallet"],
+        ["şemsiye", "umbrella"],
+        ["ceket", "jacket"],
+        ["şapka", "hat"],
+        ["bavul", "suitcase"],
+        ["oyuncak", "toy"]
+      ]
+    },
+    {
+      "id": "a1-u10-l02-e03",
+      "type": "mcq",
+      "points": ["gp-genitive", "gp-genitive-possessive"],
+      "question": "How do you say **our neighbourhood**, with the pronoun?",
+      "options": ["bizim mahallemiz", "bizin mahallemiz", "bizim mahallesi", "biz mahallemiz"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "The genitive of *biz* is irregular: *bizim*.",
+        "2": "With *bizim*, the neighbourhood takes **our** as well: *mahallemiz*.",
+        "3": "The pronoun needs the genitive: *bizim*."
+      },
+      "explain": "*Bizim* + *mahalle* + *-miz*: both words say **our**."
+    },
+    {
+      "id": "a1-u10-l02-e04",
+      "type": "translate",
+      "points": ["gp-genitive-possessive", "gp-question-mi"],
+      "from": "en",
+      "prompt": "Is this your wallet?",
+      "accept": ["Bu senin cüzdanın mı?", "Bu cüzdanın mı?", "Bu (sizin) cüzdanınız mı?", "Bu cüzdan [senin|sizin] mi?"],
+      "reject": [
+        {
+          "answer": "Bu sen cüzdanın mı?",
+          "why": "The pronoun needs the genitive: *senin cüzdanın*, or just *cüzdanın*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u10-l02-e05",
+      "type": "cloze",
+      "points": ["gp-genitive-possessive"],
+      "text": "Senin şapka___ çok güzel.",
+      "en": "Your hat is very nice.",
+      "blanks": [
+        {
+          "accept": ["n"],
+          "reject": [
+            {
+              "answer": "sı",
+              "why": "With *senin*, the hat takes **your**: *şapkan*."
+            },
+            {
+              "answer": "m",
+              "why": "*Şapkam* is **my** hat; *senin* calls for *şapkan*."
+            }
+          ]
+        }
+      ],
+      "explain": "*Şapka* ends in a vowel, so **your** is just *-n*: *senin şapkan*."
+    },
+    {
+      "id": "a1-u10-l02-e06",
+      "type": "listen",
+      "mode": "type",
+      "tr": "Onun bavulu çok büyük.",
+      "en": "His suitcase is very big."
+    },
+    {
+      "id": "a1-u10-l02-e07",
+      "type": "mcq",
+      "points": ["gp-genitive-possessive"],
+      "question": "Which is the most natural way to say **My jacket is here**, with no special emphasis?",
+      "options": ["Ceketim burada.", "Benim ceketim burada.", "Ben ceketim burada."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "Correct, but *benim* adds emphasis: **my** jacket, not yours.",
+        "2": "*Ben* can't mean **my**: that needs the genitive, *benim*."
+      },
+      "explain": "The suffix *-im* already says **my**, so Turkish leaves the pronoun out unless it is stressed."
+    },
+    {
+      "id": "a1-u10-l02-e08",
+      "type": "translate",
+      "points": ["gp-genitive-possessive"],
+      "from": "tr",
+      "prompt": "Benim paltom siyah, senin paltan mavi.",
+      "accept": [
+        "My coat is black, your coat is blue.",
+        "My coat is black, yours is blue.",
+        "My coat is black [and|but] [your coat|yours] is blue.",
+        "My overcoat is black, [your overcoat|yours] is blue.",
+        "My overcoat is black [and|but] [your overcoat|yours] is blue."
+      ]
+    },
+    {
+      "id": "a1-u10-l02-e09",
+      "type": "morph",
+      "points": ["gp-genitive", "gp-consonant-softening"],
+      "base": "çocuk",
+      "gloss": "the child's",
+      "parts": ["çocuğ", "un"],
+      "distractors": ["çocuk", "nun", "ın"],
+      "result": "çocuğun",
+      "explain": "Before a vowel the k of *çocuk* softens to ğ, and u calls for *-un*: *çocuğun*."
+    },
+    {
+      "id": "a1-u10-l02-e10",
+      "type": "listen",
+      "mode": "choose",
+      "tr": "Bu şemsiye onların.",
+      "en": "This umbrella is theirs.",
+      "options": ["Bu şemsiye onların.", "Bu şemsiye onun.", "Bu şemsiye bizim."],
+      "answer": 0
+    },
+    {
+      "id": "a1-u10-l02-e11",
+      "type": "wordbank",
+      "points": ["gp-genitive-possessive"],
+      "from": "tr",
+      "prompt": "Onların eşyaları nerede?",
+      "text": "Where are their things?",
+      "answer": ["Where", "are", "their", "things"],
+      "distractors": ["his", "our", "is"]
+    },
+    {
+      "id": "a1-u10-l02-e12",
+      "type": "cloze",
+      "points": ["gp-genitive"],
+      "text": "Onlar___ evi çok eski.",
+      "en": "Their house is very old.",
+      "blanks": [
+        {
+          "options": ["ın", "in", "nın"],
+          "answer": 0
+        }
+      ],
+      "explain": "*Onlar* ends in r and its last vowel is a: *onların*. The house keeps the plain third person: *onların evi*."
+    },
+    {
+      "id": "a1-u10-l02-e13",
+      "type": "translate",
+      "points": ["gp-genitive-possessive"],
+      "from": "en",
+      "prompt": "Our neighbour's daughter is a doctor.",
+      "accept": ["Komşumuzun kızı doktor.", "Komşumuzun kızı doktordur.", "Bizim komşumuzun kızı doktor."],
+      "reject": [
+        {
+          "answer": "Komşumuz kızı doktor.",
+          "why": "The owner needs the genitive: *komşumuzun kızı*."
+        },
+        {
+          "answer": "Komşumuzun kız doktor.",
+          "why": "The daughter needs the possessive too: *komşumuzun kızı*."
+        }
+      ]
+    }
+  ]
+}
