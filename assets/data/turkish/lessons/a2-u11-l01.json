@@ -1,0 +1,219 @@
+{
+  "id": "a2-u11-l01",
+  "unit": "a2-u11",
+  "order": 1,
+  "title": "When I was little",
+  "goal": "Say when and while with -(y)ken on nouns, adjectives and places: çocukken, öğrenciyken, evdeyken.",
+  "points": ["gp-ken"],
+  "intro": {
+    "text": "Add `-(y)ken` to a noun, an adjective or a locative to say **when** or **while**: *çocukken* (when I was a child), *öğrenciyken* (when I was a student), *evdeyken* (while I'm at home). It never changes, and the tense comes from the main verb: *Çocukken çok yaramazdım.*",
+    "see": "gp-ken"
+  },
+  "vocab": [
+    {
+      "tr": "lise",
+      "en": "high school, secondary school",
+      "pos": "noun"
+    },
+    {
+      "tr": "yaramaz",
+      "en": "naughty",
+      "pos": "adj"
+    },
+    {
+      "tr": "utangaç",
+      "en": "shy",
+      "pos": "adj"
+    },
+    {
+      "tr": "kuzen",
+      "en": "cousin",
+      "pos": "noun"
+    },
+    {
+      "tr": "yaz tatili",
+      "en": "summer holiday, summer vacation",
+      "pos": "noun"
+    },
+    {
+      "tr": "o zamanlar",
+      "en": "back then, in those days",
+      "pos": "adv"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u11-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["lise", "high school"],
+        ["yaramaz", "naughty"],
+        ["utangaç", "shy"],
+        ["kuzen", "cousin"],
+        ["yaz tatili", "summer holiday"],
+        ["o zamanlar", "back then"]
+      ]
+    },
+    {
+      "id": "a2-u11-l01-e02",
+      "type": "mcq",
+      "points": ["gp-ken", "gp-buffer-letters"],
+      "question": "How do you say **when I was a student**?",
+      "options": ["öğrenciyken", "öğrenciken", "öğrenciykan", "öğrenciydiken"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "After a vowel, `-ken` needs the buffer y: *öğrenciyken*.",
+        "2": "`-ken` never changes with harmony: always *-ken*.",
+        "3": "`-ken` carries no tense; the past goes on the main verb."
+      },
+      "explain": "*öğrenci* + y + *-ken*: *öğrenciyken*, for every person and every tense."
+    },
+    {
+      "id": "a2-u11-l01-e03",
+      "type": "cloze",
+      "points": ["gp-ken", "gp-past-copula"],
+      "text": "Çocuk___ çok utangaçtım.",
+      "en": "When I was a child, I was very shy.",
+      "blanks": [
+        {
+          "accept": ["ken"],
+          "reject": [
+            {
+              "answer": "kan",
+              "why": "Harmony would give *-kan* after u, but `-ken` never changes: *çocukken*."
+            },
+            {
+              "answer": "tum",
+              "why": "*Çocuktum* is a full sentence, **I was a child**. To make it the background of the next part, use *çocukken*."
+            }
+          ]
+        }
+      ],
+      "explain": "*çocuk* + *-ken*: **when (I was) a child**. The past is on *utangaçtım*."
+    },
+    {
+      "id": "a2-u11-l01-e04",
+      "type": "translate",
+      "points": ["gp-ken", "gp-past-copula"],
+      "from": "en",
+      "prompt": "When I was a child, I was very naughty.",
+      "accept": ["Çocukken çok yaramazdım.", "Ben çocukken çok yaramazdım.", "Küçükken çok yaramazdım.", "Ben küçükken çok yaramazdım."],
+      "reject": [
+        {
+          "answer": "Çocukken çok yaramazım.",
+          "why": "*Yaramazım* is **I am** naughty. The past goes on the main word: *yaramazdım*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u11-l01-e05",
+      "type": "translate",
+      "points": ["gp-ken", "gp-past-copula", "gp-locative"],
+      "from": "tr",
+      "prompt": "Ben lisedeyken kuzenim üniversitedeydi.",
+      "accept": [
+        "When I was in high school, my cousin was at university.",
+        "When I was in high school, my cousin was in university.",
+        "While I was in high school, my cousin was [at|in] (the) university.",
+        "When I was in high school, my cousin was at the university.",
+        "My cousin was [at|in] (the) university when I was in high school."
+      ]
+    },
+    {
+      "id": "a2-u11-l01-e06",
+      "type": "listen",
+      "points": ["gp-ken", "gp-future"],
+      "mode": "type",
+      "tr": "Tatildeyken seni arayacağım.",
+      "en": "I'll call you while I'm on holiday."
+    },
+    {
+      "id": "a2-u11-l01-e07",
+      "type": "morph",
+      "points": ["gp-ken", "gp-locative", "gp-buffer-letters"],
+      "base": "ev",
+      "gloss": "while (I'm) at home",
+      "parts": ["ev", "de", "y", "ken"],
+      "distractors": ["da", "kan", "ki"],
+      "result": "evdeyken",
+      "explain": "*evde* ends in a vowel, so y comes before *-ken*: *evdeyken*."
+    },
+    {
+      "id": "a2-u11-l01-e08",
+      "type": "wordbank",
+      "points": ["gp-ken", "gp-past-copula", "gp-var-yok"],
+      "from": "en",
+      "prompt": "When I was young, there was a park here.",
+      "text": "Ben gençken burada bir park vardı.",
+      "answer": ["Ben", "gençken", "burada", "bir", "park", "vardı"],
+      "distractors": ["var", "gençtim", "orada"]
+    },
+    {
+      "id": "a2-u11-l01-e09",
+      "type": "mcq",
+      "points": ["gp-ken", "gp-imperative"],
+      "question": "*Hastayken işe gitme.* What does it mean?",
+      "options": ["Don't go to work while you're ill.", "Don't get ill at work.", "Go to work when you're better."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*Hastayken* is **while (you are) ill**, not **getting ill**.",
+        "2": "*Gitme* is a negative imperative: **don't go**."
+      },
+      "explain": "*hasta* + y + *-ken*: **while ill**; *işe gitme*: **don't go to work**."
+    },
+    {
+      "id": "a2-u11-l01-e10",
+      "type": "cloze",
+      "points": ["gp-ken", "gp-past-di"],
+      "text": "Üniversite___ Ankara'da bir daire kiraladım.",
+      "en": "When I was at university, I rented a flat in Ankara.",
+      "blanks": [
+        {
+          "options": ["deyken", "deken", "dekan"],
+          "answer": 0
+        }
+      ],
+      "explain": "*üniversitede* + y + *-ken*: the buffer y after a vowel, and *-ken* never changes."
+    },
+    {
+      "id": "a2-u11-l01-e11",
+      "type": "listen",
+      "points": ["gp-ken", "gp-past-copula"],
+      "mode": "choose",
+      "tr": "Küçükken çok utangaçtım.",
+      "en": "When I was little, I was very shy.",
+      "options": ["Küçükken çok utangaçtım.", "Küçükken çok yaramazdım.", "Gençken çok utangaçtım."],
+      "answer": 0
+    },
+    {
+      "id": "a2-u11-l01-e12",
+      "type": "translate",
+      "points": ["gp-ken", "gp-past-copula"],
+      "from": "en",
+      "prompt": "When we were children, we were neighbours.",
+      "accept": ["Çocukken komşuyduk.", "Biz çocukken komşuyduk.", "Küçükken komşuyduk.", "Biz küçükken komşuyduk."],
+      "reject": [
+        {
+          "answer": "Çocukken komşuyuz.",
+          "why": "*Komşuyuz* is **we are** neighbours. The past goes on the main word: *komşuyduk*."
+        }
+      ]
+    },
+    {
+      "id": "a2-u11-l01-e13",
+      "type": "translate",
+      "points": ["gp-ken", "gp-past-copula"],
+      "from": "tr",
+      "prompt": "O zamanlar kuzenimle her yaz tatilinde köydeydik.",
+      "accept": [
+        "Back then my cousin and I were in the village every summer holiday.",
+        "Back then my cousin and I were in the village every summer vacation.",
+        "Back then, my cousin and I stayed in the village every summer [holiday|vacation].",
+        "In those days my cousin and I were in the village every summer [holiday|vacation].",
+        "Back then I was in the village with my cousin every summer [holiday|vacation]."
+      ]
+    }
+  ]
+}
