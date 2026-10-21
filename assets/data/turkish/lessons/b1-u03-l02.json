@@ -1,0 +1,232 @@
+{
+  "id": "b1-u03-l02",
+  "unit": "b1-u03",
+  "order": 2,
+  "title": "Saw it or heard it?",
+  "goal": "Choose between -DI and -mIş: what you saw or know as fact, and what you heard, inferred or found out.",
+  "points": ["gp-mis-vs-di", "gp-evidential-mis"],
+  "intro": {
+    "text": "Choose `-DI` for what you saw, did or know as fact, and `-mIş` for what you heard, read or worked out: *Ali dün geldi* (I saw him) and *Ali dün gelmiş* (I hear). History takes `-DI`; legends take `-mIş`.",
+    "see": "gp-mis-vs-di"
+  },
+  "vocab": [
+    {
+      "tr": "gerçek",
+      "en": "true, real; the truth",
+      "pos": "adj",
+      "card": "fc-0176"
+    },
+    {
+      "tr": "yalan",
+      "en": "lie",
+      "pos": "noun",
+      "card": "fc-0330"
+    },
+    {
+      "tr": "yalan söylemek",
+      "en": "to lie, to tell a lie",
+      "pos": "phrase"
+    },
+    {
+      "tr": "muhtemelen",
+      "en": "probably",
+      "pos": "adv",
+      "card": "fc-0464"
+    },
+    {
+      "tr": "belli",
+      "en": "clear, obvious (belli ki: obviously)",
+      "pos": "adj",
+      "card": "fc-0586"
+    },
+    {
+      "tr": "hırsız",
+      "en": "thief, burglar",
+      "pos": "noun"
+    },
+    {
+      "tr": "çalmak",
+      "en": "to steal",
+      "pos": "verb",
+      "card": "fc-0275"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "b1-u03-l02-e01",
+      "type": "mcq",
+      "points": ["gp-mis-vs-di"],
+      "question": "You watched the match yourself. How do you report the result?",
+      "options": ["Türkiye kazandı.", "Türkiye kazanmış."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Kazanmış* is for a result you heard or read about, not one you watched."
+      },
+      "explain": "You saw it, so `-DI`: *kazandı*."
+    },
+    {
+      "id": "b1-u03-l02-e02",
+      "type": "mcq",
+      "points": ["gp-mis-vs-di"],
+      "question": "You read the result in the paper the next morning. Which is more natural?",
+      "options": ["Türkiye kazanmış.", "Türkiye kazandı."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Kazandı* presents the result as something you witnessed or vouch for yourself."
+      },
+      "explain": "You found out second-hand, so `-mIş`: *kazanmış*, **Turkey won, I see**."
+    },
+    {
+      "id": "b1-u03-l02-e03",
+      "type": "cloze",
+      "points": ["gp-mis-vs-di", "gp-past-copula"],
+      "text": "Dün akşam Ali'yi gördüm. Çok yorgun___. Meğer sabaha kadar çalış___.",
+      "en": "I saw Ali last night. He was very tired. It turns out he had worked until the morning.",
+      "blanks": [
+        {
+          "accept": ["du"],
+          "reject": [
+            {
+              "answer": "muş",
+              "why": "You saw him yourself: *yorgundu*."
+            }
+          ]
+        },
+        {
+          "accept": ["mış"],
+          "reject": [
+            {
+              "answer": "tı",
+              "why": "*Meğer* (it turns out) brings in what you found out afterwards: *çalışmış*."
+            }
+          ]
+        }
+      ],
+      "explain": "What you saw: *yorgundu*. What you learned afterwards: *çalışmış*."
+    },
+    {
+      "id": "b1-u03-l02-e04",
+      "type": "translate",
+      "points": ["gp-mis-vs-di"],
+      "from": "en",
+      "prompt": "Someone has stolen my wallet!",
+      "accept": ["Cüzdanımı çalmışlar!", "Cüzdanımı çaldılar!", "Biri cüzdanımı [çalmış|çaldı]!", "Benim cüzdanımı [çalmışlar|çaldılar]!"]
+    },
+    {
+      "id": "b1-u03-l02-e05",
+      "type": "translate",
+      "points": ["gp-mis-vs-di"],
+      "from": "tr",
+      "prompt": "Hırsız arka kapıdan girmiş.",
+      "accept": [
+        "The thief got in through the back door.",
+        "The [thief|burglar] [came in|entered] through the back door.",
+        "The burglar got in through the back door.",
+        "[Apparently|It seems] the [thief|burglar] [got in|came in|entered] through the back door.",
+        "The [thief|burglar] [got in|came in|entered] through the back door, it seems.",
+        "The [thief|burglar] [got in|came in|entered] [by|from] the back door."
+      ]
+    },
+    {
+      "id": "b1-u03-l02-e06",
+      "type": "listen",
+      "points": ["gp-evidential-mis"],
+      "mode": "type",
+      "tr": "Bana yalan söylemiş.",
+      "en": "He lied to me, it turns out."
+    },
+    {
+      "id": "b1-u03-l02-e07",
+      "type": "cloze",
+      "points": ["gp-mis-vs-di"],
+      "text": "Fatih Sultan Mehmet İstanbul'u 1453'te ___.",
+      "en": "Mehmed II took Constantinople in 1453.",
+      "blanks": [
+        {
+          "options": ["aldı", "almış"],
+          "answer": 0
+        }
+      ],
+      "explain": "Established history is told with `-DI`, though nobody alive saw it: *aldı*."
+    },
+    {
+      "id": "b1-u03-l02-e08",
+      "type": "cloze",
+      "points": ["gp-mis-vs-di"],
+      "text": "Efsaneye göre Hezarfen Galata Kulesi'nden Üsküdar'a ___.",
+      "en": "According to the legend, Hezarfen flew from the Galata Tower to Üsküdar.",
+      "blanks": [
+        {
+          "options": ["uçmuş", "uçtu"],
+          "answer": 0
+        }
+      ],
+      "explain": "A legend you can't vouch for takes `-mIş`: *uçmuş*."
+    },
+    {
+      "id": "b1-u03-l02-e09",
+      "type": "wordbank",
+      "points": ["gp-idi-imis"],
+      "from": "tr",
+      "prompt": "Bu hikâye gerçek değilmiş.",
+      "text": "Apparently this story is not true.",
+      "answer": ["Apparently", "this", "story", "is", "not", "true"],
+      "distractors": ["real", "lie", "was"],
+      "accept": ["Apparently this story was not true.", "This story is apparently not true."]
+    },
+    {
+      "id": "b1-u03-l02-e10",
+      "type": "translate",
+      "points": ["gp-idi-imis"],
+      "from": "en",
+      "prompt": "It was a lie, apparently.",
+      "accept": ["Bu bir yalanmış.", "Anlaşılan bu bir yalanmış.", "O bir yalanmış.", "Anlaşılan o bir yalanmış.", "Yalanmış."],
+      "reject": [
+        {
+          "answer": "Bu bir yalandı.",
+          "why": "*Yalandı* states it as known fact. **Apparently** calls for `-(y)mIş`: *yalanmış*."
+        }
+      ]
+    },
+    {
+      "id": "b1-u03-l02-e11",
+      "type": "listen",
+      "points": ["gp-mis-vs-di"],
+      "mode": "choose",
+      "tr": "Ali dün gelmiş.",
+      "en": "Ali came yesterday, I hear.",
+      "options": ["Ali dün gelmiş.", "Ali dün geldi.", "Ali dün gelmişti."],
+      "answer": 0
+    },
+    {
+      "id": "b1-u03-l02-e12",
+      "type": "mcq",
+      "points": ["gp-mis-vs-di", "gp-past-continuous"],
+      "question": "Which part did the narrator learn from Murat, rather than see?",
+      "context": [
+        {
+          "tr": "Sabah işe gidiyordum. Yolda Murat'ı gördüm.",
+          "en": "I was going to work in the morning. On the way I saw Murat."
+        },
+        {
+          "tr": "Murat çok mutluydu. Meğer dün akşam baba olmuş!",
+          "en": "Murat was very happy. It turns out he became a father last night!"
+        }
+      ],
+      "options": ["That Murat became a father", "That Murat was happy", "That Murat was in the street"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Baba olmuş*: `-mIş`, news he heard. *Mutluydu* is what he saw."
+    },
+    {
+      "id": "b1-u03-l02-e13",
+      "type": "translate",
+      "points": ["gp-mis-vs-di"],
+      "from": "en",
+      "prompt": "He probably lied.",
+      "accept": ["Muhtemelen yalan söyledi.", "Muhtemelen yalan söylemiş.", "O muhtemelen yalan [söyledi|söylemiş].", "Galiba yalan [söyledi|söylemiş]."]
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "id": "b1-u01-l02",
+  "unit": "b1-u01",
+  "order": 2,
+  "title": "What were you doing?",
+  "goal": "Use the past continuous in the negative and in questions: gelmiyordum, geliyor muydun?",
+  "points": ["gp-past-continuous", "gp-di-compounds"],
+  "intro": {
+    "text": "The negative keeps `-mA` inside the verb: *gelmiyordum* (I wasn't coming). In a question, `mI` comes after *-yor* and takes the past and the ending: *Geliyor muydun?* (Were you coming?). Compare the simple past, *Geldin mi?*",
+    "see": "gp-di-compounds"
+  },
+  "vocab": [
+    {
+      "tr": "sadece",
+      "en": "only, just",
+      "pos": "adv",
+      "card": "fc-0051"
+    },
+    {
+      "tr": "şaka",
+      "en": "joke",
+      "pos": "noun",
+      "card": "fc-0466"
+    },
+    {
+      "tr": "şaka yapmak",
+      "en": "to joke, to be kidding",
+      "pos": "phrase"
+    },
+    {
+      "tr": "ciddi",
+      "en": "serious; seriously",
+      "pos": "adj",
+      "card": "fc-0357"
+    },
+    {
+      "tr": "gerçekten",
+      "en": "really, truly",
+      "pos": "adv",
+      "card": "fc-0111"
+    },
+    {
+      "tr": "telefonu açmak",
+      "en": "to answer the phone",
+      "pos": "phrase"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "b1-u01-l02-e01",
+      "type": "mcq",
+      "points": ["gp-di-compounds"],
+      "question": "How do you ask **Were you sleeping?**",
+      "options": ["Uyuyor muydun?", "Uyuyordun mu?", "Uyudun mu?", "Uyumuyor muydun?"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "`mI` doesn't go at the end here. After *-yor* it comes first and takes *-du-n*: *uyuyor muydun?*",
+        "2": "*Uyudun mu?* is the simple past: **did you sleep?**",
+        "3": "*Uyumuyor muydun?* is negative: **weren't you sleeping?**"
+      },
+      "explain": "Compound tenses put `mI` straight after the tense suffix: *uyuyor* + *mu* + *-ydu* + *-n*."
+    },
+    {
+      "id": "b1-u01-l02-e02",
+      "type": "conjugate",
+      "points": ["gp-past-continuous"],
+      "base": "dinlemek",
+      "form": "past-continuous-negative",
+      "label": "*dinlemek* (to listen), negative: I wasn't listening, you weren't listening…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["dinlemiyordum"]
+        },
+        {
+          "p": "sen",
+          "accept": ["dinlemiyordun"]
+        },
+        {
+          "p": "o",
+          "accept": ["dinlemiyordu"]
+        },
+        {
+          "p": "biz",
+          "accept": ["dinlemiyorduk"]
+        },
+        {
+          "p": "siz",
+          "accept": ["dinlemiyordunuz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["dinlemiyorlardı", "dinlemiyordular"]
+        }
+      ],
+      "explain": "`-mA` before `-(I)yor` gives *-mi-yor*; then *-du* and the ending: *dinlemiyordum*."
+    },
+    {
+      "id": "b1-u01-l02-e03",
+      "type": "conjugate",
+      "points": ["gp-di-compounds"],
+      "base": "gelmek",
+      "form": "past-continuous-question",
+      "label": "*gelmek*, question: was I coming?, were you coming?…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["geliyor muydum"]
+        },
+        {
+          "p": "sen",
+          "accept": ["geliyor muydun"]
+        },
+        {
+          "p": "o",
+          "accept": ["geliyor muydu"]
+        },
+        {
+          "p": "biz",
+          "accept": ["geliyor muyduk"]
+        },
+        {
+          "p": "siz",
+          "accept": ["geliyor muydunuz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["geliyorlar mıydı"]
+        }
+      ],
+      "explain": "`mu` follows *geliyor*, then the buffer y, *-du* and the ending: *geliyor muydun*. With **they**, the plural stays on the verb: *geliyorlar mıydı*."
+    },
+    {
+      "id": "b1-u01-l02-e04",
+      "type": "translate",
+      "points": ["gp-past-continuous", "gp-past-copula"],
+      "from": "tr",
+      "prompt": "Şaka yapıyordum, ciddi değildim.",
+      "accept": [
+        "I was joking, I was not serious.",
+        "I was [joking|kidding] and I was not serious.",
+        "I was kidding, I was not serious.",
+        "I was [joking|kidding], I was not being serious.",
+        "I was only [joking|kidding], I was not serious."
+      ]
+    },
+    {
+      "id": "b1-u01-l02-e05",
+      "type": "translate",
+      "points": ["gp-di-compounds"],
+      "from": "en",
+      "prompt": "Were you really sleeping?",
+      "accept": ["Gerçekten uyuyor muydun?", "Gerçekten uyuyor muydunuz?", "Sen gerçekten uyuyor muydun?", "Siz gerçekten uyuyor muydunuz?"],
+      "reject": [
+        {
+          "answer": "Gerçekten uyuyordun mu?",
+          "why": "In compound tenses `mI` comes before the past: *uyuyor muydun?*"
+        }
+      ]
+    },
+    {
+      "id": "b1-u01-l02-e06",
+      "type": "cloze",
+      "points": ["gp-past-continuous"],
+      "text": "Telefonu neden aç___?",
+      "en": "Why weren't you answering the phone?",
+      "blanks": [
+        {
+          "accept": ["mıyordun"],
+          "reject": [
+            {
+              "answer": "madın",
+              "why": "*Açmadın* is **you didn't answer**, once. **Weren't answering** is *açmıyordun*."
+            },
+            {
+              "answer": "mıyordum",
+              "why": "*-m* is **I**. The question is to **you**: *açmıyordun*."
+            }
+          ]
+        }
+      ],
+      "explain": "*aç-* + *-mı* + *-yor* + *-du* + *-n*: **you weren't answering**."
+    },
+    {
+      "id": "b1-u01-l02-e07",
+      "type": "listen",
+      "points": ["gp-past-continuous"],
+      "mode": "type",
+      "tr": "Ben sadece televizyon izliyordum.",
+      "en": "I was only watching television.",
+      "accept": ["Sadece televizyon izliyordum."]
+    },
+    {
+      "id": "b1-u01-l02-e08",
+      "type": "wordbank",
+      "points": ["gp-past-continuous"],
+      "from": "tr",
+      "prompt": "Ali telefonu açmıyordu.",
+      "text": "Ali was not answering the phone.",
+      "answer": ["Ali", "was", "not", "answering", "the", "phone"],
+      "distractors": ["did", "answer", "is"]
+    },
+    {
+      "id": "b1-u01-l02-e09",
+      "type": "mcq",
+      "points": ["gp-past-continuous", "gp-past-di"],
+      "question": "*Dün akşam ne yaptın?* and *Dün akşam ne yapıyordun?* What's the difference?",
+      "options": ["The first asks what you did; the second what you were in the middle of doing", "The first is polite; the second is casual", "There is no difference"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "`-DI` asks for the events of the evening; `-(I)yordu` asks what was going on at a given moment, often because something happened then."
+    },
+    {
+      "id": "b1-u01-l02-e10",
+      "type": "cloze",
+      "points": ["gp-di-compounds"],
+      "text": "Saat dokuzda ders çalışıyor ___?",
+      "en": "Were you studying at nine o'clock?",
+      "blanks": [
+        {
+          "options": ["muydun", "mudun", "musun"],
+          "answer": 0
+        }
+      ],
+      "explain": "`mu` + buffer y + *-du* + *-n* (**you**): *çalışıyor muydun?* *Musun* would be the present: **are you studying?**"
+    },
+    {
+      "id": "b1-u01-l02-e11",
+      "type": "translate",
+      "points": ["gp-past-continuous", "gp-past-copula"],
+      "from": "en",
+      "prompt": "We were not joking; we were serious.",
+      "accept": ["Şaka yapmıyorduk, ciddiydik.", "Biz şaka yapmıyorduk, ciddiydik.", "Şaka yapmıyorduk, biz ciddiydik.", "Şaka yapmıyorduk, ciddi konuşuyorduk."]
+    },
+    {
+      "id": "b1-u01-l02-e12",
+      "type": "listen",
+      "points": ["gp-di-compounds"],
+      "mode": "choose",
+      "tr": "Geliyor muydun?",
+      "en": "Were you coming?",
+      "options": ["Geliyor muydun?", "Geliyor musun?", "Geldin mi?"],
+      "answer": 0
+    },
+    {
+      "id": "b1-u01-l02-e13",
+      "type": "morph",
+      "points": ["gp-past-continuous", "gp-di-compounds"],
+      "base": "gelmek",
+      "gloss": "they weren't coming",
+      "parts": ["gel", "mi", "yor", "lar", "dı"],
+      "distractors": ["miy", "du", "ler"],
+      "result": "gelmiyorlardı",
+      "explain": "Negative *-mi*, then *-yor*, the plural *-lar*, and the past *-dı*, in harmony with *-lar*: *gelmiyorlardı*."
+    }
+  ]
+}
