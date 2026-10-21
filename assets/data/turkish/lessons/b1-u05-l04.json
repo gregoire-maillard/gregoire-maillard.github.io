@@ -1,0 +1,274 @@
+{
+  "id": "b1-u05-l04",
+  "unit": "b1-u05",
+  "order": 4,
+  "title": "Who's who in the photo",
+  "goal": "Describe and identify people with -(y)An participles, and follow a description of a wedding photo.",
+  "points": ["gp-participle-an", "gp-headless-an", "gp-an-possessor", "gp-relative-order"],
+  "intro": {
+    "text": "Point people out by what they're doing and how they look: *Annemin yanında oturan yaşlı adam dedem* (The old man sitting next to my mother is my grandfather). Add a few words for hair and height: *sarışın*, *esmer*, *kıvırcık*, *uzun boylu*.",
+    "see": "gp-relative-order"
+  },
+  "vocab": [
+    {
+      "tr": "sarışın",
+      "en": "blond, fair-haired",
+      "pos": "adj"
+    },
+    {
+      "tr": "esmer",
+      "en": "dark-haired, dark (of hair or skin)",
+      "pos": "adj"
+    },
+    {
+      "tr": "uzun boylu",
+      "en": "tall (of people)",
+      "pos": "adj"
+    },
+    {
+      "tr": "kısa boylu",
+      "en": "short (of people)",
+      "pos": "adj"
+    },
+    {
+      "tr": "kıvırcık",
+      "en": "curly",
+      "pos": "adj"
+    },
+    {
+      "tr": "gözlüklü",
+      "en": "with glasses, wearing glasses",
+      "pos": "adj"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "b1-u05-l04-e01",
+      "type": "match",
+      "pairs": [
+        ["sarışın", "blond"],
+        ["esmer", "dark-haired"],
+        ["uzun boylu", "tall"],
+        ["kısa boylu", "short"],
+        ["kıvırcık", "curly"],
+        ["gözlüklü", "with glasses"]
+      ]
+    },
+    {
+      "id": "b1-u05-l04-e02",
+      "type": "reading",
+      "points": ["gp-participle-an", "gp-headless-an", "gp-relative-order"],
+      "title": "Düğün fotoğrafı",
+      "passage": "Bu fotoğraf ablamın düğününden. Ortada beyaz gelinlik giyen kadın ablam Zeynep, yanında duran uzun boylu adam da eşi Murat. Zeynep'in solunda duran gözlüklü, kıvırcık saçlı kadın annem. Annemin yanında oturan yaşlı adam dedem; o gün çok mutluydu ve bütün gece dans etti.\n\nArkada duran esmer genç Murat'ın kardeşi Emre. Emre'nin yanında gülen sarışın kız kim? Ben de bilmiyorum. Düğüne gelenlerin çoğunu tanımıyordum.",
+      "glossary": [
+        {
+          "tr": "gelinlik",
+          "en": "wedding dress"
+        },
+        {
+          "tr": "ortada",
+          "en": "in the middle"
+        },
+        {
+          "tr": "çoğu",
+          "en": "most of them"
+        }
+      ],
+      "translation": "This photo is from my older sister's wedding. The woman in the middle wearing a white wedding dress is my sister Zeynep, and the tall man standing next to her is her husband, Murat. The curly-haired woman with glasses standing on Zeynep's left is my mother. The old man sitting next to my mother is my grandfather; he was very happy that day and danced all night. The dark-haired young man standing at the back is Murat's brother Emre. Who's the blond girl laughing next to Emre? I don't know either. I didn't know most of the people who came to the wedding.",
+      "questions": [
+        {
+          "q": "Who is the tall man standing next to Zeynep?",
+          "options": ["Her husband, Murat", "Her brother, Emre", "Her grandfather"],
+          "optionsLang": "en",
+          "answer": 0,
+          "explain": "*Yanında duran uzun boylu adam da eşi Murat*: the clause, the adjective, then the noun."
+        },
+        {
+          "q": "Who is the curly-haired woman with glasses?",
+          "options": ["The narrator's mother", "The bride", "A guest nobody knows"],
+          "optionsLang": "en",
+          "answer": 0
+        },
+        {
+          "q": "What does the narrator know about the blond girl?",
+          "options": ["Nothing: she doesn't know who she is", "She is Emre's wife", "She is Zeynep's friend"],
+          "optionsLang": "en",
+          "answer": 0,
+          "explain": "*Ben de bilmiyorum*: **I don't know either**."
+        },
+        {
+          "q": "What does *Düğüne gelenlerin çoğunu tanımıyordum* tell you?",
+          "options": ["She didn't know most of the guests", "Most of the guests didn't come", "She didn't go to the wedding"],
+          "optionsLang": "en",
+          "answer": 0,
+          "explain": "*Gelenlerin çoğu*: **most of those who came**, a headless participle with the genitive."
+        }
+      ]
+    },
+    {
+      "id": "b1-u05-l04-e03",
+      "type": "translate",
+      "points": ["gp-participle-an", "gp-relative-order"],
+      "from": "en",
+      "prompt": "Who is the blond girl standing next to Emre?",
+      "accept": ["Emre'nin yanında duran sarışın kız kim?", "Emre'nin yanındaki sarışın kız kim?"],
+      "reject": [
+        {
+          "answer": "Emre'nin yanında sarışın duran kız kim?",
+          "why": "The participle clause comes first, then the adjective: *yanında duran sarışın kız*."
+        }
+      ]
+    },
+    {
+      "id": "b1-u05-l04-e04",
+      "type": "cloze",
+      "points": ["gp-participle-an", "gp-genitive-possessive"],
+      "text": "Arkada dur___ esmer genç Murat'ın kardeş___.",
+      "en": "The dark-haired young man standing at the back is Murat's brother.",
+      "blanks": [
+        {
+          "accept": ["an"],
+          "reject": [
+            {
+              "answer": "en",
+              "why": "Harmony: *dur-* has u, a back vowel, so *-an*."
+            },
+            {
+              "answer": "uyor",
+              "why": "Before a noun, use the participle: *arkada duran genç*."
+            }
+          ]
+        },
+        {
+          "accept": ["i"]
+        }
+      ],
+      "explain": "*Duran* describes *genç*; *Murat'ın kardeşi* is the genitive and possessive of [A1 unit 10](gp-genitive-possessive)."
+    },
+    {
+      "id": "b1-u05-l04-e05",
+      "type": "listen",
+      "points": ["gp-participle-an"],
+      "mode": "type",
+      "tr": "Annemin yanında oturan yaşlı adam dedem.",
+      "en": "The old man sitting next to my mother is my grandfather."
+    },
+    {
+      "id": "b1-u05-l04-e06",
+      "type": "mcq",
+      "points": ["gp-relative-order"],
+      "question": "Which is **a tall man reading a newspaper**?",
+      "options": ["gazete okuyan uzun boylu bir adam", "bir gazete okuyan uzun boylu adam", "uzun boylu bir adam gazete okuyan"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "Here *bir* goes with *gazete*: **the tall man reading a newspaper**. For **a** man, put *bir* just before *adam*.",
+        "2": "The participle clause goes before the noun, not after it."
+      },
+      "explain": "Clause, adjective, *bir*, noun: *gazete okuyan uzun boylu bir adam*."
+    },
+    {
+      "id": "b1-u05-l04-e07",
+      "type": "wordbank",
+      "points": ["gp-headless-an"],
+      "from": "tr",
+      "prompt": "Düğüne gelenlerin çoğunu tanımıyordum.",
+      "text": "I did not know most of the people who came to the wedding.",
+      "answer": ["I", "did", "not", "know", "most", "of", "the", "people", "who", "came", "to", "the", "wedding"],
+      "distractors": ["guests", "knew", "all"],
+      "accept": ["I did not know most of the guests."]
+    },
+    {
+      "id": "b1-u05-l04-e08",
+      "type": "translate",
+      "points": ["gp-li"],
+      "from": "tr",
+      "prompt": "Kıvırcık saçlı, gözlüklü kadın annem.",
+      "accept": [
+        "The woman with curly hair and glasses is my mother.",
+        "The woman with curly hair and glasses is my [mom|mum].",
+        "The curly-haired woman with glasses is my [mother|mom|mum]."
+      ]
+    },
+    {
+      "id": "b1-u05-l04-e09",
+      "type": "listen",
+      "points": ["gp-headless-an"],
+      "mode": "choose",
+      "tr": "Uzun boylu olan kim?",
+      "en": "Who's the tall one?",
+      "options": ["Uzun boylu olan kim?", "Uzun boylu adam kim?", "Kısa boylu olan kim?"],
+      "answer": 0
+    },
+    {
+      "id": "b1-u05-l04-e10",
+      "type": "translate",
+      "points": ["gp-headless-an"],
+      "from": "en",
+      "prompt": "I do not know the people sitting at the back.",
+      "accept": [
+        "Arkada oturanları tanımıyorum.",
+        "Arkada oturan insanları tanımıyorum.",
+        "Ben arkada [oturanları|oturan insanları] tanımıyorum.",
+        "(Ben) arkada oturan kişileri tanımıyorum."
+      ],
+      "reject": [
+        {
+          "answer": "Arkada oturanlar tanımıyorum.",
+          "why": "They are the object of *tanımak*, and definite: *oturanları*."
+        }
+      ]
+    },
+    {
+      "id": "b1-u05-l04-e11",
+      "type": "mcq",
+      "points": ["gp-participle-an"],
+      "question": "A mother has lost her child at the market. Where is the child?",
+      "context": [
+        {
+          "who": "Görevli",
+          "tr": "Nasıl bir çocuk?",
+          "en": "What does the child look like?"
+        },
+        {
+          "who": "Anne",
+          "tr": "Beş yaşında, sarışın bir kız. Kırmızı bir ceket giyiyor ve elinde mavi bir balon var.",
+          "en": "A blond girl, five years old. She's wearing a red jacket and holding a blue balloon."
+        },
+        {
+          "who": "Görevli",
+          "tr": "Şurada dondurma yiyen kız mı?",
+          "en": "The girl eating an ice cream over there?"
+        },
+        {
+          "who": "Anne",
+          "tr": "Evet, o! Çok teşekkür ederim.",
+          "en": "Yes, that's her! Thank you so much."
+        }
+      ],
+      "options": ["Over there, eating an ice cream", "At the information desk", "Buying a balloon"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Şurada dondurma yiyen kız*: *ye-* + `-(y)An` gives *yiyen*, **the girl eating an ice cream**."
+    },
+    {
+      "id": "b1-u05-l04-e12",
+      "type": "morph",
+      "points": ["gp-participle-an"],
+      "base": "yemek",
+      "gloss": "eating (the girl … an ice cream)",
+      "parts": ["yi", "y", "en"],
+      "distractors": ["ye", "yan", "iyor"],
+      "result": "yiyen",
+      "explain": "*ye-* becomes *yi-* before the buffer y, as in *yiyor*: *yi-y-en*."
+    },
+    {
+      "id": "b1-u05-l04-e13",
+      "type": "translate",
+      "points": ["gp-participle-an", "gp-headless-an"],
+      "from": "en",
+      "prompt": "Everyone who came to the wedding was very happy.",
+      "accept": ["Düğüne gelen herkes çok mutluydu.", "Düğüne gelenlerin hepsi çok mutluydu.", "Düğüne gelenler çok [mutluydu|mutlulardı]."]
+    }
+  ]
+}
