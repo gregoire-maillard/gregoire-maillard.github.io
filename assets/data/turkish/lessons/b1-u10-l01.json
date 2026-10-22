@@ -1,0 +1,278 @@
+{
+  "id": "b1-u10-l01",
+  "unit": "b1-u10",
+  "order": 1,
+  "title": "When was it built?",
+  "goal": "Say what was done, and by whom, with the passive: yapıldı, bulundu, ertelendi, tarafından.",
+  "points": ["gp-passive"],
+  "intro": {
+    "text": "The passive goes right after the stem: `-Il` after most consonants (*yapıldı*, it was built), `-In` after l (*bulundu*), *-n* after a vowel (*tamamlandı*). *Tarafından* names who did it: *Mimar Sinan tarafından yapıldı*.",
+    "see": "gp-passive"
+  },
+  "vocab": [
+    {
+      "tr": "yüzyıl",
+      "en": "century",
+      "pos": "noun"
+    },
+    {
+      "tr": "inşa etmek",
+      "en": "to build, to construct",
+      "pos": "verb"
+    },
+    {
+      "tr": "tamamlamak",
+      "en": "to complete, to finish",
+      "pos": "verb"
+    },
+    {
+      "tr": "yapı",
+      "en": "building, structure",
+      "pos": "noun"
+    },
+    {
+      "tr": "tarafından",
+      "en": "by (after a passive verb)",
+      "pos": "postp",
+      "card": "fc-0417"
+    },
+    {
+      "tr": "taş",
+      "en": "stone",
+      "pos": "noun"
+    },
+    {
+      "tr": "yıkmak",
+      "en": "to pull down, to demolish",
+      "pos": "verb"
+    },
+    {
+      "tr": "bulunmak",
+      "en": "to be found; to be (somewhere), to be located",
+      "pos": "verb",
+      "card": "fc-0320"
+    },
+    {
+      "tr": "cami",
+      "en": "mosque",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "b1-u10-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["yüzyıl", "century"],
+        ["inşa etmek", "to build"],
+        ["tamamlamak", "to complete"],
+        ["taş", "stone"],
+        ["yıkmak", "to demolish"],
+        ["cami", "mosque"]
+      ]
+    },
+    {
+      "id": "b1-u10-l01-e02",
+      "type": "morph",
+      "points": ["gp-passive"],
+      "base": "yapmak",
+      "gloss": "it was built",
+      "parts": ["yap", "ıl", "dı"],
+      "distractors": ["ın", "ul", "tı"],
+      "result": "yapıldı",
+      "explain": "After the consonant p, the passive is `-Il`, here *-ıl*: *yap-ıl-dı*. `-In` is only for stems in l."
+    },
+    {
+      "id": "b1-u10-l01-e03",
+      "type": "cloze",
+      "points": ["gp-passive"],
+      "text": "Cüzdanım bul___!",
+      "en": "My wallet has been found!",
+      "blanks": [
+        {
+          "accept": ["undu"],
+          "reject": [
+            {
+              "answer": "uldu",
+              "why": "After l the passive is `-In`, not `-Il`: *bul-un-du*."
+            },
+            {
+              "answer": "du",
+              "why": "*Buldu* is **she found** (it). For **was found**, add the passive: *bul-un-du*."
+            }
+          ]
+        }
+      ],
+      "explain": "*bul-* ends in l, so the passive is *-un*: *bul-un-du*."
+    },
+    {
+      "id": "b1-u10-l01-e04",
+      "type": "mcq",
+      "points": ["gp-passive"],
+      "question": "Which sentence means **The meeting has been postponed**?",
+      "options": ["Toplantı ertelendi.", "Toplantıyı erteledi.", "Toplantı erteledi."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Toplantıyı erteledi* is active: **he postponed the meeting**.",
+        "2": "A meeting can't postpone anything: the verb needs the passive *-n*."
+      },
+      "explain": "*ertele-* ends in a vowel, so the passive is *-n*: *ertele-n-di*. The object becomes the subject and drops its accusative."
+    },
+    {
+      "id": "b1-u10-l01-e05",
+      "type": "conjugate",
+      "points": ["gp-passive"],
+      "base": "seçilmek",
+      "form": "passive-past",
+      "label": "*seçilmek*, past: I was chosen, you were chosen…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["seçildim"]
+        },
+        {
+          "p": "sen",
+          "accept": ["seçildin"]
+        },
+        {
+          "p": "o",
+          "accept": ["seçildi"]
+        },
+        {
+          "p": "biz",
+          "accept": ["seçildik"]
+        },
+        {
+          "p": "siz",
+          "accept": ["seçildiniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["seçildiler", "seçildi"]
+        }
+      ],
+      "explain": "The passive *seç-il-* is a new stem, and the past endings follow as usual: *seç-il-di-m*."
+    },
+    {
+      "id": "b1-u10-l01-e06",
+      "type": "translate",
+      "points": ["gp-passive"],
+      "from": "en",
+      "prompt": "This bridge was built in the 16th century.",
+      "accept": ["Bu köprü 16. yüzyılda yapıldı.", "Bu köprü on altıncı yüzyılda yapıldı.", "Bu köprü [16.|on altıncı] yüzyılda [inşa edildi|yapılmış|inşa edilmiş]."],
+      "reject": [
+        {
+          "answer": "Bu köprü 16. yüzyılda yaptı.",
+          "why": "*Yaptı* is active: the bridge would be the builder. **Was built**: *yap-ıl-dı*."
+        }
+      ]
+    },
+    {
+      "id": "b1-u10-l01-e07",
+      "type": "listen",
+      "points": ["gp-passive"],
+      "mode": "type",
+      "tr": "Kapı yavaşça açıldı.",
+      "en": "The door opened slowly."
+    },
+    {
+      "id": "b1-u10-l01-e08",
+      "type": "translate",
+      "points": ["gp-passive"],
+      "from": "tr",
+      "prompt": "Bu cami Mimar Sinan tarafından yapıldı.",
+      "accept": [
+        "This mosque was built by Mimar Sinan.",
+        "This mosque was [designed|made] by (the architect) [Mimar Sinan|Sinan].",
+        "This mosque was built by (the architect) Sinan.",
+        "This mosque was built by Sinan the Architect.",
+        "Mimar Sinan built this mosque."
+      ]
+    },
+    {
+      "id": "b1-u10-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-passive"],
+      "from": "en",
+      "prompt": "When was this house built?",
+      "text": "Bu ev ne zaman yapıldı?",
+      "answer": ["Bu", "ev", "ne", "zaman", "yapıldı"],
+      "distractors": ["yaptı", "yapılır", "evi"]
+    },
+    {
+      "id": "b1-u10-l01-e10",
+      "type": "cloze",
+      "points": ["gp-passive"],
+      "text": "Eski bina ___, yerine bir park yapılacak.",
+      "en": "The old building was pulled down; a park will be built in its place.",
+      "blanks": [
+        {
+          "options": ["yıkıldı", "yıktı", "yıkılacak"],
+          "answer": 0
+        }
+      ],
+      "explain": "*yık-ıl-dı*: the building didn't knock anything down, it **was** knocked down. *Yapılacak* shows that the passive takes the future too."
+    },
+    {
+      "id": "b1-u10-l01-e11",
+      "type": "listen",
+      "points": ["gp-passive"],
+      "mode": "choose",
+      "tr": "Bu kitap çok okunuyor.",
+      "en": "This book is widely read.",
+      "options": ["Bu kitap çok okunuyor.", "Bu kitabı çok okuyor.", "Bu kitap çok okundu."],
+      "answer": 0
+    },
+    {
+      "id": "b1-u10-l01-e12",
+      "type": "translate",
+      "points": ["gp-passive"],
+      "from": "en",
+      "prompt": "We were invited to a wedding.",
+      "accept": ["Bir düğüne davet edildik.", "Düğüne davet edildik.", "Biz (bir) düğüne davet edildik."],
+      "reject": [
+        {
+          "answer": "Bir düğüne davet ettik.",
+          "why": "*Davet ettik* is active: **we invited**. **We were invited**: *davet edildik*."
+        }
+      ]
+    },
+    {
+      "id": "b1-u10-l01-e13",
+      "type": "mcq",
+      "points": ["gp-passive"],
+      "question": "What does the visitor want to know?",
+      "context": [
+        {
+          "who": "Rehber",
+          "tr": "Bu köprü 16. yüzyılda yapıldı. Taşları çok eski.",
+          "en": "This bridge was built in the 16th century. Its stones are very old."
+        },
+        {
+          "who": "Ziyaretçi",
+          "tr": "Kim tarafından yapıldı?",
+          "en": "Who was it built by?"
+        }
+      ],
+      "options": ["Who built the bridge", "When the bridge was built", "Where the stones came from"],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Kim tarafından yapıldı?*: **by whom was it built?** *Tarafından* names the doer of a passive verb."
+    },
+    {
+      "id": "b1-u10-l01-e14",
+      "type": "translate",
+      "points": ["gp-passive"],
+      "from": "tr",
+      "prompt": "Otel denizin hemen yanında bulunuyor.",
+      "accept": [
+        "The hotel is right next to the sea.",
+        "The hotel is right [by|beside] the sea.",
+        "The hotel is located right [next to|by|beside|on] the sea.",
+        "The hotel is (located) [next to|by|beside|on] the sea.",
+        "The hotel is right on the sea."
+      ]
+    }
+  ]
+}

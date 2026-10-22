@@ -1,0 +1,279 @@
+{
+  "id": "b1-u11-l01",
+  "unit": "b1-u11",
+  "order": 1,
+  "title": "At the hairdresser's",
+  "goal": "Say what you had done with the causative: kestirdim, yıkattım, tamir ettirdim.",
+  "points": ["gp-causative"],
+  "intro": {
+    "text": "The causative makes someone else do the action, and Turkish uses it for every service: *Saçımı kestirdim* (I had my hair cut), *Arabamı yıkattım* (I had my car washed). After a vowel in a longer stem it is *-t*; after most consonants, `-DIr`.",
+    "see": "gp-causative"
+  },
+  "vocab": [
+    {
+      "tr": "kesmek",
+      "en": "to cut",
+      "pos": "verb",
+      "card": "fc-0218"
+    },
+    {
+      "tr": "kuaför",
+      "en": "hairdresser; hair salon",
+      "pos": "noun"
+    },
+    {
+      "tr": "berber",
+      "en": "barber; barbershop",
+      "pos": "noun"
+    },
+    {
+      "tr": "boyamak",
+      "en": "to paint; to dye",
+      "pos": "verb"
+    },
+    {
+      "tr": "terzi",
+      "en": "tailor",
+      "pos": "noun"
+    },
+    {
+      "tr": "dikmek",
+      "en": "to sew; to put up (a stone, a building)",
+      "pos": "verb"
+    },
+    {
+      "tr": "tamir etmek",
+      "en": "to repair, to fix",
+      "pos": "verb"
+    },
+    {
+      "tr": "tamirci",
+      "en": "repairman, mechanic",
+      "pos": "noun"
+    },
+    {
+      "tr": "uzatmak",
+      "en": "to make longer; to grow (your hair)",
+      "pos": "verb"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "b1-u11-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["kesmek", "to cut"],
+        ["kuaför", "hairdresser"],
+        ["boyamak", "to paint"],
+        ["terzi", "tailor"],
+        ["dikmek", "to sew"],
+        ["tamirci", "mechanic"]
+      ]
+    },
+    {
+      "id": "b1-u11-l01-e02",
+      "type": "morph",
+      "points": ["gp-causative"],
+      "base": "kesmek",
+      "gloss": "I had it cut",
+      "parts": ["kes", "tir", "di", "m"],
+      "distractors": ["t", "ir", "ti"],
+      "result": "kestirdim",
+      "explain": "*kes-* has one syllable and ends in a consonant, so the causative is `-DIr`, with t after s: *kes-tir*. Then the past *-di* and *-m*."
+    },
+    {
+      "id": "b1-u11-l01-e03",
+      "type": "cloze",
+      "points": ["gp-causative"],
+      "text": "Arabamı yıka___.",
+      "en": "I had my car washed.",
+      "blanks": [
+        {
+          "accept": ["ttım"],
+          "reject": [
+            {
+              "answer": "dım",
+              "why": "*Yıkadım* is **I washed it** myself. For a service, add the causative *-t*: *yıka-t-tı-m*."
+            },
+            {
+              "answer": "dırdım",
+              "why": "After a vowel in a longer stem, the causative is *-t*, not `-DIr`: *yıkattım*."
+            }
+          ]
+        }
+      ],
+      "explain": "*yıka-* ends in a vowel, so the causative is *-t*; after t, the past is *-tı*: *yıka-t-tı-m*."
+    },
+    {
+      "id": "b1-u11-l01-e04",
+      "type": "mcq",
+      "points": ["gp-causative"],
+      "question": "Which sentence means **I had my hair cut**?",
+      "options": ["Saçımı kestirdim.", "Saçımı kestim.", "Saçını kestirdim."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Kestim* means you cut it yourself; the causative *-tir-* says someone else did.",
+        "2": "*Saçını* is **your** (or **his, her**) hair; **my hair** is *saçımı*."
+      },
+      "explain": "*kes-tir-di-m*: the hairdresser did the cutting, and you had it done."
+    },
+    {
+      "id": "b1-u11-l01-e05",
+      "type": "conjugate",
+      "points": ["gp-causative"],
+      "base": "yaptırmak",
+      "form": "causative-past",
+      "label": "*yaptırmak*, past: I had it done, you had it done…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["yaptırdım"]
+        },
+        {
+          "p": "sen",
+          "accept": ["yaptırdın"]
+        },
+        {
+          "p": "o",
+          "accept": ["yaptırdı"]
+        },
+        {
+          "p": "biz",
+          "accept": ["yaptırdık"]
+        },
+        {
+          "p": "siz",
+          "accept": ["yaptırdınız"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["yaptırdılar", "yaptırdı"]
+        }
+      ],
+      "explain": "*yap-tır-* is a new stem, and the past endings follow as usual: *yap-tır-dı-m*."
+    },
+    {
+      "id": "b1-u11-l01-e06",
+      "type": "translate",
+      "points": ["gp-causative"],
+      "from": "en",
+      "prompt": "We had the house painted last summer.",
+      "accept": [
+        "Evi geçen yaz boyattık.",
+        "Geçen yaz evi boyattık.",
+        "[Evimizi geçen yaz|Geçen yaz evimizi] boyattık.",
+        "Biz [evi|evimizi] geçen yaz boyattık.",
+        "Biz geçen yaz [evi|evimizi] boyattık."
+      ],
+      "reject": [
+        {
+          "answer": "Evi geçen yaz boyadık.",
+          "why": "*Boyadık* is **we painted it** ourselves. **Had it painted**: *boya-t-tı-k*."
+        },
+        {
+          "answer": "Ev geçen yaz boyattık.",
+          "why": "The house is a definite object, so it takes the accusative: *evi*."
+        }
+      ]
+    },
+    {
+      "id": "b1-u11-l01-e07",
+      "type": "listen",
+      "points": ["gp-causative"],
+      "mode": "type",
+      "tr": "Bilgisayarımı tamir ettireceğim.",
+      "en": "I'm going to have my computer repaired."
+    },
+    {
+      "id": "b1-u11-l01-e08",
+      "type": "translate",
+      "points": ["gp-causative"],
+      "from": "tr",
+      "prompt": "Bu ceketi İstanbul'da diktirdim.",
+      "accept": [
+        "I had this jacket made in Istanbul.",
+        "I had this jacket [sewn|tailored] in Istanbul.",
+        "I got this jacket [made|sewn|tailored] in Istanbul.",
+        "In Istanbul I had this jacket [made|sewn|tailored]."
+      ]
+    },
+    {
+      "id": "b1-u11-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-causative"],
+      "from": "en",
+      "prompt": "Where do you get your hair cut?",
+      "text": "Saçını nerede kestiriyorsun?",
+      "answer": ["Saçını", "nerede", "kestiriyorsun"],
+      "distractors": ["kesiyorsun", "saçımı", "kestirdin"]
+    },
+    {
+      "id": "b1-u11-l01-e10",
+      "type": "cloze",
+      "points": ["gp-causative"],
+      "text": "Saçımı ___, bu yüzden bu ay kestirmeyeceğim.",
+      "en": "I'm growing my hair, so I won't get it cut this month.",
+      "blanks": [
+        {
+          "options": ["uzatıyorum", "uzuyorum", "uzatılıyor"],
+          "answer": 0
+        }
+      ],
+      "explain": "*uza-t-ıyor-um*: the causative of *uzamak* (to get longer), **I'm making it longer**. *Saçım uzuyor* would be **my hair is growing**."
+    },
+    {
+      "id": "b1-u11-l01-e11",
+      "type": "listen",
+      "points": ["gp-causative"],
+      "mode": "choose",
+      "tr": "Arabanı nerede yıkattın?",
+      "en": "Where did you have your car washed?",
+      "options": ["Arabanı nerede yıkattın?", "Arabanı nerede yıkadın?", "Arabamı nerede yıkattın?"],
+      "answer": 0
+    },
+    {
+      "id": "b1-u11-l01-e12",
+      "type": "mcq",
+      "points": ["gp-causative"],
+      "question": "Which verb is the causative of *gelmek*, **to make (something) come**?",
+      "options": ["getirmek", "geldirmek", "geltmek"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Gelmek* is irregular: its causative is *getirmek*, **to bring**.",
+        "2": "*-t* is only for longer stems ending in a vowel, l or r, and *gelmek* is irregular anyway: *getirmek*."
+      },
+      "explain": "Three common verbs have irregular causatives: *gör-* → *göster-* (show), *gel-* → *getir-* (bring), *kalk-* → *kaldır-* (lift)."
+    },
+    {
+      "id": "b1-u11-l01-e13",
+      "type": "translate",
+      "points": ["gp-causative"],
+      "from": "en",
+      "prompt": "Did you have your shoes repaired?",
+      "accept": [
+        "Ayakkabılarını tamir ettirdin mi?",
+        "Ayakkabılarınızı tamir ettirdiniz mi?",
+        "Sen ayakkabılarını tamir ettirdin mi?",
+        "Siz ayakkabılarınızı tamir ettirdiniz mi?",
+        "Ayakkabını tamir ettirdin mi?",
+        "Ayakkabınızı tamir ettirdiniz mi?"
+      ],
+      "reject": [
+        {
+          "answer": "Ayakkabılarını tamir ettin mi?",
+          "why": "*Tamir ettin* is **did you repair them** yourself. **Have them repaired**: *tamir ettirdin*."
+        }
+      ]
+    },
+    {
+      "id": "b1-u11-l01-e14",
+      "type": "translate",
+      "points": ["gp-causative"],
+      "from": "tr",
+      "prompt": "Bana fotoğraflarını gösterir misin?",
+      "accept": ["Will you show me your photos?", "[Can|Could|Would] you show me your [photos|pictures|photographs]?", "Will you show me your [pictures|photographs]?"]
+    }
+  ]
+}

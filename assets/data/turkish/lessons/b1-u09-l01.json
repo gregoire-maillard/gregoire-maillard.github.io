@@ -1,0 +1,276 @@
+{
+  "id": "b1-u09-l01",
+  "unit": "b1-u09",
+  "order": 1,
+  "title": "If it rains tomorrow",
+  "goal": "Make real conditions with the aorist and with nouns: gelirsem, gelmezsen, hastaysan, varsa, yoksa.",
+  "points": ["gp-conditional-real", "gp-conditional-questions"],
+  "intro": {
+    "text": "For an ordinary **if**, add `-sA` and a type II ending to the aorist: *Yağmur yağarsa evde kalırız* (If it rains, we'll stay home), *Gelmezsen kızarım* (If you don't come, I'll be cross). Nouns take `-(y)sA`: *hastaysan*, *varsa*, *yoksa*.",
+    "see": "gp-conditional-real"
+  },
+  "vocab": [
+    {
+      "tr": "eğer",
+      "en": "if",
+      "pos": "conj",
+      "card": "fc-0105"
+    },
+    {
+      "tr": "yoksa",
+      "en": "otherwise, or else; or (in questions)",
+      "pos": "conj",
+      "card": "fc-0228"
+    },
+    {
+      "tr": "tahmin",
+      "en": "guess; forecast (hava tahmini: weather forecast)",
+      "pos": "noun",
+      "card": "fc-0523"
+    },
+    {
+      "tr": "derece",
+      "en": "degree (of temperature)",
+      "pos": "noun"
+    },
+    {
+      "tr": "yağışlı",
+      "en": "rainy, wet (of weather)",
+      "pos": "adj"
+    },
+    {
+      "tr": "sis",
+      "en": "fog",
+      "pos": "noun"
+    },
+    {
+      "tr": "ertelemek",
+      "en": "to postpone, to put off",
+      "pos": "verb"
+    },
+    {
+      "tr": "iptal etmek",
+      "en": "to cancel",
+      "pos": "verb"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "b1-u09-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["eğer", "if"],
+        ["yoksa", "otherwise"],
+        ["derece", "degree"],
+        ["sis", "fog"],
+        ["ertelemek", "to postpone"],
+        ["iptal etmek", "to cancel"]
+      ]
+    },
+    {
+      "id": "b1-u09-l01-e02",
+      "type": "morph",
+      "points": ["gp-conditional-real"],
+      "base": "gelmek",
+      "gloss": "if I come",
+      "parts": ["gel", "ir", "se", "m"],
+      "distractors": ["er", "sa", "im"],
+      "result": "gelirsem",
+      "explain": "The aorist *gel-ir*, then `-sA` (e after i) and the type II ending *-m*, as in *geldim*: *gel-ir-se-m*."
+    },
+    {
+      "id": "b1-u09-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-conditional-real"],
+      "base": "gelmek",
+      "form": "conditional-aorist",
+      "label": "*gelmek*, aorist + **if**: if I come, if you come…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["gelirsem"]
+        },
+        {
+          "p": "sen",
+          "accept": ["gelirsen"]
+        },
+        {
+          "p": "o",
+          "accept": ["gelirse"]
+        },
+        {
+          "p": "biz",
+          "accept": ["gelirsek"]
+        },
+        {
+          "p": "siz",
+          "accept": ["gelirseniz"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["gelirlerse", "gelirseler"]
+        }
+      ],
+      "explain": "Aorist + `-sA` + the endings of the past: *-m, -n*, nothing, *-k, -niz*. For **they**, *-ler* usually comes before `-sA`: *gelirlerse*."
+    },
+    {
+      "id": "b1-u09-l01-e04",
+      "type": "cloze",
+      "points": ["gp-conditional-real"],
+      "text": "Yarın yağmur yağ___ pikniği erteleriz.",
+      "en": "If it rains tomorrow, we'll postpone the picnic.",
+      "blanks": [
+        {
+          "accept": ["arsa"],
+          "reject": [
+            {
+              "answer": "arse",
+              "why": "Harmony follows the a of the aorist *-ar*: *yağ-ar-sa*."
+            },
+            {
+              "answer": "ar",
+              "why": "*Yağar* states that it rains. For **if**, add `-sA`: *yağarsa*."
+            }
+          ]
+        }
+      ],
+      "hint": "Aorist, then **if**.",
+      "explain": "For a condition about the future, Turkish uses the aorist + `-sA`: *yağ-ar-sa*, **if it rains**."
+    },
+    {
+      "id": "b1-u09-l01-e05",
+      "type": "mcq",
+      "points": ["gp-conditional-real"],
+      "question": "*Hastaysan evde kal.* What does it mean?",
+      "options": ["If you're ill, stay home.", "Stay home because you're ill.", "You were ill, so you stayed home."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**Because you're ill** would be *Hasta olduğun için* ([B1 unit 8](gp-digi-icin)).",
+        "2": "*Kal* is an imperative, and *hastaysan* is a condition, not a past fact."
+      },
+      "explain": "*hasta-y-sa-n*: a noun or adjective takes `-(y)sA` directly, with y after the vowel."
+    },
+    {
+      "id": "b1-u09-l01-e06",
+      "type": "translate",
+      "points": ["gp-conditional-real"],
+      "from": "en",
+      "prompt": "If you don't come, I'll be cross.",
+      "accept": [
+        "Gelmezsen kızarım.",
+        "Gelmezsen sana kızarım.",
+        "Sen gelmezsen (sana) kızarım.",
+        "(Siz) gelmezseniz (size) kızarım.",
+        "Eğer gelmezsen (sana) kızarım.",
+        "Eğer gelmezseniz (size) kızarım.",
+        "(Sen) gelmezsen ben (sana) kızarım."
+      ]
+    },
+    {
+      "id": "b1-u09-l01-e07",
+      "type": "listen",
+      "points": ["gp-conditional-real"],
+      "mode": "type",
+      "tr": "Vaktin varsa bir kahve içelim.",
+      "en": "If you have time, let's have a coffee."
+    },
+    {
+      "id": "b1-u09-l01-e08",
+      "type": "cloze",
+      "points": ["gp-conditional-real"],
+      "text": "Acele et, ___ treni kaçıracağız.",
+      "en": "Hurry up, or we'll miss the train.",
+      "blanks": [
+        {
+          "options": ["yoksa", "eğer", "varsa"],
+          "answer": 0
+        }
+      ],
+      "explain": "At the start of a clause, *yoksa* (literally **if there isn't**) means **otherwise, or else**."
+    },
+    {
+      "id": "b1-u09-l01-e09",
+      "type": "translate",
+      "points": ["gp-conditional-real"],
+      "from": "tr",
+      "prompt": "Sorun yoksa yarın gelirim.",
+      "accept": [
+        "If there is no problem, I will come tomorrow.",
+        "If there [are no problems|is not a problem|is not any problem], I will come (by|over) tomorrow.",
+        "If there is no problem, I will come [by|over] tomorrow.",
+        "If it is not a problem, I will come (by|over) tomorrow.",
+        "I will come (by|over) tomorrow if there [is no problem|are no problems|is not a problem]."
+      ]
+    },
+    {
+      "id": "b1-u09-l01-e10",
+      "type": "wordbank",
+      "points": ["gp-conditional-real"],
+      "from": "en",
+      "prompt": "If you're tired, let's go home.",
+      "text": "Yorgunsan eve gidelim.",
+      "answer": ["Yorgunsan", "eve", "gidelim"],
+      "distractors": ["Yorgunsun", "gideriz", "evde"]
+    },
+    {
+      "id": "b1-u09-l01-e11",
+      "type": "mcq",
+      "points": ["gp-conditional-real"],
+      "question": "What will happen if it rains?",
+      "context": [
+        {
+          "who": "Elif",
+          "tr": "Hava tahmini ne diyor?",
+          "en": "What does the forecast say?"
+        },
+        {
+          "who": "Can",
+          "tr": "Yarın hava yağışlı olacakmış. Yağmur yağarsa maçı ertelerler.",
+          "en": "Apparently it's going to be rainy tomorrow. If it rains, they'll postpone the match."
+        }
+      ],
+      "options": ["The match will be postponed.", "The match will be cancelled.", "They will play in the rain."],
+      "optionsLang": "en",
+      "answer": 0,
+      "explain": "*Yağarsa … ertelerler*: if it rains, they'll put it off. **Cancel** would be *iptal etmek*."
+    },
+    {
+      "id": "b1-u09-l01-e12",
+      "type": "listen",
+      "points": ["gp-conditional-real", "gp-conditional-questions"],
+      "mode": "choose",
+      "tr": "Eğer kar yağarsa okula gitmeyiz.",
+      "en": "If it snows, we won't go to school.",
+      "options": ["Eğer kar yağarsa okula gitmeyiz.", "Eğer kar yağmazsa okula gideriz.", "Kar yağınca okula gitmedik."],
+      "answer": 0
+    },
+    {
+      "id": "b1-u09-l01-e13",
+      "type": "translate",
+      "points": ["gp-conditional-real"],
+      "from": "en",
+      "prompt": "If there's fog, the planes can't take off.",
+      "accept": ["Sis varsa uçaklar kalkamaz.", "Sis varsa uçak kalkamaz.", "Eğer sis [varsa|olursa] [uçaklar|uçak] kalkamaz.", "Sis olursa [uçaklar|uçak] kalkamaz."],
+      "reject": [
+        {
+          "answer": "Sis yoksa uçaklar kalkamaz.",
+          "why": "*Yoksa* is **if there isn't**. **If there is** fog: *sis varsa*."
+        }
+      ]
+    },
+    {
+      "id": "b1-u09-l01-e14",
+      "type": "translate",
+      "points": ["gp-conditional-real"],
+      "from": "tr",
+      "prompt": "Uçuş iptal olursa ne yapacağız?",
+      "accept": [
+        "What will we do if the flight is cancelled?",
+        "What will we do if the flight [is canceled|gets cancelled|gets canceled]?",
+        "What are we going to do if the flight [is cancelled|is canceled|gets cancelled|gets canceled]?",
+        "If the flight [is cancelled|is canceled|gets cancelled|gets canceled], what [will we do|are we going to do]?"
+      ]
+    }
+  ]
+}
