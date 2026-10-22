@@ -62,6 +62,8 @@
         display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center;
         margin: 22px 0 18px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
       }
+      .hubsel { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+      .hubsel-l { color: var(--ink); font-weight: 500; }
       .rng { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text); }
       .rng label { color: var(--ink); font-weight: 500; white-space: nowrap; }
       .rng input[type=range] { width: 150px; accent-color: var(--ink); }
@@ -78,7 +80,6 @@
       /* ── Two hubs side by side ── */
       .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; align-items: start; }
       .hub { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px 16px 16px; min-width: 0; }
-      .pick { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
       .views {
         display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: #fff;
         flex-wrap: wrap; gap: 2px;
@@ -90,7 +91,7 @@
       .views button:hover { color: var(--ink); }
       .views button.on { background: var(--ink); color: #fff; }
       .views button:disabled { color: #c4c4c4; cursor: default; }
-      .hub h3 { margin: 12px 0 0; font-size: 15px; color: var(--ink); }
+      .hub h3 { margin: 0; font-size: 15px; color: var(--ink); }
       .hub .verdict { margin: 2px 0 0; font-size: 12.5px; color: var(--text); line-height: 1.5; }
       .hub .verdict b { color: var(--ink); font-weight: 600; }
 
@@ -170,6 +171,9 @@
       .method .fx { font-family: var(--mono, ui-monospace, Menlo, monospace); font-size: 12px; color: var(--ink); background: var(--soft); border-radius: 4px; padding: 1px 6px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 
       @media (max-width: 1100px) {
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 860px) {
         .pair { grid-template-columns: 1fr; }
       }
       @media (max-width: 720px) {
@@ -242,11 +246,15 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Network planning</div>
         <h1>Hub banks</h1>
         <p class="lede">How an airline times its hub in waves of arrivals and departures, and how many connections those waves create.</p>
-        <p>Air Canada and WestJet at Toronto, Montréal, Vancouver and Calgary, from one weekday's published schedule. Each block is one flight: arrivals stack above the line, departures below. The shaded bands are the banks this page detects in the schedule. Click a flight to see where it connects.</p>
+        <p>Air Canada and WestJet at Toronto, Montréal, Vancouver and Calgary, from one weekday's published schedule. Each block is one flight: arrivals stack above the line, departures below. The shaded bands are the banks this page detects in the schedule. Pick a hub above: Air Canada on the left, WestJet on the right, on the same scale. Click a flight to see where it connects.</p>
         <div class="stamp" id="stamp"></div>
       </div>
 
       <div class="controls" id="controls">
+        <div class="hubsel">
+          <span class="hubsel-l" id="hub-l">Hub</span>
+          <div class="views" role="group" aria-labelledby="hub-l" id="hubs"></div>
+        </div>
         <div class="rng">
           <label for="mct">Minimum connection</label>
           <input type="range" id="mct" min="20" max="120" step="5" value="45">
@@ -295,7 +303,6 @@
       const B = 96, BM = 15;                 // 96 buckets of 15 minutes
       const QUICK = 60;                      // "quick" connection: within an hour of the minimum
       const HUB_ORDER = ["YYZ", "YUL", "YVR", "YYC"];
-      const AL_ORDER = ["AC", "WS"];
       const HEAT = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"];
 
       const $ = (id) => document.getElementById(id);
@@ -306,22 +313,30 @@
 
       let DATA = null;
       let MCT = 45, MAXC = 180;
+      let HUB = "YYZ";                       // one hub for both panels
       const panels = [
-        { key: "A", al: "AC", hub: "YYZ", sel: null },
-        { key: "B", al: "WS", hub: "YYC", sel: null },
+        { key: "A", al: "AC", hub: HUB, sel: null },   // left: Air Canada
+        { key: "B", al: "WS", hub: HUB, sel: null },   // right: WestJet
       ];
       const cache = new Map();
 
       // ------------------------------------------------------------ state in the URL hash
+      // #YUL (older links like #AC-YUL/WS-YYC open on their first hub)
       function readHash() {
-        const m = location.hash.match(/^#([A-Z]{2})-([A-Z]{3})\/([A-Z]{2})-([A-Z]{3})/);
-        if (!m) return;
-        [[m[1], m[2]], [m[3], m[4]]].forEach(([al, hub], i) => {
-          if (AL_ORDER.includes(al) && HUB_ORDER.includes(hub)) { panels[i].al = al; panels[i].hub = hub; }
-        });
+        const m = location.hash.match(/^#(?:[A-Z]{2}-)?([A-Z]{3})/);
+        if (m && HUB_ORDER.includes(m[1])) setHub(m[1]);
       }
       function writeHash() {
-        history.replaceState(null, "", `#${panels[0].al}-${panels[0].hub}/${panels[1].al}-${panels[1].hub}`);
+        history.replaceState(null, "", `#${HUB}`);
+      }
+      function setHub(h) {
+        HUB = h;
+        panels.forEach((p) => { p.hub = h; p.sel = null; });
+      }
+      function buildHubPicker() {
+        const box = $("hubs");
+        box.innerHTML = HUB_ORDER.map((h) => `<button type="button" data-hub="${h}" title="${esc(DATA.hubs[h].name)}">${h}</button>`).join("");
+        box.querySelectorAll("[data-hub]").forEach((b) => b.addEventListener("click", () => { setHub(b.dataset.hub); writeHash(); renderAll(); }));
       }
 
       // ------------------------------------------------------------ data
@@ -440,10 +455,6 @@
           const el = document.createElement("div");
           el.className = "hub";
           el.innerHTML = `
-            <div class="pick">
-              <div class="views" role="group" aria-label="Airline">${AL_ORDER.map((a) => `<button type="button" data-al="${a}">${esc(DATA.airlines[a])}</button>`).join("")}</div>
-              <div class="views" role="group" aria-label="Hub">${HUB_ORDER.map((h) => `<button type="button" data-hub="${h}" title="${esc(DATA.hubs[h].name)}">${h}</button>`).join("")}</div>
-            </div>
             <h3 class="ttl"></h3>
             <p class="verdict"></p>
             <div class="tiles"></div>
@@ -461,8 +472,6 @@
             <div class="dl-row"><button type="button" class="csv-btn"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>Download this hub's flights (CSV)</button></div>`;
           pairEl.appendChild(el);
           p.el = el;
-          el.querySelectorAll("[data-al]").forEach((b) => b.addEventListener("click", () => { p.al = b.dataset.al; p.sel = null; writeHash(); renderAll(); }));
-          el.querySelectorAll("[data-hub]").forEach((b) => b.addEventListener("click", () => { p.hub = b.dataset.hub; p.sel = null; writeHash(); renderAll(); }));
           el.querySelector("select").addEventListener("change", (e) => { p.sel = e.target.value || null; renderPanel(p); });
           el.querySelector(".clear").addEventListener("click", () => { p.sel = null; renderPanel(p); });
           el.querySelector(".csv-btn").addEventListener("click", () => downloadFlights(p));
@@ -506,6 +515,10 @@
       }
 
       function renderAll() {
+        $("hubs").querySelectorAll("[data-hub]").forEach((b) => {
+          b.classList.toggle("on", b.dataset.hub === HUB);
+          b.setAttribute("aria-pressed", b.dataset.hub === HUB);
+        });
         panels.forEach((p) => {
           p.r = flightsOf(p.al, p.hub);
           connect(p.r);
@@ -520,14 +533,6 @@
 
       function renderPanel(p) {
         const r = p.r, el = p.el, S = r.stats;
-        el.querySelectorAll("[data-al]").forEach((b) => {
-          b.classList.toggle("on", b.dataset.al === p.al);
-        });
-        el.querySelectorAll("[data-hub]").forEach((b) => {
-          b.classList.toggle("on", b.dataset.hub === p.hub);
-          const o = DATA.ops[`${p.al}-${b.dataset.hub}`];
-          b.disabled = !o || (o.arr.length + o.dep.length === 0);
-        });
         const hub = DATA.hubs[p.hub];
         el.querySelector(".ttl").textContent = `${DATA.airlines[p.al]} at ${hub.name} (${p.hub})`;
 
@@ -772,6 +777,7 @@
           $("m-date").textContent = day;
           $("m-fetched").textContent = got;
           readHash();
+          buildHubPicker();
           buildPanels();
           bindControls();
           $("mct-o").textContent = dur(MCT);

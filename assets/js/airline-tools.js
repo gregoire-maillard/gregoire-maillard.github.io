@@ -1,12 +1,8 @@
 /* Airline Economics (/airlinetools.html): small shared helper loaded by the hub, every tool and every course.
 
-   1. Header counts. The "N tools · M courses" pill in the hub's header is counted from the hub
-      itself (one card per tool, one per course), so adding a card is the only thing needed to keep
-      it right. It ships hidden with no number in the HTML and only appears once the count is known.
-      (Tool and course pages no longer show the pill; the code still fills one if a page has it.)
+   1. (Removed: the header no longer shows a count of tools and courses.)
    2. Breadcrumb. A tool page without a breadcrumb gets "Airline Economics · <topic>" at the top
       of its intro, using the topic section (data-area) its card sits in on the hub.
-   3. On the hub, each course card shows how many tools follow it in its topic.
    4. Usage events for Google Analytics (the gtag snippet is on every page). Only page and control
       names are sent, never values typed or picked:
         select_content    a link to another tool or course is clicked: content_type (tool / course / hub / page),
@@ -19,7 +15,7 @@
       To see tool, control, link_location and from_page in GA4 reports, register them once as
       event-scoped custom dimensions (Admin → Custom definitions).
 
-   No dependencies. Fails silently: if the hub can't be fetched, the pill stays hidden. */
+   No dependencies. Fails silently: if the hub can't be fetched, there is simply no breadcrumb. */
 (function () {
   "use strict";
   var HUB = "/airlinetools.html";
@@ -38,15 +34,6 @@
     return info;
   }
 
-  function setCounts(info) {
-    if (!info.tools) return;
-    var pills = document.querySelectorAll(".at-pill, [data-at-count]");
-    for (var i = 0; i < pills.length; i++) {
-      var b = pills[i].querySelectorAll("b");
-      if (b.length >= 2) { b[0].textContent = info.tools; b[1].textContent = info.courses; pills[i].style.display = ""; }
-    }
-  }
-
   function addCrumb(info) {
     if (document.querySelector(".crumbs")) return;
     var intro = document.querySelector(".content > .intro");
@@ -59,20 +46,6 @@
     div.appendChild(a);
     div.appendChild(document.createTextNode(" · " + area));
     intro.insertBefore(div, intro.firstChild);
-  }
-
-  function countTopicTools() {
-    var slots = document.querySelectorAll(".course.lead [data-tools]");
-    for (var i = 0; i < slots.length; i++) {
-      var row = slots[i].closest(".area-row");
-      var n = row ? row.querySelectorAll("a.tool").length : 0;
-      if (!n) continue;
-      var b = document.createElement("b");
-      b.textContent = n;
-      slots[i].textContent = "";
-      slots[i].appendChild(b);
-      slots[i].appendChild(document.createTextNode(n === 1 ? "tool" : "tools"));
-    }
   }
 
   // ── 4. usage events ──
@@ -131,15 +104,15 @@
     }, true);
   }
 
-  function apply(info) { setCounts(info); addCrumb(info); known = info.areas || known; }
+  function apply(info) { addCrumb(info); known = info.areas || known; }
 
   function run() {
     listen();
-    if (document.querySelector("a.tool")) { apply(readHub(document)); countTopicTools(); return; } // on the hub itself
+    if (document.querySelector("a.tool")) { apply(readHub(document)); return; } // on the hub itself
     var cached = null;
     try { cached = JSON.parse(sessionStorage.getItem(KEY)); } catch (e) {}
     if (cached && cached.tools) apply(cached);
-    if (!document.querySelector(".at-pill, [data-at-count], .content > .intro")) return; // nothing here needs the hub
+    if (!document.querySelector(".content > .intro")) return; // nothing here needs the hub
     if (!window.fetch || !window.DOMParser) return;
     fetch(HUB, { cache: "no-cache" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })

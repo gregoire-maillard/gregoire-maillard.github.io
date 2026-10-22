@@ -164,7 +164,15 @@
         padding: 0 20px;
       }
       .city-panel h2 { margin-top: 0; }
-      .city-panel img { max-width: 100%; border-radius: 4px; }
+      /* Each photo sits on its own line, with breathing room above and below,
+         so the text always reads between the pictures. */
+      .city-panel img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        margin: 28px 0;
+      }
 
       @media (max-width: 860px) {
         html, body { height: auto; }

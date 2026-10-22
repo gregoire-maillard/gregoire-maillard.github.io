@@ -105,7 +105,6 @@ a { color: inherit; text-decoration: none; }
 .tab[aria-current]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; border-radius: 2px; background: var(--ink); }
 .tab[aria-current] { color: var(--ink); }
 .grow { flex: 1; }
-@media (max-width: 1099px) { .hdr .pill { display: none; } }
 /* phones and small tablets: the section tabs drop to a second row of chips that scrolls sideways */
 @media (max-width: 899px) {
   :root { --hdr: 104px; }
@@ -148,7 +147,7 @@ main { padding-top: 48px; }
 .tool:hover .btn.dark { background: #000; }
 @media (max-width: 839px) { .tool { grid-column: 1 / -1; } }
 
-/* topics: one section per topic, its course first, then its tools in course order (quarters, then thirds, halves, full) */
+/* topics: one section per topic, its course first, then its tools in course order, all cards the same size */
 .area-row { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: var(--gutter); counter-reset: step; }
 .area-row .tool { grid-column: span 3; counter-increment: step; }
 .area-row .tool .viz { height: 144px; }
@@ -160,30 +159,6 @@ main { padding-top: 48px; }
 }
 @media (max-width: 1099px) { .area-row .tool, .area-row .course, .area-row .course.lead { grid-column: span 4; } }
 @media (max-width: 599px)  { .area-row .tool, .area-row .course, .area-row .course.lead { grid-column: 1 / -1; } }
-
-/* the last tool of a topic takes what is left of its row, so no row ends with a gap.
-   Wide enough for two columns, its illustration sits beside the text, drawn whole at its own proportions;
-   otherwise it stays on top, a little taller so the wider crop doesn't cut it. */
-@media (min-width: 1100px) {
-  .area-row > .tool:last-child:nth-child(4n+1) { grid-column: 1 / -1; }
-  .area-row > .tool:last-child:nth-child(4n+2) { grid-column: span 9; }
-  .area-row > .tool:last-child:nth-child(4n+3) { grid-column: span 6; }
-  .area-row > .tool:last-child:nth-child(4n+3) .viz { height: 216px; }
-  .area-row > .tool:last-child:is(:nth-child(4n+1), :nth-child(4n+2)) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: none; }
-  .area-row > .tool:last-child:is(:nth-child(4n+1), :nth-child(4n+2)) .viz { height: auto; min-height: 216px; border-bottom: 0; border-right: 1px solid var(--hair); }
-  .area-row > .tool:last-child:is(:nth-child(4n+1), :nth-child(4n+2)) .viz svg { inset: 50% 0 auto; height: auto; aspect-ratio: 600 / 216; transform: translateY(-50%); }
-}
-@media (min-width: 840px) and (max-width: 1099px) {
-  .area-row > .tool:last-child:nth-child(3n+1) { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: none; }
-  .area-row > .tool:last-child:nth-child(3n+1) .viz { height: auto; min-height: 216px; border-bottom: 0; border-right: 1px solid var(--hair); }
-  .area-row > .tool:last-child:nth-child(3n+1) .viz svg { inset: 50% 0 auto; height: auto; aspect-ratio: 600 / 216; transform: translateY(-50%); }
-  .area-row > .tool:last-child:nth-child(3n+2) { grid-column: span 8; }
-  .area-row > .tool:last-child:nth-child(3n+2) .viz { height: 216px; }
-}
-@media (min-width: 600px) and (max-width: 839px) {
-  .area-row > .tool:last-child:nth-child(2n+1) { grid-column: 1 / -1; }
-  .area-row > .tool:last-child:nth-child(2n+1) .viz { height: 216px; }
-}
 
 /* phones: compact tool cards (smaller illustration, three lines of text, the button becomes a text link) */
 @media (max-width: 599px) {
@@ -216,16 +191,6 @@ main { padding-top: 48px; }
 .course.lead:hover { box-shadow: 0 2px 4px rgb(15 23 42 / .25), 0 24px 48px -20px rgb(15 23 42 / .55), inset 0 1px 0 rgb(255 255 255 / .14); }
 .course.lead .kicker { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--air-2); }
 .course.lead .num { color: #fff; font-size: 32px; line-height: 40px; margin-top: auto; }
-.course.lead .facts { margin-top: 12px; display: grid; }
-.course.lead .facts > span { display: flex; align-items: baseline; gap: 8px; padding: 8px 0; box-shadow: inset 0 1px 0 rgb(255 255 255 / .1); font-size: 12px; line-height: 16px; color: rgb(255 255 255 / .6); }
-.course.lead .facts b { min-width: 28px; font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; color: #fff; font-variant-numeric: tabular-nums; }
-.course.lead .facts > span:empty { display: none; }
-@media (max-width: 599px) {
-  .course.lead .num { margin-top: 16px; }
-  .course.lead .facts { grid-auto-flow: column; justify-content: start; column-gap: 24px; }
-  .course.lead .facts > span { box-shadow: none; padding: 0; }
-  .course.lead .facts b { min-width: 0; font-size: 20px; line-height: 28px; }
-}
 .course.lead .num small { color: rgb(255 255 255 / .6); }
 .course.lead h3 { font-size: 24px; line-height: 32px; letter-spacing: -0.02em; }
 .course.lead p { color: rgb(255 255 255 / .72); flex: 0; }
@@ -257,7 +222,6 @@ main { padding-top: 48px; }
       <a class="tab" href="#courses">Other courses</a>
     </nav>
     <div class="grow"></div>
-    <span class="pill" data-at-count style="display:none"><b></b> tools · <b></b> courses</span>
   </div>
 </header>
 
@@ -274,7 +238,6 @@ main { padding-top: 48px; }
     <div class="area-row">
         <a class="panel course lead" href="/rm101.html">
           <span class="kicker">Start with the course</span>
-          <span class="facts"><span><b>10</b>chapters</span><span><b>30</b>min read</span><span data-tools></span></span>
           <div class="num">RM<small>101</small></div>
           <h3>Revenue Management</h3>
           <p>How airlines price seats and fill planes as profitably as possible: a mix of economics, statistics and a bit of psychology.</p>
@@ -532,7 +495,6 @@ main { padding-top: 48px; }
     <div class="area-row">
         <a class="panel course lead" href="/np101.html">
           <span class="kicker">Start with the course</span>
-          <span class="facts"><span><b>12</b>chapters</span><span><b>25</b>min read</span><span data-tools></span></span>
           <div class="num">NP<small>101</small></div>
           <h3>Network Planning</h3>
           <p>How airlines decide where to fly, how often, when, and with what aircraft.</p>
@@ -712,11 +674,10 @@ main { padding-top: 48px; }
   </section>
 
   <section class="sec topic" id="loyalty" aria-labelledby="h-loyalty" data-area="Loyalty">
-    <div class="sec-head"><h2 id="h-loyalty">Loyalty</h2><span>Points as a currency, from earning to the cost of an award seat</span></div>
+    <div class="sec-head"><h2 id="h-loyalty">Loyalty</h2><span>Points as a currency, from earning to the balance sheet</span></div>
     <div class="area-row">
         <a class="panel course lead" href="/loyalty101.html">
           <span class="kicker">Start with the course</span>
-          <span class="facts"><span><b>12</b>chapters</span><span><b>25</b>min read</span><span data-tools></span></span>
           <div class="num">Loyalty<small>101</small></div>
           <h3>Loyalty programs</h3>
           <p>Why airlines give away miles and still come out ahead, and how the points currency behind a loyalty program is managed.</p>
@@ -750,34 +711,6 @@ main { padding-top: 48px; }
             <h3>Loyalty benchmark</h3>
             <p>What an airline status is worth on partner airlines, and how many points the same trip earns in each of 13 programmes.</p>
             <div class="cta"><span class="btn dark">Open the benchmark<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/awardvalue.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- cents per point by trip: one row per trip, a marker per programme, medians in the last row -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="120" y1="28" x2="120" y2="196"/><line x1="240" y1="28" x2="240" y2="196"/><line x1="360" y1="28" x2="360" y2="196"/><line x1="480" y1="28" x2="480" y2="196"/></g>
-              <g fill="#8FA9F2">
-                <circle cx="210" cy="44" r="5"/><rect x="163" y="39" width="10" height="10"/><path d="M468 38 L474 49 L462 49Z"/><path d="M260 38 L266 44 L260 50 L254 44Z"/>
-                <circle cx="176" cy="76" r="5"/><rect x="142" y="71" width="10" height="10"/><path d="M130 70 L136 81 L124 81Z"/><path d="M98 70 L104 76 L98 82 L92 76Z"/>
-                <circle cx="298" cy="108" r="5"/><rect x="232" y="103" width="10" height="10"/><path d="M296 102 L302 113 L290 113Z"/><path d="M226 102 L232 108 L226 114 L220 108Z"/>
-                <circle cx="508" cy="140" r="5"/><rect x="418" y="135" width="10" height="10"/><path d="M152 134 L158 145 L146 145Z"/><path d="M420 134 L426 140 L420 146 L414 140Z"/>
-              </g>
-              <line x1="80" y1="164" x2="540" y2="164" stroke="rgb(15 23 42 / .1)"/>
-              <g fill="#2455E6">
-                <circle cx="302" cy="184" r="6.5"/><rect x="231" y="178" width="12" height="12"/><path d="M340 176 L347 190 L333 190Z"/><path d="M296 176 L304 184 L296 192 L288 184Z"/>
-              </g>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Calculator</span>
-              <span class="pill">Cents per point</span>
-              <span class="pill">Public data · Sep 2026</span>
-            </div>
-            <h3>Award value comparator</h3>
-            <p>How many points Aeroplan, MileagePlus, Flying Blue and Etihad Guest ask for the same trips, and what that's worth in cents per point.</p>
-            <div class="cta"><span class="btn dark">Open the comparator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
         <a class="panel tool" href="/breakage.html">
@@ -854,54 +787,6 @@ main { padding-top: 48px; }
             <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
           </div>
         </a>
-        <a class="panel tool" href="/awardseatcost.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- award seat cost against expected load: flat at the marginal cost, then rising with the bid price of the last seat; the programme's payment as a line, the zone where both sides gain shaded -->
-              <g stroke="rgb(15 23 42 / .07)"><line x1="90" y1="190" x2="510" y2="190"/><line x1="90" y1="120" x2="510" y2="120"/><line x1="90" y1="50" x2="510" y2="50"/><line x1="440" y1="24" x2="440" y2="190" stroke-dasharray="3 4"/></g>
-              <path d="M90 148 L104 148 L118 148 L132 148 L146 148 L160 148 L174 148 L188 148 L202 148 L216 148 L230 148 L244 148 L258 148 L272 148 L286 148 L300 148 L314 148 L328 143 L342 133 L356 122 L370 112 L384 102 L398 91 L412 82 L425 73 L90 73Z" fill="#12A150" opacity=".14"/>
-              <line x1="90" y1="148" x2="510" y2="148" stroke="#A0A7B4" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/>
-              <path d="M90 190 L104 190 L118 190 L132 190 L146 190 L160 190 L174 190 L188 189 L202 189 L216 187 L230 185 L244 182 L258 178 L272 174 L286 168 L300 161 L314 152 L328 143 L342 133 L356 122 L370 112 L384 102 L398 91 L412 82 L426 73 L440 65 L454 60 L468 55 L482 50 L496 47 L510 44" fill="none" stroke="#8FA9F2" stroke-width="2" stroke-dasharray="6 5"/>
-              <line x1="90" y1="74" x2="510" y2="74" stroke="#12A150" stroke-width="2.5"/>
-              <path d="M90 148 L104 148 L118 148 L132 148 L146 148 L160 148 L174 148 L188 148 L202 148 L216 148 L230 148 L244 148 L258 148 L272 148 L286 148 L300 148 L314 148 L328 143 L342 133 L356 122 L370 112 L384 102 L398 91 L412 82 L426 73 L440 65 L454 60 L468 55 L482 50 L496 47 L510 44" fill="none" stroke="#151A23" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-              <circle cx="342" cy="133" r="7" fill="#151A23" stroke="#fff" stroke-width="2.5"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Calculator</span>
-              <span class="pill">Bid prices</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Award seat cost</h3>
-            <p>What an award seat really costs the airline: almost nothing on an empty flight, a paying fare on a full one.</p>
-            <div class="cta"><span class="btn dark">Open the calculator<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
-        <a class="panel tool" href="/subscription.html">
-          <div class="viz" aria-hidden="true">
-            <svg viewBox="0 0 600 216" preserveAspectRatio="xMidYMid slice">
-              <!-- profit against the monthly price: a loss at low prices, a peak, then fading uptake; dashed = same pass without capacity control -->
-              <rect x="90" y="120" width="420" height="72" fill="#eb6834" opacity=".07"/>
-              <g stroke="rgb(15 23 42 / .07)"><line x1="90" y1="48" x2="510" y2="48"/><line x1="90" y1="84" x2="510" y2="84"/><line x1="90" y1="156" x2="510" y2="156"/></g>
-              <line x1="90" y1="120" x2="510" y2="120" stroke="#9a9a96"/>
-              <path d="M90 192 L150 192 L190 186 L230 170 L270 150 L310 132 L350 120 L390 112 L430 106 L470 102 L510 100" fill="none" stroke="#151A23" stroke-width="1.6" stroke-dasharray="5 4" opacity=".55"/>
-              <path d="M90 190 L110 150 L130 116 L150 92 L170 76 L190 66 L210 60 L230 57 L250 56 L270 57 L300 60 L340 66 L380 72 L420 77 L460 81 L510 85" fill="none" stroke="#2a78d6" stroke-width="3"/>
-              <circle cx="250" cy="56" r="7" fill="#fff" stroke="#2a78d6" stroke-width="3"/>
-              <line x1="250" y1="66" x2="250" y2="192" stroke="#2a78d6" stroke-dasharray="2 4" opacity=".6"/>
-            </svg>
-          </div>
-          <div class="body">
-            <div class="meta">
-              <span class="pill">Simulator</span>
-              <span class="pill">Choice model</span>
-              <span class="pill">Illustrative data</span>
-            </div>
-            <h3>Subscription pricer</h3>
-            <p>Price an all-you-can-fly pass, a route pass or a bundle of extras, and see who signs up and what revenue it gives away.</p>
-            <div class="cta"><span class="btn dark">Open the pricer<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></span></div>
-          </div>
-        </a>
     </div>
   </section>
 
@@ -910,7 +795,6 @@ main { padding-top: 48px; }
     <div class="area-row">
         <a class="panel course lead" href="/cargo101.html">
           <span class="kicker">Start with the course</span>
-          <span class="facts"><span><b>12</b>chapters</span><span><b>25</b>min read</span><span data-tools></span></span>
           <div class="num">Cargo<small>101</small></div>
           <h3>Air Cargo</h3>
           <p>How airlines sell the space in the hold: weight and volume, forwarders and allotments, and why cargo is harder to sell than seats.</p>

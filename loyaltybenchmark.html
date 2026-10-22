@@ -271,7 +271,6 @@
         <p>Thirteen airline loyalty programmes side by side, from the rules each one publishes. The tier translator shows what a status is worth on partner airlines. The earn comparator shows how many points one trip earns in every programme it can be credited to.</p>
         <span class="asof" id="asof">Rules as of <b>30 Sep 2026</b></span>
         <span class="asof"><b>13</b> programmes · <b>3</b> alliances</span>
-        <nav class="pair" aria-label="Programme comparator"><span class="pair-lbl">Compare programmes:</span><span class="pair-tabs"><a href="/loyaltybenchmark.html" aria-current="page">Earning &amp; status</a><a href="/awardvalue.html">Spending points</a></span></nav>
         <div class="jump"><a href="#translator">Tier translator</a><a href="#grid">Tier grid</a><a href="#earn">Earn comparator</a><a href="#how">How it works</a></div>
       </div>
 
@@ -351,7 +350,7 @@ distance-based:  points = max(distance, minimum) × booking-class % + status bon
           <li><b>Distance-based</b> (partners): distance × the percentage for the booking class, with the programme's minimums. Status bonuses follow each programme's rule: a percentage of the miles (United's Premier bonus on selected partners, Miles &amp; More's 25% Executive Bonus, Delta's Medallion bonus on Air France and KLM, AAdvantage on Qatar Airways), a percentage capped at 100% of distance (Flying Blue on Delta and SAS), a booster on the distance part only (SAS EuroBonus), or added percentage points (Qatar Privilege Club).</li>
           <li><b>Fixed tables</b>: SAS, Etihad and Emirates publish points per route and fare on their own flights, not a percentage; Turkish Airlines does so within Türkiye. The page uses those tables. For Etihad and Emirates they come from each airline's public miles calculator, saved for every route in the airport list; for SAS from its published tables.</li>
           <li><b>Status</b>: "Lower elite" is each programme's first tier with alliance status (Star Silver, Ruby, Elite), "Upper elite" the first with lounge-level status (Star Gold, Sapphire, Elite Plus), "Top tier" its highest published tier. The tier used for each programme is shown next to its bar.</li>
-          <li><b>Point value</b>: points × US cents per point. For Aeroplan, MileagePlus, Flying Blue and Etihad Guest, the median value from the <a href="/awardvalue.html">award value comparator</a> (Economy median for Economy and Premium Economy classes, Business median for Business and First). For the other nine programmes there is no median yet, so the page assumes <span id="cpp-def">1.0</span>¢ per point; edit any value under "Point values used".</li>
+          <li><b>Point value</b>: points × US cents per point. For Aeroplan, MileagePlus, Flying Blue and Etihad Guest, the median value from an award price snapshot (Economy median for Economy and Premium Economy classes, Business median for Business and First). For the other nine programmes there is no median yet, so the page assumes <span id="cpp-def">1.0</span>¢ per point; edit any value under "Point values used".</li>
         </ul>
 
         <h4>Sources</h4>
@@ -797,7 +796,7 @@ distance-based:  points = max(distance, minimum) × booking-class % + status bon
         el("cpp-grid").querySelectorAll("input").forEach(function (inp) {
           inp.addEventListener("change", function () { var v = parseFloat(inp.value); S.cppUser[inp.getAttribute("data-p")] = isFinite(v) && v >= 0 ? v : null; renderEarn(); });
         });
-        el("cpp-foot").innerHTML = "Medians come from the <a href=\"/awardvalue.html\">award value comparator</a> (typical prices, one-way, US cents, taxes deducted); the " + (cab === "J" || cab === "F" ? "Business" : "Economy") + " median is used for this booking class. Programmes without a median start at an assumed " + D.meta.assumed_cpp.toFixed(1) + "¢. Your changes apply until you reload the page.";
+        el("cpp-foot").innerHTML = "Medians come from an award price snapshot (typical prices, one-way, US cents, taxes deducted); the " + (cab === "J" || cab === "F" ? "Business" : "Economy") + " median is used for this booking class. Programmes without a median start at an assumed " + D.meta.assumed_cpp.toFixed(1) + "¢. Your changes apply until you reload the page.";
       }
 
       function renderSources() {
@@ -807,7 +806,7 @@ distance-based:  points = max(distance, minimum) × booking-class % + status bon
           D.credit.filter(function (c) { return c.prog === p.id; }).forEach(function (c) { if (!list.some(function (s) { return s.url === c.src.url; })) list.push(c.src); });
           h += "<details><summary>" + esc(p.name) + " (" + esc(p.airline) + ")</summary><ul>" + list.map(function (s) { return "<li>" + srcLink(s) + "</li>"; }).join("") + "</ul></details>";
         });
-        h += "<p>" + esc(D.meta.fx.source) + ", " + dateTxt(D.meta.fx.date) + ' (<a href="' + D.meta.fx.url + '" target="_blank" rel="noopener">ECB</a>). Airport coordinates: <a href="https://ourairports.com/data/" target="_blank" rel="noopener">OurAirports</a>. Point value medians: <a href="/awardvalue.html">award value comparator</a> (<a href="assets/data/award-value.json">dataset</a>). The full rule set behind this page: <a href="assets/data/loyalty-benchmark.json">loyalty-benchmark.json</a>.</p>';
+        h += "<p>" + esc(D.meta.fx.source) + ", " + dateTxt(D.meta.fx.date) + ' (<a href="' + D.meta.fx.url + '" target="_blank" rel="noopener">ECB</a>). Airport coordinates: <a href="https://ourairports.com/data/" target="_blank" rel="noopener">OurAirports</a>. Point value medians: the award price snapshot (<a href="assets/data/award-value.json">dataset</a>). The full rule set behind this page: <a href="assets/data/loyalty-benchmark.json">loyalty-benchmark.json</a>.</p>';
         el("how-sources").innerHTML = h;
       }
 
