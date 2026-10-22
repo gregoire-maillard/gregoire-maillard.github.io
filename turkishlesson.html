@@ -183,14 +183,14 @@
 
       .end { position: relative; isolation: isolate; text-align: center; padding-top: 12px; }
       .end::before { content: ""; position: absolute; z-index: -1; left: -24px; right: -24px; top: -20px; height: 300px; pointer-events: none;
-                     background: var(--iznik) 50% 0 / 64px 64px; opacity: .14;
+                     background: var(--iznik) 50% 0 / 64px 64px; opacity: .09;
                      -webkit-mask-image: radial-gradient(closest-side at 50% 30%, #000 30%, transparent 100%); mask-image: radial-gradient(closest-side at 50% 30%, #000 30%, transparent 100%); }
       @media (max-width: 599px) { .end::before { left: -16px; right: -16px; } }
       .end .acts { justify-content: center; }
       .end > .confetti { position: absolute; left: 50%; top: -20px; width: min(900px, calc(100vw - 32px)); height: 560px; transform: translateX(-50%); pointer-events: none; z-index: 5; }
       .badge { width: 72px; height: 72px; margin: 0 auto 14px; border-radius: 50%; display: grid; place-items: center; background: var(--lv-wash); color: var(--lv-dark); }
       .end .badge { animation: badge-in .6s cubic-bezier(.3, 1.6, .5, 1) both; }
-      .end .badge:not(.fail) { background: var(--lv); color: #fff; box-shadow: 0 0 0 6px var(--lv-wash); }
+      .end .badge:not(.fail) { background: var(--lv); color: var(--lv-on); box-shadow: 0 0 0 6px var(--lv-wash); }
       @keyframes badge-in { 0% { transform: scale(.3) rotate(-20deg); opacity: 0; } 60% { transform: scale(1.12) rotate(4deg); opacity: 1; } 100% { transform: none; } }
       .end .flame.up { animation: flicker .9s ease-in-out 3 .9s; }
       .end .flame.up + div .big { animation: bump .5s cubic-bezier(.3, 1.8, .5, 1) .9s both; }
@@ -456,17 +456,19 @@
       :root {
         --tr-font: "Lora TR", Georgia, "Times New Roman", serif;
         /* --lv*: the colour of the level in scope (data-lvl); outside a level, the site blue. Buttons keep the site blue. */
-        --lv: #287a9e; --lv-dark: #155b7c; --lv-wash: rgb(40 122 158 / 11%); --lv-tint: rgb(40 122 158 / 5%); --lv-line: rgb(40 122 158 / 35%);
+        --lv: #287a9e; --lv-dark: #155b7c; --lv-wash: rgb(40 122 158 / 11%); --lv-tint: rgb(40 122 158 / 5%); --lv-line: rgb(40 122 158 / 35%); --lv-on: #fff;
         --gold: #a87812; --gold-dark: #7d5a0d; --gold-wash: rgb(168 120 18 / 13%);
+        --gold-shine: linear-gradient(135deg, #f7dc80 0%, #e0b23c 38%, #b8861a 70%, #8a6210 100%);
         --iznik: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke-width='1.3'%3E%3Cg stroke='%232452a0'%3E%3Crect x='21' y='21' width='22' height='22'/%3E%3Crect x='21' y='21' width='22' height='22' transform='rotate%2845 32 32%29'/%3E%3Ccircle cx='0' cy='0' r='11'/%3E%3Ccircle cx='64' cy='0' r='11'/%3E%3Ccircle cx='0' cy='64' r='11'/%3E%3Ccircle cx='64' cy='64' r='11'/%3E%3C/g%3E%3Cg stroke='%2311847f'%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3Cpath d='M32 -5l5 5-5 5-5-5zM32 59l5 5-5 5-5-5zM-5 32l5-5 5 5-5 5zM59 32l5-5 5 5-5 5z'/%3E%3Cpath d='M0 5.5a5.5 5.5 0 0 0 5.5-5.5M58.5 0a5.5 5.5 0 0 0 5.5 5.5M64 58.5a5.5 5.5 0 0 0-5.5 5.5M5.5 64a5.5 5.5 0 0 0-5.5-5.5'/%3E%3C/g%3E%3Cg stroke='%23c2462c'%3E%3Cpath d='M32 17.5v-4M32 46.5v4M17.5 32h-4M46.5 32h4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
       }
-      /* İznik tiles: turquoise, cobalt, green, tomato red, manganese purple, and the deep ink of the outlines. Gold is kept for "mastered". */
+      /* İznik tiles: turquoise, cobalt, green, tomato red, manganese purple and mustard. --lv-on is the text on a solid --lv.
+         "Mastered" is a brighter, shinier gold (--gold-shine) so it doesn't read as C2's flat mustard. */
       [data-lvl="a1"] { --lv: #11847f; --lv-dark: #0a5f5b; --lv-wash: rgb(17 132 127 / 12%); --lv-tint: rgb(17 132 127 / 5%); --lv-line: rgb(17 132 127 / 35%); }
       [data-lvl="a2"] { --lv: #2452a0; --lv-dark: #1b3f7d; --lv-wash: rgb(36 82 160 / 11%); --lv-tint: rgb(36 82 160 / 5%); --lv-line: rgb(36 82 160 / 35%); }
       [data-lvl="b1"] { --lv: #2b7d50; --lv-dark: #1d5c3a; --lv-wash: rgb(43 125 80 / 12%); --lv-tint: rgb(43 125 80 / 5%); --lv-line: rgb(43 125 80 / 35%); }
       [data-lvl="b2"] { --lv: #c2462c; --lv-dark: #9a3420; --lv-wash: rgb(194 70 44 / 11%); --lv-tint: rgb(194 70 44 / 5%); --lv-line: rgb(194 70 44 / 35%); }
       [data-lvl="c1"] { --lv: #6c3f9e; --lv-dark: #51307a; --lv-wash: rgb(108 63 158 / 11%); --lv-tint: rgb(108 63 158 / 5%); --lv-line: rgb(108 63 158 / 35%); }
-      [data-lvl="c2"] { --lv: #2d3a56; --lv-dark: #232d43; --lv-wash: rgb(45 58 86 / 11%); --lv-tint: rgb(45 58 86 / 5%); --lv-line: rgb(45 58 86 / 35%); }
+      [data-lvl="c2"] { --lv: #b8861a; --lv-dark: #7d5b10; --lv-wash: rgb(184 134 26 / 14%); --lv-tint: rgb(184 134 26 / 6%); --lv-line: rgb(184 134 26 / 40%); --lv-on: #2b2006; }
       /* Turkish in its own typeface, so it stands apart from the English around it */
       [lang="tr"] { font-family: var(--tr-font); }
       .lv-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: var(--lv-wash); color: var(--lv-dark); font-size: 11.5px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; }
@@ -474,7 +476,9 @@
       .tw-t { position: relative; display: block; aspect-ratio: 1; border-radius: 3px; background: #f3f2ee; box-shadow: inset 0 0 0 1px #e4e3df; }
       .tw-t.open { background: var(--lv-tint); box-shadow: inset 0 0 0 1px var(--lv-wash); }
       .tw-t.laid { background: var(--lv); box-shadow: none; }
-      .tw-t.gold { background: linear-gradient(135deg, #c99a2e, var(--gold) 55%, #8f6610); box-shadow: none; }
+      .tw-t.gold { background: var(--gold-shine); box-shadow: inset 0 0 0 1px rgb(255 240 190 / .55); }
+      .tw-t.laid[data-lvl="c2"]::before { border-color: rgb(43 32 6 / .55); }
+      .tw-t.laid[data-lvl="c2"]::after { border-color: rgb(43 32 6 / .35); }
       .tw-t.laid::before, .tw-t.gold::before { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .85); border-radius: 1px; transform: rotate(45deg); }
       .tw-t.laid::after, .tw-t.gold::after { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .55); border-radius: 1px; }
     </style>

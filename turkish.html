@@ -109,8 +109,8 @@
       /* hero */
       .hero { position: relative; isolation: isolate; margin-bottom: 28px; max-width: 720px; }
       .hero::before { content: ""; position: absolute; z-index: -1; inset: -32px 0 -16px -24px; pointer-events: none;
-                      background: var(--iznik) 0 0 / 64px 64px; opacity: .13;
-                      -webkit-mask-image: radial-gradient(120% 140% at 0 0, #000 25%, transparent 72%); mask-image: radial-gradient(120% 140% at 0 0, #000 25%, transparent 72%); }
+                      background: var(--iznik) 0 0 / 64px 64px; opacity: .07;
+                      -webkit-mask-image: radial-gradient(110% 120% at 0 0, #000 10%, transparent 62%); mask-image: radial-gradient(110% 120% at 0 0, #000 10%, transparent 62%); }
       @media (max-width: 599px) { .hero::before { inset: -20px 0 -12px -16px; } }
       .kicker { font-size: 12px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 6px; }
       .hero h1 { font-size: 32px; line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; }
@@ -187,7 +187,7 @@
       .level > summary::-webkit-details-marker { display: none; }
       .level > summary:hover .lvl-title { color: var(--lv-dark); }
       .badge { width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; font-size: 15px; letter-spacing: .01em; background: var(--panel); color: var(--muted); border: 1px solid var(--line); }
-      .level.has-content .badge { background: var(--lv); border-color: var(--lv); color: #fff; }
+      .level.has-content .badge { background: var(--lv); border-color: var(--lv); color: var(--lv-on); }
       .lvl-title { display: block; font-size: 17px; font-weight: 620; color: var(--ink); line-height: 1.3; }
       .lvl-meta { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
       .lvl-bar { display: block; height: 4px; border-radius: 2px; background: var(--line); margin-top: 8px; max-width: 280px; overflow: hidden; }
@@ -203,7 +203,7 @@
       .units::before { content: ""; position: absolute; left: 17px; top: 24px; bottom: 24px; width: 2px; background: var(--line); }
       .unit { position: relative; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; padding: 6px 0; }
       .node { position: relative; z-index: 1; width: 36px; height: 36px; margin-top: 14px; border-radius: 50%; background: #fff; border: 2px solid var(--line); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
-      .unit.st-done .node { background: var(--lv); border-color: var(--lv); color: #fff; }
+      .unit.st-done .node { background: var(--lv); border-color: var(--lv); color: var(--lv-on); }
       .unit.st-open .node, .unit.st-started .node { border-color: var(--lv); color: var(--lv-dark); }
       .unit.st-started .node { background: conic-gradient(var(--lv-wash) var(--p, 0%), #fff 0); }
       .unit.planned .node { border-style: dashed; margin-top: 4px; width: 36px; height: 36px; font-weight: 600; color: var(--faint); }
@@ -222,7 +222,7 @@
       .lessons li:last-child .lesson { border-bottom: 0; }
       a.lesson:hover { background: var(--lv-tint); color: var(--ink); }
       .lnum { position: relative; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; border: 1.5px solid var(--line); color: var(--muted); font-variant-numeric: tabular-nums; }
-      .lesson.done .lnum { background: var(--lv); border-color: var(--lv); color: #fff; }
+      .lesson.done .lnum { background: var(--lv); border-color: var(--lv); color: var(--lv-on); }
       .lesson.next { background: var(--lv-tint); }
       .lesson.next .lnum, .lesson.open .lnum { border-color: var(--lv); color: var(--lv-dark); }
       /* the next lesson calls softly; a lesson or unit just finished fills in, once, on the way back (UI-5) */
@@ -380,10 +380,26 @@
       .pf-lv .bar { margin-top: 6px; max-width: 320px; }
       .pf-lv .m { font-size: 12.5px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
       .tag.cert { background: #e6f2e9; color: #22603a; }
-      .pf-badge.on[data-lvl] { background: var(--lv); border-color: var(--lv); }
+      .pf-badge.on[data-lvl] { background: var(--lv); border-color: var(--lv); color: var(--lv-on); }
       .pf-lv[data-lvl] .badge { background: var(--lv-tint); border-color: var(--lv-line); color: var(--lv-dark); }
-      .pf-lv.cert[data-lvl] .badge { background: var(--lv); border-color: var(--lv); color: #fff; }
+      .pf-lv.cert[data-lvl] .badge { background: var(--lv); border-color: var(--lv); color: var(--lv-on); }
       .pf-lv[data-lvl] .bar i { background: var(--lv); }
+
+      /* the greeting above today's card (UI-5): the learner's character says hello; without a profile, an invitation */
+      .hello { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; padding: 2px 0; }
+      .hello:hover { color: var(--ink); }
+      .hello-pic { flex: none; width: 52px; height: 52px; display: grid; place-items: center; }
+      .hello-pic .avatar { width: 52px; height: 52px; font-size: 21px; }
+      .hello-bub { position: relative; flex: 1; min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 9px 13px 10px; transition: border-color .15s; }
+      .hello-bub::before { content: ""; position: absolute; left: -7px; top: 50%; width: 12px; height: 12px; background: #fff; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); transform: translateY(-50%) rotate(45deg); transition: border-color .15s; }
+      .hello:hover .hello-bub, .hello:hover .hello-bub::before { border-color: #cfcfcb; }
+      .hello-say { display: block; font-family: var(--tr-font); font-size: 17.5px; font-weight: 600; line-height: 1.3; color: var(--ink); overflow-wrap: anywhere; }
+      .hello-sub { display: block; margin-top: 2px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+      .hello.invite .hello-bub { border-color: rgb(40 122 158 / 35%); background: var(--blue-tint); }
+      .hello.invite .hello-bub::before { border-color: rgb(40 122 158 / 35%); background: #f7fafb; }
+      .hello.invite .hello-sub { color: var(--blue-dark); font-weight: 600; }
+      .hello.invite:hover .hello-sub { text-decoration: underline; text-underline-offset: 3px; }
+      @media (max-width: 899px) { .today > .hello { grid-column: 1 / -1; } }
 
       /* the tile wall (UI-5): one tile per unit, a row per level */
       .wall-card h3 { font-size: 15px; }
@@ -405,8 +421,8 @@
       .ach li.on.gold { border-color: rgb(168 120 18 / 35%); background: rgb(168 120 18 / 6%); }
       .star { width: 46px; height: 46px; display: grid; place-items: center; margin-bottom: 6px; color: #a7a6a0; background: #ecebe6; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums;
               clip-path: polygon(50% 0%, 64.6% 14.7%, 85.4% 14.6%, 85.3% 35.4%, 100% 50%, 85.3% 64.6%, 85.4% 85.4%, 64.6% 85.3%, 50% 100%, 35.4% 85.3%, 14.6% 85.4%, 14.7% 64.6%, 0% 50%, 14.7% 35.4%, 14.6% 14.6%, 35.4% 14.7%); }
-      .ach li.on .star { background: var(--lv); color: #fff; }
-      .ach li.on.gold .star { background: linear-gradient(135deg, #c99a2e, var(--gold) 55%, #8f6610); }
+      .ach li.on .star { background: var(--lv); color: var(--lv-on); }
+      .ach li.on.gold .star { background: var(--gold-shine); color: #3b2a05; }
       .ach .a-tr { font-size: 15px; font-weight: 650; color: var(--ink); line-height: 1.25; }
       .ach li:not(.on) .a-tr { color: var(--body); }
       .ach .a-en { font-size: 12px; color: var(--muted); font-style: italic; }
@@ -469,17 +485,19 @@
       :root {
         --tr-font: "Lora TR", Georgia, "Times New Roman", serif;
         /* --lv*: the colour of the level in scope (data-lvl); outside a level, the site blue. Buttons keep the site blue. */
-        --lv: #287a9e; --lv-dark: #155b7c; --lv-wash: rgb(40 122 158 / 11%); --lv-tint: rgb(40 122 158 / 5%); --lv-line: rgb(40 122 158 / 35%);
+        --lv: #287a9e; --lv-dark: #155b7c; --lv-wash: rgb(40 122 158 / 11%); --lv-tint: rgb(40 122 158 / 5%); --lv-line: rgb(40 122 158 / 35%); --lv-on: #fff;
         --gold: #a87812; --gold-dark: #7d5a0d; --gold-wash: rgb(168 120 18 / 13%);
+        --gold-shine: linear-gradient(135deg, #f7dc80 0%, #e0b23c 38%, #b8861a 70%, #8a6210 100%);
         --iznik: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke-width='1.3'%3E%3Cg stroke='%232452a0'%3E%3Crect x='21' y='21' width='22' height='22'/%3E%3Crect x='21' y='21' width='22' height='22' transform='rotate%2845 32 32%29'/%3E%3Ccircle cx='0' cy='0' r='11'/%3E%3Ccircle cx='64' cy='0' r='11'/%3E%3Ccircle cx='0' cy='64' r='11'/%3E%3Ccircle cx='64' cy='64' r='11'/%3E%3C/g%3E%3Cg stroke='%2311847f'%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3Cpath d='M32 -5l5 5-5 5-5-5zM32 59l5 5-5 5-5-5zM-5 32l5-5 5 5-5 5zM59 32l5-5 5 5-5 5z'/%3E%3Cpath d='M0 5.5a5.5 5.5 0 0 0 5.5-5.5M58.5 0a5.5 5.5 0 0 0 5.5 5.5M64 58.5a5.5 5.5 0 0 0-5.5 5.5M5.5 64a5.5 5.5 0 0 0-5.5-5.5'/%3E%3C/g%3E%3Cg stroke='%23c2462c'%3E%3Cpath d='M32 17.5v-4M32 46.5v4M17.5 32h-4M46.5 32h4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
       }
-      /* İznik tiles: turquoise, cobalt, green, tomato red, manganese purple, and the deep ink of the outlines. Gold is kept for "mastered". */
+      /* İznik tiles: turquoise, cobalt, green, tomato red, manganese purple and mustard. --lv-on is the text on a solid --lv.
+         "Mastered" is a brighter, shinier gold (--gold-shine) so it doesn't read as C2's flat mustard. */
       [data-lvl="a1"] { --lv: #11847f; --lv-dark: #0a5f5b; --lv-wash: rgb(17 132 127 / 12%); --lv-tint: rgb(17 132 127 / 5%); --lv-line: rgb(17 132 127 / 35%); }
       [data-lvl="a2"] { --lv: #2452a0; --lv-dark: #1b3f7d; --lv-wash: rgb(36 82 160 / 11%); --lv-tint: rgb(36 82 160 / 5%); --lv-line: rgb(36 82 160 / 35%); }
       [data-lvl="b1"] { --lv: #2b7d50; --lv-dark: #1d5c3a; --lv-wash: rgb(43 125 80 / 12%); --lv-tint: rgb(43 125 80 / 5%); --lv-line: rgb(43 125 80 / 35%); }
       [data-lvl="b2"] { --lv: #c2462c; --lv-dark: #9a3420; --lv-wash: rgb(194 70 44 / 11%); --lv-tint: rgb(194 70 44 / 5%); --lv-line: rgb(194 70 44 / 35%); }
       [data-lvl="c1"] { --lv: #6c3f9e; --lv-dark: #51307a; --lv-wash: rgb(108 63 158 / 11%); --lv-tint: rgb(108 63 158 / 5%); --lv-line: rgb(108 63 158 / 35%); }
-      [data-lvl="c2"] { --lv: #2d3a56; --lv-dark: #232d43; --lv-wash: rgb(45 58 86 / 11%); --lv-tint: rgb(45 58 86 / 5%); --lv-line: rgb(45 58 86 / 35%); }
+      [data-lvl="c2"] { --lv: #b8861a; --lv-dark: #7d5b10; --lv-wash: rgb(184 134 26 / 14%); --lv-tint: rgb(184 134 26 / 6%); --lv-line: rgb(184 134 26 / 40%); --lv-on: #2b2006; }
       /* Turkish in its own typeface, so it stands apart from the English around it */
       [lang="tr"] { font-family: var(--tr-font); }
       .lv-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: var(--lv-wash); color: var(--lv-dark); font-size: 11.5px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; }
@@ -487,7 +505,9 @@
       .tw-t { position: relative; display: block; aspect-ratio: 1; border-radius: 3px; background: #f3f2ee; box-shadow: inset 0 0 0 1px #e4e3df; }
       .tw-t.open { background: var(--lv-tint); box-shadow: inset 0 0 0 1px var(--lv-wash); }
       .tw-t.laid { background: var(--lv); box-shadow: none; }
-      .tw-t.gold { background: linear-gradient(135deg, #c99a2e, var(--gold) 55%, #8f6610); box-shadow: none; }
+      .tw-t.gold { background: var(--gold-shine); box-shadow: inset 0 0 0 1px rgb(255 240 190 / .55); }
+      .tw-t.laid[data-lvl="c2"]::before { border-color: rgb(43 32 6 / .55); }
+      .tw-t.laid[data-lvl="c2"]::after { border-color: rgb(43 32 6 / .35); }
       .tw-t.laid::before, .tw-t.gold::before { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .85); border-radius: 1px; transform: rotate(45deg); }
       .tw-t.laid::after, .tw-t.gold::after { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .55); border-radius: 1px; }
     </style>
@@ -699,6 +719,7 @@
             (mistakes ? '<a class="btn primary block" href="' + P.lesson + '?practice=mistakes">Practise your mistakes</a>'
               : lastUnit ? '<a class="btn primary block" href="' + P.lesson + "?review=" + esc(lastUnit.id) + '">Review ' + esc(unitLabel(lastUnit)) + "</a>" : "") + "</div>";
         }
+        html = helloHtml() + html;
         var g = T.progress.goal(course, set, now), s = T.progress.streak(course, set, now);
         var note = s.done ? "Today counts toward your streak." : s.current ? "Finish a lesson or study 10 cards today to keep your streak." : "Finish a lesson today to start a streak.";
         html += '<div class="card stats" aria-label="Today\'s progress">' +
@@ -713,6 +734,24 @@
         html += '<p class="totals"><b>' + course.xp.total + "</b> XP · <b>" + done + "</b> of " + f.lessons.length + " lessons written so far" + (mastered ? " · <b>" + mastered + "</b> " + (mastered === 1 ? "unit" : "units") + " mastered" : "") + "</p>";
         $("today").innerHTML = html;
       }
+      // The greeting (UI-5): signed in, the chosen character (or the initial) says "Merhaba, <name>!"; signed out, the A1
+      // character invites the learner to make a profile. Both lead to My Profile. Redrawn alone when the account changes.
+      function helloHtml() {
+        if (!A || !A.avatarSvg) return "";
+        var known = !!A.user || A.status === "loading" || A.status === "unavailable";
+        var h = '<a class="hello' + (known ? "" : " invite") + '" id="hello" href="#profile">';
+        if (!known) {
+          return h + '<span class="hello-pic">' + A.avatarSvg("a1", 52) + '</span><span class="hello-bub"><span class="hello-say"><span lang="tr">Merhaba!</span></span>' +
+            '<span class="hello-sub">Create your free profile to save your progress online and unlock characters like me →</span></span></a>';
+        }
+        var name = A.profile && A.profile.display_name, av = A.avatar(), sub = "";
+        var pic = av ? A.avatarSvg(av, 52) : '<span class="avatar" aria-hidden="true">' + esc(T.trUpper((name || (A.user && A.user.email) || "?").charAt(0))) + "</span>";
+        if (A.user && A.profile && !name) sub = "Add your name in My Profile";
+        else if (A.user && !av && st.index && A.summary && A.unlocked) sub = Object.keys(A.unlocked(A.summary(st.index))).length ? "Pick your character in My Profile" : "Certify A1 to unlock your first character";
+        return h + '<span class="hello-pic">' + pic + '</span><span class="hello-bub"><span class="hello-say"><span lang="tr">Merhaba</span>' + (name ? ", " + esc(name) + "!" : "!") + "</span>" +
+          (sub ? '<span class="hello-sub">' + esc(sub) + "</span>" : "") + "</span></a>";
+      }
+      function renderHello() { var el = $("hello"); if (el && st.index) el.outerHTML = helloHtml(); }
       // The tile wall (UI-5): a tile per unit, laid in the level's colour once the unit is done, glazed gold once it's mastered.
       function wallHtml(ix, course, set) {
         var f = T.path.flatten(ix), laid = 0, gold = 0, fr = st.fresh;
@@ -770,7 +809,7 @@
       }
       function renderLevel(lv, course, set, f, next) {
         var s = levelStats(lv, course), L = st.levels[lv.id];
-        var open = st.open[lv.id] != null ? st.open[lv.id] : s.ready > 0;
+        var open = st.open[lv.id] != null ? st.open[lv.id] : false;   // folded by default; a link to a unit (#a1-u05) or a level chip opens it
         var meta = s.ready ? plural(s.ready, "unit") + " of " + s.total + " written" + (s.doneUnits ? " · " + s.doneUnits + " done" : "") : s.total + " units · coming soon";
         var body = "";
         if (L) {
@@ -1237,6 +1276,7 @@
           : "Your progress is saved in this browser only. Export it to keep a copy, or create a profile (My Profile) to save it online.";
         wasSignedIn = signedIn;
         renderProfile();
+        renderHello();
       });
       setInterval(function () { if (A && A.sync === "saved" && !$("profile").hidden && !document.hidden) renderAccount(); }, 30000);   // "saved 2 minutes ago"
 
