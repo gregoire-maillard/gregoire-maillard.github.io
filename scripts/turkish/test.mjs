@@ -847,6 +847,35 @@ test("store.reset: back to defaults", () => {
   assert.deepEqual([s.course().xp.total, s.settings().dailyGoal], [0, 20]);
 });
 
+// ─────────────────────────── achievements (UI-5) ───────────────────────────
+test("achievements: none at the start; earned from lessons, a review, reading, the streak and cards", () => {
+  const now = Date.UTC(2026, 9, 14, 12), P = TRK.progress, set = SETTINGS();
+  const course = P.defaults("course", now), cards = P.defaults("cards", now);
+  const ids = a => a.filter(x => x.done).map(x => x.id).sort();
+  const first = P.achievements(INDEX, course, cards, set, now);
+  assert.equal(first.length, 13);
+  assert.deepEqual(ids(first), []);
+  assert.ok(first.every(a => a.have === 0 && a.need > 0 && a.tr && a.en && a.text && a.glyph && a.hue));
+  const u = TRK.path.flatten(INDEX).units.find(x => x.status === "ready");
+  u.lessons.forEach((l, i) => P.finishLesson(course, set, l.id, { correct: i ? 9 : 10, counted: 10 }, now));
+  P.finishReview(course, set, u.id, { correct: 15, counted: 15 }, now);
+  P.markRead(course, u.id, "guide", now);
+  course.streak = { current: 7, best: 7, last: TRK.today(set, now) };
+  cards.cards["fc-0001:tr-en"] = { s: "review", due: now, ivl: 1, ease: 2.5, step: 0, reps: 2, lapses: 0, last: now };
+  cards.cards["fc-0001:en-tr"] = { s: "review", due: now, ivl: 3, ease: 2.5, step: 0, reps: 2, lapses: 0, last: now };
+  const a = P.achievements(INDEX, course, cards, set, now), by = Object.fromEntries(a.map(x => [x.id, x]));
+  assert.deepEqual(ids(a), ["first-lesson", "first-unit", "golden-tile", "perfect", "streak-3", "streak-7"]);
+  assert.equal(by["streak-30"].have, 7);
+  assert.equal(by["words-100"].have, 1);          // one word, counted once for its two directions
+  assert.equal(by["guides-12"].have, 1);
+  assert.equal(by.a1.need, INDEX.levels[0].units.length);
+  assert.ok(by["xp-1000"].have > 0 && !by["xp-1000"].done);
+  // a "jump here" test isn't a perfect lesson
+  const c2 = P.defaults("course", now);
+  P.finishTest(c2, set, u.id, [u.lessons[0].id], { correct: 20, counted: 20 }, now);
+  assert.equal(P.achievements(INDEX, c2, cards, set, now).find(x => x.id === "perfect").done, false);
+});
+
 // ─────────────────────────── analytics ───────────────────────────
 test("track: only the two allowed events, only their allowed fields", () => {
   const sent = [];

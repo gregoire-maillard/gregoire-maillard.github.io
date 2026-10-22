@@ -178,6 +178,23 @@
 
       .fc { position: relative; border: 1px solid var(--line); border-radius: 12px; background: #fff; padding: 26px 28px 28px; min-height: 260px; outline: none; }
       .fc:focus-visible { box-shadow: 0 0 0 2px var(--blue-wash); }
+      /* UI-5: the card wears its word's level colour; it flips to show the answer and slides away when graded */
+      .fc[data-lvl] { box-shadow: inset 0 4px 0 var(--lv); }
+      .fc[data-lvl]:focus-visible { box-shadow: inset 0 4px 0 var(--lv), 0 0 0 2px var(--blue-wash); }
+      .review { position: relative; }
+      .fc.flip-out { animation: flip-out .14s ease-in forwards; }
+      .fc.flip-in { animation: flip-in .22s cubic-bezier(.2, .9, .3, 1.15); }
+      @keyframes flip-out { to { transform: perspective(1400px) rotateY(88deg); } }
+      @keyframes flip-in { from { transform: perspective(1400px) rotateY(-88deg); } to { transform: perspective(1400px) rotateY(0); } }
+      .fc-ghost { position: absolute; z-index: 3; margin: 0; pointer-events: none; }
+      .fc-ghost.out-left { animation: out-left .34s ease-in forwards; }
+      .fc-ghost.out-right { animation: out-right .34s ease-in forwards; }
+      @keyframes out-left { to { transform: translateX(-55%) rotate(-7deg); opacity: 0; } }
+      @keyframes out-right { to { transform: translateX(55%) rotate(7deg); opacity: 0; } }
+      .fc.slide-in { animation: slide-in .32s cubic-bezier(.2, .9, .3, 1) .06s both; }
+      .fc.back-in { animation: back-in .32s cubic-bezier(.2, .9, .3, 1); }
+      @keyframes slide-in { from { transform: translateY(14px) scale(.97); opacity: 0; } to { transform: none; opacity: 1; } }
+      @keyframes back-in { from { transform: translateX(-40%) rotate(-5deg); opacity: 0; } to { transform: none; opacity: 1; } }
       .fc .dir { font-size: 12px; color: var(--muted); letter-spacing: .02em; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
       .fc .face { text-align: center; padding: 28px 0 6px; }
       .fc .word { font-size: 40px; line-height: 1.15; font-weight: 650; color: var(--ink); letter-spacing: -0.01em; overflow-wrap: anywhere; }
@@ -384,6 +401,42 @@
         *, *::before, *::after { transition: none !important; animation: none !important; }
         html { scroll-behavior: auto; }
       }
+    </style>
+    <style>
+      /* Level colours, the Turkish typeface and the İznik pattern (decided in UI-5, PROJECT.md 3).
+         The same block sits in turkish.html, turkishlesson.html, turkishguide.html and turkishcards.html. */
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap;
+                   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin-ext.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap;
+                   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin-italic.woff2") format("woff2"); font-weight: 400 700; font-style: italic; font-display: swap;
+                   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin-ext-italic.woff2") format("woff2"); font-weight: 400 700; font-style: italic; font-display: swap;
+                   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+      :root {
+        --tr-font: "Lora TR", Georgia, "Times New Roman", serif;
+        /* --lv*: the colour of the level in scope (data-lvl); outside a level, the site blue. Buttons keep the site blue. */
+        --lv: #287a9e; --lv-dark: #155b7c; --lv-wash: rgb(40 122 158 / 11%); --lv-tint: rgb(40 122 158 / 5%); --lv-line: rgb(40 122 158 / 35%);
+        --gold: #a87812; --gold-dark: #7d5a0d; --gold-wash: rgb(168 120 18 / 13%);
+        --iznik: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke-width='1.3'%3E%3Cg stroke='%232452a0'%3E%3Crect x='21' y='21' width='22' height='22'/%3E%3Crect x='21' y='21' width='22' height='22' transform='rotate%2845 32 32%29'/%3E%3Ccircle cx='0' cy='0' r='11'/%3E%3Ccircle cx='64' cy='0' r='11'/%3E%3Ccircle cx='0' cy='64' r='11'/%3E%3Ccircle cx='64' cy='64' r='11'/%3E%3C/g%3E%3Cg stroke='%2311847f'%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3Cpath d='M32 -5l5 5-5 5-5-5zM32 59l5 5-5 5-5-5zM-5 32l5-5 5 5-5 5zM59 32l5-5 5 5-5 5z'/%3E%3Cpath d='M0 5.5a5.5 5.5 0 0 0 5.5-5.5M58.5 0a5.5 5.5 0 0 0 5.5 5.5M64 58.5a5.5 5.5 0 0 0-5.5 5.5M5.5 64a5.5 5.5 0 0 0-5.5-5.5'/%3E%3C/g%3E%3Cg stroke='%23c2462c'%3E%3Cpath d='M32 17.5v-4M32 46.5v4M17.5 32h-4M46.5 32h4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+      /* İznik tiles: turquoise, cobalt, green, tomato red, manganese purple, and the deep ink of the outlines. Gold is kept for "mastered". */
+      [data-lvl="a1"] { --lv: #11847f; --lv-dark: #0a5f5b; --lv-wash: rgb(17 132 127 / 12%); --lv-tint: rgb(17 132 127 / 5%); --lv-line: rgb(17 132 127 / 35%); }
+      [data-lvl="a2"] { --lv: #2452a0; --lv-dark: #1b3f7d; --lv-wash: rgb(36 82 160 / 11%); --lv-tint: rgb(36 82 160 / 5%); --lv-line: rgb(36 82 160 / 35%); }
+      [data-lvl="b1"] { --lv: #2b7d50; --lv-dark: #1d5c3a; --lv-wash: rgb(43 125 80 / 12%); --lv-tint: rgb(43 125 80 / 5%); --lv-line: rgb(43 125 80 / 35%); }
+      [data-lvl="b2"] { --lv: #c2462c; --lv-dark: #9a3420; --lv-wash: rgb(194 70 44 / 11%); --lv-tint: rgb(194 70 44 / 5%); --lv-line: rgb(194 70 44 / 35%); }
+      [data-lvl="c1"] { --lv: #6c3f9e; --lv-dark: #51307a; --lv-wash: rgb(108 63 158 / 11%); --lv-tint: rgb(108 63 158 / 5%); --lv-line: rgb(108 63 158 / 35%); }
+      [data-lvl="c2"] { --lv: #2d3a56; --lv-dark: #232d43; --lv-wash: rgb(45 58 86 / 11%); --lv-tint: rgb(45 58 86 / 5%); --lv-line: rgb(45 58 86 / 35%); }
+      /* Turkish in its own typeface, so it stands apart from the English around it */
+      [lang="tr"] { font-family: var(--tr-font); }
+      .lv-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: var(--lv-wash); color: var(--lv-dark); font-size: 11.5px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; }
+      /* a tile of the wall: laid (unit done) in its level's colour, glazed gold once the unit is mastered */
+      .tw-t { position: relative; display: block; aspect-ratio: 1; border-radius: 3px; background: #f3f2ee; box-shadow: inset 0 0 0 1px #e4e3df; }
+      .tw-t.open { background: var(--lv-tint); box-shadow: inset 0 0 0 1px var(--lv-wash); }
+      .tw-t.laid { background: var(--lv); box-shadow: none; }
+      .tw-t.gold { background: linear-gradient(135deg, #c99a2e, var(--gold) 55%, #8f6610); box-shadow: none; }
+      .tw-t.laid::before, .tw-t.gold::before { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .85); border-radius: 1px; transform: rotate(45deg); }
+      .tw-t.laid::after, .tw-t.gold::after { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .55); border-radius: 1px; }
     </style>
     <script defer src="/assets/js/turkish.js"></script>
     <script defer src="/assets/js/turkish-account.js"></script>
@@ -740,8 +793,9 @@
           "<span" + cur("review") + ' style="color:#2f6e3e"><i class="dot rev"></i>' + c.review + '<span class="lbl">review</span></span></p>' +
           '<button type="button" class="btn ghost small" data-act="undo"' + (S.sess.canUndo() ? "" : " disabled") + ' title="Undo the last answer (Z)">' + ICON.undo + "Undo</button></div>";
         var kindLabel = kind === "new" ? "New card" : kind === "review" ? "Review" : st && st.s === "relearning" ? "Relearning" : "Learning";
-        h += '<article class="fc" id="fc" tabindex="-1" aria-label="' + esc(DIR[it.dir]) + ' card">' +
-          '<p class="dir"><span>' + esc(DIR[it.dir]) + " · " + kindLabel + "</span>" + (st && st.leech ? '<span class="tag leech">Leech</span>' : "") + "</p>";
+        var lvl = /^[abc][12]$/.test(card.level || "") ? card.level : null;
+        h += '<article class="fc" id="fc" tabindex="-1"' + (lvl ? ' data-lvl="' + lvl + '"' : "") + ' aria-label="' + esc(DIR[it.dir]) + ' card">' +
+          '<p class="dir"><span>' + esc(DIR[it.dir]) + " · " + kindLabel + "</span>" + (lvl ? '<span class="lv-tag">' + lvl.toUpperCase() + "</span>" : "") + (st && st.leech ? '<span class="tag leech">Leech</span>' : "") + "</p>";
         if (it.dir === "tr-en") h += '<div class="face"><p class="word" lang="tr"><span class="sayrow">' + esc(card.tr) + say(card.tr) + "</span></p></div>";
         else h += '<div class="face"><p class="word en">' + esc(glosses(card)) + '</p><span class="pos">' + esc(POS[card.pos] || card.pos) + "</span></div>";
         if (S.back) {
@@ -784,8 +838,33 @@
       function reveal() {
         if (S.mode !== "study" || !S.item || S.back) return;
         S.back = true; S.revealedAt = Date.now();
-        renderStudy();
+        var fc = $("fc"), item = S.item;
+        if (fc && !reduce) {   // UI-5: a quick flip; the 350 ms guard on grading still runs from here
+          fc.classList.add("flip-out");
+          setTimeout(function () {
+            if (S.mode !== "study" || S.item !== item || !S.back) return;
+            renderStudy();
+            var n = $("fc"); if (n) n.classList.add("flip-in");
+          }, 140);
+        } else renderStudy();
         if (S.item.dir === "en-tr") speak(S.item.card.tr);
+      }
+      // UI-5: the graded card slides away (left for Again, right otherwise) over the next one, which rises in.
+      function ghostOf(g) {
+        var old = $("fc"), host = $("v-review");
+        if (reduce || !old || !host || old.offsetParent !== host) return null;
+        var gh = old.cloneNode(true);
+        gh.removeAttribute("id"); gh.removeAttribute("tabindex"); gh.setAttribute("aria-hidden", "true"); gh.inert = true;
+        gh.querySelectorAll("[id]").forEach(function (e) { e.removeAttribute("id"); });
+        gh.classList.remove("flip-in", "flip-out", "slide-in", "back-in");
+        gh.classList.add("fc-ghost", g === 1 ? "out-left" : "out-right");
+        gh.style.top = old.offsetTop + "px"; gh.style.left = old.offsetLeft + "px"; gh.style.width = old.offsetWidth + "px";
+        return function () {
+          host.appendChild(gh);
+          var done = function () { if (gh.parentNode) gh.remove(); };
+          gh.addEventListener("animationend", done); setTimeout(done, 700);
+          var n = $("fc"); if (n) n.classList.add("slide-in");
+        };
       }
       function grade(g) {
         if (S.mode !== "study" || !S.item || !S.back || !canStudy()) return;
@@ -799,7 +878,9 @@
         S.lastDelta = d;
         if (s.leech && !(prev && prev.leech)) toast("This card is now a leech: you've forgotten it " + s.lapses + " times.", "Suspend it", function () { suspendKeys([key]); if (S.item && S.item.key === key) showNext(); });
         else hideToast();
+        var slide = ghostOf(g);
         showNext();
+        if (slide) slide();
       }
       function undo() {
         if (!S.sess || !S.sess.canUndo() || !canStudy()) return;
@@ -810,6 +891,7 @@
         hideToast();
         S.mode = "study"; S.item = null;
         showNext();
+        var n = $("fc"); if (n && !reduce) n.classList.add("back-in");
       }
       function suspendKeys(keys, on) {
         if (blocked("cards")) return 0;

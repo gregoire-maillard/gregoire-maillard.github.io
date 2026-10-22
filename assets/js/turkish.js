@@ -696,6 +696,41 @@
     var cut = addDays(dayOf(now, hourOf(settings)), -C.KEEP_DAYS);
     Object.keys(days).forEach(function (d) { if (d < cut) delete days[d]; });
   }
+  // Achievements (decided in UI-5): read from the progress, so nothing new is stored and they follow the
+  // learner to other devices with it. Each: { id, tr, en, text, have, need, done, glyph, hue } (hue: a level id or "gold").
+  // The streak titles are the old craft ranks: çırak (apprentice), kalfa (journeyman), usta (master).
+  function achievements(index, course, cards, settings, now) {
+    now = ms(now);
+    var f = flatten(index), ready = f.units.filter(function (u) { return u.status === "ready"; });
+    var lessonIds = Object.keys(course.lessons), perfect = 0;
+    lessonIds.forEach(function (id) { var r = course.lessons[id]; if (r.best >= 1 && !r.via) perfect += 1; });
+    var unitsDone = ready.filter(function (u) { return unitDone(index, course, u.id); }).length;
+    var units = Object.keys(course.units), count = function (k) { return units.filter(function (id) { return !!course.units[id][k]; }).length; };
+    var a1 = f.units.filter(function (u) { return u.level === "a1"; });
+    var a1Done = a1.filter(function (u) { return u.status === "ready" && unitDone(index, course, u.id); }).length;
+    var best = Math.max(course.streak.best || 0, streakView(course, settings, now).current);
+    var goal = settings.dailyGoal, goalDays = Object.keys(course.xp.days).filter(function (d) { return course.xp.days[d] >= goal; }).length;
+    var words = {};
+    Object.keys((cards && cards.cards) || {}).forEach(function (k) { if (cards.cards[k].ivl > 0) words[k.split(":")[0]] = true; });
+    var list = [
+      ["first-lesson", "İlk adım", "First step", "Finish your first lesson", lessonIds.length, 1, "1", "a1"],
+      ["perfect", "Kusursuz", "Flawless", "Finish a lesson without a mistake", perfect, 1, "✓", "gold"],
+      ["first-unit", "İlk ünite", "First unit", "Finish every lesson of a unit and lay your first tile", unitsDone, 1, "◆", "a2"],
+      ["golden-tile", "Altın çini", "Golden tile", "Pass a unit review to glaze a tile gold", count("reviewed"), 1, "★", "gold"],
+      ["a1", "A1 tamam", "A1 complete", "Finish all " + a1.length + " units of A1", a1Done, a1.length || 12, "A1", "a1"],
+      ["streak-3", "Çırak", "Apprentice", "Keep a 3-day streak", best, 3, "3", "b2"],
+      ["streak-7", "Kalfa", "Journeyman", "Keep a 7-day streak", best, 7, "7", "b2"],
+      ["streak-30", "Usta", "Master", "Keep a 30-day streak", best, 30, "30", "b2"],
+      ["goal-7", "Hedef", "On target", "Meet your daily goal on 7 days", goalDays, 7, "◎", "b1"],
+      ["words-100", "Yüz kelime", "A hundred words", "Learn 100 words in the flashcards", Object.keys(words).length, 100, "100", "c1"],
+      ["guides-12", "Kitap kurdu", "Bookworm", "Read 12 grammar guides", count("guide"), 12, "§", "a2"],
+      ["culture-12", "Gezgin", "Traveller", "Read 12 culture interludes", count("culture"), 12, "✦", "b1"],
+      ["xp-1000", "Bin XP", "A thousand XP", "Earn 1,000 XP", course.xp.total, 1000, "1K", "c2"]
+    ];
+    return list.map(function (a) {
+      return { id: a[0], tr: a[1], en: a[2], text: a[3], have: Math.min(a[4], a[5]), need: a[5], done: a[4] >= a[5], glyph: a[6], hue: a[7] };
+    });
+  }
 
   // ───────────────────────────── 8. progress store (PROJECT.md 3, 5.9) ─────────────────────────────
   // createStore(storage): storage is window.localStorage or anything with getItem/setItem/removeItem;
@@ -1225,7 +1260,8 @@
     // 5.9, 6.3 progress (pure functions on the stored objects)
     progress: { defaults: defaults, finishLesson: finishLesson, finishReview: finishReview, finishTest: finishTest,
                 finishPractice: finishPractice, answered: answered, mistakesDue: mistakesDue, markRead: markRead,
-                addXp: addXp, creditDay: creditDay, streak: streakView, goal: goalView, validate: validateProgress, repair: repair, SPEC: SPEC },
+                addXp: addXp, creditDay: creditDay, streak: streakView, goal: goalView, validate: validateProgress, repair: repair, SPEC: SPEC,
+                achievements: achievements },
     createStore: createStore,
     // 6.6 scheduler
     srs: { answer: answer, preview: preview, format: formatInterval, isDue: isDue, queue: queue, session: session, sibling: siblingKey, GRADES: GRADES,

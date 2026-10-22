@@ -135,15 +135,36 @@
       .icon-btn { display: grid; place-items: center; width: 44px; height: 44px; flex: none; margin-left: -10px; border: 0; border-radius: 10px; background: none; color: var(--muted); cursor: pointer; }
       .icon-btn:hover { background: var(--panel); color: var(--ink); }
       .track { flex: 1; height: 10px; border-radius: 5px; background: var(--line); overflow: hidden; }
-      .track i { display: block; height: 100%; width: 0; border-radius: 5px; background: var(--blue); transition: width .35s ease; }
+      .track { position: relative; }
+      .track i { position: relative; display: block; height: 100%; width: 0; border-radius: 5px; background: var(--lv); transition: width .55s cubic-bezier(.34, 1.56, .64, 1); overflow: hidden; }
+      .track i::after { content: ""; position: absolute; inset: 0 auto 0 -40%; width: 40%; background: linear-gradient(90deg, transparent, rgb(255 255 255 / .55), transparent); opacity: 0; }
+      .track i.glint::after { animation: glint .7s ease-out .15s; }
+      @keyframes glint { 0% { left: -40%; opacity: 1; } 100% { left: 110%; opacity: 1; } }
+      /* "3 in a row" and today's XP ring (UI-5): visual only, the XP rules don't change */
+      .combo { display: inline-flex; align-items: center; gap: 3px; height: 26px; padding: 0 9px 0 6px; border-radius: 999px; background: var(--warm-wash); color: var(--warm); font-size: 12.5px; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+      .combo svg { width: 15px; height: 15px; }
+      .combo.bump { animation: bump .4s cubic-bezier(.3, 1.8, .5, 1); }
+      .combo.hot { background: var(--warm); color: #fff; }
+      .combo.hot svg { animation: flicker .9s ease-in-out infinite; }
+      @keyframes bump { 0% { transform: scale(.7); } 60% { transform: scale(1.18); } 100% { transform: none; } }
+      @keyframes flicker { 0%, 100% { transform: rotate(-4deg) scale(1); } 50% { transform: rotate(4deg) scale(1.12); } }
+      .xpr { position: relative; display: grid; place-items: center; flex: none; width: 30px; height: 30px; }
+      .xpr svg { display: block; }
+      .xpr .bg { stroke: var(--line); }
+      .xpr .fg { stroke: var(--lv); transition: stroke-dashoffset .5s ease; }
+      .xpr.met .fg { stroke: var(--ok); }
+      .xpr .plus { position: absolute; right: -6px; top: -4px; font-size: 12px; font-weight: 750; color: var(--ok); opacity: 0; pointer-events: none; white-space: nowrap; }
+      .xpr .plus.go { animation: float-up .9s ease-out; }
+      @keyframes float-up { 0% { opacity: 0; transform: translateY(8px) scale(.8); } 25% { opacity: 1; transform: translateY(0) scale(1.1); } 100% { opacity: 0; transform: translateY(-16px); } }
+      @media (max-width: 399px) { .combo .w { display: none; } }
       .count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 44px; text-align: right; }
 
       /* start and end cards */
-      .kicker { font-size: 12px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 6px; }
+      .kicker { font-size: 12px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--lv-dark); margin-bottom: 6px; }
       .start h1, .end h1, .msg h1 { font-size: 28px; line-height: 1.2; font-weight: 650; letter-spacing: -0.02em; }
       .goal { margin-top: 8px; font-size: 16px; color: var(--body); }
-      .tip { margin-top: 20px; border: 1px solid rgb(40 122 158 / 30%); background: var(--blue-tint); border-radius: var(--r); padding: 14px 16px; font-size: 15px; color: var(--ink); }
-      .tip .tip-t { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 6px; }
+      .tip { margin-top: 20px; border: 1px solid var(--lv-line); background: var(--lv-tint); border-radius: var(--r); padding: 14px 16px; font-size: 15px; color: var(--ink); }
+      .tip .tip-t { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--lv-dark); margin-bottom: 6px; }
       .tip .more { display: inline-block; margin-top: 8px; font-size: 14px; font-weight: 600; }
       .words { margin-top: 22px; }
       .words h2, .sec-t { font-size: 13px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
@@ -160,9 +181,26 @@
       .start .notice, .msg .notice { margin: 18px 0 0; }
       .msg p.lede { margin-top: 10px; font-size: 16px; }
 
-      .end { text-align: center; padding-top: 12px; }
+      .end { position: relative; isolation: isolate; text-align: center; padding-top: 12px; }
+      .end::before { content: ""; position: absolute; z-index: -1; left: -24px; right: -24px; top: -20px; height: 300px; pointer-events: none;
+                     background: var(--iznik) 50% 0 / 64px 64px; opacity: .14;
+                     -webkit-mask-image: radial-gradient(closest-side at 50% 30%, #000 30%, transparent 100%); mask-image: radial-gradient(closest-side at 50% 30%, #000 30%, transparent 100%); }
+      @media (max-width: 599px) { .end::before { left: -16px; right: -16px; } }
       .end .acts { justify-content: center; }
-      .badge { width: 72px; height: 72px; margin: 0 auto 14px; border-radius: 50%; display: grid; place-items: center; background: var(--blue-wash); color: var(--blue-dark); }
+      .end > .confetti { position: absolute; left: 50%; top: -20px; width: min(900px, calc(100vw - 32px)); height: 560px; transform: translateX(-50%); pointer-events: none; z-index: 5; }
+      .badge { width: 72px; height: 72px; margin: 0 auto 14px; border-radius: 50%; display: grid; place-items: center; background: var(--lv-wash); color: var(--lv-dark); }
+      .end .badge { animation: badge-in .6s cubic-bezier(.3, 1.6, .5, 1) both; }
+      .end .badge:not(.fail) { background: var(--lv); color: #fff; box-shadow: 0 0 0 6px var(--lv-wash); }
+      @keyframes badge-in { 0% { transform: scale(.3) rotate(-20deg); opacity: 0; } 60% { transform: scale(1.12) rotate(4deg); opacity: 1; } 100% { transform: none; } }
+      .end .flame.up { animation: flicker .9s ease-in-out 3 .9s; }
+      .end .flame.up + div .big { animation: bump .5s cubic-bezier(.3, 1.8, .5, 1) .9s both; }
+      .end .stats { animation: rise-in .45s ease-out .25s both; }
+      .end .ring-stat { animation: none; }
+      @keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+      .new-tile { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; padding: 8px 14px 8px 10px; border: 1px solid var(--lv-line); background: var(--lv-tint); border-radius: 999px; font-size: 14.5px; color: var(--ink); }
+      .new-tile.gold { border-color: rgb(168 120 18 / 35%); background: rgb(168 120 18 / 7%); }
+      .new-tile .tw-t { width: 26px; animation: tile-drop .75s cubic-bezier(.3, 1.45, .5, 1) .7s both; }
+      @keyframes tile-drop { 0% { transform: translateY(-26px) scale(1.9) rotate(-14deg); opacity: 0; } 60% { opacity: 1; } 100% { transform: none; opacity: 1; } }
       .badge.fail { background: var(--warm-wash); color: var(--warm); }
       .end-sub { margin-top: 6px; font-size: 15.5px; }
       .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 24px 0 0; border: 1px solid var(--line); border-radius: var(--r); text-align: left; }
@@ -175,7 +213,7 @@
       .flame.on { background: var(--warm-wash); color: var(--warm); }
       .ring { flex: none; }
       .ring .bg { stroke: var(--line); }
-      .ring .fg { stroke: var(--blue); }
+      .ring .fg { stroke: var(--lv); transition: stroke-dashoffset .9s cubic-bezier(.3, .9, .4, 1); }
       @media (max-width: 599px) {
         .stat { flex-direction: column; align-items: flex-start; gap: 6px; padding: 12px; }
         .stat .big { font-size: 19px; }
@@ -189,11 +227,11 @@
 
       /* exercise */
       .ex-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-      .instr { font-size: 12.5px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--blue-dark); }
+      .instr { font-size: 12.5px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--lv-dark); }
       .instr:focus { outline: none; }
       .from { font-size: 12.5px; color: var(--muted); }
       .q { font-size: 21px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 18px; }
-      .q i[lang="tr"] { color: var(--blue-dark); }
+      .q i[lang="tr"] { color: var(--lv-dark); }
       .sub { margin: -10px 0 18px; font-size: 15px; color: var(--muted); }
       .hint { margin: 0 0 16px; border: 1px solid var(--amber-line); background: var(--amber-wash); color: #4f3a0f; border-radius: var(--r); padding: 10px 14px; font-size: 14.5px; }
       .hint b.ht { font-weight: 650; margin-right: 4px; }
@@ -298,7 +336,8 @@
       .m { min-height: 54px; padding: 8px 12px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 10px; background: #fff; color: var(--ink); font-size: 16.5px; line-height: 1.25; cursor: pointer; text-align: center; touch-action: manipulation; transition: border-color .12s, background-color .12s, opacity .25s; }
       .m:hover { background: var(--panel); border-color: #cfcfcb; }
       .m.sel { border-color: var(--blue); background: var(--blue-wash); color: var(--blue-dark); }
-      .m.done { border-color: var(--ok-line); background: var(--ok-wash); color: var(--ok); opacity: .55; cursor: default; }
+      .m.done { border-color: var(--ok-line); background: var(--ok-wash); color: var(--ok); opacity: .55; cursor: default; animation: matched .65s ease-out forwards; }
+      @keyframes matched { 0% { opacity: 1; transform: scale(1); border-color: var(--ok); } 30% { opacity: 1; transform: scale(1.06); border-color: var(--ok); background: #dff0e5; } 100% { opacity: .4; transform: scale(.94); } }
       .m.no { border-color: var(--bad); background: var(--bad-wash); color: var(--bad); animation: shake .3s; }
       @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 
@@ -315,7 +354,7 @@
 
       /* reading and open */
       .rtitle { font-size: 20px; font-weight: 650; margin-bottom: 10px; }
-      .passage { border-left: 3px solid var(--blue-wash); padding: 2px 0 2px 16px; margin: 12px 0 14px; color: var(--ink); font-size: 17px; line-height: 1.6; }
+      .passage { border-left: 3px solid var(--lv-wash); padding: 2px 0 2px 16px; margin: 12px 0 14px; color: var(--ink); font-size: 17px; line-height: 1.6; }
       .passage p + p { margin-top: 10px; }
       .say-row { display: flex; gap: 8px; align-items: center; }
       details.more-d { margin: 0 0 16px; border: 1px solid var(--line); border-radius: var(--r); }
@@ -330,7 +369,7 @@
       .rq { border: 0; margin: 0 0 18px; padding: 0; min-width: 0; }
       .rq legend { padding: 0; font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
       .rq-ex { margin-top: 8px; font-size: 14.5px; color: var(--body); }
-      .src { margin: 0 0 16px; border-left: 3px solid var(--blue-wash); padding: 4px 0 4px 16px; font-size: 18px; line-height: 1.5; color: var(--ink); display: flex; gap: 12px; align-items: flex-start; }
+      .src { margin: 0 0 16px; border-left: 3px solid var(--lv-wash); padding: 4px 0 4px 16px; font-size: 18px; line-height: 1.5; color: var(--ink); display: flex; gap: 12px; align-items: flex-start; }
       .models { margin-top: 18px; display: grid; gap: 14px; }
       .model { border: 1px solid var(--ok-line); background: var(--ok-wash); border-radius: var(--r); padding: 12px 14px; color: var(--ink); font-size: 16px; display: flex; gap: 10px; align-items: flex-start; }
       .model .ml { display: block; font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--ok); margin-bottom: 2px; }
@@ -369,6 +408,18 @@
       .fb .note { color: var(--amber); font-weight: 600; }
       .fb ul { margin: 4px 0 0; padding-left: 18px; }
       .fb .muted-s { color: var(--muted); font-size: 13.5px; }
+      /* answer animations (UI-5): a right answer pops, a wrong one shakes, the verdict draws itself in */
+      .ok-anim .opt.right, .ok-anim .ans.right, .ok-anim .blank.right, .ok-anim .cin.right, .ok-anim .bopts.right, .ok-anim .line.right .tile { animation: ok-pop .45s cubic-bezier(.3, 1.7, .5, 1); }
+      .ok-anim .line.right .tile:nth-child(2) { animation-delay: .04s; } .ok-anim .line.right .tile:nth-child(3) { animation-delay: .08s; }
+      .ok-anim .line.right .tile:nth-child(4) { animation-delay: .12s; } .ok-anim .line.right .tile:nth-child(n+5) { animation-delay: .16s; }
+      .bad-anim .opt.wrong, .bad-anim .ans.wrong, .bad-anim .blank.wrong, .bad-anim .cin.wrong, .bad-anim .bopts.wrong, .bad-anim .line.wrong { animation: shake .36s; }
+      @keyframes ok-pop { 0% { transform: scale(1); } 40% { transform: scale(1.045); } 100% { transform: none; } }
+      .dock.ok .fb-i, .dock.bad .fb-i, .dock.almost .fb-i { animation: badge-in .45s cubic-bezier(.3, 1.6, .5, 1); }
+      .dock.ok .fb-i path { stroke-dasharray: 18; stroke-dashoffset: 18; animation: draw .35s ease-out .15s forwards; }
+      @keyframes draw { to { stroke-dashoffset: 0; } }
+      .dock.ok .fb > *, .dock.bad .fb > *, .dock.almost .fb > * { animation: rise-in .3s ease-out both; }
+      .dock.ok .fb > :nth-child(2), .dock.bad .fb > :nth-child(2), .dock.almost .fb > :nth-child(2) { animation-delay: .05s; }
+      .dock.ok .fb > :nth-child(n+3), .dock.bad .fb > :nth-child(n+3), .dock.almost .fb > :nth-child(n+3) { animation-delay: .1s; }
       @media (max-width: 599px) {
         .dock { padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
         .dock-in { grid-template-columns: minmax(0, 1fr); }
@@ -390,6 +441,42 @@
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { transition: none !important; animation: none !important; }
       }
+    </style>
+    <style>
+      /* Level colours, the Turkish typeface and the İznik pattern (decided in UI-5, PROJECT.md 3).
+         The same block sits in turkish.html, turkishlesson.html, turkishguide.html and turkishcards.html. */
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap;
+                   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin-ext.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap;
+                   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin-italic.woff2") format("woff2"); font-weight: 400 700; font-style: italic; font-display: swap;
+                   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin-ext-italic.woff2") format("woff2"); font-weight: 400 700; font-style: italic; font-display: swap;
+                   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+      :root {
+        --tr-font: "Lora TR", Georgia, "Times New Roman", serif;
+        /* --lv*: the colour of the level in scope (data-lvl); outside a level, the site blue. Buttons keep the site blue. */
+        --lv: #287a9e; --lv-dark: #155b7c; --lv-wash: rgb(40 122 158 / 11%); --lv-tint: rgb(40 122 158 / 5%); --lv-line: rgb(40 122 158 / 35%);
+        --gold: #a87812; --gold-dark: #7d5a0d; --gold-wash: rgb(168 120 18 / 13%);
+        --iznik: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke-width='1.3'%3E%3Cg stroke='%232452a0'%3E%3Crect x='21' y='21' width='22' height='22'/%3E%3Crect x='21' y='21' width='22' height='22' transform='rotate%2845 32 32%29'/%3E%3Ccircle cx='0' cy='0' r='11'/%3E%3Ccircle cx='64' cy='0' r='11'/%3E%3Ccircle cx='0' cy='64' r='11'/%3E%3Ccircle cx='64' cy='64' r='11'/%3E%3C/g%3E%3Cg stroke='%2311847f'%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3Cpath d='M32 -5l5 5-5 5-5-5zM32 59l5 5-5 5-5-5zM-5 32l5-5 5 5-5 5zM59 32l5-5 5 5-5 5z'/%3E%3Cpath d='M0 5.5a5.5 5.5 0 0 0 5.5-5.5M58.5 0a5.5 5.5 0 0 0 5.5 5.5M64 58.5a5.5 5.5 0 0 0-5.5 5.5M5.5 64a5.5 5.5 0 0 0-5.5-5.5'/%3E%3C/g%3E%3Cg stroke='%23c2462c'%3E%3Cpath d='M32 17.5v-4M32 46.5v4M17.5 32h-4M46.5 32h4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+      /* İznik tiles: turquoise, cobalt, green, tomato red, manganese purple, and the deep ink of the outlines. Gold is kept for "mastered". */
+      [data-lvl="a1"] { --lv: #11847f; --lv-dark: #0a5f5b; --lv-wash: rgb(17 132 127 / 12%); --lv-tint: rgb(17 132 127 / 5%); --lv-line: rgb(17 132 127 / 35%); }
+      [data-lvl="a2"] { --lv: #2452a0; --lv-dark: #1b3f7d; --lv-wash: rgb(36 82 160 / 11%); --lv-tint: rgb(36 82 160 / 5%); --lv-line: rgb(36 82 160 / 35%); }
+      [data-lvl="b1"] { --lv: #2b7d50; --lv-dark: #1d5c3a; --lv-wash: rgb(43 125 80 / 12%); --lv-tint: rgb(43 125 80 / 5%); --lv-line: rgb(43 125 80 / 35%); }
+      [data-lvl="b2"] { --lv: #c2462c; --lv-dark: #9a3420; --lv-wash: rgb(194 70 44 / 11%); --lv-tint: rgb(194 70 44 / 5%); --lv-line: rgb(194 70 44 / 35%); }
+      [data-lvl="c1"] { --lv: #6c3f9e; --lv-dark: #51307a; --lv-wash: rgb(108 63 158 / 11%); --lv-tint: rgb(108 63 158 / 5%); --lv-line: rgb(108 63 158 / 35%); }
+      [data-lvl="c2"] { --lv: #2d3a56; --lv-dark: #232d43; --lv-wash: rgb(45 58 86 / 11%); --lv-tint: rgb(45 58 86 / 5%); --lv-line: rgb(45 58 86 / 35%); }
+      /* Turkish in its own typeface, so it stands apart from the English around it */
+      [lang="tr"] { font-family: var(--tr-font); }
+      .lv-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: var(--lv-wash); color: var(--lv-dark); font-size: 11.5px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; }
+      /* a tile of the wall: laid (unit done) in its level's colour, glazed gold once the unit is mastered */
+      .tw-t { position: relative; display: block; aspect-ratio: 1; border-radius: 3px; background: #f3f2ee; box-shadow: inset 0 0 0 1px #e4e3df; }
+      .tw-t.open { background: var(--lv-tint); box-shadow: inset 0 0 0 1px var(--lv-wash); }
+      .tw-t.laid { background: var(--lv); box-shadow: none; }
+      .tw-t.gold { background: linear-gradient(135deg, #c99a2e, var(--gold) 55%, #8f6610); box-shadow: none; }
+      .tw-t.laid::before, .tw-t.gold::before { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .85); border-radius: 1px; transform: rotate(45deg); }
+      .tw-t.laid::after, .tw-t.gold::after { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .55); border-radius: 1px; }
     </style>
     <script defer src="/assets/js/turkish.js"></script>
     <script defer src="/assets/js/turkish-account.js"></script>
@@ -414,6 +501,8 @@
           <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
         <div class="track" id="track" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0"><i id="fill"></i></div>
+        <span class="combo" id="combo" aria-hidden="true" hidden></span>
+        <span class="xpr" id="xpr" aria-hidden="true" hidden></span>
         <span class="count" id="count"></span>
       </div>
       <div class="notices" id="notices" role="status" aria-live="polite"></div>
@@ -461,7 +550,8 @@
       var S = {
         mode: null, target: null, phase: "boot", index: null, flat: null, voice: null, speech: false,
         items: [], queue: [], cur: null, view: null, total: 0, counted: 0, correct: 0, missed: 0, skipped: 0,
-        retries: true, stop: false, started: false, lesson: null, unit: null, lessonIds: null, lastInput: null
+        retries: true, stop: false, started: false, lesson: null, unit: null, lessonIds: null, lastInput: null,
+        streak: 0, xpPer: 0, xpBase: 0, xpGot: 0, filled: 0   // UI-5: answers right in a row; today's XP ring in the top bar
       };
 
       // ───────────── 1. helpers ─────────────
@@ -545,6 +635,8 @@
       function progress() {
         var done = S.items.filter(function (it) { return it.done; }).length, f = S.total ? done / S.total : 0;
         $("fill").style.width = (f * 100).toFixed(1) + "%";
+        if (done > S.filled && !reduce) { var fill = $("fill"); fill.classList.remove("glint"); void fill.offsetWidth; fill.classList.add("glint"); }
+        S.filled = done;
         $("track").setAttribute("aria-valuenow", f.toFixed(2));
         $("track").setAttribute("aria-valuetext", done + " of " + S.total + " exercises done");
         if (S.mode === "test") {
@@ -601,7 +693,7 @@
           return message({ title: "This lesson isn't written yet", text: pu ? esc(unitLabel(pu)) + ", <i>" + esc(pu.title) + "</i>, is still being written." : "This address doesn't point to a lesson." });
         }
         var u = S.flat.unit[meta.unit], course = store.course(), set = store.settings();
-        S.unit = u;
+        S.unit = u; document.body.setAttribute("data-lvl", u.level);   // the level's colour (UI-5)
         if (!T.path.lessonUnlocked(S.index, course, set, id)) return locked(meta, u, course);
         return T.data.get(id).then(function (L) {
           S.lesson = L;
@@ -628,7 +720,7 @@
         var u = S.flat.unit[S.target], course = store.course(), set = store.settings();
         if (!u) return message({ title: "There's no unit here", text: "This address doesn't point to a unit." });
         if (u.status !== "ready") return message({ title: "This unit isn't written yet", text: esc(unitLabel(u)) + ", <i>" + esc(u.title) + "</i>, is still being written." });
-        S.unit = u;
+        S.unit = u; document.body.setAttribute("data-lvl", u.level);   // the level's colour (UI-5)
         if (!T.path.unitDone(S.index, course, u.id) && !set.unlockAll) {
           var st = T.path.unitState(S.index, course, set, u.id);
           return message({ kicker: unitLabel(u) + " · Review", title: "Finish the unit first", text: "The review mixes exercises from all of the unit's lessons, so it opens once you've done them: " + st.done + " of " + st.total + " so far.",
@@ -658,7 +750,7 @@
         var u = S.flat.unit[S.target], course = store.course();
         if (!u) return message({ title: "There's no unit here", text: "This address doesn't point to a unit." });
         if (u.status !== "ready") return message({ title: "This unit isn't written yet", text: esc(unitLabel(u)) + ", <i>" + esc(u.title) + "</i>, is still being written." });
-        S.unit = u;
+        S.unit = u; document.body.setAttribute("data-lvl", u.level);   // the level's colour (UI-5)
         var ids = T.path.testLessons(S.index, course, u.id);
         if (!ids.length) return message({ kicker: "Jump to " + unitLabel(u), title: "Nothing to skip", text: "Every lesson before " + esc(unitLabel(u)) + " is done already, so this unit is open.",
                                          acts: '<a class="btn primary" href="' + P.lesson + "?id=" + u.lessons[0].id + '">Start ' + esc(unitLabel(u)) + '</a><a class="btn" href="' + hubHref(u.id) + '">Back to the course</a>' });
@@ -736,7 +828,37 @@
         $("quit-go").href = hubHref(S.unit && S.unit.id);
         $("quit-t").textContent = { lesson: "Quit this lesson?", review: "Quit the review?", test: "Quit the test?", practice: "Stop practising?" }[S.mode];
         $("quit-p").textContent = S.mode === "test" ? "The test won't count." : "Your score in it won't be saved. Mistakes you've made so far stay in your list.";
-        showBar(true); progress(); next();
+        showBar(true); progress(); topXp(); next();
+      }
+      // ── UI-5: the in-a-row counter and today's XP ring (visual only; XP is still worked out at the end, 6.3) ──
+      function topXp() {
+        var course = store.course(), set = store.settings(), g = T.progress.goal(course, set, Date.now());
+        var repeat = S.mode === "lesson" && !!course.lessons[S.lesson.id] && !course.lessons[S.lesson.id].via;
+        S.xpBase = g.xp; S.xpGoal = g.goal; S.xpGot = 0;
+        S.xpPer = S.mode === "test" || repeat ? 0 : C.XP.correct;   // a repeat earns half, a test nothing: no "+1" for those
+        $("xpr").hidden = false;
+        drawXp(false);
+      }
+      function drawXp(plus) {
+        var r = 11, c = 2 * Math.PI * r, now = S.xpBase + S.xpGot, ratio = Math.max(0, Math.min(1, now / S.xpGoal)), met = now >= S.xpGoal;
+        var el = $("xpr"), fg = el.querySelector(".fg");
+        if (!fg) {
+          el.innerHTML = '<svg viewBox="0 0 30 30" width="30" height="30"><circle class="bg" cx="15" cy="15" r="' + r + '" fill="none" stroke-width="3.5"/>' +
+            '<circle class="fg" cx="15" cy="15" r="' + r + '" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="' + c.toFixed(2) + '" stroke-dashoffset="' + c.toFixed(2) + '" transform="rotate(-90 15 15)"/></svg><span class="plus">+1</span>';
+          fg = el.querySelector(".fg"); void fg.getBoundingClientRect();
+        }
+        fg.style.strokeDashoffset = (c * (1 - ratio)).toFixed(2);
+        el.classList.toggle("met", met);
+        el.title = "Today: " + now + " of " + S.xpGoal + " XP";
+        if (plus && !reduce) { var p = el.querySelector(".plus"); p.classList.remove("go"); void p.offsetWidth; p.classList.add("go"); }
+      }
+      function drawStreak(up) {
+        var el = $("combo"), n = S.streak;
+        el.hidden = n < 3;
+        if (n < 3) { el.classList.remove("hot"); return; }
+        el.innerHTML = ICON.flame + n + '<span class="w">&nbsp;in a row</span>';
+        el.classList.toggle("hot", n >= 5);
+        if (up && !reduce) { el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
       }
 
       // ───────────── 3b. the flow: show, check, feedback, next ─────────────
@@ -800,7 +922,9 @@
           var got = r.got != null ? r.got : ok ? it.weight : 0;
           S.correct += got; S.missed += it.weight - got;
           store.answered(it.ex.id, ok);
+          if (got && S.xpPer) { S.xpGot += got * S.xpPer; drawXp(true); }
         }
+        S.streak = ok ? S.streak + 1 : 0; drawStreak(ok);
         var again = !ok && S.retries && it.ex.type !== "open" && it.attempts <= C.RETRIES;
         if (again) { it.retry = true; S.queue.push(it); } else it.done = true;
         if (S.mode === "test" && misses() < 0) S.stop = true;
@@ -820,6 +944,8 @@
         if (again) h += '<p class="muted-s">This one comes back at the end.</p>';
         if (S.stop) h += "<p><b>" + pct(C.PASS) + " is out of reach now, so the test ends here.</b></p>";
         dock.className = "dock " + kind; dock.hidden = false;
+        var body = $("ex-body");
+        if (body && !reduce) { body.classList.remove("ok-anim", "bad-anim"); void body.offsetWidth; body.classList.add(ok ? "ok-anim" : "bad-anim"); }
         dockLeft.innerHTML = "";
         fb.innerHTML = h; prep(fb);
         go.hidden = false; go.disabled = false;
@@ -1310,17 +1436,26 @@
             '<a class="btn" href="' + P.lesson + "?id=" + S.lesson.id + '">Do it again</a><a class="btn ghost" href="' + hubHref(S.unit.id) + '">Back to the course</a>';
           var after = unitNow ? '<p class="after">You\'ve finished ' + esc(unitLabel(S.unit)) + '. Review it to master it, and read its interlude, <a href="' + P.guide + "?id=" + S.unit.id + '-culture">' + esc(S.unit.interlude) + "</a>.</p>"
                     : nxt && nxt.unit === S.unit.id ? '<p class="after">Next: <b>' + esc(nxt.title) + "</b></p>" : "";
+          var fu = {}; if (unitNow) fu[S.unit.id] = "done";
+          markFresh([S.lesson.id], fu);
           endScreen({ ok: true, kicker: unitLabel(S.unit) + " · Lesson " + S.flat.lesson[S.lesson.id].num, title: res.perfect ? "Perfect lesson" : "Lesson complete", sub: S.lesson.title,
-                      res: res, xpNote: res.repeat ? "half XP for a repeat" : parts.join(" · "), acts: acts, after: after });
+                      res: res, xpNote: res.repeat ? "half XP for a repeat" : parts.join(" · "), acts: acts, after: after, tile: unitNow ? "laid" : null, party: res.perfect ? 150 : 90 });
         } else if (S.mode === "review") {
           res = store.finishReview(S.unit.id, { correct: S.correct, counted: S.counted });
-          endScreen({ ok: res.passed, kicker: unitLabel(S.unit) + " · Review", title: res.passed ? "Unit mastered" : "Not mastered yet", sub: res.passed ? S.unit.title : "You need " + pct(C.PASS) + " right on the first try to master the unit.",
+          if (res.passed) { var fr = {}; fr[S.unit.id] = "gold"; markFresh([], fr); }
+          endScreen({ ok: res.passed, tile: res.passed ? "gold" : null, party: res.passed ? 150 : 0, kicker: unitLabel(S.unit) + " · Review", title: res.passed ? "Unit mastered" : "Not mastered yet", sub: res.passed ? S.unit.title : "You need " + pct(C.PASS) + " right on the first try to master the unit.",
                       res: res, xpNote: S.correct + " right +" + S.correct * C.XP.correct + (res.passed ? " · passed +" + C.XP.review : ""),
                       acts: (res.passed ? "" : '<a class="btn primary big" href="' + P.lesson + "?review=" + S.unit.id + '">Try again</a>') + '<a class="btn' + (res.passed ? " primary big" : "") + '" href="' + hubHref(S.unit.id) + '">Back to the course</a>' });
         } else if (S.mode === "test") {
+          var doneBefore = S.flat.units.filter(function (x) { return x.status === "ready" && T.path.unitDone(S.index, store.course(), x.id); }).map(function (x) { return x.id; });
           res = store.finishTest(S.unit.id, S.lessonIds, { correct: S.correct, counted: S.counted });
           var first = S.unit.lessons[0].id;
-          endScreen({ ok: res.passed, kicker: "Jump to " + unitLabel(S.unit), title: res.passed ? "You've jumped ahead" : "Not this time",
+          if (res.passed) {
+            var ft = {};
+            S.flat.units.forEach(function (x) { if (x.status === "ready" && doneBefore.indexOf(x.id) < 0 && T.path.unitDone(S.index, store.course(), x.id)) ft[x.id] = "done"; });
+            markFresh(res.marked, ft);
+          }
+          endScreen({ ok: res.passed, party: res.passed ? 90 : 0, kicker: "Jump to " + unitLabel(S.unit), title: res.passed ? "You've jumped ahead" : "Not this time",
                       sub: res.passed ? plural(res.marked.length, "lesson") + " marked done. " + unitLabel(S.unit) + " is open." : "You need " + pct(C.PASS) + " right on the first try. The lessons before this unit will get you there.",
                       res: res, noXp: true,
                       acts: res.passed ? '<a class="btn primary big" href="' + P.lesson + "?id=" + first + '">Start ' + esc(unitLabel(S.unit)) + '</a><a class="btn" href="' + hubHref(S.unit.id) + '">Back to the course</a>'
@@ -1333,15 +1468,69 @@
                       acts: (left ? '<a class="btn primary big" href="' + P.lesson + '?practice=mistakes">Practise more</a>' : "") + '<a class="btn' + (left ? "" : " primary big") + '" href="' + P.hub + '">Back to the course</a>' });
         }
       }
+      // UI-5: tell the course page what was just finished, so the way back fills it in (sessionStorage, this tab only).
+      function markFresh(lessonIds, units) {
+        try {
+          var k = "trk:v1:fresh", cur = JSON.parse(sessionStorage.getItem(k) || "null");
+          if (!cur || typeof cur !== "object" || !(Date.now() - cur.t < 30 * 60 * 1000)) cur = { lessons: {}, units: {} };
+          (lessonIds || []).forEach(function (id) { cur.lessons[id] = 1; });
+          Object.keys(units || {}).forEach(function (id) { if (cur.units[id] !== "gold") cur.units[id] = units[id]; });
+          cur.t = Date.now();
+          sessionStorage.setItem(k, JSON.stringify(cur));
+        } catch (e) { /* no sessionStorage: the course page just shows everything at rest */ }
+      }
+      // UI-5: confetti in the level's colours (and the other İznik colours, and gold), from the badge. No library.
+      function confetti(root, amount) {
+        if (reduce || !amount || !root || !window.requestAnimationFrame) return;
+        var cv = document.createElement("canvas"), badge = root.querySelector(".badge");
+        cv.className = "confetti"; cv.setAttribute("aria-hidden", "true");
+        root.appendChild(cv);
+        var dpr = Math.min(2, window.devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight, x = cv.getContext && cv.getContext("2d");
+        if (!x || !W || !badge) { cv.remove(); return; }
+        cv.width = W * dpr; cv.height = H * dpr; x.scale(dpr, dpr);
+        var lv = getComputedStyle(document.body).getPropertyValue("--lv").trim() || "#287a9e";
+        var cols = [lv, lv, lv, "#11847f", "#2452a0", "#2b7d50", "#c2462c", "#6c3f9e", "#c99a2e", "#c99a2e"];
+        var br = badge.getBoundingClientRect(), cr = cv.getBoundingClientRect(), ox = br.left + br.width / 2 - cr.left, oy = br.top + br.height / 2 - cr.top;
+        var ps = [];
+        for (var i = 0; i < amount; i++) {
+          var a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.2, v = 4 + Math.random() * 8;
+          ps.push({ x: ox, y: oy, vx: Math.cos(a) * v, vy: Math.sin(a) * v, w: 5 + Math.random() * 6, h: 3 + Math.random() * 4, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.35, c: cols[i % cols.length], d: i % 4 === 0 });
+        }
+        var t0 = performance.now(), last = t0;
+        requestAnimationFrame(function tick(now) {
+          var dt = Math.min(2.5, (now - last) / 16.7), alive = false;
+          last = now; x.clearRect(0, 0, W, H);
+          ps.forEach(function (p) {
+            p.vy += 0.24 * dt; p.vx *= Math.pow(0.985, dt); p.x += p.vx * dt; p.y += p.vy * dt; p.r += p.vr * dt;
+            if (p.y < H + 20) alive = true;
+            x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c;
+            if (p.d) { x.beginPath(); x.moveTo(0, -p.w / 2); x.lineTo(p.w / 2, 0); x.lineTo(0, p.w / 2); x.lineTo(-p.w / 2, 0); x.fill(); }   // little tile diamonds
+            else x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r * 2)) + 0.6);   // paper that flutters
+            x.restore();
+          });
+          if (alive && now - t0 < 3500) requestAnimationFrame(tick); else cv.remove();
+        });
+      }
+      function countUp(el, n) {
+        if (!el) return;
+        if (reduce || !(n > 0)) { el.textContent = n; return; }
+        var t0 = performance.now() + 350, d = Math.min(900, 300 + n * 25);
+        el.textContent = "0";
+        requestAnimationFrame(function f(t) {
+          var k = Math.max(0, Math.min(1, (t - t0) / d));
+          el.textContent = Math.round(n * (1 - Math.pow(1 - k, 3)));
+          if (k < 1) requestAnimationFrame(f);
+        });
+      }
       function endScreen(o) {
         var res = o.res, score = S.counted ? S.correct / S.counted : 0;
         var h = '<div class="end"><div class="badge' + (o.ok ? "" : " fail") + '">' + (o.ok ? ICON.trophy : ICON.retry) + "</div>" +
           '<p class="kicker">' + esc(o.kicker) + "</p><h1>" + esc(o.title) + '</h1><p class="end-sub">' + esc(o.sub) + "</p>";
         var stats = ['<div class="stat"><div><div class="big">' + pct(score) + '</div><div class="lbl">right on the first try · ' + S.correct + " of " + S.counted + "</div></div></div>"];
         if (!o.noXp) {
-          stats.push('<div class="stat"><div><div class="big">+' + res.xp + ' XP</div><div class="lbl">' + esc(o.xpNote || "") + "</div></div></div>");
+          stats.push('<div class="stat"><div><div class="big"><span aria-hidden="true">+<span id="xp-n">' + res.xp + '</span> XP</span><span class="sr">+' + res.xp + ' XP</span></div><div class="lbl">' + esc(o.xpNote || "") + "</div></div></div>");
           var s = res.streak;
-          stats.push('<div class="stat"><span class="flame' + (s.current ? " on" : "") + '">' + ICON.flame + '</span><div><div class="big">' + plural(s.current, "day") + '</div><div class="lbl">' + (res.streakUp ? (s.current === 1 ? "streak started today" : "streak, +1 today") : "streak") + "</div></div></div>");
+          stats.push('<div class="stat"><span class="flame' + (s.current ? " on" : "") + (res.streakUp ? " up" : "") + '">' + ICON.flame + '</span><div><div class="big">' + plural(s.current, "day") + '</div><div class="lbl">' + (res.streakUp ? (s.current === 1 ? "streak started today" : "streak, +1 today") : "streak") + "</div></div></div>");
         }
         h += '<div class="stats' + (o.noXp ? " two" : "") + '">' + stats.join("") + "</div>";
         if (o.noXp && res.passed) h += '<p class="after">A test earns no XP.</p>';
@@ -1350,9 +1539,22 @@
           h += '<div class="stats two" style="grid-template-columns:minmax(0,1fr)"><div class="stat ring-stat">' + ring(g.today / g.goal, g.met) + "<div><div class=\"big\">" + g.today + " <small style=\"font-size:13px;color:var(--muted)\">of " + g.goal + ' XP today</small></div><div class="lbl">' +
             (g.justMet ? "Daily goal met. Well done." : g.met ? "Daily goal met" : (g.goal - g.today) + " XP to go for today's goal") + "</div></div></div></div>";
         }
+        if (o.tile && S.unit) h += '<p class="new-tile' + (o.tile === "gold" ? " gold" : "") + '" data-lvl="' + esc(S.unit.level) + '"><span class="tw-t ' + (o.tile === "gold" ? "gold" : "laid") + '" data-lvl="' + esc(S.unit.level) + '" aria-hidden="true"></span>' +
+          (o.tile === "gold" ? "Your " + esc(unitLabel(S.unit)) + " tile is glazed gold" : "A new tile for your wall: " + esc(unitLabel(S.unit))) + "</p>";
         h += (o.after || "") + '<div class="acts">' + o.acts + "</div></div>";
         screen(h, true);
         notices();
+        // UI-5: the XP counts up, the goal ring fills from where today stood before, confetti for a success
+        countUp($("xp-n"), res && res.xp);
+        var fg = stage.querySelector(".ring-stat .ring .fg");
+        if (fg && !reduce && res.goal) {
+          var cc = +fg.getAttribute("stroke-dasharray"), before = Math.max(0, Math.min(1, (res.goal.today - (res.xp || 0)) / res.goal.goal));
+          var to = fg.getAttribute("stroke-dashoffset");
+          fg.style.transition = "none"; fg.style.strokeDashoffset = (cc * (1 - before)).toFixed(2);
+          void fg.getBoundingClientRect(); fg.style.transition = "";
+          setTimeout(function () { fg.style.strokeDashoffset = to; }, 500);
+        }
+        if (o.ok && o.party) setTimeout(function () { confetti(stage.querySelector(".end"), o.party); }, 220);
         var p = stage.querySelector(".acts .primary");
         if (p && !touch) p.focus({ preventScroll: true });
       }

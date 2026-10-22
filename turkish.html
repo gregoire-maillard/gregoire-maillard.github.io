@@ -107,7 +107,11 @@
       .notice button, .notice a { font: inherit; color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; background: none; border: 0; padding: 0; cursor: pointer; }
 
       /* hero */
-      .hero { margin-bottom: 28px; max-width: 720px; }
+      .hero { position: relative; isolation: isolate; margin-bottom: 28px; max-width: 720px; }
+      .hero::before { content: ""; position: absolute; z-index: -1; inset: -32px 0 -16px -24px; pointer-events: none;
+                      background: var(--iznik) 0 0 / 64px 64px; opacity: .13;
+                      -webkit-mask-image: radial-gradient(120% 140% at 0 0, #000 25%, transparent 72%); mask-image: radial-gradient(120% 140% at 0 0, #000 25%, transparent 72%); }
+      @media (max-width: 599px) { .hero::before { inset: -20px 0 -12px -16px; } }
       .kicker { font-size: 12px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 6px; }
       .hero h1 { font-size: 32px; line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; }
       .hero .lede { margin-top: 10px; font-size: 16px; line-height: 1.55; color: var(--body); }
@@ -137,11 +141,11 @@
       .btn svg { flex: none; }
       .tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; font-size: 11.5px; font-weight: 600; letter-spacing: .01em; white-space: nowrap; vertical-align: 1px; }
       .tag.soon { background: var(--panel); color: var(--muted); border: 1px solid var(--line); }
-      .tag.mastered { background: var(--blue-wash); color: var(--blue-dark); }
+      .tag.mastered { background: var(--gold-wash); color: var(--gold-dark); }
 
       /* today */
-      .next { border-color: rgb(40 122 158 / 35%); background: linear-gradient(var(--blue-tint), var(--blue-tint)), #fff; }
-      .next .eyebrow { color: var(--blue-dark); font-weight: 600; }
+      .next { border-color: var(--lv-line); background: linear-gradient(var(--lv-tint), var(--lv-tint)), #fff; box-shadow: inset 3px 0 0 var(--lv); }
+      .next .eyebrow { color: var(--lv-dark); font-weight: 600; }
       .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 0; }
       .stat { display: flex; align-items: center; gap: 12px; padding: 14px 16px; min-width: 0; }
       .stat + .stat { border-left: 1px solid var(--line); }
@@ -173,20 +177,21 @@
       .lvl-nav::-webkit-scrollbar { display: none; }
       .lvl-chip { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); font-weight: 650; font-size: 14px; background: #fff; }
       .lvl-chip small { font-weight: 500; color: var(--muted); font-size: 12px; }
-      .lvl-chip:hover { border-color: var(--blue); color: var(--blue-dark); }
-      .lvl-chip.here { border-color: var(--blue); background: var(--blue-tint); }
+      .lvl-chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--lv); flex: none; }
+      .lvl-chip:hover { border-color: var(--lv); color: var(--lv-dark); }
+      .lvl-chip.here { border-color: var(--lv); background: var(--lv-tint); }
 
       .level { border-top: 1px solid var(--line); }
       .level:last-child { border-bottom: 1px solid var(--line); }
       .level > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 14px; min-height: 72px; padding: 12px 2px; }
       .level > summary::-webkit-details-marker { display: none; }
-      .level > summary:hover .lvl-title { color: var(--blue-dark); }
+      .level > summary:hover .lvl-title { color: var(--lv-dark); }
       .badge { width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; font-size: 15px; letter-spacing: .01em; background: var(--panel); color: var(--muted); border: 1px solid var(--line); }
-      .level.has-content .badge { background: var(--blue); border-color: var(--blue); color: #fff; }
+      .level.has-content .badge { background: var(--lv); border-color: var(--lv); color: #fff; }
       .lvl-title { display: block; font-size: 17px; font-weight: 620; color: var(--ink); line-height: 1.3; }
       .lvl-meta { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
       .lvl-bar { display: block; height: 4px; border-radius: 2px; background: var(--line); margin-top: 8px; max-width: 280px; overflow: hidden; }
-      .lvl-bar i { display: block; height: 100%; background: var(--blue); border-radius: 2px; }
+      .lvl-bar i { display: block; height: 100%; background: var(--lv); border-radius: 2px; }
       .chev { width: 20px; height: 20px; color: var(--muted); transition: transform .2s; }
       .level[open] > summary .chev { transform: rotate(180deg); }
       .lvl-body { padding: 0 0 20px; }
@@ -198,28 +203,37 @@
       .units::before { content: ""; position: absolute; left: 17px; top: 24px; bottom: 24px; width: 2px; background: var(--line); }
       .unit { position: relative; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; padding: 6px 0; }
       .node { position: relative; z-index: 1; width: 36px; height: 36px; margin-top: 14px; border-radius: 50%; background: #fff; border: 2px solid var(--line); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
-      .unit.st-done .node { background: var(--blue); border-color: var(--blue); color: #fff; }
-      .unit.st-open .node, .unit.st-started .node { border-color: var(--blue); color: var(--blue-dark); }
-      .unit.st-started .node { background: conic-gradient(var(--blue-wash) var(--p, 0%), #fff 0); }
+      .unit.st-done .node { background: var(--lv); border-color: var(--lv); color: #fff; }
+      .unit.st-open .node, .unit.st-started .node { border-color: var(--lv); color: var(--lv-dark); }
+      .unit.st-started .node { background: conic-gradient(var(--lv-wash) var(--p, 0%), #fff 0); }
       .unit.planned .node { border-style: dashed; margin-top: 4px; width: 36px; height: 36px; font-weight: 600; color: var(--faint); }
       .unit.flash .ucard, .unit.flash .pcard { animation: flash 1.6s ease-out; }
-      @keyframes flash { from { box-shadow: 0 0 0 4px var(--blue-wash); } to { box-shadow: 0 0 0 4px transparent; } }
+      @keyframes flash { from { box-shadow: 0 0 0 4px var(--lv-wash); } to { box-shadow: 0 0 0 4px transparent; } }
 
       .ucard { border: 1px solid var(--line); border-radius: var(--r); background: #fff; padding: 14px 16px 12px; min-width: 0; }
       .unit.st-locked .ucard { background: var(--panel); }
       .uhead { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: start; }
       .ukick { font-size: 12px; color: var(--muted); letter-spacing: .02em; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
       .uhead h3 { grid-column: 1; font-size: 17px; line-height: 1.3; font-weight: 620; }
-      .utr { grid-column: 1; font-size: 14.5px; color: var(--blue-dark); font-style: italic; }
+      .utr { grid-column: 1; font-size: 15px; color: var(--lv-dark); font-style: italic; }
       .uprog { grid-column: 2; grid-row: 1 / span 3; align-self: center; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
       .lessons { list-style: none; margin: 12px 0 0; padding: 0; border-top: 1px solid var(--line); }
       .lesson { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 44px; padding: 6px 6px; margin: 0 -6px; border-bottom: 1px solid var(--line); color: var(--ink); border-radius: 0; }
       .lessons li:last-child .lesson { border-bottom: 0; }
-      a.lesson:hover { background: var(--blue-tint); color: var(--ink); }
-      .lnum { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; border: 1.5px solid var(--line); color: var(--muted); font-variant-numeric: tabular-nums; }
-      .lesson.done .lnum { background: var(--blue); border-color: var(--blue); color: #fff; }
-      .lesson.next { background: var(--blue-tint); }
-      .lesson.next .lnum, .lesson.open .lnum { border-color: var(--blue); color: var(--blue-dark); }
+      a.lesson:hover { background: var(--lv-tint); color: var(--ink); }
+      .lnum { position: relative; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; border: 1.5px solid var(--line); color: var(--muted); font-variant-numeric: tabular-nums; }
+      .lesson.done .lnum { background: var(--lv); border-color: var(--lv); color: #fff; }
+      .lesson.next { background: var(--lv-tint); }
+      .lesson.next .lnum, .lesson.open .lnum { border-color: var(--lv); color: var(--lv-dark); }
+      /* the next lesson calls softly; a lesson or unit just finished fills in, once, on the way back (UI-5) */
+      .lesson.next .lnum::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--lv); opacity: 0; animation: ping 2.2s ease-out 1s infinite; pointer-events: none; }
+      @keyframes ping { 0% { transform: scale(1); opacity: .55; } 70%, 100% { transform: scale(1.75); opacity: 0; } }
+      .lesson.fresh .lnum { animation: fill-in .6s cubic-bezier(.3, 1.6, .5, 1) .45s both; }
+      @keyframes fill-in { 0% { transform: scale(.4); background: #fff; color: transparent; } 60% { transform: scale(1.18); } 100% { transform: none; } }
+      .unit.fresh .node { animation: node-in .7s cubic-bezier(.3, 1.6, .5, 1) .8s both; }
+      .unit.fresh .node::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 3px solid var(--lv); opacity: 0; animation: ripple 1s ease-out 1s; pointer-events: none; }
+      @keyframes node-in { 0% { transform: scale(.5); background: #fff; color: transparent; } 55% { transform: scale(1.22); } 100% { transform: none; } }
+      @keyframes ripple { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(2.4); opacity: 0; } }
       .lesson.locked { color: var(--muted); cursor: default; }
       .lesson.locked .lnum { border-color: transparent; color: var(--faint); }
       .lt { font-size: 14.5px; min-width: 0; }
@@ -232,7 +246,7 @@
       .uacts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
       .pill { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; color: var(--ink); background: #fff; }
       .pill:hover { border-color: var(--blue); color: var(--blue-dark); }
-      .pill .ok { color: var(--blue); }
+      .pill .ok { color: var(--lv); }
       .pill.strong { border-color: var(--blue); color: var(--blue-dark); background: var(--blue-tint); }
       @media (max-width: 599px) {
         .pill { min-height: 44px; padding: 0 14px; }
@@ -366,6 +380,57 @@
       .pf-lv .bar { margin-top: 6px; max-width: 320px; }
       .pf-lv .m { font-size: 12.5px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
       .tag.cert { background: #e6f2e9; color: #22603a; }
+      .pf-badge.on[data-lvl] { background: var(--lv); border-color: var(--lv); }
+      .pf-lv[data-lvl] .badge { background: var(--lv-tint); border-color: var(--lv-line); color: var(--lv-dark); }
+      .pf-lv.cert[data-lvl] .badge { background: var(--lv); border-color: var(--lv); color: #fff; }
+      .pf-lv[data-lvl] .bar i { background: var(--lv); }
+
+      /* the tile wall (UI-5): one tile per unit, a row per level */
+      .wall-card h3 { font-size: 15px; }
+      .wall { display: grid; grid-template-columns: 22px repeat(12, minmax(0, 1fr)); gap: 3px; margin-top: 12px; }
+      .wall .tw-l { grid-column: 1; align-self: center; font-size: 10.5px; font-weight: 650; color: var(--lv-dark); letter-spacing: .02em; }
+      .wall .tw-t { max-width: 22px; cursor: pointer; transition: transform .15s; }
+      .wall .tw-t:hover { transform: scale(1.15); z-index: 1; }
+      .wall .tw-t.fresh { animation: tile-drop .75s cubic-bezier(.3, 1.45, .5, 1) 1.1s both; z-index: 2; }
+      .wall .tw-t.gold.fresh { animation: tile-drop .75s cubic-bezier(.3, 1.45, .5, 1) 1.1s both, glint 1.2s ease-out 1.9s; }
+      @keyframes tile-drop { 0% { transform: translateY(-26px) scale(1.9) rotate(-14deg); opacity: 0; } 60% { opacity: 1; } 100% { transform: none; opacity: 1; } }
+      @keyframes glint { 0% { filter: brightness(1); } 30% { filter: brightness(1.45); } 100% { filter: brightness(1); } }
+      .wall-note { font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+      @media (max-width: 899px) { .today > .wall-card { grid-column: 1 / -1; } .wall { max-width: 360px; } }
+
+      /* achievements (UI-5): an eight-pointed star per achievement, coloured once earned */
+      .ach { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+      .ach li { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; padding: 12px 8px 10px; border: 1px solid var(--line); border-radius: var(--r); min-width: 0; }
+      .ach li.on { border-color: var(--lv-line); background: var(--lv-tint); }
+      .ach li.on.gold { border-color: rgb(168 120 18 / 35%); background: rgb(168 120 18 / 6%); }
+      .star { width: 46px; height: 46px; display: grid; place-items: center; margin-bottom: 6px; color: #a7a6a0; background: #ecebe6; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums;
+              clip-path: polygon(50% 0%, 64.6% 14.7%, 85.4% 14.6%, 85.3% 35.4%, 100% 50%, 85.3% 64.6%, 85.4% 85.4%, 64.6% 85.3%, 50% 100%, 35.4% 85.3%, 14.6% 85.4%, 14.7% 64.6%, 0% 50%, 14.7% 35.4%, 14.6% 14.6%, 35.4% 14.7%); }
+      .ach li.on .star { background: var(--lv); color: #fff; }
+      .ach li.on.gold .star { background: linear-gradient(135deg, #c99a2e, var(--gold) 55%, #8f6610); }
+      .ach .a-tr { font-size: 15px; font-weight: 650; color: var(--ink); line-height: 1.25; }
+      .ach li:not(.on) .a-tr { color: var(--body); }
+      .ach .a-en { font-size: 12px; color: var(--muted); font-style: italic; }
+      .ach .a-how { font-size: 12.5px; color: var(--body); line-height: 1.35; margin-top: 4px; }
+      .ach .bar { width: 100%; max-width: 110px; margin: 8px auto 0; height: 4px; }
+      .ach .a-n { font-size: 11.5px; color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
+
+      /* study calendar (UI-5): one square per learning day, Monday to Sunday down each week */
+      .cal { margin-top: 14px; }
+      .cal-m, .cal-g { display: grid; grid-template-columns: 26px repeat(var(--weeks), 13px); column-gap: 3px; }
+      .cal-m { height: 16px; font-size: 11px; color: var(--muted); }
+      .cal-m span { white-space: nowrap; overflow: visible; }
+      .cal-g { grid-template-rows: repeat(7, 13px); grid-auto-flow: column; row-gap: 3px; }
+      .cal-g .wd { grid-column: 1; font-size: 10.5px; line-height: 13px; color: var(--muted); }
+      .cal-g i { display: block; width: 13px; height: 13px; border-radius: 3px; background: #efeee9; }
+      .cal-g i.l1 { background: rgb(40 122 158 / 28%); }
+      .cal-g i.l2 { background: rgb(40 122 158 / 52%); }
+      .cal-g i.l3 { background: rgb(40 122 158 / 82%); }
+      .cal-g i.l4 { background: #155b7c; }
+      .cal-g i.cal-today { box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px var(--ink); }
+      .cal-g i.future { background: transparent; }
+      .cal-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+      .cal-key { display: inline-flex; align-items: center; gap: 3px; }
+      .cal-key i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
       .avatar.pic { background: none; }
       .chars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
       .char { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 4px 10px; border: 1px solid var(--line); border-radius: var(--r); background: #fff; font: inherit; color: var(--ink); cursor: pointer; transition: border-color .15s, background-color .15s; }
@@ -389,6 +454,42 @@
         *, *::before, *::after { transition: none !important; animation: none !important; }
         html { scroll-behavior: auto; }
       }
+    </style>
+    <style>
+      /* Level colours, the Turkish typeface and the İznik pattern (decided in UI-5, PROJECT.md 3).
+         The same block sits in turkish.html, turkishlesson.html, turkishguide.html and turkishcards.html. */
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap;
+                   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin-ext.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap;
+                   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin-italic.woff2") format("woff2"); font-weight: 400 700; font-style: italic; font-display: swap;
+                   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+      @font-face { font-family: "Lora TR"; src: url("/assets/fonts/lora-latin-ext-italic.woff2") format("woff2"); font-weight: 400 700; font-style: italic; font-display: swap;
+                   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+      :root {
+        --tr-font: "Lora TR", Georgia, "Times New Roman", serif;
+        /* --lv*: the colour of the level in scope (data-lvl); outside a level, the site blue. Buttons keep the site blue. */
+        --lv: #287a9e; --lv-dark: #155b7c; --lv-wash: rgb(40 122 158 / 11%); --lv-tint: rgb(40 122 158 / 5%); --lv-line: rgb(40 122 158 / 35%);
+        --gold: #a87812; --gold-dark: #7d5a0d; --gold-wash: rgb(168 120 18 / 13%);
+        --iznik: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke-width='1.3'%3E%3Cg stroke='%232452a0'%3E%3Crect x='21' y='21' width='22' height='22'/%3E%3Crect x='21' y='21' width='22' height='22' transform='rotate%2845 32 32%29'/%3E%3Ccircle cx='0' cy='0' r='11'/%3E%3Ccircle cx='64' cy='0' r='11'/%3E%3Ccircle cx='0' cy='64' r='11'/%3E%3Ccircle cx='64' cy='64' r='11'/%3E%3C/g%3E%3Cg stroke='%2311847f'%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3Cpath d='M32 -5l5 5-5 5-5-5zM32 59l5 5-5 5-5-5zM-5 32l5-5 5 5-5 5zM59 32l5-5 5 5-5 5z'/%3E%3Cpath d='M0 5.5a5.5 5.5 0 0 0 5.5-5.5M58.5 0a5.5 5.5 0 0 0 5.5 5.5M64 58.5a5.5 5.5 0 0 0-5.5 5.5M5.5 64a5.5 5.5 0 0 0-5.5-5.5'/%3E%3C/g%3E%3Cg stroke='%23c2462c'%3E%3Cpath d='M32 17.5v-4M32 46.5v4M17.5 32h-4M46.5 32h4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+      /* İznik tiles: turquoise, cobalt, green, tomato red, manganese purple, and the deep ink of the outlines. Gold is kept for "mastered". */
+      [data-lvl="a1"] { --lv: #11847f; --lv-dark: #0a5f5b; --lv-wash: rgb(17 132 127 / 12%); --lv-tint: rgb(17 132 127 / 5%); --lv-line: rgb(17 132 127 / 35%); }
+      [data-lvl="a2"] { --lv: #2452a0; --lv-dark: #1b3f7d; --lv-wash: rgb(36 82 160 / 11%); --lv-tint: rgb(36 82 160 / 5%); --lv-line: rgb(36 82 160 / 35%); }
+      [data-lvl="b1"] { --lv: #2b7d50; --lv-dark: #1d5c3a; --lv-wash: rgb(43 125 80 / 12%); --lv-tint: rgb(43 125 80 / 5%); --lv-line: rgb(43 125 80 / 35%); }
+      [data-lvl="b2"] { --lv: #c2462c; --lv-dark: #9a3420; --lv-wash: rgb(194 70 44 / 11%); --lv-tint: rgb(194 70 44 / 5%); --lv-line: rgb(194 70 44 / 35%); }
+      [data-lvl="c1"] { --lv: #6c3f9e; --lv-dark: #51307a; --lv-wash: rgb(108 63 158 / 11%); --lv-tint: rgb(108 63 158 / 5%); --lv-line: rgb(108 63 158 / 35%); }
+      [data-lvl="c2"] { --lv: #2d3a56; --lv-dark: #232d43; --lv-wash: rgb(45 58 86 / 11%); --lv-tint: rgb(45 58 86 / 5%); --lv-line: rgb(45 58 86 / 35%); }
+      /* Turkish in its own typeface, so it stands apart from the English around it */
+      [lang="tr"] { font-family: var(--tr-font); }
+      .lv-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: var(--lv-wash); color: var(--lv-dark); font-size: 11.5px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; }
+      /* a tile of the wall: laid (unit done) in its level's colour, glazed gold once the unit is mastered */
+      .tw-t { position: relative; display: block; aspect-ratio: 1; border-radius: 3px; background: #f3f2ee; box-shadow: inset 0 0 0 1px #e4e3df; }
+      .tw-t.open { background: var(--lv-tint); box-shadow: inset 0 0 0 1px var(--lv-wash); }
+      .tw-t.laid { background: var(--lv); box-shadow: none; }
+      .tw-t.gold { background: linear-gradient(135deg, #c99a2e, var(--gold) 55%, #8f6610); box-shadow: none; }
+      .tw-t.laid::before, .tw-t.gold::before { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .85); border-radius: 1px; transform: rotate(45deg); }
+      .tw-t.laid::after, .tw-t.gold::after { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .55); border-radius: 1px; }
     </style>
     <script defer src="/assets/js/turkish.js"></script>
     <script defer src="/assets/js/turkish-account.js"></script>
@@ -522,7 +623,21 @@
       var store = T.store, esc = T.esc, P = T.C.PAGES, A = T.account || null;   // A: online profiles (turkish-account.js)
       var $ = function (id) { return document.getElementById(id); };
       store.course(); store.cards(); store.settings();   // read all three now, so a problem with any of them shows at once
-      var st = { index: null, levels: {}, deck: null, deckLoading: false, voice: undefined, open: {}, error: null };
+      var st = { index: null, levels: {}, deck: null, deckLoading: false, voice: undefined, open: {}, error: null, fresh: null };
+      var reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+      // What the lesson player just finished (sessionStorage "trk:v1:fresh", written by turkishlesson.html), so the
+      // way back can fill it in: the lesson's number, the unit's node, the wall's new tile. Read once, then cleared.
+      var FRESH = "trk:v1:fresh";
+      function takeFresh() {
+        var o = null;
+        try { o = JSON.parse(sessionStorage.getItem(FRESH) || "null"); sessionStorage.removeItem(FRESH); } catch (e) { o = null; }
+        if (!o || typeof o !== "object" || !(Date.now() - o.t < 30 * 60 * 1000)) return null;
+        o.lessons = o.lessons || {}; o.units = o.units || {};
+        setTimeout(function () { st.fresh = null; }, 4000);   // later re-renders draw everything at rest
+        return reduce ? null : o;
+      }
+      st.fresh = takeFresh();
 
       var ICON = {
         check: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -572,7 +687,7 @@
         var html = "";
         if (next) {
           var u = f.unit[next.unit];
-          html += '<div class="card next"><p class="eyebrow">' + (done ? "Continue" : "Start here") + " · " + esc(unitLabel(u)) + "</p>" +
+          html += '<div class="card next" data-lvl="' + esc(u.level) + '"><p class="eyebrow">' + (done ? "Continue" : "Start here") + " · " + esc(unitLabel(u)) + "</p>" +
             "<h3>" + esc(next.title) + "</h3>" +
             '<p class="sub">Lesson ' + next.num + " of " + u.lessons.length + " · " + esc(u.title) + " · " + plural(next.exercises, "exercise") + "</p>" +
             '<a class="btn primary block" href="' + P.lesson + "?id=" + esc(next.id) + '">' + (done ? "Continue" : "Start the first lesson") + "</a></div>";
@@ -590,12 +705,35 @@
           '<div class="stat">' + ring(g.ratio, g.met) + '<div><div class="big">' + g.xp + ' <small>XP</small></div><div class="lbl">' + (g.met ? "Goal met" : "of " + g.goal + " today") + "</div></div></div>" +
           '<div class="stat"><span class="flame' + (s.current ? " on" : "") + '">' + ICON.flame + '</span><div><div class="big">' + plural(s.current, "day") + '</div><div class="lbl">Streak' + (s.best > s.current ? " · best " + s.best : "") + "</div></div></div>" +
           '<p class="note">' + note + "</p></div>";
+        html += wallHtml(ix, course, set);
         html += cardsPanel(ix, course, set, now);
         var m = T.progress.mistakesDue(course).length;
         if (m) html += '<div class="card mini"><div class="row"><h3>Your mistakes</h3></div><p class="counts"><b>' + m + "</b> " + (m === 1 ? "exercise" : "exercises") + ' to try again</p><a class="btn" href="' + P.lesson + '?practice=mistakes">Practise</a></div>';
         var mastered = f.units.filter(function (x) { return course.units[x.id] && course.units[x.id].reviewed; }).length;
         html += '<p class="totals"><b>' + course.xp.total + "</b> XP · <b>" + done + "</b> of " + f.lessons.length + " lessons written so far" + (mastered ? " · <b>" + mastered + "</b> " + (mastered === 1 ? "unit" : "units") + " mastered" : "") + "</p>";
         $("today").innerHTML = html;
+      }
+      // The tile wall (UI-5): a tile per unit, laid in the level's colour once the unit is done, glazed gold once it's mastered.
+      function wallHtml(ix, course, set) {
+        var f = T.path.flatten(ix), laid = 0, gold = 0, fr = st.fresh;
+        var rows = ix.levels.map(function (lv) {
+          return '<span class="tw-l" data-lvl="' + lv.id + '">' + lv.cefr + "</span>" + lv.units.map(function (x) {
+            var u = f.unit[x.id], rec = course.units[u.id] || {}, cls, state;
+            if (u.status !== "ready") { cls = ""; state = "coming soon"; }
+            else if (rec.reviewed) { cls = " gold"; state = "mastered"; gold += 1; laid += 1; }
+            else if (T.path.unitDone(ix, course, u.id)) { cls = " laid"; state = "done"; laid += 1; }
+            else { cls = " open"; state = "not finished yet"; }
+            var isFresh = fr && fr.units[u.id] && cls !== "" && cls !== " open";
+            return '<a class="tw-t' + cls + (isFresh ? " fresh" : "") + '" data-lvl="' + lv.id + '" href="#' + u.id + '" tabindex="-1" title="' +
+              esc(unitLabel(u) + ": " + u.title + " · Interlude: " + u.interlude + " · " + state) + '"></a>';
+          }).join("");
+        }).join("");
+        var total = f.units.length;
+        var note = !laid ? "Finish a unit to lay its tile. Pass the unit's review to glaze it gold."
+          : laid === total ? "The panel is complete. <i lang=\"tr\">Eline sağlık!</i>" : "Pass a unit's review to glaze its tile gold.";
+        return '<div class="card wall-card"><div class="mini"><div class="row"><h3>Tile wall</h3><span class="lmeta">' + laid + " of " + total + " laid" + (gold ? " · " + gold + " gold" : "") + "</span></div></div>" +
+          '<div class="wall" role="img" aria-label="' + esc("Tile wall: " + laid + " of " + total + " tiles laid" + (gold ? ", " + gold + " glazed gold" : "") + ", one per finished unit") + '">' + rows + "</div>" +
+          '<p class="wall-note">' + note + "</p></div>";
       }
       function cardsPanel(ix, course, set, now) {
         var head = '<div class="row"><h3>Flashcards</h3>';
@@ -626,7 +764,7 @@
         $("path-meta").textContent = plural(ix.counts.units, "unit") + " written of " + f.units.length + " · " + plural(ix.counts.exercises, "exercise");
         $("lvl-nav").innerHTML = ix.levels.map(function (lv) {
           var s = levelStats(lv, course);
-          return '<a class="lvl-chip' + (lv.id === hereLevel ? " here" : "") + '" href="#' + lv.id + '">' + lv.cefr + " <small>" + (s.ready ? s.doneUnits + "/" + s.total : "soon") + "</small></a>";
+          return '<a class="lvl-chip' + (lv.id === hereLevel ? " here" : "") + '" data-lvl="' + lv.id + '" href="#' + lv.id + '">' + lv.cefr + " <small>" + (s.ready ? s.doneUnits + "/" + s.total : "soon") + "</small></a>";
         }).join("");
         $("levels").innerHTML = ix.levels.map(function (lv) { return renderLevel(lv, course, set, f, next); }).join("");
       }
@@ -640,7 +778,7 @@
           if (L.canDo && L.canDo.length) body += '<ul class="cando" aria-label="By the end of ' + lv.cefr + ', you can">' + L.canDo.map(function (c) { return "<li>" + esc(c) + "</li>"; }).join("") + "</ul>";
         }
         body += '<ol class="units">' + lv.units.map(function (u) { return renderUnit(f.unit[u.id], course, set, next); }).join("") + "</ol>";
-        return '<details class="level' + (s.ready ? " has-content" : "") + '" id="' + lv.id + '"' + (open ? " open" : "") + ">" +
+        return '<details class="level' + (s.ready ? " has-content" : "") + '" id="' + lv.id + '" data-lvl="' + lv.id + '"' + (open ? " open" : "") + ">" +
           '<summary><span class="badge" aria-hidden="true">' + lv.cefr + '</span><span><span class="lvl-title"><span class="sr">' + lv.cefr + ": </span>" + esc(lv.title) + '</span><span class="lvl-meta">' + meta + "</span>" +
           (s.ready ? '<span class="lvl-bar" aria-hidden="true"><i style="width:' + Math.round(100 * s.doneUnits / s.total) + '%"></i></span>' : "") + "</span>" + ICON.chev + "</summary>" +
           '<div class="lvl-body">' + body + "</div></details>";
@@ -651,7 +789,8 @@
         }
         var us = T.path.unitState(st.index, course, set, u.id), rec = course.units[u.id] || {};
         var nodeInner = us.status === "done" ? ICON.check : u.num;
-        var h = '<li class="unit st-' + us.status + '" id="' + u.id + '" style="--p:' + Math.round(100 * us.done / us.total) + '%">' +
+        var fresh = st.fresh && st.fresh.units[u.id] && us.status === "done" ? " fresh" : "";
+        var h = '<li class="unit st-' + us.status + fresh + '" id="' + u.id + '" style="--p:' + Math.round(100 * us.done / us.total) + '%">' +
           '<span class="node" aria-hidden="true">' + nodeInner + "</span>" +
           '<article class="ucard" aria-labelledby="t-' + u.id + '"><div class="uhead">' +
           '<p class="ukick">' + esc(unitLabel(u)) + (us.mastered ? ' <span class="tag mastered">Mastered</span>' : "") + "</p>" +
@@ -662,7 +801,7 @@
           var r = course.lessons[l.id], unlocked = T.path.lessonUnlocked(st.index, course, set, l.id);
           var isNext = next && next.id === l.id;
           var href = P.lesson + "?id=" + l.id;
-          if (r) return '<li><a class="lesson done" href="' + href + '"><span class="lnum">' + ICON.check + '</span><span class="lt">' + esc(l.title) + '</span><span class="lmeta">' + (r.via === "test" ? "tested out" : pct(r.best)) + '<span class="sr">, done</span></span></a></li>';
+          if (r) return '<li><a class="lesson done' + (st.fresh && st.fresh.lessons[l.id] ? " fresh" : "") + '" href="' + href + '"><span class="lnum">' + ICON.check + '</span><span class="lt">' + esc(l.title) + '</span><span class="lmeta">' + (r.via === "test" ? "tested out" : pct(r.best)) + '<span class="sr">, done</span></span></a></li>';
           if (!unlocked) return '<li><span class="lesson locked" title="Finish the lesson before this one first"><span class="lnum">' + ICON.lock + '</span><span class="lt">' + esc(l.title) + '<span class="sr"> (locked)</span></span><span></span></span></li>';
           return '<li><a class="lesson ' + (isNext ? "next" : "open") + '" href="' + href + '"><span class="lnum">' + l.num + '</span><span class="lt">' + esc(l.title) + "</span>" + (isNext ? '<span class="lgo">Start</span>' : '<span class="lmeta">' + plural(l.exercises, "exercise") + "</span>") + "</a></li>";
         }).join("") + "</ol>";
@@ -929,7 +1068,8 @@
         var where = A.user ? "" : '<p class="eyebrow" style="margin-bottom:-6px">Progress in this browser</p>';
         // level
         var c = s.certified, w = s.working;
-        h += where + '<div class="card"><div class="pf-level"><span class="pf-badge' + (c ? " on" : "") + '" aria-hidden="true">' + (c ? c.cefr : w ? w.cefr : "–") + "</span><div>" +
+        var badgeLv = c ? c.id : w ? w.id : null;
+        h += where + '<div class="card"><div class="pf-level"><span class="pf-badge' + (c ? " on" : "") + '"' + (badgeLv ? ' data-lvl="' + esc(badgeLv) + '"' : "") + ' aria-hidden="true">' + (c ? c.cefr : w ? w.cefr : "–") + "</span><div>" +
           "<h2>" + (c ? esc(c.cefr) + " certified" : "Working toward " + esc(w ? w.cefr : "A1")) + "</h2>" +
           '<p class="sub">' + (c ? "You've finished every unit of " + esc(c.cefr) + " · " + esc(c.title) + "." : "Finish every unit of a level to be certified at that level.") + "</p></div></div>";
         if (w) {
@@ -945,6 +1085,8 @@
           '<div class="pf-tile"><div class="big">' + g.xp + ' <small>/ ' + g.goal + '</small></div><div class="lbl">' + (g.met ? "Today · goal met" : "XP today") + "</div></div>" +
           '<div class="pf-tile"><div class="big">' + sk.current + ' <small>' + (sk.current === 1 ? "day" : "days") + '</small></div><div class="lbl">Streak' + (sk.best > sk.current ? " · best " + sk.best : "") + "</div></div>" +
           '<div class="pf-tile"><div class="big">' + num(s.daysActive) + '</div><div class="lbl">' + (s.daysActive === 1 ? "Day" : "Days") + " studied</div></div></div>";
+        h += achievementsHtml(ix, course, store.cards(), set);
+        h += calendarHtml(course, store.cards(), set);
         // XP, last 14 days
         var today = T.today(set), days = [], max = g.goal, week = 0;
         for (var i = 13; i >= 0; i--) { var d = T.addDays(today, -i), x = course.xp.days[d] || 0; days.push({ d: d, x: x }); max = Math.max(max, x); if (i < 7) week += x; }
@@ -968,12 +1110,57 @@
         h += '<div class="card"><div class="pf-card-h"><h3>Levels</h3><span>' + s.levels.filter(function (l) { return l.certified; }).length + " of " + s.levels.length + ' certified</span></div><ol class="pf-lvls">' +
           s.levels.map(function (l) {
             var m = l.certified ? '<span class="tag cert">Certified</span>' : !l.written ? '<span class="tag soon">Coming soon</span>' : l.done + " / " + l.total + " units";
-            return '<li class="pf-lv' + (l.certified ? " cert" : "") + '"><span class="badge" aria-hidden="true">' + l.cefr + '</span><div><p class="t"><span class="sr">' + l.cefr + ": </span>" + esc(l.title) +
+            return '<li class="pf-lv' + (l.certified ? " cert" : "") + '"' + (l.written ? ' data-lvl="' + esc(l.id) + '"' : "") + '><span class="badge" aria-hidden="true">' + l.cefr + '</span><div><p class="t"><span class="sr">' + l.cefr + ": </span>" + esc(l.title) +
               (l.written && l.written < l.total ? " <span>· " + l.written + " of " + l.total + " written</span>" : "") + "</p>" + (l.written ? barHtml(ratio(l.done, l.total), "thin") : "") + '</div><span class="m">' + m + "</span></li>";
           }).join("") + "</ol></div>";
         el.innerHTML = h;
         renderChars(s);
       }
+      // Achievements (UI-5, TRK.progress.achievements): earned ones in colour, the others with how far along they are.
+      function achievementsHtml(ix, course, cards, set) {
+        var list = T.progress.achievements(ix, course, cards, set, Date.now()), got = list.filter(function (a) { return a.done; }).length;
+        return '<div class="card"><div class="pf-card-h"><h3>Achievements</h3><span>' + got + " of " + list.length + ' earned</span></div><ul class="ach">' +
+          list.map(function (a) {
+            var gold = a.hue === "gold";
+            return '<li class="' + (a.done ? "on" : "") + (gold ? " gold" : "") + '"' + (gold ? "" : ' data-lvl="' + esc(a.hue) + '"') + ">" +
+              '<span class="star" aria-hidden="true">' + esc(a.glyph) + "</span>" +
+              '<span class="a-tr" lang="tr">' + esc(a.tr) + '</span><span class="a-en">' + esc(a.en) + "</span>" +
+              '<span class="a-how">' + esc(a.text) + "</span>" +
+              (a.done ? '<span class="sr">Earned.</span>' : barHtml(ratio(a.have, a.need), "thin") + '<span class="a-n">' + num(a.have) + " / " + num(a.need) + "</span>") + "</li>";
+          }).join("") + "</ul></div>";
+      }
+      // Study calendar (UI-5): a square per learning day, darker for more study (XP plus cards, against the daily goal).
+      function calendarHtml(course, cards, set) {
+        var box = $("pf-dash"), width = box ? box.clientWidth - 36 : 640;   // the card's inner width
+        var weeks = Math.max(8, Math.min(53, Math.floor((width - 26 + 3) / 16)));
+        var today = T.today(set), p = today.split("-"), dow = (new Date(+p[0], +p[1] - 1, +p[2]).getDay() + 6) % 7;   // Monday = 0
+        var start = T.addDays(today, -(weeks - 1) * 7 - dow), goal = set.dailyGoal, days = 0, cells = "", months = "", lastMonth = null;
+        var fmt = function (day, o) { var q = day.split("-"); return new Date(+q[0], +q[1] - 1, +q[2]).toLocaleDateString("en-CA", o); };
+        for (var w = 0; w < weeks; w++) {
+          var first = T.addDays(start, w * 7), m = first.slice(0, 7);
+          if (m !== lastMonth) { if (lastMonth !== null || +first.slice(8) <= 7) months += '<span style="grid-column:' + (w + 2) + '">' + esc(fmt(first, { month: "short" })) + "</span>"; lastMonth = m; }
+          for (var d = 0; d < 7; d++) {
+            var day = T.addDays(start, w * 7 + d);
+            if (day > today) { cells += '<i class="future"></i>'; continue; }
+            var xp = course.xp.days[day] || 0, c = cards.days[day], n = c ? (c["new"] || 0) + (c.reviews || 0) : 0, score = xp + n;
+            var lvl = score <= 0 ? 0 : score < goal / 2 ? 1 : score < goal ? 2 : score < 2 * goal ? 3 : 4;
+            if (score > 0) days += 1;
+            cells += '<i class="l' + lvl + (day === today ? " cal-today" : "") + '" title="' + esc(fmt(day, { weekday: "short", month: "short", day: "numeric" }) + ": " + (score ? xp + " XP, " + plural(n, "card") : "no study")) + '"></i>';
+          }
+        }
+        var wd = ["Mon", "", "Wed", "", "Fri", "", ""].map(function (x, i) { return '<span class="wd" style="grid-row:' + (i + 1) + '">' + x + "</span>"; }).join("");
+        var key = [0, 1, 2, 3, 4].map(function (l) { return '<i class="l' + l + '" style="width:11px;height:11px"></i>'; }).join("");
+        var sk = T.progress.streak(course, set, Date.now());
+        return '<div class="card"><div class="pf-card-h"><h3>Study calendar</h3><span>' + plural(days, "day") + " in the last " + weeks + " weeks</span></div>" +
+          '<div class="cal" style="--weeks:' + weeks + '" role="img" aria-label="' + esc("Study calendar: you studied on " + plural(days, "day") + " in the last " + weeks + " weeks; longest streak " + plural(sk.best, "day") + ".") + '">' +
+          '<div class="cal-m" aria-hidden="true">' + months + '</div><div class="cal-g">' + wd + cells + "</div></div>" +
+          '<div class="cal-foot"><span>Longest streak: ' + plural(sk.best, "day") + '</span><span class="cal-key cal-g" style="display:inline-flex">Less ' + key + " More</span></div></div>";
+      }
+      var calWidth = 0;
+      window.addEventListener("resize", function () {
+        clearTimeout(calWidth);
+        calWidth = setTimeout(function () { if (!$("profile").hidden && st.index) renderDash(); }, 200);
+      });
       // ── characters: one per level, unlocked by certifying it ──
       function renderChars(s) {
         var el = $("pf-chars");
@@ -1068,6 +1255,7 @@
       store.onChange(function () { renderSettings(); if (st.index) render(); else renderNotices(); });
       window.addEventListener("hashchange", openFromHash);
       document.addEventListener("visibilitychange", function () { if (!document.hidden && st.index) { store.forget(); render(); } });   // a new day, or progress made in another tab
+      window.addEventListener("pageshow", function (e) { if (e.persisted && st.index) { st.fresh = takeFresh(); store.forget(); render(); } });   // back from a lesson, from the back-forward cache
       showView();
       renderSettings();
       renderNotices();
