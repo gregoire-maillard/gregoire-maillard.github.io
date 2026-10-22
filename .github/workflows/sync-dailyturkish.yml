@@ -1,0 +1,61 @@
+# Mirrors the Turkish section of gregoiremaillard.com to dailyturkish.tr.
+# Source of truth = this repo. On every push to main that touches a Turkish
+# file, copy those files (same paths) into a fresh folder, make turkish.html
+# the home page, add CNAME dailyturkish.tr, and force-push the result to the
+# repo gregoire-maillard/dailyturkish (served by GitHub Pages).
+# Never edit the dailyturkish repo by hand: it is overwritten on each sync.
+name: Sync Turkish section to dailyturkish.tr
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "turkish*.html"
+      - "assets/js/turkish*.js"
+      - "assets/data/turkish/**"
+      - "assets/fonts/**"
+      - "assets/img/favicon.png"
+      - "assets/img/ataturk.*"
+      - "stylesheets/styles.css"
+      - ".github/workflows/sync-dailyturkish.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: sync-dailyturkish
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build the mirror
+        run: |
+          set -euo pipefail
+          mkdir out
+          for p in turkish.html turkishcards.html turkishguide.html turkishlesson.html \
+                   assets/js/turkish.js assets/js/turkish-account.js \
+                   assets/data/turkish assets/fonts \
+                   assets/img/favicon.png assets/img/ataturk.png assets/img/ataturk.webp \
+                   stylesheets/styles.css; do
+            if [ -e "$p" ]; then mkdir -p "out/$(dirname "$p")"; cp -R "$p" "out/$p"; fi
+          done
+          cp turkish.html out/index.html          # dailyturkish.tr/ opens the course hub
+          echo "dailyturkish.tr" > out/CNAME
+          touch out/.nojekyll                     # serve files exactly as they are
+          ls -R out | head -50
+
+      - name: Publish to gregoire-maillard/dailyturkish
+        env:
+          TOKEN: ${{ secrets.DAILYTURKISH_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd out
+          git init -q -b main
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Mirror of gregoiremaillard.com Turkish section @ ${GITHUB_SHA::7}"
+          git push --force "https://x-access-token:${TOKEN}@github.com/gregoire-maillard/dailyturkish.git" main
