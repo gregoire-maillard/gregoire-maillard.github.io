@@ -43,15 +43,19 @@
   };
   var client = null, libPromise = null, subs = [], applying = false, pushTimer = null, chain = Promise.resolve();
 
-  function emit() { subs.slice().forEach(function (fn) { try { fn(A); } catch (e) { setTimeout(function () { throw e; }); } }); }
+  function emit() { try { paintTab(); } catch (e) {} subs.slice().forEach(function (fn) { try { fn(A); } catch (e) { setTimeout(function () { throw e; }); } }); }
   function ls(fn) { try { return fn(window.localStorage); } catch (e) { return null; } }
   function hasToken() { return !!ls(function (s) { return s.getItem(TOKEN_KEY); }); }
   function urlHasAuth() { return /(?:^#|&)(?:access_token|error_description|error_code)=/.test(location.hash); }
   function marker() { var m = ls(function (s) { return JSON.parse(s.getItem(SYNC_KEY) || "null"); }); return m && typeof m === "object" ? m : null; }
   function setMarker(m) { ls(function (s) { if (m) s.setItem(SYNC_KEY, JSON.stringify(m)); else s.removeItem(SYNC_KEY); }); }
 
-  // Level characters (64×64, drawn for this course). Each one is unlocked by certifying its level.
+  // Level characters (64×64, drawn for this course). Each one is unlocked by certifying its level, except Tekir,
+  // the starter every signed-in learner has from the first day (shown until another one is picked; never stored).
+  var START = "tekir";
   var AVATARS = [
+    { id: "tekir", cefr: "Start", name: "Tekir", blurb: "The Istanbul street cat who walks with you from day one",
+      art: "<circle cx='32' cy='32' r='32' fill='#efe7da'/><path d='M13 64c1-12 8-20 19-20s18 8 19 20z' fill='#df8f3f'/><path d='M26 64c0-8 3-14 6-14s6 6 6 14z' fill='#fbefe0'/><path d='M18 25l1-14 11 8zM46 25l-1-14-11 8z' fill='#e39a4b'/><path d='M20.5 21l.7-6.5 5 3.8zM43.5 21l-.7-6.5-5 3.8z' fill='#f4b6b0'/><ellipse cx='32' cy='31' rx='16' ry='14.5' fill='#e9a256'/><path d='M28 18.5q4 3 8 0M32 17v6M27 21.5l2 2.5M37 21.5l-2 2.5M16.5 30l4 1M16.5 34l4 0M47.5 30l-4 1M47.5 34l-4 0' stroke='#b2662a' stroke-width='1.5' fill='none' stroke-linecap='round'/><ellipse cx='32' cy='37.5' rx='7' ry='5' fill='#fbefe0'/><ellipse cx='26' cy='30' rx='2.6' ry='3' fill='#4a7a34'/><ellipse cx='38' cy='30' rx='2.6' ry='3' fill='#4a7a34'/><ellipse cx='26' cy='30.3' rx='1' ry='2.3' fill='#1f2a1a'/><ellipse cx='38' cy='30.3' rx='1' ry='2.3' fill='#1f2a1a'/><circle cx='26.8' cy='29' r='.7' fill='#fff'/><circle cx='38.8' cy='29' r='.7' fill='#fff'/><path d='M30.4 35h3.2l-1.6 1.9z' fill='#e07a7a'/><path d='M32 36.9q-1.6 2.2-3.4 1.1M32 36.9q1.6 2.2 3.4 1.1' stroke='#8a4a20' stroke-width='1.1' fill='none' stroke-linecap='round'/><path d='M24 37.5l-8-1.5M24 39l-8 1.5M40 37.5l8-1.5M40 39l8 1.5' stroke='#fff' stroke-width='.8' stroke-linecap='round' opacity='.9'/>" },
     { id: "a1", cefr: "A1", name: "Buzlu", blurb: "The penguin who started from zero, like everyone",
       art: "<circle cx=\"32\" cy=\"32\" r=\"32\" fill=\"#d7ecf4\"/><path d=\"M14 64c0-14 6-26 18-26s18 12 18 26z\" fill=\"#27313d\"/><ellipse cx=\"32\" cy=\"29\" rx=\"16\" ry=\"17\" fill=\"#27313d\"/><path d=\"M32 18c-6 0-11 4-11 11 0 6 4 10 11 10s11-4 11-10c0-7-5-11-11-11z\" fill=\"#fff\"/><path d=\"M23 64c0-9 4-16 9-16s9 7 9 16z\" fill=\"#fff\"/><circle cx=\"27.5\" cy=\"27\" r=\"2.3\" fill=\"#27313d\"/><circle cx=\"36.5\" cy=\"27\" r=\"2.3\" fill=\"#27313d\"/><circle cx=\"28.2\" cy=\"26.2\" r=\".8\" fill=\"#fff\"/><circle cx=\"37.2\" cy=\"26.2\" r=\".8\" fill=\"#fff\"/><path d=\"M28.5 31.5h7l-3.5 4z\" fill=\"#f29b2c\"/><circle cx=\"24\" cy=\"32\" r=\"2\" fill=\"#f4b6b0\" opacity=\".8\"/><circle cx=\"40\" cy=\"32\" r=\"2\" fill=\"#f4b6b0\" opacity=\".8\"/><path d=\"M18 41c4 3 9 4 14 4s10-1 14-4l1 5c-4 3-9 4-15 4s-11-1-15-4z\" fill=\"#d8333b\"/><path d=\"M40 45l3 12-5 1-2-11z\" fill=\"#b8262e\"/>" },
     { id: "a2", cefr: "A2", name: "Keloğlan", blurb: "The clever bald boy of the folk tales",
@@ -76,17 +80,19 @@
     return '<svg viewBox="0 0 64 64" width="' + size + '" height="' + size + '"' + (label ? ' role="img" aria-label="' + T.esc(label) + '"' : ' aria-hidden="true"') + ' style="display:block;flex:none">' +
       '<defs><clipPath id="' + c + '"><circle cx="32" cy="32" r="32"/></clipPath></defs><g clip-path="url(#' + c + ')">' + a.art + "</g></svg>";
   };
-  A.avatar = function () { var v = ls(function (s) { return s.getItem(AVATAR_KEY); }); return byId(v) ? v : null; };
+  A.START = START;
+  A.avatar = function () { var v = ls(function (s) { return s.getItem(AVATAR_KEY); }); return byId(v) && v !== START ? v : A.user ? START : null; };
   function setLocalAvatar(id) { ls(function (s) { if (id) s.setItem(AVATAR_KEY, id); else s.removeItem(AVATAR_KEY); }); paintTab(); }
   // Which characters are unlocked: one per certified level (from A.summary()).
   A.unlocked = function (summary) {
-    var out = {};
+    var out = {}; out[START] = true;
     summary.levels.forEach(function (l) { if (l.certified) out[l.id] = true; });
     return out;
   };
   // Picks a character (null: back to the initial). Saved in this browser, and in the profile when signed in.
   A.setAvatar = function (id) {
     if (id && !byId(id)) return Promise.reject(new Error("Unknown character."));
+    if (id === START) id = null;   // the starter is the default: nothing to store
     setLocalAvatar(id || null);
     emit();
     if (!A.user || !client) return Promise.resolve();
@@ -401,7 +407,8 @@
   function syncAvatar(row) {
     if (!("avatar" in row)) return;
     var mine = A.avatar();
-    if (row.avatar && byId(row.avatar)) { if (row.avatar !== mine) setLocalAvatar(row.avatar); }
+    if (mine === START) mine = null;
+    if (row.avatar && byId(row.avatar) && row.avatar !== START) { if (row.avatar !== mine) setLocalAvatar(row.avatar); }
     else if (mine) client.from(CFG.table).update({ avatar: mine }).eq("user_id", row.user_id).then(function () {});
   }
   // Push: send only the parts changed since the last sync, if nobody else wrote in between.

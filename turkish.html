@@ -736,7 +736,7 @@
         var name = A.profile && A.profile.display_name, av = A.avatar(), sub = "";
         var pic = av ? A.avatarSvg(av, 52) : '<span class="avatar" aria-hidden="true">' + esc(T.trUpper((name || (A.user && A.user.email) || "?").charAt(0))) + "</span>";
         if (A.user && A.profile && !name) sub = "Add your name in My Profile";
-        else if (A.user && !av && st.index && A.summary && A.unlocked) sub = Object.keys(A.unlocked(A.summary(st.index))).length ? "Pick your character in My Profile" : "Certify A1 to unlock your first character";
+        else if (A.user && av === A.START && st.index && A.summary && A.unlocked) sub = Object.keys(A.unlocked(A.summary(st.index))).length > 1 ? "Pick your character in My Profile" : "Certify A1 to unlock your next character";
         return h + '<span class="hello-pic">' + pic + '</span><span class="hello-bub"><span class="hello-say"><span lang="tr">Merhaba</span>' + (name ? ", " + esc(name) + "!" : "!") + "</span>" +
           (sub ? '<span class="hello-sub">' + esc(sub) + "</span>" : "") + "</span></a>";
       }
@@ -1197,7 +1197,7 @@
         // a character whose level isn't certified any more (progress reset) goes back to the initial
         if (mine && !open[mine] && (!A.user || A.sync === "saved")) { A.setAvatar(null).catch(function () {}); mine = null; }
         var note = pf.charMsg || (mine ? (function (a) { return "<b>" + esc(a.name) + "</b>: " + esc(a.blurb) + "."; })(A.AVATARS.filter(function (a) { return a.id === mine; })[0])
-          : n ? "Pick the character that shows next to your name." : "Certify A1 to unlock your first character.");
+          : n > 1 ? "Pick the character that shows next to your name." : "Certify A1 to unlock your next character.");
         el.innerHTML = '<div class="pf-card-h"><h3>Your character</h3><span>' + n + " of " + A.AVATARS.length + " unlocked</span></div>" +
           '<div class="chars">' + A.AVATARS.map(function (a) {
             var ok = !!open[a.id], on = ok && a.id === mine;
@@ -1207,7 +1207,7 @@
               (on ? '<span class="corner">' + ICON.check + "</span>" : !ok ? '<span class="corner">' + ICON.lock + "</span>" : "") +
               '<span class="sr">' + (ok ? (on ? ", your character" : "") : ", locked: certify " + a.cefr + " to unlock") + "</span></button>";
           }).join("") + "</div>" +
-          '<p class="char-note" role="status">' + note + (mine && !pf.charMsg ? ' <button type="button" class="linkbtn" data-av="">Use my initial</button>' : "") + "</p>";
+          '<p class="char-note" role="status">' + note + (mine && mine !== A.START && !pf.charMsg ? ' <button type="button" class="linkbtn" data-av="' + A.START + '">Back to Tekir</button>' : "") + "</p>";
         el.hidden = false;
       }
       $("pf-chars").addEventListener("click", function (e) {
