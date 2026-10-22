@@ -747,5 +747,12 @@
       boot();
     });
     </script>
-  </body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const sb = supabase.createClient(
+    'https://xmbwayxoqlvhqenmiyzr.supabase.co/rest/v1',
+    'sb_publishable_Xz3OM6yw0acx58SKoVFFaQ_iuQXWIxm'
+  );
+  sb.from('progress').select('*').then(r => console.log('Supabase test:', r));
+</script></body>
 </html>
