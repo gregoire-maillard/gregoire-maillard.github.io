@@ -1,0 +1,299 @@
+{
+  "id": "b2-u04-l01",
+  "unit": "b2-u04",
+  "order": 1,
+  "title": "I know you'll come",
+  "goal": "Report facts and beliefs with -DIğI and -(y)AcAğI as noun clauses.",
+  "points": ["gp-dik-clauses"],
+  "intro": {
+    "text": "Turkish has no word for **that** in *I know that you came*. The clause becomes a noun: `-DIk` or `-(y)AcAk`, a possessive for the doer, then the case the main verb needs: *Geldiğini biliyorum* (I know you came), *Geleceğine sevindim* (I'm glad you'll come), *Haklı olduğundan eminim* (I'm sure she's right).",
+    "see": "gp-dik-clauses"
+  },
+  "vocab": [
+    {
+      "tr": "şüphe",
+      "en": "doubt (şüphe etmek: to doubt)",
+      "pos": "noun"
+    },
+    {
+      "tr": "şüphelenmek",
+      "en": "to suspect (something: ablative)",
+      "pos": "verb"
+    },
+    {
+      "tr": "fark etmek",
+      "en": "to notice, to realize",
+      "pos": "verb",
+      "card": "fc-0256"
+    },
+    {
+      "tr": "farkında",
+      "en": "aware (of: genitive; bunun farkındayım: I'm aware of it)",
+      "pos": "adj"
+    },
+    {
+      "tr": "zannetmek",
+      "en": "to think, to suppose (often wrongly)",
+      "pos": "verb"
+    },
+    {
+      "tr": "iddia etmek",
+      "en": "to claim",
+      "pos": "verb"
+    },
+    {
+      "tr": "inkâr etmek",
+      "en": "to deny",
+      "pos": "verb"
+    },
+    {
+      "tr": "kanıtlamak",
+      "en": "to prove",
+      "pos": "verb"
+    },
+    {
+      "tr": "sır",
+      "en": "secret (accusative: sırrı)",
+      "pos": "noun",
+      "card": "fc-0640"
+    },
+    {
+      "tr": "saklamak",
+      "en": "to hide; to keep (a secret)",
+      "pos": "verb",
+      "card": "fc-0484"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "b2-u04-l01-e01",
+      "type": "mcq",
+      "points": ["gp-dik-clauses"],
+      "question": "*Ali'nin geleceğini biliyorum.* What do I know?",
+      "options": ["That Ali will come.", "That Ali came.", "Whether Ali will come."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**That Ali came** would be *Ali'nin geldiğini*, with `-DIk`.",
+        "2": "**Whether** would be *gelip gelmeyeceğini*, with the positive and the negative."
+      },
+      "explain": "`-(y)AcAk` + possessive + accusative: *gel-eceğ-i-n-i*, **that he will come**."
+    },
+    {
+      "id": "b2-u04-l01-e02",
+      "type": "cloze",
+      "points": ["gp-dik-clauses"],
+      "text": "Selin'in Ankara'ya ___ duydum.",
+      "en": "I heard that Selin had moved to Ankara.",
+      "blanks": [
+        {
+          "accept": ["taşındığını"],
+          "reject": [
+            {
+              "answer": "taşındı",
+              "why": "*Duydum* needs a noun as its object: `-DIk`, the possessive and the accusative, *taşındığını*."
+            },
+            {
+              "answer": "taşındığı",
+              "why": "The clause is the object of *duydum*, so it takes the accusative, after the n of the third person: *taşındığını*."
+            }
+          ]
+        }
+      ],
+      "hint": "`-DIk`, the possessive for **she**, then the case *duymak* needs.",
+      "explain": "*taşın-dığ-ı-n-ı*: **that she (had) moved**, the object of *duydum*."
+    },
+    {
+      "id": "b2-u04-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-dik-clauses"],
+      "base": "çalışmak",
+      "form": "dik-clause-accusative",
+      "label": "*çalışmak* + *biliyor*: she knows that I studied, that you studied…",
+      "cells": [
+        {
+          "p": "ben",
+          "accept": ["çalıştığımı"]
+        },
+        {
+          "p": "sen",
+          "accept": ["çalıştığını"]
+        },
+        {
+          "p": "o",
+          "accept": ["çalıştığını"]
+        },
+        {
+          "p": "biz",
+          "accept": ["çalıştığımızı"]
+        },
+        {
+          "p": "siz",
+          "accept": ["çalıştığınızı"]
+        },
+        {
+          "p": "onlar",
+          "accept": ["çalıştıklarını"]
+        }
+      ],
+      "explain": "`-DIk` becomes *-dığ-* before a vowel, then the possessive and the accusative: *çalış-tığ-ım-ı*. For **they**: *çalış-tık-ları-n-ı*. **You** and **he** look the same: *çalıştığını*."
+    },
+    {
+      "id": "b2-u04-l01-e04",
+      "type": "translate",
+      "points": ["gp-dik-clauses"],
+      "from": "en",
+      "prompt": "I didn't know you were ill.",
+      "accept": [
+        "Hasta olduğunu bilmiyordum.",
+        "Ben (senin) hasta olduğunu bilmiyordum.",
+        "Senin hasta olduğunu bilmiyordum.",
+        "(Ben) (sizin) hasta olduğunuzu bilmiyordum.",
+        "Hasta [olduğundan|olduğunuzdan] haberim yoktu.",
+        "Senin hasta olduğundan haberim yoktu.",
+        "Sizin hasta olduğunuzdan haberim yoktu."
+      ],
+      "reject": [
+        {
+          "answer": "Hasta olduğumu bilmiyordum.",
+          "why": "*Olduğumu* is **that I was** ill. **You** were ill: *olduğunu*, or *olduğunuzu*."
+        },
+        {
+          "answer": "Hastaydın bilmiyordum.",
+          "why": "*Bilmiyordum* needs a noun object: *hasta olduğunu*, with *olmak*, `-DIk` and the accusative."
+        }
+      ],
+      "explain": "*hasta ol-duğ-un-u*: the adjective goes through *olmak*, then `-DIk`, your possessive and the accusative."
+    },
+    {
+      "id": "b2-u04-l01-e05",
+      "type": "translate",
+      "points": ["gp-dik-clauses"],
+      "from": "tr",
+      "prompt": "Ali'nin bu sırrı saklayacağından eminim.",
+      "accept": [
+        "I am sure that Ali will keep this secret.",
+        "I am sure Ali will keep [this|the] secret.",
+        "I am sure that Ali will keep the secret.",
+        "I am [certain|convinced] (that) Ali will keep [this|the] secret."
+      ]
+    },
+    {
+      "id": "b2-u04-l01-e06",
+      "type": "listen",
+      "points": ["gp-dik-clauses"],
+      "mode": "type",
+      "tr": "Haklı olduğunu kanıtladı.",
+      "en": "She proved that she was right."
+    },
+    {
+      "id": "b2-u04-l01-e07",
+      "type": "wordbank",
+      "points": ["gp-dik-clauses"],
+      "from": "tr",
+      "prompt": "Murat bu sırrı bilmediğini iddia ediyor.",
+      "text": "Murat claims that he does not know this secret.",
+      "answer": ["Murat", "claims", "that", "he", "does", "not", "know", "this", "secret"],
+      "distractors": ["knew", "the", "wants"],
+      "accept": ["Murat claims he does not know this secret."]
+    },
+    {
+      "id": "b2-u04-l01-e08",
+      "type": "mcq",
+      "points": ["gp-dik-clauses"],
+      "question": "*Haklı ___ eminim.* (I'm sure you're right.) Which form fits?",
+      "options": ["olduğundan", "olduğunu", "olduğuna"],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "*Emin olmak* doesn't take the accusative: you are sure **of** something, so the ablative.",
+        "2": "The dative goes with *inanmak* or *sevinmek*; *emin olmak* takes the ablative."
+      },
+      "explain": "*-DAn eminim*, **I'm sure of**: *haklı ol-duğ-un-dan eminim*."
+    },
+    {
+      "id": "b2-u04-l01-e09",
+      "type": "translate",
+      "points": ["gp-dik-clauses", "gp-ma-possessive"],
+      "from": "en",
+      "prompt": "We were so glad you came.",
+      "accept": [
+        "Geldiğine çok sevindik.",
+        "Biz (senin) geldiğine çok sevindik.",
+        "Senin geldiğine çok sevindik.",
+        "(Biz) (sizin) geldiğinize çok sevindik.",
+        "(Biz) (senin) gelmene çok sevindik.",
+        "(Biz) (sizin) gelmenize çok sevindik.",
+        "[Geldiğin|Geldiğiniz] için çok sevindik."
+      ],
+      "reject": [
+        {
+          "answer": "Geldiğini çok sevindik.",
+          "why": "*Sevinmek* takes the dative: *geldiğine çok sevindik*."
+        }
+      ],
+      "explain": "*Sevinmek* takes the dative: *gel-diğ-in-e*. *Gelmene* is also right: with feelings, both `-DIk` and `-mA` work."
+    },
+    {
+      "id": "b2-u04-l01-e10",
+      "type": "morph",
+      "points": ["gp-dik-clauses"],
+      "base": "gelmek",
+      "gloss": "(that) they will come",
+      "parts": ["gel", "ecek", "leri", "n", "i"],
+      "distractors": ["eceğ", "ları", "ı"],
+      "result": "geleceklerini",
+      "explain": "Before the consonant of *-leri*, `-(y)AcAk` keeps its k; then the n of the third person and the accusative: *gel-ecek-leri-n-i*."
+    },
+    {
+      "id": "b2-u04-l01-e11",
+      "type": "listen",
+      "points": ["gp-dik-clauses"],
+      "mode": "choose",
+      "tr": "Burada olmadığını zannediyordum.",
+      "en": "I thought you weren't here.",
+      "options": ["Burada olmadığını zannediyordum.", "Burada olduğunu zannediyordum.", "Burada olmanı istiyordum."],
+      "answer": 0
+    },
+    {
+      "id": "b2-u04-l01-e12",
+      "type": "translate",
+      "points": ["gp-dik-clauses"],
+      "from": "tr",
+      "prompt": "Ali'nin yalan söylediğinden şüpheleniyorum.",
+      "accept": ["I suspect that Ali is lying.", "I suspect Ali is lying.", "I suspect (that) Ali [was lying|lied|has lied|is telling a lie|told a lie|has been lying]."]
+    },
+    {
+      "id": "b2-u04-l01-e13",
+      "type": "translate",
+      "points": ["gp-dik-clauses"],
+      "from": "en",
+      "prompt": "I noticed that the door was open.",
+      "accept": ["Kapının açık olduğunu fark ettim.", "Ben kapının açık olduğunu fark ettim."],
+      "reject": [
+        {
+          "answer": "Kapı açık olduğunu fark ettim.",
+          "why": "A noun doer takes the genitive in a noun clause: *kapının açık olduğunu*."
+        },
+        {
+          "answer": "Kapının açık olduğuna fark ettim.",
+          "why": "*Fark etmek* takes the accusative: *olduğunu fark ettim*."
+        }
+      ],
+      "explain": "*Kapı-nın açık ol-duğ-u-n-u fark ettim*: the doer in the genitive, the clause in the accusative."
+    },
+    {
+      "id": "b2-u04-l01-e14",
+      "type": "translate",
+      "points": ["gp-dik-clauses"],
+      "from": "tr",
+      "prompt": "Hata yaptığının farkında değil.",
+      "accept": [
+        "He is not aware that he made a mistake.",
+        "He is not aware [he made|that he has made|he has made] a mistake.",
+        "She is not aware (that) she [made|has made] a mistake.",
+        "[He|She] [is unaware|does not realize|does not realise] (that) [he|she] [made|has made] a mistake."
+      ]
+    }
+  ]
+}
