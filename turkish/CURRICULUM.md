@@ -78,7 +78,7 @@ The four sets of personal endings are taught explicitly: type I (-(y)Im, -sIn, -
 | Voice | passive, impersonal passive, reflexive, causative, reciprocal, stacked voices | b1-u10, b1-u11, b2-u07 |
 | Participles | -(y)An, -DIk, -(y)AcAk, -mIş, -(I)r / -mAz, -(y)AsI | b1-u05, b1-u06, b1-u03, b1-u05, c2-u02 |
 | Verbal nouns | -mAk, -mA, -(y)Iş, -mAzlIk | b1-u04, c1-u03 |
-| Converbs | -(y)ken, -(y)Ip, -(y)IncA, -(y)ArAk, -mAdAn, -DIktAn sonra, -(y)AlI, -(y)IncAyA kadar, -DIkçA, -DIğIndA, -DIğI için, -(I)r -mAz, -(y)A -(y)A, -mAksIzIn, -DIğI halde, -mAsInA rağmen, -DIğI sürece, -mAdIkçA, -DIğI takdirde | a2-u11, b1-u07, b1-u08, b2-u03, b2-u10 |
+| Converbs | -(y)ken, -(y)Ip, -(y)IncA, -(y)ArAk, -mAdAn, -DIktAn sonra, -(y)AlI, -(y)IncAyA kadar, -DIkçA, -DIğIndA, -DIğI için, -(I)r -mAz, -(y)A -(y)A, -mAksIzIn, -DIğI hâlde, -mAsInA rağmen, -DIğI sürece, -mAdIkçA, -DIğI takdirde | a2-u11, b1-u07, b1-u08, b2-u03, b2-u10 |
 | Compound verbs | -(y)Ivermek, -(y)Akalmak, -(y)Adurmak, -(y)Ayazmak, -(y)Agelmek, -(y)Ip durmak | b2-u06 |
 | Nouns | plural, six cases plus instrumental, possessives, genitive, compounds, -ki, pronominal n, buffer letters, softening, vowel loss | a1-u02 to a1-u12, a2-u10 |
 | Word building | -lI, -sIz, -CI, -lIk, -CA, -(ş)Ar, -lA, -lAş, -lAn, -Al, -CIk, -CAğIz, -(I)msI, -GAn, -GIn, -sAl, -DAş | a2-u12, b1-u11, b2-u09, c1-u03 |
@@ -495,7 +495,7 @@ Unreal conditions, concession, noun clauses, compound verbs and the gap between 
 
 #### b2-u03 · Although, despite, without · Yorgun olmasına rağmen
 - Grammar:
-  - `gp-digi-halde` — -DIğI halde "although"
+  - `gp-digi-halde` — -DIğI hâlde "although"
   - `gp-masina-ragmen` — -mAsInA rağmen, and noun + rağmen
   - `gp-maksizin` — -mAksIzIn "without" (formal), compared with -mAdAn
   - `gp-contrast-connectors` — ise (whereas), oysa, hâlbuki, buna rağmen, yine de, gerçi … ama
@@ -572,7 +572,7 @@ Unreal conditions, concession, noun clauses, compound verbs and the gap between 
 - Grammar:
   - `gp-digi-surece` — -DIğI sürece and -DIğI müddetçe "as long as"
   - `gp-madikca` — -mAdIkçA "unless"
-  - `gp-digi-takdirde` — -DIğI takdirde, -mAsI halinde, -(y)AcAk olursa
+  - `gp-digi-takdirde` — -DIğI takdirde, -mAsI hâlinde, -(y)AcAk olursa
   - `gp-time-clauses` — -DIğI zaman, -DIğI an, -DIğI sırada, -DIğIndAn beri, -(y)AnA kadar
   - `gp-correlatives` — hem … hem, ne … ne, ya … ya, ister … ister, gerek … gerekse
 - Vocabulary: music and performance
