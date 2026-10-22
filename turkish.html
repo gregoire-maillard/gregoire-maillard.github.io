@@ -59,6 +59,11 @@
         .at-hdr .at-tab { min-width: 44px; justify-content: center; padding: 0 10px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 10px; right: 10px; }
       }
+      .at-hdr .at-gear { display: none; }
+      @media (max-width: 599px) {
+        .at-hdr .at-gear { display: block; }
+        .at-hdr .at-set-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+      }
     </style>
     <style>
       /* Page: the site's tokens (stylesheets/styles.css), white page, hairline borders, cards like the Mobility Lab's. */
@@ -246,8 +251,8 @@
       }
 
       /* settings */
-      .settings { margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line); }
-      @media (max-width: 599px) { .settings { margin-top: 32px; } .set-grid { gap: 12px; } fieldset.set { padding: 12px 14px 14px; } }
+      .settings[hidden], #v-course[hidden] { display: none; }
+      @media (max-width: 599px) { .set-grid { gap: 12px; } fieldset.set { padding: 12px 14px 14px; } }
       .sec-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
       .sec-head h2 { font-size: 20px; font-weight: 650; }
       .sec-head p { font-size: 13.5px; color: var(--muted); }
@@ -297,9 +302,10 @@
       <div class="at-wrap">
         <a class="at-home" href="/" aria-label="Grégoire Maillard, home"><span class="at-mk"><i></i></span><span class="at-name">Grégoire Maillard</span></a>
         <nav class="at-tabs" aria-label="Turkish course">
-          <a class="at-tab" href="/turkish.html" aria-current="page">Course</a>
+          <a class="at-tab" href="/turkish.html" id="tab-course" aria-current="page">Course</a>
           <a class="at-tab" href="/turkishguide.html">Grammar</a>
           <a class="at-tab" href="/turkishcards.html">Flashcards</a>
+          <a class="at-tab at-set" href="/turkish.html#settings" id="tab-settings"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M10 12.6a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8.4 2.5h3.2l.4 2.1 1.4.8 2-.7 1.6 2.8-1.6 1.4v1.6l1.6 1.4-1.6 2.8-2-.7-1.4.8-.4 2.1H8.4l-.4-2.1-1.4-.8-2 .7-1.6-2.8 1.6-1.4V9.2L3 7.8l1.6-2.8 2 .7 1.4-.8.4-2.1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="at-set-l">Settings</span></a>
         </nav>
       </div>
     </div>
@@ -307,6 +313,7 @@
     <main class="wrap">
       <div class="notices" id="notices" role="status" aria-live="polite"></div>
 
+      <div id="v-course">
       <header class="hero">
         <p class="kicker">Turkish · A1 → C2</p>
         <h1>Learn Turkish</h1>
@@ -324,9 +331,14 @@
           <div id="levels"></div>
         </section>
       </div>
+      </div>
 
-      <section class="settings" id="settings" aria-labelledby="h-settings">
-        <div class="sec-head"><h2 id="h-settings">Settings</h2><p>Saved in this browser, with your progress.</p></div>
+      <section class="settings" id="settings" aria-labelledby="h-settings" hidden>
+        <header class="hero">
+          <p class="kicker">Turkish · A1 → C2</p>
+          <h1 id="h-settings">Settings</h1>
+          <p class="lede">Saved in this browser, with your progress. They apply to the lessons and the flashcards.</p>
+        </header>
         <div class="set-grid">
           <fieldset class="set">
             <legend>Daily goal</legend>
@@ -563,7 +575,30 @@
         var d = $(a.getAttribute("href").slice(1));
         if (d) { d.open = true; st.open[d.id] = true; }
       });
+      // ── views: the course, or the settings (#settings, the header's Settings tab) ──
+      var TITLE = document.title;
+      function showView() {
+        var set = location.hash === "#settings";
+        $("v-course").hidden = set;
+        $("settings").hidden = !set;
+        if (set) { $("tab-settings").setAttribute("aria-current", "page"); $("tab-course").removeAttribute("aria-current"); }
+        else { $("tab-course").setAttribute("aria-current", "page"); $("tab-settings").removeAttribute("aria-current"); }
+        document.title = set ? "Settings · Learn Turkish" : TITLE;
+        return set;
+      }
+      $("tab-settings").addEventListener("click", function (e) {
+        if (location.hash === "#settings") { e.preventDefault(); window.scrollTo(0, 0); }
+      });
+      $("tab-course").addEventListener("click", function (e) {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+        e.preventDefault();
+        if (location.hash) history.pushState(null, "", location.pathname + location.search);
+        showView(); window.scrollTo(0, 0);
+      });
+      window.addEventListener("popstate", showView);
+
       function openFromHash() {
+        if (showView()) { window.scrollTo(0, 0); return; }
         var id = decodeURIComponent(location.hash.slice(1));
         if (!id || !st.index) return;
         var el = $(id);
@@ -705,6 +740,7 @@
       store.onChange(function () { renderSettings(); if (st.index) render(); else renderNotices(); });
       window.addEventListener("hashchange", openFromHash);
       document.addEventListener("visibilitychange", function () { if (!document.hidden && st.index) { store.forget(); render(); } });   // a new day, or progress made in another tab
+      showView();
       renderSettings();
       renderNotices();
       T.tts.ready().then(function (v) { st.voice = v; renderVoice(); });

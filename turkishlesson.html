@@ -59,6 +59,11 @@
         .at-hdr .at-tab { min-width: 44px; justify-content: center; padding: 0 10px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 10px; right: 10px; }
       }
+      .at-hdr .at-gear { display: none; }
+      @media (max-width: 599px) {
+        .at-hdr .at-gear { display: block; }
+        .at-hdr .at-set-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+      }
     </style>
     <style>
       /* Lesson player: the hub's tokens (turkish.html), a single centred column, the answer dock pinned to the bottom. */
@@ -390,6 +395,7 @@
           <a class="at-tab" href="/turkish.html" aria-current="page">Course</a>
           <a class="at-tab" href="/turkishguide.html">Grammar</a>
           <a class="at-tab" href="/turkishcards.html">Flashcards</a>
+          <a class="at-tab at-set" href="/turkish.html#settings" id="tab-settings"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M10 12.6a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8.4 2.5h3.2l.4 2.1 1.4.8 2-.7 1.6 2.8-1.6 1.4v1.6l1.6 1.4-1.6 2.8-2-.7-1.4.8-.4 2.1H8.4l-.4-2.1-1.4-.8-2 .7-1.6-2.8 1.6-1.4V9.2L3 7.8l1.6-2.8 2 .7 1.4-.8.4-2.1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="at-set-l">Settings</span></a>
         </nav>
       </div>
     </div>
@@ -563,7 +569,7 @@
         var what = plural(n, "listening exercise");
         if (!T.tts.supported()) return '<p class="notice">This browser can\'t read text aloud, so ' + what + " " + (n === 1 ? "is" : "are") + " skipped.</p>";
         if (!S.voice) return '<p class="notice">' + esc(T.tts.HELP) + "</p>";
-        return '<p class="notice">Speech is off in your settings, so ' + what + " " + (n === 1 ? "is" : "are") + ' skipped. Turn on “Read Turkish aloud” on the <a href="' + P.hub + '#settings" data-keep="1">course page</a> to hear them.</p>';
+        return '<p class="notice">Speech is off in your settings, so ' + what + " " + (n === 1 ? "is" : "are") + ' skipped. Turn on “Read Turkish aloud” in <a href="' + P.hub + '#settings" data-keep="1">Settings</a> to hear them.</p>';
       }
       // Take one exercise at a time from each lesson in turn, so a review or test covers all of its lessons.
       function roundRobin(lists, n) {
@@ -697,7 +703,7 @@
           (unitLocked ? '<a class="btn" href="' + P.lesson + "?test=" + u.id + '">Take the “Jump here” test</a>' : "") + '<a class="btn" href="' + hubHref(u.id) + '">Back to the course</a>';
         message({ icon: ICON.lock, kicker: unitLabel(u) + " · Lesson " + meta.num, title: "This lesson is locked",
                   text: "Lessons open one after the other: finish <i>" + esc(prev.title) + "</i>" + (first ? ", the last lesson of " + esc(unitLabel(f.unit[prev.unit])) + "," : "") + " first." +
-                        (unitLocked ? " To skip ahead, take this unit's “Jump here” test." : "") + " You can also unlock every lesson in the settings on the course page.",
+                        (unitLocked ? " To skip ahead, take this unit's “Jump here” test." : "") + " You can also unlock every lesson in Settings.",
                   acts: acts });
       }
       function start(bodyHtml, metaText, label) {

@@ -59,6 +59,11 @@
         .at-hdr .at-tab { min-width: 44px; justify-content: center; padding: 0 10px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 10px; right: 10px; }
       }
+      .at-hdr .at-gear { display: none; }
+      @media (max-width: 599px) {
+        .at-hdr .at-gear { display: block; }
+        .at-hdr .at-set-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+      }
     </style>
     <style>
       /* Page: the site's tokens (stylesheets/styles.css), white page, hairline borders, cards like the Mobility Lab's. */
@@ -384,6 +389,7 @@
           <a class="at-tab" href="/turkish.html">Course</a>
           <a class="at-tab" href="/turkishguide.html">Grammar</a>
           <a class="at-tab" href="/turkishcards.html" aria-current="page">Flashcards</a>
+          <a class="at-tab at-set" href="/turkish.html#settings" id="tab-settings"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M10 12.6a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8.4 2.5h3.2l.4 2.1 1.4.8 2-.7 1.6 2.8-1.6 1.4v1.6l1.6 1.4-1.6 2.8-2-.7-1.4.8-.4 2.1H8.4l-.4-2.1-1.4-.8-2 .7-1.6-2.8 1.6-1.4V9.2L3 7.8l1.6-2.8 2 .7 1.4-.8.4-2.1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="at-set-l">Settings</span></a>
         </nav>
       </div>
     </div>
@@ -475,7 +481,7 @@
               <input type="file" id="p-file" accept="application/json,.json" hidden>
             </div>
             <div class="confirm" id="p-confirm" role="alert" hidden></div>
-            <p class="help">The daily XP goal, the letter bar and unlocking lessons are on the <a href="/turkish.html#settings">course page</a>, which can also reset everything.</p>
+            <p class="help">The daily XP goal, the letter bar and unlocking lessons are in the course <a href="/turkish.html#settings">Settings</a>, which can also reset everything.</p>
           </fieldset>
         </div>
       </section>
