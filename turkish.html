@@ -366,6 +366,21 @@
       .pf-lv .bar { margin-top: 6px; max-width: 320px; }
       .pf-lv .m { font-size: 12.5px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
       .tag.cert { background: #e6f2e9; color: #22603a; }
+      .avatar.pic { background: none; }
+      .chars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+      .char { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 4px 10px; border: 1px solid var(--line); border-radius: var(--r); background: #fff; font: inherit; color: var(--ink); cursor: pointer; transition: border-color .15s, background-color .15s; }
+      .char:hover { border-color: var(--blue); }
+      .char[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-tint); box-shadow: inset 0 0 0 1px var(--blue); }
+      .char .nm { font-size: 12.5px; font-weight: 600; line-height: 1.2; text-align: center; }
+      .char .lv { font-size: 11.5px; color: var(--muted); line-height: 1.2; }
+      .char.locked { background: var(--panel); cursor: help; }
+      .char.locked:hover { border-color: #cfcfcb; }
+      .char.locked svg { filter: grayscale(1); opacity: .3; }
+      .char .corner { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; }
+      .char.locked .corner { color: var(--muted); }
+      .char[aria-pressed="true"] .corner { background: var(--blue); color: #fff; }
+      .char-note { margin-top: 12px; font-size: 13.5px; color: var(--body); min-height: 20px; }
+      .char-note b { color: var(--ink); }
 
       .foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); max-width: 820px; }
       .foot p + p { margin-top: 6px; }
@@ -486,6 +501,7 @@
         <div class="pf-grid">
           <aside class="pf-side" aria-label="Your account">
             <div class="card" id="pf-acct"><p class="eyebrow">Checking whether you're signed in…</p></div>
+            <div class="card" id="pf-chars" hidden></div>
           </aside>
           <div class="pf-main" id="pf-dash"><div class="card"><p class="eyebrow">Loading your progress…</p></div></div>
         </div>
@@ -881,7 +897,8 @@
         }
         // signed in
         var name = A.profile && A.profile.display_name, email = A.user.email || "";
-        h += '<div class="pf-who"><span class="avatar" aria-hidden="true">' + esc(T.trUpper((name || email || "?").charAt(0))) + "</span><div>" +
+        var av = A.avatar();
+        h += '<div class="pf-who">' + (av ? '<span class="avatar pic">' + A.avatarSvg(av, 44) + "</span>" : '<span class="avatar" aria-hidden="true">' + esc(T.trUpper((name || email || "?").charAt(0))) + "</span>") + "<div>" +
           '<p class="pf-name">' + esc(name || "Welcome!") + '</p><p class="pf-mail">' + esc(email) + "</p></div></div>";
         if (A.profile && (!name || pf.editing)) {
           h += '<form class="pf-form" id="pf-nameform"><label for="pf-name">' + (name ? "Your name" : "What should we call you?") + "</label>" +
@@ -955,7 +972,38 @@
               (l.written && l.written < l.total ? " <span>· " + l.written + " of " + l.total + " written</span>" : "") + "</p>" + (l.written ? barHtml(ratio(l.done, l.total), "thin") : "") + '</div><span class="m">' + m + "</span></li>";
           }).join("") + "</ol></div>";
         el.innerHTML = h;
+        renderChars(s);
       }
+      // ── characters: one per level, unlocked by certifying it ──
+      function renderChars(s) {
+        var el = $("pf-chars");
+        if (!A || !A.AVATARS) { el.hidden = true; return; }
+        var open = A.unlocked(s), mine = A.avatar(), n = Object.keys(open).length;
+        // a character whose level isn't certified any more (progress reset) goes back to the initial
+        if (mine && !open[mine] && (!A.user || A.sync === "saved")) { A.setAvatar(null).catch(function () {}); mine = null; }
+        var note = pf.charMsg || (mine ? (function (a) { return "<b>" + esc(a.name) + "</b>: " + esc(a.blurb) + "."; })(A.AVATARS.filter(function (a) { return a.id === mine; })[0])
+          : n ? "Pick the character that shows next to your name." : "Certify A1 to unlock your first character.");
+        el.innerHTML = '<div class="pf-card-h"><h3>Your character</h3><span>' + n + " of " + A.AVATARS.length + " unlocked</span></div>" +
+          '<div class="chars">' + A.AVATARS.map(function (a) {
+            var ok = !!open[a.id], on = ok && a.id === mine;
+            return '<button type="button" class="char' + (ok ? "" : " locked") + '" data-av="' + a.id + '" aria-pressed="' + on + '"' + (ok ? "" : ' aria-disabled="true"') +
+              ' title="' + esc(ok ? a.name + ": " + a.blurb : "Certify " + a.cefr + " to unlock " + a.name) + '">' + A.avatarSvg(a.id, 52) +
+              '<span class="nm">' + esc(a.name) + '</span><span class="lv">' + a.cefr + "</span>" +
+              (on ? '<span class="corner">' + ICON.check + "</span>" : !ok ? '<span class="corner">' + ICON.lock + "</span>" : "") +
+              '<span class="sr">' + (ok ? (on ? ", your character" : "") : ", locked: certify " + a.cefr + " to unlock") + "</span></button>";
+          }).join("") + "</div>" +
+          '<p class="char-note" role="status">' + note + (mine && !pf.charMsg ? ' <button type="button" class="linkbtn" data-av="">Use my initial</button>' : "") + "</p>";
+        el.hidden = false;
+      }
+      $("pf-chars").addEventListener("click", function (e) {
+        var b = e.target.closest("[data-av]");
+        if (!b || !A) return;
+        var id = b.dataset.av, a = A.AVATARS.filter(function (x) { return x.id === id; })[0];
+        if (b.getAttribute("aria-disabled") === "true") { pf.charMsg = "Certify <b>" + a.cefr + "</b> to unlock " + (a.cefr === "A1" ? "your first character" : "this character") + ": finish every unit of the level."; renderProfile(); return; }
+        pf.charMsg = null;
+        A.setAvatar(id || null).catch(function (er) { pf.charMsg = "Saved in this browser, but not online yet (" + esc(er.message) + ")."; renderProfile(); });
+        renderProfile();
+      });
       function flash(m, err) { pf.msg = m; pf.err = !!err; renderAccount(); }
       $("pf-acct").addEventListener("submit", function (e) {
         e.preventDefault();

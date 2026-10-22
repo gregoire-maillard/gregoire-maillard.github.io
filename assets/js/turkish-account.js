@@ -31,6 +31,7 @@
   var SYNC_KEY = "trk:v1:sync";
   var store = T.store;
 
+
   var A = {
     status: "off",        // off (not loaded) · loading · signed-out · signed-in · unavailable
     user: null,           // { id, email }
@@ -48,6 +49,73 @@
   function urlHasAuth() { return /(?:^#|&)(?:access_token|error_description|error_code)=/.test(location.hash); }
   function marker() { var m = ls(function (s) { return JSON.parse(s.getItem(SYNC_KEY) || "null"); }); return m && typeof m === "object" ? m : null; }
   function setMarker(m) { ls(function (s) { if (m) s.setItem(SYNC_KEY, JSON.stringify(m)); else s.removeItem(SYNC_KEY); }); }
+
+  // Level characters (64×64, drawn for this course). Each one is unlocked by certifying its level.
+  var AVATARS = [
+    { id: "a1", cefr: "A1", name: "Buzlu", blurb: "The penguin who started from zero, like everyone",
+      art: "<circle cx=\"32\" cy=\"32\" r=\"32\" fill=\"#d7ecf4\"/><path d=\"M14 64c0-14 6-26 18-26s18 12 18 26z\" fill=\"#27313d\"/><ellipse cx=\"32\" cy=\"29\" rx=\"16\" ry=\"17\" fill=\"#27313d\"/><path d=\"M32 18c-6 0-11 4-11 11 0 6 4 10 11 10s11-4 11-10c0-7-5-11-11-11z\" fill=\"#fff\"/><path d=\"M23 64c0-9 4-16 9-16s9 7 9 16z\" fill=\"#fff\"/><circle cx=\"27.5\" cy=\"27\" r=\"2.3\" fill=\"#27313d\"/><circle cx=\"36.5\" cy=\"27\" r=\"2.3\" fill=\"#27313d\"/><circle cx=\"28.2\" cy=\"26.2\" r=\".8\" fill=\"#fff\"/><circle cx=\"37.2\" cy=\"26.2\" r=\".8\" fill=\"#fff\"/><path d=\"M28.5 31.5h7l-3.5 4z\" fill=\"#f29b2c\"/><circle cx=\"24\" cy=\"32\" r=\"2\" fill=\"#f4b6b0\" opacity=\".8\"/><circle cx=\"40\" cy=\"32\" r=\"2\" fill=\"#f4b6b0\" opacity=\".8\"/><path d=\"M18 41c4 3 9 4 14 4s10-1 14-4l1 5c-4 3-9 4-15 4s-11-1-15-4z\" fill=\"#d8333b\"/><path d=\"M40 45l3 12-5 1-2-11z\" fill=\"#b8262e\"/>" },
+    { id: "a2", cefr: "A2", name: "Keloğlan", blurb: "The clever bald boy of the folk tales",
+      art: "<circle cx=\"32\" cy=\"32\" r=\"32\" fill=\"#f6e2bf\"/><path d=\"M12 64c1-11 9-18 20-18s19 7 20 18z\" fill=\"#f4f1ea\"/><path d=\"M12 64c1-10 6-16 13-17l3 17zM52 64c-1-10-6-16-13-17l-3 17z\" fill=\"#c4362f\"/><path d=\"M27 46h10v4c0 2-2 3-5 3s-5-1-5-3z\" fill=\"#e9b78f\"/><ellipse cx=\"15.5\" cy=\"31\" rx=\"3.5\" ry=\"5\" fill=\"#e9b78f\"/><ellipse cx=\"48.5\" cy=\"31\" rx=\"3.5\" ry=\"5\" fill=\"#e9b78f\"/><ellipse cx=\"32\" cy=\"29\" rx=\"16\" ry=\"18\" fill=\"#f2c9a1\"/><ellipse cx=\"27\" cy=\"16\" rx=\"6\" ry=\"3\" fill=\"#fff\" opacity=\".45\"/><path d=\"M23 25.5q3-2 6 0M35 25.5q3-2 6 0\" stroke=\"#5a3a24\" stroke-width=\"1.4\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"26\" cy=\"30\" r=\"1.9\" fill=\"#3b2a1e\"/><circle cx=\"38\" cy=\"30\" r=\"1.9\" fill=\"#3b2a1e\"/><path d=\"M31 33q1 2.5 2 0\" stroke=\"#c98d68\" stroke-width=\"1.3\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M26 38q6 5 12 0\" stroke=\"#7a3b26\" stroke-width=\"1.6\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"21.5\" cy=\"35\" r=\"2.6\" fill=\"#ec9c8a\" opacity=\".6\"/><circle cx=\"42.5\" cy=\"35\" r=\"2.6\" fill=\"#ec9c8a\" opacity=\".6\"/>" },
+    { id: "b1", cefr: "B1", name: "Nasreddin Hoca", blurb: "The wise fool of a thousand jokes",
+      art: "<circle cx=\"32\" cy=\"32\" r=\"32\" fill=\"#dcebd3\"/><path d=\"M10 64c1-12 10-20 22-20s21 8 22 20z\" fill=\"#3f7a52\"/><path d=\"M27 46l5 18 5-18z\" fill=\"#e9e1cf\"/><ellipse cx=\"32\" cy=\"34\" rx=\"12\" ry=\"13\" fill=\"#e7b48e\"/><path d=\"M20 35c0 11 5 20 12 20s12-9 12-20c-2 4-6 6-12 6s-10-2-12-6z\" fill=\"#f7f5f0\"/><path d=\"M25 41q7-4 14 0q-7 3-14 0z\" fill=\"#ebe6dc\"/><path d=\"M14 24c0-9 8-15 18-15s18 6 18 15c0 4-3 6-6 6H20c-3 0-6-2-6-6z\" fill=\"#fbfaf6\"/><path d=\"M17 21c4 3 9 4 15 4s11-1 15-4M15.5 26c5 2 10 3 16.5 3s11.5-1 16.5-3\" stroke=\"#d9d3c5\" stroke-width=\"1.4\" fill=\"none\"/><path d=\"M27 9.5c0-3 2.2-5 5-5s5 2 5 5c-1.5.5-3.2.8-5 .8s-3.5-.3-5-.8z\" fill=\"#3f7a52\"/><path d=\"M24.5 35q2.5-2 5 0M34.5 35q2.5-2 5 0\" stroke=\"#3b2a1e\" stroke-width=\"1.6\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M24 31.5q2.5-1.5 5 0M35 31.5q2.5-1.5 5 0\" stroke=\"#f1eee6\" stroke-width=\"1.6\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M30 39q2 1.5 4 0\" stroke=\"#c98d68\" stroke-width=\"1.4\" fill=\"none\" stroke-linecap=\"round\"/>" },
+    { id: "b2", cefr: "B2", name: "Karagöz", blurb: "The everyman of the shadow theatre",
+      art: "<circle cx=\"32\" cy=\"32\" r=\"32\" fill=\"#f5cf8c\"/><circle cx=\"32\" cy=\"32\" r=\"26\" fill=\"#f9dfa9\"/><path d=\"M14 64c2-10 9-15 18-15s16 5 18 15z\" fill=\"#2c6e8f\"/><path d=\"M26 49l6 15 6-15z\" fill=\"#e6c94e\"/><path d=\"M21 32c0-8 5-13 12-13 6 0 11 4 12 10l3 5c.6 1-.2 2-1.3 1.8L45 35c-.5 4-2 7-5 9H24c-2-3-3-7-3-12z\" fill=\"#d99b6c\"/><circle cx=\"30.5\" cy=\"42.5\" r=\"9\" fill=\"#1d1d1f\"/><path d=\"M40 41q2-1.5 4-.5\" stroke=\"#1d1d1f\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"38\" cy=\"28.5\" r=\"4.2\" fill=\"#fff\"/><circle cx=\"39.3\" cy=\"28.8\" r=\"2.2\" fill=\"#1d1d1f\"/><path d=\"M34 23.5q4-2.5 8 0\" stroke=\"#1d1d1f\" stroke-width=\"1.8\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M20 22c-1-8 3-15 10-17 4-1 6 1 6 3l-1 15c-5-2-10-2-15-1z\" fill=\"#c8312d\"/><path d=\"M19.5 22.5c5-1.5 11-1 16 1l-.5 3c-5-2-10-2.5-15-1z\" fill=\"#e6c94e\"/><path d=\"M33 6c4-2 8 0 9 4\" stroke=\"#c8312d\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"42.5\" cy=\"11\" r=\"2.4\" fill=\"#e6c94e\"/><circle cx=\"27\" cy=\"51\" r=\"1.6\" fill=\"#f9dfa9\"/>" },
+    { id: "c1", cefr: "C1", name: "Köroğlu", blurb: "The bard and outlaw of the epics",
+      art: "<circle cx=\"32\" cy=\"32\" r=\"32\" fill=\"#f2d6cf\"/><path d=\"M48 10l4 1-9 40-3-1z\" fill=\"#8a5a2b\"/><path d=\"M48.5 6l4.5 1.2-1 4.4-4.4-1.2z\" fill=\"#5b3a1c\"/><path d=\"M10 64c1-12 10-19 22-19s21 7 22 19z\" fill=\"#5a4636\"/><path d=\"M23 45l9 10 9-10z\" fill=\"#c23a2b\"/><path d=\"M38 52c4-3 10-3 13 1 3 4 1 10-4 11-6 1-11-3-11-7 0-2 .7-4 2-5z\" fill=\"#a9733e\"/><circle cx=\"44.5\" cy=\"57\" r=\"2\" fill=\"#5b3a1c\"/><ellipse cx=\"32\" cy=\"32\" rx=\"12\" ry=\"14\" fill=\"#d9a07a\"/><path d=\"M19 28c-1-9 5-16 13-16s14 7 13 16c-3-3-8-5-13-5s-10 2-13 5z\" fill=\"#2f2a26\"/><path d=\"M18 27c0-10 6-17 14-17s14 7 14 17c-2-5-7-8-14-8s-12 3-14 8z\" fill=\"#c23a2b\"/><path d=\"M20 22c3-2 7-3 12-3s9 1 12 3\" stroke=\"#e8b04a\" stroke-width=\"1.6\" fill=\"none\" stroke-dasharray=\"1.5 2\"/><path d=\"M44 21c3 1 5 4 4 8l-3-3z\" fill=\"#a52e22\"/><path d=\"M24.5 28.5h5M34.5 28.5h5\" stroke=\"#2f2a26\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"27\" cy=\"31.5\" r=\"1.7\" fill=\"#2f2a26\"/><circle cx=\"37\" cy=\"31.5\" r=\"1.7\" fill=\"#2f2a26\"/><path d=\"M32 33v4\" stroke=\"#b97e5c\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><path d=\"M32 38.5c-3-1.5-7-1-10 2 2-.2 4 .1 5.5 1 2-.7 3.5-1.6 4.5-3zM32 38.5c3-1.5 7-1 10 2-2-.2-4 .1-5.5 1-2-.7-3.5-1.6-4.5-3z\" fill=\"#2f2a26\"/><path d=\"M29.5 43q2.5 1 5 0\" stroke=\"#8a4a36\" stroke-width=\"1.3\" fill=\"none\" stroke-linecap=\"round\"/>" },
+    { id: "c2", cefr: "C2", name: "Atatürk", blurb: "Founder of the Republic and of the 1928 alphabet",
+      art: "<circle cx=\"32\" cy=\"32\" r=\"32\" fill=\"#c8102e\"/><circle cx=\"32\" cy=\"32\" r=\"29\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".3\" stroke-width=\"1\"/><path d=\"M9 64c1-9 8-14 16-15.5h14C47 50 54 55 55 64z\" fill=\"#2a2c33\"/><path d=\"M25 48.5l7 9 7-9z\" fill=\"#f3f1ec\"/><path d=\"M30.6 51l1.4 1.6 1.4-1.6 1 11h-4.8z\" fill=\"#5a1d25\"/><path d=\"M25 48.5l-3 3.5 5.5 9 4.5-4zM39 48.5l3 3.5-5.5 9-4.5-4z\" fill=\"#1d1f24\"/><path d=\"M28.3 43h7.4v6.5c0 1.4-1.7 2.3-3.7 2.3s-3.7-.9-3.7-2.3z\" fill=\"#dcae8c\"/><ellipse cx=\"20.6\" cy=\"32.5\" rx=\"2.2\" ry=\"3.6\" fill=\"#e2b694\"/><ellipse cx=\"43.4\" cy=\"32.5\" rx=\"2.2\" ry=\"3.6\" fill=\"#e2b694\"/><path d=\"M20.4 24c0 13.5 4 22.5 11.6 22.5S43.6 37.5 43.6 24z\" fill=\"#ebc3a2\"/><path d=\"M23.2 36.5c.6 1.5 1.4 2.6 2.4 3.4M40.8 36.5c-.6 1.5-1.4 2.6-2.4 3.4\" stroke=\"#d8a785\" stroke-width=\".9\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M29.6 28.9c-1.9-1-3.9-1.5-6-1.5M34.4 28.9c1.9-1 3.9-1.5 6-1.5\" stroke=\"#4a3426\" stroke-width=\"1.4\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M24.4 31.4c1-1 3.6-1.1 5 0-1.4.9-3.8.9-5 0zM34.6 31.4c1.4-1.1 4-1 5 0-1.2.9-3.6.9-5 0z\" fill=\"#fff\"/><circle cx=\"27\" cy=\"31.3\" r=\"1.15\" fill=\"#3f86c9\"/><circle cx=\"37\" cy=\"31.3\" r=\"1.15\" fill=\"#3f86c9\"/><circle cx=\"27\" cy=\"31.3\" r=\".5\" fill=\"#1b2430\"/><circle cx=\"37\" cy=\"31.3\" r=\".5\" fill=\"#1b2430\"/><path d=\"M32.4 30v6.4c0 .6-.6 1.1-1.6 1.2\" stroke=\"#c48d6b\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M29.2 41.4h5.6\" stroke=\"#a5624f\" stroke-width=\"1.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M19 24.2L18.2 10.4C25 7.4 39 7.4 45.8 10.4L45 24.2C37 22.8 27 22.8 19 24.2z\" fill=\"#38383d\"/><path d=\"M20.5 11.5q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0M19.5 16q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0q1.6 -1.3 3.2 0M20 20.5q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0q2 -1.6 4 0\" stroke=\"#4a4a50\" stroke-width=\"1\" fill=\"none\" stroke-linecap=\"round\"/>" }
+  ];
+  var AVATAR_KEY = "trk:v1:avatar", avSeq = 0;
+  function byId(id) { for (var i = 0; i < AVATARS.length; i++) if (AVATARS[i].id === id) return AVATARS[i]; return null; }
+  A.AVATARS = AVATARS;
+  // The character's picture as an <svg>, clipped to a circle. size in px; label for screen readers (none: decorative).
+  A.avatarSvg = function (id, size, label) {
+    var a = byId(id);
+    if (!a) return "";
+    var c = "trk-av" + (++avSeq);
+    return '<svg viewBox="0 0 64 64" width="' + size + '" height="' + size + '"' + (label ? ' role="img" aria-label="' + T.esc(label) + '"' : ' aria-hidden="true"') + ' style="display:block;flex:none">' +
+      '<defs><clipPath id="' + c + '"><circle cx="32" cy="32" r="32"/></clipPath></defs><g clip-path="url(#' + c + ')">' + a.art + "</g></svg>";
+  };
+  A.avatar = function () { var v = ls(function (s) { return s.getItem(AVATAR_KEY); }); return byId(v) ? v : null; };
+  function setLocalAvatar(id) { ls(function (s) { if (id) s.setItem(AVATAR_KEY, id); else s.removeItem(AVATAR_KEY); }); paintTab(); }
+  // Which characters are unlocked: one per certified level (from A.summary()).
+  A.unlocked = function (summary) {
+    var out = {};
+    summary.levels.forEach(function (l) { if (l.certified) out[l.id] = true; });
+    return out;
+  };
+  // Picks a character (null: back to the initial). Saved in this browser, and in the profile when signed in.
+  A.setAvatar = function (id) {
+    if (id && !byId(id)) return Promise.reject(new Error("Unknown character."));
+    setLocalAvatar(id || null);
+    emit();
+    if (!A.user || !client) return Promise.resolve();
+    return client.from(CFG.table).update({ avatar: id || null }).eq("user_id", A.user.id).then(function (r) {
+      if (r.error) throw new Error(/avatar/.test(r.error.message) ? "the profiles table has no avatar column yet (run the SQL update)" : r.error.message);
+    });
+  };
+  // The header's My Profile tab shows the chosen character instead of the person icon.
+  function paintTab() {
+    var tab = document.getElementById("tab-profile");
+    if (!tab) return;
+    if (!document.getElementById("trk-av-css")) {
+      var st = document.createElement("style");
+      st.id = "trk-av-css";
+      st.textContent = ".at-hdr .at-av{display:block;margin-right:8px;border-radius:50%;box-shadow:0 0 0 1px rgb(15 23 42 / .08)}.at-hdr .at-tab.has-av .at-gear{display:none!important}" +
+        "@media (max-width:599px){.at-hdr .at-av{margin-right:0}}";
+      document.head.appendChild(st);
+    }
+    var id = A.avatar(), old = tab.querySelector(".at-av");
+    if (old) old.remove();
+    tab.classList.toggle("has-av", !!id);
+    if (id) {
+      var span = document.createElement("span");
+      span.className = "at-av";
+      span.innerHTML = A.avatarSvg(id, 22);
+      tab.insertBefore(span, tab.firstChild);
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", paintTab); else paintTab();
 
   // A sign-in link that failed (expired or already used) comes back with #error_description=… in the URL.
   (function readLinkError() {
@@ -123,7 +191,7 @@
     if (!client) return Promise.resolve();
     clearTimeout(pushTimer);
     return queue(push).catch(function () {}).then(function () { return client.auth.signOut(); }).then(function () {
-      setMarker(null);
+      setMarker(null); setLocalAvatar(null);
       applying = true; try { store.reset(); } finally { applying = false; }
       A.syncedAt = null;
       emit();
@@ -147,7 +215,7 @@
       if (r.error) throw new Error(r.error.message);
       return client.auth.signOut({ scope: "local" });
     }).then(function () {
-      setMarker(null);
+      setMarker(null); setLocalAvatar(null);
       applying = true; try { store.reset(); } finally { applying = false; }
       emit();
     });
@@ -283,18 +351,20 @@
     if (!A.user || !client) return Promise.resolve();
     A.sync = "syncing"; emit();
     var uid = A.user.id;
-    return client.from(CFG.table).select("display_name, course, cards, settings, rev").eq("user_id", uid).maybeSingle().then(function (r) {
+    return client.from(CFG.table).select("*").eq("user_id", uid).maybeSingle().then(function (r) {
       if (r.error) throw new Error(r.error.message);
       if (!A.user || A.user.id !== uid) return;
       var row = r.data, local = snapshot(), m = marker();
       if (m && m.user !== uid) m = null;
       A.profile = { display_name: row ? row.display_name : null };
+      if (row) syncAvatar(row);
       if (!row) {   // first sign-in ever: this browser's progress becomes the profile's
         return columns(local).then(function (cols) {
           var ins = Object.assign({ user_id: uid, course: local.course, cards: local.cards, settings: local.settings, rev: 1 }, cols);
           return client.from(CFG.table).insert(ins).then(function (w) {
             if (w.error) { if (w.error.code === "23505" && !attempt) return fullSync(1); throw new Error(w.error.message); }
             setMarker(markFor(1, local));
+            if (A.avatar()) client.from(CFG.table).update({ avatar: A.avatar() }).eq("user_id", uid).then(function () {});
           });
         });
       }
@@ -325,6 +395,14 @@
     }).then(function () {
       if (A.user && A.user.id === uid) { A.sync = "saved"; A.syncedAt = Date.now(); A.error = null; emit(); }
     });
+  }
+  // The character: the profile's choice wins; a choice made before signing in is saved to the profile.
+  // (Skipped when the table has no avatar column yet.)
+  function syncAvatar(row) {
+    if (!("avatar" in row)) return;
+    var mine = A.avatar();
+    if (row.avatar && byId(row.avatar)) { if (row.avatar !== mine) setLocalAvatar(row.avatar); }
+    else if (mine) client.from(CFG.table).update({ avatar: mine }).eq("user_id", row.user_id).then(function () {});
   }
   // Push: send only the parts changed since the last sync, if nobody else wrote in between.
   function push() {
