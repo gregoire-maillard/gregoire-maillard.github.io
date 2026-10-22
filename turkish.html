@@ -64,6 +64,12 @@
         .at-hdr .at-gear { display: block; }
         .at-hdr .at-set-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       }
+      @media (max-width: 399px) {   /* five tabs: tighter so the gear still fits at 360 px */
+        .at-hdr { --at-m: 12px; }
+        .at-hdr .at-wrap { gap: 4px; }
+        .at-hdr .at-tab { padding: 0 7px; min-width: 40px; font-size: 13.5px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 7px; right: 7px; }
+      }
     </style>
     <style>
       /* Page: the site's tokens (stylesheets/styles.css), white page, hairline borders, cards like the Mobility Lab's. */
@@ -287,6 +293,80 @@
       .confirm ul { margin: 6px 0 0; padding-left: 18px; font-size: 13px; }
       .confirm .btns { margin-top: 10px; }
 
+      /* profile (#profile, the header's My Profile tab) */
+      .pf-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start; }
+      .pf-side { grid-column: 2; grid-row: 1; position: sticky; top: 88px; display: grid; gap: 12px; }
+      .pf-main { grid-column: 1; grid-row: 1; min-width: 0; display: grid; gap: 16px; }
+      @media (max-width: 899px) {
+        .pf-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+        .pf-side, .pf-main { grid-column: 1; grid-row: auto; position: static; }
+      }
+      .pf-who { display: flex; align-items: center; gap: 12px; }
+      .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 650; font-size: 18px; flex: none; }
+      .pf-name { font-size: 17px; font-weight: 620; color: var(--ink); line-height: 1.3; overflow-wrap: anywhere; }
+      .pf-mail { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+      .pf-sync { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-top: 14px; }
+      .pf-sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
+      .pf-sync.saved i { background: #2f7d47; }
+      .pf-sync.syncing i { background: var(--blue); }
+      .pf-sync.offline i, .pf-sync.error i { background: var(--warm); }
+      .pf-form { display: grid; gap: 8px; margin-top: 14px; }
+      .pf-form label { font-size: 13px; font-weight: 600; color: var(--ink); }
+      .pf-form .btns { margin-top: 2px; }
+      .input { font: inherit; font-size: 15px; height: 44px; width: 100%; border: 1px solid var(--line); border-radius: var(--r); padding: 0 12px; color: var(--ink); background: #fff; }
+      .input:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 3px var(--blue-wash); }
+      .pf-msg { font-size: 13.5px; margin-top: 12px; color: var(--ink); }
+      .pf-msg.err { color: var(--danger); }
+      .pf-sent { margin-top: 14px; border: 1px solid rgb(40 122 158 / 35%); background: var(--blue-tint); border-radius: var(--r); padding: 12px 14px; font-size: 14px; color: var(--ink); overflow-wrap: anywhere; }
+      .linkbtn { font: inherit; color: var(--blue); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+      .linkbtn:hover { color: var(--blue-dark); }
+      .pf-perks { margin: 10px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--body); }
+      .pf-perks li { margin: 2px 0; }
+
+      .pf-level { display: flex; gap: 16px; align-items: center; }
+      .pf-badge { width: 64px; height: 64px; border-radius: 14px; display: grid; place-items: center; font-size: 22px; font-weight: 700; background: var(--panel); color: var(--muted); border: 1px solid var(--line); flex: none; }
+      .pf-badge.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+      .pf-level h2 { font-size: 22px; line-height: 1.2; font-weight: 650; letter-spacing: -0.01em; }
+      .pf-level .sub { font-size: 14px; color: var(--muted); margin-top: 3px; }
+      .pf-next { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+      .bar { display: block; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+      .bar i { display: block; height: 100%; background: var(--blue); border-radius: 4px; }
+      .bar.thin { height: 4px; }
+      .pf-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; }
+      .pf-tile { padding: 14px 16px; min-width: 0; }
+      .pf-tile + .pf-tile { border-left: 1px solid var(--line); }
+      .pf-tile .big { font-size: 22px; font-weight: 650; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; }
+      .pf-tile .big small { font-size: 13px; font-weight: 600; color: var(--muted); }
+      .pf-tile .lbl { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+      @media (max-width: 599px) {
+        .pf-tiles { grid-template-columns: 1fr 1fr; }
+        .pf-tile:nth-child(3) { border-left: 0; }
+        .pf-tile:nth-child(n+3) { border-top: 1px solid var(--line); }
+      }
+      .pf-card-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .pf-card-h h3 { font-size: 16px; }
+      .pf-card-h span { font-size: 13px; color: var(--muted); }
+      .pf-chart { display: flex; align-items: flex-end; gap: 4px; height: 80px; margin-top: 14px; }
+      .pf-chart span { flex: 1; min-height: 2px; background: var(--blue-wash); border-radius: 3px 3px 0 0; }
+      .pf-chart span.on { background: var(--blue); }
+      .pf-chart span.today { background: var(--blue-dark); }
+      .pf-chart-x { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+      .pf-rows { display: grid; gap: 16px; margin-top: 14px; }
+      .pf-row .top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14.5px; color: var(--ink); }
+      .pf-row .top b { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+      .pf-row .bar { margin-top: 6px; }
+      .pf-row .note { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+      .pf-lvls { list-style: none; margin: 8px 0 0; padding: 0; }
+      .pf-lv { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+      .pf-lv:first-child { border-top: 0; }
+      .pf-lv .badge { width: 40px; height: 40px; font-size: 14px; }
+      .pf-lv.cert .badge { background: var(--blue); border-color: var(--blue); color: #fff; }
+      .pf-lv .t { font-size: 14.5px; color: var(--ink); font-weight: 600; }
+      .pf-lv .t span { font-weight: 400; color: var(--muted); }
+      .pf-lv .bar { margin-top: 6px; max-width: 320px; }
+      .pf-lv .m { font-size: 12.5px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .tag.cert { background: #e6f2e9; color: #22603a; }
+
       .foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); max-width: 820px; }
       .foot p + p { margin-top: 6px; }
 
@@ -296,6 +376,7 @@
       }
     </style>
     <script defer src="/assets/js/turkish.js"></script>
+    <script defer src="/assets/js/turkish-account.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -305,6 +386,7 @@
           <a class="at-tab" href="/turkish.html" id="tab-course" aria-current="page">Course</a>
           <a class="at-tab" href="/turkishguide.html">Grammar</a>
           <a class="at-tab" href="/turkishcards.html">Flashcards</a>
+          <a class="at-tab at-set" href="/turkish.html#profile" id="tab-profile"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="10" cy="7" r="3.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.8 16.5c.9-3 3.3-4.6 6.2-4.6s5.3 1.6 6.2 4.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span class="at-set-l">My Profile</span></a>
           <a class="at-tab at-set" href="/turkish.html#settings" id="tab-settings"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M10 12.6a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8.4 2.5h3.2l.4 2.1 1.4.8 2-.7 1.6 2.8-1.6 1.4v1.6l1.6 1.4-1.6 2.8-2-.7-1.4.8-.4 2.1H8.4l-.4-2.1-1.4-.8-2 .7-1.6-2.8 1.6-1.4V9.2L3 7.8l1.6-2.8 2 .7 1.4-.8.4-2.1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="at-set-l">Settings</span></a>
         </nav>
       </div>
@@ -317,7 +399,7 @@
       <header class="hero">
         <p class="kicker">Turkish · A1 → C2</p>
         <h1>Learn Turkish</h1>
-        <p class="lede">From your first <i lang="tr">merhaba</i> to reading the press: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of the 1,000 most useful words on spaced repetition. No account needed: your progress stays in this browser.</p>
+        <p class="lede">From your first <i lang="tr">merhaba</i> to reading the press: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of the 1,000 most useful words on spaced repetition. No account needed: your progress stays in this browser, or <a href="#profile">create a free profile</a> to keep it online and use it on any device.</p>
       </header>
 
       <div class="layout">
@@ -395,9 +477,23 @@
         </div>
       </section>
 
+      <section class="profile" id="profile" aria-labelledby="h-profile" hidden>
+        <header class="hero">
+          <p class="kicker">Turkish · A1 → C2</p>
+          <h1 id="h-profile">My profile</h1>
+          <p class="lede" id="pf-lede">Your level, your XP, and how far you've come in lessons and words.</p>
+        </header>
+        <div class="pf-grid">
+          <aside class="pf-side" aria-label="Your account">
+            <div class="card" id="pf-acct"><p class="eyebrow">Checking whether you're signed in…</p></div>
+          </aside>
+          <div class="pf-main" id="pf-dash"><div class="card"><p class="eyebrow">Loading your progress…</p></div></div>
+        </div>
+      </section>
+
       <footer class="foot">
         <p>A personal project by Grégoire Maillard. Turkish follows the spelling of the Türk Dil Kurumu; speech uses your device's own Turkish voice.</p>
-        <p>No account and no server: your progress lives in this browser's storage. Clearing your browsing data erases it, so export a copy now and then.</p>
+        <p>Without a profile, your progress lives in this browser's storage only, and clearing your browsing data erases it. With a <a href="#profile">profile</a>, it's also saved online.</p>
       </footer>
       <noscript><p class="notice">The course needs JavaScript to show your path and save your progress.</p></noscript>
     </main>
@@ -407,7 +503,7 @@
       "use strict";
       var T = window.TRK;
       if (!T) { document.getElementById("notices").innerHTML = '<p class="notice err">The course script didn\'t load. Reload the page to try again.</p>'; return; }
-      var store = T.store, esc = T.esc, P = T.C.PAGES;
+      var store = T.store, esc = T.esc, P = T.C.PAGES, A = T.account || null;   // A: online profiles (turkish-account.js)
       var $ = function (id) { return document.getElementById(id); };
       store.course(); store.cards(); store.settings();   // read all three now, so a problem with any of them shows at once
       var st = { index: null, levels: {}, deck: null, deckLoading: false, voice: undefined, open: {}, error: null };
@@ -575,24 +671,34 @@
         var d = $(a.getAttribute("href").slice(1));
         if (d) { d.open = true; st.open[d.id] = true; }
       });
-      // ── views: the course, or the settings (#settings, the header's Settings tab) ──
+      // ── views: the course, the settings (#settings) or the profile (#profile; ?signin=1 after a sign-in link) ──
       var TITLE = document.title;
-      function showView() {
-        var set = location.hash === "#settings";
-        $("v-course").hidden = set;
-        $("settings").hidden = !set;
-        if (set) { $("tab-settings").setAttribute("aria-current", "page"); $("tab-course").removeAttribute("aria-current"); }
-        else { $("tab-course").setAttribute("aria-current", "page"); $("tab-settings").removeAttribute("aria-current"); }
-        document.title = set ? "Settings · Learn Turkish" : TITLE;
-        return set;
+      function viewOf() {
+        if (location.hash === "#settings") return "settings";
+        if (location.hash === "#profile" || /[?&]signin=1/.test(location.search)) return "profile";
+        return "course";
       }
-      $("tab-settings").addEventListener("click", function (e) {
-        if (location.hash === "#settings") { e.preventDefault(); window.scrollTo(0, 0); }
+      function showView() {
+        var v = viewOf();
+        $("v-course").hidden = v !== "course";
+        $("settings").hidden = v !== "settings";
+        $("profile").hidden = v !== "profile";
+        [["course", "tab-course"], ["settings", "tab-settings"], ["profile", "tab-profile"]].forEach(function (p) {
+          if (p[0] === v) $(p[1]).setAttribute("aria-current", "page"); else $(p[1]).removeAttribute("aria-current");
+        });
+        document.title = v === "settings" ? "Settings · Learn Turkish" : v === "profile" ? "My Profile · Learn Turkish" : TITLE;
+        if (v === "profile") { if (A) A.ensure().catch(function () {}); renderProfile(); }
+        return v !== "course";
+      }
+      ["tab-settings", "tab-profile"].forEach(function (id) {
+        $(id).addEventListener("click", function (e) {
+          if (location.hash === $(id).getAttribute("href").replace(/^[^#]*/, "")) { e.preventDefault(); window.scrollTo(0, 0); }
+        });
       });
       $("tab-course").addEventListener("click", function (e) {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
         e.preventDefault();
-        if (location.hash) history.pushState(null, "", location.pathname + location.search);
+        if (location.hash || location.search) history.pushState(null, "", location.pathname);
         showView(); window.scrollTo(0, 0);
       });
       window.addEventListener("popstate", showView);
@@ -706,7 +812,7 @@
         reader.readAsText(file);
       });
       $("p-reset").addEventListener("click", function () {
-        showConfirm("<b>Delete all your progress in this browser?</b><br>Lessons, XP, streak, mistakes, flashcards and settings go back to the start. " +
+        showConfirm("<b>Delete all your progress in this browser" + (A && A.user ? " and in your online profile" : "") + "?</b><br>Lessons, XP, streak, mistakes, flashcards and settings go back to the start. " +
           '<a href="#" data-act="export-first">Export a copy first</a> if you might want it back.' +
           '<div class="btns"><button type="button" class="btn danger solid" data-act="reset">Delete everything</button><button type="button" class="btn" data-act="cancel">Cancel</button></div>');
       });
@@ -725,8 +831,182 @@
         if (act === "reset") { store.reset(); hideConfirm(); $("p-status").textContent = "Your progress was reset."; }
       });
 
+      // ── profile: the account card (sign in, name, sync, sign out) and the progress dashboard ──
+      var pf = { editing: false, busy: false, msg: null, err: false, confirmDel: false };
+      var num = function (n) { return Number(n).toLocaleString("en-US"); };
+      var ratio = function (a, b) { return b ? Math.max(0, Math.min(1, a / b)) : 0; };
+      var barHtml = function (r, cls) { return '<span class="bar' + (cls ? " " + cls : "") + '" aria-hidden="true"><i style="width:' + (r > 0 ? Math.max(2, Math.round(r * 100)) : 0) + '%"></i></span>'; };
+      function ago(t) {
+        var s = Math.round((Date.now() - t) / 1000);
+        if (s < 30) return "just now";
+        if (s < 3600) return plural(Math.max(1, Math.round(s / 60)), "minute") + " ago";
+        return "at " + new Date(t).toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit" });
+      }
+      function renderProfile() {
+        if ($("profile").hidden) return;
+        renderAccount();
+        renderDash();
+      }
+      // Re-rendering keeps what's being typed and where the cursor is (sync updates arrive while typing).
+      function renderAccount() {
+        var keep = {}, focus = document.activeElement && $("pf-acct").contains(document.activeElement) ? document.activeElement.id : null;
+        ["pf-email", "pf-name"].forEach(function (id) { if ($(id)) keep[id] = $(id).value; });
+        drawAccount();
+        Object.keys(keep).forEach(function (id) { if ($(id)) $(id).value = keep[id]; });
+        if (focus && $(focus)) $(focus).focus();
+      }
+      function drawAccount() {
+        var el = $("pf-acct"), h = "", msg = pf.msg ? '<p class="pf-msg' + (pf.err ? " err" : "") + '" role="alert">' + esc(pf.msg) + "</p>" : "";
+        if (!A) { el.innerHTML = '<p class="eyebrow">Online profile</p><p class="sub">Online profiles couldn\'t be loaded. Reload the page to try again; your progress is still saved in this browser.</p>'; return; }
+        if (A.status === "off" || A.status === "loading") { el.innerHTML = '<p class="eyebrow">Checking whether you\'re signed in…</p>'; return; }
+        if (A.status === "unavailable") {
+          el.innerHTML = '<p class="eyebrow">Online profile</p><h3>Not reachable right now</h3><p class="sub">' + esc(A.error || "") + '</p><button type="button" class="btn block" data-act="retry">Try again</button>';
+          return;
+        }
+        if (A.status === "signed-out") {
+          h += '<p class="eyebrow">Save your progress online</p><h3>Create your profile</h3>' +
+            '<ul class="pf-perks"><li>Your XP, streak, lessons and flashcards, saved online</li><li>Carry on from your phone, laptop or any browser</li><li>Free, no password: we email you a sign-in link</li></ul>';
+          if (A.error) h += '<p class="pf-msg err" role="alert">' + esc(A.error) + "</p>";
+          if (A.sentTo) {
+            h += '<div class="pf-sent" role="status"><b>Check your inbox.</b> We sent a sign-in link to <b>' + esc(A.sentTo) + "</b>. Open it in this browser to sign in here. It can take a minute to arrive; look in your spam folder too.</div>" +
+              '<p class="pf-msg"><button type="button" class="linkbtn" data-act="again">Use a different email</button></p>';
+          } else {
+            h += '<form class="pf-form" id="pf-signin" novalidate><label for="pf-email">Email</label>' +
+              '<input class="input" type="email" id="pf-email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>' +
+              '<button type="submit" class="btn primary"' + (pf.busy ? " disabled" : "") + ">" + (pf.busy ? "Sending…" : "Email me a sign-in link") + "</button></form>" + msg +
+              '<p class="help">Already have a profile? Same button: the link signs you in. The progress in this browser is added to your profile.</p>';
+          }
+          el.innerHTML = h;
+          return;
+        }
+        // signed in
+        var name = A.profile && A.profile.display_name, email = A.user.email || "";
+        h += '<div class="pf-who"><span class="avatar" aria-hidden="true">' + esc(T.trUpper((name || email || "?").charAt(0))) + "</span><div>" +
+          '<p class="pf-name">' + esc(name || "Welcome!") + '</p><p class="pf-mail">' + esc(email) + "</p></div></div>";
+        if (A.profile && (!name || pf.editing)) {
+          h += '<form class="pf-form" id="pf-nameform"><label for="pf-name">' + (name ? "Your name" : "What should we call you?") + "</label>" +
+            '<input class="input" id="pf-name" maxlength="40" autocomplete="nickname" value="' + esc(name || "") + '" placeholder="Your first name">' +
+            '<div class="btns"><button type="submit" class="btn primary"' + (pf.busy ? " disabled" : "") + ">Save</button>" + (name ? '<button type="button" class="btn" data-act="cancel-name">Cancel</button>' : "") + "</div></form>";
+        } else if (name) h += '<p class="pf-msg"><button type="button" class="linkbtn" data-act="edit-name">Change name</button></p>';
+        var syncTxt = { idle: "Connecting…", syncing: "Saving…", saved: "Saved online " + (A.syncedAt ? ago(A.syncedAt) : ""), offline: "Offline: saved in this browser, will sync when you're back online", error: "Not saved online yet" }[A.sync] || "";
+        h += '<p class="pf-sync ' + esc(A.sync) + '"><i aria-hidden="true"></i><span>' + esc(syncTxt) + "</span></p>";
+        if (A.error) h += '<p class="pf-msg err" role="alert">' + esc(A.error) + ' <button type="button" class="linkbtn" data-act="sync">Retry</button></p>';
+        h += msg;
+        if (pf.confirmDel) {
+          h += '<div class="confirm err" role="alert"><b>Delete your profile?</b><br>Your sign-in, your name and your progress saved online are deleted for good, and this browser starts again from zero.' +
+            '<div class="btns"><button type="button" class="btn danger solid" data-act="delete-yes"' + (pf.busy ? " disabled" : "") + '>Delete my profile</button><button type="button" class="btn" data-act="delete-no">Cancel</button></div></div>';
+        } else {
+          h += '<div class="btns"><button type="button" class="btn" data-act="signout"' + (pf.busy ? " disabled" : "") + '>Sign out</button><button type="button" class="btn danger" data-act="delete">Delete profile…</button></div>' +
+            '<p class="help">Signing out clears this browser; your progress stays in your profile.</p>';
+        }
+        el.innerHTML = h;
+      }
+      function renderDash() {
+        var ix = st.index, el = $("pf-dash");
+        $("pf-lede").textContent = A && A.user && A.profile && A.profile.display_name
+          ? "Hoş geldin, " + A.profile.display_name + "! Your level, your XP, and how far you've come in lessons and words."
+          : "Your level, your XP, and how far you've come in lessons and words.";
+        if (!ix) { el.innerHTML = '<div class="card"><p class="eyebrow">' + (st.error ? "The course couldn't be loaded." : "Loading your progress…") + "</p></div>"; return; }
+        if (!A || !A.summary) { el.innerHTML = ""; return; }
+        var s = A.summary(ix), course = store.course(), set = store.settings(), h = "";
+        var where = A.user ? "" : '<p class="eyebrow" style="margin-bottom:-6px">Progress in this browser</p>';
+        // level
+        var c = s.certified, w = s.working;
+        h += where + '<div class="card"><div class="pf-level"><span class="pf-badge' + (c ? " on" : "") + '" aria-hidden="true">' + (c ? c.cefr : w ? w.cefr : "–") + "</span><div>" +
+          "<h2>" + (c ? esc(c.cefr) + " certified" : "Working toward " + esc(w ? w.cefr : "A1")) + "</h2>" +
+          '<p class="sub">' + (c ? "You've finished every unit of " + esc(c.cefr) + " · " + esc(c.title) + "." : "Finish every unit of a level to be certified at that level.") + "</p></div></div>";
+        if (w) {
+          var more = w.written < w.total ? " · " + w.written + " written so far" : "";
+          h += '<div class="pf-next pf-row"><div class="top"><span>' + (c ? "Next: " : "") + esc(w.cefr) + " · " + esc(w.title) + "</span><b>" + w.done + " / " + w.total + " units</b></div>" +
+            barHtml(ratio(w.done, w.total)) + '<p class="note">' + (w.total - w.done) + " units to go to " + esc(w.cefr) + " certified" + more + "</p></div>";
+        } else h += '<p class="pf-next">Every level certified. <i lang="tr">Tebrikler!</i></p>';
+        h += "</div>";
+        // tiles
+        var sk = s.streak, g = s.goal;
+        h += '<div class="card pf-tiles" aria-label="Your numbers">' +
+          '<div class="pf-tile"><div class="big">' + num(s.xp) + ' <small>XP</small></div><div class="lbl">Total</div></div>' +
+          '<div class="pf-tile"><div class="big">' + g.xp + ' <small>/ ' + g.goal + '</small></div><div class="lbl">' + (g.met ? "Today · goal met" : "XP today") + "</div></div>" +
+          '<div class="pf-tile"><div class="big">' + sk.current + ' <small>' + (sk.current === 1 ? "day" : "days") + '</small></div><div class="lbl">Streak' + (sk.best > sk.current ? " · best " + sk.best : "") + "</div></div>" +
+          '<div class="pf-tile"><div class="big">' + num(s.daysActive) + '</div><div class="lbl">' + (s.daysActive === 1 ? "Day" : "Days") + " studied</div></div></div>";
+        // XP, last 14 days
+        var today = T.today(set), days = [], max = g.goal, week = 0;
+        for (var i = 13; i >= 0; i--) { var d = T.addDays(today, -i), x = course.xp.days[d] || 0; days.push({ d: d, x: x }); max = Math.max(max, x); if (i < 7) week += x; }
+        var short = function (day) { var p = day.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString("en-CA", { month: "short", day: "numeric" }); };
+        h += '<div class="card"><div class="pf-card-h"><h3>XP, last 14 days</h3><span>' + num(week) + " XP this week</span></div>" +
+          '<div class="pf-chart" role="img" aria-label="' + esc(days.map(function (o) { return short(o.d) + ": " + o.x + " XP"; }).join(", ")) + '">' +
+          days.map(function (o) { return '<span class="' + (o.d === today ? "today" : o.x ? "on" : "") + '" style="height:' + Math.round(100 * o.x / max) + '%" title="' + esc(short(o.d)) + ": " + o.x + ' XP"></span>'; }).join("") +
+          '</div><div class="pf-chart-x"><span>' + esc(short(days[0].d)) + "</span><span>Today</span></div></div>";
+        // progress bars
+        var row = function (label, a, b, note) {
+          return '<div class="pf-row"><div class="top"><span>' + label + "</span><b>" + num(a) + " / " + num(b) + "</b></div>" + barHtml(ratio(a, b)) + (note ? '<p class="note">' + note + "</p>" : "") + "</div>";
+        };
+        h += '<div class="card"><div class="pf-card-h"><h3>Your progress</h3><span>Out of what\'s written so far</span></div><div class="pf-rows">' +
+          row("Words learned", s.words.learned, s.words.total, s.words.known ? num(s.words.known) + " known well (reviewed at 3+ week intervals)" : 'From the <a href="' + P.cards + '">flashcards</a>: a word counts once it has left the learning steps') +
+          row("Lessons done", s.lessons.done, s.lessons.written) +
+          row("Units done", s.units.done, s.units.written, s.units.mastered ? plural(s.units.mastered, "unit") + " mastered (unit review passed)" : "") +
+          row("Grammar guides read", s.guides, s.units.written) +
+          row("Culture interludes read", s.interludes, s.units.written) +
+          "</div></div>";
+        // levels
+        h += '<div class="card"><div class="pf-card-h"><h3>Levels</h3><span>' + s.levels.filter(function (l) { return l.certified; }).length + " of " + s.levels.length + ' certified</span></div><ol class="pf-lvls">' +
+          s.levels.map(function (l) {
+            var m = l.certified ? '<span class="tag cert">Certified</span>' : !l.written ? '<span class="tag soon">Coming soon</span>' : l.done + " / " + l.total + " units";
+            return '<li class="pf-lv' + (l.certified ? " cert" : "") + '"><span class="badge" aria-hidden="true">' + l.cefr + '</span><div><p class="t"><span class="sr">' + l.cefr + ": </span>" + esc(l.title) +
+              (l.written && l.written < l.total ? " <span>· " + l.written + " of " + l.total + " written</span>" : "") + "</p>" + (l.written ? barHtml(ratio(l.done, l.total), "thin") : "") + '</div><span class="m">' + m + "</span></li>";
+          }).join("") + "</ol></div>";
+        el.innerHTML = h;
+      }
+      function flash(m, err) { pf.msg = m; pf.err = !!err; renderAccount(); }
+      $("pf-acct").addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!A || pf.busy) return;
+        if (e.target.id === "pf-signin") {
+          var email = $("pf-email").value;
+          pf.busy = true; pf.msg = null; renderAccount();
+          A.signIn(email).then(function () { pf.busy = false; pf.msg = null; renderAccount(); })
+            .catch(function (er) { pf.busy = false; renderAccount(); $("pf-email").value = email; flash(er.message, true); $("pf-email").focus(); });
+        }
+        if (e.target.id === "pf-nameform") {
+          pf.busy = true;
+          A.setName($("pf-name").value).then(function () { pf.busy = false; pf.editing = false; pf.msg = null; renderProfile(); })
+            .catch(function (er) { pf.busy = false; flash(er.message, true); });
+        }
+      });
+      $("pf-acct").addEventListener("click", function (e) {
+        var b = e.target.closest("[data-act]");
+        if (!b || !A) return;
+        var act = b.dataset.act;
+        pf.msg = null;
+        if (act === "retry") { A.ensure().catch(function () {}); }
+        if (act === "again") { A.sentTo = null; renderAccount(); $("pf-email").focus(); }
+        if (act === "edit-name") { pf.editing = true; renderAccount(); $("pf-name").focus(); }
+        if (act === "cancel-name") { pf.editing = false; renderAccount(); }
+        if (act === "sync") A.syncNow();
+        if (act === "delete") { pf.confirmDel = true; renderAccount(); }
+        if (act === "delete-no") { pf.confirmDel = false; renderAccount(); }
+        if (act === "signout") {
+          pf.busy = true; renderAccount();
+          A.signOut().then(function () { pf.busy = false; flash("You're signed out. Sign in again any time to get your progress back."); })
+            .catch(function (er) { pf.busy = false; flash(er.message, true); });
+        }
+        if (act === "delete-yes") {
+          pf.busy = true; renderAccount();
+          A.deleteAccount().then(function () { pf.busy = false; pf.confirmDel = false; flash("Your profile was deleted."); })
+            .catch(function (er) { pf.busy = false; flash("Your profile couldn't be deleted (" + er.message + ").", true); });
+        }
+      });
+      var wasSignedIn = null;
+      if (A) A.onChange(function () {
+        var signedIn = !!A.user;
+        if (signedIn !== wasSignedIn) $("p-status").textContent = signedIn ? "Your progress is saved in this browser and in your online profile, so it follows you to other devices."
+          : "Your progress is saved in this browser only. Export it to keep a copy, or create a profile (My Profile) to save it online.";
+        wasSignedIn = signedIn;
+        renderProfile();
+      });
+      setInterval(function () { if (A && A.sync === "saved" && !$("profile").hidden && !document.hidden) renderAccount(); }, 30000);   // "saved 2 minutes ago"
+
       // ── boot ──
-      function render() { renderNotices(); renderToday(); renderPath(); }
+      function render() { renderNotices(); renderToday(); renderPath(); renderProfile(); }
       function boot() {
         T.data.index().then(function (ix) {
           st.index = ix;
@@ -747,12 +1027,5 @@
       boot();
     });
     </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const sb = supabase.createClient(
-    'https://xmbwayxoqlvhqenmiyzr.supabase.co/rest/v1',
-    'sb_publishable_Xz3OM6yw0acx58SKoVFFaQ_iuQXWIxm'
-  );
-  sb.from('progress').select('*').then(r => console.log('Supabase test:', r));
-</script></body>
+  </body>
 </html>
