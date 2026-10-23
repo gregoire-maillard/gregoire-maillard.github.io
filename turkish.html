@@ -15,7 +15,9 @@
     <title>Learn Turkish, A1 to C2</title>
     <meta name="description" content="A free Turkish course from A1 to C2: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a 1,000-word flashcard deck with spaced repetition.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/assets/img/daily-turkish-favicon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/img/daily-turkish-favicon.svg">
+    <link rel="apple-touch-icon" href="/assets/img/daily-turkish-apple-touch-icon.png">
     <link rel="canonical" href="https://gregoiremaillard.com/turkish.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Grégoire Maillard">
@@ -44,9 +46,12 @@
       .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
       .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
       .at-hdr .at-home:hover { background: var(--at-wash); }
-      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; flex: none; }
-      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
-      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 8px; }
+      .at-hdr .at-logo { width: 28px; height: 28px; flex: none; display: block; }
+      .at-hdr .at-name { font-size: 18px; line-height: 1; letter-spacing: -0.02em; }
+      .at-hdr .at-d { color: #e34b4f; font-weight: 600; }
+      .at-hdr .at-t { color: #242424; font-weight: 750; margin-left: 0.22em; }
+      .at-hdr .at-tabs { display: flex; flex: 1; align-self: stretch; gap: 8px; }
+      .at-hdr .at-push { margin-left: auto; }   /* About, My Profile and Settings sit on the right */
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
       .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
       .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
@@ -60,15 +65,25 @@
         .at-hdr .at-tab[aria-current="page"]::after { left: 10px; right: 10px; }
       }
       .at-hdr .at-gear { display: none; }
-      @media (max-width: 599px) {
+      @media (max-width: 767px) {   /* About, My Profile and Settings become icons */
+        .at-hdr .at-wrap { gap: 16px; }
         .at-hdr .at-gear { display: block; }
+        .at-hdr .at-set { min-width: 44px; justify-content: center; }
         .at-hdr .at-set-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       }
-      @media (max-width: 399px) {   /* five tabs: tighter so the gear still fits at 360 px */
+      @media (max-width: 599px) { .at-hdr .at-wrap { gap: 8px; } }
+      @media (max-width: 479px) {   /* six tabs: tighter so they still fit at 360 px */
         .at-hdr { --at-m: 12px; }
-        .at-hdr .at-wrap { gap: 4px; }
-        .at-hdr .at-tab { padding: 0 7px; min-width: 40px; font-size: 13.5px; }
-        .at-hdr .at-tab[aria-current="page"]::after { left: 7px; right: 7px; }
+        .at-hdr .at-wrap { gap: 2px; }
+        .at-hdr .at-tab { padding: 0 6px; min-width: 36px; font-size: 13px; }
+        .at-hdr .at-set { min-width: 38px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 6px; right: 6px; }
+      }
+      @media (max-width: 399px) {
+        .at-hdr { --at-m: 10px; }
+        .at-hdr .at-tab { padding: 0 5px; }
+        .at-hdr .at-set { min-width: 34px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 5px; right: 5px; }
       }
     </style>
     <style>
@@ -463,8 +478,11 @@
       .char-note { margin-top: 12px; font-size: 13.5px; color: var(--body); min-height: 20px; }
       .char-note b { color: var(--ink); }
 
-      .foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); max-width: 820px; }
-      .foot p + p { margin-top: 6px; }
+      .about[hidden] { display: none; }
+      .about-body { max-width: 720px; font-size: 15px; line-height: 1.6; color: var(--body); }
+      .about-body h2 { margin: 28px 0 6px; font-size: 17px; font-weight: 650; color: var(--ink); letter-spacing: -0.01em; }
+      .about-body h2:first-child { margin-top: 0; }
+      .about-body p + p { margin-top: 8px; }
 
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -506,11 +524,12 @@
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="/" aria-label="Grégoire Maillard, home"><span class="at-mk"><i></i></span><span class="at-name">Grégoire Maillard</span></a>
+        <a class="at-home" href="/turkish.html" aria-label="Daily Turkish, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#e34b4f"/><circle cx="76" cy="55" r="17" fill="#fff"/><circle cx="83" cy="49" r="16" fill="#e34b4f"/><path d="m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z" fill="#fff"/><path d="M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 90v46" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="3"/><path d="M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="2.5"/></svg><span class="at-name"><span class="at-d">Daily</span><span class="at-t">Turkish</span></span></a>
         <nav class="at-tabs" aria-label="Turkish course">
           <a class="at-tab" href="/turkish.html" id="tab-course" aria-current="page">Course</a>
           <a class="at-tab" href="/turkishguide.html">Grammar</a>
           <a class="at-tab" href="/turkishcards.html">Flashcards</a>
+          <a class="at-tab at-set at-push" href="/turkish.html#about" id="tab-about"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="7.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.4" r="1" fill="currentColor"/></svg><span class="at-set-l">About</span></a>
           <a class="at-tab at-set" href="/turkish.html#profile" id="tab-profile"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="10" cy="7" r="3.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.8 16.5c.9-3 3.3-4.6 6.2-4.6s5.3 1.6 6.2 4.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span class="at-set-l">My Profile</span></a>
           <a class="at-tab at-set" href="/turkish.html#settings" id="tab-settings"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M10 12.6a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8.4 2.5h3.2l.4 2.1 1.4.8 2-.7 1.6 2.8-1.6 1.4v1.6l1.6 1.4-1.6 2.8-2-.7-1.4.8-.4 2.1H8.4l-.4-2.1-1.4-.8-2 .7-1.6-2.8 1.6-1.4V9.2L3 7.8l1.6-2.8 2 .7 1.4-.8.4-2.1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="at-set-l">Settings</span></a>
         </nav>
@@ -524,7 +543,7 @@
       <header class="hero">
         <p class="kicker">Turkish · A1 → C2</p>
         <h1>Learn Turkish</h1>
-        <p class="lede">From your first <i lang="tr">merhaba</i> to reading the press: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of the 1,000 most useful words on spaced repetition. No account needed: your progress stays in this browser, or <a href="#profile">create a free profile</a> to keep it online and use it on any device.</p>
+        <p class="lede">From your first <i lang="tr">merhaba</i> to reading the press: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of the 1,000 most useful words on spaced repetition.<span id="lede-acct" hidden> No account needed: your progress stays in this browser, or <a href="#profile">create a free profile</a> to keep it online and use it on any device.</span></p>
       </header>
 
       <div class="layout">
@@ -617,10 +636,22 @@
         </div>
       </section>
 
-      <footer class="foot">
-        <p>A personal project by Grégoire Maillard. Turkish follows the spelling of the Türk Dil Kurumu; speech uses your device's own Turkish voice.</p>
-        <p>Without a profile, your progress lives in this browser's storage only, and clearing your browsing data erases it. With a <a href="#profile">profile</a>, it's also saved online.</p>
-      </footer>
+      <section class="about" id="about" aria-labelledby="h-about" hidden>
+        <header class="hero">
+          <p class="kicker">Turkish · A1 → C2</p>
+          <h1 id="h-about">About Daily Turkish</h1>
+          <p class="lede">A personal project by Grégoire Maillard.</p>
+        </header>
+        <div class="about-body">
+          <h2>The course</h2>
+          <p>Turkish follows the spelling of the Türk Dil Kurumu; speech uses your device's own Turkish voice.</p>
+          <h2>Your progress</h2>
+          <p>Without a profile, your progress lives in this browser's storage only, and clearing your browsing data erases it. With a <a href="#profile">profile</a>, it's also saved online.</p>
+          <h2>The flashcards</h2>
+          <p>The deck follows a frequency list of Turkish film and TV subtitles: the order is adapted from <a href="https://github.com/hermitdave/FrequencyWords" rel="noopener">FrequencyWords</a> by Hermit Dave (<a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>), built from the OpenSubtitles2018 corpus. Meanings, examples and notes are our own.</p>
+          <p>Scheduling follows Anki's SM-2 with its default settings.</p>
+        </div>
+      </section>
       <noscript><p class="notice">The course needs JavaScript to show your path and save your progress.</p></noscript>
     </main>
 
@@ -725,6 +756,10 @@
       }
       // The greeting (UI-5): signed in, the chosen character (or the initial) says "Merhaba, <name>!"; signed out, the A1
       // character invites the learner to make a profile. Both lead to My Profile. Redrawn alone when the account changes.
+      function renderLede() {
+        var known = A && (!!A.user || A.status === "loading");
+        $("lede-acct").hidden = !!known;
+      }
       function helloHtml() {
         if (!A || !A.avatarSvg) return "";
         var known = !!A.user || A.status === "loading" || A.status === "unavailable";
@@ -858,6 +893,7 @@
       var TITLE = document.title;
       function viewOf() {
         if (location.hash === "#settings") return "settings";
+        if (location.hash === "#about") return "about";
         if (location.hash === "#profile" || /[?&]signin=1/.test(location.search)) return "profile";
         return "course";
       }
@@ -866,14 +902,15 @@
         $("v-course").hidden = v !== "course";
         $("settings").hidden = v !== "settings";
         $("profile").hidden = v !== "profile";
-        [["course", "tab-course"], ["settings", "tab-settings"], ["profile", "tab-profile"]].forEach(function (p) {
+        $("about").hidden = v !== "about";
+        [["course", "tab-course"], ["settings", "tab-settings"], ["profile", "tab-profile"], ["about", "tab-about"]].forEach(function (p) {
           if (p[0] === v) $(p[1]).setAttribute("aria-current", "page"); else $(p[1]).removeAttribute("aria-current");
         });
-        document.title = v === "settings" ? "Settings · Learn Turkish" : v === "profile" ? "My Profile · Learn Turkish" : TITLE;
+        document.title = v === "about" ? "About · Daily Turkish" : v === "settings" ? "Settings · Learn Turkish" : v === "profile" ? "My Profile · Learn Turkish" : TITLE;
         if (v === "profile") { if (A) A.ensure().catch(function () {}); renderProfile(); }
         return v !== "course";
       }
-      ["tab-settings", "tab-profile"].forEach(function (id) {
+      ["tab-settings", "tab-profile", "tab-about"].forEach(function (id) {
         $(id).addEventListener("click", function (e) {
           if (location.hash === $(id).getAttribute("href").replace(/^[^#]*/, "")) { e.preventDefault(); window.scrollTo(0, 0); }
         });
@@ -1266,6 +1303,7 @@
         wasSignedIn = signedIn;
         renderProfile();
         renderHello();
+        renderLede();
       });
       setInterval(function () { if (A && A.sync === "saved" && !$("profile").hidden && !document.hidden) renderAccount(); }, 30000);   // "saved 2 minutes ago"
 
@@ -1286,6 +1324,7 @@
       document.addEventListener("visibilitychange", function () { if (!document.hidden && st.index) { store.forget(); render(); } });   // a new day, or progress made in another tab
       window.addEventListener("pageshow", function (e) { if (e.persisted && st.index) { st.fresh = takeFresh(); store.forget(); render(); } });   // back from a lesson, from the back-forward cache
       showView();
+      renderLede();
       renderSettings();
       renderNotices();
       T.tts.ready().then(function (v) { st.voice = v; renderVoice(); });

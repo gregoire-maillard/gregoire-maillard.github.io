@@ -15,6 +15,7 @@ on:
       - "assets/data/turkish/**"
       - "assets/fonts/**"
       - "assets/img/favicon.png"
+      - "assets/img/daily-turkish-*"
       - "assets/img/ataturk.*"
       - "stylesheets/styles.css"
       - ".github/workflows/sync-dailyturkish.yml"
@@ -39,6 +40,8 @@ jobs:
                    assets/js/turkish.js assets/js/turkish-account.js \
                    assets/data/turkish assets/fonts \
                    assets/img/favicon.png assets/img/ataturk.png assets/img/ataturk.webp \
+                   assets/img/daily-turkish-favicon.svg assets/img/daily-turkish-favicon.png \
+                   assets/img/daily-turkish-apple-touch-icon.png assets/img/daily-turkish-logo.svg \
                    stylesheets/styles.css; do
             if [ -e "$p" ]; then mkdir -p "out/$(dirname "$p")"; cp -R "$p" "out/$p"; fi
           done
