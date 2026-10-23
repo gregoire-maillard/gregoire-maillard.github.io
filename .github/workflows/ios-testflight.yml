@@ -1,0 +1,115 @@
+# Builds the Daily Turkish iOS app (app/) on a GitHub-hosted Mac and uploads it to App Store Connect,
+# where it appears in TestFlight once Apple has processed it (15–30 min). Run it by hand:
+# Actions › "iOS: build and upload to TestFlight" › Run workflow. Nothing runs on push.
+#
+# Needs these repository secrets (Settings › Secrets and variables › Actions), see app/RELEASE.md:
+#   APPLE_TEAM_ID         the 10-character Team ID (developer.apple.com › Account › Membership details)
+#   ASC_KEY_ID            the App Store Connect API key's Key ID
+#   ASC_ISSUER_ID         the Issuer ID shown above the list of keys
+#   ASC_KEY_P8            the whole text of the downloaded AuthKey_XXXXXXXXXX.p8 file
+# The key needs the Admin role so Xcode can create the signing certificate and profile itself (cloud signing).
+name: "iOS: build and upload to TestFlight"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version shown on the App Store (e.g. 1.0, 1.1)"
+        required: true
+        default: "1.0"
+
+concurrency:
+  group: ios-testflight
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      # Each run gets a higher build number, as App Store Connect requires.
+      BUILD_NUMBER: ${{ github.run_number }}
+      VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Check the secrets
+        run: |
+          for v in TEAM_ID ASC_KEY_ID ASC_ISSUER_ID; do
+            if [ -z "${!v}" ]; then echo "::error::Secret for $v is missing (see app/RELEASE.md)"; exit 1; fi
+          done
+
+      - name: Use the newest Xcode 26
+        run: |
+          XC="$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)"
+          sudo xcode-select -s "$XC"
+          xcodebuild -version
+
+      - name: Build the web content and copy it into the Xcode project
+        working-directory: app
+        run: |
+          npm ci
+          npm run sync
+
+      - name: Install the App Store Connect API key
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/keys"
+          printf '%s\n' "$ASC_KEY_P8" > "$RUNNER_TEMP/keys/AuthKey_$ASC_KEY_ID.p8"
+          echo "KEY_PATH=$RUNNER_TEMP/keys/AuthKey_$ASC_KEY_ID.p8" >> "$GITHUB_ENV"
+
+      # The archive is built unsigned; the export step signs it with a cloud-managed distribution
+      # certificate and an App Store profile that Xcode creates through the API key.
+      - name: Archive
+        working-directory: app/ios/App
+        run: |
+          xcodebuild archive \
+            -project App.xcodeproj -scheme App -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            | tee "$RUNNER_TEMP/archive.log" | grep -E "error:|warning: .*signing|\*\* ARCHIVE" || true
+          test -d "$RUNNER_TEMP/App.xcarchive" || { tail -80 "$RUNNER_TEMP/archive.log"; exit 1; }
+
+      - name: Sign and upload to App Store Connect
+        run: |
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+            <key>uploadSymbols</key><true/>
+          </dict>
+          </plist>
+          PLIST
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+          echo "### Uploaded Daily Turkish $VERSION ($BUILD_NUMBER)" >> "$GITHUB_STEP_SUMMARY"
+          echo "It appears in App Store Connect › TestFlight once Apple has processed it (usually 15–30 minutes)." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove the key
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/keys"

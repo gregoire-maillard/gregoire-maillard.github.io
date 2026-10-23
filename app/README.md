@@ -62,3 +62,5 @@ iPhone (or a simulator) and Run. After any change to the Turkish pages or data, 
 Still to check on a real phone: Export/Import of progress. Bump `MARKETING_VERSION` /
 `CURRENT_PROJECT_VERSION` in Xcode for each upload. The `ios/` folder is published by GitHub Pages
 along with the rest of the repo; it holds nothing private.
+
+To build and publish without a Mac (GitHub Actions + TestFlight), follow [RELEASE.md](RELEASE.md).
