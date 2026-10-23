@@ -645,11 +645,13 @@
         <div class="about-body">
           <h2>The course</h2>
           <p>Turkish follows the spelling of the Türk Dil Kurumu; speech uses your device's own Turkish voice.</p>
+          <h2>The method</h2>
+          <p><b>Anki and spaced repetition.</b> Anki is the free flashcard app that made spaced repetition popular. After each card you grade how well you remembered it (Again, Hard, Good or Easy), and it comes back just before you would forget it: tomorrow, then in a few days, then weeks and months later. A few minutes a day are enough to keep thousands of words. The flashcards here use Anki's own algorithm (SM-2) with its default settings, the same four grades with the next interval shown on each button, and Anki's statistics (a card is “mature” after 21 days).</p>
+          <p><b>Fluent Forever.</b> In his book <cite>Fluent Forever</cite> (2014), Gabriel Wyner argues for learning pronunciation first, the most frequent words before the rare ones, words in real sentences rather than lists, recalling actively instead of just recognising, and letting spaced repetition do the remembering. Daily Turkish follows this: the course opens with the letters and their sounds and every Turkish word can be played aloud; the deck is the 1,000 most frequent words, in order; every card has an example sentence; and words are practised in both directions, English → Turkish once you recognise the Turkish. Where it differs: Wyner recommends making your own cards with pictures instead of translations, while these cards come ready-made with English meanings, to save you the time.</p>
           <h2>Your progress</h2>
           <p>Without a profile, your progress lives in this browser's storage only, and clearing your browsing data erases it. With a <a href="#profile">profile</a>, it's also saved online.</p>
-          <h2>The flashcards</h2>
+          <h2>Sources</h2>
           <p>The deck follows a frequency list of Turkish film and TV subtitles: the order is adapted from <a href="https://github.com/hermitdave/FrequencyWords" rel="noopener">FrequencyWords</a> by Hermit Dave (<a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>), built from the OpenSubtitles2018 corpus. Meanings, examples and notes are our own.</p>
-          <p>Scheduling follows Anki's SM-2 with its default settings.</p>
         </div>
       </section>
       <noscript><p class="notice">The course needs JavaScript to show your path and save your progress.</p></noscript>
@@ -751,7 +753,7 @@
         var m = T.progress.mistakesDue(course).length;
         if (m) html += '<div class="card mini"><div class="row"><h3>Your mistakes</h3></div><p class="counts"><b>' + m + "</b> " + (m === 1 ? "exercise" : "exercises") + ' to try again</p><a class="btn" href="' + P.lesson + '?practice=mistakes">Practise</a></div>';
         var mastered = f.units.filter(function (x) { return course.units[x.id] && course.units[x.id].reviewed; }).length;
-        html += '<p class="totals"><b>' + course.xp.total + "</b> XP · <b>" + done + "</b> of " + f.lessons.length + " lessons written so far" + (mastered ? " · <b>" + mastered + "</b> " + (mastered === 1 ? "unit" : "units") + " mastered" : "") + "</p>";
+        html += '<p class="totals"><b>' + course.xp.total + "</b> XP · <b>" + done + "</b> " + (done === 1 ? "lesson" : "lessons") + " completed" + (mastered ? " · <b>" + mastered + "</b> " + (mastered === 1 ? "unit" : "units") + " mastered" : "") + "</p>";
         $("today").innerHTML = html;
       }
       // The greeting (UI-5): signed in, the chosen character (or the initial) says "Merhaba, <name>!"; signed out, the A1
@@ -824,7 +826,8 @@
         if (!ix) return;
         var course = store.course(), set = store.settings(), f = T.path.flatten(ix), next = T.path.nextLesson(ix, course);
         var hereLevel = next ? next.level : null;
-        $("path-meta").textContent = plural(ix.counts.units, "unit") + " written of " + f.units.length + " · " + plural(ix.counts.exercises, "exercise");
+        var unitsDone = f.units.filter(function (u) { return T.path.unitDone(ix, course, u.id); }).length;
+        $("path-meta").textContent = unitsDone + " of " + f.units.length + " units completed";
         $("lvl-nav").innerHTML = ix.levels.map(function (lv) {
           var s = levelStats(lv, course);
           return '<a class="lvl-chip' + (lv.id === hereLevel ? " here" : "") + '" data-lvl="' + lv.id + '" href="#' + lv.id + '">' + lv.cefr + " <small>" + (s.ready ? s.doneUnits + "/" + s.total : "soon") + "</small></a>";
@@ -834,7 +837,7 @@
       function renderLevel(lv, course, set, f, next) {
         var s = levelStats(lv, course), L = st.levels[lv.id];
         var open = st.open[lv.id] != null ? st.open[lv.id] : false;   // folded by default; a link to a unit (#a1-u05) or a level chip opens it
-        var meta = s.ready ? plural(s.ready, "unit") + " of " + s.total + " written" + (s.doneUnits ? " · " + s.doneUnits + " done" : "") : s.total + " units · coming soon";
+        var meta = s.ready ? s.doneUnits + " of " + s.total + " units completed" : "Coming soon";
         var body = "";
         if (L) {
           body += '<p class="lvl-sum">' + T.rich(L.summary, { index: st.index }) + "</p>";
