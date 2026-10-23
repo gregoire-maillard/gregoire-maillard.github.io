@@ -18,7 +18,7 @@ const SITE = resolve(APP, "..");
 const OUT = join(APP, "www");
 
 const FILES = [
-  "turkish.html", "turkishcards.html", "turkishguide.html", "turkishlesson.html",
+  "turkish.html", "turkishcards.html", "turkishguide.html", "turkishlesson.html", "turkishprivacy.html",
   "assets/js/turkish.js", "assets/js/turkish-account.js",
   "assets/data/turkish", "assets/fonts",
   "assets/img/favicon.png", "assets/img/ataturk.png", "assets/img/ataturk.webp",

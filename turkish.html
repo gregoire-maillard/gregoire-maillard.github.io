@@ -132,12 +132,12 @@
       .hero .lede { margin-top: 10px; font-size: 16px; line-height: 1.55; color: var(--body); }
       @media (max-width: 599px) { .hero { margin-bottom: 20px; } .hero h1 { font-size: 27px; } .hero .lede { font-size: 15px; } }
 
-      .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px 40px; align-items: start; }
+      .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; grid-template-rows: auto 1fr; gap: 28px 40px; align-items: start; }   /* extra height from the right column goes below the path, not under the title */
       .layout > .hero { grid-column: 1; grid-row: 1; margin-bottom: 0; }   /* the right column starts level with the title */
       .today { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 88px; display: grid; gap: 12px; }
       .path { grid-column: 1; grid-row: 2; min-width: 0; }
       @media (max-width: 899px) {
-        .layout { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+        .layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; gap: 32px; }
         .today, .path { grid-column: 1; grid-row: auto; position: static; }
         .layout > .hero { grid-column: 1; grid-row: auto; }
       }

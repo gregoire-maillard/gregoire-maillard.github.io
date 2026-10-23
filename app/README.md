@@ -43,15 +43,22 @@ In Xcode: select the **App** target › Signing & Capabilities › choose your T
 iPhone (or a simulator) and Run. After any change to the Turkish pages or data, run
 `npm run sync` again before building.
 
-## Before submitting to the App Store
+## App Store readiness (done)
 
-- **App icon:** `ios/App/App/Assets.xcassets/AppIcon.appiconset` still holds Capacitor's default
-  icon. Replace it with a 1024×1024 PNG (no transparency) of the Daily Turkish logo.
-- **Sign-in:** the online profile sends a magic link that returns to `location.origin`, which inside
-  the app is `capacitor://localhost`, so the link opens the website, not the app. Either hide sign-in
-  in the app or switch to a 6-digit email code (Supabase `verifyOtp`).
-- **Export / Import progress:** file downloads behave differently in the iOS web view; test them on a
-  phone.
-- **Version:** bump `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in Xcode for each upload.
-- The `ios/` folder is published by GitHub Pages along with the rest of the repo. It holds nothing
-  private.
+- **App icon:** `ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png`, 1024×1024, no
+  transparency, drawn from the favicon (`app/icon.svg` is the source). The launch screen shows the
+  same mark on white.
+- **No sign-in in the app:** `src/turkish-app.js` hides every way into the online profile and never
+  loads the sign-in library (the magic link would return to the website, not the app). Progress stays
+  on the phone, so the App Privacy answer is **Data not collected**. My Profile still shows level,
+  XP, achievements and the study calendar.
+- **Privacy policy:** `turkishprivacy.html` at the site root, live at
+  `https://gregoiremaillard.com/turkishprivacy.html` and, through the mirror, at
+  `https://dailyturkish.app/turkishprivacy.html` once pushed.
+- **Export compliance:** `ITSAppUsesNonExemptEncryption = NO` in `Info.plist`, so App Store Connect
+  doesn't ask on every upload.
+- **iPhone only:** `TARGETED_DEVICE_FAMILY = 1`, so no iPad screenshots are needed.
+
+Still to check on a real phone: Export/Import of progress. Bump `MARKETING_VERSION` /
+`CURRENT_PROJECT_VERSION` in Xcode for each upload. The `ios/` folder is published by GitHub Pages
+along with the rest of the repo; it holds nothing private.

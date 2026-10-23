@@ -1,4 +1,4 @@
-/* Daily Turkish app only (app/src/turkish-app.js): the daily reminder.
+/* Daily Turkish app only (app/src/turkish-app.js): the daily reminder, and no online profile.
  *
  * Not part of the website. app/scripts/build-www.mjs adds this file, Capacitor's runtime and the
  * Local Notifications plugin to the app's copy of the Turkish pages. Outside the native app
@@ -96,9 +96,39 @@
 
   var Cap = root.Capacitor;
   if (!Cap || typeof Cap.isNativePlatform !== "function" || !Cap.isNativePlatform()) return;
-  var LN = root.capacitorLocalNotifications && root.capacitorLocalNotifications.LocalNotifications;
   var TRK = root.TRK;
-  if (!LN || !TRK) return;
+  if (!TRK) return;
+
+  // ── No online profile in the app (1.0) ──
+  // The sign-in link would come back to the website, not the app, and without it the app collects no data
+  // ("Data not collected" on the App Store). turkish-account.js still loads, for the characters' artwork,
+  // but never fetches the sign-in library, and every way into sign-in is hidden. Progress stays on the phone.
+  (function noAccount() {
+    var A = TRK.account;
+    if (A) {
+      A.ensure = function () { return new Promise(function () {}); };   // status stays "off"; nothing is downloaded
+      A.signIn = function () { return Promise.reject(new Error("Sign-in isn't available in the app.")); };
+    }
+    var css = document.createElement("style");
+    css.textContent = "#lede-acct, .hello.invite, #pf-acct, #pf-chars, .pf-side { display: none !important; }" +
+      " .pf-grid { grid-template-columns: minmax(0, 1fr) !important; } .pf-main { grid-column: 1 !important; }";
+    document.head.appendChild(css);
+    var STATUS = "Your progress is saved on this iPhone. Export it to keep a copy or to move it to another device.";
+    var ps = document.getElementById("p-status");
+    if (ps) {
+      var fix = function () { if (ps.textContent !== STATUS) ps.textContent = STATUS; };
+      fix();
+      if (root.MutationObserver) new MutationObserver(fix).observe(ps, { childList: true, characterData: true, subtree: true });
+    }
+    Array.prototype.forEach.call(document.querySelectorAll("#about p"), function (p) {
+      if (/Without a profile/.test(p.textContent)) {
+        p.textContent = "Your progress lives on this iPhone only, and deleting the app erases it. Use Export progress in Settings to keep a copy.";
+      }
+    });
+  })();
+
+  var LN = root.capacitorLocalNotifications && root.capacitorLocalNotifications.LocalNotifications;
+  if (!LN) return;
 
   var state = load(), denied = false, next = null, ui = null;
   var chain = Promise.resolve();
