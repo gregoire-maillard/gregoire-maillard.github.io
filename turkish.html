@@ -132,12 +132,14 @@
       .hero .lede { margin-top: 10px; font-size: 16px; line-height: 1.55; color: var(--body); }
       @media (max-width: 599px) { .hero { margin-bottom: 20px; } .hero h1 { font-size: 27px; } .hero .lede { font-size: 15px; } }
 
-      .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start; }
-      .today { grid-column: 2; grid-row: 1; position: sticky; top: 88px; display: grid; gap: 12px; }
-      .path { grid-column: 1; grid-row: 1; min-width: 0; }
+      .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px 40px; align-items: start; }
+      .layout > .hero { grid-column: 1; grid-row: 1; margin-bottom: 0; }   /* the right column starts level with the title */
+      .today { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 88px; display: grid; gap: 12px; }
+      .path { grid-column: 1; grid-row: 2; min-width: 0; }
       @media (max-width: 899px) {
         .layout { grid-template-columns: minmax(0, 1fr); gap: 32px; }
         .today, .path { grid-column: 1; grid-row: auto; position: static; }
+        .layout > .hero { grid-column: 1; grid-row: auto; }
       }
 
       /* cards and buttons */
@@ -540,13 +542,12 @@
       <div class="notices" id="notices" role="status" aria-live="polite"></div>
 
       <div id="v-course">
-      <header class="hero">
-        <p class="kicker">Turkish · A1 → C2</p>
-        <h1>Learn Turkish</h1>
-        <p class="lede">From your first <i lang="tr">merhaba</i> to reading the press: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of the 1,000 most useful words on spaced repetition.<span id="lede-acct" hidden> No account needed: your progress stays in this browser, or <a href="#profile">create a free profile</a> to keep it online and use it on any device.</span></p>
-      </header>
-
       <div class="layout">
+        <header class="hero">
+          <p class="kicker">Turkish · A1 → C2</p>
+          <h1>Learn Turkish</h1>
+          <p class="lede">From your first <i lang="tr">merhaba</i> to reading the press: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of the 1,000 most useful words on spaced repetition.<span id="lede-acct" hidden> No account needed: your progress stays in this browser, or <a href="#profile">create a free profile</a> to keep it online and use it on any device.</span></p>
+        </header>
         <aside class="today" id="today" aria-label="Today">
           <div class="card next"><p class="eyebrow">Loading the course…</p></div>
         </aside>
