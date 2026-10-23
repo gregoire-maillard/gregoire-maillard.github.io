@@ -1,10 +1,10 @@
-# Mirrors the Turkish section of gregoiremaillard.com to dailyturkish.tr.
+# Mirrors the Turkish section of gregoiremaillard.com to dailyturkish.app.
 # Source of truth = this repo. On every push to main that touches a Turkish
 # file, copy those files (same paths) into a fresh folder, make turkish.html
-# the home page, add CNAME dailyturkish.tr, and force-push the result to the
+# the home page, add CNAME dailyturkish.app, and force-push the result to the
 # repo gregoire-maillard/dailyturkish (served by GitHub Pages).
 # Never edit the dailyturkish repo by hand: it is overwritten on each sync.
-name: Sync Turkish section to dailyturkish.tr
+name: Sync Turkish section to dailyturkish.app
 
 on:
   push:
@@ -42,8 +42,8 @@ jobs:
                    stylesheets/styles.css; do
             if [ -e "$p" ]; then mkdir -p "out/$(dirname "$p")"; cp -R "$p" "out/$p"; fi
           done
-          cp turkish.html out/index.html          # dailyturkish.tr/ opens the course hub
-          echo "dailyturkish.tr" > out/CNAME
+          cp turkish.html out/index.html          # dailyturkish.app/ opens the course hub
+          echo "dailyturkish.app" > out/CNAME
           touch out/.nojekyll                     # serve files exactly as they are
           echo "Mirror contains $(find out -type f | wc -l) files"
 
