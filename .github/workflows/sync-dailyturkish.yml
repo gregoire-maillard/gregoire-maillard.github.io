@@ -31,6 +31,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0                          # full history, for each page's <lastmod>
 
       - name: Build the mirror
         run: |
@@ -48,6 +50,22 @@ jobs:
           cp turkish.html out/index.html          # dailyturkish.app/ opens the course hub
           echo "dailyturkish.app" > out/CNAME
           touch out/.nojekyll                     # serve files exactly as they are
+
+          # robots.txt and sitemap.xml of dailyturkish.app (the main site's own
+          # files list gregoiremaillard.com URLs, so they are not copied).
+          # turkish.html is left out (same page as /), and turkishlesson.html too
+          # (it needs a lesson in its URL to show anything).
+          printf 'User-agent: *\nAllow: /\n\nSitemap: https://dailyturkish.app/sitemap.xml\n' > out/robots.txt
+          {
+            echo '<?xml version="1.0" encoding="UTF-8"?>'
+            echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+            for entry in "/ turkish.html" "/turkishguide.html turkishguide.html" \
+                         "/turkishcards.html turkishcards.html" "/turkishprivacy.html turkishprivacy.html"; do
+              set -- $entry
+              echo "  <url><loc>https://dailyturkish.app$1</loc><lastmod>$(git log -1 --format=%cs -- "$2")</lastmod></url>"
+            done
+            echo '</urlset>'
+          } > out/sitemap.xml
           echo "Mirror contains $(find out -type f | wc -l) files"
 
       - name: Publish to gregoire-maillard/dailyturkish
