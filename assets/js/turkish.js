@@ -706,26 +706,62 @@
     lessonIds.forEach(function (id) { var r = course.lessons[id]; if (r.best >= 1 && !r.via) perfect += 1; });
     var unitsDone = ready.filter(function (u) { return unitDone(index, course, u.id); }).length;
     var units = Object.keys(course.units), count = function (k) { return units.filter(function (id) { return !!course.units[id][k]; }).length; };
-    var a1 = f.units.filter(function (u) { return u.level === "a1"; });
-    var a1Done = a1.filter(function (u) { return u.status === "ready" && unitDone(index, course, u.id); }).length;
+    var lvlDone = function (lv) {   // [units done, units in the level] (unwritten units count toward the total)
+      var us = f.units.filter(function (u) { return u.level === lv; });
+      return [us.filter(function (u) { return u.status === "ready" && unitDone(index, course, u.id); }).length, us.length || 12];
+    };
+    var a1 = lvlDone("a1"), a2 = lvlDone("a2"), b1 = lvlDone("b1");
     var best = Math.max(course.streak.best || 0, streakView(course, settings, now).current);
-    var goal = settings.dailyGoal, goalDays = Object.keys(course.xp.days).filter(function (d) { return course.xp.days[d] >= goal; }).length;
-    var words = {};
-    Object.keys((cards && cards.cards) || {}).forEach(function (k) { if (cards.cards[k].ivl > 0) words[k.split(":")[0]] = true; });
+    var goal = settings.dailyGoal, xpDays = course.xp.days;
+    var goalDays = Object.keys(xpDays).filter(function (d) { return xpDays[d] >= goal; }).length;
+    var bigDay = Object.keys(xpDays).reduce(function (m, d) { return Math.max(m, xpDays[d]); }, 0);
+    var cdays = (cards && cards.days) || {}, active = {}, cardDay = 0;
+    Object.keys(xpDays).forEach(function (d) { if (xpDays[d] > 0) active[d] = true; });
+    Object.keys(cdays).forEach(function (d) { var n = (cdays[d]["new"] || 0) + (cdays[d].reviews || 0); if (n > 0) active[d] = true; cardDay = Math.max(cardDay, n); });
+    var words = {}, known = {};
+    Object.keys((cards && cards.cards) || {}).forEach(function (k) { var c = cards.cards[k], w = k.split(":")[0]; if (c.ivl > 0) words[w] = true; if (c.ivl >= 21) known[w] = true; });
+    var nWords = Object.keys(words).length, nKnown = Object.keys(known).length;
+    var cleared = Object.keys(course.mistakes).filter(function (k) { var m = course.mistakes[k]; return m.n > 0 && m.ok >= m.n; }).length;
+    var repeats = lessonIds.filter(function (id) { return course.lessons[id].runs > 1; }).length;
     var list = [
+      // lessons and units
       ["first-lesson", "İlk adım", "First step", "Finish your first lesson", lessonIds.length, 1, "1", "a1"],
+      ["lessons-10", "On ders", "Ten lessons", "Finish 10 lessons", lessonIds.length, 10, "10", "a1"],
+      ["lessons-50", "Elli ders", "Fifty lessons", "Finish 50 lessons", lessonIds.length, 50, "50", "a1"],
       ["perfect", "Kusursuz", "Flawless", "Finish a lesson without a mistake", perfect, 1, "✓", "gold"],
+      ["perfect-10", "Mükemmeliyetçi", "Perfectionist", "Finish 10 lessons without a mistake", perfect, 10, "✓✓", "gold"],
+      ["repeat-5", "Tekrar", "Once more", "Redo 5 lessons to sharpen them", repeats, 5, "↻", "a2"],
       ["first-unit", "İlk ünite", "First unit", "Finish every lesson of a unit and lay your first tile", unitsDone, 1, "◆", "a2"],
+      ["units-5", "Beş çini", "Five tiles", "Finish 5 units", unitsDone, 5, "5◆", "a2"],
       ["golden-tile", "Altın çini", "Golden tile", "Pass a unit review to glaze a tile gold", count("reviewed"), 1, "★", "gold"],
-      ["a1", "A1 tamam", "A1 complete", "Finish all " + a1.length + " units of A1", a1Done, a1.length || 12, "A1", "a1"],
+      ["golden-5", "Altın duvar", "Golden wall", "Glaze 5 tiles gold", count("reviewed"), 5, "5★", "gold"],
+      ["mistakes-10", "Telafi", "Making amends", "Clear 10 mistakes in practice", cleared, 10, "✗→✓", "b1"],
+      // levels
+      ["a1", "A1 tamam", "A1 complete", "Finish all " + a1[1] + " units of A1", a1[0], a1[1], "A1", "a1"],
+      ["a2", "A2 tamam", "A2 complete", "Finish all " + a2[1] + " units of A2", a2[0], a2[1], "A2", "a2"],
+      ["b1", "B1 tamam", "B1 complete", "Finish all " + b1[1] + " units of B1", b1[0], b1[1], "B1", "b1"],
+      // regularity
       ["streak-3", "Çırak", "Apprentice", "Keep a 3-day streak", best, 3, "3", "b2"],
       ["streak-7", "Kalfa", "Journeyman", "Keep a 7-day streak", best, 7, "7", "b2"],
       ["streak-30", "Usta", "Master", "Keep a 30-day streak", best, 30, "30", "b2"],
+      ["streak-100", "Üstat", "Grand master", "Keep a 100-day streak", best, 100, "100", "b2"],
       ["goal-7", "Hedef", "On target", "Meet your daily goal on 7 days", goalDays, 7, "◎", "b1"],
-      ["words-100", "Yüz kelime", "A hundred words", "Learn 100 words in the flashcards", Object.keys(words).length, 100, "100", "c1"],
+      ["goal-30", "Azim", "Determination", "Meet your daily goal on 30 days", goalDays, 30, "◎◎", "b1"],
+      ["days-50", "Sadık", "Faithful", "Study on 50 different days", Object.keys(active).length, 50, "50d", "b1"],
+      ["big-day", "Çalışkan", "Hard worker", "Earn 100 XP in a single day", bigDay, 100, "⚡", "b2"],
+      // words
+      ["words-100", "Yüz kelime", "A hundred words", "Learn 100 words in the flashcards", nWords, 100, "100", "c1"],
+      ["words-500", "Beş yüz kelime", "Five hundred words", "Learn 500 words in the flashcards", nWords, 500, "500", "c1"],
+      ["words-1000", "Bin kelime", "The whole deck", "Learn all 1,000 words in the flashcards", nWords, 1000, "1000", "c1"],
+      ["known-100", "Sağlam hafıza", "Solid memory", "Know 100 words well (reviewed at 3+ week intervals)", nKnown, 100, "∞", "c1"],
+      ["cards-100", "Maraton", "Marathon", "Study 100 flashcards in a single day", cardDay, 100, "🂠", "c1"],
+      // reading
       ["guides-12", "Kitap kurdu", "Bookworm", "Read 12 grammar guides", count("guide"), 12, "§", "a2"],
       ["culture-12", "Gezgin", "Traveller", "Read 12 culture interludes", count("culture"), 12, "✦", "b1"],
-      ["xp-1000", "Bin XP", "A thousand XP", "Earn 1,000 XP", course.xp.total, 1000, "1K", "c2"]
+      // XP
+      ["xp-1000", "Bin XP", "A thousand XP", "Earn 1,000 XP", course.xp.total, 1000, "1K", "c2"],
+      ["xp-5000", "Beş bin XP", "Five thousand XP", "Earn 5,000 XP", course.xp.total, 5000, "5K", "c2"],
+      ["xp-10000", "On bin XP", "Ten thousand XP", "Earn 10,000 XP", course.xp.total, 10000, "10K", "c2"]
     ];
     return list.map(function (a) {
       return { id: a[0], tr: a[1], en: a[2], text: a[3], have: Math.min(a[4], a[5]), need: a[5], done: a[4] >= a[5], glyph: a[6], hue: a[7] };

@@ -853,7 +853,7 @@ test("achievements: none at the start; earned from lessons, a review, reading, t
   const course = P.defaults("course", now), cards = P.defaults("cards", now);
   const ids = a => a.filter(x => x.done).map(x => x.id).sort();
   const first = P.achievements(INDEX, course, cards, set, now);
-  assert.equal(first.length, 13);
+  assert.equal(first.length, 32);
   assert.deepEqual(ids(first), []);
   assert.ok(first.every(a => a.have === 0 && a.need > 0 && a.tr && a.en && a.text && a.glyph && a.hue));
   const u = TRK.path.flatten(INDEX).units.find(x => x.status === "ready");

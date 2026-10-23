@@ -325,13 +325,39 @@
       .confirm .btns { margin-top: 10px; }
 
       /* profile (#profile, the header's My Profile tab) */
-      .pf-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start; }
-      .pf-side { grid-column: 2; grid-row: 1; position: sticky; top: 88px; display: grid; gap: 12px; }
-      .pf-main { grid-column: 1; grid-row: 1; min-width: 0; display: grid; gap: 16px; }
-      @media (max-width: 899px) {
-        .pf-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-        .pf-side, .pf-main { grid-column: 1; grid-row: auto; position: static; }
+      /* three columns: the section menu on the left, the dashboard, the account on the right */
+      .pf-grid { display: grid; grid-template-columns: 190px minmax(0, 1fr) 300px; gap: 36px; align-items: start; }
+      .pf-nav { grid-column: 1; grid-row: 1 / span 2; position: sticky; top: 88px; }
+      .pf-main { grid-column: 2; grid-row: 1; min-width: 0; display: grid; gap: 28px; }
+      .pf-side { grid-column: 3; grid-row: 1; position: sticky; top: 88px; display: grid; gap: 12px; }
+      .pf-sec { display: grid; gap: 16px; scroll-margin-top: 88px; min-width: 0; }
+      .pf-sec > h2.pf-sec-h { font-size: 13px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: -6px; }
+      .pf-nav ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; border-left: 1px solid var(--line); }
+      .pf-nav .pf-nav-sep { height: 12px; }
+      .pf-nav button { font: inherit; font-size: 14px; text-align: left; width: 100%; display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 12px; margin-left: -1px;
+                       border: 0; border-left: 2px solid transparent; background: none; color: var(--body); cursor: pointer; border-radius: 0 8px 8px 0; transition: color .15s, background-color .15s, border-color .15s; }
+      .pf-nav button:hover { color: var(--ink); background: var(--panel); }
+      .pf-nav button[aria-current="true"] { color: var(--blue-dark); border-left-color: var(--blue); background: var(--blue-tint); font-weight: 600; }
+      .pf-nav button:focus-visible { outline: 2px solid var(--blue-dark); outline-offset: -2px; }
+      .pf-nav .pf-nav-n { margin-left: auto; font-size: 11.5px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+      .pf-nav-t { font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px 13px; }
+      @media (max-width: 1179px) {   /* the account cards drop under the dashboard */
+        .pf-grid { grid-template-columns: 180px minmax(0, 1fr); gap: 28px; }
+        .pf-side { grid-column: 2; grid-row: 2; position: static; scroll-margin-top: 88px; }
       }
+      @media (max-width: 899px) {   /* the menu becomes a strip of chips under the header */
+        .pf-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+        .pf-nav, .pf-side, .pf-main { grid-column: 1; grid-row: auto; }
+        .pf-nav { position: sticky; top: 64px; z-index: 20; margin: 0 -16px; padding: 8px 16px; background: rgb(255 255 255 / 92%); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+        .pf-nav-t, .pf-nav .pf-nav-sep { display: none; }
+        .pf-nav ol { display: flex; gap: 6px; border: 0; overflow-x: auto; scrollbar-width: none; }
+        .pf-nav ol::-webkit-scrollbar { display: none; }
+        .pf-nav button { white-space: nowrap; width: auto; min-height: 34px; margin: 0; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; background: #fff; }
+        .pf-nav button[aria-current="true"] { border-color: var(--blue); }
+        .pf-nav .pf-nav-n { margin-left: 2px; }
+        .pf-sec, .pf-side { scroll-margin-top: 124px; }
+      }
+      @media (max-width: 599px) { .pf-nav { top: 56px; } .pf-sec, .pf-side { scroll-margin-top: 116px; } }
       .pf-who { display: flex; align-items: center; gap: 12px; }
       .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 650; font-size: 18px; flex: none; }
       .pf-name { font-size: 17px; font-weight: 620; color: var(--ink); line-height: 1.3; overflow-wrap: anywhere; }
@@ -446,6 +472,37 @@
       .ach .a-how { font-size: 12.5px; color: var(--body); line-height: 1.35; margin-top: 4px; }
       .ach .bar { width: 100%; max-width: 110px; margin: 8px auto 0; height: 4px; }
       .ach .a-n { font-size: 11.5px; color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
+      .star.long { font-size: 11px; letter-spacing: -.02em; }
+      .ach-grp { font-size: 12px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 18px 0 -4px; }
+      .ach-grp:first-of-type { margin-top: 14px; }
+      /* a just-unlocked achievement: the card lifts, the star spins in, a ring of sparks bursts out, then a sheen */
+      .ach li { position: relative; }
+      .ach li.fresh { animation: ach-lift 1.1s cubic-bezier(.3, 1.4, .5, 1) .25s both; z-index: 1; }
+      .ach li.fresh .star { animation: ach-spin .9s cubic-bezier(.3, 1.5, .5, 1) .35s both, ach-glow 1.4s ease-out 1.2s; }
+      .ach li.fresh::before { content: ""; position: absolute; left: 50%; top: 35px; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; pointer-events: none;
+        background: var(--lv); color: var(--lv);
+        box-shadow: 0 -34px 0 -1px, 24px -24px 0 -2px, 34px 0 0 -1px, 24px 24px 0 -2px, 0 34px 0 -1px, -24px 24px 0 -2px, -34px 0 0 -1px, -24px -24px 0 -2px;
+        animation: ach-burst .9s ease-out .7s both; }
+      .ach li.fresh.gold::before { background: #e0b23c; color: #e0b23c; }
+      .ach li.fresh .a-new { display: inline-block; }
+      .a-new { display: none; position: absolute; top: 6px; right: 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #fff; background: #e34b4f; border-radius: 999px; padding: 1px 7px; animation: ach-pop .5s cubic-bezier(.3, 1.6, .5, 1) 1.1s both; }
+      @keyframes ach-lift { 0% { transform: scale(.85); opacity: .4; } 55% { transform: scale(1.07); opacity: 1; box-shadow: 0 10px 28px rgb(0 0 0 / 14%); } 100% { transform: none; box-shadow: 0 0 0 rgb(0 0 0 / 0); } }
+      @keyframes ach-spin { 0% { transform: scale(0) rotate(-200deg); } 70% { transform: scale(1.25) rotate(15deg); } 100% { transform: none; } }
+      @keyframes ach-glow { 0% { filter: brightness(1); } 25% { filter: brightness(1.5) drop-shadow(0 0 6px rgb(255 214 102 / 90%)); } 100% { filter: none; } }
+      @keyframes ach-burst { 0% { transform: scale(.2); opacity: 0; } 20% { opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+      @keyframes ach-pop { 0% { transform: scale(0); } 100% { transform: none; } }
+
+      /* the unlock toast: shows on any view of this page when an achievement is newly earned */
+      .ach-toast { position: fixed; left: 50%; bottom: 24px; z-index: 2000; display: flex; align-items: center; gap: 12px; max-width: calc(100vw - 32px); min-width: 260px;
+        padding: 10px 16px 10px 10px; border-radius: 14px; background: #1f2a30; color: #fff; box-shadow: 0 14px 40px rgb(0 0 0 / 28%); cursor: pointer; border: 0; font: inherit; text-align: left;
+        transform: translate(-50%, 140%); opacity: 0; transition: transform .5s cubic-bezier(.3, 1.4, .5, 1), opacity .3s; }
+      .ach-toast.show { transform: translate(-50%, 0); opacity: 1; }
+      .ach-toast .star { margin: 0; flex: none; width: 42px; height: 42px; background: var(--lv); color: var(--lv-on); }
+      .ach-toast.gold .star { background: var(--gold-shine); color: #3b2a05; }
+      .ach-toast.show .star { animation: ach-spin .9s cubic-bezier(.3, 1.5, .5, 1) .25s both, ach-glow 1.4s ease-out 1.1s; }
+      .ach-toast .t-k { display: block; font-size: 11.5px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: #f7dc80; }
+      .ach-toast .t-n { display: block; font-size: 15.5px; font-weight: 650; line-height: 1.3; }
+      .ach-toast .t-s { display: block; font-size: 12.5px; color: rgb(255 255 255 / 72%); }
 
       /* study calendar (UI-5): one square per learning day, Monday to Sunday down each week */
       .cal { margin-top: 14px; }
@@ -640,7 +697,19 @@
           <p class="lede" id="pf-lede">Your level, your XP, and how far you've come in lessons and words.</p>
         </header>
         <div class="pf-grid">
-          <aside class="pf-side" aria-label="Your account">
+          <nav class="pf-nav" id="pf-nav" aria-label="Profile sections">
+            <p class="pf-nav-t">On this page</p>
+            <ol>
+              <li><button type="button" data-go="pf-s-progress">Progress</button></li>
+              <li><button type="button" data-go="pf-s-calendar">Study calendar</button></li>
+              <li><button type="button" data-go="pf-s-ach">Achievements <span class="pf-nav-n" id="pf-nav-ach"></span></button></li>
+              <li><button type="button" data-go="pf-s-yours">Your progress</button></li>
+              <li><button type="button" data-go="pf-s-levels">Levels</button></li>
+              <li class="pf-nav-sep" aria-hidden="true"></li>
+              <li><button type="button" data-go="pf-side">Account &amp; character</button></li>
+            </ol>
+          </nav>
+          <aside class="pf-side" id="pf-side" aria-label="Your account">
             <div class="card" id="pf-acct"><p class="eyebrow">Checking whether you're signed in…</p></div>
             <div class="card" id="pf-chars" hidden></div>
           </aside>
@@ -926,7 +995,7 @@
           if (p[0] === v) $(p[1]).setAttribute("aria-current", "page"); else $(p[1]).removeAttribute("aria-current");
         });
         document.title = v === "about" ? "About · Daily Turkish" : v === "settings" ? "Settings · Learn Turkish" : v === "profile" ? "My Profile · Learn Turkish" : TITLE;
-        if (v === "profile") { if (A) A.ensure().catch(function () {}); renderProfile(); }
+        if (v === "profile") { if (A) A.ensure().catch(function () {}); renderProfile(); settleFresh(); }
         return v !== "course";
       }
       ["tab-settings", "tab-profile", "tab-about"].forEach(function (id) {
@@ -1153,7 +1222,7 @@
         // level
         var c = s.certified, w = s.working;
         var badgeLv = c ? c.id : w ? w.id : null;
-        h += where + '<div class="card"><div class="pf-level"><span class="pf-badge' + (c ? " on" : "") + '"' + (badgeLv ? ' data-lvl="' + esc(badgeLv) + '"' : "") + ' aria-hidden="true">' + (c ? c.cefr : w ? w.cefr : "–") + "</span><div>" +
+        h += '<section class="pf-sec" id="pf-s-progress" aria-label="Progress">' + where + '<div class="card"><div class="pf-level"><span class="pf-badge' + (c ? " on" : "") + '"' + (badgeLv ? ' data-lvl="' + esc(badgeLv) + '"' : "") + ' aria-hidden="true">' + (c ? c.cefr : w ? w.cefr : "–") + "</span><div>" +
           "<h2>" + (c ? esc(c.cefr) + " certified" : "Working toward " + esc(w ? w.cefr : "A1")) + "</h2>" +
           '<p class="sub">' + (c ? "You've finished every unit of " + esc(c.cefr) + " · " + esc(c.title) + "." : "Finish every unit of a level to be certified at that level.") + "</p></div></div>";
         if (w) {
@@ -1169,8 +1238,6 @@
           '<div class="pf-tile"><div class="big">' + g.xp + ' <small>/ ' + g.goal + '</small></div><div class="lbl">' + (g.met ? "Today · goal met" : "XP today") + "</div></div>" +
           '<div class="pf-tile"><div class="big">' + sk.current + ' <small>' + (sk.current === 1 ? "day" : "days") + '</small></div><div class="lbl">Streak' + (sk.best > sk.current ? " · best " + sk.best : "") + "</div></div>" +
           '<div class="pf-tile"><div class="big">' + num(s.daysActive) + '</div><div class="lbl">' + (s.daysActive === 1 ? "Day" : "Days") + " studied</div></div></div>";
-        h += achievementsHtml(ix, course, store.cards(), set);
-        h += calendarHtml(course, store.cards(), set);
         // XP, last 14 days
         var today = T.today(set), days = [], max = g.goal, week = 0;
         for (var i = 13; i >= 0; i--) { var d = T.addDays(today, -i), x = course.xp.days[d] || 0; days.push({ d: d, x: x }); max = Math.max(max, x); if (i < 7) week += x; }
@@ -1178,41 +1245,147 @@
         h += '<div class="card"><div class="pf-card-h"><h3>XP, last 14 days</h3><span>' + num(week) + " XP this week</span></div>" +
           '<div class="pf-chart" role="img" aria-label="' + esc(days.map(function (o) { return short(o.d) + ": " + o.x + " XP"; }).join(", ")) + '">' +
           days.map(function (o) { return '<span class="' + (o.d === today ? "today" : o.x ? "on" : "") + '" style="height:' + Math.round(100 * o.x / max) + '%" title="' + esc(short(o.d)) + ": " + o.x + ' XP"></span>'; }).join("") +
-          '</div><div class="pf-chart-x"><span>' + esc(short(days[0].d)) + "</span><span>Today</span></div></div>";
+          '</div><div class="pf-chart-x"><span>' + esc(short(days[0].d)) + "</span><span>Today</span></div></div></section>";
+        // then the study calendar and the achievements
+        h += '<section class="pf-sec" id="pf-s-calendar" aria-label="Study calendar">' + calendarHtml(course, store.cards(), set) + "</section>";
+        h += '<section class="pf-sec" id="pf-s-ach" aria-label="Achievements">' + achievementsHtml(ix, course, store.cards(), set) + "</section>";
         // progress bars
         var row = function (label, a, b, note) {
           return '<div class="pf-row"><div class="top"><span>' + label + "</span><b>" + num(a) + " / " + num(b) + "</b></div>" + barHtml(ratio(a, b)) + (note ? '<p class="note">' + note + "</p>" : "") + "</div>";
         };
-        h += '<div class="card"><div class="pf-card-h"><h3>Your progress</h3><span>Out of what\'s written so far</span></div><div class="pf-rows">' +
+        h += '<section class="pf-sec" id="pf-s-yours" aria-label="Your progress"><div class="card"><div class="pf-card-h"><h3>Your progress</h3><span>Out of what\'s written so far</span></div><div class="pf-rows">' +
           row("Words learned", s.words.learned, s.words.total, s.words.known ? num(s.words.known) + " known well (reviewed at 3+ week intervals)" : 'From the <a href="' + P.cards + '">flashcards</a>: a word counts once it has left the learning steps') +
           row("Lessons done", s.lessons.done, s.lessons.written) +
           row("Units done", s.units.done, s.units.written, s.units.mastered ? plural(s.units.mastered, "unit") + " mastered (unit review passed)" : "") +
           row("Grammar guides read", s.guides, s.units.written) +
           row("Culture interludes read", s.interludes, s.units.written) +
-          "</div></div>";
+          "</div></div></section>";
         // levels
-        h += '<div class="card"><div class="pf-card-h"><h3>Levels</h3><span>' + s.levels.filter(function (l) { return l.certified; }).length + " of " + s.levels.length + ' certified</span></div><ol class="pf-lvls">' +
+        h += '<section class="pf-sec" id="pf-s-levels" aria-label="Levels"><div class="card"><div class="pf-card-h"><h3>Levels</h3><span>' + s.levels.filter(function (l) { return l.certified; }).length + " of " + s.levels.length + ' certified</span></div><ol class="pf-lvls">' +
           s.levels.map(function (l) {
             var m = l.certified ? '<span class="tag cert">Certified</span>' : !l.written ? '<span class="tag soon">Coming soon</span>' : l.done + " / " + l.total + " units";
             return '<li class="pf-lv' + (l.certified ? " cert" : "") + '"' + (l.written ? ' data-lvl="' + esc(l.id) + '"' : "") + '><span class="badge" aria-hidden="true">' + l.cefr + '</span><div><p class="t"><span class="sr">' + l.cefr + ": </span>" + esc(l.title) +
               (l.written && l.written < l.total ? " <span>· " + l.written + " of " + l.total + " written</span>" : "") + "</p>" + (l.written ? barHtml(ratio(l.done, l.total), "thin") : "") + '</div><span class="m">' + m + "</span></li>";
-          }).join("") + "</ol></div>";
+          }).join("") + "</ol></div></section>";
         el.innerHTML = h;
         renderChars(s);
+        spyNav();
       }
-      // Achievements (UI-5, TRK.progress.achievements): earned ones in colour, the others with how far along they are.
+      // Achievements (UI-5, TRK.progress.achievements): earned ones in colour, the others with how far along they are,
+      // grouped by kind. One earned since the last visit (ach.fresh) plays the unlock animation once.
+      var ACH_GROUPS = [["Lessons & units", ["first-lesson", "lessons-10", "lessons-50", "perfect", "perfect-10", "repeat-5", "first-unit", "units-5", "golden-tile", "golden-5", "mistakes-10"]],
+        ["Levels", ["a1", "a2", "b1"]], ["Regularity", ["streak-3", "streak-7", "streak-30", "streak-100", "goal-7", "goal-30", "days-50", "big-day"]],
+        ["Words", ["words-100", "words-500", "words-1000", "known-100", "cards-100"]], ["Reading & XP", ["guides-12", "culture-12", "xp-1000", "xp-5000", "xp-10000"]]];
+      function achLi(a) {
+        var gold = a.hue === "gold", fresh = !!ach.fresh[a.id];
+        return '<li class="' + (a.done ? "on" : "") + (gold ? " gold" : "") + (fresh && a.done ? " fresh" : "") + '"' + (gold ? "" : ' data-lvl="' + esc(a.hue) + '"') + ' data-ach="' + esc(a.id) + '">' +
+          (a.done ? '<span class="a-new" aria-hidden="true">New</span>' : "") +
+          '<span class="star' + (String(a.glyph).length > 3 ? " long" : "") + '" aria-hidden="true">' + esc(a.glyph) + "</span>" +
+          '<span class="a-tr" lang="tr">' + esc(a.tr) + '</span><span class="a-en">' + esc(a.en) + "</span>" +
+          '<span class="a-how">' + esc(a.text) + "</span>" +
+          (a.done ? '<span class="sr">Earned.</span>' : barHtml(ratio(a.have, a.need), "thin") + '<span class="a-n">' + num(a.have) + " / " + num(a.need) + "</span>") + "</li>";
+      }
       function achievementsHtml(ix, course, cards, set) {
         var list = T.progress.achievements(ix, course, cards, set, Date.now()), got = list.filter(function (a) { return a.done; }).length;
-        return '<div class="card"><div class="pf-card-h"><h3>Achievements</h3><span>' + got + " of " + list.length + ' earned</span></div><ul class="ach">' +
-          list.map(function (a) {
-            var gold = a.hue === "gold";
-            return '<li class="' + (a.done ? "on" : "") + (gold ? " gold" : "") + '"' + (gold ? "" : ' data-lvl="' + esc(a.hue) + '"') + ">" +
-              '<span class="star" aria-hidden="true">' + esc(a.glyph) + "</span>" +
-              '<span class="a-tr" lang="tr">' + esc(a.tr) + '</span><span class="a-en">' + esc(a.en) + "</span>" +
-              '<span class="a-how">' + esc(a.text) + "</span>" +
-              (a.done ? '<span class="sr">Earned.</span>' : barHtml(ratio(a.have, a.need), "thin") + '<span class="a-n">' + num(a.have) + " / " + num(a.need) + "</span>") + "</li>";
-          }).join("") + "</ul></div>";
+        var byId = {}, placed = {};
+        list.forEach(function (a) { byId[a.id] = a; });
+        if ($("pf-nav-ach")) $("pf-nav-ach").textContent = got + "/" + list.length;
+        var body = ACH_GROUPS.map(function (g) {
+          var items = g[1].filter(function (id) { return byId[id]; }).map(function (id) { placed[id] = true; return byId[id]; });
+          return items.length ? '<p class="ach-grp">' + esc(g[0]) + '</p><ul class="ach">' + items.map(achLi).join("") + "</ul>" : "";
+        }).join("");
+        var rest = list.filter(function (a) { return !placed[a.id]; });   // any achievement not in a group yet
+        if (rest.length) body += '<p class="ach-grp">More</p><ul class="ach">' + rest.map(achLi).join("") + "</ul>";
+        return '<div class="card"><div class="pf-card-h"><h3>Achievements</h3><span>' + got + " of " + list.length + " earned</span></div>" + body + "</div>";
       }
+      // ── unlocks: which achievements this browser has already celebrated (a per-browser convenience, nothing synced).
+      // The first time, everything already earned counts as seen, so only what's earned from then on is celebrated.
+      var ACH_KEY = "trk:v1:ach-seen";
+      var ach = { seen: null, fresh: {}, queue: [], showing: false, clear: 0 };
+      try { var raw = localStorage.getItem(ACH_KEY); ach.seen = raw ? JSON.parse(raw) : null; } catch (e) { ach.seen = null; }
+      function checkUnlocks() {
+        if (!st.index) return;
+        var list;
+        try { list = T.progress.achievements(st.index, store.course(), store.cards(), store.settings(), Date.now()); } catch (e) { return; }
+        var earned = list.filter(function (a) { return a.done; });
+        var first = !ach.seen || typeof ach.seen !== "object";
+        if (first) ach.seen = {};
+        var news = earned.filter(function (a) { return !ach.seen[a.id]; });
+        if (!news.length && !first) return;
+        news.forEach(function (a) { ach.seen[a.id] = 1; });
+        try { localStorage.setItem(ACH_KEY, JSON.stringify(ach.seen)); } catch (e) { /* no storage: celebrated again next visit */ }
+        if (first) return;
+        news.forEach(function (a) { ach.fresh[a.id] = true; });
+        if (news.length > 2) ach.queue.push({ many: news });
+        else news.forEach(function (a) { ach.queue.push(a); });
+        nextToast();
+      }
+      // the card animation plays while My Profile is open; then the "fresh" marks are dropped so a redraw doesn't replay it
+      function settleFresh() {
+        if ($("profile").hidden || !Object.keys(ach.fresh).length) return;
+        clearTimeout(ach.clear);
+        ach.clear = setTimeout(function () { ach.fresh = {}; }, 3200);
+      }
+      function nextToast() {
+        if (ach.showing || !ach.queue.length) return;
+        var a = ach.queue.shift(), b = document.createElement("button");
+        ach.showing = true;
+        b.type = "button";
+        if (a.many) {
+          b.className = "ach-toast gold";
+          b.innerHTML = '<span class="star" aria-hidden="true">' + a.many.length + '</span><span><span class="t-k">Achievements unlocked</span><span class="t-n">' +
+            esc(a.many.slice(0, 3).map(function (x) { return x.en; }).join(", ") + (a.many.length > 3 ? " and " + (a.many.length - 3) + " more" : "")) + '</span><span class="t-s">See them in My Profile →</span></span>';
+        } else {
+          b.className = "ach-toast" + (a.hue === "gold" ? " gold" : "");
+          if (a.hue !== "gold") b.setAttribute("data-lvl", a.hue);
+          b.innerHTML = '<span class="star' + (String(a.glyph).length > 3 ? " long" : "") + '" aria-hidden="true">' + esc(a.glyph) + '</span><span><span class="t-k">Achievement unlocked</span>' +
+            '<span class="t-n"><span lang="tr">' + esc(a.tr) + "</span> · " + esc(a.en) + '</span><span class="t-s">' + esc(a.text) + "</span></span>";
+        }
+        b.setAttribute("role", "status");
+        var gone = false, done = function () {
+          if (gone) return; gone = true;
+          b.classList.remove("show");
+          setTimeout(function () { b.remove(); ach.showing = false; nextToast(); }, 450);
+        };
+        b.addEventListener("click", function () {
+          done();
+          if (location.hash !== "#profile") location.hash = "#profile";
+          setTimeout(function () { goSection("pf-s-ach"); }, 60);
+        });
+        document.body.appendChild(b);
+        requestAnimationFrame(function () { requestAnimationFrame(function () { b.classList.add("show"); }); });
+        setTimeout(done, 5200);
+      }
+      // ── the section menu on the left: one click scrolls to a section; the one in view is highlighted ──
+      function goSection(id) {
+        var el = $(id);
+        if (!el) return;
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+        markNav(id);
+        ach.lock = Date.now() + 900;   // the smooth scroll doesn't fight the highlight
+      }
+      function markNav(id) {
+        Array.prototype.forEach.call($("pf-nav").querySelectorAll("[data-go]"), function (b) {
+          var on = b.getAttribute("data-go") === id;
+          b.setAttribute("aria-current", on ? "true" : "false");
+          if (on && b.scrollIntoView && window.innerWidth < 900) {   // keep the chip in view on the strip
+            var ol = b.closest("ol"); ol.scrollTo({ left: b.offsetLeft - 16, behavior: "smooth" });
+          }
+        });
+      }
+      function spyNav() {
+        if ($("profile").hidden || (ach.lock && Date.now() < ach.lock)) return;
+        var ids = ["pf-s-progress", "pf-s-calendar", "pf-s-ach", "pf-s-yours", "pf-s-levels", "pf-side"], cur = ids[0], line = window.innerWidth < 900 ? 140 : 120;
+        var stacked = window.innerWidth < 1180;   // pf-side only counts when it sits under the dashboard
+        ids.forEach(function (id) { var el = $(id); if (!el || (id === "pf-side" && !stacked)) return; if (el.getBoundingClientRect().top <= line) cur = id; });
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = stacked ? "pf-side" : "pf-s-levels";
+        var b = $("pf-nav").querySelector('[aria-current="true"]');
+        if (!b || b.getAttribute("data-go") !== cur) markNav(cur);
+      }
+      $("pf-nav").addEventListener("click", function (e) { var b = e.target.closest("[data-go]"); if (b) goSection(b.getAttribute("data-go")); });
+      var spyRaf = 0;
+      window.addEventListener("scroll", function () { if (spyRaf) return; spyRaf = requestAnimationFrame(function () { spyRaf = 0; spyNav(); }); }, { passive: true });
       // Study calendar (UI-5): a square per learning day, darker for more study (XP plus cards, against the daily goal).
       function calendarHtml(course, cards, set) {
         var box = $("pf-dash"), width = box ? box.clientWidth - 36 : 640;   // the card's inner width
@@ -1327,7 +1500,7 @@
       setInterval(function () { if (A && A.sync === "saved" && !$("profile").hidden && !document.hidden) renderAccount(); }, 30000);   // "saved 2 minutes ago"
 
       // ── boot ──
-      function render() { renderNotices(); renderToday(); renderPath(); renderProfile(); }
+      function render() { checkUnlocks(); renderNotices(); renderToday(); renderPath(); renderProfile(); settleFresh(); }
       function boot() {
         T.data.index().then(function (ix) {
           st.index = ix;
