@@ -523,8 +523,9 @@ Breakage when points lapse  an award releases D × R / N;  the last D × B / N w
 Cost per point redeemed c' = [e × 0.15¢ + (1 − e) × v] / (1 + x)      e = share of awards on empty seats
 Standalone value        A = v' × (1 − b')
 Deferred per point      flights: A      partners: p × A / (A + m)     m = marketing value per point
-Cash per point          deferred + partners' marketing share
-Profit                  breakage (deferred × b') + spread (deferred × (1 − b') − redeemed × c') + marketing
+Cash per point          flights: the value before the change, A₀ (the fare doesn't move)    partners: p
+Fare kept               flights: A₀ − A, passenger revenue on the day of the flight
+Profit                  breakage (deferred × b') + spread (deferred × (1 − b') − redeemed × c') + marketing + fare kept
 Points already issued   gain = old redeemed × old cost − new redeemed × new cost   (their deferred value doesn't change)</span>
         <h4>The rules over time</h4>
         <p>Before 2008, IFRS had no specific rule and many companies treated points as a marketing cost, accruing only what the awards were expected to cost. IFRIC 13 <i>Customer Loyalty Programmes</i>, issued in 2007 and applied from 2008, required part of the sale to be deferred as revenue for the award credits at their fair value, without saying how to split the price, so both the relative and the residual approaches were used. IFRS 15 replaced it in 2018 and requires relative standalone selling prices; its guidance on customer options and unexercised rights (paragraphs B39–B47) is where breakage comes from. In the United States, ASC 606 took effect the same year with the same model. Before it, US airlines generally used incremental cost for miles earned on flights and multiple-element accounting for miles sold to partners.</p>
@@ -964,9 +965,11 @@ Points already issued   gain = old redeemed × old cost − new redeemed × new 
         var D = Dpp * 10, MK = s * (p - dp) * 10;                       // per 1,000 points, $
         var R = 1000 * (1 - b), K = R * c / 100;
         var brk = D * b, spread = D * (1 - b) - K;
+        // the fare doesn't change: whatever is no longer deferred for flight points is passenger revenue on the day of the flight
+        var A0 = S.ssp * (1 - S.b / 100), shift = (1 - s) * (A0 - A) * 10;
         var ssp = S.points * v / 100 * (1 - b), tD = S.price + ssp > 0 ? S.price * ssp / (S.price + ssp) : 0;
         return { x: x, v: v, b: b, c: c, A: A, Dpp: Dpp, D: D, MK: MK, R: R, K: K, brk: brk, spread: spread,
-                 cash: D + MK, profit: brk + spread + MK, perRed: b < 1 ? Dpp / (1 - b) : 0, tD: tD };
+                 shift: shift, cash: D + MK + shift, profit: brk + spread + MK + shift, perRed: b < 1 ? Dpp / (1 - b) : 0, tD: tD };
       }
       function renderLab() {
         el("lab-award").value = L.award; el("lab-empty").value = L.empty; el("lab-partner").value = L.partner; el("lab-elast").value = L.elast;
@@ -988,16 +991,17 @@ Points already issued   gain = old redeemed × old cost − new redeemed × new 
           '<div class="tile"><b>' + (A1.cash > 0 ? pc(A1.profit / A1.cash) : "—") + "</b><span>Of the cash received is profit, before the cost of running the programme</span></div>";
         var max = Math.max(B0.cash, A1.cash, 0.01);
         function bar(M, title) {
-          var segs = [["Cost of the awards", Math.min(M.K, M.D * (1 - M.b)), "#A0A7B4"], ["Spread", Math.max(0, M.spread), C.red], ["Breakage", M.brk, C.brk], ["Marketing (partners)", M.MK, C.eq]];
+          var segs = [["Cost of the awards", Math.min(M.K, M.D * (1 - M.b)), "#A0A7B4"], ["Spread", Math.max(0, M.spread), C.red], ["Breakage", M.brk, C.brk], ["Marketing (partners)", M.MK, C.eq], ["Fare kept as passenger revenue", Math.max(0, M.shift), "#4a3aa7"]];
           var o = '<div class="lab-row"><div class="pl">' + title + "<span>" + money(M.cash) + " received · " + money(M.profit) + " profit</span></div>" +
             '<div class="sbar" style="width:' + (M.cash / max * 100).toFixed(1) + '%">';
           segs.forEach(function (g) { if (g[1] > 0.005) o += '<div style="flex:' + g[1].toFixed(4) + " 1 0;background:" + g[2] + '" title="' + g[0] + ": " + money(g[1]) + '">' + (g[1] / max > 0.12 ? money(g[1]) : "") + "</div>"; });
           o += "</div>";
+          if (M.shift < -0.005) o += '<p class="warn" style="margin:6px 0 0">' + money(-M.shift) + " more of the fares is deferred for the points, taken from passenger revenue.</p>";
           if (M.spread < -0.005) o += '<p class="warn" style="margin:6px 0 0">The awards cost ' + money(-M.spread) + " more than the value deferred for the redeemed points: a loss on each award.</p>";
           return o + "</div>";
         }
         el("lab-bars").innerHTML = bar(B0, "Award prices unchanged") + (changed ? bar(A1, "Award prices " + el("lab-award-o").textContent) : "") +
-          '<div class="sleg"><span><i style="background:#A0A7B4"></i>Cost of the awards</span><span><i style="background:' + C.red + '"></i>Spread on redeemed points</span><span><i style="background:' + C.brk + '"></i>Breakage</span><span><i style="background:' + C.eq + '"></i>Marketing share of partner sales</span></div>';
+          '<div class="sleg"><span><i style="background:#A0A7B4"></i>Cost of the awards</span><span><i style="background:' + C.red + '"></i>Spread on redeemed points</span><span><i style="background:' + C.brk + '"></i>Breakage</span><span><i style="background:' + C.eq + '"></i>Marketing share of partner sales</span>' + (changed ? '<span><i style="background:#4a3aa7"></i>Fare kept as passenger revenue</span>' : "") + "</div>";
         var rows = [
           ["Value of a point to members", c2(B0.v), c2(A1.v)],
           ["Expected breakage", pc(B0.b), pc(A1.b)],
@@ -1011,8 +1015,8 @@ Points already issued   gain = old redeemed × old cost − new redeemed × new 
           rows.map(function (r) { return '<tr><td class="k">' + r[0] + "</td><td>" + r[1] + "</td><td" + (r[1] !== r[2] ? ' style="color:var(--ink);font-weight:600"' : "") + ">" + r[2] + "</td></tr>"; }).join("") + "</tbody></table>";
         var main = A1.spread >= A1.brk && A1.spread >= A1.MK ? "the spread on redeemed points" : A1.brk >= A1.MK ? "breakage" : "the marketing share of partner sales";
         var t = "Of the " + money(A1.cash) + " received for 1,000 points, " + money(A1.K) + " pays for the awards and " + money(A1.profit) + " is profit: " + money(A1.spread) + " from honouring points with seats that cost less than their value, " +
-          money(A1.brk) + " from breakage and " + money(A1.MK) + " from the marketing share of partner sales. The biggest source here is " + main + ". ";
-        if (L.award > 0) t += "Raising award prices by " + L.award + "% cuts a point's value to members from " + c2(B0.v) + " to " + c2(A1.v) + ", and the airline gains three ways. Points already in accounts were paid for at the old value but are now honoured with cheaper awards (" + money(windfall) + " per 1,000). More points go unused (breakage " + pc(B0.b) + " → " + pc(A1.b) + "). And on new tickets less of the fare is deferred, so " + money(B0.tD - A1.tD) + " more of the " + money(S.price, 0) + " fare is revenue the day the flight is flown. The value deferred per new point falls too, so the gain on new points is smaller than on old ones.";
+          money(A1.brk) + " from breakage and " + money(A1.MK) + " from the marketing share of partner sales" + (Math.abs(A1.shift) >= 0.005 ? (A1.shift > 0 ? ", plus " + money(A1.shift) + " of fares no longer deferred" : ", less " + money(-A1.shift) + " of fares now deferred") : "") + ". The biggest source here is " + main + ". ";
+        if (L.award > 0) t += "Raising award prices by " + L.award + "% cuts a point's value to members from " + c2(B0.v) + " to " + c2(A1.v) + ", and the airline gains three ways. Points already in accounts were paid for at the old value but are now honoured with cheaper awards (" + money(windfall) + " per 1,000). More points go unused (breakage " + pc(B0.b) + " → " + pc(A1.b) + "). And on new tickets less of the fare is deferred, so " + money(B0.tD - A1.tD) + " more of the " + money(S.price, 0) + " fare is revenue the day the flight is flown.";
         else if (L.award < 0) t += "An award sale works the other way: each point buys more, so awards cost the airline more and breakage falls, while points already issued keep the value they were deferred at. Programmes run sales to lift engagement and card spend, not margin.";
         else t += "Now try raising award prices, or lowering the share of awards on empty seats.";
         el("lab-explain").innerHTML = t;
