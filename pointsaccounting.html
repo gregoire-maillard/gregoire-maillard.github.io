@@ -291,6 +291,15 @@
       .gloss { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
       .gloss div { border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; background: #fff; font-size: 13px; line-height: 1.5; }
       .gloss b { display: block; color: var(--ink); font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+      .rng { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+      .rng input[type=range] { flex: 1; max-width: 340px; accent-color: #151A23; }
+      .rng output { font-size: 12.5px; color: var(--ink); min-width: 60px; font-variant-numeric: tabular-nums; }
+      .lab-row { margin: 4px 0 16px; }
+      .lab-row .pl { font-size: 13px; color: var(--ink); font-weight: 500; margin-bottom: 5px; display: flex; justify-content: space-between; gap: 10px; }
+      .lab-row .pl span { color: var(--muted); font-weight: 400; font-size: 12px; font-variant-numeric: tabular-nums; }
+      .lab-row .sbar div { display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11.5px; font-variant-numeric: tabular-nums; overflow: hidden; white-space: nowrap; }
+      .tile b.up { color: #12804a; } .tile b.down { color: #b23c0c; }
+      .tile small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
       @media (max-width: 900px) {
         .mcards, .gloss { grid-template-columns: 1fr 1fr; }
       }
@@ -321,7 +330,7 @@
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Loyalty</div>
         <h1>Accounting for points</h1>
         <p class="lede">Three ways to book a loyalty point, and IFRS 15 step by step.</p>
-        <p>A member who flies and earns points has bought two things at once: a seat today and an award later. How much of the fare belongs to the points, when it becomes revenue, and what sits on the balance sheet in between depends on the accounting method. This page follows one ticket through the books, entry by entry, then compares IFRS 15 with the methods it replaced.</p>
+        <p>A member who flies and earns points has bought two things at once: a seat today and an award later. How much of the fare belongs to the points, when it becomes revenue, and what sits on the balance sheet in between depends on the accounting method. This page follows one ticket through the books, entry by entry, compares IFRS 15 with the methods it replaced, then shows where the profit comes from and how the airline can move the value of a point in its favour.</p>
         <p class="note-line">Illustrative numbers: a stylised ticket and programme, not the figures or accounting policies of any airline.</p>
       </div>
 
@@ -417,6 +426,62 @@
         <p class="explain" id="partner-explain"></p>
       </section>
 
+      <section class="sec" aria-labelledby="h-money">
+        <div class="sec-head"><h3 id="h-money">Where the profit comes from</h3><span>Collect at value, deliver at cost</span></div>
+        <p class="lead">Deferred revenue sounds like a burden, but it is cash the airline already holds. It is booked at what the points are worth to members, and the airline later settles it in seats, which often cost it very little. Four things turn that gap into profit.</p>
+        <div class="gloss">
+          <div><b>1. The spread</b>Each point is deferred at its value to the member, but honoured with a seat that would often have flown empty, costing only fees, fuel and catering. The difference is margin on every award.</div>
+          <div><b>2. Breakage</b>Points that are never used were paid for in full and cost nothing to honour. Under IFRS 15 their value is released as revenue alongside the redemptions.</div>
+          <div><b>3. Partner sales</b>Banks pay for the points and also for the brand, access to members and advertising. That marketing share is revenue straight away, with almost no cost attached.</div>
+          <div><b>4. The float</b>Cash comes in when points are issued; awards are delivered a year or two later. The liability is interest-free funding, which is why United, Delta and American borrowed billions against their programmes in 2020 and 2021.</div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-lab">
+        <div class="sec-head"><h3 id="h-lab">Points profit lab</h3><span>What 1,000 points bring in, and what moving the value of a point does</span></div>
+        <p class="lead">The airline decides how many points an award costs, which seats are open to awards and who buys its points. Each choice changes what a point is worth to members and what it costs to honour, so the airline can tilt the economics in its favour. Move the levers and watch where the money from 1,000 points goes. The value per point, breakage and partner price come from the settings above and the partner section.</p>
+        <div class="panel" style="margin-top:0">
+          <div class="ctl-grid">
+            <label for="lab-award">Points needed for the same award</label>
+            <div><div class="chips" id="lab-presets"></div><div class="rng"><input type="range" id="lab-award" min="-20" max="60" step="1"><output id="lab-award-o"></output></div></div>
+            <label for="lab-empty">Awards on seats that would fly empty</label>
+            <div class="rng"><input type="range" id="lab-empty" min="0" max="100" step="5"><output id="lab-empty-o"></output></div>
+            <label for="lab-partner">Points sold to partners</label>
+            <div class="rng"><input type="range" id="lab-partner" min="0" max="90" step="5"><output id="lab-partner-o"></output></div>
+            <label for="lab-elast">Extra breakage per +10% on award prices</label>
+            <div class="rng"><input type="range" id="lab-elast" min="0" max="5" step="0.5"><output id="lab-elast-o"></output></div>
+          </div>
+          <p class="hint" style="margin:10px 0 0">An award on a seat that would fly empty costs about 0.15¢ per point (fees, fuel, catering). One that displaces a paying passenger costs what that passenger would have paid, roughly the value of the points. Higher award prices make both cheaper per point, and push some members to give up, which raises breakage.</p>
+        </div>
+        <div class="tiles" id="lab-tiles"></div>
+        <div class="two even">
+          <div class="card">
+            <h4>Where the money from 1,000 points goes</h4>
+            <p class="sub">Cash received for 1,000 points, split into what the awards cost and the three sources of profit.</p>
+            <div id="lab-bars"></div>
+          </div>
+          <div class="card">
+            <h4>What the change does to a point</h4>
+            <p class="sub">Award prices unchanged, against the lab's setting.</p>
+            <div id="lab-value"></div>
+          </div>
+        </div>
+        <p class="explain" id="lab-explain"></p>
+      </section>
+
+      <section class="sec" aria-labelledby="h-levers">
+        <div class="sec-head"><h3 id="h-levers">The levers on a point's value</h3><span>And what each one does in the accounts</span></div>
+        <div class="gloss">
+          <div><b>Award prices</b>Raising the points needed for an award (a devaluation, or dynamic pricing that follows cash fares) makes every point cheaper to honour. Points already issued keep their deferred value, so the saving is pure margin.</div>
+          <div><b>Award seat availability</b>Opening awards mostly on flights that won't sell out keeps the cost of an award near the cost of an empty seat, and protects revenue from paying passengers.</div>
+          <div><b>Fees and surcharges</b>Cash taxes and carrier surcharges paid on top of the points cover part of the cost of the award, so the points themselves carry more margin.</div>
+          <div><b>Low-value redemptions</b>Gift cards, merchandise or upgrades priced at under a cent a point release the same deferred value for less cost.</div>
+          <div><b>Expiry and inactivity rules</b>Stricter rules raise breakage and the revenue released with each redemption. Removing expiry does the opposite, which is why it is expensive.</div>
+          <div><b>The value estimate itself</b>Under IFRS 15 the airline estimates the standalone value of a point. A lower estimate defers less of each fare, so more is revenue on the day of the flight. The estimate must rest on evidence, such as what awards are worth on redemption, and auditors test it.</div>
+        </div>
+        <p class="explain">Every lever has a cost outside the accounts. A point that buys less is a weaker reason to fly the airline or use its card, banks reprice their contracts at renewal, and members who expect a devaluation burn their balances early, which cuts breakage. Regulators have started to look too: in 2024 the US Department of Transportation opened an inquiry into the four largest US programmes, including how they devalue points. <a href="/loyalty101.html#ch05">Loyalty 101, chapter 05</a> covers inflation and devaluation from the member's side.</p>
+      </section>
+
       <section class="sec" aria-labelledby="h-gloss">
         <div class="sec-head"><h3 id="h-gloss">The vocabulary</h3><span>The words in an airline's loyalty note</span></div>
         <div class="gloss">
@@ -452,6 +517,15 @@ Incremental cost     F = P    provision = E × c, expensed when the flight is fl
 Breakage when points lapse  an award releases D × R / N;  the last D × B / N when the points lapse</span>
         <p>Under incremental cost, flying an award uses up the provision and doesn't touch revenue. Under the deferral methods, the cost of flying the award is an expense when the award is flown. The balance sheet leaves out the cost of the original flight and everything else in the airline, so equity is just the profit on this ticket so far.</p>
 
+        <h4>The profit lab</h4>
+        <p>Per 1,000 points issued, a share <code>s</code> is sold to partners at price <code>p</code> and the rest is earned on flights. Raising award prices by <code>x</code> divides the value of a point and the cost of an award per point by <code>1 + x</code>, and adds the chosen number of breakage points per 10%. Partner prices are fixed by contract and don't move.</p>
+        <span class="fx">Value to members        v' = v / (1 + x)          breakage  b' = b + slope × x / 10%
+Cost per point redeemed c' = [e × 0.15¢ + (1 − e) × v] / (1 + x)      e = share of awards on empty seats
+Standalone value        A = v' × (1 − b')
+Deferred per point      flights: A      partners: p × A / (A + m)     m = marketing value per point
+Cash per point          deferred + partners' marketing share
+Profit                  breakage (deferred × b') + spread (deferred × (1 − b') − redeemed × c') + marketing
+Points already issued   gain = old redeemed × old cost − new redeemed × new cost   (their deferred value doesn't change)</span>
         <h4>The rules over time</h4>
         <p>Before 2008, IFRS had no specific rule and many companies treated points as a marketing cost, accruing only what the awards were expected to cost. IFRIC 13 <i>Customer Loyalty Programmes</i>, issued in 2007 and applied from 2008, required part of the sale to be deferred as revenue for the award credits at their fair value, without saying how to split the price, so both the relative and the residual approaches were used. IFRS 15 replaced it in 2018 and requires relative standalone selling prices; its guidance on customer options and unexercised rights (paragraphs B39–B47) is where breakage comes from. In the United States, ASC 606 took effect the same year with the same model. Before it, US airlines generally used incremental cost for miles earned on flights and multiple-element accounting for miles sold to partners.</p>
 
@@ -468,6 +542,7 @@ Breakage when points lapse  an award releases D × R / N;  the last D × B / N w
           <li>Breakage turns out exactly as expected here. When it doesn't, the estimate is revised and a catch-up adjustment goes through revenue, which this page doesn't show.</li>
           <li>The value per point is an input. In practice estimating it is a judgement of its own, often based on what similar awards would cost to buy.</li>
           <li>No financing component, taxes, currency, or partner redemptions (where the programme acts as an agent and books revenue net).</li>
+          <li>The lab looks at one batch of points over its whole life and leaves out the cost of running the programme, the time value of the float and how members change their flying or card spend when points are worth less.</li>
           <li>The partner example splits a payment into two parts only; real co-brand agreements have more elements and are recognised over several years.</li>
         </ul>
         <p>This is a personal project and isn't affiliated with any airline. For the business side, read <a href="/loyalty101.html#ch04">Loyalty 101: Breakage &amp; the Points Liability</a>.</p>
@@ -870,7 +945,83 @@ Breakage when points lapse  an award releases D × R / N;  the last D × B / N w
           "This is why co-brand cards matter so much to a programme's profits: the marketing share is revenue with almost no cost attached, and the points' share carries breakage. <a href=\"/loyalty101.html#ch07\">Loyalty 101, chapter 07</a> has the business side.";
       }
 
-      function renderAll() { renderControls(); renderWalk(); renderCompare(); renderPartner(); }
+      // ── points profit lab ──
+      var L = { award: 0, empty: 75, partner: 60, elast: 1.5 };
+      var COST_EMPTY = 0.15; // ¢ per point redeemed for an award on a seat that would fly empty (base award prices)
+      var LAB_PRESETS = [{ k: 0, t: "No change" }, { k: 15, t: "Award chart +15%" }, { k: 35, t: "Dynamic pricing +35%" }, { k: -15, t: "Award sale −15%" }];
+      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+      function labCalc(x) {
+        var f = 1 + x / 100;
+        var v = S.ssp / f;                                              // value of a point to members, ¢
+        var b = clamp(S.b + L.elast * x / 10, 0, 95) / 100;             // expected breakage
+        var e = L.empty / 100;
+        var c = (e * COST_EMPTY + (1 - e) * S.ssp) / f;                 // cost per point redeemed, ¢
+        var s = L.partner / 100, p = S.pPrice;                          // partner price stays fixed: it is in the contract
+        var mkt = S.pSold > 0 ? S.pMkt / S.pSold * 100 : 0;             // marketing value per partner point, ¢
+        var A = v * (1 - b);                                            // standalone value per point issued, ¢
+        var dp = A + mkt > 0 ? Math.min(p, p * A / (A + mkt)) : 0;      // deferred per partner point, ¢
+        var Dpp = (1 - s) * A + s * dp;                                 // deferred per point issued, ¢
+        var D = Dpp * 10, MK = s * (p - dp) * 10;                       // per 1,000 points, $
+        var R = 1000 * (1 - b), K = R * c / 100;
+        var brk = D * b, spread = D * (1 - b) - K;
+        var ssp = S.points * v / 100 * (1 - b), tD = S.price + ssp > 0 ? S.price * ssp / (S.price + ssp) : 0;
+        return { x: x, v: v, b: b, c: c, A: A, Dpp: Dpp, D: D, MK: MK, R: R, K: K, brk: brk, spread: spread,
+                 cash: D + MK, profit: brk + spread + MK, perRed: b < 1 ? Dpp / (1 - b) : 0, tD: tD };
+      }
+      function renderLab() {
+        el("lab-award").value = L.award; el("lab-empty").value = L.empty; el("lab-partner").value = L.partner; el("lab-elast").value = L.elast;
+        el("lab-award-o").textContent = (L.award > 0 ? "+" : L.award < 0 ? "−" : "") + Math.abs(L.award) + "%";
+        el("lab-empty-o").textContent = L.empty + "%";
+        el("lab-partner-o").textContent = L.partner + "%";
+        el("lab-elast-o").textContent = "+" + L.elast + " pts";
+        chips("lab-presets", LAB_PRESETS, L.award, function (k) { L.award = k; renderLab(); });
+        var B0 = labCalc(0), A1 = labCalc(L.award), changed = L.award !== 0;
+        // existing balances: deferred at the old value, honoured at the new cost
+        var oldCost = B0.K, newCost = 1000 * (1 - A1.b) * A1.c / 100, windfall = oldCost - newCost;
+        function c2(x) { return (Math.round(x * 100) / 100).toFixed(2) + "¢"; }
+        function delta(a, b) { var d = a - b; return Math.abs(d) < 0.005 ? "" : '<small>' + (d > 0 ? "+" : "−") + money(Math.abs(d)) + " vs unchanged</small>"; }
+        var cls = function (d) { return Math.abs(d) < 0.005 ? "" : d > 0 ? "up" : "down"; };
+        el("lab-tiles").innerHTML =
+          '<div class="tile"><b class="' + cls(A1.profit - B0.profit) + '">' + money(A1.profit) + "</b><span>Profit over the life of 1,000 new points</span>" + delta(A1.profit, B0.profit) + "</div>" +
+          '<div class="tile"><b>' + c2(A1.perRed - A1.c) + "</b><span>Margin on each point redeemed: " + c2(A1.perRed) + " released, " + c2(A1.c) + " to fly</span></div>" +
+          '<div class="tile"><b class="' + cls(windfall) + '">' + (changed ? (windfall < 0 ? "−" : "+") + money(Math.abs(windfall)) : "—") + "</b><span>" + (changed ? "On every 1,000 points already in members' accounts: same revenue, " + (windfall >= 0 ? "cheaper" : "dearer") + " awards" : "Change award prices to see the effect on points already issued") + "</span></div>" +
+          '<div class="tile"><b>' + (A1.cash > 0 ? pc(A1.profit / A1.cash) : "—") + "</b><span>Of the cash received is profit, before the cost of running the programme</span></div>";
+        var max = Math.max(B0.cash, A1.cash, 0.01);
+        function bar(M, title) {
+          var segs = [["Cost of the awards", Math.min(M.K, M.D * (1 - M.b)), "#A0A7B4"], ["Spread", Math.max(0, M.spread), C.red], ["Breakage", M.brk, C.brk], ["Marketing (partners)", M.MK, C.eq]];
+          var o = '<div class="lab-row"><div class="pl">' + title + "<span>" + money(M.cash) + " received · " + money(M.profit) + " profit</span></div>" +
+            '<div class="sbar" style="width:' + (M.cash / max * 100).toFixed(1) + '%">';
+          segs.forEach(function (g) { if (g[1] > 0.005) o += '<div style="flex:' + g[1].toFixed(4) + " 1 0;background:" + g[2] + '" title="' + g[0] + ": " + money(g[1]) + '">' + (g[1] / max > 0.12 ? money(g[1]) : "") + "</div>"; });
+          o += "</div>";
+          if (M.spread < -0.005) o += '<p class="warn" style="margin:6px 0 0">The awards cost ' + money(-M.spread) + " more than the value deferred for the redeemed points: a loss on each award.</p>";
+          return o + "</div>";
+        }
+        el("lab-bars").innerHTML = bar(B0, "Award prices unchanged") + (changed ? bar(A1, "Award prices " + el("lab-award-o").textContent) : "") +
+          '<div class="sleg"><span><i style="background:#A0A7B4"></i>Cost of the awards</span><span><i style="background:' + C.red + '"></i>Spread on redeemed points</span><span><i style="background:' + C.brk + '"></i>Breakage</span><span><i style="background:' + C.eq + '"></i>Marketing share of partner sales</span></div>';
+        var rows = [
+          ["Value of a point to members", c2(B0.v), c2(A1.v)],
+          ["Expected breakage", pc(B0.b), pc(A1.b)],
+          ["Cost to fly an award, per point", c2(B0.c), c2(A1.c)],
+          ["Deferred per point issued", c2(B0.Dpp), c2(A1.Dpp)],
+          ["Revenue released per point redeemed", c2(B0.perRed), c2(A1.perRed)],
+          ["On the " + money(S.price, 0) + " ticket: deferred for the points", money(B0.tD), money(A1.tD)],
+          ["On the " + money(S.price, 0) + " ticket: revenue at the flight", money(S.price - B0.tD), money(S.price - A1.tD)]
+        ];
+        el("lab-value").innerHTML = '<table class="rf small"><thead><tr><th></th><th>Unchanged</th><th>' + (changed ? "Award prices " + el("lab-award-o").textContent : "Same") + "</th></tr></thead><tbody>" +
+          rows.map(function (r) { return '<tr><td class="k">' + r[0] + "</td><td>" + r[1] + "</td><td" + (r[1] !== r[2] ? ' style="color:var(--ink);font-weight:600"' : "") + ">" + r[2] + "</td></tr>"; }).join("") + "</tbody></table>";
+        var main = A1.spread >= A1.brk && A1.spread >= A1.MK ? "the spread on redeemed points" : A1.brk >= A1.MK ? "breakage" : "the marketing share of partner sales";
+        var t = "Of the " + money(A1.cash) + " received for 1,000 points, " + money(A1.K) + " pays for the awards and " + money(A1.profit) + " is profit: " + money(A1.spread) + " from honouring points with seats that cost less than their value, " +
+          money(A1.brk) + " from breakage and " + money(A1.MK) + " from the marketing share of partner sales. The biggest source here is " + main + ". ";
+        if (L.award > 0) t += "Raising award prices by " + L.award + "% cuts a point's value to members from " + c2(B0.v) + " to " + c2(A1.v) + ", and the airline gains three ways. Points already in accounts were paid for at the old value but are now honoured with cheaper awards (" + money(windfall) + " per 1,000). More points go unused (breakage " + pc(B0.b) + " → " + pc(A1.b) + "). And on new tickets less of the fare is deferred, so " + money(B0.tD - A1.tD) + " more of the " + money(S.price, 0) + " fare is revenue the day the flight is flown. The value deferred per new point falls too, so the gain on new points is smaller than on old ones.";
+        else if (L.award < 0) t += "An award sale works the other way: each point buys more, so awards cost the airline more and breakage falls, while points already issued keep the value they were deferred at. Programmes run sales to lift engagement and card spend, not margin.";
+        else t += "Now try raising award prices, or lowering the share of awards on empty seats.";
+        el("lab-explain").innerHTML = t;
+      }
+      [["lab-award", "award"], ["lab-empty", "empty"], ["lab-partner", "partner"], ["lab-elast", "elast"]].forEach(function (d) {
+        el(d[0]).addEventListener("input", function () { var x = parseFloat(this.value); if (isFinite(x)) { L[d[1]] = x; renderLab(); } });
+      });
+
+      function renderAll() { renderControls(); renderWalk(); renderCompare(); renderPartner(); renderLab(); }
       fillInputs();
       renderAll();
       var t, lastW = document.documentElement.clientWidth;
