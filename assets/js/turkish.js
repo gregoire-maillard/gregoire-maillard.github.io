@@ -1,3 +1,4 @@
+/* © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt */
 /* Turkish A1 → C2 (/turkish.html and the pages around it): the one shared script, see turkish/PROJECT.md.
 
    Loaded by every page of the section with <script defer src="/assets/js/turkish.js"></script>; it exposes

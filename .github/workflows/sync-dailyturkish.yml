@@ -19,6 +19,7 @@ on:
       - "assets/img/ataturk.*"
       - "stylesheets/styles.css"
       - ".github/workflows/sync-dailyturkish.yml"
+      - "LICENSE.txt"
   workflow_dispatch:
 
 concurrency:
@@ -44,7 +45,7 @@ jobs:
                    assets/img/favicon.png assets/img/ataturk.png assets/img/ataturk.webp \
                    assets/img/daily-turkish-favicon.svg assets/img/daily-turkish-favicon.png \
                    assets/img/daily-turkish-apple-touch-icon.png assets/img/daily-turkish-logo.svg \
-                   stylesheets/styles.css; do
+                   stylesheets/styles.css LICENSE.txt; do
             if [ -e "$p" ]; then mkdir -p "out/$(dirname "$p")"; cp -R "$p" "out/$p"; fi
           done
           cp turkish.html out/index.html          # dailyturkish.app/ opens the course hub

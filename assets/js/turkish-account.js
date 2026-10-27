@@ -1,3 +1,4 @@
+/* © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt */
 /* Turkish A1 → C2: online profiles (TRK.account). Loaded after turkish.js on every page of the section.
 
    Without an account nothing changes: progress lives in this browser (turkish.js, store section 8).

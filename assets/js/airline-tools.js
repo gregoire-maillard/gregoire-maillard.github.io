@@ -1,3 +1,4 @@
+/* © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt */
 /* Airline Economics (/airlinetools.html): small shared helper loaded by the hub, every tool and every course.
 
    1. (Removed: the header no longer shows a count of tools and courses.)
