@@ -5,7 +5,9 @@
    With one, the same three progress parts (course, cards, settings) are also kept in one Supabase row
    per learner (table public.profiles), so they follow the learner to other devices.
 
-     - Sign-in: a one-time link sent by email (Supabase "magic link"); no password.
+     - Sign-in: email + password (the email is confirmed once, when the profile is created), or a
+       one-time link sent by email (Supabase "magic link"). "Forgot password?" emails a link that
+       opens a "choose a new password" box; magic-link users can set a password the same way.
      - Sync: on load, when the page comes back into view, and a few seconds after each change.
        Each part is compared with what was last synced on this device: whichever side changed wins,
        and when both changed the two are merged (lessons, units, mistakes, flashcards and XP days are
@@ -40,7 +42,9 @@
     sync: "idle",         // idle · syncing · saved · offline · error
     syncedAt: null,
     error: null,          // a message for the profile page
-    sentTo: null          // the email a sign-in link was just sent to
+    sentTo: null,         // the email a sign-in link was just sent to
+    sentKind: null,       // link · confirm · reset: which email was sent
+    recovering: false     // signed in from a "reset password" link: ask for a new password
   };
   var client = null, libPromise = null, subs = [], applying = false, pushTimer = null, chain = Promise.resolve();
 
@@ -173,7 +177,8 @@
     if (session && session.user) {
       A.user = { id: session.user.id, email: session.user.email };
       A.status = "signed-in";
-      if (event === "SIGNED_IN" && /[?&]signin=1/.test(location.search)) history.replaceState(null, "", CFG.page + "#profile");
+      if ((event === "SIGNED_IN" || event === "PASSWORD_RECOVERY") && /[?&]signin=1/.test(location.search)) history.replaceState(null, "", CFG.page + "#profile");
+      if (event === "PASSWORD_RECOVERY") A.recovering = true;
       if (before !== A.user.id) { A.error = null; A.sentTo = null; emit(); A.syncNow(); }
       else emit();
     } else {
@@ -190,7 +195,67 @@
       return c.auth.signInWithOtp({ email: email, options: { emailRedirectTo: location.origin + CFG.page + "?signin=1", shouldCreateUser: true } });
     }).then(function (r) {
       if (r.error) throw new Error(/rate limit/i.test(r.error.message) ? "Too many sign-in emails were sent in the last hour. Please try again a bit later." : r.error.message);
-      A.sentTo = email; A.error = null; emit();
+      A.sentTo = email; A.sentKind = "link"; A.error = null; emit();
+    });
+  };
+
+  // ── email + password ──
+  var MIN_PW = 8;
+  function checkEmail(email) {
+    email = String(email || "").trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("That doesn't look like an email address.");
+    return email;
+  }
+  function checkPw(pw) {
+    pw = String(pw || "");
+    if (pw.length < MIN_PW) throw new Error("Your password needs at least " + MIN_PW + " characters.");
+    return pw;
+  }
+  function authError(e) {
+    var m = (e && e.message) || "unknown error";
+    if (/invalid login credentials/i.test(m)) return new Error("Wrong email or password. If you've only signed in with emailed links so far, use \u201cForgot password?\u201d to set one.");
+    if (/email not confirmed/i.test(m)) return new Error("Confirm your email first: open the link we sent when you created your profile. Use \u201cForgot password?\u201d if you can't find it.");
+    if (/rate limit/i.test(m)) return new Error("Too many emails were sent in the last hour. Please try again a bit later.");
+    if (/same.*password|different from the old/i.test(m)) return new Error("Choose a password different from your current one.");
+    return new Error(m);
+  }
+  function redirectTo() { return location.origin + CFG.page + "?signin=1"; }
+
+  // Signs in straight away: no email, no link.
+  A.signInPassword = function (email, pw) {
+    try { email = checkEmail(email); if (!pw) throw new Error("Type your password."); } catch (e) { return Promise.reject(e); }
+    return A.ensure().then(function (c) { return c.auth.signInWithPassword({ email: email, password: pw }); })
+      .then(function (r) { if (r.error) throw authError(r.error); A.sentTo = null; A.error = null; });
+  };
+  // Creates the profile. With "Confirm email" on in Supabase, one confirmation email is sent;
+  // after that, email + password is all it takes.
+  A.signUp = function (email, pw) {
+    try { email = checkEmail(email); pw = checkPw(pw); } catch (e) { return Promise.reject(e); }
+    return A.ensure().then(function (c) {
+      return c.auth.signUp({ email: email, password: pw, options: { emailRedirectTo: redirectTo() } });
+    }).then(function (r) {
+      if (r.error) {
+        if (/already registered|already exists/i.test(r.error.message)) throw new Error("There's already a profile with this email. Sign in instead, or use \u201cForgot password?\u201d.");
+        throw authError(r.error);
+      }
+      if (r.data && r.data.session) return;                       // email confirmation is off: already signed in
+      var ids = r.data && r.data.user && r.data.user.identities;
+      if (ids && !ids.length) throw new Error("There's already a profile with this email. Sign in instead, or use \u201cForgot password?\u201d.");
+      A.sentTo = email; A.sentKind = "confirm"; A.error = null; emit();
+    });
+  };
+  A.resetPassword = function (email) {
+    try { email = checkEmail(email); } catch (e) { return Promise.reject(e); }
+    return A.ensure().then(function (c) { return c.auth.resetPasswordForEmail(email, { redirectTo: redirectTo() }); })
+      .then(function (r) { if (r.error) throw authError(r.error); A.sentTo = email; A.sentKind = "reset"; A.error = null; emit(); });
+  };
+  // Sets or changes the password of the signed-in learner (also after a reset link).
+  A.setPassword = function (pw) {
+    try { pw = checkPw(pw); } catch (e) { return Promise.reject(e); }
+    if (!A.user) return Promise.reject(new Error("You're not signed in."));
+    return client.auth.updateUser({ password: pw }).then(function (r) {
+      if (r.error) throw authError(r.error);
+      A.recovering = false; emit();
     });
   };
   // Signing out saves what's left to save, then clears this browser, so the next person starts fresh.
@@ -200,7 +265,7 @@
     return queue(push).catch(function () {}).then(function () { return client.auth.signOut(); }).then(function () {
       setMarker(null); setLocalAvatar(null);
       applying = true; try { store.reset(); } finally { applying = false; }
-      A.syncedAt = null;
+      A.syncedAt = null; A.recovering = false;
       emit();
     });
   };

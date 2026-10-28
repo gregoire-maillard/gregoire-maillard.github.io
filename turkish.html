@@ -380,6 +380,8 @@
       .linkbtn:hover { color: var(--blue-dark); }
       .pf-perks { margin: 10px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--body); }
       .pf-perks li { margin: 2px 0; }
+      .pf-show { display: flex; align-items: center; gap: 6px; font-size: 13px !important; font-weight: 400 !important; color: var(--muted) !important; cursor: pointer; }
+      .pf-alts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13.5px; margin-top: 12px; }
 
       .pf-level { display: flex; gap: 16px; align-items: center; }
       .pf-badge { width: 64px; height: 64px; border-radius: 14px; display: grid; place-items: center; font-size: 22px; font-weight: 700; background: var(--panel); color: var(--muted); border: 1px solid var(--line); flex: none; }
@@ -741,7 +743,7 @@
           <p>The deck follows a frequency list of Turkish film and TV subtitles: the order is adapted from <a href="https://github.com/hermitdave/FrequencyWords" rel="noopener">FrequencyWords</a> by Hermit Dave (<a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>), built from the OpenSubtitles2018 corpus. Meanings, examples and notes are our own.</p>
         </div>
       </section>
-      <noscript><p class="notice">The course needs JavaScript to show your path and save your progress.</p></noscript>
+      <noscript><p class="notice">The lessons, flashcards and your progress need JavaScript.</p></noscript>
     </main>
     <footer class="dt-foot"><p><a href="https://buymeacoffee.com/dailyturkish" target="_blank" rel="noopener">☕ Buy me a Turkish coffee</a></p></footer>
 
@@ -961,11 +963,11 @@
         }).join("") + "</ol>";
         h += '<p class="upoints">Grammar: ' + u.points.map(function (gp) {
           var p = st.index.points[gp];
-          return '<a href="' + P.guide + "?id=" + u.id + "-grammar#" + gp + '">' + esc((p ? p.label : gp).replace(/(^|\s)-(?=\S)/g, "$1\u2011")) + "</a>";
+          return '<a href="' + T.guideHref(u.id + "-grammar", gp) + '">' + esc((p ? p.label : gp).replace(/(^|\s)-(?=\S)/g, "$1\u2011")) + "</a>";
         }).join(" · ") + "</p>";
         h += '<div class="uacts">' +
-          '<a class="pill" href="' + P.guide + "?id=" + u.id + '-grammar">Grammar guide' + (rec.guide ? ' <span class="ok">' + ICON.check + '</span><span class="sr"> (read)</span>' : "") + "</a>" +
-          '<a class="pill" href="' + P.guide + "?id=" + u.id + '-culture">Interlude<span class="long">: ' + esc(u.interlude) + "</span>" + (rec.culture ? ' <span class="ok">' + ICON.check + '</span><span class="sr"> (read)</span>' : "") + "</a>";
+          '<a class="pill" href="' + T.guideHref(u.id + "-grammar") + '">Grammar guide' + (rec.guide ? ' <span class="ok">' + ICON.check + '</span><span class="sr"> (read)</span>' : "") + "</a>" +
+          '<a class="pill" href="' + T.guideHref(u.id + "-culture") + '">Interlude<span class="long">: ' + esc(u.interlude) + "</span>" + (rec.culture ? ' <span class="ok">' + ICON.check + '</span><span class="sr"> (read)</span>' : "") + "</a>";
         if (us.status === "done") h += '<a class="pill' + (us.mastered ? "" : " strong") + '" href="' + P.lesson + "?review=" + u.id + '">' + (us.mastered ? "Review again" : "Review the unit") + "</a>";
         if (us.status === "locked") h += '<a class="pill strong" href="' + P.lesson + "?test=" + u.id + '" title="A 20-exercise test on the units before this one; 80% opens this unit">Jump here</a>';
         h += "</div></article></li>";
@@ -1143,7 +1145,7 @@
       });
 
       // ── profile: the account card (sign in, name, sync, sign out) and the progress dashboard ──
-      var pf = { editing: false, busy: false, msg: null, err: false, confirmDel: false };
+      var pf = { editing: false, busy: false, msg: null, err: false, confirmDel: false, mode: "signin", showPw: false, pwOpen: false };
       var num = function (n) { return Number(n).toLocaleString("en-US"); };
       var ratio = function (a, b) { return b ? Math.max(0, Math.min(1, a / b)) : 0; };
       var barHtml = function (r, cls) { return '<span class="bar' + (cls ? " " + cls : "") + '" aria-hidden="true"><i style="width:' + (r > 0 ? Math.max(2, Math.round(r * 100)) : 0) + '%"></i></span>'; };
@@ -1161,7 +1163,7 @@
       // Re-rendering keeps what's being typed and where the cursor is (sync updates arrive while typing).
       function renderAccount() {
         var keep = {}, focus = document.activeElement && $("pf-acct").contains(document.activeElement) ? document.activeElement.id : null;
-        ["pf-email", "pf-name"].forEach(function (id) { if ($(id)) keep[id] = $(id).value; });
+        ["pf-email", "pf-pass", "pf-name"].forEach(function (id) { if ($(id)) keep[id] = $(id).value; });
         drawAccount();
         Object.keys(keep).forEach(function (id) { if ($(id)) $(id).value = keep[id]; });
         if (focus && $(focus)) $(focus).focus();
@@ -1175,17 +1177,41 @@
           return;
         }
         if (A.status === "signed-out") {
-          h += '<p class="eyebrow">Save your progress online</p><h3>Create your profile</h3>' +
-            '<ul class="pf-perks"><li>Your XP, streak, lessons and flashcards, saved online</li><li>Carry on from your phone, laptop or any browser</li><li>Free, no password: we email you a sign-in link</li></ul>';
+          var m = pf.mode, bz = pf.busy ? " disabled" : "";
+          var pwField = function (auto) {
+            return '<label for="pf-pass">Password</label>' +
+              '<input class="input" type="' + (pf.showPw ? "text" : "password") + '" id="pf-pass" autocomplete="' + auto + '" minlength="8" required' + (auto === "new-password" ? ' placeholder="At least 8 characters"' : "") + ">" +
+              '<label class="pf-show"><input type="checkbox" data-act="showpw"' + (pf.showPw ? " checked" : "") + "> Show password</label>";
+          };
+          var emailField = '<label for="pf-email">Email</label><input class="input" type="email" id="pf-email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>';
+          h += '<p class="eyebrow">Save your progress online</p><h3>' + (m === "signup" ? "Create your profile" : m === "forgot" ? "Reset your password" : "Sign in to your profile") + "</h3>";
+          if (m === "signin" || m === "signup") h += '<ul class="pf-perks"><li>Your XP, streak, lessons and flashcards, saved online</li><li>Carry on from your phone, laptop or any browser</li><li>Free: sign in with your email and password</li></ul>';
           if (A.error) h += '<p class="pf-msg err" role="alert">' + esc(A.error) + "</p>";
           if (A.sentTo) {
-            h += '<div class="pf-sent" role="status"><b>Check your inbox.</b> We sent a sign-in link to <b>' + esc(A.sentTo) + "</b>. Open it in this browser to sign in here. It can take a minute to arrive; look in your spam folder too.</div>" +
-              '<p class="pf-msg"><button type="button" class="linkbtn" data-act="again">Use a different email</button></p>';
+            var k = A.sentKind;
+            h += '<div class="pf-sent" role="status"><b>Check your inbox.</b> ' +
+              (k === "confirm" ? "We sent a link to <b>" + esc(A.sentTo) + "</b> to confirm your email. Open it once to activate your profile; after that, you just sign in with your email and password."
+                : k === "reset" ? "If a profile exists for <b>" + esc(A.sentTo) + "</b>, we sent it a link to choose a new password. Open it in this browser."
+                : "We sent a sign-in link to <b>" + esc(A.sentTo) + "</b>. Open it in this browser to sign in here.") +
+              " It can take a minute to arrive; look in your spam folder too.</div>" +
+              '<p class="pf-msg"><button type="button" class="linkbtn" data-act="again">Back to sign in</button></p>';
+          } else if (m === "link") {
+            h += '<form class="pf-form" id="pf-signin" novalidate>' + emailField +
+              '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Sending…" : "Email me a sign-in link") + "</button></form>" + msg +
+              '<p class="help">No password needed: the link signs you in, or creates your profile if you don\'t have one. <button type="button" class="linkbtn" data-act="mode-signin">Use my password instead</button></p>';
+          } else if (m === "forgot") {
+            h += '<form class="pf-form" id="pf-signin" novalidate>' + emailField +
+              '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Sending…" : "Email me a reset link") + "</button></form>" + msg +
+              '<p class="help"><button type="button" class="linkbtn" data-act="mode-signin">Back to sign in</button></p>';
+          } else if (m === "signup") {
+            h += '<form class="pf-form" id="pf-signin" novalidate>' + emailField + pwField("new-password") +
+              '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Creating…" : "Create my profile") + "</button></form>" + msg +
+              '<p class="help">Already have a profile? <button type="button" class="linkbtn" data-act="mode-signin">Sign in</button>. The progress in this browser is added to your profile.</p>';
           } else {
-            h += '<form class="pf-form" id="pf-signin" novalidate><label for="pf-email">Email</label>' +
-              '<input class="input" type="email" id="pf-email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>' +
-              '<button type="submit" class="btn primary"' + (pf.busy ? " disabled" : "") + ">" + (pf.busy ? "Sending…" : "Email me a sign-in link") + "</button></form>" + msg +
-              '<p class="help">Already have a profile? Same button: the link signs you in. The progress in this browser is added to your profile.</p>';
+            h += '<form class="pf-form" id="pf-signin" novalidate>' + emailField + pwField("current-password") +
+              '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Signing in…" : "Sign in") + "</button></form>" + msg +
+              '<p class="pf-alts"><button type="button" class="linkbtn" data-act="mode-forgot">Forgot password?</button><button type="button" class="linkbtn" data-act="mode-link">Email me a sign-in link instead</button></p>' +
+              '<p class="help">New here? <button type="button" class="linkbtn" data-act="mode-signup">Create a profile</button>. The progress in this browser is added to your profile.</p>';
           }
           el.innerHTML = h;
           return;
@@ -1200,6 +1226,13 @@
             '<input class="input" id="pf-name" maxlength="40" autocomplete="nickname" value="' + esc(name || "") + '" placeholder="Your first name">' +
             '<div class="btns"><button type="submit" class="btn primary"' + (pf.busy ? " disabled" : "") + ">Save</button>" + (name ? '<button type="button" class="btn" data-act="cancel-name">Cancel</button>' : "") + "</div></form>";
         } else if (name) h += '<p class="pf-msg"><button type="button" class="linkbtn" data-act="edit-name">Change name</button></p>';
+        if (A.recovering || pf.pwOpen) {
+          h += '<form class="pf-form" id="pf-pwform" novalidate><label for="pf-pass">' + (A.recovering ? "Choose a new password" : "New password") + "</label>" +
+            '<input class="input" type="' + (pf.showPw ? "text" : "password") + '" id="pf-pass" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>' +
+            '<label class="pf-show"><input type="checkbox" data-act="showpw"' + (pf.showPw ? " checked" : "") + "> Show password</label>" +
+            '<div class="btns"><button type="submit" class="btn primary"' + (pf.busy ? " disabled" : "") + ">Save password</button>" +
+            (A.recovering ? "" : '<button type="button" class="btn" data-act="cancel-pw">Cancel</button>') + "</div></form>";
+        } else h += '<p class="pf-msg"><button type="button" class="linkbtn" data-act="pw">Set or change password</button></p>';
         var syncTxt = { idle: "Connecting…", syncing: "Saving…", saved: "Saved online " + (A.syncedAt ? ago(A.syncedAt) : ""), offline: "Offline: saved in this browser, will sync when you're back online", error: "Not saved online yet" }[A.sync] || "";
         h += '<p class="pf-sync ' + esc(A.sync) + '"><i aria-hidden="true"></i><span>' + esc(syncTxt) + "</span></p>";
         if (A.error) h += '<p class="pf-msg err" role="alert">' + esc(A.error) + ' <button type="button" class="linkbtn" data-act="sync">Retry</button></p>';
@@ -1456,10 +1489,23 @@
         e.preventDefault();
         if (!A || pf.busy) return;
         if (e.target.id === "pf-signin") {
-          var email = $("pf-email").value;
+          var email = $("pf-email").value, pw = $("pf-pass") ? $("pf-pass").value : "";
+          var go = pf.mode === "link" ? A.signIn(email) : pf.mode === "forgot" ? A.resetPassword(email)
+            : pf.mode === "signup" ? A.signUp(email, pw) : A.signInPassword(email, pw);
           pf.busy = true; pf.msg = null; renderAccount();
-          A.signIn(email).then(function () { pf.busy = false; pf.msg = null; renderAccount(); })
-            .catch(function (er) { pf.busy = false; renderAccount(); $("pf-email").value = email; flash(er.message, true); $("pf-email").focus(); });
+          go.then(function () { pf.busy = false; pf.msg = null; renderAccount(); })
+            .catch(function (er) {
+              pf.busy = false; renderAccount();
+              if ($("pf-email")) $("pf-email").value = email; if ($("pf-pass")) $("pf-pass").value = pw;
+              flash(er.message, true);
+              var f = /password/i.test(er.message) && $("pf-pass") ? $("pf-pass") : $("pf-email"); if (f) f.focus();
+            });
+        }
+        if (e.target.id === "pf-pwform") {
+          var npw = $("pf-pass").value;
+          pf.busy = true; pf.msg = null; renderAccount();
+          A.setPassword(npw).then(function () { pf.busy = false; pf.pwOpen = false; pf.showPw = false; flash("Password saved. Next time, sign in with your email and this password."); })
+            .catch(function (er) { pf.busy = false; renderAccount(); if ($("pf-pass")) { $("pf-pass").value = npw; } flash(er.message, true); if ($("pf-pass")) $("pf-pass").focus(); });
         }
         if (e.target.id === "pf-nameform") {
           pf.busy = true;
@@ -1473,7 +1519,11 @@
         var act = b.dataset.act;
         pf.msg = null;
         if (act === "retry") { A.ensure().catch(function () {}); }
-        if (act === "again") { A.sentTo = null; renderAccount(); $("pf-email").focus(); }
+        if (act === "again") { A.sentTo = null; A.sentKind = null; pf.mode = "signin"; renderAccount(); $("pf-email").focus(); }
+        if (/^mode-/.test(act)) { pf.mode = act.slice(5); A.error = null; renderAccount(); if ($("pf-email")) $("pf-email").focus(); }
+        if (act === "showpw") { pf.showPw = b.checked; renderAccount(); if ($("pf-pass")) $("pf-pass").focus(); }
+        if (act === "pw") { pf.pwOpen = true; renderAccount(); $("pf-pass").focus(); }
+        if (act === "cancel-pw") { pf.pwOpen = false; renderAccount(); }
         if (act === "edit-name") { pf.editing = true; renderAccount(); $("pf-name").focus(); }
         if (act === "cancel-name") { pf.editing = false; renderAccount(); }
         if (act === "sync") A.syncNow();

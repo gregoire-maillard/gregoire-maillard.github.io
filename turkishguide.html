@@ -428,7 +428,10 @@
       if (!T) { $("notices").innerHTML = '<p class="notice err">The course script didn\'t load. Reload the page to try again.</p>'; $("main").innerHTML = ""; return; }
       var store = T.store, esc = T.esc, P = T.C.PAGES;
       store.course(); store.settings();   // read now, so a storage problem shows at once
-      var reqId = (new URLSearchParams(location.search).get("id") || "").trim().toLowerCase();
+      // A static guide page (/guides/<id>.html) names its guide on <body data-guide>; otherwise ?id=.
+      var reqId = (document.body.getAttribute("data-guide") || new URLSearchParams(location.search).get("id") || "").trim().toLowerCase();
+      // On dailyturkish.app this file holds the pre-rendered index: hide it while a ?id= guide loads.
+      if (reqId && !document.body.getAttribute("data-guide") && !$("main").querySelector(".loading")) { $("main").innerHTML = '<p class="loading">Loading…</p>'; $("rail").innerHTML = ""; }
       var st = { index: null, flat: null, error: null, says: [], questions: [], unit: null, kind: null };
       var reduced = function () { return !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches); };
       try { if ("scrollRestoration" in history) history.scrollRestoration = "manual"; } catch (e) { /* keep the default */ }
@@ -439,7 +442,8 @@
       };
       var KIND = { tip: "Tip", pitfall: "Watch out", compare: "Compare", culture: "Culture", history: "History" };
       var unitLabel = function (u) { return u.cefr + " · Unit " + u.num; };
-      var docHref = function (u, kind) { return P.guide + "?id=" + u.id + "-" + kind; };
+      var docHref = function (u, kind) { return T.guideHref(u.id + "-" + kind); };
+      var docPath = function (u, kind) { return T.guidePath(u.id + "-" + kind); };   // canonical address
       var pad2 = function (n) { return (n < 10 ? "0" : "") + n; };
       var dateLabel = function (iso) { try { return new Date(iso).toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return String(iso).slice(0, 10); } };
       var R = function (s) { return T.rich(s, { index: st.index }); };
@@ -684,7 +688,7 @@
           $("read-min").innerHTML = '<span class="dot">·</span>About ' + Math.max(1, Math.round(words / 200)) + " min";
         }
         var desc = T.plain(g ? doc.intro : (doc.blocks.filter(function (b) { return b.type === "p"; })[0] || { text: doc.title }).text);
-        setMeta(doc.title + (g ? " · Turkish grammar, " : " · Turkish interlude, ") + unitLabel(u), desc, docHref(u, kind));
+        setMeta(doc.title + (g ? " · Turkish grammar, " : " · Turkish interlude, ") + unitLabel(u), desc, docPath(u, kind));
         afterRender();
         watchRead(u, key);
       }
@@ -709,7 +713,7 @@
         setLevel(u);
         $("rail").innerHTML = railUnit(u, kind, [], false);
         $("main").innerHTML = h;
-        setMeta((g ? u.title : u.interlude) + " · coming soon", "This part of the Turkish course from A1 to C2 is still being written.", docHref(u, kind));
+        setMeta((g ? u.title : u.interlude) + " · coming soon", "This part of the Turkish course from A1 to C2 is still being written.", docPath(u, kind));
         afterRender();
       }
 

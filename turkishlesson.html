@@ -1444,7 +1444,7 @@
           var acts = (nxt ? '<a class="btn primary big" href="' + P.lesson + "?id=" + nxt.id + '">' + (nxt.unit === S.unit.id ? "Next lesson" : "Start " + esc(unitLabel(S.flat.unit[nxt.unit]))) + "</a>" : "") +
             (unitNow ? '<a class="btn' + (nxt ? "" : " primary big") + '" href="' + P.lesson + "?review=" + S.unit.id + '">Review the unit</a>' : "") +
             '<a class="btn" href="' + P.lesson + "?id=" + S.lesson.id + '">Do it again</a><a class="btn ghost" href="' + hubHref(S.unit.id) + '">Back to the course</a>';
-          var after = unitNow ? '<p class="after">You\'ve finished ' + esc(unitLabel(S.unit)) + '. Review it to master it, and read its interlude, <a href="' + P.guide + "?id=" + S.unit.id + '-culture">' + esc(S.unit.interlude) + "</a>.</p>"
+          var after = unitNow ? '<p class="after">You\'ve finished ' + esc(unitLabel(S.unit)) + '. Review it to master it, and read its interlude, <a href="' + T.guideHref(S.unit.id + "-culture") + '">' + esc(S.unit.interlude) + "</a>.</p>"
                     : nxt && nxt.unit === S.unit.id ? '<p class="after">Next: <b>' + esc(nxt.title) + "</b></p>" : "";
           var fu = {}; if (unitNow) fu[S.unit.id] = "done";
           markFresh([S.lesson.id], fu);

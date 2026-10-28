@@ -38,3 +38,14 @@ node scripts/turkish/test.mjs --verbose  # also list the tests that pass
 Besides hand-written cases it marks every accepted answer in the content correct and every rejected one wrong with its feedback, renders every Rich text and every `seg` (which must read back as its own text) and resolves every link, compares the checker's normalization with this validator's (taken from its source), runs `validate.mjs --progress` on an exported file, and repeats the date tests under America/Toronto and Australia/Lord_Howe.
 
 A content conversation is done when `--batch <id>` reports its units complete with no errors and `--index` has been run. See `turkish/PROJECT.md`, section 9.
+
+## Static pages for dailyturkish.app
+
+`static.mjs` makes the course readable without JavaScript, for search engines. The workflow `.github/workflows/sync-dailyturkish.yml` runs it on the mirror folder before publishing dailyturkish.app; it needs Playwright with Chromium (the workflow installs them). It opens every page in headless Chromium and saves what it renders:
+
+- `guides/<unit>-grammar.html` and `guides/<unit>-culture.html`: one page per grammar guide and interlude, with its own title, description and canonical URL. Units not written yet get a "coming soon" page marked `noindex`.
+- `turkishguide.html` (the index) and the hub (`turkish.html`, `index.html`) with the path filled in.
+- `sitemap.xml`: the hub, the index, the flashcards, the privacy page and every written guide.
+
+The pages keep their scripts, so in a browser they render again with the learner's progress. Links go to `guides/…` on dailyturkish.app only (`TRK.guideHref`); gregoiremaillard.com and the iPhone app keep `turkishguide.html?id=`, and every guide's canonical URL is its dailyturkish.app page. If a page fails to render, the script exits 1 and the workflow publishes nothing. To try it locally, build the mirror folder as the workflow does, then `npm install --no-save playwright && npx playwright install chromium && node scripts/turkish/static.mjs out`.
+

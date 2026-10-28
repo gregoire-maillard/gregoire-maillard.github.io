@@ -32,6 +32,7 @@
     APP: "gregoiremaillard.com/turkish",
     KEYS: { course: "trk:v1:course", cards: "trk:v1:cards", settings: "trk:v1:settings" },
     PAGES: { hub: "/turkish.html", lesson: "/turkishlesson.html", guide: "/turkishguide.html", cards: "/turkishcards.html" },
+    GUIDES: "/guides/",   // static page of each guide, e.g. /guides/a1-u02-grammar.html (built for dailyturkish.app only, see guideHref)
     LEVELS: ["a1", "a2", "b1", "b2", "c1", "c2"],
     PERSONS: ["ben", "sen", "o", "biz", "siz", "onlar"],
     DIRS: ["tr-en", "en-tr"],
@@ -117,6 +118,16 @@
     url: /^https:\/\/\S+$/
   };
 
+  // Link to a grammar guide or interlude ("a1-u02-grammar"). dailyturkish.app has a static page per guide,
+  // pre-rendered by .github/workflows/sync-dailyturkish.yml (scripts/turkish-static.mjs) so search engines
+  // read it without JavaScript; gregoiremaillard.com and the iPhone app keep turkishguide.html?id=.
+  // guidePath is the static address, used for canonical URLs everywhere.
+  function staticGuides() {
+    return !!(root && (root.TRK_STATIC_GUIDES === true || (root.location && /(^|\.)dailyturkish\.app$/.test(root.location.hostname))));
+  }
+  function guidePath(id) { return C.GUIDES + id + ".html"; }
+  function guideHref(id, hash) { return (staticGuides() ? guidePath(id) : C.PAGES.guide + "?id=" + id) + (hash ? "#" + hash : ""); }
+
   // Where a reference points (PROJECT.md 3, "Links inside content"), and whether it exists yet.
   // Without an index every internal target counts as ready; grammar points need the index to find their unit.
   function href(ref, index) {
@@ -128,11 +139,11 @@
     if (RE.gp.test(ref)) {
       var pt = index && index.points ? index.points[ref] : null;
       if (!pt) return { href: P.guide + "#" + ref, ready: !index };
-      return { href: P.guide + "?id=" + pt.unit + "-grammar#" + ref, ready: !!pt.ready };
+      return { href: guideHref(pt.unit + "-grammar", ref), ready: !!pt.ready };
     }
     if (RE.unit.test(ref)) return { href: P.hub + "#" + ref, ready: unitReady(ref) };
     if (RE.lesson.test(ref)) return { href: P.lesson + "?id=" + ref, ready: !flat || !!flat.lesson[ref] };
-    if (RE.grammar.test(ref) || RE.culture.test(ref)) return { href: P.guide + "?id=" + ref, ready: unitReady(ref.slice(0, 6)) };
+    if (RE.grammar.test(ref) || RE.culture.test(ref)) return { href: guideHref(ref), ready: unitReady(ref.slice(0, 6)) };
     return null;
   }
 
@@ -1286,7 +1297,7 @@
     esc: esc, iso: iso, dayOf: dayOf, today: function (settings, now) { return dayOf(now, hourOf(settings)); },
     dayStart: dayStart, addDays: addDays, daysBetween: daysBetween, trLower: trLower, trUpper: trUpper, fold: fold,
     // 5.1 markup
-    rich: rich, trRich: trRich, seg: seg, plain: plain, href: href,
+    rich: rich, trRich: trRich, seg: seg, plain: plain, href: href, guideHref: guideHref, guidePath: guidePath,
     // 6.4 checker
     expand: expand, norm: norm, check: check, answerSpec: answerSpec, checkExercise: checkExercise, distance: distance,
     // data

@@ -18,6 +18,7 @@ on:
       - "assets/img/daily-turkish-*"
       - "assets/img/ataturk.*"
       - "stylesheets/styles.css"
+      - "scripts/turkish/static.mjs"
       - ".github/workflows/sync-dailyturkish.yml"
       - "LICENSE.txt"
   workflow_dispatch:
@@ -29,11 +30,20 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0                          # full history, for each page's <lastmod>
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright (renders the pages for search engines)
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0
+          npx playwright install --with-deps chromium
 
       - name: Build the mirror
         run: |
@@ -52,21 +62,14 @@ jobs:
           echo "dailyturkish.app" > out/CNAME
           touch out/.nojekyll                     # serve files exactly as they are
 
-          # robots.txt and sitemap.xml of dailyturkish.app (the main site's own
-          # files list gregoiremaillard.com URLs, so they are not copied).
-          # turkish.html is left out (same page as /), and turkishlesson.html too
-          # (it needs a lesson in its URL to show anything).
+          # robots.txt of dailyturkish.app (the main site's own lists gregoiremaillard.com URLs).
           printf 'User-agent: *\nAllow: /\n\nSitemap: https://dailyturkish.app/sitemap.xml\n' > out/robots.txt
-          {
-            echo '<?xml version="1.0" encoding="UTF-8"?>'
-            echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-            for entry in "/ turkish.html" "/turkishguide.html turkishguide.html" \
-                         "/turkishcards.html turkishcards.html" "/turkishprivacy.html turkishprivacy.html"; do
-              set -- $entry
-              echo "  <url><loc>https://dailyturkish.app$1</loc><lastmod>$(git log -1 --format=%cs -- "$2")</lastmod></url>"
-            done
-            echo '</urlset>'
-          } > out/sitemap.xml
+
+      - name: Pre-render the guides, the index and the hub; write sitemap.xml
+        # A static page per guide (guides/<id>.html) and the content filled into turkishguide.html and the hub,
+        # so search engines read it without JavaScript. Fails (and publishes nothing) if a page doesn't render.
+        run: |
+          node scripts/turkish/static.mjs out
           echo "Mirror contains $(find out -type f | wc -l) files"
 
       - name: Publish to gregoire-maillard/dailyturkish
