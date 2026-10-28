@@ -13,7 +13,7 @@
 </script>
     <meta charset="utf-8">
     <title>Accounting for points</title>
-    <meta name="description" content="How airlines account for loyalty points: IFRS 15 step by step (deferred revenue, the points liability, breakage) compared with the residual and incremental cost methods.">
+    <meta name="description" content="Deferred revenue explained simply: who gets paid when, how IFRS 15, the residual and the incremental cost methods book a loyalty point side by side, and where the profit comes from.">
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <meta name="viewport" content="width=device-width">
@@ -23,7 +23,7 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Grégoire Maillard">
     <meta property="og:title" content="Accounting for points · Airline Economics">
-    <meta property="og:description" content="How airlines account for loyalty points: IFRS 15 step by step (deferred revenue, the points liability, breakage) compared with the residual and incremental cost methods.">
+    <meta property="og:description" content="Deferred revenue explained simply: who gets paid when, how IFRS 15, the residual and the incremental cost methods book a loyalty point side by side, and where the profit comes from.">
     <meta property="og:url" content="https://gregoiremaillard.com/pointsaccounting.html">
     <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/pointsaccounting.jpg">
     <meta property="og:image:width" content="1200">
@@ -245,67 +245,61 @@
       .intro .lede { margin: 0 0 8px; color: var(--ink, #222); font-size: 1.05em; line-height: 1.5; }
     </style>
     <style>
-      /* Accounting for points: additions to the shared tool styles */
-      :root {
-        --atl: #A0A7B4; --liab: #8FA9F2; --prov: #e7a3c9; --eq: #1baf7a;
-        --redeem: #2a78d6; --breakage: #eb6834;
-      }
-      .chart text.axl { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
-      .chip:disabled { opacity: .45; cursor: default; }
+      /* Accounting for points: page additions to the shared tool styles */
+      .chip b { font-weight: 600; margin-right: 5px; }
       .stepbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 14px; }
       .stepbar .chips { flex: 1; }
-      .stepbar .chip b { font-weight: 600; margin-right: 5px; }
       .navbtn { border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 6px; padding: 4px 12px; font: inherit; font-size: 12.5px; cursor: pointer; }
       .navbtn:hover:not(:disabled) { border-color: #cfcfcf; }
       .navbtn:disabled { opacity: .4; cursor: default; }
-      .bs svg { display: block; width: 100%; height: auto; }
-      .bs text { font-size: 12px; fill: var(--text); font-variant-numeric: tabular-nums; }
-      .bs text.nm { fill: var(--ink); font-weight: 500; }
-      .bs text.cap { fill: var(--muted); font-size: 11.5px; }
-      .bs text.in { fill: #fff; font-weight: 500; }
-      .bs text.zero { fill: #b5b5b2; }
-      .pgrid { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 3px; max-width: 380px; margin: 8px 0 8px; }
-      .pgrid i { display: block; aspect-ratio: 1 / 1; border-radius: 2px; }
-      .what { font-size: 13.5px; line-height: 1.6; margin: 0 0 12px; }
-      .what .fxi { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; color: var(--ink); white-space: nowrap; }
-      .card h5 { margin: 14px 0 6px; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+      .flow svg { display: block; width: 100%; height: auto; }
+      .flow text { font-size: 12px; fill: var(--text); font-variant-numeric: tabular-nums; }
+      .flow text.in { fill: #fff; font-weight: 500; }
+      .flow text.hd { fill: var(--ink); font-weight: 600; }
+      .flow text.cap { fill: var(--muted); font-size: 11.5px; }
       table.rf.small { min-width: 0; }
-      table.rf td.ind { padding-left: 22px; }
-      table.rf td.dim { color: #b5b5b2; }
-      table.rf td.on, table.rf th.on { background: #f3f6fd; }
-      .mcards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0 0 16px; }
-      .mcard { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: #fff; font-size: 13px; line-height: 1.5; cursor: pointer; text-align: left; font: inherit; color: var(--text); }
-      .mcard:hover { border-color: #cfcfcf; }
-      .mcard.on { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink) inset; }
-      .mcard b { display: flex; align-items: center; gap: 7px; color: var(--ink); font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
-      .mcard b i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; flex: none; }
-      .mcard small { display: block; color: var(--muted); font-size: 12px; margin-top: 6px; }
-      .prow { margin: 6px 0 16px; }
-      .prow .pl { font-size: 13px; color: var(--ink); font-weight: 500; margin-bottom: 5px; }
-      .prow .pl span { color: var(--muted); font-weight: 400; font-size: 12px; }
-      .sbar { display: flex; height: 28px; border-radius: 5px; overflow: hidden; gap: 2px; }
-      .sbar div { height: 100%; min-width: 2px; }
-      .sleg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; margin-top: 5px; }
-      .sleg i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
-      .sleg b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+      table.rf td.wrap { white-space: normal; }
+      table.rf tr.cur td { background: #f3f6fd; }
+      table.rf td small { display: block; color: var(--muted); font-size: 11.5px; font-weight: 400; }
+      .callout { background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.55; margin: 14px 0 0; max-width: 900px; }
+      .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+      .mcol { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: #fff; min-width: 0; }
+      .mcol h4 { margin: 0; font-size: 14px; color: var(--ink); display: flex; align-items: center; gap: 7px; }
+      .mcol h4 i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; flex: none; }
+      .mcol .era { color: var(--muted); font-size: 12px; margin: 2px 0 10px; }
+      .mcol .say { font-size: 13px; line-height: 1.5; margin: 0 0 10px; color: var(--ink); min-height: 4.5em; }
+      .mcol .ln { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding: 4px 0; border-top: 1px solid #f1f1f1; }
+      .mcol .ln b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+      .mcol .ln b.dim { color: #b5b5b2; font-weight: 400; }
+      .meter { margin-top: 10px; font-size: 12px; color: var(--muted); }
+      .meter .lab { display: flex; justify-content: space-between; margin-bottom: 3px; }
+      .meter .lab b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+      .trk { height: 10px; background: #f0f0ee; border-radius: 5px; overflow: hidden; }
+      .trk i { display: block; height: 100%; border-radius: 5px; transition: width .25s ease; }
+      .cards4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
       .gloss { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-      .gloss div { border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; background: #fff; font-size: 13px; line-height: 1.5; }
-      .gloss b { display: block; color: var(--ink); font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+      .cards4 div, .gloss div { border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; background: #fff; font-size: 13px; line-height: 1.5; }
+      .cards4 b, .gloss b { display: block; color: var(--ink); font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
       .rng { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
       .rng input[type=range] { flex: 1; max-width: 340px; accent-color: #151A23; }
-      .rng output { font-size: 12.5px; color: var(--ink); min-width: 60px; font-variant-numeric: tabular-nums; }
-      .lab-row { margin: 4px 0 16px; }
-      .lab-row .pl { font-size: 13px; color: var(--ink); font-weight: 500; margin-bottom: 5px; display: flex; justify-content: space-between; gap: 10px; }
-      .lab-row .pl span { color: var(--muted); font-weight: 400; font-size: 12px; font-variant-numeric: tabular-nums; }
-      .lab-row .sbar div { display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11.5px; font-variant-numeric: tabular-nums; overflow: hidden; white-space: nowrap; }
+      .rng output { font-size: 12.5px; color: var(--ink); min-width: 48px; font-variant-numeric: tabular-nums; }
+      .tiles.three { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 16px; }
       .tile b.up { color: #12804a; } .tile b.down { color: #b23c0c; }
       .tile small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+      .lab-row { margin: 4px 0 14px; }
+      .lab-row .pl { font-size: 13px; color: var(--ink); font-weight: 500; margin-bottom: 5px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+      .lab-row .pl span { color: var(--muted); font-weight: 400; font-size: 12px; font-variant-numeric: tabular-nums; }
+      .sbar { display: flex; height: 28px; border-radius: 5px; overflow: hidden; gap: 2px; }
+      .sbar div { height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11.5px; overflow: hidden; white-space: nowrap; font-variant-numeric: tabular-nums; }
+      .sleg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; margin-top: 4px; }
+      .sleg i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
       @media (max-width: 900px) {
-        .mcards, .gloss { grid-template-columns: 1fr 1fr; }
+        .cards4 { grid-template-columns: 1fr 1fr; }
+        .gloss { grid-template-columns: 1fr 1fr; }
       }
       @media (max-width: 720px) {
-        .mcards, .gloss { grid-template-columns: 1fr; }
-        .scen-ctl { flex-direction: column; align-items: flex-start; }
+        .cols, .gloss, .cards4, .tiles.three { grid-template-columns: 1fr; }
+        .mcol .say { min-height: 0; }
       }
     </style>
     <script defer src="/assets/js/airline-tools.js"></script>
@@ -329,222 +323,121 @@
       <div class="intro">
         <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Loyalty</div>
         <h1>Accounting for points</h1>
-        <p class="lede">Three ways to book a loyalty point, and IFRS 15 step by step.</p>
-        <p>A member who flies and earns points has bought two things at once: a seat today and an award later. How much of the fare belongs to the points, when it becomes revenue, and what sits on the balance sheet in between depends on the accounting method. This page follows one ticket through the books, entry by entry, compares IFRS 15 with the methods it replaced, then shows where the profit comes from and how the airline can move the value of a point in its favour.</p>
-        <p class="note-line">Illustrative numbers: a stylised ticket and programme, not the figures or accounting policies of any airline.</p>
-      </div>
-
-      <div class="steps" aria-label="IFRS 15 in three steps">
-        <div class="step"><b><span class="n">1</span>The fare is split</b>The flight and the points are two separate promises. The fare is shared between them in proportion to what each would sell for on its own.</div>
-        <div class="step"><b><span class="n">2</span>The points wait as a liability</b>Their share is <i>deferred revenue</i>: cash received for something not delivered yet. It sits on the balance sheet next to the tickets sold but not yet flown.</div>
-        <div class="step"><b><span class="n">3</span>Revenue follows the awards</b>Each award releases its share of the liability into revenue, including a slice for the points expected never to be used (<i>breakage</i>).</div>
-      </div>
-
-      <div class="panel" id="controls">
-        <div class="ctl-grid">
-          <label>Accounting method</label>
-          <div><div class="chips" id="method"></div><div class="hint" id="method-desc" style="margin:5px 0 0 0"></div></div>
-          <label>Breakage recognised</label>
-          <div><div class="chips" id="brk"></div><div class="hint" id="brk-desc" style="margin:5px 0 0 0"></div></div>
-        </div>
+        <p class="lede">Who gets paid, when the airline earns it, and how three accounting methods differ.</p>
+        <p>We follow one ticket: a member pays <span id="i-price"></span> and earns <span id="i-points"></span> points, flies, then uses the points for two awards. First the idea of deferred revenue, then the three ways airlines have booked it, side by side, then where the profit comes from.</p>
+        <p class="note-line">Illustrative numbers: a stylised ticket, not the figures or accounting policies of any airline.</p>
         <details class="vol">
-          <summary>The ticket and the points <span id="tk-sum"></span></summary>
+          <summary>Change the ticket <span id="tk-sum"></span></summary>
           <div class="vol-grid">
             <label>Ticket price ($)<input class="num" id="price" type="number" min="50" max="5000" step="10" inputmode="decimal"></label>
             <label>Points earned<input class="num" id="points" type="number" min="0" max="100000" step="100" inputmode="numeric"></label>
             <label>Value per point (¢)<input class="num" id="ssp" type="number" min="0.1" max="5" step="0.1" inputmode="decimal"></label>
-            <label>Expected breakage (%)<input class="num" id="b" type="number" min="0" max="95" step="1" inputmode="decimal"></label>
-            <label>Cost per point redeemed (¢)<input class="num" id="cost" type="number" min="0" max="3" step="0.05" inputmode="decimal"></label>
+            <label>Points never used (%)<input class="num" id="b" type="number" min="0" max="95" step="1" inputmode="decimal"></label>
+            <label>Cost to fly an award (¢ per point)<input class="num" id="cost" type="number" min="0" max="3" step="0.05" inputmode="decimal"></label>
           </div>
-          <div class="vol-foot"><span class="hint" style="margin:0">Value per point is what a point is worth to the member; the cost is what an award seat costs the airline to fly (fees, fuel, catering), per point.</span> <button type="button" class="linkbtn" id="reset">Reset to the default ticket</button></div>
+          <div class="vol-foot"><button type="button" class="linkbtn" id="reset">Back to the default ticket</button></div>
         </details>
       </div>
 
-      <section class="sec" aria-labelledby="h-walk">
-        <div class="sec-head"><h3 id="h-walk">Follow one ticket through the books</h3><span id="walk-method"></span></div>
-        <div class="stepbar">
-          <div class="chips" id="stepnav"></div>
-          <button type="button" class="navbtn" id="prev" aria-label="Previous step">← Back</button>
-          <button type="button" class="navbtn" id="next" aria-label="Next step">Next →</button>
-        </div>
-        <div class="two even">
+      <section class="sec" aria-labelledby="h-def">
+        <div class="sec-head"><h3 id="h-def">Deferred revenue: cash now, revenue later</h3><span>Today's rule, IFRS 15</span></div>
+        <p class="lead">The member pays the airline on the day of the booking, but at that point the airline hasn't done anything yet. Money received for something not yet delivered is not revenue: it is <b>deferred revenue</b>, a debt to the member that the airline pays back in kind, with a flight and later with awards. It becomes revenue only when each promise is kept. Points work exactly like the ticket, except the wait is longer, and some points are never used at all (<b>breakage</b>).</p>
+        <div class="two">
           <div class="card">
-            <h4>The balance sheet after this step</h4>
-            <p class="sub">What the airline owns (cash) on the left, and who has a claim on it on the right: members and passengers still owed something, then the owners. The two columns are always the same height.</p>
-            <div class="bs" id="bs"></div>
-            <h5>The member's points</h5>
-            <div class="pgrid" id="pgrid" aria-hidden="true"></div>
-            <div class="legend" id="pleg"></div>
+            <h4>What happens to the member's money over time</h4>
+            <p class="sub">Each column is the full amount the member paid. Green is what the airline has earned so far; the rest is still owed.</p>
+            <div class="flow" id="flow"></div>
+            <div class="legend"><span><i style="background:#1baf7a"></i>Earned (revenue)</span><span><i style="background:#A0A7B4"></i>Owed: the flight</span><span><i style="background:#8FA9F2"></i>Owed: the points</span></div>
           </div>
           <div class="card">
-            <h4 id="step-title"></h4>
-            <p class="sub" id="step-when"></p>
-            <div class="what" id="step-text"></div>
-            <h5>Journal entry</h5>
-            <div id="je"></div>
-            <h5>Income statement so far</h5>
-            <div id="is"></div>
+            <h4>Who receives which money, and when</h4>
+            <p class="sub">Cash changes hands only twice. Revenue is earned in four pieces.</p>
+            <div class="tbl-wrap"><table class="rf small" id="who"></table></div>
           </div>
         </div>
+        <p class="callout" id="split"></p>
+        <p class="callout">If a bank buys the points to give to its cardholders, the money comes from the bank instead, on the day it buys them, while the member gets the points for free. The airline still owes the award, so the points' share of the bank's payment is deferred in exactly the same way.</p>
       </section>
 
       <section class="sec" aria-labelledby="h-cmp">
-        <div class="sec-head"><h3 id="h-cmp">Three methods, one ticket</h3><span>Same cash, same profit, different timing</span></div>
-        <div class="mcards" id="mcards">
-          <button type="button" class="mcard" data-m="rel"><b><i style="background:#2a78d6"></i>IFRS 15 / ASC 606</b>Relative standalone selling price. The fare is split between the flight and the points in proportion to what each is worth alone; the points' share is deferred until the awards are flown.<small>Required under IFRS and US GAAP since 2018.</small></button>
-          <button type="button" class="mcard" data-m="res"><b><i style="background:#4a3aa7"></i>Residual method</b>The points are valued first, at their full standalone value, and the flight gets whatever is left of the fare. More revenue is deferred than under relative allocation.<small>Allowed under IFRIC 13 (IFRS, 2008 to 2017) and used for miles sold to partners under older US rules.</small></button>
-          <button type="button" class="mcard" data-m="inc"><b><i style="background:#c2378f"></i>Incremental cost</b>The points aren't treated as something sold. The whole fare is revenue when the flight is flown, and only the expected cost of the future awards is set aside as a provision.<small>Common before IFRIC 13, and for miles earned on flights under US GAAP until 2018.</small></button>
+        <div class="sec-head"><h3 id="h-cmp">Three methods, side by side</h3><span>Same ticket, same cash, different timing</span></div>
+        <p class="lead">IFRS 15 is the rule today. Before it, airlines either valued the points first and gave the flight what was left (the residual method), or didn't treat the points as something sold at all and only set aside what the awards would cost (incremental cost). Step through the ticket's life and compare.</p>
+        <div class="stepbar">
+          <div class="chips" id="stepnav"></div>
+          <button type="button" class="navbtn" id="prev">← Back</button>
+          <button type="button" class="navbtn" id="next">Next →</button>
         </div>
-        <div class="two even">
-          <div class="card">
-            <h4>Revenue recognised, cumulative</h4>
-            <p class="sub">Months after the ticket is sold. Every method ends at the ticket price.</p>
-            <div class="chart" id="c-rev"></div>
-          </div>
-          <div class="card">
-            <h4>Liability for the points</h4>
-            <p class="sub">Deferred revenue, or the provision under incremental cost.</p>
-            <div class="chart" id="c-liab"></div>
-          </div>
-        </div>
-        <div class="legend" id="l-cmp"></div>
+        <div class="cols" id="cols"></div>
+        <h4 style="margin:26px 0 8px;font-size:14px;color:var(--ink)">Every step at a glance</h4>
+        <div class="tbl-wrap"><table class="rf" id="matrix"></table></div>
         <p class="explain" id="cmp-explain"></p>
-        <div class="tbl-wrap" style="margin-top:14px"><table class="rf" id="cmp-tbl"></table></div>
-      </section>
-
-      <section class="sec" aria-labelledby="h-partner">
-        <div class="sec-head"><h3 id="h-partner">Points sold to a partner</h3><span>Co-brand cards, hotels, car rental, retail</span></div>
-        <p class="lead">Many points are never earned in the air: banks and other partners buy them to reward their own customers. What a bank pays buys more than points: the airline's brand on the card, access to its members, advertising. Those are separate promises too, so the payment is split the same way a fare is. Only the points' share is deferred; the marketing share is revenue as those services are delivered.</p>
-        <div class="card">
-          <div class="scen-ctl">
-            <label>Points bought <input class="num" id="p-sold" type="number" min="1" max="10000" step="10" inputmode="decimal"> million</label>
-            <label>Price paid <input class="num" id="p-price" type="number" min="0.1" max="5" step="0.05" inputmode="decimal"> ¢ per point</label>
-            <label>Marketing services, standalone value <input class="num" id="p-mkt" type="number" min="0" max="1000" step="0.05" inputmode="decimal"> $M</label>
-          </div>
-          <div id="partner"></div>
-        </div>
-        <p class="explain" id="partner-explain"></p>
       </section>
 
       <section class="sec" aria-labelledby="h-money">
         <div class="sec-head"><h3 id="h-money">Where the profit comes from</h3><span>Collect at value, deliver at cost</span></div>
-        <p class="lead">Deferred revenue sounds like a burden, but it is cash the airline already holds. It is booked at what the points are worth to members, and the airline later settles it in seats, which often cost it very little. Four things turn that gap into profit.</p>
-        <div class="gloss">
-          <div><b>1. The spread</b>Each point is deferred at its value to the member, but honoured with a seat that would often have flown empty, costing only fees, fuel and catering. The difference is margin on every award.</div>
-          <div><b>2. Breakage</b>Points that are never used were paid for in full and cost nothing to honour. Under IFRS 15 their value is released as revenue alongside the redemptions.</div>
-          <div><b>3. Partner sales</b>Banks pay for the points and also for the brand, access to members and advertising. That marketing share is revenue straight away, with almost no cost attached.</div>
-          <div><b>4. The float</b>Cash comes in when points are issued; awards are delivered a year or two later. The liability is interest-free funding, which is why United, Delta and American borrowed billions against their programmes in 2020 and 2021.</div>
+        <p class="lead">The points' share is booked at what points are worth to members, but the airline pays it back in seats, which often cost it little. Four things turn that gap into profit.</p>
+        <div class="cards4">
+          <div><b>The spread</b>Awards mostly go on seats that would have flown empty. Flying one costs fees, fuel and catering, far less than the value deferred for it.</div>
+          <div><b>Breakage</b>Points never used were paid for and cost nothing to honour. Their value is released as revenue alongside the awards.</div>
+          <div><b>Partner sales</b>Banks pay for the points and for the airline's brand and members. That marketing share is revenue right away.</div>
+          <div><b>The float</b>Cash comes in years before the awards go out: free funding. United, Delta and American borrowed billions against their programmes in 2020–21.</div>
         </div>
       </section>
 
       <section class="sec" aria-labelledby="h-lab">
-        <div class="sec-head"><h3 id="h-lab">Points profit lab</h3><span>What 1,000 points bring in, and what moving the value of a point does</span></div>
-        <p class="lead">The airline decides how many points an award costs, which seats are open to awards and who buys its points. Each choice changes what a point is worth to members and what it costs to honour, so the airline can tilt the economics in its favour. Move the levers and watch where the money from 1,000 points goes. The value per point, breakage and partner price come from the settings above and the partner section.</p>
+        <div class="sec-head"><h3 id="h-lab">Moving the value of a point</h3><span>A small lab</span></div>
+        <p class="lead">The airline decides how many points an award costs and which seats are open to awards. Raising award prices (a devaluation) makes each point worth less to members, and cheaper for the airline to honour. Try it.</p>
         <div class="panel" style="margin-top:0">
           <div class="ctl-grid">
             <label for="lab-award">Points needed for the same award</label>
             <div><div class="chips" id="lab-presets"></div><div class="rng"><input type="range" id="lab-award" min="-20" max="60" step="1"><output id="lab-award-o"></output></div></div>
             <label for="lab-empty">Awards on seats that would fly empty</label>
             <div class="rng"><input type="range" id="lab-empty" min="0" max="100" step="5"><output id="lab-empty-o"></output></div>
-            <label for="lab-partner">Points sold to partners</label>
-            <div class="rng"><input type="range" id="lab-partner" min="0" max="90" step="5"><output id="lab-partner-o"></output></div>
-            <label for="lab-elast">Extra breakage per +10% on award prices</label>
-            <div class="rng"><input type="range" id="lab-elast" min="0" max="5" step="0.5"><output id="lab-elast-o"></output></div>
           </div>
-          <p class="hint" style="margin:10px 0 0">An award on a seat that would fly empty costs about 0.15¢ per point (fees, fuel, catering). One that displaces a paying passenger costs what that passenger would have paid, roughly the value of the points. Higher award prices make both cheaper per point, and push some members to give up, which raises breakage.</p>
         </div>
-        <div class="tiles" id="lab-tiles"></div>
-        <div class="two even">
-          <div class="card">
-            <h4>Where the money from 1,000 points goes</h4>
-            <p class="sub">Cash received for 1,000 points, split into what the awards cost and the three sources of profit.</p>
-            <div id="lab-bars"></div>
-          </div>
-          <div class="card">
-            <h4>What the change does to a point</h4>
-            <p class="sub">Award prices unchanged, against the lab's setting.</p>
-            <div id="lab-value"></div>
-          </div>
+        <div class="tiles three" id="lab-tiles"></div>
+        <div class="card" style="margin-top:12px">
+          <h4>Where the money for 1,000 points goes</h4>
+          <p class="sub">60% of points sold to partners at 1.2¢, 40% earned on flights. Grey is what the awards cost; everything else is profit.</p>
+          <div id="lab-bars"></div>
         </div>
         <p class="explain" id="lab-explain"></p>
       </section>
 
-      <section class="sec" aria-labelledby="h-levers">
-        <div class="sec-head"><h3 id="h-levers">The levers on a point's value</h3><span>And what each one does in the accounts</span></div>
-        <div class="gloss">
-          <div><b>Award prices</b>Raising the points needed for an award (a devaluation, or dynamic pricing that follows cash fares) makes every point cheaper to honour. Points already issued keep their deferred value, so the saving is pure margin.</div>
-          <div><b>Award seat availability</b>Opening awards mostly on flights that won't sell out keeps the cost of an award near the cost of an empty seat, and protects revenue from paying passengers.</div>
-          <div><b>Fees and surcharges</b>Cash taxes and carrier surcharges paid on top of the points cover part of the cost of the award, so the points themselves carry more margin.</div>
-          <div><b>Low-value redemptions</b>Gift cards, merchandise or upgrades priced at under a cent a point release the same deferred value for less cost.</div>
-          <div><b>Expiry and inactivity rules</b>Stricter rules raise breakage and the revenue released with each redemption. Removing expiry does the opposite, which is why it is expensive.</div>
-          <div><b>The value estimate itself</b>Under IFRS 15 the airline estimates the standalone value of a point. A lower estimate defers less of each fare, so more is revenue on the day of the flight. The estimate must rest on evidence, such as what awards are worth on redemption, and auditors test it.</div>
-        </div>
-        <p class="explain">Every lever has a cost outside the accounts. A point that buys less is a weaker reason to fly the airline or use its card, banks reprice their contracts at renewal, and members who expect a devaluation burn their balances early, which cuts breakage. Regulators have started to look too: in 2024 the US Department of Transportation opened an inquiry into the four largest US programmes, including how they devalue points. <a href="/loyalty101.html#ch05">Loyalty 101, chapter 05</a> covers inflation and devaluation from the member's side.</p>
-      </section>
-
       <section class="sec" aria-labelledby="h-gloss">
-        <div class="sec-head"><h3 id="h-gloss">The vocabulary</h3><span>The words in an airline's loyalty note</span></div>
+        <div class="sec-head"><h3 id="h-gloss">Six words to know</h3><span>The vocabulary of a loyalty note</span></div>
         <div class="gloss">
-          <div><b>Liability</b>Something the company owes: cash, a service or, here, a seat. Points are a liability because members can claim flights with them.</div>
-          <div><b>Deferred revenue</b>Cash received for something not delivered yet. IFRS 15 calls it a <i>contract liability</i>. It turns into revenue when the promise is kept.</div>
-          <div><b>Advance ticket sales</b>The deferred revenue for tickets sold but not yet flown, also called the air traffic liability. Usually an airline's largest current liability.</div>
-          <div><b>Performance obligation</b>A distinct promise in a contract. A ticket that earns points contains two: the flight, and the right to a future award.</div>
-          <div><b>Standalone selling price</b>What a promise would sell for on its own. For a point, roughly what it's worth when redeemed, reduced for the chance it is never used.</div>
-          <div><b>Allocation</b>Sharing one price among the promises in a contract, in proportion to their standalone selling prices.</div>
-          <div><b>Breakage</b>Points that will never be redeemed. When it can be estimated, its value is recognised in step with redemptions, not when points expire.</div>
-          <div><b>Change in estimate</b>When expected breakage is revised, the balance is restated as if the new rate had always applied and the difference goes through revenue at once (the catch-up).</div>
-          <div><b>Current and non-current</b>The part of the liability expected to be redeemed within twelve months is current; the rest is non-current.</div>
-          <div><b>Provision</b>A liability of uncertain amount, measured at the expected cost of settling it. Under the incremental cost method, the points are a provision for the cost of the awards.</div>
-          <div><b>Principal or agent</b>When a member redeems on a partner airline, the programme only arranges the flight, so it books revenue net of what it pays the partner.</div>
-          <div><b>Financing component</b>When cash arrives long before delivery, as with a multi-year prepayment from a card issuer, IFRS 15 may require interest to accrue on the liability.</div>
+          <div><b>Deferred revenue</b>Cash received for something not delivered yet. IFRS 15 calls it a contract liability. It becomes revenue when the promise is kept.</div>
+          <div><b>Liability</b>Something the company owes. Unflown tickets and unused points are both liabilities: they are owed in seats, not cash.</div>
+          <div><b>Standalone selling price</b>What each promise would sell for on its own. IFRS 15 splits a fare between flight and points in proportion to these values.</div>
+          <div><b>Breakage</b>Points that will never be used. Their value is released little by little with each award, not when the points expire.</div>
+          <div><b>Provision</b>Money set aside for an expected cost. Under the incremental cost method, the points are only a provision for the cost of the awards.</div>
+          <div><b>Devaluation</b>Raising the points needed for an award. Points already issued keep the value they were deferred at, but cost less to honour.</div>
         </div>
       </section>
 
       <div class="method" id="how">
         <h3>How it works</h3>
-
-        <h4>The ticket</h4>
-        <p>A member pays <code>P</code> for a ticket and earns <code>N</code> points, each worth <code>v</code> to the member. A share <code>b</code> of points is expected never to be used. The ticket is sold in month 0 and flown in month 2. The member redeems 60% of the points expected to be used in month 10 and the rest in month 28; the remaining points lapse in month 40. Each award costs the airline <code>c</code> per point redeemed to fly. The default ticket is the one in <a href="/loyalty101.html#ch04">Loyalty 101, chapter 04</a>: $500, 5,000 points, 1.3¢ a point and 15% breakage.</p>
-        <span class="fx">Points expected to be redeemed   E = N × (1 − b)        breakage points   B = N − E
-Standalone value of the points   SSP = N × v × (1 − b)
-
-IFRS 15 (relative)   deferred D = P × SSP / (P + SSP)    flight F = P − D
-Residual             D = SSP (at most P)                 F = P − D
-Incremental cost     F = P    provision = E × c, expensed when the flight is flown</span>
-        <p>Under the two deferral methods, the points' share is released as awards are delivered:</p>
-        <span class="fx">Breakage with redemptions   an award of R points releases D × R / E
-                            of which the award itself  D × R / N,  breakage  D × R × (1/E − 1/N)
-Breakage when points lapse  an award releases D × R / N;  the last D × B / N when the points lapse</span>
-        <p>Under incremental cost, flying an award uses up the provision and doesn't touch revenue. Under the deferral methods, the cost of flying the award is an expense when the award is flown. The balance sheet leaves out the cost of the original flight and everything else in the airline, so equity is just the profit on this ticket so far.</p>
-
-        <h4>The profit lab</h4>
-        <p>Per 1,000 points issued, a share <code>s</code> is sold to partners at price <code>p</code> and the rest is earned on flights. Raising award prices by <code>x</code> divides the value of a point and the cost of an award per point by <code>1 + x</code>, and adds the chosen number of breakage points per 10%. Partner prices are fixed by contract and don't move.</p>
-        <span class="fx">Value to members        v' = v / (1 + x)          breakage  b' = b + slope × x / 10%
-Cost per point redeemed c' = [e × 0.15¢ + (1 − e) × v] / (1 + x)      e = share of awards on empty seats
-Standalone value        A = v' × (1 − b')
-Deferred per point      flights: A      partners: p × A / (A + m)     m = marketing value per point
-Cash per point          flights: the value before the change, A₀ (the fare doesn't move)    partners: p
-Fare kept               flights: A₀ − A, passenger revenue on the day of the flight
-Profit                  breakage (deferred × b') + spread (deferred × (1 − b') − redeemed × c') + marketing + fare kept
-Points already issued   gain = old redeemed × old cost − new redeemed × new cost   (their deferred value doesn't change)</span>
-        <h4>The rules over time</h4>
-        <p>Before 2008, IFRS had no specific rule and many companies treated points as a marketing cost, accruing only what the awards were expected to cost. IFRIC 13 <i>Customer Loyalty Programmes</i>, issued in 2007 and applied from 2008, required part of the sale to be deferred as revenue for the award credits at their fair value, without saying how to split the price, so both the relative and the residual approaches were used. IFRS 15 replaced it in 2018 and requires relative standalone selling prices; its guidance on customer options and unexercised rights (paragraphs B39–B47) is where breakage comes from. In the United States, ASC 606 took effect the same year with the same model. Before it, US airlines generally used incremental cost for miles earned on flights and multiple-element accounting for miles sold to partners.</p>
-
+        <p>The ticket is sold in month 0 and flown in month 2. The member uses 60% of the points expected to be used in month 10, the rest in month 28, and the unused points expire in month 40. Defaults follow <a href="/loyalty101.html#ch04">Loyalty 101, chapter 04</a>: $500, 5,000 points, 1.3¢ a point, 15% never used.</p>
+        <span class="fx">Points expected to be used   E = N × (1 − b)
+Value of the points          V = N × v × (1 − b)
+IFRS 15            points D = P × V / (P + V)     flight = P − D
+Residual           points D = V (at most P)       flight = P − D
+Incremental cost   flight = P     provision = E × cost per point, expensed at the flight
+Each award of R points releases D × R / E (its own value plus its share of breakage)</span>
+        <p>The lab looks at 1,000 points over their whole life. Raising award prices by <code>x</code> divides the value of a point and the cost of an award by <code>1 + x</code> and adds 1.5 points of breakage per 10%. An award on an empty seat costs 0.15¢ a point; one that displaces a paying passenger costs what that seat would have sold for. The fare and the partner price don't change, so whatever is no longer deferred for flight points is passenger revenue on the day of the flight.</p>
+        <p><b>The rules over time.</b> Before 2008, many IFRS companies treated points as a marketing cost. IFRIC 13 (issued 2007, applied from 2008) required part of the sale to be deferred for the points, using either relative values or the residual method. IFRS 15 and its US twin ASC 606 replaced everything in 2018 with relative standalone selling prices. Until then, US airlines generally used incremental cost for miles earned on flights. When breakage can't be estimated, IFRS 15 holds the unused points' share until they expire instead; most large programmes do estimate it.</p>
         <h4>Sources</h4>
         <ul>
           <li>IFRS Foundation, <a href="https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/" target="_blank" rel="noopener">IFRS 15 Revenue from Contracts with Customers</a>, application guidance B39–B47.</li>
           <li>IFRS Foundation, <a href="https://www.ifrs.org/issued-standards/list-of-standards/ifric-13-customer-loyalty-programmes/" target="_blank" rel="noopener">IFRIC 13 Customer Loyalty Programmes</a> (2007, superseded by IFRS 15).</li>
           <li>FASB, ASC 606 Revenue from Contracts with Customers (ASU 2014-09).</li>
         </ul>
-
         <h4>Limitations</h4>
         <ul>
-          <li>One ticket and a fixed redemption schedule. A real programme holds millions of balances at different ages; the <a href="/breakage.html">Breakage &amp; liability</a> model follows them month by month.</li>
-          <li>Breakage turns out exactly as expected here. When it doesn't, the estimate is revised and a catch-up adjustment goes through revenue, which this page doesn't show.</li>
-          <li>The value per point is an input. In practice estimating it is a judgement of its own, often based on what similar awards would cost to buy.</li>
-          <li>No financing component, taxes, currency, or partner redemptions (where the programme acts as an agent and books revenue net).</li>
-          <li>The lab looks at one batch of points over its whole life and leaves out the cost of running the programme, the time value of the float and how members change their flying or card spend when points are worth less.</li>
-          <li>The partner example splits a payment into two parts only; real co-brand agreements have more elements and are recognised over several years.</li>
+          <li>One ticket, a fixed redemption schedule, and breakage that turns out exactly as expected. The <a href="/breakage.html">Breakage &amp; liability</a> model follows a whole programme month by month, including revised estimates.</li>
+          <li>The cost of the flight itself, taxes, interest and currency are left out; profit is the profit on the points only.</li>
+          <li>Real devaluations also change how members fly and spend, and banks reprice their contracts at renewal. The lab ignores both.</li>
         </ul>
         <p>This is a personal project and isn't affiliated with any airline. For the business side, read <a href="/loyalty101.html#ch04">Loyalty 101: Breakage &amp; the Points Liability</a>.</p>
       </div>
@@ -554,30 +447,21 @@ Points already issued   gain = old redeemed × old cost − new redeemed × new 
 
     <script>
     window.addEventListener("DOMContentLoaded", function () {
-      var DEF = { method: "rel", brk: "prop", price: 500, points: 5000, ssp: 1.3, b: 15, cost: 0.3, pSold: 100, pPrice: 1.2, pMkt: 0.3 };
+      var DEF = { price: 500, points: 5000, ssp: 1.3, b: 15, cost: 0.3 };
       var S = JSON.parse(JSON.stringify(DEF));
       S.step = 0;
       var EV = [
-        { m: 0, label: "Ticket sold", short: "Sale" }, { m: 2, label: "Flight flown", short: "Flight" },
-        { m: 10, label: "First award", short: "Award" }, { m: 28, label: "Second award", short: "Award" },
-        { m: 40, label: "Points lapse", short: "Lapse" }
+        { m: 0, label: "Ticket sold" }, { m: 2, label: "Flight flown" }, { m: 10, label: "First award" },
+        { m: 28, label: "Second award" }, { m: 40, label: "Points expire" }
       ];
-      var HORIZON = 44, SHARE1 = 0.6;
-      var C = { cash: "#151A23", atl: "#A0A7B4", liab: "#8FA9F2", prov: "#e7a3c9", eq: "#1baf7a",
-                red: "#2a78d6", brk: "#eb6834", outR: "#c9d6fa", outB: "#f8d5c4" };
+      var SHARE1 = 0.6;
+      var C = { atl: "#A0A7B4", liab: "#8FA9F2", prov: "#e7a3c9", eq: "#1baf7a", red: "#2a78d6", brk: "#eb6834", fare: "#4a3aa7" };
       var METHODS = {
-        rel: { name: "IFRS 15 / ASC 606", chip: "IFRS 15 (relative value)", color: "#2a78d6",
-               desc: "Required since 2018 under IFRS 15 and its US twin, ASC 606." },
-        res: { name: "Residual", chip: "Residual", color: "#4a3aa7",
-               desc: "One of the approaches used under IFRIC 13, the IFRS rule from 2008 to 2017: the points take their full value first." },
-        inc: { name: "Incremental cost", chip: "Incremental cost", color: "#c2378f",
-               desc: "The older approach: the points are a cost to provide for, not something sold." }
+        rel: { name: "IFRS 15", era: "Today, since 2018 (ASC 606 in the US)", color: "#2a78d6" },
+        res: { name: "Residual", era: "An IFRIC 13 option, 2008 to 2017", color: "#4a3aa7" },
+        inc: { name: "Incremental cost", era: "Common before 2008, and in the US until 2018", color: "#c2378f" }
       };
       var ORDER = ["rel", "res", "inc"];
-      var BRK = {
-        prop: { chip: "With redemptions", desc: "When breakage can be estimated, the usual case for large programmes." },
-        lapse: { chip: "When points lapse", desc: "When it can't: the unused points' share waits on the balance sheet until they lapse." }
-      };
 
       function el(id) { return document.getElementById(id); }
       function z(x) { return Math.abs(x) < 0.005 ? 0 : x; }
@@ -587,71 +471,36 @@ Points already issued   gain = old redeemed × old cost − new redeemed × new 
         var s = Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
         return (x <= -0.005 ? "−$" : "$") + s;
       }
+      function signed(x) { return z(x) ? (x > 0 ? "+" : "") + money(x) : "—"; }
       function pts(x) { return Math.round(x).toLocaleString("en-US"); }
       function pc(x) { var v = Math.round(x * 1000) / 10; return (v % 1 === 0 ? v.toFixed(0) : v.toFixed(1)) + "%"; }
-      function cents(x) { return (Math.round(x * 10000) / 100).toString() + "¢"; }
 
-      // ── the model: one ticket, five events ──
-      function model(method, brk) {
+      // ── one ticket, five events, three methods (amounts kept in whole cents) ──
+      function model(method) {
         var P = S.price, N = Math.max(0, Math.round(S.points)), b = S.b / 100, v = S.ssp / 100, c = S.cost / 100;
-        var E = Math.round(N * (1 - b)), B = N - E;
-        var R1 = Math.round(E * SHARE1), R2 = E - R1;
-        var ssp = N * v * (1 - b);
-        // amounts are kept in whole cents so every journal entry balances to the cent
-        var D = r2(method === "rel" ? (P + ssp > 0 ? P * ssp / (P + ssp) : 0) : method === "res" ? Math.min(ssp, P) : 0);
-        var F = r2(P - D);
-        var prov = method === "inc" ? r2(E * c) : 0;
-        function release(R, rest) {
-          if (method === "inc" || N === 0) return { red: 0, brk: 0 };
-          var red = r2(D * R / N);
-          if (brk === "prop") { var tot = rest != null ? rest : r2(E > 0 ? D * R / E : 0); return { red: Math.min(red, tot), brk: r2(tot - Math.min(red, tot)) }; }
-          return { red: red, brk: 0 };
-        }
-        var a1 = release(R1), a2 = release(R2, E > 0 && R2 > 0 ? r2(D - a1.red - a1.brk) : (R2 > 0 ? 0 : 0));
-        var lapse = method === "inc" ? 0 : r2(z(D - a1.red - a1.brk - a2.red - a2.brk));
-        var cur = { cash: P, atl: method === "inc" ? P : F, liab: D, revF: 0, revR: 0, revB: 0, cost: 0, provE: 0 };
-        var states = [], entries = [];
-        function snap() {
-          var s = {}; for (var k in cur) s[k] = cur[k];
-          s.eq = s.revF + s.revR + s.revB - s.cost - s.provE;
-          states.push(s);
-        }
-        // 0. ticket sold
-        entries.push(method === "inc"
-          ? [["Cash", P, 0], ["Advance ticket sales", 0, P]]
-          : [["Cash", P, 0], ["Advance ticket sales", 0, F], ["Loyalty deferred revenue", 0, D]]);
+        var E = Math.round(N * (1 - b)), B = N - E, R1 = Math.round(E * SHARE1), R2 = E - R1;
+        var V = N * v * (1 - b);
+        var D = r2(method === "rel" ? (P + V > 0 ? P * V / (P + V) : 0) : method === "res" ? Math.min(V, P) : 0);
+        var F = r2(P - D), prov = method === "inc" ? r2(E * c) : 0;
+        var rel1 = method === "inc" ? 0 : r2(E > 0 ? D * R1 / E : 0);
+        var rel2 = method === "inc" ? 0 : (E > 0 ? r2(D - rel1) : 0);
+        var lapse = method === "inc" ? 0 : r2(D - rel1 - rel2);
+        var cur = { cash: P, atl: method === "inc" ? P : F, liab: D, rev: 0, exp: 0 }, states = [];
+        function snap() { states.push({ cash: cur.cash, atl: cur.atl, liab: cur.liab, rev: cur.rev, exp: cur.exp, profit: cur.rev - cur.exp }); }
         snap();
-        // 1. flight flown
-        var fr = cur.atl, e1 = [["Advance ticket sales", fr, 0], ["Passenger revenue", 0, fr]];
-        cur.revF = fr; cur.atl = 0;
-        if (method === "inc") {
-          cur.liab = prov; cur.provE = prov;
-          e1.push(["Loyalty expense", prov, 0], ["Provision for awards", 0, prov]);
-        }
-        entries.push(e1); snap();
-        // 2, 3. awards
-        [[R1, a1], [R2, a2]].forEach(function (x) {
-          var R = x[0], a = x[1], ac = r2(R * c), e = [];
+        cur.rev += cur.atl; cur.atl = 0;
+        if (method === "inc") { cur.liab = prov; cur.exp += prov; }
+        snap();
+        [[R1, rel1], [R2, rel2]].forEach(function (x) {
+          var ac = r2(x[0] * c);
           cur.cash -= ac;
-          if (method === "inc") {
-            cur.liab -= ac;
-            e.push(["Provision for awards", ac, 0], ["Cash (cost of flying the award)", 0, ac]);
-          } else {
-            cur.liab -= a.red + a.brk; cur.revR += a.red; cur.revB += a.brk; cur.cost += ac;
-            e.push(["Loyalty deferred revenue", a.red + a.brk, 0], ["Loyalty revenue: award delivered", 0, a.red]);
-            if (z(a.brk)) e.push(["Loyalty revenue: breakage", 0, a.brk]);
-            e.push(["Cost of flying the award", ac, 0], ["Cash", 0, ac]);
-          }
-          entries.push(e); snap();
+          if (method === "inc") cur.liab -= ac;
+          else { cur.liab -= x[1]; cur.rev += x[1]; cur.exp += ac; }
+          snap();
         });
-        // 4. the unused points lapse
-        if (z(lapse)) {
-          cur.liab -= lapse; cur.revB += lapse;
-          entries.push([["Loyalty deferred revenue", lapse, 0], ["Loyalty revenue: breakage", 0, lapse]]);
-        } else entries.push([]);
-        snap();
-        return { method: method, brk: brk, P: P, N: N, b: b, v: v, c: c, E: E, B: B, R1: R1, R2: R2, ssp: ssp,
-                 D: D, F: F, prov: prov, a1: a1, a2: a2, lapse: lapse, states: states, entries: entries };
+        cur.liab -= lapse; cur.rev += lapse; snap();
+        return { method: method, P: P, N: N, b: b, v: v, c: c, E: E, B: B, R1: R1, R2: R2, V: V, D: D, F: F, prov: prov,
+                 rel: [0, 0, rel1, rel2, lapse], ac: [0, 0, r2(R1 * c), r2(R2 * c), 0], states: states };
       }
 
       // ── controls ──
@@ -659,380 +508,163 @@ Points already issued   gain = old redeemed × old cost − new redeemed × new 
         var box = el(id); box.innerHTML = "";
         items.forEach(function (it) {
           var b = document.createElement("button");
-          b.type = "button"; b.className = "chip" + (it.k === cur ? " on" : "");
-          b.innerHTML = it.t;
-          if (it.dis) b.disabled = true;
+          b.type = "button"; b.className = "chip" + (it.k === cur ? " on" : ""); b.innerHTML = it.t;
           b.addEventListener("click", function () { onPick(it.k); });
           box.appendChild(b);
         });
       }
-      var INPUTS = [["price", "price", 50, 5000], ["points", "points", 0, 100000], ["ssp", "ssp", 0.1, 5], ["b", "b", 0, 95],
-                    ["cost", "cost", 0, 3], ["p-sold", "pSold", 1, 10000], ["p-price", "pPrice", 0.1, 5], ["p-mkt", "pMkt", 0, 1000]];
-      function fillInputs() { INPUTS.forEach(function (d) { el(d[0]).value = S[d[1]]; }); }
+      var INPUTS = [["price", 50, 5000], ["points", 0, 100000], ["ssp", 0.1, 5], ["b", 0, 95], ["cost", 0, 3]];
+      function fillInputs() { INPUTS.forEach(function (d) { el(d[0]).value = S[d[0]]; }); }
       INPUTS.forEach(function (d) {
         el(d[0]).addEventListener("input", function () {
           var x = parseFloat(this.value);
-          if (!isFinite(x) || x < d[2] || x > d[3]) return;
-          S[d[1]] = x; renderAll();
+          if (!isFinite(x) || x < d[1] || x > d[2]) return;
+          S[d[0]] = x; renderAll();
         });
       });
-      el("reset").addEventListener("click", function () {
-        ["price", "points", "ssp", "b", "cost"].forEach(function (k) { S[k] = DEF[k]; });
-        fillInputs(); renderAll();
-      });
-      el("prev").addEventListener("click", function () { if (S.step > 0) { S.step--; renderWalk(); } });
-      el("next").addEventListener("click", function () { if (S.step < EV.length - 1) { S.step++; renderWalk(); } });
-      Array.prototype.forEach.call(document.querySelectorAll(".mcard"), function (b) {
-        b.addEventListener("click", function () { S.method = b.getAttribute("data-m"); renderAll(); });
-      });
+      el("reset").addEventListener("click", function () { for (var k in DEF) S[k] = DEF[k]; fillInputs(); renderAll(); });
+      el("prev").addEventListener("click", function () { if (S.step > 0) { S.step--; renderCompare(); } });
+      el("next").addEventListener("click", function () { if (S.step < EV.length - 1) { S.step++; renderCompare(); } });
 
-      function renderControls() {
-        chips("method", ORDER.map(function (k) { return { k: k, t: METHODS[k].chip }; }), S.method, function (k) { S.method = k; renderAll(); });
-        el("method-desc").textContent = METHODS[S.method].desc;
-        var inc = S.method === "inc";
-        chips("brk", ["prop", "lapse"].map(function (k) { return { k: k, t: BRK[k].chip, dis: inc }; }), S.brk, function (k) { S.brk = k; renderAll(); });
-        el("brk-desc").textContent = inc ? "Doesn't apply: under incremental cost, only the points expected to be redeemed are provided for." : BRK[S.brk].desc;
-        el("tk-sum").textContent = "· " + money(S.price, 0) + ", " + pts(S.points) + " points at " + S.ssp + "¢, " + S.b + "% breakage";
-        Array.prototype.forEach.call(document.querySelectorAll(".mcard"), function (b) {
-          b.classList.toggle("on", b.getAttribute("data-m") === S.method);
+      // ── 1. deferred revenue ──
+      function renderDeferred() {
+        var M = model("rel"), W = 600, H = 300, base = 230, top = 30, h = base - top, cw = 74, gap = (W - 5 * cw) / 5;
+        var sc = M.P > 0 ? h / M.P : 0, o = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Earned and owed amounts at each step">';
+        M.states.forEach(function (s, k) {
+          var x = gap / 2 + k * (cw + gap), y = base;
+          [[s.rev, C.eq], [z(s.liab), C.liab], [z(s.atl), C.atl]].forEach(function (g, i) {
+            var hh = Math.max(0, g[0]) * sc;
+            if (hh > 0.01) o += '<rect x="' + x + '" y="' + (y - hh).toFixed(1) + '" width="' + cw + '" height="' + hh.toFixed(1) + '" rx="' + Math.min(3, hh / 2).toFixed(1) + '" fill="' + g[1] + '"/>';
+            if (hh >= 18) o += '<text class="in" x="' + (x + cw / 2) + '" y="' + (y - hh / 2 + 4).toFixed(1) + '" text-anchor="middle">' + money(g[0], 0) + "</text>";
+            else if (i === 1 && g[0] > 0.005) o += '<text x="' + (x + cw / 2) + '" y="' + (y - hh - 4).toFixed(1) + '" text-anchor="middle" style="font-size:11px">' + money(g[0]) + "</text>";
+            y -= hh;
+          });
+          o += '<text class="hd" x="' + (x + cw / 2) + '" y="' + (base + 20) + '" text-anchor="middle">Month ' + EV[k].m + "</text>";
+          o += '<text class="cap" x="' + (x + cw / 2) + '" y="' + (base + 36) + '" text-anchor="middle">' + EV[k].label + "</text>";
         });
-      }
-
-      // ── the walk-through ──
-      function rect(x, y, w, h, fill) {
-        if (h <= 0.01) return "";
-        return '<rect x="' + x + '" y="' + y.toFixed(1) + '" width="' + w + '" height="' + h.toFixed(1) + '" rx="' + Math.min(3, h / 2).toFixed(1) + '" fill="' + fill + '"/>';
-      }
-      function drawBS(M, k) {
-        var s = M.states[k], W = 540, H = 300, base = 262, top = 22, h = base - top;
-        var sc = M.P > 0 ? h / M.P : 0, x1 = 30, x2 = 170, cw = 110, lx = 316;
-        var o = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Balance sheet after this step">';
-        var cashH = Math.max(0, s.cash) * sc;
-        o += rect(x1, base - cashH, cw, cashH, C.cash);
-        if (cashH > 22) o += '<text class="in" x="' + (x1 + cw / 2) + '" y="' + (base - cashH / 2 + 4).toFixed(1) + '" text-anchor="middle">' + money(s.cash) + '</text>';
-        var inc = M.method === "inc";
-        var segs = [
-          { label: "Equity: profit so far", v: s.eq, color: C.eq },
-          { label: inc ? "Provision for awards" : "Loyalty deferred revenue", v: z(s.liab), color: inc ? C.prov : C.liab },
-          { label: "Advance ticket sales", v: z(s.atl), color: C.atl }
+        o += '<line x1="0" x2="' + W + '" y1="' + base + '" y2="' + base + '" stroke="#d9d9d6"/>';
+        el("flow").innerHTML = o + "</svg>";
+        var cashTxt = [
+          "<b>Member → airline: " + money(M.P) + "</b>",
+          "None",
+          "Airline → suppliers: " + money(M.ac[2]) + " to fly the award (fees, fuel, catering)",
+          "Airline → suppliers: " + money(M.ac[3]) + " to fly the award",
+          "None"
         ];
-        var y = base, labs = [];
-        segs.forEach(function (g) {
-          var hh = Math.max(0, g.v) * sc;
-          o += rect(x2, y - hh, cw, hh, g.color);
-          labs.push({ g: g, mid: y - hh / 2 });
-          y -= hh;
+        var t = '<thead><tr><th>When</th><th>Cash that changes hands</th><th>Earned</th><th>Still owed</th></tr></thead><tbody>';
+        M.states.forEach(function (s, k) {
+          var earned = s.rev - (k ? M.states[k - 1].rev : 0), owed = z(s.atl) + z(s.liab);
+          t += '<tr><td class="k">Month ' + EV[k].m + "<small>" + EV[k].label + '</small></td><td class="wrap">' + cashTxt[k] + "</td><td>" + (z(earned) ? money(earned) : k === 4 ? "$0<small>already counted</small>" : "—") +
+            "</td><td>" + money(owed) + (k === 0 ? "<small>flight " + money(M.F) + " + points " + money(M.D) + "</small>" : k === 1 ? "<small>the points</small>" : "") + "</td></tr>";
         });
-        // labels from the top down, at least 34px apart, kept above the baseline
-        labs.reverse();
-        var gap = 34, ly = [];
-        labs.forEach(function (l, i) { ly[i] = Math.max(l.mid, i ? ly[i - 1] + gap : top + 6); });
-        for (var i = labs.length - 1; i >= 0; i--) ly[i] = Math.min(ly[i], i === labs.length - 1 ? base - 14 : ly[i + 1] - gap);
-        labs.forEach(function (l, i) {
-          var zero = Math.abs(l.g.v) < 0.005;
-          o += '<path d="M' + (x2 + cw + 2) + ' ' + l.mid.toFixed(1) + ' C' + (x2 + cw + 40) + ' ' + l.mid.toFixed(1) + ' ' + (lx - 40) + ' ' + ly[i].toFixed(1) + ' ' + (lx - 6) + ' ' + ly[i].toFixed(1) + '" fill="none" stroke="' + (zero ? "#e2e2df" : "#c4c4c0") + '"/>';
-          o += '<rect x="' + (lx - 2) + '" y="' + (ly[i] - 13).toFixed(1) + '" width="4" height="26" rx="2" fill="' + (zero ? "#e2e2df" : l.g.color) + '"/>';
-          o += '<text class="' + (zero ? "zero" : "nm") + '" x="' + (lx + 8) + '" y="' + (ly[i] - 2).toFixed(1) + '">' + l.g.label + '</text>';
-          o += '<text class="' + (zero ? "zero" : "") + '" x="' + (lx + 8) + '" y="' + (ly[i] + 12).toFixed(1) + '">' + money(l.g.v) + '</text>';
-        });
-        o += '<line x1="12" x2="' + (x2 + cw + 18) + '" y1="' + base + '" y2="' + base + '" stroke="#d9d9d6"/>';
-        o += '<text class="cap" x="' + (x1 + cw / 2) + '" y="' + (base + 18) + '" text-anchor="middle">Assets: cash</text>';
-        o += '<text class="cap" x="' + (x2 + cw / 2) + '" y="' + (base + 18) + '" text-anchor="middle">Liabilities + equity</text>';
-        o += '<text class="cap" x="' + ((x1 + cw + x2) / 2) + '" y="' + (base - 6) + '" text-anchor="middle">=</text>';
-        return o + "</svg>";
-      }
-      function largest(counts, total) {
-        var sum = counts.reduce(function (a, b) { return a + b; }, 0);
-        if (!sum) return counts.map(function () { return 0; });
-        var raw = counts.map(function (c) { return c / sum * total; }), fl = raw.map(Math.floor);
-        var left = total - fl.reduce(function (a, b) { return a + b; }, 0);
-        raw.map(function (r, i) { return [r - fl[i], i]; }).sort(function (a, b) { return b[0] - a[0]; })
-          .slice(0, left).forEach(function (p) { fl[p[1]]++; });
-        return fl;
-      }
-      function drawGrid(M, k) {
-        var redeemed = (k >= 2 ? M.R1 : 0) + (k >= 3 ? M.R2 : 0), lapsed = k >= 4 ? M.B : 0;
-        var parts = [
-          { n: redeemed, color: C.red, label: "Redeemed" },
-          { n: M.E - redeemed, color: C.outR, label: "Still to be redeemed" },
-          { n: M.B - lapsed, color: C.outB, label: "Expected never to be used" },
-          { n: lapsed, color: C.brk, label: "Lapsed" }
-        ];
-        var cells = largest(parts.map(function (p) { return p.n; }), 100), o = "";
-        parts.forEach(function (p, i) { for (var j = 0; j < cells[i]; j++) o += '<i style="background:' + p.color + '"></i>'; });
-        el("pgrid").innerHTML = o;
-        el("pleg").innerHTML = parts.filter(function (p) { return p.n > 0; }).map(function (p) {
-          return '<span><i style="background:' + p.color + '"></i>' + p.label + " · " + pts(p.n) + "</span>";
-        }).join("") + (M.N ? '<span style="color:var(--muted)">each square is 1% of the ' + pts(M.N) + " points</span>" : "");
-      }
-      function fx(s) { return '<span class="fxi">' + s + "</span>"; }
-      function stepText(M, k) {
-        var inc = M.method === "inc", res = M.method === "res", prop = M.brk === "prop";
-        var a = k === 2 ? M.a1 : M.a2, R = k === 2 ? M.R1 : M.R2, ac = R * M.c;
-        if (k === 0) {
-          if (inc) return "<p>The member pays " + money(M.P) + " for a ticket that also earns " + pts(M.N) + " points. The incremental cost method doesn't treat the points as something sold: the whole fare is waiting for the flight, as <b>advance ticket sales</b>. The points will show up later, as a cost.</p>";
-          var s = "<p>The member pays " + money(M.P) + " for a ticket that also earns " + pts(M.N) + " points. That's two promises (performance obligations): the flight, and a future award. What each would sell for on its own:</p><p>Points: " +
-            fx(pts(M.N) + " × " + cents(M.v) + " × (1 − " + pc(M.b) + ") = " + money(M.ssp)) + "<br>Flight: " + fx(money(M.P)) + "</p>";
-          if (res) s += "<p>The residual method gives the points their full standalone value, " + money(M.D) + ", and the flight what is left, " + money(M.F) + ".</p>";
-          else s += "<p>The fare is split in proportion: the points get " + fx(money(M.P) + " × " + money(M.ssp) + " / " + money(M.P + M.ssp) + " = " + money(M.D)) + " and the flight " + money(M.F) + ".</p>";
-          return s + "<p>None of it is revenue yet. Both amounts are <b>liabilities</b>: the airline still owes the flight and the award.</p>";
-        }
-        if (k === 1) {
-          if (inc) return "<p>The flight is flown and the whole " + money(M.P) + " becomes passenger revenue. At the same moment the airline books an expense for what the awards are expected to cost: " +
-            fx(pts(M.E) + " points × " + cents(M.c) + " = " + money(M.prov)) + ", held as a <b>provision</b>. Only the points expected to be redeemed count, so breakage is built in from the start.</p><p>The liability is measured at cost, not at what the points are worth to the member: " + money(M.prov) + " here, against " + money(model("rel", S.brk).D) + " under IFRS 15.</p>";
-          return "<p>The flight is flown, so the first promise is kept: " + money(M.F) + " moves from advance ticket sales (the air traffic liability) to <b>passenger revenue</b>.</p><p>The " + money(M.D) + " for the points stays on the balance sheet as <b>deferred revenue</b>. The airline has the cash but hasn't earned it yet.</p>";
-        }
-        if (k === 2 || k === 3) {
-          var first = k === 2;
-          if (inc) return "<p>The member redeems " + pts(R) + " points and the award is flown. Its cost, " + money(ac) + ", is charged against the provision rather than to profit: the expense was already booked at the flight. Revenue doesn't move.</p>" +
-            (first ? "" : "<p>The provision is now used up, even though " + pts(M.B) + " points are still in the member's account: they were never expected to be redeemed, so nothing was set aside for them.</p>");
-          var s2 = "<p>The member redeems " + pts(R) + " points" + (first ? ", " + pc(M.E ? R / M.E : 0) + " of the " + pts(M.E) + " expected to be used" : ", the rest of those expected to be used") + ". ";
-          if (prop) {
-            s2 += "The same share of the deferred amount is released: " + fx(money(M.D) + " × " + pts(R) + " / " + pts(M.E) + " = " + money(a.red + a.brk)) + ".</p><p>" + money(a.red) + " is the value of the redeemed points themselves; the other " + money(a.brk) +
-              " is <b>breakage</b>. Since " + pc(M.b) + " of points are expected never to be used, each redemption also releases a slice of their value.</p>";
-            if (!first) s2 += "<p>The liability is now zero although " + pts(M.B) + " points are still in the account: their value has already been recognised alongside the redemptions.</p>";
-          } else {
-            s2 += "Breakage isn't being estimated, so each point releases only its own value: " + fx(money(M.D) + " / " + pts(M.N) + " × " + pts(R) + " = " + money(a.red)) + ".</p>";
-            if (!first) s2 += "<p>" + money(z(M.states[3].liab)) + " is still deferred, for the " + pts(M.B) + " points left in the account.</p>";
-          }
-          return s2 + "<p>Flying the award costs the airline " + money(ac) + " (" + pts(R) + " × " + cents(M.c) + "), an expense of its own.</p>";
-        }
-        if (inc) return "<p>The last " + pts(M.B) + " points expire. Nothing happens in the books: they were never part of the provision.</p>";
-        if (prop) return "<p>The last " + pts(M.B) + " points expire. <b>No entry</b>: their value was recognised as breakage along the way. Under IFRS 15, a point that expires is not a revenue event when breakage can be estimated.</p><p>If breakage turns out different from the estimate, the estimate is revised and a catch-up goes through revenue; the <a href=\"/breakage.html#h-rev2\">Breakage &amp; liability</a> model shows that case.</p>";
-        return "<p>The last " + pts(M.B) + " points expire, and the " + money(M.lapse) + " still deferred for them becomes <b>breakage revenue</b> at once. IFRS 15 asks for this pattern when the airline can't expect to keep the unused rights, typically because it can't estimate breakage reliably. Most large programmes can, and use the other pattern.</p>";
-      }
-      function jeTable(rows) {
-        if (!rows.length) return '<p class="sub" style="margin:0">No entry.</p>';
-        var o = '<table class="rf small"><thead><tr><th>Account</th><th>Debit</th><th>Credit</th></tr></thead><tbody>';
-        rows.forEach(function (r) {
-          o += "<tr><td class=\"k" + (r[2] ? " ind" : "") + "\">" + r[0] + "</td><td>" + (r[1] ? money(r[1]) : "") + "</td><td>" + (r[2] ? money(r[2]) : "") + "</td></tr>";
-        });
-        return o + "</tbody></table>";
-      }
-      function isTable(M, k) {
-        var s = M.states[k], inc = M.method === "inc";
-        var rows = [["Passenger revenue", s.revF, false], ["Loyalty revenue: awards delivered", s.revR, inc], ["Loyalty revenue: breakage", s.revB, inc],
-                    [inc ? "Loyalty expense (provision)" : "Cost of flying the awards", -(inc ? s.provE : s.cost), false]];
-        var o = '<table class="rf small"><tbody>';
-        rows.forEach(function (r) { o += "<tr><td" + (r[2] ? ' class="dim"' : "") + ">" + r[0] + "</td><td" + (r[2] ? ' class="dim"' : "") + ">" + (r[2] ? "n/a" : money(r[1])) + "</td></tr>"; });
-        return o + '<tr class="total"><td>Profit on this ticket so far</td><td>' + money(s.eq) + "</td></tr></tbody></table>";
-      }
-      function renderWalk() {
-        var M = model(S.method, S.brk), k = S.step;
-        chips("stepnav", EV.map(function (e, i) { return { k: i, t: "<b>" + (i + 1) + "</b>" + e.label }; }), k, function (i) { S.step = i; renderWalk(); });
-        el("prev").disabled = k === 0; el("next").disabled = k === EV.length - 1;
-        el("walk-method").textContent = METHODS[S.method].name + (S.method === "inc" ? "" : " · breakage " + BRK[S.brk].chip.toLowerCase());
-        el("step-title").textContent = (k + 1) + ". " + EV[k].label;
-        el("step-when").textContent = "Month " + EV[k].m + (k === 0 ? ", the day of the booking" : " after the sale");
-        el("step-text").innerHTML = stepText(M, k);
-        el("je").innerHTML = jeTable(M.entries[k]);
-        el("is").innerHTML = isTable(M, k);
-        el("bs").innerHTML = drawBS(M, k);
-        drawGrid(M, k);
+        el("who").innerHTML = t + "</tbody>";
+        el("split").innerHTML = "<b>How the " + money(M.P) + " is split.</b> The ticket contains two promises, so IFRS 15 shares the price between them in proportion to what each would sell for alone. The points are worth " +
+          pts(M.N) + " × " + S.ssp + "¢ × (1 − " + pc(M.b) + " never used) = " + money(M.V) + "; the flight is worth " + money(M.P) + ". So the points get " + money(M.P) + " × " + money(M.V) + " / " + money(M.P + M.V) + " = <b>" + money(M.D) +
+          "</b> and the flight <b>" + money(M.F) + "</b>. Each award then releases its share of the " + money(M.D) + ", including a slice for the points that will never be used, so the debt reaches zero with the last expected award, even though " + pts(M.B) + " points are still unused.";
       }
 
-      // ── comparison ──
-      function series(method) {
-        var M = model(method, S.brk), rev = [], liab = [];
-        for (var m = 0; m <= HORIZON; m++) {
-          var k = 0; for (var i = 0; i < EV.length; i++) if (EV[i].m <= m) k = i;
-          var s = M.states[k];
-          rev.push(s.revF + s.revR + s.revB); liab.push(Math.max(0, z(s.liab)));
-        }
-        return { rev: rev, liab: liab, M: M };
-      }
-      function niceMax(v) {
-        if (v <= 0) return 1;
-        var e = Math.pow(10, Math.floor(Math.log(v) / Math.LN10)), f = v / e;
-        return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e;
-      }
-      var tip = el("tip");
-      function showTip(html, ev) {
-        tip.innerHTML = html; tip.style.display = "block";
-        var w = tip.offsetWidth, x = ev.pageX + 14;
-        if (ev.clientX + 14 + w > document.documentElement.clientWidth - 8) x = ev.pageX - w - 14;
-        tip.style.left = Math.max(4, x) + "px"; tip.style.top = (ev.pageY + 14) + "px";
-      }
-      function hideTip() { tip.style.display = "none"; }
-      function lineChart(id, ser, title) {
-        var box = el(id), W = Math.max(280, box.clientWidth || 500), H = 230, mg = { l: 50, r: 12, t: 22, b: 28 };
-        var iw = W - mg.l - mg.r, ih = H - mg.t - mg.b, max = 0;
-        ser.forEach(function (s) { s.values.forEach(function (v) { if (v > max) max = v; }); });
-        var ymax = niceMax(max * 1.04);
-        function X(m) { return mg.l + m / HORIZON * iw; }
-        function Y(v) { return mg.t + ih - v / ymax * ih; }
-        var o = '<svg viewBox="0 0 ' + W + " " + H + '">';
-        for (var i = 0; i <= 4; i++) {
-          var v = ymax / 4 * i, y = Y(v).toFixed(1);
-          o += '<line x1="' + mg.l + '" x2="' + (W - mg.r) + '" y1="' + y + '" y2="' + y + '" stroke="' + (i ? "#eeeeec" : "#d9d9d6") + '"/>';
-          o += '<text class="axl" x="' + (mg.l - 6) + '" y="' + (+y + 4) + '" text-anchor="end">' + money(v, ymax < 20 ? 2 : 0) + "</text>";
-        }
-        for (var m = 0; m <= HORIZON; m += 6) o += '<text class="axl" x="' + X(m).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + m + "</text>";
-        EV.forEach(function (e, i) {
-          if (!i) return;
-          var x = X(e.m).toFixed(1);
-          o += '<line x1="' + x + '" x2="' + x + '" y1="' + mg.t + '" y2="' + (mg.t + ih) + '" stroke="#cfcfcb" stroke-dasharray="3 3"/>';
-          o += '<text class="axl" x="' + x + '" y="' + (mg.t - 8) + '" text-anchor="' + (i === 1 ? "start" : "middle") + '">' + e.short + "</text>";
-        });
-        ser.slice().sort(function (a, b) { return (a.on ? 1 : 0) - (b.on ? 1 : 0); }).forEach(function (s) {
-          var d = "M" + X(0).toFixed(1) + " " + Y(s.values[0]).toFixed(1);
-          for (var m = 1; m <= HORIZON; m++) d += "H" + X(m).toFixed(1) + "V" + Y(s.values[m]).toFixed(1);
-          o += '<path d="' + d + '" fill="none" stroke="' + s.color + '" stroke-width="' + (s.on ? 2.8 : 1.8) + '" opacity="' + (s.on ? 1 : 0.55) + '" stroke-linejoin="round"/>';
-        });
-        o += '<line class="xh" x1="0" x2="0" y1="' + mg.t + '" y2="' + (mg.t + ih) + '" stroke="#bdbdb8" style="display:none"/>';
-        o += '<rect class="ov" x="' + mg.l + '" y="0" width="' + iw + '" height="' + H + '" fill="transparent"/>';
-        box.innerHTML = o + "</svg>";
-        var svg = box.querySelector("svg"), ov = box.querySelector(".ov"), xh = box.querySelector(".xh");
-        function move(ev) {
-          var r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) / r.width * W;
-          var m = Math.max(0, Math.min(HORIZON, Math.round((px - mg.l) / iw * HORIZON)));
-          xh.setAttribute("x1", X(m)); xh.setAttribute("x2", X(m)); xh.style.display = "";
-          var evn = EV.filter(function (e) { return e.m === m; })[0];
-          var h = '<div class="t">Month ' + m + (evn ? " · " + evn.label : "") + "</div>";
-          ser.forEach(function (s) { h += '<div class="r"><span><span class="sw" style="background:' + s.color + '"></span>' + s.name + "</span><b>" + money(s.values[m]) + "</b></div>"; });
-          showTip(h, ev);
-        }
-        ov.addEventListener("pointermove", move);
-        ov.addEventListener("pointerdown", move);
-        ov.addEventListener("pointerleave", function () { xh.style.display = "none"; hideTip(); });
+      // ── 2. side by side ──
+      function say(M, k) {
+        var m = M.method;
+        if (m === "inc") return [
+          "No split. The whole " + money(M.P) + " waits for the flight; the points are ignored for now.",
+          "All " + money(M.P) + " becomes revenue. The expected cost of the awards, " + money(M.prov) + ", is booked as an expense and set aside (a provision).",
+          "The award's " + money(M.ac[2]) + " cost is paid out of the provision. No revenue, no new expense.",
+          "The last " + money(M.ac[3]) + " of the provision is used. Nothing more is owed.",
+          "Nothing happens: unused points were never provided for."][k];
+        var first = m === "res"
+          ? "Points valued first, at their full value: " + money(M.D) + ". The flight gets the rest, " + money(M.F) + ". Both are owed."
+          : "Fare split by value: " + money(M.F) + " for the flight, " + money(M.D) + " for the points. Both are owed.";
+        return [first,
+          money(M.F) + " becomes revenue. The " + money(M.D) + " for the points is still owed" + (m === "res" ? ", more than under IFRS 15." : "."),
+          pc(SHARE1) + " of the expected points used, so " + pc(SHARE1) + " of the " + money(M.D) + " becomes revenue (" + money(M.rel[2]) + "). Flying the award costs " + money(M.ac[2]) + ".",
+          "The rest, " + money(M.rel[3]) + ", becomes revenue. The debt is paid off although " + pts(M.B) + " points are unused.",
+          "The unused points expire. No entry: their value came in with the awards."][k];
       }
       function renderCompare() {
-        var all = {};
-        ORDER.forEach(function (k) { all[k] = series(k); });
-        lineChart("c-rev", ORDER.map(function (k) { return { name: METHODS[k].name, color: METHODS[k].color, values: all[k].rev, on: k === S.method }; }));
-        lineChart("c-liab", ORDER.map(function (k) { return { name: METHODS[k].name, color: METHODS[k].color, values: all[k].liab, on: k === S.method }; }));
-        el("l-cmp").innerHTML = ORDER.map(function (k) { return '<span><i class="ln" style="border-color:' + METHODS[k].color + '"></i>' + METHODS[k].name + "</span>"; }).join("") +
-          '<span style="color:var(--muted)">' + (S.brk === "prop" ? "Breakage with redemptions" : "Breakage when points lapse") + " for the two deferral methods</span>";
-        var R = all.rel.M, Rs = all.res.M, I = all.inc.M;
-        el("cmp-explain").innerHTML = "All three end with the same " + money(R.P) + " of revenue and the same " + money(R.states[4].eq) +
-          " of profit on the ticket. What changes is when the revenue arrives and how big the obligation looks. Right after the flight, the points liability is " +
-          money(R.states[1].liab) + " under IFRS 15, " + money(Rs.states[1].liab) + " under the residual method and only " + money(I.states[1].liab) +
-          " under incremental cost, which measures what the awards will cost to fly rather than what the member paid for them. That gap, scaled up to a whole programme, is why the move to IFRIC 13, and in the US to ASC 606, made loyalty liabilities much larger on airline balance sheets.";
-        var rows = [
-          ["Deferred for the points at the sale", function (M) { return money(M.D); }],
-          ["Revenue when the flight is flown", function (M) { return money(M.states[1].revF); }],
-          ["Revenue from the awards, incl. breakage", function (M) { var s = M.states[4]; return money(s.revR + s.revB); }],
-          ["Total revenue", function (M) { var s = M.states[4]; return money(s.revF + s.revR + s.revB); }, true],
-          ["Cost of the awards", function (M) { var s = M.states[4]; return money(-(s.cost + s.provE)); }],
-          ["Profit on the ticket", function (M) { return money(M.states[4].eq); }, true],
-          ["Points liability after the flight", function (M) { return money(z(M.states[1].liab)); }],
-          ["Liability measured at", function (M) { return M.method === "inc" ? "Cost of the awards" : M.method === "res" ? "Full value of the points" : "Points' share of the fare"; }]
-        ];
-        var o = "<thead><tr><th></th>" + ORDER.map(function (k) { return '<th class="' + (k === S.method ? "on" : "") + '">' + METHODS[k].name + "</th>"; }).join("") + "</tr></thead><tbody>";
-        rows.forEach(function (r) {
-          o += "<tr" + (r[2] ? ' style="font-weight:600"' : "") + '><td class="k">' + r[0] + "</td>" + ORDER.map(function (k) { return '<td class="' + (k === S.method ? "on" : "") + '">' + r[1](all[k].M) + "</td>"; }).join("") + "</tr>";
+        var k = S.step, all = {};
+        ORDER.forEach(function (m) { all[m] = model(m); });
+        chips("stepnav", EV.map(function (e, i) { return { k: i, t: "<b>" + (i + 1) + "</b>" + e.label }; }), k, function (i) { S.step = i; renderCompare(); });
+        el("prev").disabled = k === 0; el("next").disabled = k === EV.length - 1;
+        var maxOwed = Math.max(0.01, all.rel.D, all.res.D, all.inc.prov);
+        el("cols").innerHTML = ORDER.map(function (m) {
+          var M = all[m], s = M.states[k], p = k ? M.states[k - 1] : { cash: 0, rev: 0, exp: 0 };
+          var lines = [["Cash", s.cash - p.cash], ["Revenue booked", s.rev - p.rev], ["Expense booked", -(s.exp - p.exp)]];
+          return '<div class="mcol"><h4><i style="background:' + METHODS[m].color + '"></i>' + METHODS[m].name + '</h4><div class="era">' + METHODS[m].era + "</div>" +
+            '<p class="say">' + say(M, k) + "</p>" +
+            lines.map(function (l) { return '<div class="ln"><span>' + l[0] + " this step</span><b" + (z(l[1]) ? "" : ' class="dim"') + ">" + signed(l[1]) + "</b></div>"; }).join("") +
+            '<div class="meter"><div class="lab"><span>Revenue so far</span><b>' + money(s.rev) + '</b></div><div class="trk"><i style="width:' + (M.P > 0 ? s.rev / M.P * 100 : 0).toFixed(1) + "%;background:" + C.eq + '"></i></div></div>' +
+            '<div class="meter"><div class="lab"><span>' + (m === "inc" ? "Owed for the points (at cost)" : "Owed for the points") + "</span><b>" + money(z(s.liab)) + '</b></div><div class="trk"><i style="width:' + (Math.max(0, z(s.liab)) / maxOwed * 100).toFixed(1) + "%;background:" + (m === "inc" ? C.prov : C.liab) + '"></i></div></div>' +
+            "</div>";
+        }).join("");
+        var t = "<thead><tr><th>Step</th>" + ORDER.map(function (m) { return "<th>" + METHODS[m].name + "</th>"; }).join("") + "</tr></thead><tbody>";
+        EV.forEach(function (e, i) {
+          t += '<tr class="' + (i === k ? "cur" : "") + '"><td class="k">' + (i + 1) + ". " + e.label + "<small>Month " + e.m + "</small></td>" + ORDER.map(function (m) {
+            var M = all[m], s = M.states[i], r = s.rev - (i ? M.states[i - 1].rev : 0);
+            return "<td>" + (z(r) ? "+" + money(r) : "—") + "<small>owed for points: " + money(z(s.liab)) + "</small></td>";
+          }).join("") + "</tr>";
         });
-        el("cmp-tbl").innerHTML = o + "</tbody>";
+        t += '<tr class="total"><td>Total revenue · profit</td>' + ORDER.map(function (m) { var s = all[m].states[4]; return "<td>" + money(s.rev) + " · " + money(s.profit) + "</td>"; }).join("") + "</tr>";
+        el("matrix").innerHTML = t + "</tbody>";
+        el("cmp-explain").innerHTML = "The cash is the same under all three, and so are total revenue (" + money(all.rel.P) + ") and profit (" + money(all.rel.states[4].profit) + "). Two things differ. <b>When</b> revenue arrives: incremental cost books it all at the flight, the other two hold back the points' share until the awards. <b>How big the debt looks</b>: after the flight it is " +
+          money(all.rel.D) + " under IFRS 15, " + money(all.res.D) + " under the residual method, but only " + money(all.inc.prov) + " under incremental cost, which counts what the awards will cost to fly rather than what the member paid for them. Across a whole programme, that is why the newer rules made loyalty liabilities much larger.";
       }
 
-      // ── partner sales ──
-      function renderPartner() {
-        var b = S.b / 100, pay = S.pSold * S.pPrice / 100, sspPts = S.pSold * S.ssp / 100 * (1 - b), mkt = S.pMkt;
-        var relD = sspPts + mkt > 0 ? pay * sspPts / (sspPts + mkt) : 0, resD = Math.min(sspPts, pay);
-        pay = Math.round(pay * 100) / 100; relD = Math.round(relD * 100) / 100;
-        function M$(x) { x = Math.round(x * 100) / 100; return (x < 0 ? "−$" : "$") + Math.abs(x).toFixed(2) + "M"; }
-        function row(title, sub, d) {
-          d = Math.round(d * 100) / 100;
-          var w = pay > 0 ? d / pay * 100 : 0;
-          return '<div class="prow"><div class="pl">' + title + " <span>" + sub + '</span></div><div class="sbar"><div style="width:' + w.toFixed(2) + "%;background:" + C.liab + '"></div><div style="flex:1;background:' + C.eq + '"></div></div>' +
-            '<div class="sleg"><span><i style="background:' + C.liab + '"></i>Deferred: the points · <b>' + M$(d) + '</b></span><span><i style="background:' + C.eq + '"></i>Revenue as the marketing is delivered · <b>' + M$(pay - d) + "</b></span></div></div>";
-        }
-        el("partner").innerHTML = '<p class="sub">The bank pays <b style="color:var(--ink)">' + M$(pay) + "</b> for " + S.pSold.toLocaleString("en-US") + " million points. Standalone values: the points " + M$(sspPts) + " (" + S.ssp + "¢ × (1 − " + S.b + "%)), the marketing services " + M$(mkt) + ".</p>" +
-          row("IFRS 15", "relative standalone selling prices", relD) + row("Residual", "points at full value, marketing gets the rest", resD);
-        var perPt = S.pSold > 0 ? relD / S.pSold * 100 : 0;
-        el("partner-explain").innerHTML = "Under IFRS 15, " + M$(relD) + " is deferred, about " + perPt.toFixed(2) + "¢ per point sold, and waits for redemptions like any other point. The other " + M$(pay - relD) +
-          " is revenue as the airline delivers the marketing services, typically over the life of the agreement. " +
-          (sspPts >= pay ? "Here the points alone are worth at least what the bank pays, so the residual method would defer the whole payment. " : "") +
-          "This is why co-brand cards matter so much to a programme's profits: the marketing share is revenue with almost no cost attached, and the points' share carries breakage. <a href=\"/loyalty101.html#ch07\">Loyalty 101, chapter 07</a> has the business side.";
-      }
-
-      // ── points profit lab ──
-      var L = { award: 0, empty: 75, partner: 60, elast: 1.5 };
-      var COST_EMPTY = 0.15; // ¢ per point redeemed for an award on a seat that would fly empty (base award prices)
+      // ── 3. the lab ──
+      var L = { award: 0, empty: 75 }, PARTNER = 0.6, P_PRICE = 1.2, MKT = 0.3, ELAST = 1.5, COST_EMPTY = 0.15;
       var LAB_PRESETS = [{ k: 0, t: "No change" }, { k: 15, t: "Award chart +15%" }, { k: 35, t: "Dynamic pricing +35%" }, { k: -15, t: "Award sale −15%" }];
-      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
       function labCalc(x) {
-        var f = 1 + x / 100;
-        var v = S.ssp / f;                                              // value of a point to members, ¢
-        var b = clamp(S.b + L.elast * x / 10, 0, 95) / 100;             // expected breakage
-        var e = L.empty / 100;
-        var c = (e * COST_EMPTY + (1 - e) * S.ssp) / f;                 // cost per point redeemed, ¢
-        var s = L.partner / 100, p = S.pPrice;                          // partner price stays fixed: it is in the contract
-        var mkt = S.pSold > 0 ? S.pMkt / S.pSold * 100 : 0;             // marketing value per partner point, ¢
-        var A = v * (1 - b);                                            // standalone value per point issued, ¢
-        var dp = A + mkt > 0 ? Math.min(p, p * A / (A + mkt)) : 0;      // deferred per partner point, ¢
-        var Dpp = (1 - s) * A + s * dp;                                 // deferred per point issued, ¢
-        var D = Dpp * 10, MK = s * (p - dp) * 10;                       // per 1,000 points, $
-        var R = 1000 * (1 - b), K = R * c / 100;
-        var brk = D * b, spread = D * (1 - b) - K;
-        // the fare doesn't change: whatever is no longer deferred for flight points is passenger revenue on the day of the flight
-        var A0 = S.ssp * (1 - S.b / 100), shift = (1 - s) * (A0 - A) * 10;
-        var ssp = S.points * v / 100 * (1 - b), tD = S.price + ssp > 0 ? S.price * ssp / (S.price + ssp) : 0;
-        return { x: x, v: v, b: b, c: c, A: A, Dpp: Dpp, D: D, MK: MK, R: R, K: K, brk: brk, spread: spread,
-                 shift: shift, cash: D + MK + shift, profit: brk + spread + MK + shift, perRed: b < 1 ? Dpp / (1 - b) : 0, tD: tD };
+        var f = 1 + x / 100, v = S.ssp / f, b = Math.max(0, Math.min(95, S.b + ELAST * x / 10)) / 100, e = L.empty / 100;
+        var c = (e * COST_EMPTY + (1 - e) * S.ssp) / f;                         // ¢ per point redeemed
+        var A = v * (1 - b), A0 = S.ssp * (1 - S.b / 100);
+        var dp = A + MKT > 0 ? Math.min(P_PRICE, P_PRICE * A / (A + MKT)) : 0;  // deferred per partner point
+        var D = ((1 - PARTNER) * A + PARTNER * dp) * 10, MK = PARTNER * (P_PRICE - dp) * 10;  // $ per 1,000 points
+        var K = 1000 * (1 - b) * c / 100, brk = D * b, spread = D * (1 - b) - K, fare = (1 - PARTNER) * (A0 - A) * 10;
+        var V = S.points * v / 100 * (1 - b), tD = S.price + V > 0 ? S.price * V / (S.price + V) : 0;
+        return { v: v, b: b, c: c, K: K, brk: brk, spread: spread, MK: MK, fare: fare, cash: D + MK + fare, profit: brk + spread + MK + fare, tD: tD };
       }
+      ["award", "empty"].forEach(function (k) {
+        el("lab-" + k).addEventListener("input", function () { var x = parseFloat(this.value); if (isFinite(x)) { L[k] = x; renderLab(); } });
+      });
       function renderLab() {
-        el("lab-award").value = L.award; el("lab-empty").value = L.empty; el("lab-partner").value = L.partner; el("lab-elast").value = L.elast;
-        el("lab-award-o").textContent = (L.award > 0 ? "+" : L.award < 0 ? "−" : "") + Math.abs(L.award) + "%";
-        el("lab-empty-o").textContent = L.empty + "%";
-        el("lab-partner-o").textContent = L.partner + "%";
-        el("lab-elast-o").textContent = "+" + L.elast + " pts";
+        el("lab-award").value = L.award; el("lab-empty").value = L.empty;
+        var sgn = (L.award > 0 ? "+" : L.award < 0 ? "−" : "") + Math.abs(L.award) + "%";
+        el("lab-award-o").textContent = sgn; el("lab-empty-o").textContent = L.empty + "%";
         chips("lab-presets", LAB_PRESETS, L.award, function (k) { L.award = k; renderLab(); });
-        var B0 = labCalc(0), A1 = labCalc(L.award), changed = L.award !== 0;
-        // existing balances: deferred at the old value, honoured at the new cost
-        var oldCost = B0.K, newCost = 1000 * (1 - A1.b) * A1.c / 100, windfall = oldCost - newCost;
-        function c2(x) { return (Math.round(x * 100) / 100).toFixed(2) + "¢"; }
-        function delta(a, b) { var d = a - b; return Math.abs(d) < 0.005 ? "" : '<small>' + (d > 0 ? "+" : "−") + money(Math.abs(d)) + " vs unchanged</small>"; }
-        var cls = function (d) { return Math.abs(d) < 0.005 ? "" : d > 0 ? "up" : "down"; };
+        var B0 = labCalc(0), A1 = labCalc(L.award), ch = L.award !== 0;
+        var old = 1000 * (1 - B0.b) * B0.c / 100 - 1000 * (1 - A1.b) * A1.c / 100;
+        function tile(val, d, label, plain) {
+          return '<div class="tile"><b class="' + (!ch || Math.abs(d) < 0.005 ? "" : d > 0 ? "up" : "down") + '">' + val + "</b><span>" + label + "</span>" +
+            (!plain && ch && Math.abs(d) >= 0.005 ? "<small>" + (d > 0 ? "+" : "−") + money(Math.abs(d)) + " vs no change</small>" : "") + "</div>";
+        }
         el("lab-tiles").innerHTML =
-          '<div class="tile"><b class="' + cls(A1.profit - B0.profit) + '">' + money(A1.profit) + "</b><span>Profit over the life of 1,000 new points</span>" + delta(A1.profit, B0.profit) + "</div>" +
-          '<div class="tile"><b>' + c2(A1.perRed - A1.c) + "</b><span>Margin on each point redeemed: " + c2(A1.perRed) + " released, " + c2(A1.c) + " to fly</span></div>" +
-          '<div class="tile"><b class="' + cls(windfall) + '">' + (changed ? (windfall < 0 ? "−" : "+") + money(Math.abs(windfall)) : "—") + "</b><span>" + (changed ? "On every 1,000 points already in members' accounts: same revenue, " + (windfall >= 0 ? "cheaper" : "dearer") + " awards" : "Change award prices to see the effect on points already issued") + "</span></div>" +
-          '<div class="tile"><b>' + (A1.cash > 0 ? pc(A1.profit / A1.cash) : "—") + "</b><span>Of the cash received is profit, before the cost of running the programme</span></div>";
+          tile(money(A1.profit), A1.profit - B0.profit, "Profit on 1,000 new points, over their life") +
+          tile(ch ? (old < 0 ? "−" : "+") + money(Math.abs(old)) : "—", old, ch ? "On 1,000 points members already hold: same revenue, " + (old >= 0 ? "cheaper" : "dearer") + " awards" : "Change award prices to see the effect on points already issued", true) +
+          tile(money(S.price - A1.tD), (B0.tD - A1.tD), "Of the " + money(S.price, 0) + " ticket booked as revenue on the day of the flight");
         var max = Math.max(B0.cash, A1.cash, 0.01);
         function bar(M, title) {
-          var segs = [["Cost of the awards", Math.min(M.K, M.D * (1 - M.b)), "#A0A7B4"], ["Spread", Math.max(0, M.spread), C.red], ["Breakage", M.brk, C.brk], ["Marketing (partners)", M.MK, C.eq], ["Fare kept as passenger revenue", Math.max(0, M.shift), "#4a3aa7"]];
-          var o = '<div class="lab-row"><div class="pl">' + title + "<span>" + money(M.cash) + " received · " + money(M.profit) + " profit</span></div>" +
-            '<div class="sbar" style="width:' + (M.cash / max * 100).toFixed(1) + '%">';
-          segs.forEach(function (g) { if (g[1] > 0.005) o += '<div style="flex:' + g[1].toFixed(4) + " 1 0;background:" + g[2] + '" title="' + g[0] + ": " + money(g[1]) + '">' + (g[1] / max > 0.12 ? money(g[1]) : "") + "</div>"; });
-          o += "</div>";
-          if (M.shift < -0.005) o += '<p class="warn" style="margin:6px 0 0">' + money(-M.shift) + " more of the fares is deferred for the points, taken from passenger revenue.</p>";
-          if (M.spread < -0.005) o += '<p class="warn" style="margin:6px 0 0">The awards cost ' + money(-M.spread) + " more than the value deferred for the redeemed points: a loss on each award.</p>";
-          return o + "</div>";
+          var segs = [["Cost of the awards", Math.min(M.K, M.cash), C.atl], ["Spread", Math.max(0, M.spread), C.red], ["Breakage", M.brk, C.brk], ["Partner marketing", M.MK, C.eq], ["Fare no longer deferred", Math.max(0, M.fare), C.fare]];
+          var o = '<div class="lab-row"><div class="pl">' + title + "<span>" + money(M.cash) + " received · " + money(M.profit) + ' profit</span></div><div class="sbar" style="width:' + (M.cash / max * 100).toFixed(1) + '%">';
+          segs.forEach(function (g) { if (g[1] > 0.005) o += '<div style="flex:' + g[1].toFixed(4) + " 1 0;background:" + g[2] + '" title="' + g[0] + ": " + money(g[1]) + '">' + (g[1] / max > 0.1 ? money(g[1]) : "") + "</div>"; });
+          return o + "</div></div>";
         }
-        el("lab-bars").innerHTML = bar(B0, "Award prices unchanged") + (changed ? bar(A1, "Award prices " + el("lab-award-o").textContent) : "") +
-          '<div class="sleg"><span><i style="background:#A0A7B4"></i>Cost of the awards</span><span><i style="background:' + C.red + '"></i>Spread on redeemed points</span><span><i style="background:' + C.brk + '"></i>Breakage</span><span><i style="background:' + C.eq + '"></i>Marketing share of partner sales</span>' + (changed ? '<span><i style="background:#4a3aa7"></i>Fare kept as passenger revenue</span>' : "") + "</div>";
-        var rows = [
-          ["Value of a point to members", c2(B0.v), c2(A1.v)],
-          ["Expected breakage", pc(B0.b), pc(A1.b)],
-          ["Cost to fly an award, per point", c2(B0.c), c2(A1.c)],
-          ["Deferred per point issued", c2(B0.Dpp), c2(A1.Dpp)],
-          ["Revenue released per point redeemed", c2(B0.perRed), c2(A1.perRed)],
-          ["On the " + money(S.price, 0) + " ticket: deferred for the points", money(B0.tD), money(A1.tD)],
-          ["On the " + money(S.price, 0) + " ticket: revenue at the flight", money(S.price - B0.tD), money(S.price - A1.tD)]
-        ];
-        el("lab-value").innerHTML = '<table class="rf small"><thead><tr><th></th><th>Unchanged</th><th>' + (changed ? "Award prices " + el("lab-award-o").textContent : "Same") + "</th></tr></thead><tbody>" +
-          rows.map(function (r) { return '<tr><td class="k">' + r[0] + "</td><td>" + r[1] + "</td><td" + (r[1] !== r[2] ? ' style="color:var(--ink);font-weight:600"' : "") + ">" + r[2] + "</td></tr>"; }).join("") + "</tbody></table>";
-        var main = A1.spread >= A1.brk && A1.spread >= A1.MK ? "the spread on redeemed points" : A1.brk >= A1.MK ? "breakage" : "the marketing share of partner sales";
-        var t = "Of the " + money(A1.cash) + " received for 1,000 points, " + money(A1.K) + " pays for the awards and " + money(A1.profit) + " is profit: " + money(A1.spread) + " from honouring points with seats that cost less than their value, " +
-          money(A1.brk) + " from breakage and " + money(A1.MK) + " from the marketing share of partner sales" + (Math.abs(A1.shift) >= 0.005 ? (A1.shift > 0 ? ", plus " + money(A1.shift) + " of fares no longer deferred" : ", less " + money(-A1.shift) + " of fares now deferred") : "") + ". The biggest source here is " + main + ". ";
-        if (L.award > 0) t += "Raising award prices by " + L.award + "% cuts a point's value to members from " + c2(B0.v) + " to " + c2(A1.v) + ", and the airline gains three ways. Points already in accounts were paid for at the old value but are now honoured with cheaper awards (" + money(windfall) + " per 1,000). More points go unused (breakage " + pc(B0.b) + " → " + pc(A1.b) + "). And on new tickets less of the fare is deferred, so " + money(B0.tD - A1.tD) + " more of the " + money(S.price, 0) + " fare is revenue the day the flight is flown.";
-        else if (L.award < 0) t += "An award sale works the other way: each point buys more, so awards cost the airline more and breakage falls, while points already issued keep the value they were deferred at. Programmes run sales to lift engagement and card spend, not margin.";
-        else t += "Now try raising award prices, or lowering the share of awards on empty seats.";
+        el("lab-bars").innerHTML = bar(B0, "Award prices unchanged") + (ch ? bar(A1, "Award prices " + sgn) : "") +
+          '<div class="sleg"><span><i style="background:' + C.atl + '"></i>Cost of the awards</span><span><i style="background:' + C.red + '"></i>Spread</span><span><i style="background:' + C.brk + '"></i>Breakage</span><span><i style="background:' + C.eq + '"></i>Partner marketing</span>' +
+          (ch && A1.fare > 0 ? '<span><i style="background:' + C.fare + '"></i>Fare no longer deferred</span>' : "") + "</div>";
+        var t;
+        if (L.award > 0) t = "Raising award prices by " + L.award + "% cuts a point's value to members from " + B0.v.toFixed(2) + "¢ to " + A1.v.toFixed(2) + "¢. The airline gains three ways: points already issued were paid for at the old value but cost less to honour; more points go unused (" + pc(B0.b) + " → " + pc(A1.b) + "); and less of each new fare is deferred, so " + money(B0.tD - A1.tD) + " more of the " + money(S.price, 0) + " ticket is revenue on the day of the flight. The cost is outside the accounts: points that buy less are a weaker reason to stay loyal, banks reprice their contracts, and regulators are watching (the US Department of Transportation opened an inquiry into the largest US programmes in 2024).";
+        else if (L.award < 0) t = "An award sale works the other way: each point buys more, so awards cost more to fly and fewer points go unused, while points already issued keep the value they were deferred at. Airlines run sales to lift engagement and card spend, not margin.";
+        else t = "Of the " + money(B0.cash) + " received for 1,000 points, " + money(B0.K) + " pays for the awards and " + money(B0.profit) + " is profit. Opening fewer awards on empty seats raises the cost; raising award prices lowers it. Try the presets above.";
         el("lab-explain").innerHTML = t;
       }
-      [["lab-award", "award"], ["lab-empty", "empty"], ["lab-partner", "partner"], ["lab-elast", "elast"]].forEach(function (d) {
-        el(d[0]).addEventListener("input", function () { var x = parseFloat(this.value); if (isFinite(x)) { L[d[1]] = x; renderLab(); } });
-      });
 
-      function renderAll() { renderControls(); renderWalk(); renderCompare(); renderPartner(); renderLab(); }
+      function renderAll() {
+        el("i-price").textContent = money(S.price, 0); el("i-points").textContent = pts(S.points);
+        el("tk-sum").textContent = "· " + money(S.price, 0) + ", " + pts(S.points) + " points at " + S.ssp + "¢, " + S.b + "% never used";
+        renderDeferred(); renderCompare(); renderLab();
+      }
       fillInputs();
       renderAll();
-      var t, lastW = document.documentElement.clientWidth;
-      window.addEventListener("resize", function () {
-        clearTimeout(t);
-        t = setTimeout(function () { var w = document.documentElement.clientWidth; if (w !== lastW) { lastW = w; renderCompare(); } }, 150);
-      });
     });
     </script>
   </body>
