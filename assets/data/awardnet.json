@@ -1,0 +1,40 @@
+{
+  "about": "Inputs for /awardnet.html (Net award revenue). An invented single flight, not any real airline's data. The thesis table is copied from García Saavedra (2017), Table 6-3.",
+  "model": {
+    "seats": 150,
+    "flights": 1500,
+    "dpStepsPerDay": 20,
+    "classes": ["Y", "B", "M", "H", "Q", "K"],
+    "fares": [640, 480, 360, 290, 230, 180],
+    "advancePurchaseDays": [0, 0, 3, 7, 14, 21],
+    "awardAdvancePurchaseDays": 7,
+    "periodsDaysBefore": [63, 42, 28, 21, 14, 7, 3, 0],
+    "arrivalShareByPeriod": {
+      "leisure": [0.30, 0.27, 0.15, 0.12, 0.09, 0.04, 0.03],
+      "business": [0.04, 0.07, 0.09, 0.14, 0.22, 0.22, 0.22]
+    },
+    "willingnessToPay": {
+      "leisure": { "median": 240, "logSd": 0.40 },
+      "business": { "median": 540, "logSd": 0.35 }
+    },
+    "arrivalsPerFlight": {
+      "medium": { "leisure": 140, "business": 50 },
+      "high": { "leisure": 156, "business": 56 }
+    },
+    "demandCv": 0.25,
+    "pointsCostLogSd": 0.15,
+    "defaults": { "valuation": 0.75, "ratio": 1, "method": "dp", "demand": "medium", "eligible": 0.35, "pointsCost": 1.2 }
+  },
+  "thesis": {
+    "source": "J. P. García Saavedra (2017), The Impacts of Airline Loyalty Programs on Revenue Management Optimization, S.M. thesis, MIT, Table 6-3",
+    "url": "https://dspace.mit.edu/handle/1721.1/113516",
+    "valuations": [0.5, 0.75, 1, 1.25, 1.5],
+    "ratios": [0.5, 1, 1.5],
+    "totalRevenueChangePct": {
+      "emsr-medium": [[-1.42, -1.85, -2.17], [-0.89, -1.20, -1.36], [-0.15, -0.21, -0.19], [0.70, 0.96, 1.02], [1.68, 2.17, 2.24]],
+      "davn-medium": [[-1.48, -1.98, -2.26], [-0.85, -1.11, -1.34], [0.04, 0.03, 0.03], [1.09, 1.37, 1.52], [2.34, 2.87, 3.01]],
+      "udp-medium": [[-1.70, -2.07, -2.29], [-0.87, -1.12, -1.30], [0.10, 0.02, 0.03], [1.15, 1.40, 1.51], [2.37, 2.86, 2.91]],
+      "udp-high": [[-0.73, -1.11, -1.50], [-0.37, -0.76, -1.33], [0.01, -0.05, -0.02], [-0.37, 1.18, 1.58], [1.46, 2.82, 3.01]]
+    }
+  }
+}

@@ -1,0 +1,929 @@
+<!doctype html>
+<!-- © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt -->
+<html lang="en">
+  <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HT8J8ZFYTB');
+</script>
+    <meta charset="utf-8">
+    <title>Net award revenue</title>
+    <meta name="description" content="Is an award seat worth it to the airline? A simulator that replays the same flights with and without award passengers, after an MIT thesis on loyalty programs and revenue management.">
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png">
+    <!-- link previews (LinkedIn, Slack, iMessage…): image made from the hub card, see scripts/og -->
+    <link rel="canonical" href="https://gregoiremaillard.com/awardnet.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Grégoire Maillard">
+    <meta property="og:title" content="Net award revenue · Airline Economics">
+    <meta property="og:description" content="Is an award seat worth it to the airline? A simulator that replays the same flights with and without award passengers, after an MIT thesis on loyalty programs and revenue management.">
+    <meta property="og:url" content="https://gregoiremaillard.com/awardnet.html">
+    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/og/awardnet.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Net award revenue · Airline Economics">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+
+    <style>
+      /* Same slim top-bar pattern as breakage.html / airlinetools.html:
+         this page opts out of the fixed header / narrow section columns. */
+      html, body { margin: 0; padding: 0; }
+
+      :root {
+        --ink: #222;
+        --text: #595959;
+        --muted: #767676;
+        --line: #e5e5e5;
+        --soft: #f7f7f7;
+        --link: #39c;
+        /* chart roles: gains blue, losses orange (CVD-safe pair), net in ink */
+        --gain: #2a78d6;
+        --gain-2: #6da7ec;
+        --loss: #eb6834;
+        --loss-2: #b4441a;
+        --pos: #2e7a4d;
+        --neg: #b4441a;
+        --grid: #eeeeec;
+      }
+
+      .content { max-width: 1180px; margin: 0 auto; padding: 26px 30px 60px; }
+      .intro h1 { margin: 0 0 6px; font-size: 1.5em; }
+      .intro p { margin: 0 0 6px; max-width: 860px; }
+      .intro .lede { margin: 0 0 8px; color: var(--ink); font-size: 1.05em; line-height: 1.5; }
+      .crumbs { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+      .crumbs a { color: var(--muted); }
+      .crumbs a:hover { color: var(--link); }
+
+      /* ── Controls ── */
+      .panel { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fff; margin: 22px 0 16px; }
+      .ctl-grid { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; align-items: center; }
+      .ctl-grid > label, .lbl { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+      .chips { display: inline-flex; flex-wrap: wrap; gap: 6px; vertical-align: middle; }
+      .chip { border: 1px solid var(--line); background: #fff; color: var(--text); border-radius: 999px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer; font-variant-numeric: tabular-nums; }
+      .chip:hover { border-color: #cfcfcf; }
+      .chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .hint { display: inline-block; font-size: 12px; color: var(--muted); margin-left: 10px; vertical-align: middle; }
+      .hint b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      input.num { font: inherit; font-size: 13px; color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px; background: #fff; width: 64px; font-variant-numeric: tabular-nums; }
+      details.more { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+      details.more summary { cursor: pointer; font-size: 13px; color: var(--ink); }
+      details.more summary span { color: var(--muted); font-size: 12px; margin-left: 4px; }
+      .more-grid { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 10px 0 2px; font-size: 12.5px; color: var(--muted); }
+      .more-grid label { display: inline-flex; align-items: center; gap: 7px; }
+
+      /* ── Tiles ── */
+      .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 0 8px; }
+      .tile { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px 14px; color: var(--text); }
+      .tile .k { font-size: 12px; }
+      .tile b { display: block; font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; margin-top: 3px; }
+      .tile > span { font-size: 12px; line-height: 1.4; display: block; margin-top: 3px; }
+      .nw { white-space: nowrap; }
+      .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .tile .pos { color: var(--pos); } .tile .neg { color: var(--neg); }
+      .tile.verdict { border-color: #cfcfcf; }
+
+      /* ── Sections & charts ── */
+      .sec { margin-top: 38px; }
+      .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px; }
+      .sec-head h3 { margin: 0; font-size: 17px; color: var(--ink); }
+      .sec-head span { color: var(--muted); font-size: 12.5px; }
+      .sec > p.lead { margin: 0 0 12px; max-width: 820px; font-size: 13.5px; line-height: 1.55; }
+      .two { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+      .two.even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+      .card { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 10px; background: #fff; min-width: 0; }
+      .card h4 { margin: 0 0 2px; font-size: 14px; color: var(--ink); font-weight: 600; }
+      .card .sub { margin: 0 0 8px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+      .chart { position: relative; width: 100%; }
+      .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+      .chart .axis text { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+      .chart .axis path, .chart .axis line { stroke: #d9d9d6; }
+      .chart .grid line { stroke: var(--grid); }
+      .chart .grid path { display: none; }
+      .chart .rl { font-size: 12px; fill: var(--text); paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+      .chart .rl.strong, .chart .val.strong { fill: var(--ink); font-weight: 600; }
+      .chart .val { font-size: 12px; fill: var(--ink); font-variant-numeric: tabular-nums; }
+      .explain { font-size: 13px; line-height: 1.55; margin: 10px 0 2px; }
+
+      table.res { border-collapse: collapse; width: 100%; margin: 0; }
+      table.res th { text-align: right; font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+      table.res td { text-align: right; padding: 5px 8px; border-bottom: 1px solid #f1f1f1; color: var(--text); font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap; vertical-align: baseline; }
+      table.res th:first-child, table.res td:first-child { text-align: left; padding-left: 0; }
+      table.res td.k { color: var(--ink); }
+      table.res tr.aw td { color: var(--gain); }
+      table.res tr.total td { color: var(--ink); font-weight: 600; border-top: 1px solid var(--line); border-bottom: 0; }
+      table.res .neg { color: var(--neg); } table.res .pos { color: var(--pos); }
+      table.res small { color: var(--muted); font-size: 11.5px; }
+      table.cmp td { padding-top: 7px; padding-bottom: 7px; }
+      table.cmp td:first-child { white-space: normal; }
+      .scen-ctl { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 0 0 14px; }
+      .scen-ctl .hint { margin-left: 0; }
+
+      /* ── Heatmaps ── */
+      table.hm { border-collapse: separate; border-spacing: 3px; width: 100%; table-layout: fixed; margin: 0; }
+      table.hm th { font-weight: 500; color: var(--muted); font-size: 11.5px; padding: 3px 4px; text-align: center; border: 0; white-space: nowrap; }
+      table.hm thead tr:first-child th { color: var(--text); }
+      table.hm tbody th { text-align: left; padding-left: 0; width: 92px; }
+      table.hm tbody th small { color: var(--muted); font-size: 11px; margin-left: 3px; }
+      table.hm td { height: 36px; padding: 0; text-align: center; vertical-align: middle; border: 0; border-radius: 5px; font-size: 12.5px; color: var(--ink); font-variant-numeric: tabular-nums; }
+      table.hm td.dark { color: #fff; }
+      table.hm td.wait { color: #b5b5b2; background: var(--soft); }
+      table.hm.click td { cursor: pointer; }
+      table.hm.click td:hover { box-shadow: inset 0 0 0 1px rgb(0 0 0 / .35); }
+      table.hm td.sel, table.hm.click td.sel:hover { box-shadow: inset 0 0 0 2px var(--ink); font-weight: 600; }
+      .hm-key { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--muted); margin: 8px 0 0; }
+      .hm-key i { display: inline-block; width: 120px; height: 8px; border-radius: 3px; }
+
+      .tip { position: absolute; pointer-events: none; z-index: 5; background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.08); padding: 8px 11px; font-size: 12.5px; color: var(--text); line-height: 1.5; max-width: 300px; display: none; }
+      .tip .t { color: var(--ink); font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+      .tip .r { display: flex; justify-content: space-between; gap: 14px; white-space: nowrap; }
+      .tip .r b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+      .tip .n { color: var(--muted); font-size: 12px; margin-top: 3px; white-space: normal; }
+
+      .method { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12.5px; }
+      .method h3 { font-size: 14px; margin: 0 0 8px; }
+      .method h4 { font-size: 13px; margin: 16px 0 6px; color: var(--ink); }
+      .method p, .method li { margin: 0 0 8px; line-height: 1.55; max-width: 900px; }
+      .method ul { padding-left: 18px; margin: 0 0 8px; }
+      .method code, .fx { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; color: var(--ink); }
+      .method .fx { display: block; padding: 7px 10px; margin: 6px 0 10px; white-space: pre-wrap; line-height: 1.6; max-width: 900px; }
+
+      .loading { padding: 40px 20px; text-align: center; color: var(--muted); grid-column: 1 / -1; }
+
+      @media (max-width: 900px) {
+        .two, .two.even { grid-template-columns: 1fr; }
+        .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 720px) {
+        .content { padding: 18px 16px 40px; }
+        .ctl-grid { grid-template-columns: 1fr; gap: 4px 0; }
+        .ctl-grid > label { margin-top: 8px; }
+        .hint { display: block; margin: 5px 0 0; }
+        .tile b { font-size: 20px; }
+        table.hm tbody th { width: 70px; }
+        table.hm tbody th small { display: block; margin: 0; }
+      }
+    </style>
+
+    <!-- Airline Economics header: same bar as /airlinetools.html (self-contained, scoped to .at-hdr) -->
+    <link rel="preload" href="/assets/fonts/inter-fleet.woff2" as="font" type="font/woff2" crossorigin>
+    <style>
+      @font-face { font-family: "Inter Fleet"; src: url("/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap; }
+      html { scroll-padding-top: 88px; }
+      .at-hdr {
+        --at-ink: #151A23; --at-ink-2: #5B6272; --at-hair: rgb(15 23 42 / .07); --at-wash: rgb(15 23 42 / .04);
+        --at-blur: blur(20px) saturate(180%); --at-m: 40px;
+        position: sticky; top: 0; z-index: 1000;
+        background: rgb(255 255 255 / .6); -webkit-backdrop-filter: var(--at-blur); backdrop-filter: var(--at-blur);
+        box-shadow: 0 1px 0 var(--at-hair), inset 0 -1px 0 rgb(255 255 255 / .6);
+        font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 14px; line-height: 20px; font-weight: 400; font-style: normal; letter-spacing: normal; color: var(--at-ink); -webkit-font-smoothing: antialiased;
+      }
+      @media (max-width: 1279px) { .at-hdr { --at-m: 24px; } }
+      @media (max-width: 599px)  { .at-hdr { --at-m: 16px; } }
+      .at-hdr *, .at-hdr *::before, .at-hdr *::after { box-sizing: border-box; }
+      .at-hdr a { color: inherit; text-decoration: none; }
+      .at-hdr a:hover { color: inherit; }
+      .at-hdr a:focus-visible { outline: 2px solid var(--at-ink); outline-offset: 2px; }
+      .at-hdr .at-wrap { width: 100%; max-width: calc(1320px + 2 * var(--at-m)); margin-inline: auto; padding-inline: var(--at-m); height: 64px; display: flex; align-items: center; gap: 24px; }
+      .at-hdr .at-home { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-left: -4px; padding: 4px; border-radius: 10px; white-space: nowrap; }
+      .at-hdr .at-home:hover { background: var(--at-wash); }
+      .at-hdr .at-mk { width: 24px; height: 24px; border-radius: 7px; background: var(--at-ink); display: grid; place-items: center; }
+      .at-hdr .at-mk i { width: 8px; height: 8px; border-radius: 50%; background: #fff; }
+      .at-hdr .at-tabs { display: flex; align-self: stretch; gap: 4px; }
+      .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
+      .at-hdr .at-tab:hover, .at-hdr .at-tab[aria-current="page"] { color: var(--at-ink); }
+      .at-hdr .at-tab[aria-current="page"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2px; background: var(--at-ink); border-radius: 2px 2px 0 0; }
+      .at-hdr .at-grow { flex: 1; }
+      @media (max-width: 899px) { .at-hdr .at-tabs { display: none; } }
+    </style>
+    <script defer src="/assets/js/airline-tools.js"></script>
+  </head>
+  <body>
+    <div class="at-hdr" role="banner">
+      <div class="at-wrap">
+        <a class="at-home" href="/airlinetools.html" aria-label="Grégoire Maillard, airline economics"><span class="at-mk"><i></i></span>Grégoire Maillard</a>
+        <nav class="at-tabs" aria-label="Airline Economics">
+          <a class="at-tab" href="/airlinetools.html#rm">Revenue management</a>
+          <a class="at-tab" href="/airlinetools.html#network">Network planning</a>
+          <a class="at-tab" href="/airlinetools.html#loyalty" aria-current="page">Loyalty</a>
+          <a class="at-tab" href="/airlinetools.html#cargo">Cargo</a>
+          <a class="at-tab" href="/airlinetools.html#courses">Other courses</a>
+        </nav>
+        <div class="at-grow"></div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="intro">
+        <div class="crumbs"><a href="/airlinetools.html">Airline Economics</a> · Loyalty</div>
+        <h1>Net award revenue</h1>
+        <p class="lede">When is an award seat worth it to the airline?</p>
+        <p>When a member redeems points, the loyalty program pays the airline for the seat. The seat can still cost more than that: the member might have bought a ticket anyway, or taken a seat a paying passenger needed. This simulator replays the same 1,500 flights with and without award passengers and compares the two, following an <a href="https://dspace.mit.edu/handle/1721.1/113516" target="_blank" rel="noopener">MIT thesis</a> on the question, then tries a forecaster that sees buy-down.</p>
+      </div>
+
+      <div class="panel" id="controls">
+        <div class="ctl-grid">
+          <label>The program pays</label>
+          <div><div class="chips" id="c-val"></div><span class="hint" id="h-val"></span></div>
+          <label>RM values the seat at</label>
+          <div><div class="chips" id="c-ratio"></div><span class="hint" id="h-ratio"></span></div>
+          <label>RM method</label>
+          <div><div class="chips" id="c-method"></div><span class="hint" id="h-method"></span></div>
+          <label>Demand</label>
+          <div><div class="chips" id="c-demand"></div><span class="hint" id="h-demand"></span></div>
+        </div>
+        <details class="more">
+          <summary>Members <span id="more-sum"></span></summary>
+          <div class="more-grid">
+            <label for="elig">Leisure travelers with enough points <input class="num" id="elig" type="number" min="0" max="100" step="5" inputmode="numeric"> %</label>
+            <label for="pts">Redeeming feels like paying <input class="num" id="pts" type="number" min="0.5" max="2" step="0.05" inputmode="decimal"> × the lowest fare</label>
+          </div>
+        </details>
+      </div>
+
+      <div class="tiles" id="tiles"><div class="loading">Simulating…</div></div>
+
+      <section class="sec" aria-labelledby="h-wf">
+        <div class="sec-head"><h3 id="h-wf">Where the money goes</h3><span>Average flight, with award passengers vs. without</span></div>
+        <div class="two">
+          <div class="card">
+            <h4>Net effect, piece by piece</h4>
+            <p class="sub">Dollars per flight. Blue adds revenue, orange takes it away.</p>
+            <div class="chart" id="c-wf"></div>
+            <p class="explain" id="wf-explain"></p>
+          </div>
+          <div class="card">
+            <h4>Passengers by class</h4>
+            <p class="sub">Average per flight. The award passengers come mostly out of the cheapest fares.</p>
+            <div class="tbl-wrap"><table class="res" id="cls"></table></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="h-grid">
+        <div class="sec-head"><h3 id="h-grid">The thesis experiment</h3><span id="grid-status"></span></div>
+        <p class="lead">The thesis tried five payments, from half the lowest fare to one and a half times it, each with RM valuing award seats at half, the same or one and a half times the payment. Click a cell to see it above.</p>
+        <div class="two even">
+          <div class="card">
+            <h4>This simulator</h4>
+            <p class="sub" id="g-sub"></p>
+            <table class="hm click" id="hm-sim"></table>
+          </div>
+          <div class="card">
+            <h4>The thesis</h4>
+            <p class="sub" id="t-sub"></p>
+            <table class="hm" id="hm-th"></table>
+          </div>
+        </div>
+        <div class="hm-key" id="hm-key"></div>
+        <p class="explain" id="grid-explain"></p>
+      </section>
+
+      <section class="sec" aria-labelledby="h-ext">
+        <div class="sec-head"><h3 id="h-ext">Extension: a class-free forecaster that sees buy-down</h3><span id="cf-status"></span></div>
+        <p class="lead">The RM above forecasts by class, as if each customer only ever bought their own class. A class-free forecaster predicts how many people would pay at least each fare, so RM knows that opening a cheap fare lets everyone above it buy down. It can also see members who would redeem instead of paying.</p>
+        <div class="scen-ctl"><span class="lbl">Members buying down to an award</span><div class="chips" id="c-cf"></div><span class="hint" id="h-cfmode"></span></div>
+        <div class="two even">
+          <div class="card">
+            <h4>Class-based vs. class-free</h4>
+            <p class="sub" id="cf-sub"></p>
+            <div class="tbl-wrap"><table class="res cmp" id="cf-tbl"></table></div>
+          </div>
+          <div class="card">
+            <h4>Class-free: the thesis grid again</h4>
+            <p class="sub">Change in total revenue vs. the same flights without awards, under the class-free RM. Click a cell to see it.</p>
+            <table class="hm click" id="hm-cf"></table>
+          </div>
+        </div>
+        <p class="explain" id="cf-explain"></p>
+      </section>
+
+      <div class="method" id="how">
+        <h3>How it works</h3>
+        <p><b>The flight.</b> 150 seats and six fares, from $640 (Y) to $180 (K), the cheaper ones with advance purchase rules (21 days for K, 14 for Q, 7 for H, 3 for M). Leisure travelers book early and would pay $240 at the median, business travelers book late and would pay $540; each buys the cheapest open fare they are willing to pay. Demand varies by about ±25% between departures, so some flights fill up and others don't.</p>
+        <p><b>Members.</b> A share of leisure travelers have enough points. Redeeming isn't free in their eyes (the points are worth something), so it feels like paying a multiple of the lowest fare. A member takes an award when one is open and it feels cheaper than the cheapest fare they would pay. Awards close 7 days before departure, as in the thesis.</p>
+        <p><b>RM.</b> The award is one more class, worth the value RM is given. RM forecasts demand by class, award requests included, then either sets bid prices with a dynamic program (a class is open while its value covers the price of the next seat) or EMSR-b protection levels at the start of each booking period.</p>
+        <p><b>Class-free (extension).</b> RM forecasts, for each booking period, how many customers would pay at least each fare and, when members' buy-down is seen, how many would redeem rather than pay if awards were open. A dynamic program then picks, for every moment and number of seats left, the cheapest fare to offer and whether to offer awards. In practice, fare adjustment approximates this by running bid prices on the marginal revenue of each fare (Fiig, Isler, Hopperstad and Belobaba, 2010).</p>
+        <p><b>Measuring.</b> The same customers, with the same arrival times, budgets and points, book the flight twice: once with no award class, once with it. Comparing them passenger by passenger gives the thesis's three effects:</p>
+        <span class="fx">Award revenue = award passengers × what the program pays per seat
+Displaced     = fares lost: members who would have paid but redeemed, and paying passengers who no longer got a seat
+Sell-up       = change in the fare paid by passengers who flew both times
+Net           = award revenue − displaced + sell-up</span>
+        <p>The thesis measured them on class averages across a network; on one flight each class has a single fare, so they are measured passenger by passenger here.</p>
+
+        <h4>Limitations</h4>
+        <ul>
+          <li>One flight, no connections and no competitors. The thesis ran four airlines on MIT's PODS network simulator, so passengers could also switch airline.</li>
+          <li>Only leisure travelers redeem, and an award is all points: no points plus cash, no award prices that move with demand.</li>
+          <li>Every input is invented, so the page shows the mechanics, not any program's numbers. The inputs are in <a href="/assets/data/awardnet.json">assets/data/awardnet.json</a>.</li>
+        </ul>
+
+        <h4>Source</h4>
+        <ul>
+          <li>J. P. García Saavedra (2017), <a href="https://dspace.mit.edu/handle/1721.1/113516" target="_blank" rel="noopener"><i>The Impacts of Airline Loyalty Programs on Revenue Management Optimization</i></a>, S.M. thesis, MIT, supervised by Peter Belobaba. The right-hand grid is its Table 6-3.</li>
+          <li>T. Fiig, K. Isler, C. Hopperstad and P. Belobaba (2010), <a href="https://amadeus.com/documents/en/research-papers/rpm200918a.pdf" target="_blank" rel="noopener"><i>Optimization of mixed fare structures: Theory and applications</i></a>, Journal of Revenue and Pricing Management 9, 152–170.</li>
+        </ul>
+        <p>This is a personal project and isn't affiliated with any airline. For the business side of award seats, read <a href="/loyalty101.html#ch10">Loyalty 101, chapter 10: Where Loyalty Meets RM</a>.</p>
+      </div>
+    </div>
+
+    <div class="tip" id="tip"></div>
+
+    <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      var DATA_URL = "assets/data/awardnet.json";
+      var VALS = [0.5, 0.75, 1, 1.25, 1.5], RATIOS = [0.5, 1, 1.5];
+      var THESIS_COL = { "dp|medium": "udp-medium", "dp|high": "udp-high", "emsr|medium": "emsr-medium", "emsr|high": "emsr-medium" };
+      var THESIS_NAME = { "udp-medium": "UDP, medium demand", "udp-high": "UDP, high demand", "emsr-medium": "EMSR, medium demand", "davn-medium": "DAVN, medium demand" };
+      var css = getComputedStyle(document.documentElement);
+      function cv(n) { return css.getPropertyValue(n).trim(); }
+      var C = { gain: cv("--gain"), gain2: cv("--gain-2"), loss: cv("--loss"), loss2: cv("--loss-2"), ink: cv("--ink") };
+      var tip = document.getElementById("tip");
+      var cfg, model, LOW, S, cache = {}, order = [], job = null, lastDrawn = null;
+
+      // ───────────────────────────── helpers
+      function el(id) { return document.getElementById(id); }
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+      function money(x) { var v = Math.round(Math.abs(x)); return (x < 0 && v > 0 ? "−" : "") + "$" + String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+      function smoney(x) { return (Math.round(x) > 0 ? "+" : "") + money(x); }
+      function pct(x, dp) { return (x * 100).toFixed(dp == null ? 0 : dp) + "%"; }
+      function spct(x, dp) { var s = Math.abs(x * 100).toFixed(dp == null ? 2 : dp); return (+s === 0 ? "" : x > 0 ? "+" : "−") + s + "%"; }
+      function num(x, dp) { return x.toFixed(dp == null ? 1 : dp); }
+      function ratioLabel(r) { return "×" + r; }
+      function showTip(ev, html) {
+        tip.innerHTML = html; tip.style.display = "block";
+        var w = tip.offsetWidth, h = tip.offsetHeight, x = ev.pageX + 14, y = ev.pageY + 14;
+        if (x + w > window.scrollX + document.documentElement.clientWidth - 8) x = ev.pageX - w - 14;
+        if (y + h > window.scrollY + window.innerHeight - 8) y = ev.pageY - h - 14;
+        tip.style.left = Math.max(8, x) + "px"; tip.style.top = y + "px";
+      }
+      function hideTip() { tip.style.display = "none"; }
+
+      // ───────────────────────────── the model
+      // One flight, six paid classes and an award class. The same customers (arrival day, segment,
+      // willingness to pay, points, how much redeeming "costs" them) book once without awards and
+      // once with them, so every difference comes from the award class.
+      function makeModel(m) {
+        var CAP = m.seats, FLIGHTS = m.flights, SPD = m.dpStepsPerDay;
+        var FARES = m.fares, AP = m.advancePurchaseDays, NC = FARES.length, LOWF = FARES[NC - 1], AWAP = m.awardAdvancePurchaseDays;
+        var FR = m.periodsDaysBefore, NF = FR.length - 1;
+        var ARR = [m.arrivalShareByPeriod.leisure, m.arrivalShareByPeriod.business];
+        var WTP = [[m.willingnessToPay.leisure.median, m.willingnessToPay.leisure.logSd], [m.willingnessToPay.business.median, m.willingnessToPay.business.logSd]];
+        var VOL = {}; Object.keys(m.arrivalsPerFlight).forEach(function (k) { VOL[k] = [m.arrivalsPerFlight[k].leisure, m.arrivalsPerFlight[k].business]; });
+        var CV = m.demandCv, DSD = m.pointsCostLogSd;
+
+        function rng(seed) {
+          var a = seed >>> 0, spare = null;
+          function u() { a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }
+          function norm() {
+            if (spare !== null) { var s = spare; spare = null; return s; }
+            var x, y, r; do { x = 2 * u() - 1; y = 2 * u() - 1; r = x * x + y * y; } while (r >= 1 || r === 0);
+            var q = Math.sqrt(-2 * Math.log(r) / r); spare = y * q; return x * q;
+          }
+          function gamma(k) { // Marsaglia–Tsang, k ≥ 1
+            var d = k - 1 / 3, c = 1 / Math.sqrt(9 * d);
+            for (;;) {
+              var x, v; do { x = norm(); v = 1 + c * x; } while (v <= 0);
+              v = v * v * v; var w = u();
+              if (w < 1 - 0.0331 * x * x * x * x || Math.log(w) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+            }
+          }
+          function poisson(l) { if (l <= 0) return 0; var L = Math.exp(-l), k = 0, p = 1; do { k++; p *= u(); } while (p > L); return k - 1; }
+          return { u: u, norm: norm, gamma: gamma, poisson: poisson };
+        }
+        function invNorm(p) { // Acklam's approximation
+          if (p <= 0) return -8; if (p >= 1) return 8;
+          var a = [-39.69683028665376, 220.9460984245205, -275.9285104469687, 138.3577518672690, -30.66479806614716, 2.506628277459239],
+              b = [-54.47609879822406, 161.5858368580409, -155.6989798598866, 66.80131188771972, -13.28068155288572],
+              c = [-0.007784894002430293, -0.3223964580411365, -2.400758277161838, -2.549671010050150, 4.374664141464968, 2.938163982698783],
+              d = [0.007784695709041462, 0.3224671290700398, 2.445134137142996, 3.754408661907416], q, r;
+          if (p < 0.02425) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+          if (p > 0.97575) { q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+          q = p - 0.5; r = q * q;
+          return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+        }
+        function frameOf(t) { for (var f = 0; f < NF - 1; f++) if (t > FR[f + 1]) return f; return NF - 1; }
+        function apOk(ap, f) { return FR[f + 1] >= ap; }   // a class is sellable for a whole period or not at all
+
+        // customers of every departure, identical in every run
+        function demand(s) {
+          var R = rng(20170512), vol = VOL[s.demand], k = 1 / (CV * CV);
+          var start = new Int32Array(FLIGHTS + 1), day = [], seg = [], wtp = [], elig = [], dis = [];
+          for (var fl = 0; fl < FLIGHTS; fl++) {
+            start[fl] = day.length;
+            var M = R.gamma(k) / k;                      // this departure's demand relative to the average
+            for (var f = 0; f < NF; f++) {
+              var buf = [];
+              for (var g = 0; g < 2; g++) {
+                var n = R.poisson(vol[g] * ARR[g][f] * M);
+                for (var i = 0; i < n; i++) buf.push([
+                  FR[f] - R.u() * (FR[f] - FR[f + 1]), g,
+                  WTP[g][0] * Math.exp(WTP[g][1] * R.norm()),
+                  g === 0 && R.u() < s.elig ? 1 : 0,
+                  s.pts * LOWF * Math.exp(DSD * R.norm())
+                ]);
+              }
+              buf.sort(function (a, b) { return b[0] - a[0]; });
+              for (var j = 0; j < buf.length; j++) { day.push(buf[j][0]); seg.push(buf[j][1]); wtp.push(buf[j][2]); elig.push(buf[j][3]); dis.push(buf[j][4]); }
+            }
+          }
+          start[FLIGHTS] = day.length;
+          return { start: start, day: Float64Array.from(day), wtp: Float64Array.from(wtp), elig: Int8Array.from(elig), dis: Float64Array.from(dis), n: day.length };
+        }
+
+        // what RM forecasts: independent demand by class and period. A paid customer counts in the
+        // dearest class they would pay for; award requests from members are a class of their own.
+        function forecast(s) {
+          var R = rng(7), vol = VOL[s.demand], N = 20000, lam = [];
+          for (var f = 0; f < NF; f++) {
+            var row = new Float64Array(NC + 1);
+            for (var g = 0; g < 2; g++) {
+              var cnt = new Float64Array(NC + 1), A = vol[g] * ARR[g][f], j;
+              for (var i = 0; i < N; i++) {
+                var w = WTP[g][0] * Math.exp(WTP[g][1] * R.norm()), e = g === 0 && R.u() < s.elig, d = s.pts * LOWF * Math.exp(DSD * R.norm());
+                if (e && apOk(AWAP, f) && d <= w) cnt[NC]++;
+                for (j = 0; j < NC; j++) if (apOk(AP[j], f) && FARES[j] <= w) { cnt[j]++; break; }
+              }
+              for (j = 0; j <= NC; j++) row[j] += A * cnt[j] / N;
+            }
+            lam.push(row);
+          }
+          return lam;
+        }
+
+        // what a class-free RM forecasts: for each period, how many customers buy if the cheapest open
+        // fare is class m (everyone who would pay at least that fare buys it), and, with awards open,
+        // how many members redeem instead. sees: members buying down to an award are in the forecast;
+        // otherwise award requests are forecast as their own class, on top of paid demand.
+        function forecastFree(s) {
+          var R = rng(7), vol = VOL[s.demand], N = 20000, out = [];
+          for (var f = 0; f < NF; f++) {
+            var mf = -1, j, m; for (j = 0; j < NC; j++) if (apOk(AP[j], f)) mf = j;
+            var P = { mf: mf, awOk: apOk(AWAP, f), pay: new Float64Array(NC), payA: new Float64Array(NC), aw: new Float64Array(NC + 1), awInd: 0 };
+            for (var g = 0; g < 2; g++) {
+              var A = vol[g] * ARR[g][f] / N;
+              for (var i = 0; i < N; i++) {
+                var w = WTP[g][0] * Math.exp(WTP[g][1] * R.norm()), e = g === 0 && R.u() < s.elig, d = s.pts * LOWF * Math.exp(DSD * R.norm());
+                var mem = e && P.awOk && d <= w;
+                if (mem) { P.awInd += A; P.aw[NC] += A; }
+                for (m = 0; m <= mf; m++) {
+                  var buys = w >= FARES[m];
+                  if (buys) P.pay[m] += A;
+                  if (mem && (!buys || d < FARES[m])) P.aw[m] += A; else if (buys) P.payA[m] += A;
+                }
+              }
+            }
+            out.push(P);
+          }
+          return out;
+        }
+
+        // one booking run over every departure; rmValue = null for the run without awards
+        function simulate(s, D, lam, rmValue) {
+          var award = rmValue != null, nk = award ? NC + 1 : NC, i, j, f, x;
+          var vals = FARES.slice(); if (award) vals.push(rmValue);
+          var ord = []; for (i = 0; i < nk; i++) ord.push(i);
+          ord.sort(function (a, b) { return vals[b] - vals[a] || a - b; });
+          var rank = new Int32Array(nk); for (i = 0; i < nk; i++) rank[ord[i]] = i;
+          var rem = [], isCF = s.method === "cf" || s.method === "cf0";
+          if (!isCF) for (f = NF - 1; f >= 0; f--) { var r = new Float64Array(nk); for (j = 0; j < nk; j++) r[j] = lam[f][j] + (f < NF - 1 ? rem[0][j] : 0); rem.unshift(r); }
+          var T = FR[0] * SPD, bp = null;
+          if (s.method === "dp") {                       // bid prices from a single-flight dynamic program
+            bp = new Float32Array(T * (CAP + 1));
+            var V = new Float64Array(CAP + 1), Vn = new Float64Array(CAP + 1), p = new Float64Array(nk);
+            for (var t = T - 1; t >= 0; t--) {
+              var ff = frameOf(FR[0] - (t + 0.5) / SPD), len = (FR[ff] - FR[ff + 1]) * SPD;
+              for (j = 0; j < nk; j++) p[j] = lam[ff][j] / len;
+              for (x = 0; x <= CAP; x++) {
+                var dv = x > 0 ? V[x] - V[x - 1] : Infinity, gsum = 0;
+                bp[t * (CAP + 1) + x] = dv;
+                if (x > 0) for (j = 0; j < nk; j++) if (vals[j] > dv) gsum += p[j] * (vals[j] - dv);
+                Vn[x] = V[x] + gsum;
+              }
+              var tmp = V; V = Vn; Vn = tmp;
+            }
+          }
+          var pol = null;
+          if (isCF) {                                     // class-free: which fares (and awards) to offer, from a DP on the whole offer
+            pol = new Int8Array(T * (CAP + 1));
+            var W0 = new Float64Array(CAP + 1), W1 = new Float64Array(CAP + 1), seen = -1, oR = [], oQ = [], oC = [];
+            for (var t2 = T - 1; t2 >= 0; t2--) {
+              var f2 = frameOf(FR[0] - (t2 + 0.5) / SPD);
+              if (f2 !== seen) {                         // the offers open in this period, with expected revenue and seats per step
+                seen = f2; oR = []; oQ = []; oC = [];
+                var P = lam[f2], L2 = (FR[f2] - FR[f2 + 1]) * SPD, m2;
+                for (m2 = 0; m2 <= P.mf; m2++) { oR.push(FARES[m2] * P.pay[m2] / L2); oQ.push(P.pay[m2] / L2); oC.push(m2); }
+                if (award && P.awOk) for (m2 = 0; m2 <= NC; m2++) {
+                  if (m2 < NC && m2 > P.mf) continue;
+                  var pp = m2 < NC ? (s.method === "cf" ? P.payA[m2] : P.pay[m2]) : 0, aa = s.method === "cf" ? P.aw[m2] : P.awInd;
+                  oR.push(((m2 < NC ? FARES[m2] * pp : 0) + rmValue * aa) / L2); oQ.push((pp + aa) / L2); oC.push(m2 + 8);
+                }
+              }
+              for (x = 0; x <= CAP; x++) {
+                var dv2 = x > 0 ? W0[x] - W0[x - 1] : Infinity, bg = 0, bc = NC;
+                if (x > 0) for (var o2 = 0; o2 < oR.length; o2++) { var gg = oR[o2] - oQ[o2] * dv2; if (gg > bg) { bg = gg; bc = oC[o2]; } }
+                pol[t2 * (CAP + 1) + x] = bc; W1[x] = W0[x] + bg;
+              }
+              var tmp2 = W0; W0 = W1; W1 = tmp2;
+            }
+          }
+          var out = new Int8Array(D.n), open = new Uint8Array(nk), prot = new Float64Array(nk), ap = AP.concat([AWAP]);
+          for (var fl = 0; fl < FLIGHTS; fl++) {
+            var seats = CAP, cur = -1;
+            for (var c = D.start[fl]; c < D.start[fl + 1]; c++) {
+              if (seats <= 0) { out[c] = -1; continue; }
+              var t0 = D.day[c], fr = frameOf(t0);
+              if (pol) {
+                var code = pol[Math.min(T - 1, Math.floor((FR[0] - t0) * SPD)) * (CAP + 1) + seats], mo = code & 7;
+                for (j = 0; j < NC; j++) open[j] = mo < NC && j <= mo && apOk(AP[j], fr) ? 1 : 0;
+                if (award) open[NC] = code >= 8 && apOk(AWAP, fr) ? 1 : 0;
+              } else if (bp) {
+                var price = bp[Math.min(T - 1, Math.floor((FR[0] - t0) * SPD)) * (CAP + 1) + seats];
+                for (j = 0; j < nk; j++) open[j] = vals[j] >= price && apOk(ap[j], fr) ? 1 : 0;
+              } else {
+                if (fr !== cur) {                        // EMSR-b protection levels, reset each booking period
+                  cur = fr; var Sm = 0, SF = 0, yPrev = 0;
+                  for (var k = 0; k < nk - 1; k++) {
+                    var jj = ord[k]; Sm += rem[fr][jj]; SF += rem[fr][jj] * vals[jj];
+                    var y = 0;
+                    if (Sm > 1e-9) { var ratio = vals[ord[k + 1]] * Sm / SF; y = ratio >= 1 ? 0 : Sm + Math.sqrt(Sm + CV * CV * Sm * Sm) * invNorm(1 - ratio); }
+                    y = Math.max(y, yPrev, 0); yPrev = y; prot[k] = Math.round(y);
+                  }
+                }
+                for (j = 0; j < nk; j++) open[j] = (rank[j] === 0 || seats > prot[rank[j] - 1]) && apOk(ap[j], fr) ? 1 : 0;
+              }
+              // the cheapest open fare the customer will pay, or an award if that feels cheaper
+              var w = D.wtp[c], best = -1, cost = Infinity;
+              for (j = NC - 1; j >= 0; j--) if (open[j] && FARES[j] <= w) { best = j; cost = FARES[j]; break; }
+              if (award && open[NC] && D.elig[c] && D.dis[c] <= w && D.dis[c] < cost) best = NC;
+              out[c] = best; if (best >= 0) seats--;
+            }
+          }
+          return out;
+        }
+
+        // the run with awards against the run without, passenger by passenger
+        function compare(D, base, run, valuation, rmValue) {
+          var basePax = new Float64Array(NC), pax = new Float64Array(NC), aw = 0, baseRev = 0,
+              div = 0, spill = 0, up = 0, nDiv = 0, nSpill = 0, nIncr = 0, nUp = 0, nDown = 0;
+          for (var c = 0; c < D.n; c++) {
+            var b = base[c], a = run[c], fb = b >= 0 ? FARES[b] : 0, fa = a >= 0 && a < NC ? FARES[a] : 0;
+            if (b >= 0) { basePax[b]++; baseRev += fb; }
+            if (a >= 0 && a < NC) pax[a]++;
+            if (a === NC) aw++;
+            if (b >= 0) {
+              if (a === NC) { div += fb; nDiv++; }
+              else if (a < 0) { spill += fb; nSpill++; }
+              else if (a !== b) { up += fa - fb; if (fa > fb) nUp++; else nDown++; }
+            } else if (a >= 0 && a < NC) { spill -= fa; nSpill--; }   // a seat freed up for someone new
+            else if (a === NC) nIncr++;
+          }
+          var F = FLIGHTS, per = function (v) { return v / F; };
+          var o = {
+            valuation: valuation, rmValue: rmValue,
+            baseRev: per(baseRev), basePax: Array.from(basePax, per), pax: Array.from(pax, per), award: per(aw),
+            diverted: per(div), spilled: per(spill), sellup: per(up),
+            nDiv: per(nDiv), nSpill: per(nSpill), nIncr: per(nIncr), nUp: per(nUp), nDown: per(nDown)
+          };
+          o.basePaid = sum(o.basePax); o.paid = sum(o.pax);
+          o.awardRev = o.award * valuation;
+          o.cost = o.diverted + o.spilled - o.sellup;     // paid revenue the award seats cost
+          o.net = o.awardRev - o.cost;
+          o.pct = o.net / o.baseRev;
+          return o;
+        }
+        function sum(a) { var s = 0; for (var i = 0; i < a.length; i++) s += a[i]; return s; }
+
+        return {
+          LOW: LOWF, FARES: FARES, CODES: m.classes, CAP: CAP,
+          demand: demand,
+          prepare: function (s, D) { var lam = s.method === "cf" || s.method === "cf0" ? forecastFree(s) : forecast(s); return { s: s, D: D, lam: lam, base: simulate(s, D, lam, null) }; },
+          cell: function (ctx, valuation, rmValue) { return compare(ctx.D, ctx.base, simulate(ctx.s, ctx.D, ctx.lam, rmValue), valuation, rmValue); }
+        };
+      }
+
+      // ───────────────────────────── running the experiment
+      // Each RM method gets 15 cells. On screen first (Part 1, then the extension's two columns), then
+      // the rest, one per tick so the page stays responsive. The customers are shared by every method.
+      var dCache = {}, dOrder = [];
+      function dKey() { return [S.demand, S.elig, S.pts].join("|"); }
+      function customers() {
+        var k = dKey();
+        if (!dCache[k]) {
+          dCache[k] = model.demand({ demand: S.demand, elig: S.elig, pts: S.pts }); dOrder.push(k);
+          while (dOrder.length > 3) { var old = dOrder.shift(); if (old !== k) delete dCache[old]; }
+        }
+        return dCache[k];
+      }
+      function entry(method, create) {
+        var k = method + "|" + dKey();
+        if (!cache[k] && create) {
+          cache[k] = { ctx: null, cells: VALS.map(function () { return RATIOS.map(function () { return null; }); }) };
+          order.push(k);
+          while (order.length > 10) { var old = order.shift(); if (old !== k) delete cache[old]; }
+        }
+        return cache[k] || null;
+      }
+      function tasks() {
+        var list = [[S.method, S.v, S.r], ["dp", S.v, S.r], [S.cf, S.v, S.r]], i, j;
+        for (i = 0; i < VALS.length; i++) for (j = 0; j < RATIOS.length; j++) list.push([S.method, i, j]);
+        for (i = 0; i < VALS.length; i++) for (j = 0; j < RATIOS.length; j++) list.push([S.cf, i, j]);
+        return list;
+      }
+      function schedule(delay) { if (job) clearTimeout(job); job = setTimeout(step, delay || 0); }
+      function step() {
+        job = null;
+        var list = tasks();
+        for (var n = 0; n < list.length; n++) {
+          var t = list[n], e = entry(t[0], true);
+          if (!e.ctx) { e.ctx = model.prepare({ method: t[0], demand: S.demand, elig: S.elig, pts: S.pts }, customers()); schedule(); return; }
+          if (!e.cells[t[1]][t[2]]) {
+            var val = VALS[t[1]] * LOW;
+            e.cells[t[1]][t[2]] = model.cell(e.ctx, val, val * RATIOS[t[2]]);
+            render(); schedule(); return;
+          }
+        }
+        render();
+      }
+      function cellOf(method) { var e = entry(method, false); return e ? e.cells[S.v][S.r] : null; }
+      function current() { return cellOf(S.method); }
+
+      // ───────────────────────────── controls
+      function chips(id, items, on, pick) {
+        var box = el(id); box.innerHTML = "";
+        items.forEach(function (it, i) {
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "chip" + (on(it, i) ? " on" : ""); b.textContent = it.label; b.name = id.replace("c-", "");
+          if (it.title) b.title = it.title;
+          b.setAttribute("aria-pressed", on(it, i) ? "true" : "false");
+          b.addEventListener("click", function () { pick(it, i); });
+          box.appendChild(b);
+        });
+      }
+      function renderControls() {
+        chips("c-val", VALS.map(function (v) { return { label: pct(v), title: money(v * LOW) + " a seat" }; }), function (it, i) { return i === S.v; }, function (it, i) { S.v = i; update(false); });
+        chips("c-ratio", RATIOS.map(function (r) { return { label: ratioLabel(r) }; }), function (it, i) { return i === S.r; }, function (it, i) { S.r = i; update(false); });
+        chips("c-method", [{ k: "dp", label: "Bid prices" }, { k: "emsr", label: "EMSR-b" }], function (it) { return it.k === S.method; }, function (it) { S.method = it.k; update(true); });
+        chips("c-demand", [{ k: "medium", label: "Medium" }, { k: "high", label: "High" }], function (it) { return it.k === S.demand; }, function (it) { S.demand = it.k; update(true); });
+        chips("c-cf", [{ k: "cf", label: "Seen" }, { k: "cf0", label: "Not seen" }], function (it) { return it.k === S.cf; }, function (it) { S.cf = it.k; update(true); });
+        el("h-cfmode").textContent = S.cf === "cf" ? "RM counts the fare a member would have paid as a cost of opening awards" : "award requests are forecast as their own class, as in Part 1";
+        var val = VALS[S.v] * LOW, rmv = val * RATIOS[S.r];
+        el("h-val").innerHTML = "of the lowest fare (" + money(LOW) + "), so <b>" + money(val) + "</b> per award seat";
+        el("h-ratio").innerHTML = "the payment, so RM treats an award request like a <b>" + money(rmv) + "</b> fare";
+        el("h-method").textContent = S.method === "dp" ? "a dynamic program sets the price of the next seat" : "protection levels for the dearer classes, reset each booking period";
+        el("h-demand").textContent = S.demand === "medium" ? "about 85% of seats filled without awards" : "about 89% of seats filled without awards";
+        el("more-sum").textContent = "· " + pct(S.elig) + " of leisure travelers have points · redeeming feels like " + S.pts.toFixed(2).replace(/0$/, "") + "× the lowest fare";
+      }
+      function update(rerun) {
+        renderControls();
+        if (rerun) { hideTip(); }
+        render();
+        schedule(rerun ? 30 : 0);
+      }
+
+      // ───────────────────────────── tiles, waterfall, class table
+      function render() {
+        var o = current();
+        if (o) { if (lastDrawn !== o) { drawTiles(o); drawWaterfall(o); drawClasses(o); lastDrawn = o; } }
+        else { el("tiles").innerHTML = '<div class="loading">Simulating 1,500 flights…</div>'; }
+        drawGrids();
+        drawExtension();
+      }
+
+      function drawTiles(o) {
+        var per = o.award > 0 ? o.cost / o.award : 0, margin = o.valuation - per, worth = margin >= 0;
+        var share = o.award / (o.paid + o.award), lost = o.award > 0 ? (o.nDiv + o.nSpill) / o.award : 0;
+        el("tiles").innerHTML =
+          '<div class="tile"><div class="k">Net effect per flight</div><b class="' + (o.net >= 0 ? "pos" : "neg") + '">' + smoney(o.net) + '</b><span><span class="nw">' + spct(o.pct) + '</span> of ticket revenue (' + money(o.baseRev) + ' without awards)</span></div>' +
+          '<div class="tile"><div class="k">Award passengers</div><b>' + num(o.award) + '</b><span>per flight, ' + pct(share, 1) + ' of passengers</span></div>' +
+          '<div class="tile"><div class="k">What an award seat costs</div><b>' + money(per) + '</b><span>of paid revenue: ' + num(lost, 2) + ' fewer paying passengers per award seat</span></div>' +
+          '<div class="tile verdict"><div class="k">Verdict</div><b class="' + (worth ? "pos" : "neg") + '">' + (worth ? "Worth it" : "Not worth it") + '</b><span>Paid ' + money(o.valuation) + ', costs ' + money(per) + ': <span class="nw">' + smoney(margin) + '</span> per award seat</span></div>';
+      }
+
+      function drawWaterfall(o) {
+        var box = el("c-wf"); box.innerHTML = "";
+        var rows = [
+          { k: "Award revenue", v: o.awardRev, c: C.gain, tip: num(o.award) + " award passengers × " + money(o.valuation) },
+          { k: "Members who would have paid", v: -o.diverted, c: C.loss, tip: num(o.nDiv) + " members redeemed instead of buying a ticket" + (o.nDiv > 0.05 ? " (average fare " + money(o.diverted / o.nDiv) + ")" : "") },
+          { k: "Paying passengers pushed out", v: -o.spilled, c: C.loss2, tip: num(o.nSpill) + " paying passengers no longer found a seat at a fare they would pay" },
+          { k: "Sell-up", v: o.sellup, c: o.sellup >= 0 ? C.gain2 : C.loss, tip: num(o.nUp) + " passengers paid a higher fare, " + num(o.nDown) + " a lower one" },
+          { k: "Net", v: o.net, c: C.ink, total: true, tip: smoney(o.net) + " per flight, " + spct(o.pct) + " of ticket revenue" }
+        ];
+        var run = 0;
+        rows.forEach(function (r) { if (r.total) { r.x0 = 0; r.x1 = r.v; } else { r.x0 = run; r.x1 = run + r.v; run = r.x1; } });
+        var W = box.clientWidth || 520, narrow = W < 460, labW = narrow ? 0 : 190, valW = 64, rowH = narrow ? 46 : 34, top = 6, axisH = 22;
+        var H = top + rows.length * rowH + axisH;
+        var ext = d3.extent(rows.reduce(function (a, r) { return a.concat([r.x0, r.x1]); }, [0]));
+        var x = d3.scaleLinear().domain(ext).nice(5).range([labW + 4, W - valW]);
+        var svg = d3.select(box).append("svg").attr("viewBox", "0 0 " + W + " " + H).attr("role", "img")
+          .attr("aria-label", "Waterfall: " + rows.map(function (r) { return r.k + " " + smoney(r.v); }).join(", "));
+        svg.append("g").attr("class", "axis grid").attr("transform", "translate(0," + (top + rows.length * rowH) + ")")
+          .call(d3.axisBottom(x).ticks(W < 500 ? 4 : 6).tickSize(-(rows.length * rowH)).tickFormat(function (d) { return smoney(d); }))
+          .call(function (g) { g.select(".domain").remove(); g.selectAll("text").attr("dy", "1em"); });
+        svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", top - 2).attr("y2", top + rows.length * rowH).attr("stroke", "#9a9a96");
+        var g = svg.selectAll("g.row").data(rows).enter().append("g").attr("class", "row")
+          .attr("transform", function (r, i) { return "translate(0," + (top + i * rowH) + ")"; });
+        var barY = narrow ? 20 : 7, barH = narrow ? 18 : 20;
+        g.append("rect").attr("x", labW).attr("y", 0).attr("width", W - labW).attr("height", rowH).attr("fill", "transparent");
+        g.append("text").attr("class", function (r) { return "rl" + (r.total ? " strong" : ""); })
+          .attr("x", narrow ? x.range()[0] : 0).attr("y", narrow ? 13 : barY + barH / 2 + 4).text(function (r) { return r.k; });
+        g.append("rect").attr("rx", 3).attr("y", barY).attr("height", barH)
+          .attr("x", function (r) { return x(Math.min(r.x0, r.x1)); })
+          .attr("width", function (r) { return Math.max(1.5, Math.abs(x(r.x1) - x(r.x0))); })
+          .attr("fill", function (r) { return r.c; });
+        g.append("text").attr("class", function (r) { return "val" + (r.total ? " strong" : ""); }).attr("text-anchor", "end")
+          .attr("x", W).attr("y", barY + barH / 2 + 4).text(function (r) { return smoney(r.v); });
+        // connectors from one bar's end to the next bar's start
+        rows.forEach(function (r, i) {
+          if (i === rows.length - 1 || rows[i + 1].total) return;
+          svg.append("line").attr("x1", x(r.x1)).attr("x2", x(r.x1)).attr("y1", top + i * rowH + barY + barH).attr("y2", top + (i + 1) * rowH + barY)
+            .attr("stroke", "#b5b5b2").attr("stroke-dasharray", "2 2");
+        });
+        g.on("mousemove", function (ev, r) { showTip(ev, '<div class="t">' + esc(r.k) + ' · ' + smoney(r.v) + '</div><div class="n">' + esc(r.tip) + ' per flight.</div>'); })
+         .on("mouseleave", hideTip);
+
+        var a = o.award || 1;
+        el("wf-explain").innerHTML = "Out of every 10 award passengers, <b>" + num(10 * o.nDiv / a) + "</b> would otherwise have bought a ticket and <b>" + num(10 * o.nIncr / a) +
+          "</b> would not have flown. On top of that, " + num(o.nSpill) + " paying passengers per flight no longer found a seat at a price they would pay, and sell-up " +
+          (o.sellup >= 0 ? "added " : "took away ") + money(Math.abs(o.sellup)) + ".";
+      }
+
+      function drawClasses(o) {
+        var h = '<thead><tr><th>Class</th><th>Fare</th><th>Without</th><th>With</th><th>Change</th></tr></thead><tbody>';
+        function d(v) { var s = num(Math.abs(v)); return +s === 0 ? "0.0" : (v > 0 ? "+" : "−") + s; }
+        model.CODES.forEach(function (c, i) {
+          var dv = o.pax[i] - o.basePax[i];
+          h += '<tr><td class="k">' + c + '</td><td>' + money(model.FARES[i]) + '</td><td>' + num(o.basePax[i]) + '</td><td>' + num(o.pax[i]) + '</td><td class="' + (dv < -0.05 ? "neg" : dv > 0.05 ? "pos" : "") + '">' + d(dv) + '</td></tr>';
+        });
+        h += '<tr class="aw"><td>Award</td><td>' + money(o.valuation) + '<small style="color:var(--muted)"> paid</small></td><td>0.0</td><td>' + num(o.award) + '</td><td>+' + num(o.award) + '</td></tr>';
+        var tb = o.basePaid, ta = o.paid + o.award;
+        h += '<tr class="total"><td>All</td><td></td><td>' + num(tb) + ' <small style="color:var(--muted);font-weight:400">' + pct(tb / model.CAP) + '</small></td><td>' + num(ta) + ' <small style="color:var(--muted);font-weight:400">' + pct(ta / model.CAP) + '</small></td><td>' + d(ta - tb) + '</td></tr></tbody>';
+        el("cls").innerHTML = h;
+      }
+
+      // ───────────────────────────── the two grids
+      function cellColor(p) {   // p in % · diverging: orange (loss) – neutral – blue (gain)
+        var t = Math.min(1, Math.abs(p) / 3), neutral = [244, 244, 242], pole = p < 0 ? [235, 104, 52] : [42, 120, 214];
+        var k = Math.pow(t, 0.75) * 0.9, c = neutral.map(function (n, i) { return Math.round(n + (pole[i] - n) * k); });
+        return { bg: "rgb(" + c.join(",") + ")", dark: k > 0.55 };
+      }
+      function gridHead() {
+        return '<thead><tr><th></th><th colspan="3">RM value ÷ payment</th></tr><tr><th style="text-align:left">Payment</th>' +
+          RATIOS.map(function (r) { return '<th>' + ratioLabel(r) + '</th>'; }).join("") + '</tr></thead>';
+      }
+      function simGrid(id, e) {   // fills a 5 × 3 table from simulated cells; returns how many are done
+        var done = 0, h = gridHead() + '<tbody>';
+        VALS.forEach(function (v, i) {
+          h += '<tr><th>' + pct(v) + '<small>' + money(v * LOW) + '</small></th>';
+          RATIOS.forEach(function (r, j) {
+            var o = e && e.cells[i][j], sel = i === S.v && j === S.r ? " sel" : "";
+            if (!o) { h += '<td class="wait' + sel + '" data-i="' + i + '" data-j="' + j + '">…</td>'; return; }
+            done++;
+            var col = cellColor(o.pct * 100);
+            h += '<td class="' + (col.dark ? "dark" : "") + sel + '" style="background:' + col.bg + '" data-i="' + i + '" data-j="' + j + '">' + spct(o.pct) + '</td>';
+          });
+          h += '</tr>';
+        });
+        el(id).innerHTML = h + '</tbody>';
+        return done;
+      }
+      function drawGrids() {
+        var e = entry(S.method, false), done = simGrid("hm-sim", e);
+        el("grid-status").textContent = done < 15 ? "Simulating… " + done + " of 15" : "Change in total revenue vs. the same flights without awards";
+        el("g-sub").textContent = (S.method === "dp" ? "Bid prices" : "EMSR-b") + ", " + S.demand + " demand. Average of 1,500 flights.";
+
+        var col = THESIS_COL[S.method + "|" + S.demand], T = cfg.thesis.totalRevenueChangePct[col];
+        var t = gridHead() + '<tbody>';
+        VALS.forEach(function (v, i) {
+          t += '<tr><th>' + pct(v) + '<small>of FC10</small></th>';
+          RATIOS.forEach(function (r, j) {
+            var p = T[i][j], c2 = cellColor(p);
+            t += '<td class="' + (c2.dark ? "dark" : "") + (i === S.v && j === S.r ? " sel" : "") + '" style="background:' + c2.bg + '">' + spct(p / 100) + '</td>';
+          });
+          t += '</tr>';
+        });
+        el("hm-th").innerHTML = t + '</tbody>';
+        el("t-sub").textContent = THESIS_NAME[col] + (S.method === "emsr" && S.demand === "high" ? " (the thesis ran high demand with UDP only)" : "") +
+          ". Airline 1 on MIT's PODS network, FC10 being its lowest fare.";
+
+        // break-even: where the net effect changes sign along the payments, at the RM ratio on screen
+        var ex = el("grid-explain");
+        if (done < 15) { ex.textContent = ""; return; }
+        var col2 = e.cells.map(function (row) { return row[S.r]; }), be = null;
+        for (var k = 0; k < col2.length - 1; k++) {
+          var a = col2[k].net, b = col2[k + 1].net;
+          if (a <= 0 && b > 0) { be = VALS[k] + (VALS[k + 1] - VALS[k]) * (-a / (b - a)); break; }
+        }
+        var costs = [], i2, j2;
+        for (i2 = 0; i2 < VALS.length; i2++) for (j2 = 0; j2 < RATIOS.length; j2++) { var oc = e.cells[i2][j2]; if (oc.award > 0) costs.push(oc.cost / oc.award); }
+        costs.sort(d3.ascending);
+        var range = money(costs[0]) + " to " + money(costs[costs.length - 1]);
+        var tail = be != null
+          ? "Here, with RM at " + ratioLabel(RATIOS[S.r]) + ", award seats break even when the program pays about <b>" + money(be * LOW) + "</b> (" + pct(be) + " of the lowest fare), since each one costs " + range + " of paid revenue. The thesis found the break-even at the lowest fare."
+          : "With these member settings an award seat costs " + range + " of paid revenue, so award seats " + (col2.every(function (c) { return c.net > 0; }) ? "pay off at every payment tested." : col2.every(function (c) { return c.net <= 0; }) ? "lose money at every payment tested." : "pay off only at some payments.");
+        ex.innerHTML = "Same pattern in both grids: award seats lose money when the program pays less than the lowest fare and make money above it. " +
+          "The RM value mostly scales the result, since it decides how many award seats open; once it goes above the lowest fare, award seats start to push out paying passengers. " + tail;
+      }
+      function gridEvents(id, method) {
+        el(id).addEventListener("click", function (ev) {
+          var td = ev.target.closest("td[data-i]"); if (!td) return;
+          S.v = +td.getAttribute("data-i"); S.r = +td.getAttribute("data-j"); update(false);
+        });
+        el(id).addEventListener("mousemove", function (ev) { cellTip(ev, entry(method(), false)); });
+        el(id).addEventListener("mouseleave", hideTip);
+      }
+      function cellTip(ev, e) {
+        var td = ev.target.closest("td[data-i]");
+        if (!td || !e) { hideTip(); return; }
+        var o = e.cells[+td.getAttribute("data-i")][+td.getAttribute("data-j")];
+        if (!o) { hideTip(); return; }
+        var per = o.award > 0 ? o.cost / o.award : 0;
+        showTip(ev, '<div class="t">Pays ' + money(o.valuation) + ' · RM value ' + money(o.rmValue) + '</div>' +
+          '<div class="r">Award passengers per flight<b>' + num(o.award) + '</b></div>' +
+          '<div class="r">What an award seat costs<b>' + money(per) + '</b></div>' +
+          '<div class="r">Net per flight<b>' + smoney(o.net) + '</b></div>' +
+          '<div class="r">Change in total revenue<b>' + spct(o.pct) + '</b></div>');
+      }
+      gridEvents("hm-sim", function () { return S.method; });
+      gridEvents("hm-cf", function () { return S.cf; });
+
+      // ───────────────────────────── extension: class-free forecasting
+      function drawExtension() {
+        var a = cellOf("dp"), b = cellOf(S.cf), e = entry(S.cf, false), done = simGrid("hm-cf", e);
+        el("cf-status").textContent = done < 15 ? "Simulating… " + done + " of 15" : "Bid prices in both, same flights and members";
+        var val = VALS[S.v] * LOW;
+        el("cf-sub").textContent = "Bid prices, program pays " + money(val) + ", RM value " + money(val * RATIOS[S.r]) + " (" + ratioLabel(RATIOS[S.r]) + "), " + S.demand + " demand.";
+        function col(o, f) { return o ? f(o) : "…"; }
+        function per(o) { return o.award > 0 ? o.cost / o.award : 0; }
+        function verdict(o) { var w = o.award < 0.05 ? null : o.valuation >= per(o); return w == null ? "No award seats" : '<span class="' + (w ? "pos" : "neg") + '">' + (w ? "Worth it" : "Not worth it") + '</span>'; }
+        var rows = [
+          ["Ticket revenue without awards", function (o) { return money(o.baseRev); }, function (o) { return money(o.baseRev) + (a ? ' <small>' + spct(o.baseRev / a.baseRev - 1, 1) + '</small>' : ""); }],
+          ["Award passengers per flight", function (o) { return num(o.award); }],
+          ["What an award seat costs", function (o) { return o.award < 0.05 ? "–" : money(per(o)); }],
+          ["Net effect per flight", function (o) { return '<span class="' + (o.net >= 0 ? "pos" : "neg") + '">' + smoney(o.net) + '</span>'; }],
+          ["Change in total revenue", function (o) { return spct(o.pct); }],
+          ["Verdict on award seats", verdict]
+        ];
+        el("cf-tbl").innerHTML = '<thead><tr><th></th><th>Class-based</th><th>Class-free</th></tr></thead><tbody>' + rows.map(function (r) {
+          return '<tr><td class="k">' + r[0] + '</td><td>' + col(a, r[1]) + '</td><td>' + col(b, r[2] || r[1]) + '</td></tr>';
+        }).join("") + '</tbody>';
+
+        var ex = el("cf-explain");
+        if (done < 15 || !a) { ex.textContent = ""; return; }
+        var lift = "Without awards, seeing buy-down adds " + spct(e.cells[0][0].baseRev / a.baseRev - 1, 1) + " to ticket revenue, because fewer passengers pay less than they would have. ";
+        if (S.cf === "cf") {
+          var c1 = e.cells.map(function (row) { return row[1]; }), worst = d3.min(c1, function (o) { return o.pct; });
+          ex.innerHTML = lift + "With award buy-down seen too and RM given the program's real payment (×1), award seats " + (worst > -0.0005 ? "never lose money" : "rarely lose money") +
+            ": RM only opens the ones that bring in more than they cost, from " + (c1[0].award < 0.05 ? "none" : num(c1[0].award) + " a flight") + " when the program pays 50% of the lowest fare to " + num(c1[4].award) + " a flight at 150%. " +
+            "So award availability now rests on the payment, which is the loyalty team's side of the bargain." +
+            (e.cells[1][2].pct < -0.0005 ? " Valued above the payment (×1.5), they lose money again at low payments (" + spct(e.cells[1][2].pct) + " at 75%)." : "");
+        } else {
+          var more = b && b.award > a.award;
+          ex.innerHTML = lift + "Seeing buy-down between fares but not into awards is the worst case for awards: " +
+            (more ? "RM learns that a seat sold early is worth little, so it opens more award seats (" + num(b.award) + " a flight here, against " + num(a.award) + " with class-based forecasting) without knowing that most of those members would have paid."
+                  : "RM opens award seats without knowing that most of the members taking them would have paid (" + (b ? num(b.award) : "…") + " a flight here, against " + num(a.award) + " with class-based forecasting).");
+        }
+      }
+
+      function drawKey() {
+        var stops = [-3, -1.5, 0, 1.5, 3].map(function (p) { return cellColor(p).bg; });
+        el("hm-key").innerHTML = '<span>−3% or less</span><i style="background:linear-gradient(90deg,' + stops.join(",") + ')"></i><span>+3% or more</span>';
+      }
+
+      // ───────────────────────────── members inputs
+      function numInput(id, lo, hi, get, set) {
+        var inp = el(id); inp.value = get();
+        inp.addEventListener("change", function () {
+          var v = parseFloat(inp.value);
+          if (!isFinite(v)) { inp.value = get(); return; }
+          v = Math.min(hi, Math.max(lo, v)); set(v); inp.value = get(); update(true);
+        });
+      }
+
+      // ───────────────────────────── start
+      fetch(DATA_URL).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (data) {
+        cfg = data; model = makeModel(cfg.model); LOW = model.LOW;
+        var d = cfg.model.defaults;
+        S = { v: VALS.indexOf(d.valuation), r: RATIOS.indexOf(d.ratio), method: d.method, demand: d.demand, elig: d.eligible, pts: d.pointsCost, cf: "cf" };
+        numInput("elig", 0, 100, function () { return Math.round(S.elig * 100); }, function (v) { S.elig = Math.round(v) / 100; });
+        numInput("pts", 0.5, 2, function () { return S.pts.toFixed(2); }, function (v) { S.pts = Math.round(v * 20) / 20; });
+        drawKey();
+        update(true);
+        var rt;
+        window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { var o = current(); if (o) drawWaterfall(o); }, 150); });
+      }).catch(function (e) {
+        el("tiles").innerHTML = '<div class="loading">Couldn\'t load the model data (' + esc(e.message) + ').</div>';
+      });
+    });
+    </script>
+  </body>
+</html>

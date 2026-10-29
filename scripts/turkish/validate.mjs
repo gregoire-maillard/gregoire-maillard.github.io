@@ -11,10 +11,13 @@
 //   options: --strict (warnings count as errors), --quiet (hide warnings)
 //
 // The schema definitions below mirror PROJECT.md section 5; change both together and run --examples.
+// Conjugate cells and morph tiles are also compared with the morphology engine, assets/js/turkish-morph.js
+// (PROJECT.md 3 and 8); for now its disagreements are warnings.
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
+import { createRequire } from "module";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const DATA = path.join(ROOT, "assets/data/turkish");
@@ -272,6 +275,44 @@ function checkAccept(list, lang, where, rejects, mode = "lenient") {
     else if (looseSet.has(relax(n))) warn(w, `rejected answer “${r.answer}” differs from an accepted one only by apostrophes${folds ? " or Turkish letters" : ""}`);
   });
   return all;
+}
+
+// ─────────────────────────── morphology engine (PROJECT.md 3, 8) ───────────────────────────
+// conjugate: every cell's paradigm form must be accepted, and everything accepted must be a form the engine
+// builds (its variants; for onlar also the o form, since a plural subject can take a singular verb; words in
+// front of the form are allowed, as in "yorgun olduğum için"). morph: the tiles must be the base plus suffixes
+// cut at morpheme boundaries. Slugs and tiles the engine doesn't know are listed as not checked, not warned about.
+const MORPH = createRequire(import.meta.url)(path.join(ROOT, "assets/js/turkish-morph.js"));
+const MSTAT = { conj: 0, conjChecked: 0, cells: 0, morph: 0, morphChecked: 0, notModelled: [] };
+function engineConjugate(e, w) {
+  MSTAT.conj++;
+  const info = MORPH.formInfo(e.form);
+  if (!info) { MSTAT.notModelled.push(`${e.id} (form “${e.form}”)`); return; }
+  let checked = 0;
+  e.cells.forEach((c, i) => {
+    const cw = `${w}.cells[${i}]`;
+    if (!info.persons.includes(c.p)) { warn(cw, `“${e.form}” has no ${c.p} form in the morphology engine`); return; }
+    const r = MORPH.form(e.form, e.base, c.p);
+    if (!r) { MSTAT.notModelled.push(`${e.id} (${c.p} of “${e.base}”)`); return; }
+    checked++;
+    const ok = new Set(r.variants.map(v => norm(v, "tr")));
+    if (c.p === "onlar") { const o = MORPH.form(e.form, e.base, "o"); if (o) for (const v of o.variants) ok.add(norm(v, "tr")); }
+    const fits = x => ok.has(x) || [...ok].some(v => x.endsWith(" " + v));
+    const accepted = new Set();
+    for (const a of c.accept) for (const x of expand(a).list || []) accepted.add(norm(x, "tr"));
+    if (!accepted.has(norm(r.text, "tr"))) warn(cw, `the morphology engine gives “${r.text}”, which this cell doesn't accept`);
+    for (const x of accepted) if (!fits(x)) warn(cw, `“${x}” is accepted, but the morphology engine gives ${r.variants.map(v => `“${v}”`).join(" or ")}`);
+  });
+  if (checked) MSTAT.conjChecked++;
+  MSTAT.cells += checked;
+}
+function engineMorph(e, w) {
+  MSTAT.morph++;
+  const r = MORPH.analyze(e.base, e.parts);
+  if (r.reason === "unknown") { MSTAT.notModelled.push(`${e.id} (morph ${e.parts.join("+")})`); return; }
+  MSTAT.morphChecked++;
+  if (r.reason === "boundaries") warn(`${w}.parts`, `the tiles cut a morpheme: the morphology engine splits “${e.result}” as ${r.seg}`);
+  else if (!r.ok) warn(`${w}.parts`, `the morphology engine builds “${r.text}” (${r.seg}) from “${e.base}” with these suffixes, not “${e.result}”`);
 }
 
 // ─────────────────────────── schema combinators ───────────────────────────
@@ -743,6 +784,7 @@ function checkExercise(e, w, unitId, cx) {
         prev = Math.max(prev, k);
         checkAccept(c.accept, "tr", `${w}.cells[${i}]`);
       });
+      engineConjugate(e, w);
       break;
     }
     case "morph": {
@@ -753,6 +795,7 @@ function checkExercise(e, w, unitId, cx) {
         if (e.parts.includes(t)) err(`${w}.distractors[${i}]`, `“${t}” is also a correct part`);
       });
       dupes(e.distractors, `${w}.distractors`);
+      if (e.parts.join("") === e.result) engineMorph(e, w);
       break;
     }
     case "reading": {
@@ -1120,7 +1163,7 @@ if (opt.examples) {
   for (const rec of C.culture.values()) if (rec.ok) checkCulture(rec, cx);
   for (const f of deferred) f();
   const nEx = [...C.lessons.values()].reduce((n, l) => n + (l.ok ? l.v.exercises.length : 0), 0);
-  summary = `registry ${REG.levels.size} levels, ${REG.units.size} units, ${REG.points.size} grammar points · content ${C.levels.size} levels, ${C.units.size} units, ${C.lessons.size} lessons (${nEx} exercises), ${C.grammar.size} guides, ${C.culture.size} interludes, ${C.cards.size} cards`;
+  summary = `registry ${REG.levels.size} levels, ${REG.units.size} units, ${REG.points.size} grammar points · content ${C.levels.size} levels, ${C.units.size} units, ${C.lessons.size} lessons (${nEx} exercises), ${C.grammar.size} guides, ${C.culture.size} interludes, ${C.cards.size} cards · morphology engine: ${MSTAT.cells} cells of ${MSTAT.conjChecked}/${MSTAT.conj} conjugate exercises, ${MSTAT.morphChecked}/${MSTAT.morph} morph exercises`;
   if (opt.vocab) runVocab();
   let batchLines = [];
   if (opt.batch) batchLines = runBatch(opt.batch);
@@ -1139,6 +1182,7 @@ if (opt.examples) {
   if (batchLines.length) console.log(`Batch ${opt.batch}:\n${batchLines.join("\n")}`);
 }
 
+if (MSTAT.notModelled.length && !opt.quiet) console.log(`Not modelled by the morphology engine, so not checked: ${MSTAT.notModelled.join(", ")}`);
 const errors = issues.filter(x => x.level === "error"), warnings = issues.filter(x => x.level === "warn");
 for (const x of errors) console.log(`ERROR  ${x.where}: ${x.msg}`);
 if (!opt.quiet) for (const x of warnings) console.log(`warn   ${x.where}: ${x.msg}`);
