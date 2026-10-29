@@ -110,7 +110,9 @@ check("distributives", () => ["bir", "iki", "üç", "dört", "altı", "on"].map(
 for (const [w, ids, want] of [["şeker", ["LI"], "şekerli"], ["İstanbul", ["LI"], "İstanbullu"], ["su", ["SIZ"], "susuz"], ["para", ["SIZ"], "parasız"],
   ["kitap", ["CI"], "kitapçı"], ["süt", ["CI"], "sütçü"], ["yol", ["CI"], "yolcu"], ["göz", ["LIK"], "gözlük"], ["kitap", ["LIK"], "kitaplık"],
   ["güzel", ["LIK"], "güzellik"], ["göz", ["LIK", "POSS1"], "gözlüğüm"], ["Türk", ["CA"], "Türkçe"], ["İngiliz", ["CA"], "İngilizce"],
-  ["yavaş", ["CA"], "yavaşça"], ["sabah", ["LEYIN"], "sabahleyin"], ["yol", ["DAS"], "yoldaş"], ["küçük", ["DIM"], "küçücük"],
+  ["yavaş", ["CA"], "yavaşça"], ["sabah", ["LEYIN"], "sabahleyin"], ["yol", ["DAS"], "yoldaş"],
+  ["meslek", ["DAS"], "meslektaş"], ["din", ["DAS"], "dindaş"], ["yurt", ["DAS"], "yurttaş"], ["gönül", ["DAS"], "gönüldaş"], ["sır", ["DAS"], "sırdaş"],
+  ["bilim", ["SAL"], "bilimsel"], ["toplum", ["SAL"], "toplumsal"], ["kişi", ["SAL"], "kişisel"], ["tarih", ["SAL"], "tarihsel"], ["deney", ["SAL"], "deneysel"], ["küçük", ["DIM"], "küçücük"],
   ["ufak", ["DIM"], "ufacık"], ["sıcak", ["DIM"], "sıcacık"], ["az", ["DIM"], "azıcık"], ["dar", ["DIM"], "daracık"], ["anne", ["DIM", "POSS1"], "anneciğim"],
   ["adam", ["CAGIZ"], "adamcağız"], ["çocuk", ["CAGIZ"], "çocukcağız"], ["yeşil", ["IMSI"], "yeşilimsi"], ["sarı", ["IMSI"], "sarımsı"],
   ["ekşi", ["IMTIRAK"], "ekşimtırak"], ["temiz", ["LA", "PAST"], "temizledi"], ["güzel", ["LAS", "EVID"], "güzelleşmiş"],
@@ -363,7 +365,15 @@ for (const [v, ids, want] of [
   ["gelmek", ["MA", "POSS3"], "gelmesi"], ["gelmek", ["MA", "POSS3", "ACC"], "gelmesini"], ["unutmak", ["NEG", "MA", "POSS1", "ACC"], "unutmamamı"],
   ["olmak", ["MA", "POSS6", "DAT"], "olmalarına"], ["gitmek", ["IS"], "gidiş"], ["yürümek", ["IS"], "yürüyüş"], ["demek", ["IS"], "deyiş"],
   ["okumak", ["AOR", "KEN"], "okurken"], ["gelmek", ["AOR", "KEN"], "gelirken"], ["vermek", ["MAKSIZIN"], "vermeksizin"], ["bilmek", ["AOR", "CASINA"], "bilircesine"],
-  ["çalışmak", ["GAN"], "çalışkan"], ["yorulmak", ["NEG", "DIK", "POSS1", "LOC"], "yorulmadığımda"]]) {
+  ["çalışmak", ["GAN"], "çalışkan"], ["yorulmak", ["NEG", "DIK", "POSS1", "LOC"], "yorulmadığımda"],
+  ["unutmak", ["GAN"], "unutkan"], ["konuşmak", ["GAN"], "konuşkan"], ["sıkılmak", ["GAN"], "sıkılgan"], ["alınmak", ["GAN"], "alıngan"],
+  ["bilmek", ["GIN"], "bilgin"], ["kırmak", ["GIN"], "kırgın"], ["şaşmak", ["GIN"], "şaşkın"], ["dalmak", ["GIN"], "dalgın"], ["yormak", ["GIN"], "yorgun"],
+  ["ölçmek", ["IM"], "ölçüm"], ["seçmek", ["IM"], "seçim"], ["doğmak", ["IM"], "doğum"], ["anlatmak", ["IM"], "anlatım"], ["gözlemek", ["IM"], "gözlem"],
+  ["akmak", ["INTI"], "akıntı"], ["kırmak", ["INTI"], "kırıntı"], ["söylemek", ["INTI"], "söylenti"], ["toplamak", ["INTI"], "toplantı"], ["esmek", ["INTI"], "esinti"],
+  ["sürmek", ["ICI"], "sürücü"], ["korumak", ["ICI"], "koruyucu"], ["dinlemek", ["ICI"], "dinleyici"], ["öğretmek", ["ICI"], "öğretici"], ["yormak", ["ICI"], "yorucu"],
+  ["öğretmek", ["MAN"], "öğretmen"], ["okutmak", ["MAN"], "okutman"], ["seçmek", ["MAN"], "seçmen"], ["danışmak", ["MAN"], "danışman"],
+  ["bilmek", ["MAZLIK", "ABL"], "bilmezlikten"], ["duymak", ["MAZLIK", "ABL"], "duymazlıktan"], ["anlaşmak", ["MAZLIK"], "anlaşmazlık"],
+  ["anlamak", ["NEG", "MAZLIK"], "anlamamazlık"], ["kurmak", ["PASS", "MA", "POSS3", "GEN"], "kurulmasının"]]) {
   check(`${v} + ${ids.join(" + ")}`, () => build(v, ids), want);
 }
 check("evdeyken, çocukken", () => [build("ev", ["LOC", "KEN"]), build("çocuk", ["KEN"])], ["evdeyken", "çocukken"]);
@@ -375,6 +385,7 @@ para("diginda", "gelmek", "geldiğimde|geldiğinde|geldiğinde|geldiğimizde|gel
 para("digi-icin", "olmak", "olduğum için|-|olduğu için|-|-|oldukları için");
 para("madigi-halde", "çalışmak", "çalışmadığım hâlde|-|çalışmadığı hâlde|-|-|-");
 para("lazim", "gitmek", "gitmem lazım|gitmen lazım|gitmesi lazım|gitmemiz lazım|gitmeniz lazım|gitmeleri lazım");
+para("masindan-dolayi", "geç kalmak", "geç kalmamdan dolayı|geç kalmandan dolayı|geç kalmasından dolayı|geç kalmamızdan dolayı|geç kalmanızdan dolayı|geç kalmalarından dolayı");
 para("masina-ragmen", "olmak", "olmama rağmen|olmana rağmen|olmasına rağmen|olmamıza rağmen|olmanıza rağmen|olmalarına rağmen");
 para("ip-mayacagi", "gelmek", "gelip gelmeyeceğimi|-|gelip gelmeyeceğini|-|-|gelip gelmeyeceklerini");
 para("mis-gibi-negative", "duymak", "duymamışım gibi|-|duymamış gibi|-|-|-");
@@ -385,11 +396,13 @@ const an = (base, tiles) => M.analyze(base, tiles);
 for (const [base, tiles] of [["kitap", ["kitap", "ta"]], ["okul", ["okul", "da"]], ["ev", ["ev", "ler", "de"]], ["kitap", ["kitab", "ı"]],
   ["gitmek", ["git", "mi", "yor", "um"]], ["istemek", ["ist", "iyor"]], ["araba", ["araba", "s", "ı", "n", "a"]], ["bu", ["bu", "nlar"]],
   ["yürümek", ["yürü", "yerek"]], ["yapmak", ["yap", "ma", "y", "ız"]], ["burun", ["burn", "u"]], ["tanımak", ["tanı", "ş", "tır", "ıl", "dı", "m"]],
-  ["küçük", ["küçü", "cük"]], ["ben", ["ben", "im", "ki", "n", "i"]], ["havalimanı", ["havalimanı", "n", "dan"]], ["yemek", ["yi", "y", "en"]]]) {
+  ["küçük", ["küçü", "cük"]], ["ben", ["ben", "im", "ki", "n", "i"]], ["ölçmek", ["ölç", "üm"]], ["kurmak", ["kur", "ul", "ma", "sı", "nın"]],
+  ["meslek", ["meslek", "taş"]], ["bilmek", ["bil", "mezlik", "ten"]], ["havalimanı", ["havalimanı", "n", "dan"]], ["yemek", ["yi", "y", "en"]]]) {
   check(`analyze ${base}: ${tiles.join("+")}`, () => an(base, tiles).ok, true, "check");
 }
 check("analyze okul+de: the engine builds okulda", () => { const r = an("okul", ["okul", "de"]); return [r.ok, r.reason, r.text]; }, [false, "form", "okulda"], "check");
 check("analyze kitap+da: the engine builds kitapta", () => { const r = an("kitap", ["kitap", "da"]); return [r.reason, r.text]; }, ["form", "kitapta"], "check");
+check("analyze meslek+teş: the engine builds meslektaş", () => { const r = an("meslek", ["meslek", "teş"]); return [r.reason, r.text]; }, ["form", "meslektaş"], "check");
 check("analyze kızgın+im: the engine builds kızgınım", () => an("kızgın", ["kızgın", "im"]).text, "kızgınım", "check");
 check("analyze evle+rde: a tile cuts a morpheme", () => { const r = an("ev", ["evle", "rde"]); return [r.reason, r.seg]; }, ["boundaries", "ev|ler|de"], "check");
 check("seg: gel|ecek|ler, bekl|iyor, gel|mi|yor, kitab|ı, Ankara'|y|a", () => [

@@ -688,7 +688,8 @@
           $("read-min").innerHTML = '<span class="dot">·</span>About ' + Math.max(1, Math.round(words / 200)) + " min";
         }
         var desc = T.plain(g ? doc.intro : (doc.blocks.filter(function (b) { return b.type === "p"; })[0] || { text: doc.title }).text);
-        setMeta(doc.title + (g ? " · Turkish grammar, " : " · Turkish interlude, ") + unitLabel(u), desc, docPath(u, kind));
+        // page title for search engines: a guide's seoTitle (the term people search) + its level; an interlude's own title
+        setMeta(g ? (doc.seoTitle ? doc.seoTitle + " · " + u.cefr + " grammar" : doc.title + " · Turkish grammar, " + unitLabel(u)) : doc.title + " · Turkish culture", desc, docPath(u, kind));
         afterRender();
         watchRead(u, key);
       }

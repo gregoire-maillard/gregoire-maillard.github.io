@@ -651,6 +651,7 @@
     "reported-request": vposs("mA", "MA", { c: "acc" }),
     "mamasini-rica": vposs("mA", "MA", { neg: true, c: "acc" }),
     "masina-ragmen": vposs("mA", "MA", { c: "dat", post: ["rağmen"] }),
+    "masindan-dolayi": vposs("mA", "MA", { c: "abl", post: ["dolayı"] }),
     "ip-mayacagi": function (b, p) {   // gelip gelmeyeceğimi
       return [[attach(mkVerb(b), "(y)Ip", { id: "IP", keepDe: true }), addCase(poss(attach(negate(mkVerb(b)), "(y)AcAK", { id: "FUT", cat: "n" }), p), "acc")]];
     },
@@ -727,7 +728,7 @@
   tstep("KEN", "nf", "(y)ken", "f");
   tstep("CASINA", "nf", "CAsInA", "n");
   // word building
-  [["LI", "lI"], ["SIZ", "sIz"], ["CI", "CI"], ["LIK", "lIK"], ["CA", "CA"], ["SAR", "(ş)Ar"], ["LEYIN", "leyin"], ["DAS", "DAş"],
+  [["LI", "lI"], ["SIZ", "sIz"], ["CI", "CI"], ["LIK", "lIK"], ["CA", "CA"], ["SAR", "(ş)Ar"], ["LEYIN", "leyin"], ["DAS", "Daş"],
    ["IMSI", "(I)msI"], ["IMTIRAK", "(I)mtırak"], ["CAGIZ", "cAğIz"], ["INCI", "(I)ncI"], ["SAL", "sAl"]].forEach(function (d) {
     tstep(d[0], "n", d[1], "n", { deriv: true });
   });
@@ -773,6 +774,10 @@
   tstep("MAKSIZIN", "v", "mAksIzIn", "n");
   tstep("GAN", "v", "GAn", "n", { deriv: true });
   tstep("GIN", "v", "GIn", "n", { deriv: true });
+  tstep("IM", "v", "(I)m", "n", { deriv: true });
+  tstep("INTI", "v", "(I)ntI", "n", { deriv: true });
+  tstep("ICI", "v", "(y)IcI", "n", { deriv: true });
+  tstep("MAN", "v", "mAn", "n", { deriv: true });
 
   function build(base, ids) {
     var first = BY_ID[ids[0]];
