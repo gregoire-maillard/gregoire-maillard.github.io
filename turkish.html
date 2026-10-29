@@ -441,11 +441,92 @@
       .hello:hover .hello-bub, .hello:hover .hello-bub::before { border-color: #cfcfcb; }
       .hello-say { display: block; font-size: 17.5px; font-weight: 600; line-height: 1.3; color: var(--ink); overflow-wrap: anywhere; }
       .hello-sub { display: block; margin-top: 2px; font-size: 13px; line-height: 1.4; color: var(--muted); }
-      .hello.invite .hello-bub { border-color: rgb(40 122 158 / 35%); background: var(--blue-tint); }
-      .hello.invite .hello-bub::before { border-color: rgb(40 122 158 / 35%); background: #f7fafb; }
-      .hello.invite .hello-sub { color: var(--blue-dark); font-weight: 600; }
-      .hello.invite:hover .hello-sub { text-decoration: underline; text-underline-offset: 3px; }
       @media (max-width: 899px) { .today > .hello { grid-column: 1 / -1; } }
+
+      /* signed out, the greeting is a welcome card (ACCT-1): the A1 character says hello, with the two ways in.
+         It keeps the classes hello and invite, so the app (app/src/turkish-app.js) still hides it. */
+      .hello.invite { display: block; padding: 14px 16px 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+      .hello.invite .w-top { display: flex; align-items: center; gap: 12px; }
+      .hello.invite .hello-pic { width: 64px; height: 64px; }
+      .hello.invite .hello-bub, .auth .hello-bub { border-color: rgb(40 122 158 / 35%); background: var(--blue-tint); }
+      .hello.invite .hello-bub::before, .auth .hello-bub::before { border-color: rgb(40 122 158 / 35%); background: #f7fafb; }
+      .hello.invite .hello-sub { color: var(--body); }
+      .w-acts { display: flex; gap: 8px; margin-top: 14px; }
+      .w-acts .btn { flex: 1 1 0; min-width: 0; padding: 0 12px; white-space: nowrap; }
+      .w-acts .btn.primary { flex-grow: 1.7; }
+      .w-fine { margin-top: 9px; font-size: 12.5px; line-height: 1.4; color: var(--muted); text-align: center; }
+
+      /* the greeter, drawn from the A1 character's artwork with eyelids, happy eyes and two hooves added:
+         it blinks, covers its eyes while a password is typed, peeks when it's shown, shakes its head at an error, hops at the end */
+      .cr { display: block; flex: none; transform-origin: 50% 90%; }
+      .cr-bob { animation: cr-bob 3.4s ease-in-out infinite; }
+      @keyframes cr-bob { 50% { transform: translateY(-2px); } }
+      .cr .cr-lid { transform-box: fill-box; transform-origin: 50% 0; transform: scaleY(0); animation: cr-blink 5.5s 1.5s infinite; }
+      @keyframes cr-blink { 0%, 94%, 100% { transform: scaleY(0); } 97% { transform: scaleY(1); } }
+      .cr .cr-joy { opacity: 0; }
+      .cr .cr-paw { transform: translateY(42px); transition: transform .4s cubic-bezier(.3, 1.35, .5, 1); }
+      .auth-pic.hide .cr-paw { transform: none; }
+      .auth-pic.peek .cr-paw { transform: translateY(7px); }
+      .auth-pic.yay .cr .cr-lid { animation: none; transform: scaleY(1); }
+      .auth-pic.yay .cr .cr-joy { opacity: 1; }
+      .auth-pic.yay .cr { animation: cr-hop .8s cubic-bezier(.3, 1.5, .5, 1) 2; }
+      .auth-pic.oops .cr { animation: cr-shake .55s ease-in-out; }
+      @keyframes cr-hop { 0%, 100% { transform: none; } 40% { transform: translateY(-9px); } 70% { transform: translateY(1px); } }
+      @keyframes cr-shake { 0%, 100% { transform: none; } 20% { transform: rotate(-8deg); } 45% { transform: rotate(7deg); } 70% { transform: rotate(-4deg); } }
+
+      /* the sign-in dialog (ACCT-1): create an account, sign in, reset a password or get a link, without leaving the course */
+      html:has(dialog.auth[open]) { overflow: hidden; }
+      dialog.auth { width: min(420px, calc(100vw - 24px)); max-width: none; max-height: calc(100dvh - 24px); padding: 0; border: 0; border-radius: 16px; overflow: auto; overscroll-behavior: contain;
+                    background: #fff; color: var(--body); box-shadow: 0 24px 64px rgb(15 23 42 / 24%), 0 0 0 1px rgb(15 23 42 / 6%); }
+      dialog.auth::backdrop { background: rgb(21 26 35 / 45%); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+      dialog.auth[open] { animation: au-in .34s cubic-bezier(.3, 1.3, .5, 1); }
+      @keyframes au-in { from { opacity: 0; transform: translateY(16px) scale(.97); } }
+      .auth-in { position: relative; padding: 22px 24px 22px; }
+      .auth-x { position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: var(--muted); cursor: pointer; }
+      .auth-x:hover { background: var(--panel); color: var(--ink); }
+      .auth-top { display: flex; align-items: center; gap: 14px; margin: 0 40px 18px 0; }
+      .auth-pic { flex: none; width: 84px; height: 84px; }
+      .auth .hello-bub { flex: 1; min-width: 0; }
+      .auth .hello-sub { color: var(--body); }
+      .au-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin-bottom: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+      .au-seg button { min-height: 40px; border: 0; border-radius: 9px; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; transition: background-color .15s, color .15s, box-shadow .15s; }
+      .au-seg button:hover { color: var(--ink); }
+      .au-seg button[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgb(15 23 42 / 12%), 0 0 0 1px rgb(15 23 42 / 5%); }
+      .au-h { font-size: 19px; line-height: 1.3; font-weight: 650; letter-spacing: -0.01em; color: var(--ink); }
+      .au-p { margin-top: 6px; font-size: 14.5px; color: var(--body); overflow-wrap: anywhere; }
+      .au-p b { color: var(--ink); }
+      .au-small { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+      .au-form { display: grid; gap: 6px; }
+      .au-form label { margin-top: 4px; font-size: 13px; font-weight: 600; color: var(--ink); }
+      .au-form label:first-child { margin-top: 0; }
+      .auth .input { font-size: 16px; }   /* 16 px, or iOS zooms in on focus */
+      .au-pw { position: relative; }
+      .au-pw .input { padding-right: 48px; }
+      .au-eye { position: absolute; top: 2px; right: 2px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 6px; background: none; color: var(--muted); cursor: pointer; }
+      .au-eye:hover { color: var(--ink); }
+      .au-hint { display: flex; align-items: center; gap: 6px; min-height: 18px; font-size: 12.5px; color: var(--muted); }
+      .au-hint.ok { color: #2f7d47; }
+      .au-err { margin-top: 6px; padding: 9px 12px; border: 1px solid #efc4be; border-radius: var(--r); background: #fdf3f2; color: #6e1d15; font-size: 13.5px; }
+      .au-go { width: 100%; min-height: 48px; margin-top: 12px; font-size: 15px; }
+      .auth .btn[aria-disabled="true"] { opacity: .75; cursor: progress; }
+      .au-alts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; margin-top: 14px; font-size: 13.5px; }
+      .au-fine { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12.5px; line-height: 1.45; color: var(--muted); text-align: center; }
+      .au-fine a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+      .au-row { display: flex; gap: 8px; }
+      .au-row .input { flex: 1; min-width: 0; }
+      .au-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+      .au-btns .btn { flex: 1 1 auto; }
+      .au-tekir { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 10px 12px; border: 1px dashed #d9d8d3; border-radius: var(--r); font-size: 13.5px; color: var(--body); }
+      .au-tekir b { color: var(--ink); }
+      .au-spin { flex: none; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgb(255 255 255 / 40%); border-top-color: #fff; animation: au-spin .8s linear infinite; }
+      .au-small .au-spin { border-color: var(--line); border-top-color: var(--blue); }
+      @keyframes au-spin { to { transform: rotate(360deg); } }
+      @media (max-width: 599px) {
+        dialog.auth { margin: 12px auto auto; }   /* near the top, so the keyboard doesn't cover the fields */
+        .auth-in { padding: 18px 16px 18px; }
+        .auth-top { gap: 12px; margin-right: 36px; }
+        .auth-pic { width: 72px; height: 72px; }
+      }
 
       /* the tile wall (UI-5): one tile per unit, a row per level */
       .wall-card h3 { font-size: 15px; }
@@ -619,7 +700,7 @@
           <h1>Learn Turkish</h1>
           <p class="notice" id="dt-home" hidden>Daily Turkish has its own home: <a href="https://dailyturkish.app/">dailyturkish.app</a>. Progress is saved per address, so to carry yours over, sign in under <a href="#profile">My profile</a> or use Export in <a href="#settings">Settings</a>, then Import on dailyturkish.app. This page keeps working too.</p>
           <script>if (/(^|\.)gregoiremaillard\.com$/.test(location.hostname)) document.getElementById("dt-home").hidden = false;</script>
-          <p class="lede">From your first <i lang="tr">merhaba</i> to reading the press: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of the 1,000 most useful words on spaced repetition.<span id="lede-acct" hidden> No account needed: your progress stays in this browser, or <a href="#profile">create a free profile</a> to keep it online and use it on any device.</span></p>
+          <p class="lede">From your first <i lang="tr">merhaba</i> to reading the press: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of the 1,000 most useful words on spaced repetition.<span id="lede-acct" hidden> No account needed: your progress stays in this browser, or <a href="#signup" data-auth="signup">create a free account</a> to keep it online and use it on any device.</span></p>
         </header>
         <aside class="today" id="today" aria-label="Today">
           <div class="card next"><p class="eyebrow">Loading the course…</p></div>
@@ -745,6 +826,13 @@
       </section>
       <noscript><p class="notice">The lessons, flashcards and your progress need JavaScript.</p></noscript>
     </main>
+    <dialog class="auth" id="auth" aria-labelledby="auth-h">
+      <div class="auth-in">
+        <button type="button" class="auth-x" data-au="close" aria-label="Close"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+        <div class="auth-top" aria-hidden="true"><span class="auth-pic" id="auth-pic"></span><p class="hello-bub" id="auth-bub"></p></div>
+        <div id="auth-body"></div>
+      </div>
+    </dialog>
     <footer class="dt-foot"><p><a href="https://buymeacoffee.com/dailyturkish" target="_blank" rel="noopener">☕ Buy me a Turkish coffee</a></p></footer>
 
     <script>
@@ -846,20 +934,44 @@
         html += '<p class="totals"><b>' + course.xp.total + "</b> XP · <b>" + done + "</b> " + (done === 1 ? "lesson" : "lessons") + " completed" + (mastered ? " · <b>" + mastered + "</b> " + (mastered === 1 ? "unit" : "units") + " mastered" : "") + "</p>";
         $("today").innerHTML = html;
       }
-      // The greeting (UI-5): signed in, the chosen character (or the initial) says "Merhaba, <name>!"; signed out, the A1
-      // character invites the learner to make a profile. Both lead to My Profile. Redrawn alone when the account changes.
+      // The greeting (UI-5): signed in, the chosen character (or the initial) says "Merhaba, <name>!" and leads to My Profile.
+      // Signed out (ACCT-1), a welcome card: the A1 character says hello, with "Create an account" and "Sign in", which open
+      // the sign-in dialog on this page. Redrawn alone when the account changes.
+      // au: the dialog's state. touched: the dialog has been opened, so a "loading" status is the library downloading for
+      // it, not a saved sign-in being restored, and the welcome card stays.
+      var au = { mode: "signup", email: "", busy: false, msg: null, showPw: false, pwFocus: false, oops: false, fresh: false, skipName: false, touched: false, opener: null, wantFocus: false, sig: "" };
+      function knownUser() { return !!A.user || ((A.status === "loading" || A.status === "unavailable") && !au.touched); }
       function renderLede() {
-        var known = A && (!!A.user || A.status === "loading");
+        var known = A && (!!A.user || (A.status === "loading" && !au.touched));
         $("lede-acct").hidden = !!known;
+      }
+      // The greeter: the A1 character's artwork with eyelids, happy eyes and two hooves added (see .cr in the CSS).
+      var GREETER = "a1", crSeq = 0;
+      function critter(size) {
+        var a = A && A.AVATARS ? A.AVATARS.filter(function (x) { return x.id === GREETER; })[0] : null;
+        if (!a) return A && A.avatarSvg ? A.avatarSvg(GREETER, size) : "";
+        var clip = "cr-clip" + (++crSeq);
+        var lid = function (x) { return '<ellipse class="cr-lid" cx="' + x + '" cy="29" rx="3" ry="2.9" fill="#9c97a1"/>'; };
+        var joy = function (x) { return '<path class="cr-joy" d="M' + (x - 2.4) + ' 29.8q2.4-2.8 4.8 0" fill="none" stroke="#2a2730" stroke-width="1.5" stroke-linecap="round"/>'; };
+        var paw = function (sx, ex, hx) {   // a foreleg from below the circle up to a hoof over the eye
+          var leg = "M" + sx + " 72 L" + ex + " 32";
+          return '<g class="cr-paw"><path d="' + leg + '" stroke="#6f6a76" stroke-width="9.2" stroke-linecap="round" fill="none"/><path d="' + leg + '" stroke="#a19ca6" stroke-width="7.2" stroke-linecap="round" fill="none"/>' +
+            '<ellipse cx="' + hx + '" cy="29.2" rx="5.5" ry="4.6" fill="#4f4957"/><path d="M' + (hx - 3.4) + ' 27.3q3.4-2.4 6.8 0" stroke="#78727f" stroke-width="1.1" fill="none" stroke-linecap="round"/></g>';
+        };
+        return '<svg class="cr cr-bob" viewBox="0 0 64 64" width="' + size + '" height="' + size + '" aria-hidden="true"><defs><clipPath id="' + clip + '"><circle cx="32" cy="32" r="32"/></clipPath></defs>' +
+          '<g clip-path="url(#' + clip + ')">' + a.art + lid(26.5) + lid(37.5) + joy(26.5) + joy(37.5) + paw(13, 24.5, 26.5) + paw(51, 39.5, 37.5) + "</g></svg>";
       }
       function helloHtml() {
         if (!A || !A.avatarSvg) return "";
-        var known = !!A.user || A.status === "loading" || A.status === "unavailable";
-        var h = '<a class="hello' + (known ? "" : " invite") + '" id="hello" href="#profile">';
+        var known = knownUser();
         if (!known) {
-          return h + '<span class="hello-pic">' + A.avatarSvg("a1", 52) + '</span><span class="hello-bub"><span class="hello-say"><span lang="tr">Merhaba!</span></span>' +
-            '<span class="hello-sub">Create your free profile to save your progress online and unlock characters like me →</span></span></a>';
+          return '<section class="hello invite" id="hello" aria-label="Your account"><div class="w-top"><span class="hello-pic">' + critter(64) + "</span>" +
+            '<p class="hello-bub"><span class="hello-say"><span lang="tr">Merhaba!</span></span>' +
+            '<span class="hello-sub">Save your progress online, use it on any device, and unlock characters like me.</span></p></div>' +
+            '<div class="w-acts"><button type="button" class="btn primary" data-auth="signup">Create an account</button><button type="button" class="btn" data-auth="signin">Sign in</button></div>' +
+            '<p class="w-fine">Free, no ads. What you\'ve already done here comes with you.</p></section>';
         }
+        var h = '<a class="hello" id="hello" href="#profile">';
         var name = A.profile && A.profile.display_name, av = A.avatar(), sub = "";
         var pic = av ? A.avatarSvg(av, 52) : '<span class="avatar" aria-hidden="true">' + esc(T.trUpper((name || (A.user && A.user.email) || "?").charAt(0))) + "</span>";
         if (A.user && A.profile && !name) sub = "Add your name in My Profile";
@@ -1018,6 +1130,12 @@
 
       function openFromHash() {
         if (showView()) { window.scrollTo(0, 0); return; }
+        if (/^#sign(?:in|up)$/.test(location.hash)) {   // dailyturkish.app/#signin or #signup opens the dialog (ACCT-1)
+          var mode = location.hash.slice(1);
+          history.replaceState(null, "", location.pathname + location.search);
+          if (A && !A.user && !(A.status === "loading" && !au.touched)) openAuth(mode);
+          return;
+        }
         var id = decodeURIComponent(location.hash.slice(1));
         if (!id || !st.index) return;
         var el = $(id);
@@ -1540,8 +1658,220 @@
             .catch(function (er) { pf.busy = false; flash("Your profile couldn't be deleted (" + er.message + ").", true); });
         }
       });
+      // ── the sign-in dialog (ACCT-1): create an account, sign in, "Forgot password?" or an emailed link, on the course page.
+      // It drives TRK.account like the account card on My Profile does; that card stays as it is. ──
+      var dlg = $("auth");
+      var EYE = '<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M1.8 10S4.8 4.5 10 4.5 18.2 10 18.2 10 15.2 15.5 10 15.5 1.8 10 1.8 10Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="10" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+      var EYE_OFF = '<svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M1.8 10S4.8 4.5 10 4.5 18.2 10 18.2 10 15.2 15.5 10 15.5 1.8 10 1.8 10Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="10" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 3.5l13 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+      var SPIN = '<span class="au-spin" aria-hidden="true"></span>';
+      function canAuth() {
+        var app = window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform();   // no accounts in the app (APP-2)
+        return !!(A && !app && dlg && typeof dlg.showModal === "function");
+      }
+      function openAuth(mode, opener) {
+        if (!canAuth()) { location.hash = "#profile"; return; }
+        au.touched = true; au.mode = A.user ? "done" : mode === "signin" ? "signin" : "signup";
+        au.busy = false; au.msg = null; au.showPw = false; au.pwFocus = false; au.oops = false; au.fresh = false; au.skipName = false;
+        au.opener = opener && opener.dataset ? opener.dataset.auth : null;
+        A.sentTo = null; A.sentKind = null;
+        if (A.status !== "unavailable") A.error = null;
+        if (!$("auth-pic").firstChild) $("auth-pic").innerHTML = critter(84);
+        if (!dlg.open) dlg.showModal();
+        drawAuth();
+        focusFirst();
+        A.ensure().catch(function () {});   // the sign-in library downloads while they type
+      }
+      function authSig() { return [A.status, A.user && A.user.id, A.profile ? 1 : 0, A.profile && A.profile.display_name, A.error, A.sentTo].join("|"); }
+      function focusFirst() {
+        setTimeout(function () {
+          var el = dlg.querySelector("[data-first]");
+          if (el && el.id === "au-email" && el.value && $("au-pass")) el = $("au-pass");
+          if (el) el.focus();
+          au.wantFocus = !el;   // "Signing you in…" has nothing to focus: the next view takes it
+        }, 0);
+      }
+      function authHtml() {
+        if (A.user && au.mode !== "done") { au.fresh = au.fresh || au.mode === "signup"; au.mode = "done"; }
+        if (au.mode === "sent" && !A.sentTo) au.mode = "signin";
+        var m = au.mode, bz = au.busy ? ' aria-disabled="true"' : "", h = "";   // aria-disabled, not disabled: the button keeps the focus while busy
+        var err = au.msg ? '<p class="au-err" role="alert">' + esc(au.msg) + "</p>" : "";
+        var email = '<label for="au-email">Email</label><input class="input" type="email" id="au-email" name="email" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" placeholder="you@example.com" required data-first>';
+        var go = function (idle, busy) { return '<button type="submit" class="btn primary au-go" id="au-submit"' + bz + ">" + (au.busy ? SPIN + busy : idle) + "</button>"; };
+        if (m === "done") {
+          var name = A.profile && A.profile.display_name, asking = !!(A.user && A.profile && !name && !au.skipName);
+          if (!A.user) return '<h2 class="au-h" id="auth-h">Signing you in…</h2><p class="au-p au-small">' + SPIN + "One moment.</p>";
+          h += '<h2 class="au-h" id="auth-h">' + (!au.fresh ? "You\'re signed in" : name ? "You\'re all set!" : "You\'re in!") + "</h2>" +
+            '<p class="au-p">' + (au.fresh ? "Your progress now saves online and follows you to any device." : "Your progress is with you again, here and on any device.") + "</p>";
+          if (asking) h += '<form class="au-form" id="au-nameform" style="margin-top:14px"><label for="au-nm">What should we call you?</label>' +
+            '<div class="au-row"><input class="input" id="au-nm" maxlength="40" autocomplete="nickname" placeholder="Your first name" data-first><button type="submit" class="btn"' + bz + ">Save</button></div>" + err + "</form>";
+          else if (!A.profile && !A.error) h += '<p class="au-p au-small">' + SPIN + "Setting up your account…</p>";
+          if (A.error) h += '<p class="au-err" role="alert">' + esc(A.error) + "</p>";
+          if (au.fresh) h += '<p class="au-tekir">' + A.avatarSvg(A.START, 40) + "<span>Your first character, <b>Tekir</b> the Istanbul street cat, now walks with you. Certify A1 to unlock the next one.</span></p>";
+          return h + '<button type="button" class="btn primary au-go" id="au-done" data-au="close"' + (asking ? "" : " data-first") + ">" + (au.fresh ? "Start learning" : "Continue learning") + "</button>";
+        }
+        if (A.status === "unavailable") {
+          return '<h2 class="au-h" id="auth-h">Let\'s try again in a moment</h2><p class="au-p">' + esc(A.error || "Online accounts can\'t be reached right now.") + "</p>" +
+            '<button type="button" class="btn primary au-go" data-au="retry" data-first>Try again</button>';
+        }
+        if (m === "sent") {
+          var k = A.sentKind, to = "<b>" + esc(A.sentTo) + "</b>";
+          return '<div role="status"><h2 class="au-h" id="auth-h">Check your inbox</h2><p class="au-p">' +
+            (k === "confirm" ? "We sent a link to " + to + " to confirm your email. Open it once to activate your account; after that, you just sign in with your email and password."
+              : k === "reset" ? "If an account exists for " + to + ", we sent it a link to choose a new password. Open it in this browser."
+              : "We sent a sign-in link to " + to + ". Open it in this browser to sign in here.") +
+            '</p><p class="au-p au-small">It can take a minute to arrive; look in your spam folder too.</p></div>' +
+            '<div class="au-btns"><button type="button" class="btn primary" data-au="close" data-first>OK, got it</button><button type="button" class="btn" data-au="again">Use another email</button></div>';
+        }
+        if (m === "forgot" || m === "link") {
+          return '<h2 class="au-h" id="auth-h">' + (m === "forgot" ? "Reset your password" : "Sign in with an email link") + "</h2>" +
+            '<p class="au-p" style="margin-bottom:14px">' + (m === "forgot" ? "Type your email and we\'ll send you a link to choose a new password." : "No password needed: the link signs you in, or creates your account if you don\'t have one yet.") + "</p>" +
+            '<form class="au-form" id="au-form" novalidate>' + email + err + go(m === "forgot" ? "Email me a reset link" : "Email me a sign-in link", "Sending…") + "</form>" +
+            '<p class="au-alts"><button type="button" class="linkbtn" data-au="mode-signin">' + (m === "forgot" ? "Back to sign in" : "Use my password instead") + "</button></p>";
+        }
+        var up = m === "signup";
+        h += '<div class="au-seg" role="group" aria-label="Account"><button type="button" data-au="mode-signup" aria-pressed="' + up + '">Create an account</button><button type="button" data-au="mode-signin" aria-pressed="' + !up + '">Sign in</button></div>' +
+          '<h2 class="sr" id="auth-h">' + (up ? "Create an account" : "Sign in") + "</h2>" +
+          '<form class="au-form" id="au-form" novalidate>' + email +
+          '<label for="au-pass">Password</label><div class="au-pw"><input class="input" type="' + (au.showPw ? "text" : "password") + '" id="au-pass" name="password" autocomplete="' + (up ? "new-password" : "current-password") + '" minlength="8" required' + (up ? ' aria-describedby="au-hint"' : "") + ">" +
+          '<button type="button" class="au-eye" data-au="eye" aria-pressed="' + au.showPw + '" aria-label="' + (au.showPw ? "Hide password" : "Show password") + '">' + (au.showPw ? EYE_OFF : EYE) + "</button></div>" +
+          (up ? '<p class="au-hint" id="au-hint">At least 8 characters</p>' : "") +
+          err + go(up ? "Create my account" : "Sign in", up ? "Creating your account…" : "Signing in…") + "</form>";
+        if (!up) h += '<p class="au-alts"><button type="button" class="linkbtn" data-au="mode-forgot">Forgot password?</button><button type="button" class="linkbtn" data-au="mode-link">Email me a sign-in link</button></p>';
+        return h + '<p class="au-fine">' + (up ? 'Free, no ads. What you\'ve done in this browser comes with you. <a href="/turkishprivacy.html">Privacy</a>' : "What you\'ve done in this browser is added to your account.") + "</p>";
+      }
+      // Redraws the dialog's body, keeping what's typed and where the cursor is (account updates arrive while typing).
+      function drawAuth() {
+        if (!dlg || !dlg.open) return;
+        var keep = {}, f = document.activeElement, had = !!f && f !== dlg && dlg.contains(f), fid = had ? f.id : null, sel = null;
+        ["au-email", "au-pass", "au-nm"].forEach(function (id) { if ($(id)) keep[id] = $(id).value; });
+        var asked = !!$("au-nm");
+        if (fid) { try { sel = [f.selectionStart, f.selectionEnd]; } catch (e) { sel = null; } }
+        $("auth-body").innerHTML = authHtml();
+        Object.keys(keep).forEach(function (id) { if ($(id)) $(id).value = keep[id]; });
+        if ($("au-email") && !keep["au-email"] && au.email) $("au-email").value = au.email;   // the address typed last, after an email was sent
+        if ((had || au.wantFocus) && !asked && $("au-nm")) { $("au-nm").focus(); au.wantFocus = false; }   // the name question just appeared
+        else if (fid && $(fid)) { $(fid).focus(); if (sel && sel[0] != null) { try { $(fid).setSelectionRange(sel[0], sel[1]); } catch (e) { /* type=email */ } } }
+        else if (had || au.wantFocus) focusFirst();   // what had focus is gone (another view), or nothing could take it last time
+        passHint();
+        au.sig = authSig();
+        moodAuth();
+      }
+      // The character and its speech bubble follow what's happening: Turkish first, then a word of English.
+      function moodAuth() {
+        var m = au.mode, pw = au.pwFocus && $("au-pass"), name = A.profile && A.profile.display_name, say;
+        var face = m === "done" && A.user ? "yay" : pw ? (au.showPw ? "peek" : "hide") : "";
+        if (face === "yay") say = name ? (au.fresh ? ["Memnun oldum, " + name + "!", "Nice to meet you!"] : ["Tekrar hoş geldin, " + name + "!", "Good to see you again."])
+          : [au.fresh ? "Aramıza hoş geldin!" : "Tekrar hoş geldin!", A.profile ? "What should I call you?" : au.fresh ? "Welcome aboard!" : "Good to see you again."];
+        else if (m === "done") say = ["Bir saniye…", "Opening your account."];
+        else if (au.oops || A.status === "unavailable") say = ["Hay aksi!", A.status === "unavailable" ? "I can't reach the accounts right now." : "Let's sort that out."];
+        else if (face === "hide") say = ["Bakmıyorum!", "I'm not looking, promise."];
+        else if (face === "peek") say = ["Birazcık bakıyorum…", "Just a tiny peek."];
+        else say = ({ signup: ["Hoş geldin!", "Let's make your free account. It only takes a moment."], signin: ["Tekrar hoş geldin!", "Sign in and pick up right where you left off."],
+                      forgot: ["Olur böyle şeyler.", "It happens! I'll send you a link to choose a new one."], link: ["Şifreye gerek yok!", "I'll email you a link that signs you in."],
+                      sent: ["E-postanı kontrol et!", "Your link is on its way."] })[m] || ["Merhaba!", ""];
+        var pic = $("auth-pic"), cls = "auth-pic" + (face ? " " + face : "") + (au.oops && face !== "yay" ? " oops" : "");
+        if (pic.className !== cls) pic.className = cls;
+        $("auth-bub").innerHTML = '<span class="hello-say"><span lang="tr">' + esc(say[0]) + '</span></span><span class="hello-sub">' + esc(say[1]) + "</span>";
+      }
+      function oops() {
+        au.oops = true;
+        var pic = $("auth-pic");
+        pic.classList.remove("oops"); void pic.offsetWidth;   // shake again on a second error
+        moodAuth();
+      }
+      function passHint() {
+        var p = $("au-pass"), hint = $("au-hint");
+        if (!p || !hint) return;
+        var ok = p.value.length >= 8;
+        hint.className = "au-hint" + (ok ? " ok" : "");
+        hint.innerHTML = ok ? ICON.check + " Good length" : p.value.length ? "At least 8 characters (" + (8 - p.value.length) + " more)" : "At least 8 characters";
+      }
+      if (dlg) {
+        dlg.addEventListener("submit", function (e) {
+          e.preventDefault();
+          if (au.busy) return;
+          if (e.target.id === "au-form") {
+            var m = au.mode, email = $("au-email").value, pw = $("au-pass") ? $("au-pass").value : "";
+            var run = m === "link" ? A.signIn(email) : m === "forgot" ? A.resetPassword(email) : m === "signup" ? A.signUp(email, pw) : A.signInPassword(email, pw);
+            au.busy = true; au.msg = null; au.oops = false; drawAuth();
+            run.then(function () {
+              au.busy = false;
+              if (A.sentTo) au.mode = "sent";
+              else { au.fresh = m === "signup"; au.mode = "done"; }
+              if (dlg.open) { drawAuth(); focusFirst(); }
+            }).catch(function (er) {
+              au.busy = false; au.msg = er.message;
+              if (!dlg.open) return;
+              drawAuth(); oops();
+              var bad = /password/i.test(er.message) && $("au-pass") ? $("au-pass") : $("au-email");
+              if (bad) { bad.focus(); try { bad.select(); } catch (x) { /* fine */ } }
+            });
+          }
+          if (e.target.id === "au-nameform") {
+            au.busy = true; au.msg = null; drawAuth();
+            A.setName($("au-nm").value).then(function () { au.busy = false; drawAuth(); focusFirst(); })
+              .catch(function (er) { au.busy = false; au.msg = er.message; drawAuth(); oops(); if ($("au-nm")) $("au-nm").focus(); });
+          }
+        });
+        dlg.addEventListener("click", function (e) {
+          var b = e.target.closest("[data-au]");
+          if (!b) return;
+          var act = b.dataset.au;
+          if (act === "close") { dlg.close(); return; }
+          if (/^mode-/.test(act)) { au.mode = act.slice(5); au.msg = null; au.oops = false; A.error = null; drawAuth(); focusFirst(); }
+          if (act === "again") {   // back to the form, the address selected so typing replaces it
+            A.sentTo = null; A.sentKind = null; au.mode = "signin"; drawAuth();
+            setTimeout(function () { var el = $("au-email"); if (el) { el.focus(); el.select(); } }, 0);
+          }
+          if (act === "retry") { A.error = null; drawAuth(); A.ensure().then(drawAuth, drawAuth); }
+          if (act === "eye") {
+            au.showPw = !au.showPw;
+            var p = $("au-pass");
+            if (p) p.type = au.showPw ? "text" : "password";
+            b.setAttribute("aria-pressed", String(au.showPw));
+            b.setAttribute("aria-label", au.showPw ? "Hide password" : "Show password");
+            b.innerHTML = au.showPw ? EYE_OFF : EYE;
+            if (p) { p.focus(); try { p.setSelectionRange(p.value.length, p.value.length); } catch (er) { /* fine */ } }
+            moodAuth();
+          }
+        });
+        // a click on the backdrop closes the dialog (only when the press started there too, not a text selection that ended there)
+        var downOnBackdrop = false;
+        dlg.addEventListener("mousedown", function (e) { downOnBackdrop = e.target === dlg; });
+        dlg.addEventListener("click", function (e) { if (e.target === dlg && downOnBackdrop) dlg.close(); downOnBackdrop = false; });
+        // the character covers its eyes while the password field (or its eye button) has focus
+        function trackFocus() {
+          setTimeout(function () {
+            var f = document.activeElement, on = !!f && (f.id === "au-pass" || f.dataset.au === "eye");
+            if (on !== au.pwFocus) { au.pwFocus = on; moodAuth(); }
+          }, 0);
+        }
+        dlg.addEventListener("focusin", trackFocus);
+        dlg.addEventListener("focusout", trackFocus);
+        dlg.addEventListener("input", function (e) {
+          if (e.target.id === "au-pass") passHint();
+          if (e.target.id === "au-email") au.email = e.target.value.trim();
+          if (au.oops) { au.oops = false; moodAuth(); }
+        });
+        dlg.addEventListener("close", function () {
+          au.busy = false; au.pwFocus = false; au.oops = false; au.wantFocus = false;
+          if (A && !A.user && au.mode !== "sent") A.error = null;
+          var hello = $("hello"), back = hello && hello.tagName === "A" ? hello : hello ? hello.querySelector('[data-auth="' + (au.opener || "signup") + '"]') : null;
+          if (back) back.focus();
+        });
+      }
+      // "Create an account" and "Sign in" on the welcome card, and the hero's link
+      document.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-auth]");
+        if (!b || !A) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+        e.preventDefault();
+        openAuth(b.dataset.auth, b);
+      });
+
       var wasSignedIn = null;
       if (A) A.onChange(function () {
+        if (dlg && dlg.open && authSig() !== au.sig) drawAuth();
         var signedIn = !!A.user;
         if (signedIn !== wasSignedIn) $("p-status").textContent = signedIn ? "Your progress is saved in this browser and in your online profile, so it follows you to other devices."
           : "Your progress is saved in this browser only. Export it to keep a copy, or create a profile (My Profile) to save it online.";
