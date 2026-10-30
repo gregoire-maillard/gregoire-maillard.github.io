@@ -108,7 +108,7 @@ Room for audio later: no `audio` field exists yet. When recordings are made, a c
 
 ### 5.1 Examples
 
-A lesson start, to show the renames (the rest of the lesson schema is unchanged):
+A lesson start, to show the renames (the rest of the lesson schema is unchanged; a real lesson has 10–14 exercises):
 
 ```json lesson
 {
@@ -128,13 +128,73 @@ A lesson start, to show the renames (the rest of the lesson schema is unchanged)
     { "tk": "otag", "en": "room", "pos": "noun" },
     { "tk": "nirede", "en": "where", "pos": "adv" }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "a1-u05-l01-e01",
+      "type": "mcq",
+      "points": ["gp-locative"],
+      "question": "How do you say **at school**?",
+      "options": ["mekdepde", "mekdepda", "mekdepte", "mekdebe"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The last vowel of *mekdep* is e, a front vowel, so the suffix takes e.",
+        "2": "The d of the locative never changes: *mekdepde*.",
+        "3": "*Mekdebe* means **to school**; you will meet it in unit 7."
+      },
+      "explain": "Front vowel e: *mekdep* + *-de* = *mekdepde*."
+    },
+    {
+      "id": "a1-u05-l01-e02",
+      "type": "cloze",
+      "points": ["gp-locative"],
+      "text": "Aýna otag___, Merdan öý___.",
+      "en": "Aýna is in the room, Merdan is at home.",
+      "blanks": [
+        { "accept": ["da"], "reject": [{ "answer": "de", "why": "The last vowel of *otag* is a, a back vowel, so the suffix takes a: *otagda*." }] },
+        { "options": ["de", "da"], "answer": 0 }
+      ],
+      "explain": "*otag* has the back vowel a → *-da*; *öý* has the front vowel ö → *-de*."
+    },
+    {
+      "id": "a1-u05-l01-e03",
+      "type": "translate",
+      "points": ["gp-locative", "gp-copula-present"],
+      "from": "en",
+      "prompt": "I am at home.",
+      "accept": ["Men öýde."],
+      "reject": [{ "answer": "Öýde.", "why": "Nothing in *öýde* says who is at home, so keep the subject: *Men öýde*." }],
+      "explain": "*öý* + *-de* (at home); after *men*, **to be** is not written."
+    },
+    {
+      "id": "a1-u05-l01-e04",
+      "type": "translate",
+      "points": ["gp-locative"],
+      "from": "tk",
+      "prompt": "Mugallym mekdepde.",
+      "accept": ["The teacher is at school.", "The teacher is [at|in] the school", "The teacher's at (the) school"]
+    },
+    {
+      "id": "a1-u05-l01-e05",
+      "type": "wordbank",
+      "from": "en",
+      "prompt": "Where is the school?",
+      "text": "Mekdep nirede?",
+      "answer": ["mekdep", "nirede"],
+      "distractors": ["öý", "bar", "otagda"]
+    },
+    {
+      "id": "a1-u05-l01-e06",
+      "type": "match",
+      "pairs": [["öý", "house, home"], ["mekdep", "school"], ["otag", "room"], ["nirede", "where"]]
+    }
+  ]
 }
 ```
 
 A `tip` callout in a grammar guide:
 
-```json
+```json block
 { "type": "callout", "kind": "tip", "title": "One word, not two", "text": "The question ending is written onto the word it asks about: *Sen talypmy?* (Are you a student?), *Gelýärsiňmi?* (Are you coming?)" }
 ```
 
@@ -190,16 +250,53 @@ Card notes never mention Turkish (section 1). They may point out two Turkmen wor
 
 ### 5.9 User progress
 
-As turkish/PROJECT.md 5.9, under the keys `tkm:v1:course`, `tkm:v1:cards` and `tkm:v1:settings`, with the card directions `tk-en` and `en-tk`. Settings drop everything about speech. The export file's `app` field is `"daily-turkmen"`, and import refuses a Daily Turkish file with a clear message (and the Turkish course refuses a Turkmen one).
+As turkish/PROJECT.md 5.9, under the keys `tkm:v1:course`, `tkm:v1:cards` and `tkm:v1:settings`, with the card directions `tk-en` and `en-tk`. Settings drop everything about speech (`tts`, `ttsRate`). The export file's `app` field is `"daily-turkmen"`, and import refuses a Daily Turkish file with a clear message (and the Turkish course refuses a Turkmen one).
+
+```json progress
+{
+  "app": "daily-turkmen",
+  "schema": 1,
+  "exported": "2026-10-13T21:40:00.000Z",
+  "course": {
+    "schema": 1,
+    "updated": "2026-10-13T21:35:12.000Z",
+    "lessons": { "a1-u01-l01": { "first": "2026-10-12", "last": "2026-10-13T21:30:00.000Z", "runs": 2, "best": 0.9, "xp": 23 } },
+    "units": { "a1-u01": { "guide": "2026-10-12T20:00:00.000Z" } },
+    "mistakes": { "a1-u01-l01-e04": { "n": 1, "ok": 1, "last": "2026-10-13T21:28:00.000Z" } },
+    "xp": { "total": 23, "days": { "2026-10-12": 13, "2026-10-13": 10 } },
+    "streak": { "current": 2, "best": 2, "last": "2026-10-13" }
+  },
+  "cards": {
+    "schema": 1,
+    "updated": "2026-10-13T21:35:12.000Z",
+    "cards": {
+      "fc-0001:tk-en": { "s": "review", "due": 1792195200000, "ivl": 1, "ease": 2.5, "step": 0, "reps": 3, "lapses": 0, "last": 1792100000000 },
+      "fc-0002:tk-en": { "s": "learning", "due": 1792100600000, "ivl": 0, "ease": 2.5, "step": 1, "reps": 1, "lapses": 0, "last": 1792100000000 }
+    },
+    "days": { "2026-10-13": { "new": 2, "reviews": 4, "again": 1, "lapses": 1, "mature": 0, "matureLapses": 0 } }
+  },
+  "settings": {
+    "schema": 1,
+    "dailyGoal": 20,
+    "newPerDay": 15,
+    "reviewsPerDay": 200,
+    "directions": ["tk-en", "en-tk"],
+    "dayStartHour": 4,
+    "keyboardBar": true,
+    "unlockAll": false,
+    "onlyTaughtWords": false
+  }
+}
+```
 
 ## 6. Runtime behaviour
 
 As turkish/PROJECT.md section 6 (path and unlocking, lesson flow, XP and streak, answer checking, flashcard scheduling), with these differences:
 
-- **6.4 Answer checking.** Normalization lowercases with plain `toLowerCase()` (Turkmen has no dotted/dotless i pair), applies NFC, and for the "almost" verdict folds the eight Turkmen letters to their base (ä→a, ç→c, ž→z, ň→n, ö→o, ş→s, ü→u, ý→y), so an answer right except for missing marks is "almost": shown the right spelling, not counted wrong in a lenient exercise. The question particle typed apart (*talyp my*) is "almost", with the note that Turkmen writes it attached.
+- **6.4 Answer checking.** Normalization lowercases with plain `toLowerCase()` (Turkmen has no dotted/dotless i pair), applies NFC, and for the "almost" verdict folds the eight Turkmen letters to their base (ä→a, ç→c, ž→z, ň→n, ö→o, ş→s, ü→u, ý→y), so an answer right except for missing marks is "almost": shown the right spelling, not counted wrong in a lenient exercise. The question particle typed apart (*talyp my*) is "almost", with the note that Turkmen writes it attached. As in turkish/PROJECT.md 6.4, the letter fold applies in lenient mode only (`translate` by default; `cloze` and `conjugate` are strict), and an answer right but for an apostrophe (*Aşgabat'da*) is "almost" (step 5); the particle typed apart is "almost" in both modes. No other letters are folded: e and ä stay apart, ç and j, and letters outside the Turkmen alphabet (ı, ğ, c, v…) make an answer wrong. The checker's notes are `apostrophe`, `Turkmen letters` and `particle` (and `typo` for English answers).
 - **6.5 Speech and typing.** No speech (section 2). Typing as in section 3.
 - **6.6 Flashcards.** Identical, with directions `tk-en` and `en-tk`; nothing is read aloud.
-- **6.7 `turkmen.js`** exposes `window.TKM` with the same members as `TRK`, minus speech.
+- **6.7 `turkmen.js`** exposes `window.TKM` with the same members as `TRK`, minus speech (no `tts`), renamed for Turkmen: `tkLower`, `tkUpper` and `tkRich` (for `trLower`, `trUpper`, `trRich`), the CSS classes `tkm-nw`, `tkm-seg` and `tkm-soon`, and an achievement's Turkmen name in `tk`. It adds `joinParticle`, the checker's joining of a particle typed apart. Its page links are relative (`index.html`, `lesson.html`, `guide.html`, `cards.html`, section 3); a page that sets `window.TKM_STATIC_GUIDES = true` before loading it links guides to `guides/<id>.html` instead (for TK-PUBLISH).
 
 ## 7. Content style rules
 
@@ -289,7 +386,7 @@ node scripts/turkmen/morph-test.mjs                  # test turkmen-morph.js on 
 
 Same errors and warnings as turkish/PROJECT.md 8, with the Turkmen letter rules of 7.1 in place of the Turkish ones: errors for the Turkish-only letters (ı, ğ, İ, â, î, û), `listen` exercises, the word "Turkish" in lesson, guide, interlude or card text (a warning, so a writer checks that it is a brief factual remark in a guide or interlude, not a bridge from Turkish), a malformed `scripts/turkmen/tm-wordlist.tsv` or a card that differs from its row; warnings for a question particle written apart (*talyp my*), an apostrophe in Turkmen text, *y*/*ý* patterns that look wrong (a *ý* between two consonants, a *y* starting a word before a vowel), a future or necessitative sentence with no subject in an `accept[0]`.
 
-Until TK-BUILD-1 has forked the validator, a conversation checks its JSON with a short throwaway script (schema shape, letters, wordlist agreement) and says so in the log.
+The morphology checks of turkish/PROJECT.md 8 (conjugate cells and morph tiles against the engine) are off until TK-MORPH hooks `turkmen-morph.js` into the validator; the summary line says "morphology engine not loaded" and counts the exercises not checked. `--examples` validates the `json lesson`, `json block`, `json flashcards` and `json progress` examples of this file.
 
 ## 9. Workflow for a conversation
 
