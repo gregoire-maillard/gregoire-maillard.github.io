@@ -13,13 +13,16 @@
 //   turkish.html, index.html                                  the hub, with the path filled in
 //   words/index.html, words/1-100.html … words/901-1000.html  the 1,000 flashcard words as a list (the cards page
 //                                                            shows them only through JavaScript); footers link to it
+//   404.html                                                  the page for addresses that don't exist (noindex)
+//   + schema.org JSON-LD: WebSite and Organization on the hub, BreadcrumbList on the guides, the index and the word list
 //   sitemap.xml                                               the hub, the index, cards, privacy, every written guide,
 //                                                            the word list
+// and changes every href="/turkish.html…" in the mirror to "/…" (index.html is the hub, so it keeps one address).
 // The pages keep their scripts: in a browser they render again as usual (progress, speaker buttons, quiz).
 // Exits 1 if any page fails to render, so the workflow publishes nothing rather than a broken mirror.
 
 import { createServer } from "node:http";
-import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync, readdirSync } from "node:fs";
 import { join, extname, resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 import { chromium } from "playwright";
@@ -77,6 +80,22 @@ function lastmod(files) {
 const WORDS_LINK = '<p style="margin-bottom:6px"><a href="/words/">The 1,000 most common Turkish words</a></p>';
 const addWordsLink = (src, what) => swap(src, /<footer class="dt-foot">/, `<footer class="dt-foot">${WORDS_LINK}`, `footer of ${what}`);
 
+// ── structured data (schema.org JSON-LD), for the mirror only ──
+// The home page says what the site is called (Google shows that name above its results) and who makes it;
+// guides and word-list pages carry a breadcrumb trail (Daily Turkish › Grammar guides › A1 · Unit 5: …).
+const ld = (o) => `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", ...o }).replace(/</g, "\\u003c")}</script>`;
+const crumbs = (trail) => ld({ "@type": "BreadcrumbList", itemListElement: trail.map(([name, item], i) => ({ "@type": "ListItem", position: i + 1, name, item })) });
+const HOME_LD = ld({ "@graph": [
+  { "@type": "WebSite", "@id": SITE + "/#website", name: "Daily Turkish", alternateName: "dailyturkish.app", url: SITE + "/", inLanguage: "en",
+    description: "A free Turkish course from A1 to C2: short lessons, grammar guides, culture notes and 1,000 flashcards.", publisher: { "@id": SITE + "/#org" } },
+  { "@type": "Organization", "@id": SITE + "/#org", name: "Daily Turkish", url: SITE + "/",
+    logo: { "@type": "ImageObject", url: SITE + "/assets/img/daily-turkish-apple-touch-icon.png", width: 180, height: 180 },
+    founder: { "@type": "Person", name: "Grégoire Maillard", url: "https://gregoiremaillard.com/" },
+    sameAs: ["https://buymeacoffee.com/dailyturkish"] }
+] });
+const addLd = (src, block, what) => swap(src, /\n\s*<\/head>/, `\n    ${block}\n  </head>`, `</head> of ${what}`);
+const HOME_CRUMB = ["Daily Turkish", SITE + "/"];
+
 // ── the word list: words/ and words/<from>-<to>.html, built from the flashcard deck ──
 // The page frame (Google tag, icons, styles, header bar, footer) is taken from turkishcards.html, so the list looks like
 // the flashcards and follows any change to them. Each word: rank, Turkish, part of speech, meanings, example, forms,
@@ -125,8 +144,9 @@ function one(src, re, what) {
   if (m.length !== 1) throw new Error(`template: expected one ${what}, found ${m.length}`);
   return m[0];
 }
-// Writes the eleven pages into OUT/words; returns their sitemap entries.
-function writeWordList(cardsSrc, deck, notes, unitInfo, fileOfRank) {
+// The frame of a generated page (Google tag, icons, styles, header bar, footer), taken from turkishcards.html.
+// m: { title, description, canonical (none: noindex, as for the 404 page), kicker, h1, body, noTab (no tab marked current) }
+function pageFrame(cardsSrc) {
   const headSrc = cardsSrc.slice(0, cardsSrc.indexOf("</head>"));
   const gtag = one(headSrc, /<!-- Google tag \(gtag\.js\) -->[\s\S]*?<\/script>\s*<script>[\s\S]*?<\/script>/, "Google tag");
   const icons = headSrc.match(/<link rel="(?:icon|apple-touch-icon|preload)"[^>]*>/g) || [];
@@ -137,9 +157,9 @@ function writeWordList(cardsSrc, deck, notes, unitInfo, fileOfRank) {
   if (!/class="at-hdr"/.test(header)) throw new Error("template: no header bar before <main> in turkishcards.html");
   const footer = one(cardsSrc, /<footer class="dt-foot">[\s\S]*?<\/footer>/, "footer");
 
-  const frame = (m) => `<!doctype html>
+  return (m) => `<!doctype html>
 <!-- © 2026 Grégoire Maillard. All rights reserved, except the order of the words (CC BY-SA 4.0): see /LICENSE.txt -->
-<!-- Generated by scripts/turkish/static.mjs from assets/data/turkish/flashcards/: edit the cards, not this page. -->
+<!-- Generated by scripts/turkish/static.mjs: edit the script or its data (the word list: assets/data/turkish/flashcards/), not this page. -->
 <html lang="en">
   <head>
 ${gtag}
@@ -148,16 +168,16 @@ ${gtag}
     <meta name="description" content="${attr(m.description)}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     ${icons.join("\n    ")}
-    <link rel="canonical" href="${attr(m.canonical)}">
+    ${m.canonical ? `<link rel="canonical" href="${attr(m.canonical)}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Daily Turkish">
     <meta property="og:title" content="${attr(m.title)}">
     <meta property="og:description" content="${attr(m.description)}">
-    <meta property="og:url" content="${attr(m.canonical)}">
+    <meta property="og:url" content="${attr(m.canonical)}">` : '<meta name="robots" content="noindex">'}
     ${styles.join("\n    ")}
-    <style>${WORDS_CSS}</style>
+    <style>${WORDS_CSS}</style>${m.ld ? "\n    " + m.ld : ""}
   </head>
-  <body>${header}<main class="wrap">
+  <body>${m.noTab ? header.replace(/ aria-current="page"/, "") : header}<main class="wrap">
       <div class="head"><div><p class="kicker">${m.kicker}</p><h1>${text(m.h1)}</h1></div></div>
 ${m.body}
     </main>
@@ -165,6 +185,9 @@ ${m.body}
   </body>
 </html>
 `;
+}
+// Writes the eleven pages into OUT/words; returns their sitemap entries.
+function writeWordList(frame, deck, notes, unitInfo, fileOfRank) {
   const ranges = [];
   for (let from = 1; from <= deck.length; from += 100) ranges.push({ from, to: Math.min(from + 99, deck.length), file: `${from}-${Math.min(from + 99, deck.length)}.html` });
   const tr = (s) => `<span lang="tr">${text(s)}</span>`;
@@ -203,6 +226,7 @@ ${m.body}
       description: (first ? `The 100 most common Turkish words (${some}…)` : `Turkish words ${r.from} to ${r.to} by frequency (${some}…)`) +
         ": English meanings, an example sentence for each, and verb forms.",
       canonical: `${SITE}/words/${r.file}`,
+      ld: crumbs([HOME_CRUMB, ["Word list", SITE + "/words/"], [`Words ${r.from}–${r.to}`, `${SITE}/words/${r.file}`]]),
       kicker: `<a href="/words/">Turkish · 1,000 words</a>`,
       body: `      <p class="wl-intro">${first ? "The 100 Turkish words you'll hear most often" : `Turkish words ${r.from} to ${r.to}, by how often they're used`}, each with its meaning in English, an example sentence and, for verbs, the main forms (he, she or it).${taught ? ` ${taught === words.length ? "All" : taught} of them are taught in the lessons of the course.` : ""}</p>
       ${cta}
@@ -221,6 +245,7 @@ ${words.map((c) => item(c, notes[c.rank - 1])).join("\n")}
     h1: "The 1,000 most common Turkish words",
     description: "The 1,000 most common Turkish words, ranked by how often they're used in film and TV dialogue, each with its English meanings and an example sentence.",
     canonical: `${SITE}/words/`,
+    ld: crumbs([HOME_CRUMB, ["Word list", SITE + "/words/"]]),
     kicker: "Turkish · Word list",
     body: `      <p class="wl-intro">These are the 1,000 Turkish words you'll meet most often, ranked by how often they're used in film and TV dialogue. Each one comes with its English meanings, a natural example sentence and, where it helps, its forms and a short note. Together they make up the Daily Turkish flashcard deck.</p>
       ${cta}
@@ -275,11 +300,19 @@ function guidePage(r, id, noindex) {
   s = swap(s, /<div id="main"><p class="loading">[^<]*<\/p><\/div>/, `<div id="main">${r.main}</div>`, "#main");
   s = swap(s, /\n\s*<noscript><p class="notice">The grammar guides need JavaScript to show\.<\/p><\/noscript>/, "", "noscript");
   if (id) s = swap(s, /<body>/, `<body data-guide="${attr(id)}">`, "<body>");
+  const trail = [HOME_CRUMB, ["Grammar guides", SITE + "/turkishguide.html"]];
+  if (id) {
+    const m = /^(.+)-(grammar|culture)$/.exec(id), u = unitMeta.get(m[1]);
+    trail.push([`${u.label}: ${m[2] === "grammar" ? u.title : "Interlude, " + u.interlude}`, `${SITE}/guides/${id}.html`]);
+  }
+  if (!noindex) s = addLd(s, crumbs(trail), id || "turkishguide.html");
   return s;
 }
 
 const index = JSON.parse(readFileSync(join(OUT, "assets/data/turkish/index.json"), "utf8"));
 const units = index.levels.flatMap((lv) => lv.units);
+const unitMeta = new Map();
+index.levels.forEach((lv) => lv.units.forEach((u, i) => unitMeta.set(u.id, { label: `${lv.cefr} · Unit ${i + 1}`, title: u.title, interlude: u.interlude })));
 mkdirSync(join(OUT, "guides"), { recursive: true });
 const sitemap = [];
 let written = 0, soon = 0, wordPages = [];
@@ -308,7 +341,7 @@ try {
     s = swap(s, /<span id="path-meta"><\/span>/, `<span id="path-meta">${hub.pathMeta}</span>`, "#path-meta");
     s = swap(s, /<nav class="lvl-nav" id="lvl-nav" aria-label="Levels"><\/nav>/, `<nav class="lvl-nav" id="lvl-nav" aria-label="Levels">${hub.lvlNav}</nav>`, "#lvl-nav");
     s = swap(s, /<div id="levels"><\/div>/, `<div id="levels">${hub.levels}</div>`, "#levels");
-    writeFileSync(join(OUT, f), addWordsLink(s, f));
+    writeFileSync(join(OUT, f), addLd(addWordsLink(s, f), HOME_LD, f));
   }
 
   // ── the flashcards page links to the word list (footer, and next to Browse's note on ranks) ──
@@ -324,7 +357,21 @@ try {
   const notes = await page.evaluate((ns) => ns.map((n) => (n ? window.TRK.rich(n) : "")), deck.map((c) => c.note || ""));
   const unitInfo = new Map();
   index.levels.forEach((lv) => lv.units.forEach((u, i) => { if (u.status === "ready") unitInfo.set(u.id, { id: u.id, label: `${lv.cefr} · Unit ${i + 1}`, title: u.title }); }));
-  wordPages = writeWordList(cards, deck, notes, unitInfo, fileOfRank);
+  const frame = pageFrame(cards);
+  wordPages = writeWordList(frame, deck, notes, unitInfo, fileOfRank);
+
+  // ── 404.html: GitHub Pages serves it for any address that doesn't exist ──
+  writeFileSync(join(OUT, "404.html"), frame({
+    title: "Page not found · Daily Turkish", description: "This page doesn't exist on Daily Turkish.", noTab: true,
+    kicker: "Not found", h1: "This page doesn't exist",
+    body: `      <p class="wl-intro">The address may be mistyped, or the page has moved. Everything in the course is one click away:</p>
+      <ul class="wl-grid">
+        <li><a href="/"><b>The course</b><span>Lessons from A1 to C2</span></a></li>
+        <li><a href="/turkishguide.html"><b>Grammar guides</b><span>Every guide and grammar point</span></a></li>
+        <li><a href="/turkishcards.html"><b>Flashcards</b><span>The 1,000 most useful words, Anki-style</span></a></li>
+        <li><a href="/words/"><b>Word list</b><span>The 1,000 most common Turkish words</span></a></li>
+      </ul>`
+  }));
 } catch (e) {
   console.error("turkish-static: " + e.message);
   await browser.close(); server.close();
@@ -332,6 +379,20 @@ try {
 }
 await browser.close();
 server.close();
+
+// ── one address for the hub: index.html serves "/", so every link to /turkish.html becomes "/" ──
+// (pages rendered above already use "/": turkish.js sets PAGES.hub to "/" on dailyturkish.app; this catches the
+// header bars and other links written in the HTML itself)
+let relinked = 0;
+(function relink(dir) {
+  for (const name of readdirSync(dir)) {
+    const f = join(dir, name);
+    if (statSync(f).isDirectory()) { if (name !== "assets") relink(f); continue; }
+    if (!name.endsWith(".html")) continue;
+    const s = readFileSync(f, "utf8"), t = s.replace(/href="\/turkish\.html(?=["#])/g, 'href="/');
+    if (t !== s) { writeFileSync(f, t); relinked++; }
+  }
+})(OUT);
 
 // ── sitemap.xml ──
 const head = [
@@ -343,4 +404,4 @@ const head = [
 writeFileSync(join(OUT, "sitemap.xml"), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   head.concat(sitemap, wordPages).map((x) => `  <url><loc>${text(x.loc)}</loc><lastmod>${x.lastmod}</lastmod></url>`).join("\n") + "\n</urlset>\n");
 
-console.log(`turkish-static: ${written} guide pages, ${soon} coming-soon pages (noindex), ${wordPages.length} word-list pages, index and hub filled in, sitemap with ${head.length + sitemap.length + wordPages.length} URLs`);
+console.log(`turkish-static: ${written} guide pages, ${soon} coming-soon pages (noindex), ${wordPages.length} word-list pages, 404 page, links to /turkish.html made "/" in ${relinked} pages, index and hub filled in, sitemap with ${head.length + sitemap.length + wordPages.length} URLs`);

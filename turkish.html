@@ -12,8 +12,7 @@
   gtag('config', 'G-HT8J8ZFYTB');
 </script>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Learn Turkish, A1 to C2</title>
+    <title>Daily Turkish · Free Turkish course, A1 to C2</title>
     <meta name="description" content="Free Turkish course from A1 to C2: short lessons with instant feedback, grammar guides, culture notes and 1,000 flashcards with spaced repetition.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" sizes="64x64" href="/assets/img/daily-turkish-favicon.png">
@@ -22,7 +21,7 @@
     <link rel="canonical" href="https://dailyturkish.app/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Daily Turkish">
-    <meta property="og:title" content="Learn Turkish, A1 to C2">
+    <meta property="og:title" content="Daily Turkish · Free Turkish course, A1 to C2">
     <meta property="og:description" content="Short lessons, a grammar guide and a culture interlude in every unit, and a 1,000-word flashcard deck.">
     <meta property="og:url" content="https://dailyturkish.app/">
 
@@ -129,9 +128,9 @@
                       -webkit-mask-image: radial-gradient(110% 120% at 0 0, #000 10%, transparent 62%); mask-image: radial-gradient(110% 120% at 0 0, #000 10%, transparent 62%); }
       @media (max-width: 599px) { .hero::before { inset: -20px 0 -12px -16px; } }
       .kicker { font-size: 12px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 6px; }
-      .hero h1 { font-size: 32px; line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; }
+      .hero h1, .hero .h1 { font-size: 32px; line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; }
       .hero .lede { margin-top: 10px; font-size: 16px; line-height: 1.55; color: var(--body); }
-      @media (max-width: 599px) { .hero { margin-bottom: 20px; } .hero h1 { font-size: 27px; } .hero .lede { font-size: 15px; } }
+      @media (max-width: 599px) { .hero { margin-bottom: 20px; } .hero h1, .hero .h1 { font-size: 27px; } .hero .lede { font-size: 15px; } }
 
       .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; grid-template-rows: auto 1fr; gap: 28px 40px; align-items: start; }   /* extra height from the right column goes below the path, not under the title */
       .layout > .hero { grid-column: 1; grid-row: 1; margin-bottom: 0; }   /* the right column starts level with the title */
@@ -717,7 +716,7 @@
       <section class="settings" id="settings" aria-labelledby="h-settings" hidden>
         <header class="hero">
           <p class="kicker">Turkish · A1 → C2</p>
-          <h1 id="h-settings">Settings</h1>
+          <h2 class="h1" id="h-settings">Settings</h2>
           <p class="lede">Saved in this browser, with your progress. They apply to the lessons and the flashcards.</p>
         </header>
         <div class="set-grid">
@@ -779,7 +778,7 @@
       <section class="profile" id="profile" aria-labelledby="h-profile" hidden>
         <header class="hero">
           <p class="kicker">Turkish · A1 → C2</p>
-          <h1 id="h-profile">My profile</h1>
+          <h2 class="h1" id="h-profile">My profile</h2>
           <p class="lede" id="pf-lede">Your level, your XP, and how far you've come in lessons and words.</p>
         </header>
         <div class="pf-grid">
@@ -806,7 +805,7 @@
       <section class="about" id="about" aria-labelledby="h-about" hidden>
         <header class="hero">
           <p class="kicker">Turkish · A1 → C2</p>
-          <h1 id="h-about">About Daily Turkish</h1>
+          <h2 class="h1" id="h-about">About Daily Turkish</h2>
           <p class="lede">A personal project by Grégoire Maillard.</p>
         </header>
         <div class="about-body">
@@ -1111,7 +1110,7 @@
         [["course", "tab-course"], ["settings", "tab-settings"], ["profile", "tab-profile"], ["about", "tab-about"]].forEach(function (p) {
           if (p[0] === v) $(p[1]).setAttribute("aria-current", "page"); else $(p[1]).removeAttribute("aria-current");
         });
-        document.title = v === "about" ? "About · Daily Turkish" : v === "settings" ? "Settings · Learn Turkish" : v === "profile" ? "My Profile · Learn Turkish" : TITLE;
+        document.title = v === "about" ? "About · Daily Turkish" : v === "settings" ? "Settings · Daily Turkish" : v === "profile" ? "My Profile · Daily Turkish" : TITLE;
         if (v === "profile") { if (A) A.ensure().catch(function () {}); renderProfile(); settleFresh(); }
         return v !== "course";
       }

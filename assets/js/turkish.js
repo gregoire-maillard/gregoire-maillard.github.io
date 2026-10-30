@@ -125,6 +125,8 @@
   function staticGuides() {
     return !!(root && (root.TRK_STATIC_GUIDES === true || (root.location && /(^|\.)dailyturkish\.app$/.test(root.location.hostname))));
   }
+  // On dailyturkish.app the course's home is "/" (index.html is the hub): link there, not to its duplicate /turkish.html.
+  if (staticGuides()) C.PAGES.hub = "/";
   function guidePath(id) { return C.GUIDES + id + ".html"; }
   function guideHref(id, hash) { return (staticGuides() ? guidePath(id) : C.PAGES.guide + "?id=" + id) + (hash ? "#" + hash : ""); }
 

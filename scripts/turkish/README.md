@@ -57,6 +57,8 @@ A content conversation is done when `--batch <id>` reports its units complete wi
 - `turkishguide.html` (the index) and the hub (`turkish.html`, `index.html`) with the path filled in.
 - `words/index.html` and `words/1-100.html` … `words/901-1000.html`: the 1,000 flashcard words as a list, 100 per page, built from `assets/data/turkish/flashcards/` (rank, word, part of speech, meanings, example, forms, note, level, the unit that first teaches it), in the frame of `turkishcards.html`, with the CC BY-SA credit for the order of the list. The footers of the hub, the guides and the flashcards page, and Browse's note on ranks, link to it (in the mirror only).
 - `sitemap.xml`: the hub, the index, the flashcards, the privacy page, every written guide and the word list.
+- `404.html`, the page GitHub Pages shows for addresses that don't exist (noindex), with links into the course.
+- Every `href="/turkish.html…"` in the mirror becomes `"/…"`, since `index.html` is the hub (turkish.js does the same for the links it writes, on dailyturkish.app).
 
 The pages keep their scripts, so in a browser they render again with the learner's progress. Links go to `guides/…` on dailyturkish.app only (`TRK.guideHref`); gregoiremaillard.com and the iPhone app keep `turkishguide.html?id=`, and every guide's canonical URL is its dailyturkish.app page. If a page fails to render, the script exits 1 and the workflow publishes nothing. To try it locally, build the mirror folder as the workflow does, then `npm install --no-save playwright && npx playwright install chromium && node scripts/turkish/static.mjs out`.
 
