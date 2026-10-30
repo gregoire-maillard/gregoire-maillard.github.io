@@ -13,7 +13,11 @@
 //   turkish.html, index.html                                  the hub, with the path filled in
 //   words/index.html, words/1-100.html … words/901-1000.html  the 1,000 flashcard words as a list (the cards page
 //                                                            shows them only through JavaScript); footers link to it
+//   verbs/index.html, verbs/<verb>.html                       the 100 most common verbs, conjugated (static-verbs.mjs)
+//   grammar-cheat-sheet.html                                  grammar on one page (static-cheatsheet.mjs)
 //   404.html                                                  the page for addresses that don't exist (noindex)
+//   assets/img/og/<page>.jpg                                  share images (1200×630): one per written guide and word-list
+//                                                            page, daily-turkish.jpg for the rest; og:image on every page
 //   + schema.org JSON-LD: WebSite and Organization on the hub, BreadcrumbList on the guides, the index and the word list
 //   sitemap.xml                                               the hub, the index, cards, privacy, every written guide,
 //                                                            the word list
@@ -26,6 +30,10 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync, readdirSy
 import { join, extname, resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 import { chromium } from "playwright";
+import { createRequire } from "node:module";
+import { writeVerbPages } from "./static-verbs.mjs";
+import { cheatSheetBody, CHEAT_CSS } from "./static-cheatsheet.mjs";
+const M = createRequire(import.meta.url)("../../assets/js/turkish-morph.js");   // the morphology engine, for the verb pages and the cheat sheet
 
 const SITE = "https://dailyturkish.app";
 const OUT = resolve(process.argv[2] || "");
@@ -77,7 +85,7 @@ function lastmod(files) {
 }
 // The footer of the mirror's pages gets a line linking to the word list (dailyturkish.app only: gregoiremaillard.com and
 // the iPhone app have no words/ pages).
-const WORDS_LINK = '<p style="margin-bottom:6px"><a href="/words/">The 1,000 most common Turkish words</a></p>';
+const WORDS_LINK = '<p style="margin-bottom:6px"><a href="/words/">1,000 common words</a> · <a href="/verbs/">100 verbs conjugated</a> · <a href="/grammar-cheat-sheet.html">Grammar cheat sheet</a></p>';
 const addWordsLink = (src, what) => swap(src, /<footer class="dt-foot">/, `<footer class="dt-foot">${WORDS_LINK}`, `footer of ${what}`);
 
 // ── structured data (schema.org JSON-LD), for the mirror only ──
@@ -175,7 +183,7 @@ ${gtag}
     <meta property="og:description" content="${attr(m.description)}">
     <meta property="og:url" content="${attr(m.canonical)}">` : '<meta name="robots" content="noindex">'}
     ${styles.join("\n    ")}
-    <style>${WORDS_CSS}</style>${m.ld ? "\n    " + m.ld : ""}
+    <style>${WORDS_CSS}</style>${m.css ? "\n    <style>" + m.css + "</style>" : ""}${m.ld ? "\n    " + m.ld : ""}
   </head>
   <body>${m.noTab ? header.replace(/ aria-current="page"/, "") : header}<main class="wrap">
       <div class="head"><div><p class="kicker">${m.kicker}</p><h1>${text(m.h1)}</h1></div></div>
@@ -187,7 +195,7 @@ ${m.body}
 `;
 }
 // Writes the eleven pages into OUT/words; returns their sitemap entries.
-function writeWordList(frame, deck, notes, unitInfo, fileOfRank) {
+function writeWordList(frame, deck, notes, unitInfo, fileOfRank, verbLinks) {
   const ranges = [];
   for (let from = 1; from <= deck.length; from += 100) ranges.push({ from, to: Math.min(from + 99, deck.length), file: `${from}-${Math.min(from + 99, deck.length)}.html` });
   const tr = (s) => `<span lang="tr">${text(s)}</span>`;
@@ -209,7 +217,7 @@ function writeWordList(frame, deck, notes, unitInfo, fileOfRank) {
             <p class="wl-en">${c.en.map(text).join("; ")}</p>
             <div class="ex"><p class="tr" lang="tr">${text(c.ex.tr)}</p><p class="en">${text(c.ex.en)}</p></div>` +
       (forms ? `\n            <p class="wl-forms">${forms}</p>` : "") + (note ? `\n            <p class="wl-note">${note}</p>` : "") + `
-            <p class="wl-meta"><span class="lv-tag">${text(c.level.toUpperCase())}</span>${u ? `<span>First taught in <a href="/guides/${u.id}-grammar.html">${text(u.label)}: ${text(u.title)}</a></span>` : ""}</p>
+            <p class="wl-meta"><span class="lv-tag">${text(c.level.toUpperCase())}</span>${u ? `<span>First taught in <a href="/guides/${u.id}-grammar.html">${text(u.label)}: ${text(u.title)}</a></span>` : ""}${verbLinks.has(c.tr) ? `<span>· <a href="${verbLinks.get(c.tr)}">Conjugation</a></span>` : ""}</p>
           </div>
         </li>`;
   };
@@ -257,6 +265,55 @@ ${ranges.map((r) => `        <li><a href="/words/${r.file}"><b>Words ${r.from}�
   writeFileSync(join(OUT, "words", "index.html"), frame(hub));
   out.unshift({ loc: hub.canonical, lastmod: lastmod([...new Set(deck.map((c) => fileOfRank(c.rank)))]) });
   return out;
+}
+
+// ── share images ──
+// Each card is a small HTML page drawn in the headless browser and saved as JPEG: the level's colour (İznik palette,
+// as in the course), the logo and name, a kicker, the title (shrunk to fit three lines) and, in Lora italic, the
+// Turkish title of the unit or the first words of the list.
+const LEVEL_COLOUR = { a1: "#11847f", a2: "#2452a0", b1: "#2b7d50", b2: "#c2462c", c1: "#6c3f9e", c2: "#b8861a" };
+async function drawShareCards(cardsSrc) {
+  const logo = one(cardsSrc, /<svg class="at-logo"[\s\S]*?<\/svg>/, "logo in the header bar").replace(/ width="28" height="28"/, ' width="64" height="64"');
+  mkdirSync(join(OUT, "assets/img/og"), { recursive: true });
+  const card = await context.newPage();
+  await card.setViewportSize({ width: 1200, height: 630 });
+  for (const c of shareCards) {
+    const colour = LEVEL_COLOUR[c.level] || "#287a9e";
+    await card.setContent(`<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
+      @font-face { font-family: "Inter Fleet"; src: url("${BASE}/assets/fonts/inter-fleet.woff2") format("woff2"); font-weight: 100 900; }
+      @font-face { font-family: "Lora"; font-style: italic; src: url("${BASE}/assets/fonts/lora-latin-italic.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2013-2026; }
+      @font-face { font-family: "Lora"; font-style: italic; src: url("${BASE}/assets/fonts/lora-latin-ext-italic.woff2") format("woff2"); unicode-range: U+0100-024F, U+1E00-1EFF; }
+      html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #fff; }
+      body { position: relative; font-family: "Inter Fleet", sans-serif; color: #242424; -webkit-font-smoothing: antialiased; }
+      .band { position: absolute; inset: 0 auto 0 0; width: 28px; background: ${colour}; }
+      .disc { position: absolute; right: -170px; bottom: -230px; width: 640px; height: 640px; border-radius: 50%; background: ${colour}; opacity: .08; }
+      .disc2 { position: absolute; right: -50px; bottom: -110px; width: 280px; height: 280px; border-radius: 50%; border: 3px solid ${colour}; opacity: .18; }
+      .wrap { position: absolute; left: 100px; right: 110px; top: 72px; bottom: 70px; display: flex; flex-direction: column; }
+      .brand { display: flex; align-items: center; gap: 18px; font-size: 38px; letter-spacing: -0.02em; }
+      .brand svg { display: block; }
+      .d { color: #e34b4f; font-weight: 600; } .t { color: #242424; font-weight: 750; margin-left: .22em; }
+      .kicker { margin-top: auto; font-size: 25px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: ${colour}; }
+      .title { margin-top: 14px; font-size: 78px; line-height: 1.06; font-weight: 700; letter-spacing: -0.025em; max-width: 880px; }
+      .sub { margin-top: 20px; font-size: 38px; color: #555; max-width: 880px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .sub.tr { font-family: "Lora", serif; font-style: italic; }
+      .url { position: absolute; right: 110px; top: 88px; font-size: 26px; color: #8a8a86; }
+    </style></head><body>
+      <div class="band"></div><div class="disc"></div><div class="disc2"></div>
+      <div class="url">dailyturkish.app</div>
+      <div class="wrap">
+        <div class="brand">${logo}<span><span class="d">Daily</span><span class="t">Turkish</span></span></div>
+        <div class="kicker">${text(c.kicker)}</div>
+        <div class="title">${text(c.title)}</div>
+        ${c.sub ? `<div class="sub${c.subTr ? " tr" : ""}"${c.subTr ? ' lang="tr"' : ""}>${text(c.sub)}</div>` : ""}
+      </div></body></html>`, { waitUntil: "load" });
+    await card.evaluate(async () => {
+      await document.fonts.ready;
+      const t = document.querySelector(".title"); let size = 78;
+      while (t.scrollHeight > 3.3 * size && size > 40) { size -= 4; t.style.fontSize = size + "px"; }
+    });
+    await card.screenshot({ path: join(OUT, "assets/img/og", c.name + ".jpg"), type: "jpeg", quality: 86 });
+  }
+  await card.close();
 }
 
 // ── the browser ──
@@ -312,10 +369,18 @@ function guidePage(r, id, noindex) {
 const index = JSON.parse(readFileSync(join(OUT, "assets/data/turkish/index.json"), "utf8"));
 const units = index.levels.flatMap((lv) => lv.units);
 const unitMeta = new Map();
-index.levels.forEach((lv) => lv.units.forEach((u, i) => unitMeta.set(u.id, { label: `${lv.cefr} · Unit ${i + 1}`, title: u.title, interlude: u.interlude })));
+index.levels.forEach((lv) => lv.units.forEach((u, i) => unitMeta.set(u.id, { label: `${lv.cefr} · Unit ${i + 1}`, cefr: lv.cefr, num: i + 1, level: lv.id,
+  title: u.title, titleTr: u.titleTr, interlude: u.interlude, ready: u.status === "ready" })));
+// a grammar point's section in its guide, if the unit is written: { href, label (the point), unit ("A1 · Unit 6") }
+const guideLink = (gp) => {
+  const pt = index.points[gp], u = pt && unitMeta.get(pt.unit);
+  if (!pt) throw new Error(`unknown grammar point ${gp}`);
+  return u && u.ready ? { href: `/guides/${pt.unit}-grammar.html#${gp}`, label: pt.label, unit: u.label } : null;
+};
+const shareCards = [];   // { file (page in OUT), name (image), kicker, title, sub, subTr, level, alt }, drawn once the pages are written
 mkdirSync(join(OUT, "guides"), { recursive: true });
 const sitemap = [];
-let written = 0, soon = 0, wordPages = [];
+let written = 0, soon = 0, wordPages = [], verbPages = [], cheatPage = null;
 try {
   for (const u of units) {
     for (const kind of ["grammar", "culture"]) {
@@ -325,7 +390,12 @@ try {
       const want = `${SITE}/guides/${id}.html`;
       if (r.canonical !== want) throw new Error(`${id}: canonical ${r.canonical}, expected ${want}`);
       writeFileSync(join(OUT, "guides", id + ".html"), guidePage(r, id, !ready));
-      if (ready) { written++; sitemap.push({ loc: want, lastmod: lastmod([`assets/data/turkish/${kind}/${u.id}.json`, "turkishguide.html"]) }); }
+      if (ready) {
+        written++; sitemap.push({ loc: want, lastmod: lastmod([`assets/data/turkish/${kind}/${u.id}.json`, "turkishguide.html"]) });
+        const m = unitMeta.get(u.id), g = kind === "grammar";
+        shareCards.push({ file: `guides/${id}.html`, name: id, level: m.level, kicker: g ? `${m.cefr} grammar · Unit ${m.num}` : `Turkish culture · ${m.label}`,
+          title: g ? m.title : m.interlude, sub: g ? m.titleTr : "", subTr: true, alt: `Daily Turkish · ${g ? m.cefr + " grammar: " + m.title : "Turkish culture: " + m.interlude}` });
+      }
       else soon++;
     }
   }
@@ -358,7 +428,33 @@ try {
   const unitInfo = new Map();
   index.levels.forEach((lv) => lv.units.forEach((u, i) => { if (u.status === "ready") unitInfo.set(u.id, { id: u.id, label: `${lv.cefr} · Unit ${i + 1}`, title: u.title }); }));
   const frame = pageFrame(cards);
-  wordPages = writeWordList(frame, deck, notes, unitInfo, fileOfRank);
+  const crumbsGuide = ["Grammar guides", SITE + "/turkishguide.html"];
+
+  // ── conjugation pages (static-verbs.mjs) and the grammar cheat sheet (static-cheatsheet.mjs), built by the engine ──
+  const verbs = writeVerbPages({ OUT, SITE, M, deck, notes, frame, crumbs, HOME_CRUMB, text, attr, guideLink, lastmod, fileOfRank, writeFileSync, mkdirSync, join });
+  verbPages = verbs.pages; shareCards.push(...verbs.cards);
+  const cs = cheatSheetBody({ M, text, guideLink, verbLinks: verbs.links });
+  const csPage = {
+    title: "Turkish grammar cheat sheet: suffixes, cases, tenses", h1: "Turkish grammar cheat sheet", kicker: '<a href="/turkishguide.html">Turkish · Grammar</a>',
+    description: "Turkish grammar on one page: vowel harmony, consonant changes, the six cases, possessives, pronouns, personal endings, every tense, participles, voices and word order, with examples.",
+    canonical: `${SITE}/grammar-cheat-sheet.html`, css: CHEAT_CSS, ld: crumbs([HOME_CRUMB, crumbsGuide, ["Cheat sheet", `${SITE}/grammar-cheat-sheet.html`]]),
+    body: `      <p class="wl-intro">The essentials of Turkish grammar on one page, from vowel harmony to word order. Every example is built by the course's own conjugation engine, and each section links to the guide that explains it.</p>
+      <ol class="cs-toc">${cs.toc.map(([id, t]) => `<li><a href="#${id}">${text(t)}</a></li>`).join("")}</ol>
+${cs.html}`
+  };
+  writeFileSync(join(OUT, "grammar-cheat-sheet.html"), frame(csPage));
+  cheatPage = { loc: csPage.canonical, lastmod: lastmod(["assets/js/turkish-morph.js", "scripts/turkish/static-cheatsheet.mjs", "scripts/turkish/static-verbs.mjs"]) };
+  shareCards.push({ file: "grammar-cheat-sheet.html", name: "grammar-cheat-sheet", kicker: "Turkish · Grammar", title: "Turkish grammar cheat sheet",
+    sub: "Cases, endings, tenses and suffixes on one page", subTr: false, alt: "Daily Turkish · Turkish grammar cheat sheet" });
+
+  wordPages = writeWordList(frame, deck, notes, unitInfo, fileOfRank, verbs.links);
+  const firstWords = (from, n) => deck.slice(from - 1, from - 1 + n).map((c) => c.tr).join(", ") + "…";
+  shareCards.push({ file: "words/index.html", name: "words", kicker: "Word list", title: "The 1,000 most common Turkish words", sub: firstWords(1, 6), subTr: true,
+    alt: "Daily Turkish · The 1,000 most common Turkish words" });
+  for (let from = 1; from <= deck.length; from += 100) {
+    const to = Math.min(from + 99, deck.length), title = from === 1 ? "The 100 most common Turkish words" : `Turkish words ${from}–${to}`;
+    shareCards.push({ file: `words/${from}-${to}.html`, name: `words-${from}-${to}`, kicker: "Word list", title, sub: firstWords(from, 5), subTr: true, alt: `Daily Turkish · ${title}` });
+  }
 
   // ── 404.html: GitHub Pages serves it for any address that doesn't exist ──
   writeFileSync(join(OUT, "404.html"), frame({
@@ -372,6 +468,11 @@ try {
         <li><a href="/words/"><b>Word list</b><span>The 1,000 most common Turkish words</span></a></li>
       </ul>`
   }));
+
+  // ── share images: a 1200×630 card per guide and word-list page, and one for every other page ──
+  shareCards.push({ file: null, name: "daily-turkish", kicker: "Turkish · A1 → C2", title: "A free Turkish course, from A1 to C2",
+    sub: "Lessons, grammar guides and 1,000 flashcards", subTr: false, alt: "Daily Turkish · A free Turkish course, from A1 to C2" });
+  await drawShareCards(cards);
 } catch (e) {
   console.error("turkish-static: " + e.message);
   await browser.close(); server.close();
@@ -379,6 +480,27 @@ try {
 }
 await browser.close();
 server.close();
+
+// ── share-image tags on every page (404 aside): its own card if it has one, else the site's ──
+const cardOf = new Map(shareCards.filter((c) => c.file).map((c) => [c.file, c]));
+const siteCard = shareCards.find((c) => !c.file);
+let tagged = 0;
+(function tag(dir, rel) {
+  for (const name of readdirSync(dir)) {
+    const f = join(dir, name), r = rel ? rel + "/" + name : name;
+    if (statSync(f).isDirectory()) { if (name !== "assets") tag(f, r); continue; }
+    if (!name.endsWith(".html") || r === "404.html") continue;
+    const s = readFileSync(f, "utf8");
+    if (/property="og:image"/.test(s)) continue;
+    const c = cardOf.get(r) || siteCard;
+    writeFileSync(f, addLd(s, `<meta property="og:image" content="${SITE}/assets/img/og/${c.name}.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="${attr(c.alt)}">
+    <meta name="twitter:card" content="summary_large_image">`, r));
+    tagged++;
+  }
+})(OUT, "");
 
 // ── one address for the hub: index.html serves "/", so every link to /turkish.html becomes "/" ──
 // (pages rendered above already use "/": turkish.js sets PAGES.hub to "/" on dailyturkish.app; this catches the
@@ -402,6 +524,6 @@ const head = [
   { loc: SITE + "/turkishprivacy.html", lastmod: lastmod(["turkishprivacy.html"]) }
 ];
 writeFileSync(join(OUT, "sitemap.xml"), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-  head.concat(sitemap, wordPages).map((x) => `  <url><loc>${text(x.loc)}</loc><lastmod>${x.lastmod}</lastmod></url>`).join("\n") + "\n</urlset>\n");
+  head.concat(sitemap, wordPages, verbPages, cheatPage ? [cheatPage] : []).map((x) => `  <url><loc>${text(x.loc)}</loc><lastmod>${x.lastmod}</lastmod></url>`).join("\n") + "\n</urlset>\n");
 
-console.log(`turkish-static: ${written} guide pages, ${soon} coming-soon pages (noindex), ${wordPages.length} word-list pages, 404 page, links to /turkish.html made "/" in ${relinked} pages, index and hub filled in, sitemap with ${head.length + sitemap.length + wordPages.length} URLs`);
+console.log(`turkish-static: ${written} guide pages, ${soon} coming-soon pages (noindex), ${wordPages.length} word-list pages, ${verbPages.length} verb pages, the cheat sheet, 404 page, ${shareCards.length} share images on ${tagged} pages, links to /turkish.html made "/" in ${relinked} pages, index and hub filled in, sitemap with ${head.length + sitemap.length + wordPages.length + verbPages.length + 1} URLs`);

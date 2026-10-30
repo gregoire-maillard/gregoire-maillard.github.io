@@ -444,6 +444,9 @@
 
       /* signed out, the greeting is a welcome card (ACCT-1): the A1 character says hello, with the two ways in.
          It keeps the classes hello and invite, so the app (app/src/turkish-app.js) still hides it. */
+      /* the iPhone app (<html data-app>, APP-3): no online profile. Hidden from the first paint; the script also leaves them out */
+      html[data-app] #lede-acct, html[data-app] .hello.invite, html[data-app] #auth, html[data-app] #pf-side, html[data-app] .pf-acct-nav { display: none !important; }
+      @media (min-width: 1180px) { html[data-app] .pf-grid { grid-template-columns: 190px minmax(0, 1fr); } }
       .hello.invite { display: block; padding: 14px 16px 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
       .hello.invite .w-top { display: flex; align-items: center; gap: 12px; }
       .hello.invite .hello-pic { width: 64px; height: 64px; }
@@ -717,7 +720,7 @@
         <header class="hero">
           <p class="kicker">Turkish · A1 → C2</p>
           <h2 class="h1" id="h-settings">Settings</h2>
-          <p class="lede">Saved in this browser, with your progress. They apply to the lessons and the flashcards.</p>
+          <p class="lede" id="set-lede">Saved in this browser, with your progress. They apply to the lessons and the flashcards.</p>
         </header>
         <div class="set-grid">
           <fieldset class="set">
@@ -790,8 +793,8 @@
               <li><button type="button" data-go="pf-s-ach">Achievements <span class="pf-nav-n" id="pf-nav-ach"></span></button></li>
               <li><button type="button" data-go="pf-s-yours">Your progress</button></li>
               <li><button type="button" data-go="pf-s-levels">Levels</button></li>
-              <li class="pf-nav-sep" aria-hidden="true"></li>
-              <li><button type="button" data-go="pf-side">Account &amp; character</button></li>
+              <li class="pf-nav-sep pf-acct-nav" aria-hidden="true"></li>
+              <li class="pf-acct-nav"><button type="button" data-go="pf-side">Account &amp; character</button></li>
             </ol>
           </nav>
           <aside class="pf-side" id="pf-side" aria-label="Your account">
@@ -815,7 +818,7 @@
           <p><b>Anki and spaced repetition.</b> Anki is the free flashcard app that made spaced repetition popular. After each card you grade how well you remembered it (Again, Hard, Good or Easy), and it comes back just before you would forget it: tomorrow, then in a few days, then weeks and months later. A few minutes a day are enough to keep thousands of words. The flashcards here use Anki's own algorithm (SM-2) with its default settings, the same four grades with the next interval shown on each button, and Anki's statistics (a card is “mature” after 21 days).</p>
           <p><b>Fluent Forever.</b> In his book <cite>Fluent Forever</cite> (2014), Gabriel Wyner argues for learning pronunciation first, the most frequent words before the rare ones, words in real sentences rather than lists, recalling actively instead of just recognising, and letting spaced repetition do the remembering. Daily Turkish follows this: the course opens with the letters and their sounds and every Turkish word can be played aloud; the deck is the 1,000 most frequent words, in order; every card has an example sentence; and words are practised in both directions, English → Turkish once you recognise the Turkish. Where it differs: Wyner recommends making your own cards with pictures instead of translations, while these cards come ready-made with English meanings, to save you the time.</p>
           <h2>Your progress</h2>
-          <p>Without a profile, your progress lives in this browser's storage only, and clearing your browsing data erases it. With a <a href="#profile">profile</a>, it's also saved online.</p>
+          <p id="about-where">Without a profile, your progress lives in this browser's storage only, and clearing your browsing data erases it. With a <a href="#profile">profile</a>, it's also saved online.</p>
           <h2>Support Daily Turkish</h2>
           <p>Daily Turkish is free to use and has no ads. If it helps you learn, you can buy me a Turkish coffee: it pays for the domain and the time spent writing new units.</p>
           <p style="margin-top:14px"><a class="btn coffee" href="https://buymeacoffee.com/dailyturkish" target="_blank" rel="noopener">☕ Buy me a Turkish coffee</a></p>
@@ -840,6 +843,8 @@
       var T = window.TRK;
       if (!T) { document.getElementById("notices").innerHTML = '<p class="notice err">The course script didn\'t load. Reload the page to try again.</p>'; return; }
       var store = T.store, esc = T.esc, P = T.C.PAGES, A = T.account || null;   // A: online profiles (turkish-account.js)
+      // The iPhone app (TRK.app, APP-3): no online profile, and progress lives "on this iPhone".
+      var APP = T.app === "ios", NOACCT = APP || !!(A && A.disabled), HERE = APP ? "on this iPhone" : "in this browser";
       var $ = function (id) { return document.getElementById(id); };
       store.course(); store.cards(); store.settings();   // read all three now, so a problem with any of them shows at once
       var st = { index: null, levels: {}, deck: null, deckLoading: false, voice: undefined, open: {}, error: null, fresh: null };
@@ -942,7 +947,7 @@
       function knownUser() { return !!A.user || ((A.status === "loading" || A.status === "unavailable") && !au.touched); }
       function renderLede() {
         var known = A && (!!A.user || (A.status === "loading" && !au.touched));
-        $("lede-acct").hidden = !!known;
+        $("lede-acct").hidden = NOACCT || !!known;
       }
       // The greeter: the A1 character's artwork with eyelids, happy eyes and two hooves added (see .cr in the CSS).
       var GREETER = "a1", crSeq = 0;
@@ -961,7 +966,7 @@
           '<g clip-path="url(#' + clip + ')">' + a.art + lid(26.5) + lid(37.5) + joy(26.5) + joy(37.5) + paw(13, 24.5, 26.5) + paw(51, 39.5, 37.5) + "</g></svg>";
       }
       function helloHtml() {
-        if (!A || !A.avatarSvg) return "";
+        if (!A || !A.avatarSvg || (NOACCT && !A.user)) return "";   // the app: no welcome card, no way into sign-in
         var known = knownUser();
         if (!known) {
           return '<section class="hello invite" id="hello" aria-label="Your account"><div class="w-top"><span class="hello-pic">' + critter(64) + "</span>" +
@@ -1132,7 +1137,7 @@
         if (/^#sign(?:in|up)$/.test(location.hash)) {   // dailyturkish.app/#signin or #signup opens the dialog (ACCT-1)
           var mode = location.hash.slice(1);
           history.replaceState(null, "", location.pathname + location.search);
-          if (A && !A.user && !(A.status === "loading" && !au.touched)) openAuth(mode);
+          if (A && !NOACCT && !A.user && !(A.status === "loading" && !au.touched)) openAuth(mode);
           return;
         }
         var id = decodeURIComponent(location.hash.slice(1));
@@ -1235,14 +1240,14 @@
             return;
           }
           pending = obj;
-          showConfirm("<b>Replace the progress in this browser?</b><br>The file, exported on " + esc(dateLabel(obj.exported)) + ", has " + esc(summary(obj.course, obj.cards)) + ". This browser has " + esc(summary(store.course(), store.cards())) + "." +
+          showConfirm("<b>Replace the progress " + HERE + "?</b><br>The file, exported on " + esc(dateLabel(obj.exported)) + ", has " + esc(summary(obj.course, obj.cards)) + ". " + (APP ? "This iPhone" : "This browser") + " has " + esc(summary(store.course(), store.cards())) + "." +
             '<div class="btns"><button type="button" class="btn primary" data-act="import">Replace my progress</button><button type="button" class="btn" data-act="cancel">Cancel</button></div>');
         };
         reader.onerror = function () { showConfirm("The file couldn't be read.", true); };
         reader.readAsText(file);
       });
       $("p-reset").addEventListener("click", function () {
-        showConfirm("<b>Delete all your progress in this browser" + (A && A.user ? " and in your online profile" : "") + "?</b><br>Lessons, XP, streak, mistakes, flashcards and settings go back to the start. " +
+        showConfirm("<b>Delete all your progress " + HERE + (A && A.user ? " and in your online profile" : "") + "?</b><br>Lessons, XP, streak, mistakes, flashcards and settings go back to the start. " +
           '<a href="#" data-act="export-first">Export a copy first</a> if you might want it back.' +
           '<div class="btns"><button type="button" class="btn danger solid" data-act="reset">Delete everything</button><button type="button" class="btn" data-act="cancel">Cancel</button></div>');
       });
@@ -1286,6 +1291,7 @@
         if (focus && $(focus)) $(focus).focus();
       }
       function drawAccount() {
+        if (NOACCT) { $("pf-acct").innerHTML = ""; return; }
         var el = $("pf-acct"), h = "", msg = pf.msg ? '<p class="pf-msg' + (pf.err ? " err" : "") + '" role="alert">' + esc(pf.msg) + "</p>" : "";
         if (!A) { el.innerHTML = '<p class="eyebrow">Online profile</p><p class="sub">Online profiles couldn\'t be loaded. Reload the page to try again; your progress is still saved in this browser.</p>'; return; }
         if (A.status === "off" || A.status === "loading") { el.innerHTML = '<p class="eyebrow">Checking whether you\'re signed in…</p>'; return; }
@@ -1371,7 +1377,7 @@
         if (!ix) { el.innerHTML = '<div class="card"><p class="eyebrow">' + (st.error ? "The course couldn't be loaded." : "Loading your progress…") + "</p></div>"; return; }
         if (!A || !A.summary) { el.innerHTML = ""; return; }
         var s = A.summary(ix), course = store.course(), set = store.settings(), h = "";
-        var where = A.user ? "" : '<p class="eyebrow" style="margin-bottom:-6px">Progress in this browser</p>';
+        var where = A.user ? "" : '<p class="eyebrow" style="margin-bottom:-6px">Progress ' + HERE + '</p>';
         // level
         var c = s.certified, w = s.working;
         var badgeLv = c ? c.id : w ? w.id : null;
@@ -1531,8 +1537,8 @@
         if ($("profile").hidden || (ach.lock && Date.now() < ach.lock)) return;
         var ids = ["pf-s-progress", "pf-s-calendar", "pf-s-ach", "pf-s-yours", "pf-s-levels", "pf-side"], cur = ids[0], line = window.innerWidth < 900 ? 140 : 120;
         var stacked = window.innerWidth < 1180;   // pf-side only counts when it sits under the dashboard
-        ids.forEach(function (id) { var el = $(id); if (!el || (id === "pf-side" && !stacked)) return; if (el.getBoundingClientRect().top <= line) cur = id; });
-        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = stacked ? "pf-side" : "pf-s-levels";
+        ids.forEach(function (id) { var el = $(id); if (!el || (id === "pf-side" && (!stacked || NOACCT))) return; if (el.getBoundingClientRect().top <= line) cur = id; });
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = stacked && !NOACCT ? "pf-side" : "pf-s-levels";
         var b = $("pf-nav").querySelector('[aria-current="true"]');
         if (!b || b.getAttribute("data-go") !== cur) markNav(cur);
       }
@@ -1574,7 +1580,7 @@
       // ── characters: one per level, unlocked by certifying it ──
       function renderChars(s) {
         var el = $("pf-chars");
-        if (!A || !A.AVATARS) { el.hidden = true; return; }
+        if (!A || !A.AVATARS || NOACCT) { el.hidden = true; return; }
         var open = A.unlocked(s), mine = A.avatar(), n = Object.keys(open).length;
         // a character whose level isn't certified any more (progress reset) goes back to the initial
         if (mine && !open[mine] && (!A.user || A.sync === "saved")) { A.setAvatar(null).catch(function () {}); mine = null; }
@@ -1665,7 +1671,7 @@
       var SPIN = '<span class="au-spin" aria-hidden="true"></span>';
       function canAuth() {
         var app = window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform();   // no accounts in the app (APP-2)
-        return !!(A && !app && dlg && typeof dlg.showModal === "function");
+        return !!(A && !app && !NOACCT && dlg && typeof dlg.showModal === "function");
       }
       function openAuth(mode, opener) {
         if (!canAuth()) { location.hash = "#profile"; return; }
@@ -1868,12 +1874,21 @@
         openAuth(b.dataset.auth, b);
       });
 
+      function statusText(signedIn) {
+        return APP ? "Your progress is saved on this iPhone only. Export it to keep a copy or to move it to another device."
+          : signedIn ? "Your progress is saved in this browser and in your online profile, so it follows you to other devices."
+          : "Your progress is saved in this browser only. Export it to keep a copy, or create a profile (My Profile) to save it online.";
+      }
+      if (APP) {   // the app's wording for where progress lives (APP-3)
+        $("p-status").textContent = statusText(false);
+        $("set-lede").textContent = "Saved on this iPhone, with your progress. They apply to the lessons and the flashcards.";
+        $("about-where").textContent = "Your progress lives on this iPhone only, and deleting the app erases it. Use Export progress in Settings to keep a copy.";
+      }
       var wasSignedIn = null;
       if (A) A.onChange(function () {
         if (dlg && dlg.open && authSig() !== au.sig) drawAuth();
         var signedIn = !!A.user;
-        if (signedIn !== wasSignedIn) $("p-status").textContent = signedIn ? "Your progress is saved in this browser and in your online profile, so it follows you to other devices."
-          : "Your progress is saved in this browser only. Export it to keep a copy, or create a profile (My Profile) to save it online.";
+        if (signedIn !== wasSignedIn) $("p-status").textContent = statusText(signedIn);
         wasSignedIn = signedIn;
         renderProfile();
         renderHello();

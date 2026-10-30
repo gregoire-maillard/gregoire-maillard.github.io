@@ -512,7 +512,14 @@
   });
   window.addEventListener("online", function () { if (A.user) A.syncNow(); });
 
+  // The iPhone app (TRK.app, APP-3): no online profile. The library is never downloaded and every sign-in call fails,
+  // so the status stays "off"; the pages read A.disabled (and the CSS <html data-app>) to show no way in.
+  if (T.app) {
+    A.disabled = true;
+    A.ensure = function () { return Promise.reject(new Error("Online profiles aren't available in the app.")); };
+  }
+
   T.account = A;
   // Only download the library when it's needed: someone is signed in, or arriving from a sign-in link.
-  if (hasToken() || urlHasAuth()) A.ensure().catch(function () {});
+  if (!A.disabled && (hasToken() || urlHasAuth())) A.ensure().catch(function () {});
 })();

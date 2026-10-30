@@ -1,0 +1,48 @@
+/* Daily Turkish app only (app/src/turkish-app.css): the pages under the notch and the home indicator.
+ *
+ * Not part of the website. app/scripts/build-www.mjs copies it to www/assets/css/app/ and links it at the
+ * end of the <head> of every page in the app, which it also gives viewport-fit=cover (PROJECT.md APP-4).
+ * capacitor.config.json draws the web view edge to edge (ios.contentInset "never"), so the page itself
+ * keeps clear of the status bar and the home indicator: the header's glass reaches up behind the clock,
+ * like a native navigation bar, and everything sticky below it moves down by the same amount.
+ * Every rule is scoped to html[data-app], so it would do nothing on the website even if loaded there.
+ * The app is portrait only (Info.plist), so there are no side insets to handle.
+ */
+html[data-app] {
+  --app-top: env(safe-area-inset-top, 0px);
+  --app-bottom: env(safe-area-inset-bottom, 0px);
+  /* The header's height, as turkishguide.html names it (64px, 56px on phones), plus the status bar:
+     anchors and scroll-into-view land below the header on every page (80px on the website's phones). */
+  --hdr: calc(64px + var(--app-top));
+  scroll-padding-top: calc(var(--hdr) + 24px);
+}
+@media (max-width: 599px) { html[data-app] { --hdr: calc(56px + var(--app-top)); } }
+
+/* The sticky glass header reaches up behind the status bar. */
+html[data-app] .at-hdr { padding-top: var(--app-top); }
+
+/* turkish.html: the sticky Today column and the profile's menu, and where its sections land. */
+html[data-app] .today, html[data-app] .pf-nav, html[data-app] .pf-side { top: calc(88px + var(--app-top)); }
+html[data-app] .pf-sec, html[data-app] .pf-side { scroll-margin-top: calc(88px + var(--app-top)); }
+@media (max-width: 899px) {
+  html[data-app] .pf-nav { top: calc(64px + var(--app-top)); }
+  html[data-app] .pf-sec, html[data-app] .pf-side { scroll-margin-top: calc(124px + var(--app-top)); }
+}
+@media (max-width: 599px) {
+  html[data-app] .pf-nav { top: calc(56px + var(--app-top)); }
+  html[data-app] .pf-sec, html[data-app] .pf-side { scroll-margin-top: calc(116px + var(--app-top)); }
+}
+html[data-app] .ach-toast { bottom: calc(24px + var(--app-bottom)); }
+
+/* The end of every page stays clear of the home indicator. The lesson's answer dock already pads itself
+   (env(safe-area-inset-bottom)) and sticks to the bottom of the body, so the lesson page gets the room only
+   while the dock is hidden (the start and end screens). */
+html[data-app] body:not(:has(> #dock:not([hidden]))) { padding-bottom: var(--app-bottom); }
+
+/* A page without the header (the privacy policy): start below the status bar, and a glass strip behind
+   the clock so text scrolling up doesn't run into it. */
+html[data-app] body:not(:has(.at-hdr)) { padding-top: var(--app-top); }
+html[data-app] body:not(:has(.at-hdr))::before {
+  content: ""; position: fixed; z-index: 1000; top: 0; left: 0; right: 0; height: var(--app-top);
+  background: rgb(255 255 255 / .8); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+}

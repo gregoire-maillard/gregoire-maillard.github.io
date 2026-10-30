@@ -574,7 +574,9 @@
       var T = window.TRK;
       if (!T) { document.getElementById("notices").innerHTML = '<p class="notice err">The flashcard script didn\'t load. Reload the page to try again.</p>'; return; }
       var store = T.store, esc = T.esc, P = T.C.PAGES, MATURE = T.C.SRS.mature;
+      var APP = T.app === "ios", HERE = APP ? "on this iPhone" : "in this browser";   // the iPhone app (APP-3)
       var $ = function (id) { return document.getElementById(id); };
+      if (APP) $("p-status").textContent = "Your lessons and cards are saved on this iPhone only. Export them to keep a copy or to move them to another device.";
       store.course(); store.cards(); store.settings();   // read all three now, so a problem with any of them shows at once
       var reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 
@@ -1371,7 +1373,7 @@
             return;
           }
           pending = obj;
-          showConfirm("<b>Replace the progress in this browser?</b><br>The file, exported on " + esc(dateLabel(obj.exported)) + ", has " + esc(summary(obj.course, obj.cards)) + ". This browser has " + esc(summary(store.course(), store.cards())) + "." +
+          showConfirm("<b>Replace the progress " + HERE + "?</b><br>The file, exported on " + esc(dateLabel(obj.exported)) + ", has " + esc(summary(obj.course, obj.cards)) + ". " + (APP ? "This iPhone" : "This browser") + " has " + esc(summary(store.course(), store.cards())) + "." +
             '<div class="btns"><button type="button" class="btn primary" data-act="import">Replace my progress</button><button type="button" class="btn" data-act="cancel">Cancel</button></div>');
         };
         reader.onerror = function () { showConfirm("The file couldn't be read.", true); };

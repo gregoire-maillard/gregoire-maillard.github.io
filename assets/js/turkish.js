@@ -1293,8 +1293,12 @@
     return false;
   }
 
+  // The iPhone app's copies of the pages carry <html data-app="ios"> (app/scripts/build-www.mjs, APP-3): no online
+  // profile there, and progress is "on this iPhone". null on the website, on dailyturkish.app and in Node.
+  var APP = (root && root.document && root.document.documentElement && root.document.documentElement.getAttribute("data-app")) || null;
+
   var TRK = {
-    C: C, RE: RE,
+    C: C, RE: RE, app: APP,
     // helpers
     esc: esc, iso: iso, dayOf: dayOf, today: function (settings, now) { return dayOf(now, hourOf(settings)); },
     dayStart: dayStart, addDays: addDays, daysBetween: daysBetween, trLower: trLower, trUpper: trUpper, fold: fold,
