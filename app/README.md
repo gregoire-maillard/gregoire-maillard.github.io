@@ -10,6 +10,7 @@ The website stays the only source: the app is rebuilt from it, so nothing has to
 |---|---|
 | `capacitor.config.json` | App id `app.dailyturkish`, name "Daily Turkish", white background, web view edge to edge (`contentInset: never`), dark status bar text, keyboard resizes the web view |
 | `scripts/build-www.mjs` | Builds `www/` from the site: the same files as the dailyturkish.app mirror, `turkish.html` as the start page, the Google tag removed from every page, `<html data-app="ios">` on every page, `viewport-fit=cover` and the app stylesheet on every page, "Buy me a Turkish coffee" left out, the app-only scripts added; then fails if a Google tag or a coffee link is left or a page refers to a local file that isn't in `www/` |
+| `scripts/content-4plus.mjs`, `scripts/content-filter.mjs` | **App only.** The course for a 4+ age rating (below): the rules, each with the exact text it expects, and the step `build-www.mjs` runs to apply them to `www/` |
 | `src/turkish-app.js` | **App only.** The daily reminder, Export/Import, haptics, status bar and keyboard (below). Never copied to the website |
 | `src/turkish-app.css` | **App only.** Keeps the pages clear of the notch and the home indicator (below). Never copied to the website |
 | `ios/` | The Xcode project (Swift Package Manager, no CocoaPods) |
@@ -79,6 +80,32 @@ npm run open         # opens ios/App/App.xcodeproj in Xcode
 In Xcode: select the **App** target › Signing & Capabilities › choose your Team, then pick an
 iPhone (or a simulator) and Run. After any change to the Turkish pages or data, run
 `npm run sync` again before building.
+
+## The course for a 4+ age rating (app only)
+
+The App Store rates an app from its content. The website's course has a few things that would rate it 13+
+(alcohol and tobacco words and sentences) or 9+ (swearing, weapons and violence, the darker history passages),
+so the app ships a filtered copy: `build-www.mjs` copies the course into `www/`, then `content-filter.mjs`
+applies `content-4plus.mjs` to that copy only. Nothing in the repo's own content changes.
+
+- **Left out:** 15 flashcards (*öldürmek, silah, lanet, cinayet, katil, içki, seks, ceset, uyuşturucu, bomba, bira,
+  bar, sigara, sarhoş, şarap*), so the app's deck has 985 words, and 4 translation exercises about smoking.
+- **Reworded:** the smoking examples in lessons and grammar guides (*Burada fotoğraf çekilmez*, *park etmek yasak*,
+  *Süt içmem*…; lesson a2-u04-l03 is "I never eat fish"), the double causative with *pişirtmek* instead of
+  *öldürtmek* (and its grammar point label), card notes and senses, the *okul bokul* distractor, and the history
+  interludes: no executions (Piri Reis, Pir Sultan Abdal, the Bursa legend), no killing (Sabahattin Ali, Constantine XI),
+  no political violence or 1980 coup (Yeşilçam), no 1915–1916 passage (Ottoman Empire), no alcohol or tobacco in
+  the kolonya interlude, no weapons in the Grand Bazaar.
+- **Then:** `index.json` is recounted (lesson titles and exercise counts, cards, a version of its own), the pages say
+  "985" where they said "1,000" (the rank on a card, "#913 of 1,000", stays: it is the rank in the frequency list),
+  and the build **fails** if a rule no longer finds its text or if `GUARD` finds a word of these kinds anywhere in the
+  app's data. After the website's content changes, `npm run build` says what to look at; add a rule, or a reviewed
+  exception to `GUARD_OK`.
+- Progress moves freely between the website and the app: cards and exercises the app doesn't have are simply
+  ignored there.
+
+Checked with the course's own tools on the filtered copy: `validate.mjs` (all checks passed; the index it generates
+equals the filter's apart from the version) and `test.mjs` (72/72, every accepted and rejected answer).
 
 ## App Store readiness (done)
 

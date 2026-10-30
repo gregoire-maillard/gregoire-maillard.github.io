@@ -14,12 +14,17 @@
 //     linked at the end of the <head> (APP-4);
 //   - leaves out "Buy me a Turkish coffee" (the footer line and the About section): App Review wants tips
 //     through in-app purchase (APP-4);
+//   - leaves out of the course, or rewords, what would keep the App Store age rating above 4+: alcohol, tobacco,
+//     drugs, swearing, weapons and violence, and the darker passages of the history interludes. The rules, each
+//     with the exact text it expects, are in content-4plus.mjs; content-filter.mjs applies them, recounts
+//     index.json and fails the build when a rule no longer matches or a new such word appears (APP-6);
 //   - then checks that no Google tag or coffee link is left and that every local file a page refers to is in www.
 // Run with `npm run build` (or `npm run sync` to also copy into the Xcode project).
 
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { filterCourse } from "./content-filter.mjs";
 
 const APP = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SITE = resolve(APP, "..");
@@ -71,6 +76,9 @@ for (const [to, from] of [...APP_SCRIPTS, APP_CSS]) {
   if (!existsSync(src)) fail(from + " not found (run npm install in app/)");
   cp(src, join(OUT, to));
 }
+
+// The course for a 4+ age rating (APP-6): only the copies in www change.
+const filtered = filterCourse(OUT, fail);
 
 const GTAG = /<!-- Google tag \(gtag\.js\) -->\s*<script async src="https:\/\/www\.googletagmanager\.com[^"]*"><\/script>\s*<script>[\s\S]*?<\/script>\s*/;
 const ACCOUNT = /(<script defer src="\/assets\/js\/turkish-account\.js"><\/script>)/;
@@ -131,4 +139,5 @@ if (missing.length) fail("files the pages use but www lacks (add them to FILES a
 
 let count = 0;
 (function walk(d) { for (const e of readdirSync(d, { withFileTypes: true })) e.isDirectory() ? walk(join(d, e.name)) : count++; })(OUT);
-console.log("build-www: www/ ready, " + count + " files");
+console.log("build-www: www/ ready, " + count + " files; course for 4+: " + filtered.cards + " cards (" + filtered.dropped.cards + " left out), " +
+  filtered.lessons + " lessons, " + filtered.exercises + " exercises (" + filtered.dropped.exercises + " left out), " + filtered.edits + " edits");

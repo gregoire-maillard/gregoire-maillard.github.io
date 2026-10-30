@@ -67,7 +67,8 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
     - Subtitle (30 characters max) · Category: **Education**
     - Content Rights: the deck's word order is adapted from FrequencyWords (CC BY-SA 4.0, credited in About):
       answer that the app contains third-party content and you have the rights to use it
-    - Age Rating › Edit › answer None/No throughout › result 4+
+    - Age Rating › Edit › answer None/No throughout › result 4+ (true for the app's filtered course, see README
+      "The course for a 4+ age rating"; the website's course would be 13+). Paste-ready answers: `app/store/listing.md`
 15. **Pricing and Availability:** Price Free · Availability: all countries.
 16. **App Privacy:** Privacy Policy URL `https://dailyturkish.app/turkishprivacy.html` › Get Started ›
     "Do you or your third-party partners collect data from this app?" **No** › Save › Publish.
@@ -82,7 +83,7 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
     - **App Review Information:** sign-in required: **unticked** · your name, phone and email (Apple only) ·
       Notes:
 
-      > A complete offline Turkish course (A1–C2): lessons with instant feedback, a grammar guide per unit and
+      > A complete offline Turkish course (A1–C1; C2 in preparation): lessons with instant feedback, a grammar guide per unit and
       > spaced-repetition flashcards, all built into the app. No account needed. Native features:
       > daily study reminders as local notifications (Settings › Daily reminder); haptic feedback on right and
       > wrong answers, finished lessons and the daily goal (Settings › Haptics); progress export through the
