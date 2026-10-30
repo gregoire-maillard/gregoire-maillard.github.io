@@ -9,7 +9,7 @@ One prompt per conversation, in the recommended order of [TM-CURRICULUM.md](TM-C
 3. Until TK-PUBLISH, merging to `main` publishes nothing on dailyturkish.app (the sync workflow only copies Turkish paths). From TK-BUILD-2 on, `gregoiremaillard.com/turkmen/` shows the pages, which is fine for testing.
 4. After A1 and again after B1, run the two TK-REVIEW prompts with a native Turkmen speaker in between.
 
-Every prompt points the conversation to `turkmen/TM-PROJECT.md`, which holds the rules; the prompts only add what is specific to each conversation.
+Every prompt points the conversation to `turkmen/TM-PROJECT.md`, which holds the rules; the prompts only add what is specific to each conversation. The most important rule: Daily Turkmen is for English speakers learning Turkmen from scratch. It looks and works like Daily Turkish, but its content never mentions or compares with Turkish.
 
 ---
 
@@ -22,9 +22,9 @@ Read turkmen/TM-PROJECT.md in full, then turkmen/TM-CURRICULUM.md, then turkish/
 
 Goal: the Turkmen course gets its own validator, tests and core script, forked from the Turkish ones, and the existing Turkmen data (the word list and FC-1) passes.
 
-1. Create scripts/turkmen/validate.mjs by forking scripts/turkish/validate.mjs: paths to assets/data/turkmen/, turkmen/TM-CURRICULUM.md and turkmen/TM-PROJECT.md; the renames of 5.0 (tk, titleTk, Lang, Person, column types, forms keys, the `~…~` Turkish markup in compare callouts and card notes); levels a1, a2, b1; `listen` rejected; the Turkmen letter rules and warnings of TM-PROJECT.md 7.1 and 8 instead of the Turkish ones (drop the İ/ı checks, the apostrophe rules and the Turkish question-particle rule; add the Turkmen ones); the six-column tm-wordlist.tsv with `sense`. Keep --batch, --index, --examples, --vocab, --progress, --strict, --quiet. The morphology checks stay switched off until TK-MORPH (say "engine not loaded" in the summary).
+1. Create scripts/turkmen/validate.mjs by forking scripts/turkish/validate.mjs: paths to assets/data/turkmen/, turkmen/TM-CURRICULUM.md and turkmen/TM-PROJECT.md; the renames of 5.0 (tk, titleTk, Lang, Person, column types, forms keys); no Turkish markup or compare-with-Turkish callouts; levels a1, a2, b1; `listen` rejected; the Turkmen letter rules and warnings of TM-PROJECT.md 7.1 and 8 instead of the Turkish ones (drop the İ/ı checks, the apostrophe rules and the Turkish question-particle rule; add the Turkmen ones); the six-column tm-wordlist.tsv with `sense`. Keep --batch, --index, --examples, --vocab, --progress, --strict, --quiet. The morphology checks stay switched off until TK-MORPH (say "engine not loaded" in the summary).
 2. Create assets/js/turkmen.js by forking assets/js/turkish.js: window.TKM, storage keys tkm:v1:…, card directions tk-en and en-tk, no speech, the answer checker's Turkmen normalization and "almost" folds of TM-PROJECT.md 6.4, export `app: "daily-turkmen"` with import refusing a Daily Turkish file (and make the Turkish import refuse a Turkmen file, a one-line change in assets/js/turkish.js; run the Turkish tests after it).
-3. Create scripts/turkmen/test.mjs by forking scripts/turkish/test.mjs, with Turkmen cases for the checker (missing marks, y/ý, the particle written apart, Turkish habits ı, ğ, v, c) and the scheduler unchanged.
+3. Create scripts/turkmen/test.mjs by forking scripts/turkish/test.mjs, with Turkmen cases for the checker (missing marks, y/ý, the particle written apart) and the scheduler unchanged.
 4. Create assets/data/turkmen/levels/a1.json, a2.json and b1.json (titles and units from TM-CURRICULUM.md, summary and canDo written for Turkmen) and generate assets/data/turkmen/index.json with --index. Units not written yet are "planned", as in the Turkish index.
 5. Write scripts/turkmen/README.md.
 6. Run: node scripts/turkmen/validate.mjs, --examples, --index, node scripts/turkmen/test.mjs, node scripts/turkish/validate.mjs and node scripts/turkish/test.mjs (the Turkish course must be unchanged). Fix what fails; FC-1 must pass with zero errors.
@@ -37,7 +37,7 @@ Don't create pages, don't touch Turkish content. Work on the branch turkmen/tk-b
 ```text
 This conversation is TK-MORPH of the Turkmen course (Daily Turkmen).
 
-Read turkmen/TM-PROJECT.md in full, turkmen/TM-CURRICULUM.md (especially "How Turkmen differs", the coverage tables and "Open questions for native review"), and the "Morphology engine" part of turkish/PROJECT.md section 3, then assets/js/turkish-morph.js and scripts/turkish/morph-test.mjs to see how the Turkish engine is built.
+Read turkmen/TM-PROJECT.md in full, turkmen/TM-CURRICULUM.md (especially "Notes for writers", the coverage tables and "Open questions for native review"), and the "Morphology engine" part of turkish/PROJECT.md section 3, then assets/js/turkish-morph.js and scripts/turkish/morph-test.mjs to see how the Turkish engine is built.
 
 Goal: assets/js/turkmen-morph.js (window.TKMMorph, also usable with require() in Node), a rule-based model of written Turkmen, and scripts/turkmen/morph-test.mjs with forms typed by hand.
 
@@ -55,7 +55,7 @@ Run morph-test.mjs, validate.mjs and test.mjs. Work on the branch turkmen/tk-mor
 ```text
 This conversation is content batch A1-1 of the Turkmen course (Daily Turkmen): units a1-u01, a1-u02 and a1-u03.
 
-Read turkmen/TM-PROJECT.md in full, the A1 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to (5 schemas, 7 style rules), and the progress log. Look at one finished Turkish unit for the shape and level of detail (assets/data/turkish/units/a1-u02.json, its four lessons, grammar/a1-u02.json and culture/a1-u02.json), but write Turkmen content from scratch: don't translate Turkish lessons.
+Read turkmen/TM-PROJECT.md in full, the A1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to (5 schemas, 7 style rules), and the progress log. Look at one finished Turkish unit for the shape and level of detail (assets/data/turkish/units/a1-u02.json, its four lessons, grammar/a1-u02.json and culture/a1-u02.json), but write Turkmen content from scratch: don't translate Turkish lessons, and never mention or compare with Turkish in anything the learner sees.
 
 Write, for each unit: the grammar guide, then the four lessons, then the interlude, then the unit file, following turkmen/TM-PROJECT.md section 9. This is the first real Turkmen content, so it also tests the schemas: if a schema or validator rule turns out wrong for Turkmen, fix the spec and the validator together and log it.
 
@@ -96,7 +96,7 @@ Read turkmen/TM-PROJECT.md in full, turkish/PROJECT.md sections 3 and 6, and the
 
 Goal: turkmen/guide.html (grammar guides, interludes, index of grammar points) and turkmen/cards.html (flashcard review, browse, stats, settings), forked from the Turkish pages, in the look TK-BUILD-2 set.
 
-- The reader renders the `~…~` Turkish markup only in compare callouts, with lang="tr"; Turkmen with lang="tk". Segmented examples with the harmony colours; check that the colours read right for Turkmen's nine vowels (ä included).
+- Turkmen text gets lang="tk". Segmented examples with the harmony colours; check that the colours read right for Turkmen's nine vowels (ä included).
 - The flashcards page: directions tk-en and en-tk, no speech, the deck browser's search folds the Turkmen letters (searching "yok" finds "ýok"), the beta notice.
 - Same tests as TK-BUILD-2 (360 px and desktop, both themes, reduced motion, no console errors, no horizontal scroll), plus a full review session of new FC-1 cards with Undo and Suspend, the stats view, and a guide and an interlude of A1-1 read to the end (marked read on the hub).
 
@@ -126,7 +126,7 @@ Work on the branch turkmen/tk-publish from main, commit, push, open a pull reque
 ```text
 This conversation is content batch A1-2 of the Turkmen course (Daily Turkmen): units a1-u04, a1-u05 and a1-u06.
 
-Read turkmen/TM-PROJECT.md in full, the A1 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log (especially what earlier batches decided and left open). Run node scripts/turkmen/validate.mjs --vocab to see which words are taught. Write from scratch in Turkmen; don't translate Turkish lessons.
+Read turkmen/TM-PROJECT.md in full, the A1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log (especially what earlier batches decided and left open). Run node scripts/turkmen/validate.mjs --vocab to see which words are taught. Write from scratch in Turkmen; don't translate Turkish lessons.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9). Give every conjugate exercise a form slug the engine knows.
 
@@ -140,11 +140,11 @@ Set `unit` and `level` on the cards these lessons teach first, and `card` on the
 ```text
 This conversation is content batch A1-3 of the Turkmen course (Daily Turkmen): units a1-u07, a1-u08 and a1-u09.
 
-Read turkmen/TM-PROJECT.md in full, the A1 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
+Read turkmen/TM-PROJECT.md in full, the A1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
-Specific to this batch: the dative fusion after vowels (a1-u07) and voicing (a1-u08) are where learners from Turkish go wrong; give each a `compare` callout and `reject` entries with a why for the predictable mistakes (*Marya*, *mekdepe*, *kitapy*). The family words of a1-u09 (aga, uýa, jigi, daýy, daýza, bibi) need a clear table. Settle open question 5 (e → ä) for nouns before the dative if TK-MORPH didn't. Interludes: The Karakum; Bread and the tamdyr; The toý.
+Specific to this batch: the dative fusion after vowels (a1-u07) and voicing (a1-u08) are where learners go wrong; give each a clear table and `reject` entries with a why for the predictable mistakes (*Marya*, *mekdepe*, *kitapy*). The family words of a1-u09 (aga, uýa, jigi, daýy, daýza, bibi) need a clear table. Settle open question 5 (e → ä) for nouns before the dative if TK-MORPH didn't. Interludes: The Karakum; Bread and the tamdyr; The toý.
 
 Set `unit` and `level` on the cards these lessons teach first, and `card` on the vocab entries. Run --batch A1-3 until clean, then --index, test.mjs and morph-test.mjs. Re-read every file. List uncertain forms in the log row. Work on the branch turkmen/a1-3 from main, commit, push, open a pull request into main; don't merge.
 ```
@@ -154,7 +154,7 @@ Set `unit` and `level` on the cards these lessons teach first, and `card` on the
 ```text
 This conversation is content batch A1-4 of the Turkmen course (Daily Turkmen): units a1-u10, a1-u11 and a1-u12, the end of A1.
 
-Read turkmen/TM-PROJECT.md in full, the A1 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
+Read turkmen/TM-PROJECT.md in full, the A1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
@@ -206,7 +206,7 @@ If the whole level has now been reviewed, remove the beta notice for that level 
 ```text
 This conversation is content batch A2-1 of the Turkmen course (Daily Turkmen): units a2-u01, a2-u02 and a2-u03.
 
-Read turkmen/TM-PROJECT.md in full, the A2 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen. A2 lessons have 5–8 new words each, and interlude mini-reads of 4–6 Turkmen sentences.
+Read turkmen/TM-PROJECT.md in full, the A2 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen. A2 lessons have 5–8 new words each, and interlude mini-reads of 4–6 Turkmen sentences.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
@@ -220,7 +220,7 @@ Set `unit` and `level` on the cards these lessons teach first, and `card` on the
 ```text
 This conversation is content batch A2-2 of the Turkmen course (Daily Turkmen): units a2-u04, a2-u05 and a2-u06.
 
-Read turkmen/TM-PROJECT.md in full, the A2 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
+Read turkmen/TM-PROJECT.md in full, the A2 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
@@ -234,7 +234,7 @@ Set `unit` and `level` on the cards these lessons teach first, and `card` on the
 ```text
 This conversation is content batch A2-3 of the Turkmen course (Daily Turkmen): units a2-u07, a2-u08 and a2-u09.
 
-Read turkmen/TM-PROJECT.md in full, the A2 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
+Read turkmen/TM-PROJECT.md in full, the A2 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
@@ -248,7 +248,7 @@ Set `unit` and `level` on the cards these lessons teach first, and `card` on the
 ```text
 This conversation is content batch A2-4 of the Turkmen course (Daily Turkmen): units a2-u10, a2-u11 and a2-u12, the end of A2.
 
-Read turkmen/TM-PROJECT.md in full, the A2 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
+Read turkmen/TM-PROJECT.md in full, the A2 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
@@ -278,7 +278,7 @@ Run validate.mjs --strict, test.mjs and morph-test.mjs. Work on the branch turkm
 ```text
 This conversation is content batch B1-1 of the Turkmen course (Daily Turkmen): units b1-u01, b1-u02 and b1-u03.
 
-Read turkmen/TM-PROJECT.md in full, the B1 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen. From B1, each unit has at least one `reading` exercise, guides run 1,200–2,500 words, and interludes are parallel Turkmen and English paragraphs (300–500 words in each language).
+Read turkmen/TM-PROJECT.md in full, the B1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen. From B1, each unit has at least one `reading` exercise, guides run 1,200–2,500 words, and interludes are parallel Turkmen and English paragraphs (300–500 words in each language).
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
@@ -292,11 +292,11 @@ Set `unit` and `level` on the cards these lessons teach first, and `card` on the
 ```text
 This conversation is content batch B1-2 of the Turkmen course (Daily Turkmen): units b1-u04, b1-u05 and b1-u06.
 
-Read turkmen/TM-PROJECT.md in full, the B1 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
+Read turkmen/TM-PROJECT.md in full, the B1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
-Specific to this batch: the participles are where Turkmen differs most from Turkish (-An for both subject and object relatives, the possessive on the noun: *meniň okan kitabym*); give learners who know Turkish a compare callout and reject the Turkish-style forms with a why. Fact clauses with -dYgY (b1-u06) need many examples with *bilmek*, *eşitmek*, *aýtmak*. Interludes: Bagşy and the dutar; Magtymguly Pyragy; Kemine and Mollanepes. Quote only public-domain poetry (TM-PROJECT.md 7.7), with our own translations.
+Specific to this batch: the participles carry a lot (-An for both subject and object relatives, the possessive on the noun: *meniň okan kitabym*); build them up step by step with many examples, and reject the predictable mistakes with a why. Fact clauses with -dYgY (b1-u06) need many examples with *bilmek*, *eşitmek*, *aýtmak*. Interludes: Bagşy and the dutar; Magtymguly Pyragy; Kemine and Mollanepes. Quote only public-domain poetry (TM-PROJECT.md 7.7), with our own translations.
 
 Set `unit` and `level` on the cards these lessons teach first, and `card` on the vocab entries. Run --batch B1-2 until clean, then --index, test.mjs and morph-test.mjs. Re-read every file. List uncertain forms in the log row. Work on the branch turkmen/b1-2 from main, commit, push, open a pull request into main; don't merge.
 ```
@@ -306,7 +306,7 @@ Set `unit` and `level` on the cards these lessons teach first, and `card` on the
 ```text
 This conversation is content batch B1-3 of the Turkmen course (Daily Turkmen): units b1-u07 and b1-u08.
 
-Read turkmen/TM-PROJECT.md in full, the B1 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
+Read turkmen/TM-PROJECT.md in full, the B1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
@@ -320,11 +320,11 @@ Set `unit` and `level` on the cards these lessons teach first, and `card` on the
 ```text
 This conversation is content batch B1-4 of the Turkmen course (Daily Turkmen): units b1-u09 and b1-u10.
 
-Read turkmen/TM-PROJECT.md in full, the B1 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
+Read turkmen/TM-PROJECT.md in full, the B1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
-Specific to this batch: real conditions in Turkmen go through *bolsa* after participles (*gelýän bolsaň*), unlike Turkish tense + -sA; unreal conditions and *kaşki* complete the picture since B2 isn't planned yet. The Darvaza interlude separates what is documented from what is told, with attributed accounts; the Karakum Canal interlude states its effects (including on the Aral Sea basin) factually, with sources. Interludes: Darvaza; The Karakum Canal.
+Specific to this batch: real conditions go through *bolsa* after participles (*gelýän bolsaň*); unreal conditions and *kaşki* complete the picture since B2 isn't planned yet. The Darvaza interlude separates what is documented from what is told, with attributed accounts; the Karakum Canal interlude states its effects (including on the Aral Sea basin) factually, with sources. Interludes: Darvaza; The Karakum Canal.
 
 Set `unit` and `level` on the cards these lessons teach first, and `card` on the vocab entries. Run --batch B1-4 until clean, then --index, test.mjs and morph-test.mjs. Re-read every file. List uncertain forms in the log row. Work on the branch turkmen/b1-4 from main, commit, push, open a pull request into main; don't merge.
 ```
@@ -334,11 +334,11 @@ Set `unit` and `level` on the cards these lessons teach first, and `card` on the
 ```text
 This conversation is content batch B1-5 of the Turkmen course (Daily Turkmen): units b1-u11 and b1-u12, the end of B1.
 
-Read turkmen/TM-PROJECT.md in full, the B1 part and "How Turkmen differs" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
+Read turkmen/TM-PROJECT.md in full, the B1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to, and the progress log. Run node scripts/turkmen/validate.mjs --vocab. Write from scratch in Turkmen.
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
-Specific to this batch: the causative suffixes are partly lexical; check every causative you use with the engine and a dictionary, and add the ones it lacks with tests. The interlude on Turkmen among the Turkic languages is written for learners who may know Turkish: a table of look-alike words with different meanings is welcome, and every claim about sound history needs a source. The proverbs interlude quotes only traditional proverbs, with our own translations and an explanation of use. Interludes: Turkmen among the Turkic languages; Turkmen proverbs.
+Specific to this batch: the causative suffixes are partly lexical; check every causative you use with the engine and a dictionary, and add the ones it lacks with tests. The interlude on the Turkmen language is about Turkmen itself (where it is spoken, dialects, sounds, the written standard), with no comparison with Turkish; every claim about its history needs a source. The proverbs interlude quotes only traditional proverbs, with our own translations and an explanation of use. Interludes: The Turkmen language; Turkmen proverbs.
 
 Set `unit` and `level` on the cards these lessons teach first, and `card` on the vocab entries. Run --batch B1-5 until clean, then --index, test.mjs and morph-test.mjs. Re-read every file. List uncertain forms in the log row. Work on the branch turkmen/b1-5 from main, commit, push, open a pull request into main; don't merge.
 ```
