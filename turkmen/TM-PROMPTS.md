@@ -9,7 +9,7 @@ One prompt per conversation, in the recommended order of [TM-CURRICULUM.md](TM-C
 3. Until TK-PUBLISH, merging to `main` publishes nothing on dailyturkish.app (the sync workflow only copies Turkish paths). From TK-BUILD-2 on, `gregoiremaillard.com/turkmen/` shows the pages, which is fine for testing.
 4. After A1 and again after B1, run the two TK-REVIEW prompts with a native Turkmen speaker in between.
 
-Every prompt points the conversation to `turkmen/TM-PROJECT.md`, which holds the rules; the prompts only add what is specific to each conversation. The most important rule: Daily Turkmen is for English speakers learning Turkmen from scratch. It follows Daily Turkish in structure, look and format, and can say it is its sister, but its explanations never compare with Turkish.
+Every prompt points the conversation to `turkmen/TM-PROJECT.md`, which holds the rules; the prompts only add what is specific to each conversation. The most important rule: Daily Turkmen is for English speakers learning Turkmen from scratch. It follows Daily Turkish in structure, look and format, and can say it is its sister, but its lessons are never built as a bridge from Turkish: everything is explained for someone who has never heard Turkish (a brief factual remark that Turkmen is like Turkish is allowed in a guide or interlude).
 
 ---
 
@@ -55,7 +55,7 @@ Run morph-test.mjs, validate.mjs and test.mjs. Work on the branch turkmen/tk-mor
 ```text
 This conversation is content batch A1-1 of the Turkmen course (Daily Turkmen): units a1-u01, a1-u02 and a1-u03.
 
-Read turkmen/TM-PROJECT.md in full, the A1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to (5 schemas, 7 style rules), and the progress log. Look at one finished Turkish unit for the shape and level of detail (assets/data/turkish/units/a1-u02.json, its four lessons, grammar/a1-u02.json and culture/a1-u02.json), but write Turkmen content from scratch: don't translate Turkish lessons, and never explain a point by comparison with Turkish.
+Read turkmen/TM-PROJECT.md in full, the A1 part and "Notes for writers" of turkmen/TM-CURRICULUM.md, the sections of turkish/PROJECT.md the Turkmen spec points to (5 schemas, 7 style rules), and the progress log. Look at one finished Turkish unit for the shape and level of detail (assets/data/turkish/units/a1-u02.json, its four lessons, grammar/a1-u02.json and culture/a1-u02.json), but write Turkmen content from scratch: don't translate Turkish lessons, and never teach a point by bridging from Turkish (TM-PROJECT.md section 1).
 
 Write, for each unit: the grammar guide, then the four lessons, then the interlude, then the unit file, following turkmen/TM-PROJECT.md section 9. This is the first real Turkmen content, so it also tests the schemas: if a schema or validator rule turns out wrong for Turkmen, fix the spec and the validator together and log it.
 
