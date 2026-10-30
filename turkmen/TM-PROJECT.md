@@ -107,7 +107,7 @@ Room for audio later: no `audio` field exists yet. When recordings are made, a c
 
 ### 5.1 Examples
 
-A lesson start, to show the renames (the rest of the lesson schema is unchanged):
+A lesson start, to show the renames (the rest of the lesson schema is unchanged; a real lesson has 10–14 exercises):
 
 ```json lesson
 {
@@ -127,13 +127,73 @@ A lesson start, to show the renames (the rest of the lesson schema is unchanged)
     { "tk": "otag", "en": "room", "pos": "noun" },
     { "tk": "nirede", "en": "where", "pos": "adv" }
   ],
-  "exercises": []
+  "exercises": [
+    {
+      "id": "a1-u05-l01-e01",
+      "type": "mcq",
+      "points": ["gp-locative"],
+      "question": "How do you say **at school**?",
+      "options": ["mekdepde", "mekdepda", "mekdepte", "mekdebe"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The last vowel of *mekdep* is e, a front vowel, so the suffix takes e.",
+        "2": "The d of the locative never changes: *mekdepde*.",
+        "3": "*Mekdebe* means **to school**; you will meet it in unit 7."
+      },
+      "explain": "Front vowel e: *mekdep* + *-de* = *mekdepde*."
+    },
+    {
+      "id": "a1-u05-l01-e02",
+      "type": "cloze",
+      "points": ["gp-locative"],
+      "text": "Aýna otag___, Merdan öý___.",
+      "en": "Aýna is in the room, Merdan is at home.",
+      "blanks": [
+        { "accept": ["da"], "reject": [{ "answer": "de", "why": "The last vowel of *otag* is a, a back vowel, so the suffix takes a: *otagda*." }] },
+        { "options": ["de", "da"], "answer": 0 }
+      ],
+      "explain": "*otag* has the back vowel a → *-da*; *öý* has the front vowel ö → *-de*."
+    },
+    {
+      "id": "a1-u05-l01-e03",
+      "type": "translate",
+      "points": ["gp-locative", "gp-copula-present"],
+      "from": "en",
+      "prompt": "I am at home.",
+      "accept": ["Men öýde."],
+      "reject": [{ "answer": "Öýde.", "why": "Nothing in *öýde* says who is at home, so keep the subject: *Men öýde*." }],
+      "explain": "*öý* + *-de* (at home); after *men*, **to be** is not written."
+    },
+    {
+      "id": "a1-u05-l01-e04",
+      "type": "translate",
+      "points": ["gp-locative"],
+      "from": "tk",
+      "prompt": "Mugallym mekdepde.",
+      "accept": ["The teacher is at school.", "The teacher is [at|in] the school", "The teacher's at (the) school"]
+    },
+    {
+      "id": "a1-u05-l01-e05",
+      "type": "wordbank",
+      "from": "en",
+      "prompt": "Where is the school?",
+      "text": "Mekdep nirede?",
+      "answer": ["mekdep", "nirede"],
+      "distractors": ["öý", "bar", "otagda"]
+    },
+    {
+      "id": "a1-u05-l01-e06",
+      "type": "match",
+      "pairs": [["öý", "house, home"], ["mekdep", "school"], ["otag", "room"], ["nirede", "where"]]
+    }
+  ]
 }
 ```
 
 A `tip` callout in a grammar guide:
 
-```json
+```json block
 { "type": "callout", "kind": "tip", "title": "One word, not two", "text": "The question ending is written onto the word it asks about: *Sen talypmy?* (Are you a student?), *Gelýärsiňmi?* (Are you coming?)" }
 ```
 
@@ -189,16 +249,53 @@ Card notes never mention Turkish (section 1). They may point out two Turkmen wor
 
 ### 5.9 User progress
 
-As turkish/PROJECT.md 5.9, under the keys `tkm:v1:course`, `tkm:v1:cards` and `tkm:v1:settings`, with the card directions `tk-en` and `en-tk`. Settings drop everything about speech. The export file's `app` field is `"daily-turkmen"`, and import refuses a Daily Turkish file with a clear message (and the Turkish course refuses a Turkmen one).
+As turkish/PROJECT.md 5.9, under the keys `tkm:v1:course`, `tkm:v1:cards` and `tkm:v1:settings`, with the card directions `tk-en` and `en-tk`. Settings drop everything about speech (`tts`, `ttsRate`). The export file's `app` field is `"daily-turkmen"`, and import refuses a Daily Turkish file with a clear message (and the Turkish course refuses a Turkmen one).
+
+```json progress
+{
+  "app": "daily-turkmen",
+  "schema": 1,
+  "exported": "2026-10-13T21:40:00.000Z",
+  "course": {
+    "schema": 1,
+    "updated": "2026-10-13T21:35:12.000Z",
+    "lessons": { "a1-u01-l01": { "first": "2026-10-12", "last": "2026-10-13T21:30:00.000Z", "runs": 2, "best": 0.9, "xp": 23 } },
+    "units": { "a1-u01": { "guide": "2026-10-12T20:00:00.000Z" } },
+    "mistakes": { "a1-u01-l01-e04": { "n": 1, "ok": 1, "last": "2026-10-13T21:28:00.000Z" } },
+    "xp": { "total": 23, "days": { "2026-10-12": 13, "2026-10-13": 10 } },
+    "streak": { "current": 2, "best": 2, "last": "2026-10-13" }
+  },
+  "cards": {
+    "schema": 1,
+    "updated": "2026-10-13T21:35:12.000Z",
+    "cards": {
+      "fc-0001:tk-en": { "s": "review", "due": 1792195200000, "ivl": 1, "ease": 2.5, "step": 0, "reps": 3, "lapses": 0, "last": 1792100000000 },
+      "fc-0002:tk-en": { "s": "learning", "due": 1792100600000, "ivl": 0, "ease": 2.5, "step": 1, "reps": 1, "lapses": 0, "last": 1792100000000 }
+    },
+    "days": { "2026-10-13": { "new": 2, "reviews": 4, "again": 1, "lapses": 1, "mature": 0, "matureLapses": 0 } }
+  },
+  "settings": {
+    "schema": 1,
+    "dailyGoal": 20,
+    "newPerDay": 15,
+    "reviewsPerDay": 200,
+    "directions": ["tk-en", "en-tk"],
+    "dayStartHour": 4,
+    "keyboardBar": true,
+    "unlockAll": false,
+    "onlyTaughtWords": false
+  }
+}
+```
 
 ## 6. Runtime behaviour
 
 As turkish/PROJECT.md section 6 (path and unlocking, lesson flow, XP and streak, answer checking, flashcard scheduling), with these differences:
 
-- **6.4 Answer checking.** Normalization lowercases with plain `toLowerCase()` (Turkmen has no dotted/dotless i pair), applies NFC, and for the "almost" verdict folds the eight Turkmen letters to their base (ä→a, ç→c, ž→z, ň→n, ö→o, ş→s, ü→u, ý→y), so an answer right except for missing marks is "almost": shown the right spelling, not counted wrong in a lenient exercise. The question particle typed apart (*talyp my*) is "almost", with the note that Turkmen writes it attached.
+- **6.4 Answer checking.** Normalization lowercases with plain `toLowerCase()` (Turkmen has no dotted/dotless i pair), applies NFC, and for the "almost" verdict folds the eight Turkmen letters to their base (ä→a, ç→c, ž→z, ň→n, ö→o, ş→s, ü→u, ý→y), so an answer right except for missing marks is "almost": shown the right spelling, not counted wrong in a lenient exercise. The question particle typed apart (*talyp my*) is "almost", with the note that Turkmen writes it attached. As in turkish/PROJECT.md 6.4, the letter fold applies in lenient mode only (`translate` by default; `cloze` and `conjugate` are strict), and an answer right but for an apostrophe (*Aşgabat'da*) is "almost" (step 5); the particle typed apart is "almost" in both modes. No other letters are folded: e and ä stay apart, ç and j, and letters outside the Turkmen alphabet (ı, ğ, c, v…) make an answer wrong. The checker's notes are `apostrophe`, `Turkmen letters` and `particle` (and `typo` for English answers).
 - **6.5 Speech and typing.** No speech (section 2). Typing as in section 3.
 - **6.6 Flashcards.** Identical, with directions `tk-en` and `en-tk`; nothing is read aloud.
-- **6.7 `turkmen.js`** exposes `window.TKM` with the same members as `TRK`, minus speech.
+- **6.7 `turkmen.js`** exposes `window.TKM` with the same members as `TRK`, minus speech (no `tts`), renamed for Turkmen: `tkLower`, `tkUpper` and `tkRich` (for `trLower`, `trUpper`, `trRich`), the CSS classes `tkm-nw`, `tkm-seg` and `tkm-soon`, and an achievement's Turkmen name in `tk`. It adds `joinParticle`, the checker's joining of a particle typed apart. Its page links are relative (`index.html`, `lesson.html`, `guide.html`, `cards.html`, section 3); a page that sets `window.TKM_STATIC_GUIDES = true` before loading it links guides to `guides/<id>.html` instead (for TK-PUBLISH).
 
 ## 7. Content style rules
 
@@ -286,9 +383,9 @@ node scripts/turkmen/test.mjs                        # test turkmen.js
 node scripts/turkmen/morph-test.mjs                  # test turkmen-morph.js on known-correct forms
 ```
 
-Same errors and warnings as turkish/PROJECT.md 8, with the Turkmen letter rules of 7.1 in place of the Turkish ones: errors for the Turkish-only letters (ı, ğ, İ, â, î, û), `listen` exercises, the word "Turkish" in learner-facing text (a warning, so a writer checks it), a malformed `scripts/turkmen/tm-wordlist.tsv` or a card that differs from its row; warnings for a question particle written apart (*talyp my*), an apostrophe in Turkmen text, *y*/*ý* patterns that look wrong (a *ý* between two consonants, a *y* starting a word before a vowel), a future or necessitative sentence with no subject in an `accept[0]`.
+Same errors and warnings as turkish/PROJECT.md 8, with the Turkmen letter rules of 7.1 in place of the Turkish ones: errors for the Turkish-only letters (ı, ğ, İ, â, î, û), `listen` exercises, the word "Turkish" in learner-facing text (a warning, so a writer checks it), a malformed `scripts/turkmen/tm-wordlist.tsv` or a card that differs from its row; warnings for a question particle written apart (*talyp my*), an apostrophe in Turkmen text, other non-Turkmen letters (c, q, v, x…), *y*/*ý* patterns that look wrong (a *ý* between two consonants, a *y* starting a word before a vowel, a *y* right after a vowel as in *ay* for *aý*), a future or necessitative sentence with no subject in an `accept[0]` (a rough check: a clause ending in -jAk or -mAlY needs a pronoun, a name of the cast of 7.5 or a capitalized word; a noun subject such as *kakam* is not seen).
 
-Until TK-BUILD-1 has forked the validator, a conversation checks its JSON with a short throwaway script (schema shape, letters, wordlist agreement) and says so in the log.
+The morphology checks of turkish/PROJECT.md 8 (conjugate cells and morph tiles against the engine) are off until TK-MORPH hooks `turkmen-morph.js` into the validator; the summary line says "morphology engine not loaded" and counts the exercises not checked. `--examples` validates the `json lesson`, `json block`, `json flashcards` and `json progress` examples of this file.
 
 ## 9. Workflow for a conversation
 
@@ -314,3 +411,4 @@ One row per conversation, newest at the bottom.
 |---|---|---|---|---|
 | 2026-10-30 | TK-PLAN | **The plan, asked by Grégoire**: a Turkmen sister of Daily Turkish, A1–B1 first, served at `dailyturkish.app/turkmen/`, no audio, interludes and references about Turkmenistan. New `turkmen/TM-CURRICULUM.md` (36 units, 149 grammar points, 13 content batches, interlude list, open questions), this file, `turkmen/TM-PROMPTS.md` (a prompt per conversation), `scripts/turkmen/tm-wordlist.tsv` (1,000 ranked lemmas adapted from the Turkish deck, 7.8) and FC-1, `assets/data/turkmen/flashcards/tm-fc-0001-0200.json` (200 cards with glosses, examples, forms and notes). No code, no pages. | No validator yet: a throwaway script checked the cards' shape, that every card matches its word-list row, the Turkmen letter set, no apostrophes, and that each example contains its word or a form of it. | Every Turkmen form in the cards and the curriculum is AI-written and needs native review, first of all the eight open questions at the end of TM-CURRICULUM.md, the verb forms on the cards (`prs`, `aor`, `cvb` of the t-stems and e-stems) and the example sentences. Push from the cloud session was refused (GitHub App access): branch `claude/turkmen-curriculum`, delivered to Grégoire as a patch if the push stays blocked. |
 | 2026-10-30 | TK-PLAN (follow-up) | **No Turkish in the course, asked by Grégoire**: Daily Turkmen is for English speakers learning Turkmen from scratch, not a comparison with Turkish. Added the principle to section 1; removed the `compare` callouts with Turkish, the `~…~` Turkish markup, the Turkish-habit answer folds and the Turkish mentions in four FC-1 card notes; the b1-u11 interlude becomes **The Turkmen language**; the prompts updated to match. TM-CURRICULUM.md keeps a notes-for-writers section on where the Turkish course's habits don't apply, never shown to learners. | Throwaway checker: FC-1 still clean. | Branch `turkmen/no-turkish-comparison`. |
+| 2026-10-30 | TK-BUILD-1 | **Validator, tests and core script.** New `scripts/turkmen/validate.mjs`, a fork of the Turkish validator: the renames of 5.0, levels A1–B1, `listen` rejected, no Turkish markup (and the word "Turkish" in learner-facing English text warned about, the deck's CC BY-SA credit line excepted), the Turkmen letter rules of 7.1 and the warnings of 8, the six-column `tm-wordlist.tsv` with `sense`; morphology checks off ("engine not loaded"). New `assets/js/turkmen.js` (`window.TKM`): keys `tkm:v1:…`, directions `tk-en`/`en-tk`, no speech, page links relative to `/turkmen/`, the checker of 6.4 with the notes `apostrophe`, `Turkmen letters` and `particle`, export `app: "daily-turkmen"` with a Daily Turkish file refused. New `scripts/turkmen/test.mjs` (83 tests), `scripts/turkmen/README.md`, `assets/data/turkmen/levels/a1.json`, `a2.json`, `b1.json` and the generated `index.json` (36 planned units, 200 cards). Turkish course: one line in `assets/js/turkish.js` so its import refuses a Daily Turkmen file. Spec changes: the 5.1 lesson example gets six exercises (it had none, which the schema forbids), the callout example is tagged `json block` so `--examples` checks it, a `json progress` example in 5.9, details in 6.4 (modes, apostrophe, notes, nothing else folded) and 6.7 (the TKM renames), and in 8 the y-after-vowel warning, the subject check's limits and the engine note. Started from the prompt as it was before the TK-PLAN follow-up; rebased onto it, so the `~…~` markup and the Turkish-habit folds first written here were taken out again. | `validate.mjs`: 0 errors, 0 warnings (FC-1 and the word list pass). `--examples`: 4 examples pass. `--index`: written. `test.mjs`: 83/83, and the date tests pass in 2 other time zones. Turkish `validate.mjs`: all checks pass; Turkish `test.mjs`: 72/72. The new checks were tried on broken copies of the data (listen, ı, v, apostrophe, *talyp my*, *öy*, *yaşyl*, *Ertir geljek*, a missing `cvb`, a card that differs from its row, a duplicated lemma without `sense`, "Turkish" in a note and a gloss): each is reported. | Turkmen written here, for the native review: the 32 achievement names in `turkmen.js` (*Ilkinji ädim, On sapak, Ýalňyşsyz, Kämil, Gaýtadan, Ilkinji bölüm, Altyn bölüm, Altyn diwar, Düzediş, Maksat, Erjellik, Wepaly, Zähmetsöýer, Güýçli ýat, Uzak ýol, Kitapsöýer, Syýahatçy*; the streak ranks *Şägirt, Ussa, Halypa, Uly halypa* follow the master–apprentice pair *halypa–şägirt*), chosen as plain words, not checked in a dictionary; the 5.1 example exercises (*mekdepde, mekdebe* "to school", *otagda, Men öýde* for "I am at home", *Mugallym mekdepde*); the level summaries. Checker choices to confirm: ý typed for y is "almost" like y for ý (both fold to y); the particle typed apart is "almost" even in strict mode. The subject check of 8 is a heuristic (a noun subject such as *kakam* isn't seen, so it can warn wrongly). Merging also triggers the dailyturkish.app sync, because `assets/js/turkish.js` changed. Branch `turkmen/tk-build-1`. |

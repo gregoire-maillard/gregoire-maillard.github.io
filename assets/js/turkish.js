@@ -598,7 +598,7 @@
     return clone(d);
   }
   // Errors in an exported progress file, as messages (empty when it can be imported).
-  function validateProgress(obj) { var e = []; vcheck(SPEC.progress, obj, "", e); return e; }
+  function validateProgress(obj) { if (isObj(obj) && obj.app === "daily-turkmen") return ["This is a Daily Turkmen progress file. Import it in the Turkmen course; the Turkish course only takes Daily Turkish files."]; var e = []; vcheck(SPEC.progress, obj, "", e); return e; }
 
   function xpOn(course, day) { return (course.xp.days && course.xp.days[day]) || 0; }
   function addXp(course, settings, n, now) {
