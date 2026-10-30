@@ -9,6 +9,7 @@ The rules for the Turkmen course (working name **Daily Turkmen**), a sister of t
 ## 1. Goals
 
 - A Turkmen course from A1 to B1 for English speakers, in the spirit of Daily Turkish: a path of units and short lessons, many small exercises, immediate feedback, XP and a streak.
+- **For English speakers starting from zero.** No knowledge of Turkish (or any other Turkic language) is assumed, and nothing is taught by comparison with Turkish. Learner-facing content (lessons, hints, explanations, guides, interludes, flashcards, page text) never mentions Turkish words or Turkish grammar; it explains Turkmen on its own terms, in English. The Turkish course is the model for the design, the code and the workflow only.
 - Every point of Turkmen grammar up to B1 (scope in TM-CURRICULUM.md), explained in a grammar guide per unit and practised in that unit's lessons.
 - One culture or history interlude per unit, about Turkmenistan and the Turkmen, factual and neutral.
 - A deck of 1,000 useful Turkmen words, reviewed with Anki-style spaced repetition.
@@ -24,7 +25,7 @@ The rules for the Turkmen course (working name **Daily Turkmen**), a sister of t
 | Hosting | Static files on GitHub Pages in the `gregoire-maillard.github.io` repo, mirrored to `dailyturkish` by the sync workflow (TK-PUBLISH adds the Turkmen paths); no backend |
 | Code | Forked from the Turkish course, not shared: Turkmen files never `import` or load Turkish ones, so the Turkish course can change without breaking this one |
 | Progress | `localStorage` under `tkm:v1:…`, with export to and import from a JSON file. No accounts in this version |
-| Interface language | English only. Turkish appears only in `compare` callouts, for learners who come from Daily Turkish |
+| Interface language | English only. No Turkish anywhere in learner-facing content (section 1) |
 | Audio | **None.** Browsers have no Turkmen speech voice and Turkish voices mispronounce Turkmen. No speaker buttons, no `listen` exercises, no speech settings. The data leaves room for recordings later (section 5.0) |
 | Flashcard algorithm | Identical to the Turkish course (turkish/PROJECT.md 6.6) |
 | Validation | `node scripts/turkmen/validate.mjs`, no dependencies (section 8) |
@@ -67,7 +68,7 @@ The pages live in the `turkmen/` folder (not at the site root like the Turkish o
 
 As in turkish/PROJECT.md section 3, "Page conventions", with these differences:
 
-- `<html lang="en">`, and every element holding Turkmen text gets `lang="tk"`. Turkish words in a `compare` callout get `lang="tr"`.
+- `<html lang="en">`, and every element holding Turkmen text gets `lang="tk"`.
 - Header tabs: **Course** (`index.html`), **Grammar** (`guide.html`), **Flashcards** (`cards.html`), plus a small link back to Daily Turkish. The Turkish hub gets a link to the Turkmen course (TK-PUBLISH).
 - **Level colours** from Turkmen carpets and jewellery, distinct from the Turkish İznik set so a learner of both never confuses them. Proposal for TK-BUILD-2 to test for contrast: A1 carnelian `#b23a2e`, A2 indigo `#2e4a8a`, B1 malachite green `#1f7a55`; "mastered" stays the shiny gold. The level colour marks identity only; buttons and selected options keep the site blue.
 - **Pattern**: a faint SVG of a carpet *göl* (the octagonal medallion) instead of the İznik tile, in the same places.
@@ -101,7 +102,6 @@ Every schema of turkish/PROJECT.md section 5 applies, with these changes. The va
 | exercise type `listen` | **not allowed**: the validator rejects it |
 | flashcard `forms` (`acc, poss3, pl, aor, prog, past, fut`) | `forms?: { acc?, poss3?, pl?, prs?, past?, fut?, aor?, cvb? }` (5.8) |
 | `*…*` marks Turkish inside English | `*…*` marks **Turkmen** inside English (`<i lang="tk">`) |
-| — | `~…~` marks a **Turkish** word inside English (`<i lang="tr">`), allowed only in a `callout` of kind `compare` and in a flashcard `note`; the validator rejects it elsewhere and does not check it as Turkmen |
 
 Room for audio later: no `audio` field exists yet. When recordings are made, a conversation adds an optional `audio` field to the schemas, the `listen` type and the player's speaker buttons together.
 
@@ -118,7 +118,7 @@ A lesson start, to show the renames (the rest of the lesson schema is unchanged)
   "goal": "Say where someone is with -da and -de.",
   "points": ["gp-locative"],
   "intro": {
-    "text": "Add `-da` or `-de` to a noun to say where: *öýde* (at home), *mekdepde* (at school). Unlike Turkish, the d never becomes t.",
+    "text": "Add `-da` or `-de` to a noun to say where: *öýde* (at home), *mekdepde* (at school). The d never changes, whatever sound the word ends in.",
     "see": "gp-locative"
   },
   "vocab": [
@@ -131,10 +131,10 @@ A lesson start, to show the renames (the rest of the lesson schema is unchanged)
 }
 ```
 
-A `compare` callout in a grammar guide:
+A `tip` callout in a grammar guide:
 
 ```json
-{ "type": "callout", "kind": "compare", "title": "If you know Turkish", "text": "Turkmen writes the question particle onto the word: *Sen talypmy?* where Turkish has ~Öğrenci misin?~" }
+{ "type": "callout", "kind": "tip", "title": "One word, not two", "text": "The question ending is written onto the word it asks about: *Sen talypmy?* (Are you a student?), *Gelýärsiňmi?* (Are you coming?)" }
 ```
 
 ### 5.8 Flashcards
@@ -155,7 +155,7 @@ interface Card {
   en: En[];                  // [1–4] glosses, most common first; verbs as "to go"
   ex: { tk: Tk; en: En };    // a natural example sentence, A1–A2 grammar where possible
   forms?: { acc?: Tk; poss3?: Tk; pl?: Tk; prs?: Tk; past?: Tk; fut?: Tk; aor?: Tk; cvb?: Tk };  // third person singular forms
-  note?: Rich;               // irregularities, register, false friends; Turkish words in ~…~
+  note?: Rich;               // irregularities, register, words easily confused
   tags?: string[];
   level?: LevelId;
   unit?: string;             // first unit that teaches it (filled in by content batches)
@@ -185,7 +185,7 @@ Verbs give `forms.prs` (-ýAr), `forms.past` (-dY), `forms.aor` (-Ar) and `forms
 }
 ```
 
-Card notes mention Turkish only for a false friend that would really mislead a learner who knows it: *ýapmak* means **to close**, not **to do** like Turkish ~yapmak~.
+Card notes never mention Turkish (section 1). They may point out two Turkmen words easily confused: *at* (name) and *at* (horse).
 
 ### 5.9 User progress
 
@@ -195,7 +195,7 @@ As turkish/PROJECT.md 5.9, under the keys `tkm:v1:course`, `tkm:v1:cards` and `t
 
 As turkish/PROJECT.md section 6 (path and unlocking, lesson flow, XP and streak, answer checking, flashcard scheduling), with these differences:
 
-- **6.4 Answer checking.** Normalization lowercases with plain `toLowerCase()` (Turkmen has no dotted/dotless i pair), applies NFC, and for the "almost" verdict folds the eight Turkmen letters to their base (ä→a, ç→c, ž→z, ň→n, ö→o, ş→s, ü→u, ý→y), so an answer right except for missing marks is "almost": shown the right spelling, not counted wrong in a lenient exercise. Also fold the Turkish habits of learners who come from Daily Turkish to "almost": ı→y, ğ→g, v→w, and a Turkish c where Turkmen has j (*cogap* for *jogap*). The question particle typed apart (*talyp my*) is "almost", with the note that Turkmen writes it attached.
+- **6.4 Answer checking.** Normalization lowercases with plain `toLowerCase()` (Turkmen has no dotted/dotless i pair), applies NFC, and for the "almost" verdict folds the eight Turkmen letters to their base (ä→a, ç→c, ž→z, ň→n, ö→o, ş→s, ü→u, ý→y), so an answer right except for missing marks is "almost": shown the right spelling, not counted wrong in a lenient exercise. The question particle typed apart (*talyp my*) is "almost", with the note that Turkmen writes it attached.
 - **6.5 Speech and typing.** No speech (section 2). Typing as in section 3.
 - **6.6 Flashcards.** Identical, with directions `tk-en` and `en-tk`; nothing is read aloud.
 - **6.7 `turkmen.js`** exposes `window.TKM` with the same members as `TRK`, minus speech.
@@ -236,7 +236,7 @@ As turkish/PROJECT.md 7.3, with these Turkmen rules:
 
 ### 7.4 Tone and English
 
-As turkish/PROJECT.md 7.4: friendly, precise, short, Canadian spelling, the same length limits. Name grammar in plain English first and give the Turkmen term once in brackets (vowel harmony (*sesleriň sazlaşygy*) where the term is well established; leave it out rather than guess). Comparisons with Turkish go only in `compare` callouts, and only where they help a learner who knows Turkish; comparisons with English or French only where they really help.
+As turkish/PROJECT.md 7.4: friendly, precise, short, Canadian spelling, the same length limits. Name grammar in plain English first and give the Turkmen term once in brackets (vowel harmony (*sesleriň sazlaşygy*) where the term is well established; leave it out rather than guess). Never compare with Turkish (section 1). A `compare` callout may compare with English, and only when it really helps.
 
 ### 7.5 Lessons and exercises
 
@@ -250,7 +250,7 @@ As turkish/PROJECT.md 7.5, except:
 
 ### 7.6 Grammar guides
 
-As turkish/PROJECT.md 7.6 (length, one section per grammar point in TM-CURRICULUM.md order, at least four examples with `seg`, pitfalls, a full `paradigm` for each new verb form, a summary). Each guide of A1–A2 ends its main sections with a `compare` callout for Turkish learners when Turkmen differs in a way they would get wrong (most units), but never only for Turkish: the explanation must stand without it. Paradigms use the persons *men, sen, ol, biz, siz, olar*.
+As turkish/PROJECT.md 7.6 (length, one section per grammar point in TM-CURRICULUM.md order, at least four examples with `seg`, pitfalls, a full `paradigm` for each new verb form, a summary). Guides explain Turkmen on its own terms, for a learner who knows no other Turkic language: from the sound and the meaning to the rule, with plenty of examples, and pitfalls that English speakers actually meet. Paradigms use the persons *men, sen, ol, biz, siz, olar*.
 
 ### 7.7 Interludes, history and copyright
 
@@ -286,7 +286,7 @@ node scripts/turkmen/test.mjs                        # test turkmen.js
 node scripts/turkmen/morph-test.mjs                  # test turkmen-morph.js on known-correct forms
 ```
 
-Same errors and warnings as turkish/PROJECT.md 8, with the Turkmen letter rules of 7.1 in place of the Turkish ones: errors for the Turkish-only letters (ı, ğ, İ, â, î, û), `listen` exercises, `~…~` outside a compare callout, a malformed `scripts/turkmen/tm-wordlist.tsv` or a card that differs from its row; warnings for a question particle written apart (*talyp my*), an apostrophe in Turkmen text, *y*/*ý* patterns that look wrong (a *ý* between two consonants, a *y* starting a word before a vowel), a future or necessitative sentence with no subject in an `accept[0]`.
+Same errors and warnings as turkish/PROJECT.md 8, with the Turkmen letter rules of 7.1 in place of the Turkish ones: errors for the Turkish-only letters (ı, ğ, İ, â, î, û), `listen` exercises, the word "Turkish" in learner-facing text (a warning, so a writer checks it), a malformed `scripts/turkmen/tm-wordlist.tsv` or a card that differs from its row; warnings for a question particle written apart (*talyp my*), an apostrophe in Turkmen text, *y*/*ý* patterns that look wrong (a *ý* between two consonants, a *y* starting a word before a vowel), a future or necessitative sentence with no subject in an `accept[0]`.
 
 Until TK-BUILD-1 has forked the validator, a conversation checks its JSON with a short throwaway script (schema shape, letters, wordlist agreement) and says so in the log.
 
@@ -313,3 +313,4 @@ One row per conversation, newest at the bottom.
 | Date | Conversation | What was written | Checks | Open issues and branch |
 |---|---|---|---|---|
 | 2026-10-30 | TK-PLAN | **The plan, asked by Grégoire**: a Turkmen sister of Daily Turkish, A1–B1 first, served at `dailyturkish.app/turkmen/`, no audio, interludes and references about Turkmenistan. New `turkmen/TM-CURRICULUM.md` (36 units, 149 grammar points, 13 content batches, interlude list, open questions), this file, `turkmen/TM-PROMPTS.md` (a prompt per conversation), `scripts/turkmen/tm-wordlist.tsv` (1,000 ranked lemmas adapted from the Turkish deck, 7.8) and FC-1, `assets/data/turkmen/flashcards/tm-fc-0001-0200.json` (200 cards with glosses, examples, forms and notes). No code, no pages. | No validator yet: a throwaway script checked the cards' shape, that every card matches its word-list row, the Turkmen letter set, no apostrophes, and that each example contains its word or a form of it. | Every Turkmen form in the cards and the curriculum is AI-written and needs native review, first of all the eight open questions at the end of TM-CURRICULUM.md, the verb forms on the cards (`prs`, `aor`, `cvb` of the t-stems and e-stems) and the example sentences. Push from the cloud session was refused (GitHub App access): branch `claude/turkmen-curriculum`, delivered to Grégoire as a patch if the push stays blocked. |
+| 2026-10-30 | TK-PLAN (follow-up) | **No Turkish in the course, asked by Grégoire**: Daily Turkmen is for English speakers learning Turkmen from scratch, not a comparison with Turkish. Added the principle to section 1; removed the `compare` callouts with Turkish, the `~…~` Turkish markup, the Turkish-habit answer folds and the Turkish mentions in four FC-1 card notes; the b1-u11 interlude becomes **The Turkmen language**; the prompts updated to match. TM-CURRICULUM.md keeps a notes-for-writers section on where the Turkish course's habits don't apply, never shown to learners. | Throwaway checker: FC-1 still clean. | Branch `turkmen/no-turkish-comparison`. |

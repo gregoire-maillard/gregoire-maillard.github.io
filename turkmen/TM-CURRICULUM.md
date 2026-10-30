@@ -4,7 +4,7 @@ What the Turkmen course (working name **Daily Turkmen**, served at `dailyturkish
 
 This file is also the **registry** of unit IDs, grammar-point IDs and batches. `scripts/turkmen/validate.mjs` (forked from the Turkish validator in TK-BUILD-1) parses it, and unit files must match it: same unit titles, the same grammar points in the same order. To change the plan, edit this file first, then the JSON, then run the validator.
 
-The course is modelled on the Turkish course (`turkish/CURRICULUM.md`): same path of units and lessons, same exercise types, same batch rhythm. It is **not a translation of it**. Turkmen grammar differs from Turkish in ways that change the order and content of units (see "How Turkmen differs" below), and every interlude and cultural reference is about Turkmenistan and the Turkmen.
+The course is modelled on the Turkish course (`turkish/CURRICULUM.md`): same path of units and lessons, same exercise types, same batch rhythm. It is **not a translation of it**, and it is not taught by comparison with Turkish: learners are English speakers who start from zero. The order and content of units follow Turkmen grammar (see "Notes for writers" below), and every interlude and cultural reference is about Turkmenistan and the Turkmen.
 
 Scope for now: **A1, A2 and B1** (36 units). B2 to C2 may follow once B1 is finished and reviewed; their unit IDs (`b2-u01`…) stay free.
 
@@ -21,7 +21,9 @@ Line formats the validator reads (keep them exact, as in the Turkish file):
 
 **Suffix notation** (from a1-u03 on; before that, guides spell the variants out, -lar/-ler): **A** = a/e (written ä in the cases the guides explain), **Y** = y/i, or u/ü where rounding applies (`gp-harmony-rounding`), **K** = k/g. Letters in brackets appear only after a consonant or only after a vowel, as the guide for each suffix says: -(Y)m after a consonant gives -ym/-im (*kitabym*), after a vowel just -m (*ejem*); -(n)Yň gives -nyň/-niň after a vowel (*Aýnanyň*). Turkmen suffixes do not alternate d/t or c/ç the way Turkish ones do: the locative is always -dA (*Aşgabatda*), the past always -dY (*gitdi*).
 
-## How Turkmen differs (for writers who know the Turkish course)
+## Notes for writers: where the Turkish course's habits don't apply
+
+**Who the course is for:** English speakers learning Turkmen from scratch. They know no Turkish, and the course never compares Turkmen with Turkish (TM-PROJECT.md section 1). This section is only for the people and conversations writing the course, who start from the Turkish course's code, schemas and files: it lists what those carry over that is wrong for Turkmen. None of it is shown to learners, and none of it should be phrased as a comparison in the content.
 
 Read this before writing any batch. Every point below changes what a unit teaches or how an exercise is checked.
 
@@ -106,7 +108,7 @@ Sounds, harmony and the noun system, the verb "to be" and the present tense. Fou
 
 #### a1-u01 · Letters and sounds · Salam!
 - Grammar:
-  - `gp-alphabet` — the 30 letters and their order; the letters that differ from English and from Turkish (ä, ç, j, ž, ň, ş, w, y, ý); capitals; no c, q, v, x
+  - `gp-alphabet` — the 30 letters and their order; the letters an English speaker needs to learn (ä, ç, j, ž, ň, ş, w, y, ý); capitals; no c, q, v, x
   - `gp-pronunciation` — one letter, one sound; y (a vowel) against ý (a consonant); s and z as *th* sounds; ň; g and k beside back vowels
   - `gp-vowel-length` — long vowels are not written but change meaning (*at* horse, *at* name); e against ä; stress usually on the last syllable
   - `gp-sentence-basics` — the big picture: suffixes stack on a root, the verb comes last, no gender, no articles; *Men Merdan.*
@@ -464,7 +466,7 @@ Compound tenses, reported and inferred events, and the non-finite forms (partici
   - `gp-reciprocal` — -(Y)ş (*görüşmek, tanyşmak, gürleşmek*) and *biri-biri*, *birek-birege*
   - `gp-verb-derivation` — verbs from nouns and adjectives: -lA, -lAş, -lAn, -Al (*arassalamak, gowulaşmak, öýlenmek, azalmak*)
 - Vocabulary: services and errands, relationships
-- Interlude: **Turkmen among the Turkic languages** — the Oghuz branch with Turkish and Azerbaijani, the old long vowels, the *th* sounds, and words that look alike but mean something else
+- Interlude: **The Turkmen language** — where it is spoken, its main dialects, its long vowels and *th* sounds, and how the written standard took shape
 - Batch: B1-5
 
 #### b1-u12 · Reported speech · Ol näme diýdi?
