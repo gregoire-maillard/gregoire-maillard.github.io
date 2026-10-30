@@ -4,7 +4,7 @@ What the Turkmen course (working name **Daily Turkmen**, served at `dailyturkish
 
 This file is also the **registry** of unit IDs, grammar-point IDs and batches. `scripts/turkmen/validate.mjs` (forked from the Turkish validator in TK-BUILD-1) parses it, and unit files must match it: same unit titles, the same grammar points in the same order. To change the plan, edit this file first, then the JSON, then run the validator.
 
-The course is modelled on the Turkish course (`turkish/CURRICULUM.md`): same path of units and lessons, same exercise types, same batch rhythm. It is **not a translation of it**. Turkmen grammar differs from Turkish in ways that change the order and content of units (see "How Turkmen differs" below), and every interlude and cultural reference is about Turkmenistan and the Turkmen.
+The course is modelled on the Turkish course (`turkish/CURRICULUM.md`): same path of units and lessons, same exercise types, same batch rhythm. It is **not a translation of it**, and it is not taught by comparison with Turkish: learners are English speakers who start from zero. The order and content of units follow Turkmen grammar (see "Notes for writers" below), and every interlude and cultural reference is about Turkmenistan and the Turkmen.
 
 Scope for now: **A1, A2 and B1** (36 units). B2 to C2 may follow once B1 is finished and reviewed; their unit IDs (`b2-u01`…) stay free.
 
