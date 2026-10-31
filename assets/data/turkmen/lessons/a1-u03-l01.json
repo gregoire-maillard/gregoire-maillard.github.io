@@ -1,0 +1,224 @@
+{
+  "id": "a1-u03-l01",
+  "unit": "a1-u03",
+  "order": 1,
+  "title": "Who are you?",
+  "goal": "Say who people are and what they do with the personal pronouns and the short form of to be.",
+  "points": ["gp-personal-pronouns", "gp-copula-present"],
+  "intro": {
+    "text": "*men* (I), *sen* (you), *ol* (he, she), *biz* (we), *siz* (you, plural or polite), *olar* (they). To say what someone is, put the pronoun and the word side by side: *Men talyp*, I am a student. Keep the pronoun: nothing else says who you mean.",
+    "see": "gp-personal-pronouns"
+  },
+  "vocab": [
+    {
+      "tk": "sen",
+      "en": "you (one person, familiar)",
+      "pos": "pron",
+      "card": "fc-0006"
+    },
+    {
+      "tk": "ol",
+      "en": "he, she, it",
+      "pos": "pron",
+      "card": "fc-0007"
+    },
+    {
+      "tk": "biz",
+      "en": "we",
+      "pos": "pron",
+      "card": "fc-0036"
+    },
+    {
+      "tk": "siz",
+      "en": "you (plural, or polite)",
+      "pos": "pron",
+      "card": "fc-0039"
+    },
+    {
+      "tk": "olar",
+      "en": "they",
+      "pos": "pron",
+      "card": "fc-0066"
+    },
+    {
+      "tk": "mugallym",
+      "en": "teacher",
+      "pos": "noun"
+    },
+    {
+      "tk": "talyp",
+      "en": "student (at university or college)",
+      "pos": "noun"
+    },
+    {
+      "tk": "lukman",
+      "en": "doctor",
+      "pos": "noun"
+    },
+    {
+      "tk": "okuwçy",
+      "en": "pupil, schoolchild",
+      "pos": "noun",
+      "card": "fc-0197"
+    },
+    {
+      "tk": "sürüji",
+      "en": "driver",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u03-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["mugallym", "teacher"],
+        ["talyp", "student"],
+        ["lukman", "doctor"],
+        ["okuwçy", "pupil"],
+        ["sürüji", "driver"]
+      ]
+    },
+    {
+      "id": "a1-u03-l01-e02",
+      "type": "mcq",
+      "points": ["gp-personal-pronouns"],
+      "question": "Which pronoun do you use for **one** person who is older than you, or whom you don't know?",
+      "options": ["siz", "sen", "olar"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*sen* is for a friend, a child, or a relative your age or younger.",
+        "2": "*olar* is **they**."
+      },
+      "explain": "*siz* is the plural **you**, and also the polite **you** for one person."
+    },
+    {
+      "id": "a1-u03-l01-e03",
+      "type": "translate",
+      "points": ["gp-copula-present", "gp-personal-pronouns"],
+      "from": "en",
+      "prompt": "I am a student.",
+      "accept": ["Men talyp.", "(Men) talypdyryn."],
+      "reject": [
+        {
+          "answer": "Talyp.",
+          "why": "*Talyp* alone just means **a student**. With the short form of **to be**, keep the subject: *Men talyp*."
+        }
+      ],
+      "explain": "*Men talyp*: the pronoun and the noun side by side. *Talypdyryn* is the formal written form."
+    },
+    {
+      "id": "a1-u03-l01-e04",
+      "type": "translate",
+      "points": ["gp-copula-present"],
+      "from": "tk",
+      "prompt": "Ol lukman.",
+      "accept": ["She is a doctor.", "He is a doctor.", "[He|She] is the doctor."]
+    },
+    {
+      "id": "a1-u03-l01-e05",
+      "type": "mcq",
+      "points": ["gp-personal-pronouns"],
+      "question": "What does *Biz mugallym* mean?",
+      "options": ["We are teachers.", "You are teachers.", "They are teachers."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "The plural **you** is *siz*.",
+        "2": "**they** is *olar*."
+      },
+      "explain": "*biz* is **we**, and the word for **are** is left out. *mugallym* can stay singular."
+    },
+    {
+      "id": "a1-u03-l01-e06",
+      "type": "cloze",
+      "points": ["gp-personal-pronouns"],
+      "text": "___ sürüji.",
+      "en": "You are a driver. (to a friend)",
+      "blanks": [
+        {
+          "accept": ["Sen"],
+          "reject": [
+            {
+              "answer": "Siz",
+              "why": "*siz* is for several people, or for one person you speak to politely. For a friend, *sen*."
+            }
+          ]
+        }
+      ],
+      "explain": "To a friend, the familiar *sen*: *Sen sürüji*."
+    },
+    {
+      "id": "a1-u03-l01-e07",
+      "type": "wordbank",
+      "points": ["gp-personal-pronouns", "gp-copula-present"],
+      "from": "en",
+      "prompt": "They are pupils.",
+      "text": "Olar okuwçylar.",
+      "answer": ["Olar", "okuwçylar"],
+      "distractors": ["ol", "biz", "okuwçy"],
+      "accept": ["Olar okuwçy."]
+    },
+    {
+      "id": "a1-u03-l01-e08",
+      "type": "mcq",
+      "points": ["gp-copula-present"],
+      "question": "*Men talyp* has no word for **am**. What happens if you leave out *men* as well?",
+      "options": ["It just means “a student”", "It still means “I am a student”", "It means “you are a student”"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Nothing in *talyp* says **I**: the pronoun carries that.",
+        "2": "Nothing in *talyp* says **you** either."
+      },
+      "explain": "In the short form, only the pronoun says who is meant, so it stays: *Men talyp*."
+    },
+    {
+      "id": "a1-u03-l01-e09",
+      "type": "translate",
+      "points": ["gp-copula-present", "gp-personal-pronouns"],
+      "from": "en",
+      "prompt": "We are doctors.",
+      "accept": ["Biz lukman.", "(Biz) lukmandyrys."]
+    },
+    {
+      "id": "a1-u03-l01-e10",
+      "type": "translate",
+      "points": ["gp-personal-pronouns"],
+      "from": "tk",
+      "prompt": "Siz mugallym.",
+      "accept": ["You are a teacher.", "You are teachers.", "You are the teacher."]
+    },
+    {
+      "id": "a1-u03-l01-e11",
+      "type": "mcq",
+      "points": ["gp-personal-pronouns"],
+      "question": "Which word means **he**, **she** and **it**?",
+      "options": ["ol", "olar", "sen"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*olar* is **they**.",
+        "2": "*sen* is **you**."
+      },
+      "explain": "Turkmen has no gender: *ol* covers he, she and it."
+    },
+    {
+      "id": "a1-u03-l01-e12",
+      "type": "translate",
+      "points": ["gp-copula-present"],
+      "from": "en",
+      "prompt": "She is a pupil.",
+      "accept": ["Ol okuwçy.", "Ol okuwçydyr."]
+    },
+    {
+      "id": "a1-u03-l01-e13",
+      "type": "translate",
+      "points": ["gp-copula-present", "gp-personal-pronouns"],
+      "from": "tk",
+      "prompt": "Men sürüji, ol mugallym.",
+      "accept": ["I am a driver, she is a teacher.", "I am a driver, he is a teacher.", "I am a driver and [he|she] is a teacher."]
+    }
+  ]
+}

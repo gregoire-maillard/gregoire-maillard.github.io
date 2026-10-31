@@ -170,22 +170,36 @@ for (const [w, ids, want] of [["şeker", ["LY"], "şekerli"], ["bulut", ["LY"], 
 }
 
 // ─────────────────────────── 5. "to be" ───────────────────────────
-para("copula-present", "talyp", "talybyn|talypsyň|talyp|talybys|talypsyňyz|talyplar");
-para("copula-present", "talyp", "talyp|talyp|talypdyr|talyp|talyp|talyp", true);
-para("copula-present", "talyp", "-|-|-|-|-|talypdyrlar", true);
-para("copula-present", "mugallym", "mugallymyn|mugallymsyň|mugallym|mugallymys|mugallymsyňyz|mugallymlar");
-para("copula-present", "türkmen", "türkmenin|türkmensiň|türkmen|türkmenis|türkmensiňiz|türkmenler");
-para("copula-present", "öýde", "öýde|öýdesiň|öýde|öýde|öýdesiňiz|öýdeler");
-para("copula-present", "öýde", "-|-|öýdedir|-|-|-", true);
-para("copula-present-negative", "talyp", "talyp dälin|talyp dälsiň|talyp däl|talyp dälis|talyp dälsiňiz|talyp däller");
-para("copula-present-negative", "talyp", "talyp däl|talyp däl|talyp däldir|talyp däl|talyp däl|talyp däl", true);
-para("copula-present-question", "talyp", "talybynmy|talypsyňmy|talypmy|talybysmy|talypsyňyzmy|talyplarmy");
-para("copula-present-question", "talyp", "talypmy|talypmy|-|talypmy|talypmy|talypmy", true);
+// "to be" (open question 2, settled in A1-1): the zero form first; -dYr with the endings, the formal written form
+// (minnetdardyryn, minnetdardyrys in print); the bare endings last, accepted but not taught (none after a vowel in
+// the first persons: öýden, öýdes read as other words)
+para("copula-present", "talyp", "talyp|talyp|talyp|talyp|talyp|talyp");
+para("copula-present", "talyp", "talypdyryn|talypdyrsyň|talypdyr|talypdyrys|talypdyrsyňyz|talypdyrlar", true);
+para("copula-present", "talyp", "talybyn|talypsyň|-|talybys|talypsyňyz|talyplar", true);
+para("copula-present", "mugallym", "mugallym|mugallym|mugallym|mugallym|mugallym|mugallym");
+para("copula-present", "mugallym", "mugallymdyryn|mugallymdyrsyň|mugallymdyr|mugallymdyrys|mugallymdyrsyňyz|mugallymdyrlar", true);
+para("copula-present", "türkmen", "türkmendirin|türkmendirsiň|türkmendir|türkmendiris|türkmendirsiňiz|türkmendirler", true);
+para("copula-present", "minnetdar", "minnetdardyryn|-|-|minnetdardyrys|-|-", true);
+para("copula-present", "öýde", "öýde|öýde|öýde|öýde|öýde|öýde");
+para("copula-present", "öýde", "öýdedirin|öýdesiň|öýdedir|öýdediris|öýdesiňiz|öýdeler", true);
+para("copula-present", "ýadaw", "ýadawdyryn|ýadawdyrsyň|ýadawdyr|ýadawdyrys|ýadawdyrsyňyz|ýadawdyrlar", true);
+check("no bare first-person ending after a vowel: not öýden, öýdes", () => ["men", "biz"].map(p => M.form("copula-present", "öýde", p).variants.join(" ")),
+  ["öýde öýdedirin", "öýde öýdediris"]);
+para("copula-present-negative", "talyp", "talyp däl|talyp däl|talyp däl|talyp däl|talyp däl|talyp däl");
+para("copula-present-negative", "talyp", "talyp däldirin|-|talyp däldir|-|-|-", true);
+para("copula-present-negative", "talyp", "talyp dälin|talyp dälsiň|-|talyp dälis|talyp dälsiňiz|talyp däller", true);
+para("copula-present-question", "talyp", "talypmy|talypmy|talypmy|talypmy|talypmy|talypmy");
+para("copula-present-question", "talyp", "talybynmy|talypsyňmy|-|talybysmy|talypsyňyzmy|talyplarmy", true);
+para("copula-present-question", "talyp", "-|talypmyň|-|-|talypmysyňyz|-", true);
 para("copula-present-question", "gowy", "-|-|gowumy|-|-|-");
-para("copula-present-negative-question", "talyp", "talyp dälinmi|talyp dälsiňmi|talyp dälmi|talyp dälismi|talyp dälsiňizmi|talyp dällermi");
-para("copula-present-negative-question", "talyp", "-|talyp dälmi|-|-|-|-", true);
-para("copula-dyr", "talyp", "-|-|talypdyr|-|-|talypdyrlar");
-para("copula-dyr", "öýde", "-|-|öýdedir|-|-|öýdedirler");
+para("copula-present-negative-question", "talyp", "talyp dälmi|talyp dälmi|talyp dälmi|talyp dälmi|talyp dälmi|talyp dälmi");
+para("copula-present-negative-question", "talyp", "talyp dälinmi|talyp dälsiňmi|-|talyp dälismi|talyp dälsiňizmi|talyp dällermi", true);
+para("copula-dyr", "talyp", "talypdyryn|talypdyrsyň|talypdyr|talypdyrys|talypdyrsyňyz|talypdyrlar");
+para("copula-dyr", "öýde", "öýdedirin|öýdedirsiň|öýdedir|öýdediris|öýdedirsiňiz|öýdedirler");
+para("copula-dyr", "türkmen", "türkmendirin|türkmendirsiň|türkmendir|türkmendiris|türkmendirsiňiz|türkmendirler");
+check("-dYr with an ending is positive only: no negative or question in the first and second persons", () =>
+  [M.form("copula-dyr-negative", "talyp", "men"), M.form("copula-dyr-question", "talyp", "sen"), M.form("copula-dyr-question", "talyp", "ol").text],
+  [null, null, "talypdyrmy"], "check");
 para("past-copula", "talyp", "talypdym|talypdyň|talypdy|talypdyk|talypdyňyz|talypdylar");
 para("past-copula", "öýde", "öýdedim|öýdediň|öýdedi|öýdedik|öýdediňiz|öýdediler");
 para("past-copula", "mugallym", "mugallymdym|-|mugallymdy|-|-|-");

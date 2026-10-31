@@ -1,0 +1,223 @@
+{
+  "id": "a1-u03-l02",
+  "unit": "a1-u03",
+  "order": 2,
+  "title": "How are you feeling?",
+  "goal": "Say how you and others feel, and recognize to be with -dYr.",
+  "points": ["gp-copula-present", "gp-harmony-rounding", "gp-personal-pronouns"],
+  "intro": {
+    "text": "Feelings work like jobs: *Men ýadaw* (I'm tired), *Ol aç* (he's hungry). In careful style the third person adds `-dYr`: *-dyr* after a back vowel, *-dir* after a front one: *Ol keseldir* (she is ill). Formal writing uses *-dYr* with an ending in every person: *Men ýadawdyryn*.",
+    "see": "gp-copula-present"
+  },
+  "vocab": [
+    {
+      "tk": "ýadaw",
+      "en": "tired",
+      "pos": "adj"
+    },
+    {
+      "tk": "bagtly",
+      "en": "happy",
+      "pos": "adj"
+    },
+    {
+      "tk": "aç",
+      "en": "hungry",
+      "pos": "adj"
+    },
+    {
+      "tk": "kesel",
+      "en": "ill, sick",
+      "pos": "adj"
+    },
+    {
+      "tk": "gamgyn",
+      "en": "sad",
+      "pos": "adj",
+      "card": "fc-0157"
+    },
+    {
+      "tk": "şat",
+      "en": "glad",
+      "pos": "adj"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u03-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["ýadaw", "tired"],
+        ["bagtly", "happy"],
+        ["aç", "hungry"],
+        ["kesel", "ill"],
+        ["gamgyn", "sad"]
+      ]
+    },
+    {
+      "id": "a1-u03-l02-e02",
+      "type": "translate",
+      "points": ["gp-copula-present"],
+      "from": "en",
+      "prompt": "I am tired.",
+      "accept": ["Men ýadaw.", "(Men) ýadawdyryn."],
+      "reject": [
+        {
+          "answer": "Ýadaw.",
+          "why": "*Ýadaw* alone just means **tired**. With the short form of **to be**, keep the subject: *Men ýadaw*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u03-l02-e03",
+      "type": "morph",
+      "points": ["gp-copula-present", "gp-harmony-rounding"],
+      "base": "kesel",
+      "gloss": "(she) is ill, in careful style",
+      "parts": ["kesel", "dir"],
+      "distractors": ["dyr", "dur", "der"],
+      "result": "keseldir",
+      "explain": "The last vowel of *kesel* is *e*, a front vowel, so `-dYr` is *-dir*. It is never *-der*: **Y** is a high vowel."
+    },
+    {
+      "id": "a1-u03-l02-e04",
+      "type": "translate",
+      "from": "tk",
+      "prompt": "Biz örän bagtly.",
+      "accept": ["We are very happy."]
+    },
+    {
+      "id": "a1-u03-l02-e05",
+      "type": "cloze",
+      "points": ["gp-copula-present", "gp-harmony-rounding"],
+      "text": "Ol mugallym___.",
+      "en": "He is a teacher. (careful style)",
+      "blanks": [
+        {
+          "accept": ["dyr"],
+          "reject": [
+            {
+              "answer": "dir",
+              "why": "The last vowel of *mugallym* is *y*, a back vowel: *-dyr*."
+            }
+          ]
+        }
+      ],
+      "explain": "*mugallym* ends in back *y*, so *-dyr*: *mugallymdyr*."
+    },
+    {
+      "id": "a1-u03-l02-e06",
+      "type": "mcq",
+      "question": "Which is the right spelling of **hungry**?",
+      "options": ["aç", "aj", "ac"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*j* is the j of “jam”. **Hungry** ends in the ch of “church”: *ç*.",
+        "2": "There is no c in Turkmen."
+      },
+      "explain": "*aç*, with *ç*, the ch of “church”."
+    },
+    {
+      "id": "a1-u03-l02-e07",
+      "type": "translate",
+      "points": ["gp-copula-present", "gp-personal-pronouns"],
+      "from": "en",
+      "prompt": "You are tired. (to a friend)",
+      "accept": ["Sen ýadaw.", "(Sen) ýadawdyrsyň."]
+    },
+    {
+      "id": "a1-u03-l02-e08",
+      "type": "wordbank",
+      "from": "tk",
+      "prompt": "Olar bagtly.",
+      "text": "They are happy.",
+      "answer": ["They", "are", "happy"],
+      "distractors": ["he", "is", "sad"]
+    },
+    {
+      "id": "a1-u03-l02-e09",
+      "type": "cloze",
+      "points": ["gp-copula-present", "gp-harmony-rounding"],
+      "text": "Ol bagtly___.",
+      "en": "She is happy. (careful style)",
+      "blanks": [
+        {
+          "accept": ["dyr"],
+          "reject": [
+            {
+              "answer": "dir",
+              "why": "The last vowel of *bagtly* is *y*, a back vowel: *-dyr*."
+            }
+          ]
+        }
+      ],
+      "explain": "*bagtly* ends in back *y*; the ending is in the third syllable, so no rounding: *bagtlydyr*."
+    },
+    {
+      "id": "a1-u03-l02-e10",
+      "type": "translate",
+      "points": ["gp-copula-present"],
+      "from": "en",
+      "prompt": "We are hungry.",
+      "accept": ["Biz aç.", "(Biz) açdyrys."]
+    },
+    {
+      "id": "a1-u03-l02-e11",
+      "type": "mcq",
+      "points": ["gp-harmony-rounding"],
+      "question": "*gözüm* (my eye), *gözi* (his eye), *gözler* (eyes): in which word is the ending's vowel rounded?",
+      "options": ["gözüm", "gözi", "gözler"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "A vowel at the very end of a word doesn't round: *gözi*.",
+        "2": "*-ler* has the vowel **A**, which never rounds."
+      },
+      "explain": "In *gözüm* the ending's vowel is in the second syllable, after *ö*, and not at the end: *ü*."
+    },
+    {
+      "id": "a1-u03-l02-e12",
+      "type": "conjugate",
+      "points": ["gp-copula-present", "gp-harmony-rounding"],
+      "base": "ýadaw",
+      "form": "copula-dyr",
+      "label": "*ýadaw* + **to be**, the formal written form: I am tired, you are tired…",
+      "cells": [
+        {
+          "p": "men",
+          "accept": ["ýadawdyryn"]
+        },
+        {
+          "p": "sen",
+          "accept": ["ýadawdyrsyň"]
+        },
+        {
+          "p": "ol",
+          "accept": ["ýadawdyr"]
+        },
+        {
+          "p": "biz",
+          "accept": ["ýadawdyrys"]
+        },
+        {
+          "p": "siz",
+          "accept": ["ýadawdyrsyňyz"]
+        },
+        {
+          "p": "olar",
+          "accept": ["ýadawdyrlar", "ýadawdyr"]
+        }
+      ],
+      "explain": "*-dyr* (back *a*), then the personal endings: *-yn, -syň, -ys, -syňyz, -lar*."
+    },
+    {
+      "id": "a1-u03-l02-e13",
+      "type": "translate",
+      "points": ["gp-copula-present"],
+      "from": "en",
+      "prompt": "He is ill.",
+      "accept": ["Ol kesel.", "Ol keseldir."]
+    }
+  ]
+}
