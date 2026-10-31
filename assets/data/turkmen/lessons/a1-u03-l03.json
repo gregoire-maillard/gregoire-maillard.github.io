@@ -1,0 +1,209 @@
+{
+  "id": "a1-u03-l03",
+  "unit": "a1-u03",
+  "order": 3,
+  "title": "Where are you from?",
+  "goal": "Say your nationality and your home town, and ask someone where they are from.",
+  "points": ["gp-nationality-words", "gp-harmony-rounding", "gp-copula-present"],
+  "intro": {
+    "text": "Nationality words are lowercase nouns: *Men türkmen* (I'm Turkmen), *Ol iňlis* (she's English). To ask where someone is from, say *Siz nireli?* Answer with your town and `-lY`: *-ly* after a back vowel, *-li* after a front one: *Men Aşgabatly*, *Ol Tejenli*.",
+    "see": "gp-nationality-words"
+  },
+  "vocab": [
+    {
+      "tk": "türkmen",
+      "en": "Turkmen; a Turkmen",
+      "pos": "noun",
+      "card": "fc-0043"
+    },
+    {
+      "tk": "rus",
+      "en": "Russian (person)",
+      "pos": "noun"
+    },
+    {
+      "tk": "iňlis",
+      "en": "English (person)",
+      "pos": "noun"
+    },
+    {
+      "tk": "nemes",
+      "en": "German (person)",
+      "pos": "noun"
+    },
+    {
+      "tk": "fransuz",
+      "en": "French (person)",
+      "pos": "noun"
+    },
+    {
+      "tk": "Türkmenistan",
+      "en": "Turkmenistan",
+      "pos": "noun"
+    },
+    {
+      "tk": "nireli",
+      "en": "from where",
+      "pos": "adv"
+    },
+    {
+      "tk": "Siz nireli?",
+      "en": "Where are you from?",
+      "pos": "phrase"
+    },
+    {
+      "tk": "Aşgabatly",
+      "en": "from Ashgabat",
+      "pos": "adj"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u03-l03-e01",
+      "type": "match",
+      "pairs": [
+        ["türkmen", "Turkmen"],
+        ["rus", "Russian"],
+        ["iňlis", "English"],
+        ["nemes", "German"],
+        ["fransuz", "French"]
+      ]
+    },
+    {
+      "id": "a1-u03-l03-e02",
+      "type": "translate",
+      "points": ["gp-nationality-words", "gp-copula-present"],
+      "from": "en",
+      "prompt": "I am Turkmen.",
+      "accept": ["Men türkmen.", "(Men) türkmendirin."]
+    },
+    {
+      "id": "a1-u03-l03-e03",
+      "type": "mcq",
+      "points": ["gp-nationality-words"],
+      "question": "In a Turkmen sentence, does the word for a Turkmen person start with a capital letter?",
+      "options": ["No: türkmen", "Yes: Türkmen"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Nationality words take no capital; only names of countries and towns do: *Türkmenistan*."
+      },
+      "explain": "*Men türkmen*, lowercase, like *iňlis*, *rus* and *nemes*."
+    },
+    {
+      "id": "a1-u03-l03-e04",
+      "type": "translate",
+      "points": ["gp-nationality-words"],
+      "from": "tk",
+      "prompt": "Siz nireli?",
+      "accept": ["Where are you from?"]
+    },
+    {
+      "id": "a1-u03-l03-e05",
+      "type": "cloze",
+      "points": ["gp-nationality-words", "gp-harmony-rounding"],
+      "text": "Men Aşgabat___.",
+      "en": "I'm from Ashgabat.",
+      "blanks": [
+        {
+          "accept": ["ly"],
+          "reject": [
+            {
+              "answer": "li",
+              "why": "The last vowel of *Aşgabat* is *a*, a back vowel: *Aşgabatly*."
+            }
+          ]
+        }
+      ],
+      "explain": "`-lY` after the back vowel *a*: *Aşgabatly*. The ending is written straight onto the name, with no apostrophe or hyphen."
+    },
+    {
+      "id": "a1-u03-l03-e06",
+      "type": "morph",
+      "points": ["gp-nationality-words", "gp-harmony-rounding"],
+      "base": "Tejen",
+      "gloss": "from Tejen",
+      "parts": ["Tejen", "li"],
+      "distractors": ["ly", "le", "lü"],
+      "result": "Tejenli",
+      "explain": "The last vowel of *Tejen* is *e*, a front vowel: *-li*. No rounding, since *e* is unrounded."
+    },
+    {
+      "id": "a1-u03-l03-e07",
+      "type": "mcq",
+      "points": ["gp-nationality-words"],
+      "question": "What does *Ol iňlis* mean?",
+      "options": ["She is English.", "She speaks English.", "She is in England."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Speaking a language needs a verb; verbs start in [A1 unit 6](a1-u06).",
+        "2": "**In England** needs a place ending, which comes in [A1 unit 5](a1-u05)."
+      },
+      "explain": "*iňlis* is an English person; with the short form of **to be**, *Ol iňlis* is she or he is English."
+    },
+    {
+      "id": "a1-u03-l03-e08",
+      "type": "translate",
+      "points": ["gp-nationality-words"],
+      "from": "en",
+      "prompt": "We are from Mary.",
+      "accept": ["Biz Maryly."],
+      "explain": "*Mary* ends in the back vowel *y*: *Maryly*."
+    },
+    {
+      "id": "a1-u03-l03-e09",
+      "type": "wordbank",
+      "points": ["gp-nationality-words"],
+      "from": "en",
+      "prompt": "Where are you from? – I'm from Dashoguz.",
+      "text": "Siz nireli? Men Daşoguzly.",
+      "answer": ["Siz", "nireli", "Men", "Daşoguzly"],
+      "distractors": ["Daşoguz", "näme", "sen"],
+      "accept": ["Sen nireli? Men Daşoguzly."]
+    },
+    {
+      "id": "a1-u03-l03-e10",
+      "type": "mcq",
+      "question": "Which is spelled right?",
+      "options": ["iňlis", "inlis", "iňglis"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The sound is *ň*, the ng of “sing”.",
+        "2": "No g is written or said after *ň*."
+      },
+      "explain": "*iňlis*: *ň* is the ng of “sing”, with no g after it."
+    },
+    {
+      "id": "a1-u03-l03-e11",
+      "type": "translate",
+      "points": ["gp-nationality-words", "gp-personal-pronouns"],
+      "from": "tk",
+      "prompt": "Olar rus, biz türkmen.",
+      "accept": ["They are Russian, we are Turkmen.", "They are Russian and we are Turkmen.", "They are Russians, we are Turkmens.", "They are Russians and we are Turkmens."]
+    },
+    {
+      "id": "a1-u03-l03-e12",
+      "type": "translate",
+      "points": ["gp-nationality-words", "gp-copula-present"],
+      "from": "en",
+      "prompt": "She is German.",
+      "accept": ["Ol nemes.", "Ol nemesdir."]
+    },
+    {
+      "id": "a1-u03-l03-e13",
+      "type": "mcq",
+      "points": ["gp-harmony-rounding"],
+      "question": "In the guides' shorthand, what does `-lY` stand for?",
+      "options": ["-ly, -li, -lu or -lü", "-la or -le", "only -ly"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "That is `-lA`: **A** is the low vowel a or e.",
+        "2": "**Y** changes with harmony: *Aşgabatly*, but *Tejenli*."
+      },
+      "explain": "**Y** is the high vowel: *y* or *i*, and *u* or *ü* where rounding applies."
+    }
+  ]
+}

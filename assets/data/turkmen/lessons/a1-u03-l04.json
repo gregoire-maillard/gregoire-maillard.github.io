@@ -1,0 +1,227 @@
+{
+  "id": "a1-u03-l04",
+  "unit": "a1-u03",
+  "order": 4,
+  "title": "Introductions",
+  "goal": "Introduce yourself and others: name, job, nationality and home town, politely when needed.",
+  "points": ["gp-copula-present", "gp-personal-pronouns", "gp-nationality-words", "gp-harmony-rounding"],
+  "intro": {
+    "text": "To show respect to an older man, put *aga* (older brother) after his name: *Kerim aga*. For an older woman, *daýza* (aunt): *Bahar daýza*. Speak to both with *siz*.",
+    "see": "gp-personal-pronouns"
+  },
+  "vocab": [
+    {
+      "tk": "aga",
+      "en": "older brother; after a man's name, a mark of respect",
+      "pos": "noun"
+    },
+    {
+      "tk": "daýza",
+      "en": "aunt; after a woman's name, a mark of respect",
+      "pos": "noun"
+    },
+    {
+      "tk": "dost",
+      "en": "friend",
+      "pos": "noun",
+      "card": "fc-0122"
+    },
+    {
+      "tk": "adam",
+      "en": "person; man",
+      "pos": "noun",
+      "card": "fc-0053"
+    },
+    {
+      "tk": "Türkmenabat",
+      "en": "Turkmenabat (a city on the Amu Darya)",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u03-l04-e01",
+      "type": "mcq",
+      "points": ["gp-copula-present"],
+      "context": [
+        {
+          "who": "Myrat",
+          "tk": "Salam! Men Myrat, men mugallym.",
+          "en": "Hello! I'm Myrat, I'm a teacher."
+        },
+        {
+          "who": "Jeren",
+          "tk": "Tanyşanyma şat. Men Jeren, men talyp."
+        }
+      ],
+      "question": "What does Jeren do?",
+      "options": ["She is a student.", "She is a teacher.", "She is a doctor."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Myrat is the teacher: *Men mugallym*.",
+        "2": "**Doctor** would be *lukman*."
+      },
+      "explain": "*Men talyp*: I'm a student."
+    },
+    {
+      "id": "a1-u03-l04-e02",
+      "type": "translate",
+      "points": ["gp-copula-present"],
+      "from": "en",
+      "prompt": "That man is a driver.",
+      "accept": ["Ol adam sürüji.", "Ol adam sürüjidir."]
+    },
+    {
+      "id": "a1-u03-l04-e03",
+      "type": "mcq",
+      "points": ["gp-personal-pronouns"],
+      "question": "How do you politely name an older man called Kerim?",
+      "options": ["Kerim aga", "Aga Kerim", "Kerim daýza"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*aga* comes after the name.",
+        "2": "*daýza* is for an older woman."
+      },
+      "explain": "*aga* (older brother) after a man's name shows respect: *Kerim aga*. For a woman, *daýza*: *Bahar daýza*."
+    },
+    {
+      "id": "a1-u03-l04-e04",
+      "type": "translate",
+      "from": "tk",
+      "prompt": "Bahar daýza mugallym.",
+      "accept": ["Bahar is a teacher.", "[Aunt|Auntie] Bahar is a teacher."]
+    },
+    {
+      "id": "a1-u03-l04-e05",
+      "type": "cloze",
+      "points": ["gp-personal-pronouns", "gp-nationality-words"],
+      "text": "___ türkmen, olar rus.",
+      "en": "We are Turkmen, they are Russian.",
+      "blanks": [
+        {
+          "accept": ["Biz"],
+          "reject": [
+            {
+              "answer": "Siz",
+              "why": "*siz* is **you**; **we** is *biz*."
+            }
+          ]
+        }
+      ],
+      "explain": "*biz* is **we**: *Biz türkmen*."
+    },
+    {
+      "id": "a1-u03-l04-e06",
+      "type": "wordbank",
+      "points": ["gp-copula-present"],
+      "from": "en",
+      "prompt": "Pleased to meet you. I am a teacher.",
+      "text": "Tanyşanyma şat. Men mugallym.",
+      "answer": ["Tanyşanyma", "şat", "Men", "mugallym"],
+      "distractors": ["mugallymlar", "sen", "bir"]
+    },
+    {
+      "id": "a1-u03-l04-e07",
+      "type": "conjugate",
+      "points": ["gp-copula-present", "gp-harmony-rounding"],
+      "base": "türkmen",
+      "form": "copula-dyr",
+      "label": "*türkmen* + **to be**, the formal written form: I am Turkmen, you are Turkmen…",
+      "cells": [
+        {
+          "p": "men",
+          "accept": ["türkmendirin"]
+        },
+        {
+          "p": "sen",
+          "accept": ["türkmendirsiň"]
+        },
+        {
+          "p": "ol",
+          "accept": ["türkmendir"]
+        },
+        {
+          "p": "biz",
+          "accept": ["türkmendiris"]
+        },
+        {
+          "p": "siz",
+          "accept": ["türkmendirsiňiz"]
+        },
+        {
+          "p": "olar",
+          "accept": ["türkmendirler", "türkmendir"]
+        }
+      ],
+      "explain": "The last vowel of *türkmen* is *e*, a front vowel: *-dir*, then *-in, -siň, -is, -siňiz, -ler*."
+    },
+    {
+      "id": "a1-u03-l04-e08",
+      "type": "mcq",
+      "points": ["gp-personal-pronouns"],
+      "question": "You are speaking to your teacher. Which sentence fits?",
+      "options": ["Siz örän gowy mugallym.", "Sen örän gowy mugallym."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*sen* is too familiar for a teacher: use the polite *siz*."
+      },
+      "explain": "*Siz örän gowy mugallym*: you are a very good teacher."
+    },
+    {
+      "id": "a1-u03-l04-e09",
+      "type": "translate",
+      "points": ["gp-nationality-words"],
+      "from": "tk",
+      "prompt": "Dowlet aga sürüji, ol Balkanabatly.",
+      "accept": ["Dowlet is a driver, he is from Balkanabat.", "Dowlet is a driver and he is from Balkanabat.", "Dowlet is a driver from Balkanabat."]
+    },
+    {
+      "id": "a1-u03-l04-e10",
+      "type": "translate",
+      "points": ["gp-copula-present"],
+      "from": "en",
+      "prompt": "You are a good friend. (to a friend)",
+      "accept": ["Sen gowy dost."],
+      "reject": [
+        {
+          "answer": "Gowy dost.",
+          "why": "*Gowy dost* is just **a good friend**. Keep the subject: *Sen gowy dost*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u03-l04-e11",
+      "type": "mcq",
+      "points": ["gp-nationality-words"],
+      "question": "*Aýgül Daşoguzly.* What does this tell you?",
+      "options": ["Aýgül is from Dashoguz.", "Aýgül is in Dashoguz now.", "Aýgül likes Dashoguz."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "`-lY` says where someone is from, not where they are now.",
+        "2": "Liking something needs a verb."
+      },
+      "explain": "*Daşoguz* + *-ly*: from Dashoguz."
+    },
+    {
+      "id": "a1-u03-l04-e12",
+      "type": "translate",
+      "points": ["gp-nationality-words", "gp-copula-present"],
+      "from": "en",
+      "prompt": "Selbi is a student. She is from Turkmenabat.",
+      "accept": ["Selbi talyp. Ol Türkmenabatly.", "Selbi talypdyr. Ol Türkmenabatly(dyr).", "Selbi talyp. Ol Türkmenabatlydyr."]
+    },
+    {
+      "id": "a1-u03-l04-e13",
+      "type": "wordbank",
+      "from": "tk",
+      "prompt": "Kerim aga lukman, Bahar daýza mugallym.",
+      "text": "Kerim is a doctor, Bahar is a teacher.",
+      "answer": ["Kerim", "is", "a", "doctor", "Bahar", "is", "a", "teacher"],
+      "distractors": ["teachers", "driver", "they"]
+    }
+  ]
+}

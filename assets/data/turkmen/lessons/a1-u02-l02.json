@@ -1,0 +1,225 @@
+{
+  "id": "a1-u02-l02",
+  "unit": "a1-u02",
+  "order": 2,
+  "title": "Front and back vowels",
+  "goal": "Tell front vowels from back vowels and make plurals with -lar and -ler.",
+  "points": ["gp-vowel-groups", "gp-harmony-2way", "gp-plural"],
+  "intro": {
+    "text": "The plural ending follows the last vowel of the word. After a back vowel (*a, o, u, y*) it is *-lar*: *kitaplar*, books. After a front vowel (*e, ä, i, ö, ü*) it is *-ler*: *öýler*, houses. Borrowed words follow their last vowel too: *telefonlar*.",
+    "see": "gp-harmony-2way"
+  },
+  "vocab": [
+    {
+      "tk": "gapy",
+      "en": "door",
+      "pos": "noun"
+    },
+    {
+      "tk": "penjire",
+      "en": "window",
+      "pos": "noun"
+    },
+    {
+      "tk": "surat",
+      "en": "picture, photo",
+      "pos": "noun"
+    },
+    {
+      "tk": "telefon",
+      "en": "phone",
+      "pos": "noun"
+    },
+    {
+      "tk": "sözlük",
+      "en": "dictionary",
+      "pos": "noun"
+    },
+    {
+      "tk": "kagyz",
+      "en": "paper",
+      "pos": "noun"
+    },
+    {
+      "tk": "öý",
+      "en": "house, home",
+      "pos": "noun",
+      "card": "fc-0073"
+    },
+    {
+      "tk": "zat",
+      "en": "thing",
+      "pos": "noun",
+      "card": "fc-0012"
+    },
+    {
+      "tk": "täze",
+      "en": "new",
+      "pos": "adj",
+      "card": "fc-0140"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u02-l02-e01",
+      "type": "mcq",
+      "points": ["gp-vowel-groups"],
+      "question": "Which are the **front** vowels?",
+      "options": ["e, ä, i, ö, ü", "a, o, u, y", "a, e, i, o, u"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "These are the back vowels, made further back in the mouth.",
+        "2": "This list mixes the two groups."
+      },
+      "explain": "Front: *e, ä, i, ö, ü*. Back: *a, o, u, y*."
+    },
+    {
+      "id": "a1-u02-l02-e02",
+      "type": "match",
+      "pairs": [
+        ["gapy", "door"],
+        ["penjire", "window"],
+        ["surat", "picture"],
+        ["telefon", "phone"],
+        ["sözlük", "dictionary"],
+        ["kagyz", "paper"]
+      ]
+    },
+    {
+      "id": "a1-u02-l02-e03",
+      "type": "morph",
+      "points": ["gp-harmony-2way", "gp-plural"],
+      "base": "kitap",
+      "gloss": "books",
+      "parts": ["kitap", "lar"],
+      "distractors": ["ler", "lär"],
+      "result": "kitaplar",
+      "explain": "The last vowel of *kitap* is *a*, a back vowel: *-lar*."
+    },
+    {
+      "id": "a1-u02-l02-e04",
+      "type": "morph",
+      "points": ["gp-harmony-2way", "gp-plural"],
+      "base": "öý",
+      "gloss": "houses",
+      "parts": ["öý", "ler"],
+      "distractors": ["lar", "lär"],
+      "result": "öýler",
+      "explain": "*ö* is a front vowel: *-ler*. The front form of the plural is always spelled with *e*."
+    },
+    {
+      "id": "a1-u02-l02-e05",
+      "type": "mcq",
+      "points": ["gp-vowel-groups"],
+      "question": "Is *y* a front or a back vowel?",
+      "options": ["back", "front"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*i* is the front one; *y* is made further back."
+      },
+      "explain": "*y* goes with *a, o, u*: *gyzlar* (girls), *gapylar* (doors)."
+    },
+    {
+      "id": "a1-u02-l02-e06",
+      "type": "cloze",
+      "points": ["gp-harmony-2way", "gp-plural"],
+      "text": "Gapy___, penjire___.",
+      "en": "Doors, windows.",
+      "blanks": [
+        {
+          "accept": ["lar"],
+          "reject": [
+            {
+              "answer": "ler",
+              "why": "The last vowel of *gapy* is *y*, a back vowel: *gapylar*."
+            }
+          ]
+        },
+        {
+          "accept": ["ler"],
+          "reject": [
+            {
+              "answer": "lar",
+              "why": "The last vowel of *penjire* is *e*, a front vowel: *penjireler*."
+            }
+          ]
+        }
+      ],
+      "explain": "*gapy* ends in back *y* → *-lar*; *penjire* ends in front *e* → *-ler*."
+    },
+    {
+      "id": "a1-u02-l02-e07",
+      "type": "mcq",
+      "points": ["gp-harmony-2way"],
+      "question": "What is the plural of *telefon*?",
+      "options": ["telefonlar", "telefonler"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "Only the last vowel counts, and it is *o*, a back vowel."
+      },
+      "explain": "*telefon* has e, then o. The last vowel decides: *telefonlar*."
+    },
+    {
+      "id": "a1-u02-l02-e08",
+      "type": "translate",
+      "points": ["gp-plural"],
+      "from": "en",
+      "prompt": "The houses are new.",
+      "accept": ["Öýler täze."]
+    },
+    {
+      "id": "a1-u02-l02-e09",
+      "type": "translate",
+      "points": ["gp-plural"],
+      "from": "tk",
+      "prompt": "Suratlar täze.",
+      "accept": ["The pictures are new.", "The [photos|photographs] are new."]
+    },
+    {
+      "id": "a1-u02-l02-e10",
+      "type": "mcq",
+      "points": ["gp-harmony-2way", "gp-vowel-groups"],
+      "question": "Which word takes *-ler* in the plural?",
+      "options": ["sözlük", "kagyz", "surat", "gapy"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*a* is back: *kagyzlar*.",
+        "2": "*a* is back: *suratlar*.",
+        "3": "*y* is back: *gapylar*."
+      },
+      "explain": "*sözlük* ends in *ü*, a front vowel: *sözlükler*."
+    },
+    {
+      "id": "a1-u02-l02-e11",
+      "type": "wordbank",
+      "from": "tk",
+      "prompt": "Bular täze kitaplar.",
+      "text": "These are new books.",
+      "answer": ["These", "are", "new", "books"],
+      "distractors": ["this", "is", "old"]
+    },
+    {
+      "id": "a1-u02-l02-e12",
+      "type": "morph",
+      "points": ["gp-harmony-2way", "gp-plural"],
+      "base": "zat",
+      "gloss": "things",
+      "parts": ["zat", "lar"],
+      "distractors": ["ler", "lär"],
+      "result": "zatlar",
+      "explain": "*zat* has the back vowel *a*: *zatlar*."
+    },
+    {
+      "id": "a1-u02-l02-e13",
+      "type": "translate",
+      "points": ["gp-plural"],
+      "from": "en",
+      "prompt": "The phones are new.",
+      "accept": ["Telefonlar täze."]
+    }
+  ]
+}
