@@ -12,11 +12,12 @@
 //   options: --strict (warnings count as errors), --quiet (hide warnings)
 //
 // The schema definitions below mirror TM-PROJECT.md 5; change both together and run --examples.
-// The Turkish validator also compares conjugate cells and morph tiles with its morphology engine. The Turkmen engine
-// (assets/js/turkmen-morph.js) comes with TK-MORPH, which hooks it in here; until then the summary says "engine not loaded".
+// Conjugate cells, morph tiles and the forms on the flashcards are also compared with the morphology engine,
+// assets/js/turkmen-morph.js (TM-PROJECT.md 3 and 8; TK-MORPH).
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { createRequire } from "module";
 import { fileURLToPath } from "url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -309,9 +310,71 @@ function subjectSaid(s, where) {
   }
 }
 
-// ─────────────────────────── morphology engine (TK-MORPH) ───────────────────────────
-// Not loaded yet: conjugate and morph exercises are only counted, for the summary line.
-const MSTAT = { conj: 0, morph: 0 };
+// ─────────────────────────── morphology engine (TM-PROJECT.md 3, 8) ───────────────────────────
+// conjugate: every cell's paradigm form must be accepted, and everything accepted must be a form the engine
+// builds (its variants; for olar also the ol form, since a plural subject can take a singular verb; words in
+// front of the form are allowed, as in "Men talyp"). morph: the tiles must be the base plus suffixes cut at
+// morpheme boundaries. Flashcards: forms.prs, past, aor, cvb, fut, acc, poss3 and pl must be what the engine
+// builds. Slugs and tiles the engine doesn't know are listed as not checked, not warned about. A base with two
+// readings (at "name" and "horse") is checked with the reading that fits the cells or the card's sense.
+const MORPH = createRequire(import.meta.url)(path.join(ROOT, "assets/js/turkmen-morph.js"));
+const MSTAT = { conj: 0, conjChecked: 0, cells: 0, morph: 0, morphChecked: 0, cards: 0, cardForms: 0, notModelled: [] };
+function engineConjugate(e, w) {
+  MSTAT.conj++;
+  const info = MORPH.formInfo(e.form);
+  if (!info) { MSTAT.notModelled.push(`${e.id} (form “${e.form}”)`); return; }
+  // try each reading of the base; keep the one with the fewest disagreements
+  let best = null;
+  for (const r of MORPH.readings(e.base)) {
+    const out = [], cells = [];
+    let checked = 0;
+    e.cells.forEach((c, i) => {
+      const cw = `${w}.cells[${i}]`;
+      if (!info.persons.includes(c.p)) { out.push([cw, `“${e.form}” has no ${c.p} form in the morphology engine`]); return; }
+      const f = MORPH.form(e.form, e.base, c.p, { sense: r.sense });
+      if (!f) { cells.push(`${e.id} (${c.p} of “${e.base}”)`); return; }
+      checked++;
+      const ok = new Set(f.variants.map(v => norm(v, "tk")));
+      if (c.p === "olar") { const o = MORPH.form(e.form, e.base, "ol", { sense: r.sense }); if (o) for (const v of o.variants) ok.add(norm(v, "tk")); }
+      const fits = x => ok.has(x) || [...ok].some(v => x.endsWith(" " + v));
+      const accepted = new Set();
+      for (const a of c.accept) for (const x of expand(a).list || []) accepted.add(norm(x, "tk"));
+      if (!accepted.has(norm(f.text, "tk"))) out.push([cw, `the morphology engine gives “${f.text}”, which this cell doesn't accept`]);
+      for (const x of accepted) if (!fits(x)) out.push([cw, `“${x}” is accepted, but the morphology engine gives ${f.variants.map(v => `“${v}”`).join(" or ")}`]);
+    });
+    if (!best || out.length < best.out.length) best = { out, cells, checked };
+  }
+  for (const [cw, msg] of best.out) warn(cw, msg);
+  MSTAT.notModelled.push(...best.cells);
+  if (best.checked) MSTAT.conjChecked++;
+  MSTAT.cells += best.checked;
+}
+function engineMorph(e, w) {
+  MSTAT.morph++;
+  const r = MORPH.analyze(e.base, e.parts);
+  if (r.reason === "unknown") { MSTAT.notModelled.push(`${e.id} (morph ${e.parts.join("+")})`); return; }
+  MSTAT.morphChecked++;
+  if (r.reason === "boundaries") warn(`${w}.parts`, `the tiles cut a morpheme: the morphology engine splits “${e.result}” as ${r.seg}`);
+  else if (!r.ok) warn(`${w}.parts`, `the morphology engine builds “${r.text}” (${r.seg}) from “${e.base}” with these suffixes, not “${e.result}”`);
+}
+// the third-person forms a card gives (TM-PROJECT.md 5.8), as the engine builds them
+function engineCard(c, w) {
+  if (!c.forms) return;
+  MSTAT.cards++;
+  const o = { sense: c.sense || null };
+  const third = slug => { const r = MORPH.form(slug, c.tk, "ol", o); return r && r.variants; };
+  const want = c.pos === "verb"
+    ? { prs: () => third("present"), past: () => third("past"), aor: () => third("aorist"), fut: () => third("future"), cvb: () => [MORPH.converb(c.tk).text] }
+    : { acc: () => [MORPH.decline(c.tk, { ...o, case: "acc" }).text], poss3: () => third("possessive"), pl: () => [MORPH.decline(c.tk, { ...o, pl: true }).text] };
+  for (const [k, v] of Object.entries(c.forms)) {
+    if (!want[k]) continue;
+    let got;
+    try { got = want[k](); } catch { got = null; }
+    if (!got) { MSTAT.notModelled.push(`${c.id} (forms.${k})`); continue; }
+    MSTAT.cardForms++;
+    if (!got.map(x => norm(x, "tk")).includes(norm(v, "tk"))) warn(`${w}.forms.${k}`, `“${v}”, but the morphology engine gives ${got.map(x => `“${x}”`).join(" or ")}`);
+  }
+}
 
 // ─────────────────────────── schema combinators ───────────────────────────
 // A spec is a function (value, path, cx) that reports errors through cx.err. cx.file is the file label.
@@ -769,7 +832,7 @@ function checkExercise(e, w, unitId, cx) {
         prev = Math.max(prev, k);
         checkAccept(c.accept, "tk", `${w}.cells[${i}]`);
       });
-      MSTAT.conj++;
+      engineConjugate(e, w);
       break;
     }
     case "morph": {
@@ -780,7 +843,7 @@ function checkExercise(e, w, unitId, cx) {
         if (e.parts.includes(t)) err(`${w}.distractors[${i}]`, `“${t}” is also a correct part`);
       });
       dupes(e.distractors, `${w}.distractors`);
-      MSTAT.morph++;
+      if (e.parts.join("") === e.result) engineMorph(e, w);
       break;
     }
     case "reading": {
@@ -934,6 +997,7 @@ function checkFlashFile(rec, cx) {
     if (c.unit && !REG.units.has(c.unit)) err(`${w}.unit`, `${c.unit} is not in TM-CURRICULUM.md`);
     if (c.unit && c.level && !c.unit.startsWith(c.level + "-")) warn(`${w}.level`, `${c.level}, but its unit ${c.unit} is in ${c.unit.slice(0, 2).toUpperCase()}; a card's level follows its unit (PROJECT.md 7.8)`);
     if (!exampleHasWord(c)) warn(`${w}.ex.tk`, `example does not seem to contain “${c.tk}”`);
+    if (!cx.examples) engineCard(c, w);
   });
   if (!cx.examples) {
     const want = v.range[1] - v.range[0] + 1;
@@ -1169,7 +1233,7 @@ if (opt.examples) {
   for (const rec of C.culture.values()) if (rec.ok) checkCulture(rec, cx);
   for (const f of deferred) f();
   const nEx = [...C.lessons.values()].reduce((n, l) => n + (l.ok ? l.v.exercises.length : 0), 0);
-  summary = `registry ${REG.levels.size} levels, ${REG.units.size} units, ${REG.points.size} grammar points · content ${C.levels.size} levels, ${C.units.size} units, ${C.lessons.size} lessons (${nEx} exercises), ${C.grammar.size} guides, ${C.culture.size} interludes, ${C.cards.size} cards · morphology engine not loaded (TK-MORPH): ${MSTAT.conj} conjugate and ${MSTAT.morph} morph exercises not checked against it`;
+  summary = `registry ${REG.levels.size} levels, ${REG.units.size} units, ${REG.points.size} grammar points · content ${C.levels.size} levels, ${C.units.size} units, ${C.lessons.size} lessons (${nEx} exercises), ${C.grammar.size} guides, ${C.culture.size} interludes, ${C.cards.size} cards · morphology engine: ${MSTAT.cells} cells of ${MSTAT.conjChecked}/${MSTAT.conj} conjugate exercises, ${MSTAT.morphChecked}/${MSTAT.morph} morph exercises, ${MSTAT.cardForms} forms on ${MSTAT.cards} cards`;
   if (opt.vocab) runVocab();
   let batchLines = [];
   if (opt.batch) batchLines = runBatch(opt.batch);
@@ -1191,6 +1255,7 @@ if (opt.examples) {
 const errors = issues.filter(x => x.level === "error"), warnings = issues.filter(x => x.level === "warn");
 for (const x of errors) console.log(`ERROR  ${x.where}: ${x.msg}`);
 if (!opt.quiet) for (const x of warnings) console.log(`warn   ${x.where}: ${x.msg}`);
+if (MSTAT.notModelled.length && !opt.quiet) console.log(`Not modelled by the morphology engine, so not checked: ${MSTAT.notModelled.join(", ")}`);
 console.log(`\nTurkmen course · ${summary}`);
 const fail = errors.length || (opt.strict && warnings.length);
 console.log(fail ? `${errors.length} error(s), ${warnings.length} warning(s).` : `All checks passed${warnings.length ? ` (${warnings.length} warning(s)${opt.quiet ? ", hidden" : ""})` : ""}.`);
