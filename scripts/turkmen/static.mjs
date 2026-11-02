@@ -176,7 +176,10 @@ try {
   writeFileSync(join(TM, "guide.html"), guidePage(readFileSync(join(TM, "guide.html"), "utf8"), ix, null, false));
 
   // ── the hub: the path (levels, units, lessons, links to every guide). "Today" stays personal. ──
-  const hub = await render("/turkmen/index.html", () => !!document.querySelector("#levels details.level"));
+  // The path is drawn first from index.json, then again as each level's file brings its summary: wait for those.
+  const sums = index.levels.filter((lv) => existsSync(join(OUT, "assets/data/turkmen/levels", lv.id + ".json"))).length;
+  const hub = await render("/turkmen/index.html", `document.querySelectorAll("#levels details.level").length === ${index.levels.length} && ` +
+    `document.querySelectorAll("#levels .lvl-sum").length === ${sums}`);
   let s = readFileSync(join(TM, "index.html"), "utf8");
   s = swap(s, /<span id="path-meta"><\/span>/, `<span id="path-meta">${hub.pathMeta}</span>`, "#path-meta");
   s = swap(s, /<nav class="lvl-nav" id="lvl-nav" aria-label="Levels"><\/nav>/, `<nav class="lvl-nav" id="lvl-nav" aria-label="Levels">${hub.lvlNav}</nav>`, "#lvl-nav");
