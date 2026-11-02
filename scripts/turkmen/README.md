@@ -54,6 +54,16 @@ The checker cases cover what is particular to Turkmen: plain lowercasing (no dot
 
 Besides hand-written cases it marks every accepted answer in the content correct and every rejected one wrong with its feedback, renders every Rich text (flashcard notes included) and every `seg` (which must read back as its own text) and resolves every link, compares the checker's normalization, fold and particle joining with this validator's (taken from its source), runs `validate.mjs --progress` on an exported file and on a Daily Turkish one, and repeats the date tests under America/Toronto and Australia/Lord_Howe. While units are unwritten, the path and link tests use a copy of `index.json` with the first three units marked ready.
 
-`turkmen.js` has the members of the Turkish `TRK` minus speech, renamed for Turkmen: `tkLower`, `tkUpper`, `tkRich`, the CSS classes `tkm-nw`, `tkm-seg` and `tkm-soon`, achievements with a `tk` name, plus `joinParticle`. Its page links are relative to `/turkmen/` (`index.html`, `lesson.html`, `guide.html`, `cards.html`).
+`turkmen.js` has the members of the Turkish `TRK` minus speech, renamed for Turkmen: `tkLower`, `tkUpper`, `tkRich`, the CSS classes `tkm-nw`, `tkm-seg` and `tkm-soon`, achievements with a `tk` name, plus `joinParticle`. Its page links are relative to `/turkmen/` (`index.html`, `lesson.html`, `guide.html`, `cards.html`), prefixed with `window.TKM_BASE` on a page one folder down (the mirror's `guides/<id>.html`).
+
+## Pre-rendering for dailyturkish.app
+
+`static.mjs` runs in `.github/workflows/sync-dailyturkish.yml`, after `scripts/turkish/static.mjs`, on the mirror folder it is about to publish. It needs Playwright with Chromium (the workflow installs them), so it isn't run by hand day to day:
+
+```
+node scripts/turkmen/static.mjs <mirror folder>   # exit 1 if a page doesn't render: the workflow then publishes nothing
+```
+
+It renders each guide and interlude in headless Chromium where it will be published (`turkmen/guides/<id>.html`, with `TKM_BASE = "../"`), and copies the result into the page: the 72 pages of the 36 units, `noindex` for units not written yet. It fills the guide index (`turkmen/guide.html`) and the hub's path (`turkmen/index.html`), sets `TKM_STATIC_GUIDES` on every Turkmen page so links lead to the static guides, adds a breadcrumb (schema.org JSON-LD) to the guides and the index, makes links to `/turkish.html` `/` (Daily Turkish's hub on dailyturkish.app), and appends the Turkmen hub, index, flashcards and written guides to the mirror's `sitemap.xml`. It loads nothing from the Turkish course.
 
 A content conversation is done when `--batch <id>` reports its units complete with no errors and `--index` has been run. See `turkmen/TM-PROJECT.md`, section 9.

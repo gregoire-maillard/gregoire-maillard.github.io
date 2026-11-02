@@ -348,6 +348,16 @@ test("guideHref: guide.html?id= unless the page asks for the static guides", () 
   finally { delete globalThis.TKM_STATIC_GUIDES; }
   assert.equal(TKM.guidePath("a1-u05-culture"), "guides/a1-u05-culture.html");
 });
+test("TKM_BASE: a page one folder down (the mirror's guides/<id>.html) links up to the course", () => {
+  const box = { module: { exports: {} }, TKM_BASE: "../", TKM_STATIC_GUIDES: true };
+  vm.runInNewContext(fs.readFileSync(path.join(ROOT, "assets/js/turkmen.js"), "utf8"), box);
+  const T = box.module.exports;
+  assert.equal(T.C.PAGES.hub, "../index.html");
+  assert.equal(T.guideHref("a1-u02-grammar", "gp-plural"), "../guides/a1-u02-grammar.html#gp-plural");
+  assert.equal(T.guidePath("a1-u02-grammar"), "guides/a1-u02-grammar.html", "the canonical address stays within the course's folder");
+  assert.equal(T.href("a1-u01-l01").href, "../lesson.html?id=a1-u01-l01");
+  assert.equal(TKM.C.PAGES.hub, "index.html", "pages without TKM_BASE are unchanged");
+});
 test("tkRich: paragraphs, bold and links only", () => {
   assert.equal(TKM.tkRich("Bu **öý** uly.\n\nOl *öý* däl."), '<p lang="tk">Bu <strong>öý</strong> uly.</p><p lang="tk">Ol *öý* däl.</p>');
 });
