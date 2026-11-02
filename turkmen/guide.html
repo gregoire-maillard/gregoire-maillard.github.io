@@ -18,13 +18,13 @@
     <link rel="icon" type="image/png" sizes="64x64" href="/assets/img/daily-turkmen-favicon.png">
     <link rel="icon" type="image/svg+xml" href="/assets/img/daily-turkmen-favicon.svg">
     <link rel="apple-touch-icon" href="/assets/img/daily-turkmen-apple-touch-icon.png">
-    <link rel="canonical" href="https://gregoiremaillard.com/turkmen/guide.html">
+    <link rel="canonical" href="https://dailyturkish.app/turkmen/guide.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Daily Turkmen">
     <meta property="og:title" content="Turkmen grammar guides and interludes">
     <meta property="og:description" content="A grammar guide and a culture interlude for every unit of a free Turkmen course from A1 to B1. In beta.">
-    <meta property="og:url" content="https://gregoiremaillard.com/turkmen/guide.html">
-    <meta property="og:image" content="https://gregoiremaillard.com/assets/img/daily-turkmen-share.png">
+    <meta property="og:url" content="https://dailyturkish.app/turkmen/guide.html">
+    <meta property="og:image" content="https://dailyturkish.app/assets/img/daily-turkmen-share.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
@@ -462,8 +462,7 @@
       var KIND = { tip: "Tip", pitfall: "Watch out", compare: "Compare", culture: "Culture", history: "History" };
       var unitLabel = function (u) { return u.cefr + " · Unit " + u.num; };
       var docHref = function (u, kind) { return T.guideHref(u.id + "-" + kind); };
-      // Canonical address: guide.html?id= until TK-PUBLISH pre-renders the guides (then T.guidePath, guides/<id>.html).
-      var docPath = function (u, kind) { return P.guide + "?id=" + u.id + "-" + kind; };
+      var docPath = function (u, kind) { return T.guidePath(u.id + "-" + kind); };   // canonical address: the mirror's guides/<id>.html
       var pad2 = function (n) { return (n < 10 ? "0" : "") + n; };
       var dateLabel = function (iso) { try { return new Date(iso).toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return String(iso).slice(0, 10); } };
       var R = function (s) { return T.rich(s, { index: st.index }); };
@@ -733,7 +732,7 @@
         $("main").innerHTML = '<p class="doc-kicker">Not found</p><h1 class="doc-title" id="top">No such guide</h1>' +
           "<p>There's no grammar guide or interlude called “" + esc(reqId) + "”. Guides are named after their unit, like <code>a1-u02-grammar</code> and <code>a1-u02-culture</code>.</p>" +
           '<nav class="next-grid" aria-label="What next">' + nextCard("Index", "All guides and grammar points", P.guide, true) + nextCard("The course", "Back to the path", P.hub, true) + "</nav>";
-        setMeta("Guide not found · Daily Turkmen", "", P.guide);
+        setMeta("Guide not found · Daily Turkmen", "", "guide.html");
       }
 
       // ── the index: every guide and grammar point (index.json) ──
@@ -771,7 +770,7 @@
         }).join("");
         h += '<p class="read-state" id="no-match" hidden>No grammar point matches. Try a shorter word, or a suffix such as <code>-lar</code>.</p>';
         $("main").innerHTML = h;
-        setMeta("Turkmen grammar guides and interludes · Daily Turkmen", "The grammar guide and culture interlude of every unit of a free Turkmen course from A1 to B1, with an index of every grammar point. In beta.", P.guide);
+        setMeta("Turkmen grammar guides and interludes · Daily Turkmen", "The grammar guide and culture interlude of every unit of a free Turkmen course from A1 to B1, with an index of every grammar point. In beta.", "guide.html");
         afterRender();
         var input = $("find"), timer = null;
         input.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(filter, 80); });
@@ -820,7 +819,7 @@
 
       // ── after every render: contents, quiz, position ──
       function setMeta(title, desc, path) {
-        var abs = "https://gregoiremaillard.com/turkmen/" + path;   // the course's home until TK-PUBLISH (TM-PROJECT.md 3)
+        var abs = "https://dailyturkish.app/turkmen/" + path;   // the course's home, whichever domain serves the page
         document.title = title;
         var set = function (sel, attr, v) { var el = document.querySelector(sel); if (el && v) el.setAttribute(attr, v); };
         set('meta[name="description"]', "content", desc && desc.length > 200 ? desc.slice(0, 197).replace(/\s+\S*$/, "") + "…" : desc);

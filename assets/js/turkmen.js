@@ -39,9 +39,11 @@
     APP_TURKISH: "gregoiremaillard.com/turkish",   // a Daily Turkish export: import refuses it with its own message
     KEYS: { course: "tkm:v1:course", cards: "tkm:v1:cards", settings: "tkm:v1:settings" },
     // The pages sit in /turkmen/ and link to each other relatively (TM-PROJECT.md 3), so the same links work on
-    // gregoiremaillard.com/turkmen/ and dailyturkish.app/turkmen/.
+    // gregoiremaillard.com/turkmen/ and dailyturkish.app/turkmen/. A page one folder down (the mirror's
+    // guides/<id>.html) sets window.TKM_BASE = "../" before this script runs, and every link starts with it.
+    BASE: root && typeof root.TKM_BASE === "string" ? root.TKM_BASE : "",
     PAGES: { hub: "index.html", lesson: "lesson.html", guide: "guide.html", cards: "cards.html" },
-    GUIDES: "guides/",   // static page of each guide, e.g. guides/a1-u02-grammar.html (TK-PUBLISH; see guideHref)
+    GUIDES: "guides/",   // static page of each guide, e.g. guides/a1-u02-grammar.html (mirror only, TK-PUBLISH; see guideHref)
     LEVELS: ["a1", "a2", "b1"],
     PERSONS: ["men", "sen", "ol", "biz", "siz", "olar"],
     DIRS: ["tk-en", "en-tk"],
@@ -127,13 +129,15 @@
     url: /^https:\/\/\S+$/
   };
 
-  // Link to a grammar guide or interlude ("a1-u02-grammar"). The mirror on dailyturkish.app will have a static page per
-  // guide at turkmen/guides/<id>.html (TK-PUBLISH, TM-PROJECT.md 3); a page that wants those links sets
-  // window.TKM_STATIC_GUIDES = true before this script runs. Otherwise links go to guide.html?id=.
-  // guidePath is the static address, for canonical URLs.
+  Object.keys(C.PAGES).forEach(function (k) { C.PAGES[k] = C.BASE + C.PAGES[k]; });
+
+  // Link to a grammar guide or interlude ("a1-u02-grammar"). The mirror on dailyturkish.app has a static page per
+  // guide at turkmen/guides/<id>.html, pre-rendered by scripts/turkmen/static.mjs (TK-PUBLISH, TM-PROJECT.md 3); its
+  // pages set window.TKM_STATIC_GUIDES = true before this script runs. Otherwise links go to guide.html?id=.
+  // guidePath is the static address within the course's folder, for canonical URLs.
   function staticGuides() { return !!(root && root.TKM_STATIC_GUIDES === true); }
   function guidePath(id) { return C.GUIDES + id + ".html"; }
-  function guideHref(id, hash) { return (staticGuides() ? guidePath(id) : C.PAGES.guide + "?id=" + id) + (hash ? "#" + hash : ""); }
+  function guideHref(id, hash) { return (staticGuides() ? C.BASE + guidePath(id) : C.PAGES.guide + "?id=" + id) + (hash ? "#" + hash : ""); }
 
   // Where a reference points (PROJECT.md 3, "Links inside content"), and whether it exists yet.
   // Without an index every internal target counts as ready; grammar points need the index to find their unit.
