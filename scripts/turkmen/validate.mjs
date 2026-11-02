@@ -116,8 +116,14 @@ function sentenceCase(s, where) {
 }
 
 // TM-PROJECT.md 7.1 and 8: letters, no apostrophe, the question particle written attached, y against ý.
+// wrong: a wrong option of an mcq or a cloze blank, or a wordbank distractor, which a spelling drill misspells on
+// purpose (yok, hava, neme): only the Turkish-only letters are reported there, as errors (TM-PROJECT.md 8, A1-1).
 const PARTICLE_APART = /(?:^|[^\p{L}-])(\p{L}+)\s+(m[yi](?:d[yi](?:m|ň|k|ňyz|ňiz|lar|ler)?)?)(?![\p{L}-])/u;
-function checkTk(s, where, { sentence = true } = {}) {
+function checkTk(s, where, { sentence = true, wrong = false } = {}) {
+  if (wrong) {
+    for (const ch of new Set(s)) if (ch in TURKISH_ONLY) err(where, `“${ch}” is a Turkish letter, not a Turkmen one (Turkmen writes ${TURKISH_ONLY[ch]})`);
+    return;
+  }
   if (/['’‘ʼ]/.test(s)) warn(where, "apostrophe in Turkmen text: Turkmen writes none, not even before a suffix on a name (Aşgabatda, Merdanyň)");
   for (const ch of new Set(s)) {
     if (!/\p{L}/u.test(ch) || TK_LETTERS.has(ch)) continue;
@@ -147,7 +153,7 @@ function bareId(t, where) {
   if (m) warn(where, `internal ID “${m[1]}” in learner-facing text; use a [label](ref) link`);
 }
 
-function checkText(s, lang, where, o) { if (lang === "tk") checkTk(s, where, o); else checkEnText(s, where); }
+function checkText(s, lang, where, o = {}) { if (lang === "tk") checkTk(s, where, o); else checkEnText(s, where); }
 
 // inline markup (PROJECT.md 5.1, TM-PROJECT.md 5.0): *Turkmen*, **bold**, `code`, [label](ref)
 function checkRich(s, where, cx) {
@@ -471,7 +477,7 @@ const EX_BASE = { id: S.str({ re: RE.exercise }), type: S.oneOfLit(TYPES), "poin
 const mcqQ = S.obj({ q: T.rich, options: S.arr(T.plain, { min: 2, max: 6 }), optionsLang: lang, answer: S.int({ min: 0 }), "explain?": T.rich });
 const EXERCISE = S.union("type", {
   mcq: S.obj({ ...EX_BASE, question: T.rich, "context?": S.arr(S.obj({ "who?": T.tk, tk: T.tk, "en?": T.en }), { min: 1 }), options: S.arr(T.plain, { min: 2, max: 6 }), optionsLang: lang, answer: S.int({ min: 0 }), "why?": S.map(/^\d+$/, T.rich) }),
-  cloze: S.obj({ ...EX_BASE, text: T.plain, en: T.en, blanks: S.arr(S.when(b => b && typeof b === "object" && "options" in b, S.obj({ options: S.arr(T.tk, { min: 2, max: 6 }), answer: S.int({ min: 0 }) }), S.obj({ accept: S.arr(T.plain, { min: 1 }), "reject?": S.arr(reject, { min: 1 }) })), { min: 1, max: 4 }), "diacritics?": dia }),
+  cloze: S.obj({ ...EX_BASE, text: T.plain, en: T.en, blanks: S.arr(S.when(b => b && typeof b === "object" && "options" in b, S.obj({ options: S.arr(T.plain, { min: 2, max: 6 }), answer: S.int({ min: 0 }) }), S.obj({ accept: S.arr(T.plain, { min: 1 }), "reject?": S.arr(reject, { min: 1 }) })), { min: 1, max: 4 }), "diacritics?": dia }),
   translate: S.obj({ ...EX_BASE, from: lang, prompt: T.plain, accept: S.arr(T.plain, { min: 1 }), "reject?": S.arr(reject, { min: 1 }), "diacritics?": dia }),
   wordbank: S.obj({ ...EX_BASE, from: lang, prompt: T.plain, text: T.plain, answer: S.arr(T.plain, { min: 1 }), distractors: S.arr(T.plain, { max: 6 }), "accept?": S.arr(T.plain, { min: 1 }) }),
   match: S.obj({ ...EX_BASE, pairs: S.arr(S.tuple([T.tk, T.en]), { min: 4, max: 6 }) }),
@@ -759,7 +765,7 @@ function checkExercise(e, w, unitId, cx) {
   switch (e.type) {
     case "mcq": {
       if (e.answer >= e.options.length) err(`${w}.answer`, "points past the last option");
-      e.options.forEach((o, i) => checkText(o, e.optionsLang, `${w}.options[${i}]`, { sentence: false }));
+      e.options.forEach((o, i) => checkText(o, e.optionsLang, `${w}.options[${i}]`, { sentence: false, wrong: i !== e.answer }));
       dupes(e.options.map(o => norm(o, e.optionsLang)), `${w}.options`);
       for (const k of Object.keys(e.why || {})) {
         if (Number(k) >= e.options.length) err(`${w}.why.${k}`, "no such option");
@@ -776,6 +782,7 @@ function checkExercise(e, w, unitId, cx) {
         const bw = `${w}.blanks[${i}]`;
         if ("options" in b) {
           if (b.answer >= b.options.length) err(`${bw}.answer`, "points past the last option");
+          b.options.forEach((o, j) => checkTk(o, `${bw}.options[${j}]`, { sentence: false, wrong: j !== b.answer }));
           dupes(b.options.map(o => norm(o, "tk")), `${bw}.options`);
           filled = filled.replace("___", b.options[b.answer] ?? "");
         } else {
@@ -801,7 +808,7 @@ function checkExercise(e, w, unitId, cx) {
       [...e.answer, ...e.distractors].forEach((t, i) => {
         if (/\s/.test(t)) warn(`${w}.tiles`, `tile “${t}” contains a space; tiles are single words`);
         if (/[.,!?;:…"“”]/.test(t)) warn(`${w}.tiles`, `tile “${t}” contains punctuation`);
-        checkText(t, to, `${w}.tiles`, { sentence: false });
+        checkText(t, to, `${w}.tiles`, { sentence: false, wrong: i >= e.answer.length });
       });
       if (norm(e.text, to) !== norm(e.answer.join(" "), to)) err(`${w}.answer`, `tiles “${e.answer.join(" ")}” do not spell the text “${e.text}”`);
       const answerTiles = new Set(e.answer.map(t => norm(t, to)));

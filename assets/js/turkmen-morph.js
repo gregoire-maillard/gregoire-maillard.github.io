@@ -295,8 +295,11 @@
 
   // Nominal predicates: copula("talyp", { tense: "pres" | "past" | "dyr", neg, q, p }). A predicate ending in
   // "däl" is negative already; bar and ýok swap for the negative. Returns variants (arrays of words), the usual first.
-  // Present (open question 2): the endings (talybyn, talypsyň, talybys, talypsyňyz, talyplar) and the zero form
-  // (Men talyp) are both accepted for every person; -dYr in the third person (talypdyr, talypdyrlar).
+  // Present (open question 2, settled in A1-1): the zero form first in every person (Men talyp); then -dYr with
+  // the personal ending, the formal written form (talypdyryn, talypdyrsyň, talypdyr, talypdyrys, talypdyrsyňyz,
+  // talypdyrlar; minnetdardyryn, minnetdardyrys in print); last, the endings without -dYr (talybyn, talypsyň,
+  // talybys, talypsyňyz, talyplar), which no source reached shows and the course doesn't teach. After a vowel
+  // the bare first-person endings are left out: öýden and öýdes would read as other words.
   function copula(pred, spec) {
     var p = personIndex(spec.p), q = !!spec.q, neg = !!spec.neg, t = spec.tense || "pres", out = [];
     if (p < 0) return null;
@@ -306,22 +309,24 @@
     if (neg && (hl === "bar" || hl === "ýok")) { head = mkNoun(hl === "bar" ? "ýok" : "bar"); neg = false; }
     var X = neg ? mkNoun(text(head) + " däl") : head;
     var vowelEnd = isV(letters(body(X)).slice(-1));
+    var dyrP = function () { return person(attach(X, "dYr", { id: "DYR", cat: "f" }), E1, p); };   // talypdyryn … talypdyrlar
     if (t === "pres") {
       if (q) {
         if (p === 2) return [[Q(X)]];
-        if (p === 5) return [[Q(person(X, E1, 5))], [Q(X)]];
-        return e1(X, p, true).concat([[Q(X)]]);                                     // talypsyňmy, talypmyň, talypmy
+        if (p === 5) return [[Q(X)], [Q(person(X, E1, 5))]];
+        return [[Q(X)]].concat(e1(X, p, true));                                     // talypmy, talypsyňmy, talypmyň
       }
-      if (p === 2) return [[X], [attach(X, "dYr", { id: "DYR" })]];                   // talyp, talypdyr
-      if (p === 5) return [[person(X, E1, 5)], [X], [attach(attach(X, "dYr", { id: "DYR" }), "lAr", { id: "PL" })]];
-      var withEnd = [person(X, E1, p)];
-      return vowelEnd && (p === 0 || p === 3) ? [[X], withEnd] : [withEnd, [X]];  // öýde (öýden would read "from home")
+      if (p === 2) return [[X], [dyrP()]];                                           // talyp, talypdyr
+      if (p === 5) return [[X], [person(X, E1, 5)], [dyrP()]];                       // talyp, talyplar, talypdyrlar
+      out = [[X], [dyrP()]];                                                         // talyp, talypdyryn
+      if (!(vowelEnd && (p === 0 || p === 3))) out.push([person(X, E1, p)]);         // talybyn (not öýden: "from home")
+      return out;
     }
-    if (t === "dyr") {
-      if (p !== 2 && p !== 5) return null;
+    if (t === "dyr") {                                                               // first and second persons: positive only
+      if (p !== 2 && p !== 5 && (neg || q)) return null;
       var d = attach(X, "dYr", { id: "DYR", cat: "f" });
       if (q) return [[Q(p === 5 ? attach(d, "lAr", { id: "PL" }) : d)]];
-      return p === 5 ? [[attach(d, "lAr", { id: "PL" })], [attach(attach(X, "lAr", { id: "PL" }), "dYr", { id: "DYR" })]] : [[d]];
+      return p === 5 ? [[attach(d, "lAr", { id: "PL" })], [attach(attach(X, "lAr", { id: "PL" }), "dYr", { id: "DYR" })]] : [[dyrP()]];
     }
     if (t === "past") {                                                              // talypdym, öýdedik, bardy, däldi
       var dy = function (w) { return attach(w, "dY", { id: "PCOP", cat: "g" }); };
@@ -416,7 +421,7 @@
   var TABLE = [
     // slug, coverage-table row, grammar points, "verb" | "nom", spec, polarities, persons
     ["copula-present", 'Present "to be"', "gp-copula-present, gp-dal, gp-question-my", "nom", { tense: "pres" }],
-    ["copula-dyr", 'Present "to be" with -dYr', "gp-copula-present", "nom", { tense: "dyr" }, "pnq", [2, 5]],
+    ["copula-dyr", 'Present "to be" with -dYr', "gp-copula-present", "nom", { tense: "dyr" }, "pnq"],   // negative, question: ol, olar
     ["present", "Present -ýAr", "gp-present-yar, gp-present-negative", "verb", { tense: "present" }],
     ["imperative", "Imperative, 2nd person", "gp-imperative", "verb", { tense: "imp" }, "pn", [1, 4]],
     ["past", "Past -dY", "gp-past-dy, gp-past-dy-negative-question", "verb", { tense: "past" }],
