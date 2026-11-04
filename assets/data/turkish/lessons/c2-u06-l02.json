@@ -1,0 +1,264 @@
+{
+  "id": "c2-u06-l02",
+  "unit": "c2-u06",
+  "order": 2,
+  "title": "What English has to add",
+  "goal": "Translate -mIş, -DIr and dropped pronouns into natural English, and choose the Turkish form for English hearsay and guesses.",
+  "points": ["gp-translating-evidentiality", "gp-evidential-mis", "gp-dir-assumption", "gp-meger"],
+  "intro": {
+    "text": "English has no evidential suffix, so `-mIş` becomes **apparently**, **must have**, **it turned out** or a surprised **you've…**, depending on its job; `-DIr` is **must** as a guess and nothing in a formal statement. And Turkish *o* makes English choose **he**, **she** or **they**.",
+    "see": "gp-translating-evidentiality"
+  },
+  "vocab": [
+    {
+      "tr": "görünüşe göre",
+      "en": "apparently, by the look of it",
+      "pos": "phrase"
+    },
+    {
+      "tr": "söylenene göre",
+      "en": "reportedly, from what people say",
+      "pos": "phrase"
+    },
+    {
+      "tr": "rivayete göre",
+      "en": "according to legend, so the story goes",
+      "pos": "phrase"
+    },
+    {
+      "tr": "kim bilir",
+      "en": "who knows (kim bilir ne zaman: who knows when)",
+      "pos": "phrase"
+    },
+    {
+      "tr": "zamir",
+      "en": "pronoun (also adıl)",
+      "pos": "noun"
+    },
+    {
+      "tr": "cinsiyet",
+      "en": "gender",
+      "pos": "noun"
+    },
+    {
+      "tr": "belirsiz",
+      "en": "unclear, ambiguous; indefinite",
+      "pos": "adj"
+    },
+    {
+      "tr": "ima etmek",
+      "en": "to imply, to hint at",
+      "pos": "verb"
+    },
+    {
+      "tr": "kesinlik",
+      "en": "certainty",
+      "pos": "noun"
+    },
+    {
+      "tr": "aktarmak",
+      "en": "to pass on, to convey; to render (in another language)",
+      "pos": "verb"
+    },
+    {
+      "tr": "kaçınmak",
+      "en": "to avoid (with the ablative)",
+      "pos": "verb"
+    },
+    {
+      "tr": "tarafsız",
+      "en": "neutral, impartial",
+      "pos": "adj"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "c2-u06-l02-e01",
+      "type": "mcq",
+      "points": ["gp-translating-evidentiality", "gp-mis-vs-di"],
+      "question": "You see Ali's coat on the hook and say *Ali gelmiş!* Which English fits?",
+      "options": ["Ali must be here!", "Ali came, apparently: someone told me.", "Once upon a time Ali came.", "Ali had come."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Nobody told you: you are drawing a conclusion from the coat.",
+        "2": "That is the `-mIş` of tales; here you are talking about now.",
+        "3": "The pluperfect needs another past event to come before; it would be *gelmişti*."
+      },
+      "explain": "Inference from evidence: **must be here**, **looks like Ali's here**. The same *Ali gelmiş* after a phone call would be **Ali's here, apparently**."
+    },
+    {
+      "id": "c2-u06-l02-e02",
+      "type": "translate",
+      "points": ["gp-translating-evidentiality", "gp-evidential-mis"],
+      "from": "tr",
+      "prompt": "Komşular taşınmış.",
+      "accept": [
+        "The neighbours have moved, apparently.",
+        "[Apparently|Reportedly] the [neighbours|neighbors] (have) moved (out|away)",
+        "[It seems|I hear|I heard|They say] (that) the [neighbours|neighbors] (have) moved (out|away)",
+        "The neighbours moved (out|away), [apparently|I hear|I heard|it seems|they say]",
+        "The neighbours have moved, I hear",
+        "The neighbours have moved, I heard",
+        "The neighbours have moved, it seems",
+        "The neighbours have moved, they say",
+        "The neighbours have moved out, [apparently|I hear|I heard|it seems|they say]",
+        "The neighbours have moved away, [apparently|I hear|I heard|it seems|they say]",
+        "The neighbors (have) moved (out|away), [apparently|I hear|I heard|it seems|they say]",
+        "The [neighbours|neighbors] seem to have moved (out|away)",
+        "It looks like the [neighbours|neighbors] (have) moved (out|away)"
+      ],
+      "reject": [
+        {
+          "answer": "The neighbours moved.",
+          "why": "Correct, but it loses `-mIş`: you didn't see it, someone told you. Add **apparently** or **I hear**."
+        }
+      ],
+      "hint": "You weren't there: someone told you.",
+      "explain": "Hearsay `-mIş` needs a word in English: **apparently**, **I hear**, **it seems**. Once is enough for a whole report."
+    },
+    {
+      "id": "c2-u06-l02-e03",
+      "type": "open",
+      "points": ["gp-translating-evidentiality"],
+      "task": "Translate into natural English. Keep the narrator's distance from what she was told.",
+      "source": "Meğer yeni komşu bir haftalığına tatile gitmiş, kediye de kapıcı bakıyormuş.",
+      "sourceLang": "tr",
+      "models": [
+        "It turned out the new neighbour had gone away on holiday for a week, and the caretaker was looking after the cat.",
+        "Apparently the new neighbour was away for a week, and the caretaker had been feeding the cat."
+      ],
+      "modelsLang": "en",
+      "checklist": [
+        "*Meğer* comes out as **it turned out** or **apparently**",
+        "`-mIş` reads as hearsay or discovery, not as a plain past",
+        "*bir haftalığına* means **for a week**"
+      ]
+    },
+    {
+      "id": "c2-u06-l02-e04",
+      "type": "cloze",
+      "points": ["gp-translating-evidentiality", "gp-dir-assumption"],
+      "text": "Merak etme, bu saatte çoktan ___.",
+      "en": "Don't worry, they must have arrived long ago by now.",
+      "blanks": [
+        {
+          "accept": ["varmışlardır"],
+          "reject": [
+            {
+              "answer": "varmışlar",
+              "why": "*Varmışlar* passes on news. **Must have** is a confident guess: `-mIştIr`, *varmışlardır*."
+            },
+            {
+              "answer": "vardılar",
+              "why": "*Vardılar* states a fact you know; the English is a guess: *varmışlardır*."
+            }
+          ]
+        }
+      ],
+      "hint": "Use *varmak*, as a confident guess about **they**.",
+      "explain": "`-mIş` + `-lAr` + `-DIr`: the assumptive `-DIr` of [C1 unit 2](gp-dir-assumption), English **must have**."
+    },
+    {
+      "id": "c2-u06-l02-e05",
+      "type": "translate",
+      "points": ["gp-translating-evidentiality", "gp-dir-assumption", "gp-personal-pronouns"],
+      "from": "tr",
+      "prompt": "Yorulmuştur, bırakalım dinlensin.",
+      "accept": [
+        "She must be tired; let's let her rest.",
+        "She must be tired, let her rest",
+        "She must be tired, let's leave her to rest",
+        "She must be tired, let's leave her alone to rest",
+        "She must be tired, let's let her get some rest",
+        "He must be tired, [let's let him rest|let him rest|let's leave him to rest|let's leave him alone to rest|let's let him get some rest]",
+        "They must be tired, [let's let them rest|let them rest|let's leave them to rest|let's let them get some rest]",
+        "She is probably tired, [let's let her rest|let her rest|let's leave her to rest]",
+        "He is probably tired, [let's let him rest|let him rest|let's leave him to rest]"
+      ],
+      "explain": "`-mIştIr` as a confident guess: **must be tired**. *O* has no gender, so **he**, **she** or **they** all fit until the context decides; keep the same one in both halves."
+    },
+    {
+      "id": "c2-u06-l02-e06",
+      "type": "mcq",
+      "points": ["gp-translating-evidentiality", "gp-dir-general-truth"],
+      "question": "An encyclopedia says *Roman ilk kez 1900'de yayımlanmıştır.* Which English is right?",
+      "options": [
+        "The novel was first published in 1900.",
+        "The novel must have been first published in 1900.",
+        "Apparently, the novel was first published in 1900.",
+        "The novel had been first published in 1900."
+      ],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "No guess here: encyclopedic `-mIştIr` states a fact ([C1 unit 2](gp-dir-general-truth)).",
+        "2": "**Apparently** would add a doubt that the encyclopedia doesn't have.",
+        "3": "The pluperfect needs an earlier past to refer to."
+      },
+      "explain": "In formal and reference style, `-DIr` adds authority, not doubt. English simply states the fact."
+    },
+    {
+      "id": "c2-u06-l02-e07",
+      "type": "translate",
+      "points": ["gp-translating-evidentiality", "gp-idi-imis"],
+      "from": "en",
+      "prompt": "Apparently the museum is closed on Mondays.",
+      "accept": [
+        "Müze pazartesi günleri kapalıymış.",
+        "Müze pazartesileri kapalıymış",
+        "[Pazartesileri|Pazartesi günleri] müze kapalıymış",
+        "[Görünüşe göre|Söylenene göre|Anlaşılan] müze [pazartesileri|pazartesi günleri] [kapalı|kapalıymış]",
+        "[Görünüşe göre|Söylenene göre|Anlaşılan] [pazartesileri|pazartesi günleri] müze [kapalı|kapalıymış]"
+      ],
+      "reject": [
+        {
+          "answer": "Müze pazartesi günleri kapalıdır.",
+          "why": "*Kapalıdır* states the rule, like a notice; **apparently** passes on what you heard: *kapalıymış*."
+        }
+      ],
+      "explain": "Hearsay on a noun predicate is the copula `-(y)mIş`: *kapalıymış*. A word such as *görünüşe göre* can carry it instead."
+    },
+    {
+      "id": "c2-u06-l02-e08",
+      "type": "translate",
+      "points": ["gp-translating-evidentiality", "gp-meger"],
+      "from": "tr",
+      "prompt": "Meğer kapıyı kimse kilitlememiş.",
+      "accept": [
+        "It turned out nobody had locked the door.",
+        "It turned out no one had locked the door",
+        "It turned out that [nobody|no one] had locked the door",
+        "[Nobody|No one] had locked the door, it turned out",
+        "As it turned out, [nobody|no one] had locked the door",
+        "It turns out (that) [nobody|no one] (had) locked the door",
+        "Turns out [nobody|no one] (had) locked the door",
+        "So [nobody|no one] had locked the door after all"
+      ],
+      "explain": "*Meğer* + `-mIş`: a discovery about what was true all along, **it turned out**. The English pluperfect places the locking before the discovery."
+    },
+    {
+      "id": "c2-u06-l02-e09",
+      "type": "mcq",
+      "points": ["gp-translating-evidentiality", "gp-personal-pronouns"],
+      "question": "Which Turkish sentence keeps the genders of **She told him the truth**?",
+      "options": ["Kadın adama gerçeği söyledi.", "Ona gerçeği söyledi.", "O ona gerçeği söyledi.", "Kız gerçeği söyledi."],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "Correct Turkish, but **she** and **him** vanish: *ona* can be anyone.",
+        "2": "*O ona* still has no gender.",
+        "3": "**Him** is lost, and *kız* is a girl."
+      },
+      "explain": "Turkish pronouns have no gender. When it matters, Turkish names the people: *kadın*, *adam*."
+    },
+    {
+      "id": "c2-u06-l02-e10",
+      "type": "listen",
+      "mode": "type",
+      "points": ["gp-translating-evidentiality", "gp-idi-imis"],
+      "tr": "Söylenene göre yeni komşu çok iyi biriymiş.",
+      "en": "Reportedly, the new neighbour is a very nice person."
+    }
+  ]
+}
