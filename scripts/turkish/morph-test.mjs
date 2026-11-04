@@ -373,7 +373,8 @@ for (const [v, ids, want] of [
   ["sürmek", ["ICI"], "sürücü"], ["korumak", ["ICI"], "koruyucu"], ["dinlemek", ["ICI"], "dinleyici"], ["öğretmek", ["ICI"], "öğretici"], ["yormak", ["ICI"], "yorucu"],
   ["öğretmek", ["MAN"], "öğretmen"], ["okutmak", ["MAN"], "okutman"], ["seçmek", ["MAN"], "seçmen"], ["danışmak", ["MAN"], "danışman"],
   ["bilmek", ["MAZLIK", "ABL"], "bilmezlikten"], ["duymak", ["MAZLIK", "ABL"], "duymazlıktan"], ["anlaşmak", ["MAZLIK"], "anlaşmazlık"],
-  ["anlamak", ["NEG", "MAZLIK"], "anlamamazlık"], ["kurmak", ["PASS", "MA", "POSS3", "GEN"], "kurulmasının"]]) {
+  ["anlamak", ["NEG", "MAZLIK"], "anlamamazlık"], ["kurmak", ["PASS", "MA", "POSS3", "GEN"], "kurulmasının"],
+  ["gitmek", ["ASI"], "gidesi"], ["gitmek", ["ASI", "POSS1"], "gidesim"], ["ağlamak", ["ASI"], "ağlayası"], ["dönmek", ["ASI"], "dönesi"]]) {
   check(`${v} + ${ids.join(" + ")}`, () => build(v, ids), want);
 }
 check("evdeyken, çocukken", () => [build("ev", ["LOC", "KEN"]), build("çocuk", ["KEN"])], ["evdeyken", "çocukken"]);
@@ -386,6 +387,9 @@ para("digi-icin", "olmak", "olduğum için|-|olduğu için|-|-|oldukları için"
 para("madigi-halde", "çalışmak", "çalışmadığım hâlde|-|çalışmadığı hâlde|-|-|-");
 para("lazim", "gitmek", "gitmem lazım|gitmen lazım|gitmesi lazım|gitmemiz lazım|gitmeniz lazım|gitmeleri lazım");
 para("masindan-dolayi", "geç kalmak", "geç kalmamdan dolayı|geç kalmandan dolayı|geç kalmasından dolayı|geç kalmamızdan dolayı|geç kalmanızdan dolayı|geç kalmalarından dolayı");
+para("asi-geldi", "gitmek", "gidesim geldi|gidesin geldi|gidesi geldi|gidesimiz geldi|gidesiniz geldi|-");
+para("asi-geldi", "ağlamak", "ağlayasım geldi|-|ağlayası geldi|-|-|-");
+check("asi-geldi has no onlar form", () => M.form("asi-geldi", "gitmek", "onlar"), null, "check");
 para("masina-ragmen", "olmak", "olmama rağmen|olmana rağmen|olmasına rağmen|olmamıza rağmen|olmanıza rağmen|olmalarına rağmen");
 para("ip-mayacagi", "gelmek", "gelip gelmeyeceğimi|-|gelip gelmeyeceğini|-|-|gelip gelmeyeceklerini");
 para("mis-gibi-negative", "duymak", "duymamışım gibi|-|duymamış gibi|-|-|-");

@@ -652,6 +652,11 @@
     "mamasini-rica": vposs("mA", "MA", { neg: true, c: "acc" }),
     "masina-ragmen": vposs("mA", "MA", { c: "dat", post: ["rağmen"] }),
     "masindan-dolayi": vposs("mA", "MA", { c: "abl", post: ["dolayı"] }),
+    "asi-geldi": function (b, p) {   // gidesim geldi: -(y)AsI + possessive (bare for o), gelmek in the third person
+      if (p === 5) return null;   // the third person plural is left out: usage varies
+      var w = attach(mkVerb(b), "(y)AsI", { id: "ASI", cat: "n" });
+      return [[p === 2 ? w : poss(w, p), lit("geldi")]];
+    },
     "ip-mayacagi": function (b, p) {   // gelip gelmeyeceğimi
       return [[attach(mkVerb(b), "(y)Ip", { id: "IP", keepDe: true }), addCase(poss(attach(negate(mkVerb(b)), "(y)AcAK", { id: "FUT", cat: "n" }), p), "acc")]];
     },
@@ -672,7 +677,7 @@
   [["accusative", "acc"], ["dative", "dat"], ["locative", "loc"], ["ablative", "abl"], ["genitive", "gen"], ["ile", "ins"]].forEach(function (c) {
     EXTRA["pronoun-" + c[0]] = function (b, p) { return [[addCase(mkNoun(PERSONS[p]), c[1])]]; };
   });
-  var EXTRA_PERSONS = { "sana-imperative": [1, 4], "sana-imperative-negative": [1, 4], "optative-imperative-3rd": [0, 2, 3, 5] };
+  var EXTRA_PERSONS = { "sana-imperative": [1, 4], "sana-imperative-negative": [1, 4], "optative-imperative-3rd": [0, 2, 3, 5], "asi-geldi": [0, 1, 2, 3, 4] };
   Object.keys(EXTRA).forEach(function (k) {
     FORMS[k] = { slug: k, row: null, gp: null, persons: EXTRA_PERSONS[k] || [0, 1, 2, 3, 4, 5], build: EXTRA[k] };
   });

@@ -1,0 +1,271 @@
+{
+  "id": "c2-u01-l01",
+  "unit": "c2-u01",
+  "order": 1,
+  "title": "Reading the headlines",
+  "goal": "Read Turkish headlines and say what they leave out, and write dates, figures and abbreviations with the right suffix.",
+  "points": ["gp-headlines", "gp-numbers-in-print"],
+  "intro": {
+    "text": "A headline drops what the reader can rebuild: the copula, often the verb, sometimes the tense. *Benzine zam* is **a price rise for petrol**; *Okullar pazartesi açılıyor* is **schools open on Monday**. Figures and abbreviations take the suffix of the way they are read: *2026'da*, *TDK'ye*.",
+    "see": "gp-headlines"
+  },
+  "vocab": [
+    {
+      "tr": "manşet",
+      "en": "front-page headline, lead story",
+      "pos": "noun"
+    },
+    {
+      "tr": "başlık",
+      "en": "headline; title",
+      "pos": "noun"
+    },
+    {
+      "tr": "spot",
+      "en": "summary line under a headline (newsroom word)",
+      "pos": "noun"
+    },
+    {
+      "tr": "son dakika",
+      "en": "breaking news",
+      "pos": "phrase"
+    },
+    {
+      "tr": "gündem",
+      "en": "agenda; the news of the day (gündemde: in the news)",
+      "pos": "noun"
+    },
+    {
+      "tr": "basın",
+      "en": "the press (basın toplantısı: press conference)",
+      "pos": "noun"
+    },
+    {
+      "tr": "muhabir",
+      "en": "reporter, correspondent",
+      "pos": "noun"
+    },
+    {
+      "tr": "haber ajansı",
+      "en": "news agency",
+      "pos": "phrase"
+    },
+    {
+      "tr": "tören",
+      "en": "ceremony",
+      "pos": "noun"
+    },
+    {
+      "tr": "valilik",
+      "en": "governor's office (of a province)",
+      "pos": "noun"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "c2-u01-l01-e01",
+      "type": "match",
+      "points": ["gp-headlines"],
+      "pairs": [
+        ["manşet", "front-page headline"],
+        ["son dakika", "breaking news"],
+        ["muhabir", "reporter"],
+        ["gündem", "the news of the day"],
+        ["tören", "ceremony"],
+        ["valilik", "governor's office"]
+      ]
+    },
+    {
+      "id": "c2-u01-l01-e02",
+      "type": "mcq",
+      "points": ["gp-headlines"],
+      "question": "A headline reads *Okullar pazartesi açılıyor*. What does it say?",
+      "options": ["Schools open on Monday", "Schools are opening right now", "Schools opened on Monday", "Schools should open on Monday"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "With a time word, the headline `-(I)yor` is a near future, not an action going on as you read.",
+        "2": "A past event would be *açıldı*.",
+        "3": "**Should** needs `-mAlI`: *açılmalı*."
+      },
+      "explain": "Headlines announce what is planned with `-(I)yor` and a time word, as English does with **Schools open on Monday**."
+    },
+    {
+      "id": "c2-u01-l01-e03",
+      "type": "translate",
+      "points": ["gp-headlines"],
+      "from": "tr",
+      "prompt": "Benzine yeni zam",
+      "accept": [
+        "A new price rise for petrol",
+        "A new price rise for gas",
+        "A new price rise for gasoline",
+        "A new price rise for fuel",
+        "A new price rise on [petrol|gas|gasoline|fuel]",
+        "A new price increase [for|on] [petrol|gas|gasoline|fuel]",
+        "A new price hike [for|on] [petrol|gas|gasoline|fuel]",
+        "Another new price [rise|increase|hike] [for|on] [petrol|gas|gasoline|fuel]",
+        "New price [rise|increase|hike] [for|on] [petrol|gas|gasoline|fuel]",
+        "[Another|A new] [rise|increase|hike] [in|for|on] [petrol|gas|gasoline|fuel] prices",
+        "[Petrol|Gas|Gasoline|Fuel] prices [go up|rise|raised|increased] again",
+        "[Petrol|Gas|Gasoline|Fuel] price [rise|increase|hike]"
+      ],
+      "explain": "The dative marks what is affected and the verb is understood: in full, *Benzine yeni bir zam yapıldı*."
+    },
+    {
+      "id": "c2-u01-l01-e04",
+      "type": "cloze",
+      "points": ["gp-numbers-in-print", "gp-apostrophe"],
+      "text": "Kira 2026___ %15___ bir artışla 20.000 liraya çıktı.",
+      "en": "In 2026 the rent went up by 15% to 20,000 lira.",
+      "blanks": [
+        {
+          "accept": ["'da"],
+          "reject": [
+            {
+              "answer": "'de",
+              "why": "*2026* is read *iki bin yirmi altı*: the last vowel, ı, is a back vowel, so *'da*."
+            },
+            {
+              "answer": "'ta",
+              "why": "*Altı* ends in a vowel, so the d of `-DA` stays d: *2026'da*."
+            }
+          ]
+        },
+        {
+          "accept": ["'lik"],
+          "reject": [
+            {
+              "answer": "'luk",
+              "why": "*%15* is read *yüzde on beş*: the last vowel is e, so four-way harmony gives *beşlik*: *%15'lik*."
+            },
+            {
+              "answer": "'lık",
+              "why": "The last vowel of *on beş* is e, a front vowel: *%15'lik*."
+            }
+          ]
+        }
+      ],
+      "hint": "Read each number aloud and harmonize with its last word.",
+      "explain": "*2026* → *altı* → *'da*; *%15* → *yüzde on beş* → *'lik*. *20.000 lira* is a word written out, so *liraya* takes no apostrophe."
+    },
+    {
+      "id": "c2-u01-l01-e05",
+      "type": "mcq",
+      "points": ["gp-numbers-in-print"],
+      "question": "Which sentence is written correctly?",
+      "options": [
+        "Toplantı TDK'nin binasında yapıldı.",
+        "Toplantı TDK'nın binasında yapıldı.",
+        "Toplantı TDK'in binasında yapıldı.",
+        "Toplantı Türk Dil Kurumu'nun binasında yapıldı."
+      ],
+      "optionsLang": "tr",
+      "answer": 0,
+      "why": {
+        "1": "A capital abbreviation takes the suffix that suits its last letter as it is read: *ke*, a front vowel, so *TDK'nin*.",
+        "2": "*Ke* ends in a vowel, so the genitive needs its n: *TDK'nin*.",
+        "3": "The name of an institution written out in full takes no apostrophe: *Türk Dil Kurumunun*."
+      },
+      "explain": "*TDK* is read *te de ke*: *TDK'nin*, *TDK'ye*, *TDK'den*."
+    },
+    {
+      "id": "c2-u01-l01-e06",
+      "type": "translate",
+      "points": ["gp-headlines"],
+      "from": "en",
+      "prompt": "The new metro line opens tomorrow.",
+      "accept": [
+        "Yeni metro hattı yarın açılıyor.",
+        "Yeni metro hattı yarın açılacak.",
+        "Yeni metro hattı yarın hizmete giriyor.",
+        "Yeni metro hattı yarın hizmete girecek.",
+        "Yeni metro hattı yarın hizmete açılıyor.",
+        "Yeni metro hattı yarın hizmete açılacak.",
+        "Yarın yeni metro hattı [açılıyor|açılacak|hizmete giriyor|hizmete girecek|hizmete açılıyor|hizmete açılacak]."
+      ],
+      "reject": [
+        {
+          "answer": "Yeni metro hattı yarın açıyor.",
+          "why": "*Açmak* needs an object: someone opens the line. The line itself *açılıyor*."
+        }
+      ],
+      "explain": "Headlines use `-(I)yor` with a time word for what is about to happen; the line is opened, so the verb is passive: *açılıyor*."
+    },
+    {
+      "id": "c2-u01-l01-e07",
+      "type": "listen",
+      "mode": "choose",
+      "points": ["gp-headlines"],
+      "tr": "Son dakika: İstanbul'da kar nedeniyle okullar tatil.",
+      "en": "Breaking news: schools in Istanbul are closed because of snow.",
+      "options": [
+        "Son dakika: İstanbul'da kar nedeniyle okullar tatil.",
+        "Son dakika: İstanbul'da kar nedeniyle okullar açık.",
+        "Son dakika: İzmir'de kar nedeniyle okullar tatil."
+      ],
+      "answer": 0
+    },
+    {
+      "id": "c2-u01-l01-e08",
+      "type": "translate",
+      "points": ["gp-headlines"],
+      "from": "tr",
+      "prompt": "Valilik: Okullar yarın tatil.",
+      "accept": [
+        "Governor's office: Schools closed tomorrow.",
+        "The governor's office: [Schools|Schools are|Schools will be] [closed|off] tomorrow",
+        "Governor's office: Schools off tomorrow",
+        "Governor's office: Schools are [closed|off] tomorrow",
+        "Governor's office: Schools will be [closed|off] tomorrow",
+        "Governorate: [Schools|Schools are|Schools will be] [closed|off] tomorrow",
+        "The governorate: [Schools|Schools are|Schools will be] [closed|off] tomorrow",
+        "[The governor's office|Governor's office|Governorate|The governorate]: No school tomorrow",
+        "[The governor's office|The governorate] [says|announces|has announced] (that) schools [are|will be] closed tomorrow"
+      ],
+      "explain": "A colon after the speaker introduces their words, and the copula is dropped: in full, *Valilik, okulların yarın tatil olduğunu açıkladı*."
+    },
+    {
+      "id": "c2-u01-l01-e09",
+      "type": "cloze",
+      "points": ["gp-numbers-in-print"],
+      "text": "Sonuçlar TÜİK___ sitesinde, saat 10.00___ açıklanacak.",
+      "en": "The results will be announced on TÜİK's website at 10 a.m.",
+      "blanks": [
+        {
+          "options": ["'in", "'nin", "'ün"],
+          "answer": 0
+        },
+        {
+          "accept": ["'da"],
+          "reject": [
+            {
+              "answer": "'de",
+              "why": "*10.00* is read *on*: the vowel o is a back vowel, so *10.00'da*."
+            }
+          ]
+        }
+      ],
+      "explain": "*TÜİK* is read as a word, *tüik*, and ends in a consonant: *TÜİK'in*. *10.00* is read *on*: *10.00'da*."
+    },
+    {
+      "id": "c2-u01-l01-e10",
+      "type": "open",
+      "points": ["gp-headlines", "gp-news-reporting"],
+      "task": "Rewrite each headline as the first sentence of a report would put it: give the verb and the tense the headline leaves out, and end each sentence with a full stop.",
+      "source": "Benzine yeni zam / Belediyeden ulaşım açıklaması / Köprü yarın trafiğe kapanıyor",
+      "sourceLang": "tr",
+      "models": [
+        "Benzine yeni bir zam yapıldı. Belediye, ulaşımla ilgili bir açıklama yaptı. Köprü yarın trafiğe kapatılacak.",
+        "Benzinin fiyatı yeniden arttı. Belediyeden ulaşım konusunda bir açıklama geldi. Köprü yarından itibaren trafiğe kapalı olacak."
+      ],
+      "modelsLang": "tr",
+      "checklist": [
+        "*Benzine zam* gets its verb: *zam yapıldı*, or *fiyatı arttı*",
+        "The ablative *belediyeden* becomes the subject (*Belediye … açıklama yaptı*) or stays a source (*belediyeden … geldi*)",
+        "The headline `-(I)yor` becomes a future: *kapatılacak* or *kapalı olacak*",
+        "Each sentence has a finite verb and a full stop"
+      ]
+    }
+  ]
+}
