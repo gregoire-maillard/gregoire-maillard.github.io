@@ -48,6 +48,7 @@
     // 6.4 answer checking
     EXPAND_MAX: 200, TYPO_MIN: 5,
     // 6.5 speech
+    LANG: "tr",            // the course's language code: its rows in Supabase (enrollments, activity_days…)
     TTS_LANG: "tr-TR", TTS_SLOW: 0.6, TTS_WAIT: 1500,
     LETTERS: ["ç", "ğ", "ı", "ö", "ş", "ü"], LETTERS_UP: ["Ç", "Ğ", "İ", "Ö", "Ş", "Ü"],
     // 6.6 scheduler: steps in minutes, intervals in days (Anki's defaults)

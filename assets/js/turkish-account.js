@@ -26,7 +26,9 @@
     url: "https://xmbwayxoqlvhqenmiyzr.supabase.co",
     key: "sb_publishable_Xz3OM6yw0acx58SKoVFFaQ_iuQXWIxm",
     lib: "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js",
-    table: "profiles",
+    table: "profiles",       // the person: name, character, time zone (no language in it)
+    progress: "enrollments", // one row per person and language: the progress (supabase-v2-multilang.sql)
+    lang: T.C.LANG || "tr",  // this course's language code, a row of public.languages
     page: "/turkish.html",
     pushDelay: 4000
   };
@@ -423,20 +425,34 @@
     if (!A.user || !client) return Promise.resolve();
     A.sync = "syncing"; emit();
     var uid = A.user.id;
-    return client.from(CFG.table).select("*").eq("user_id", uid).maybeSingle().then(function (r) {
+    // 1. The person (profiles). The row is made at sign-up by a trigger; made here too if it's missing.
+    return client.from(CFG.table).select("user_id, display_name, avatar, timezone, ui_locale").eq("user_id", uid).maybeSingle().then(function (p) {
+      if (p.error) throw new Error(p.error.message);
+      if (!A.user || A.user.id !== uid) return;
+      var prof = p.data;
+      A.profile = { display_name: prof ? prof.display_name : null };
+      var made = prof ? Promise.resolve() : client.from(CFG.table).upsert({ user_id: uid }, { onConflict: "user_id", ignoreDuplicates: true }).then(function (w) { if (w.error) throw new Error(w.error.message); });
+      return made.then(function () {
+        syncAvatar(prof || { user_id: uid, avatar: null });
+        syncPerson(prof || { user_id: uid });
+        // 2. The progress in this language (enrollments).
+        return client.from(CFG.progress).select("*").eq("user_id", uid).eq("lang", CFG.lang).maybeSingle();
+      }).then(function (r) { return mergeRow(r, uid, attempt); });
+    }).then(function () {
+      if (A.user && A.user.id === uid) { A.sync = "saved"; A.syncedAt = Date.now(); A.error = null; emit(); flushExtras(); }
+    });
+  }
+  function mergeRow(r, uid, attempt) {
       if (r.error) throw new Error(r.error.message);
       if (!A.user || A.user.id !== uid) return;
       var row = r.data, local = snapshot(), m = marker();
       if (m && m.user !== uid) m = null;
-      A.profile = { display_name: row ? row.display_name : null };
-      if (row) syncAvatar(row);
-      if (!row) {   // first sign-in ever: this browser's progress becomes the profile's
+      if (!row) {   // first time in this language: this browser's progress becomes the enrollment's
         return columns(local).then(function (cols) {
-          var ins = Object.assign({ user_id: uid, course: local.course, cards: local.cards, settings: local.settings, rev: 1 }, cols);
-          return client.from(CFG.table).insert(ins).then(function (w) {
+          var ins = Object.assign({ user_id: uid, lang: CFG.lang, course: local.course, cards: local.cards, settings: local.settings, rev: 1, last_active_at: new Date().toISOString() }, cols);
+          return client.from(CFG.progress).insert(ins).then(function (w) {
             if (w.error) { if (w.error.code === "23505" && !attempt) return fullSync(1); throw new Error(w.error.message); }
             setMarker(markFor(1, local));
-            if (A.avatar()) client.from(CFG.table).update({ avatar: A.avatar() }).eq("user_id", uid).then(function () {});
           });
         });
       }
@@ -457,17 +473,65 @@
       var same = JSON.stringify(result) === JSON.stringify(remote);
       if (same) { setMarker(markFor(row.rev, result)); return; }
       return columns(result).then(function (cols) {
-        var upd = Object.assign({ course: result.course, cards: result.cards, settings: result.settings, rev: row.rev + 1, updated_at: new Date().toISOString() }, cols);
-        return client.from(CFG.table).update(upd).eq("user_id", uid).eq("rev", row.rev).select("rev").then(function (w) {
+        var stamp = new Date().toISOString();
+        var upd = Object.assign({ course: result.course, cards: result.cards, settings: result.settings, rev: row.rev + 1, updated_at: stamp, last_active_at: stamp }, cols);
+        return client.from(CFG.progress).update(upd).eq("user_id", uid).eq("lang", CFG.lang).eq("rev", row.rev).select("rev").then(function (w) {
           if (w.error) throw new Error(w.error.message);
           if (!w.data || !w.data.length) { if (!attempt) return fullSync(1); throw new Error("another device kept changing the progress"); }
           setMarker(markFor(row.rev + 1, result));
         });
       });
-    }).then(function () {
-      if (A.user && A.user.id === uid) { A.sync = "saved"; A.syncedAt = Date.now(); A.error = null; emit(); }
-    });
   }
+  // Time zone and language of the device, so streaks and reminders follow the learner's own days. Filled once.
+  function syncPerson(prof) {
+    var upd = {};
+    try { var tz = Intl.DateTimeFormat().resolvedOptions().timeZone; if (!prof.timezone && tz && tz.length <= 64) upd.timezone = tz; } catch (e) {}
+    var m = /^([a-z]{2})(?:-([a-z]{2}))?/i.exec(navigator.language || "");
+    if (!prof.ui_locale && m) upd.ui_locale = m[1].toLowerCase() + (m[2] ? "-" + m[2].toUpperCase() : "");
+    if (Object.keys(upd).length) client.from(CFG.table).update(upd).eq("user_id", prof.user_id).then(function () {}, function () {});
+  }
+
+  // ── activity, exercise statistics, reports ──
+  // activity_days: the last two weeks of the progress's own day logs (XP per day, new cards and reviews per day),
+  // written as absolute values, so sending them twice, or from two devices, changes nothing.
+  var sentDays = "";
+  function pushActivity() {
+    if (!A.user || !client) return;
+    var d = snapshot(), xd = (d.course.xp && d.course.xp.days) || {}, cd = d.cards.days || {}, uid = A.user.id;
+    var since = T.iso(Date.now() - 14 * 864e5).slice(0, 10), days = {};
+    Object.keys(xd).concat(Object.keys(cd)).forEach(function (k) { if (/^\d{4}-\d{2}-\d{2}$/.test(k) && k >= since) days[k] = true; });
+    var rows = Object.keys(days).sort().map(function (k) {
+      var c = cd[k] || {};
+      return { user_id: uid, lang: CFG.lang, day: k, xp: Math.max(0, Math.round(xd[k] || 0)), new_cards: Math.max(0, c["new"] || 0), reviews: Math.max(0, c.reviews || 0) };
+    }).filter(function (x) { return x.xp || x.new_cards || x.reviews; });
+    var key = JSON.stringify(rows);
+    if (!rows.length || key === sentDays) return;
+    client.from("activity_days").upsert(rows, { onConflict: "user_id,lang,day" }).then(function (w) { if (!w.error) sentDays = key; }, function () {});
+  }
+  // item_stats: first tries at each exercise, sent in batches (anonymous: the table has no user in it).
+  var attempts = [];
+  A.recordAttempt = function (id, ok) {
+    if (!A.user || !id || !/^[a-z0-9-]{1,80}$/.test(id)) return;
+    attempts.push({ id: id, ok: !!ok });
+    if (attempts.length >= 200) flushAttempts();
+  };
+  function flushAttempts() {
+    if (!A.user || !client || !attempts.length) return;
+    var batch = attempts.splice(0, 200);
+    client.rpc("record_attempts", { p_lang: CFG.lang, items: batch }).then(function (r) { if (r.error && !/sign in/.test(r.error.message)) attempts = batch.concat(attempts).slice(0, 400); }, function () { attempts = batch.concat(attempts).slice(0, 400); });
+  }
+  function flushExtras() { pushActivity(); flushAttempts(); }
+  // feedback: "report a mistake". kind: typo · wrong-answer · audio · other. Needs a profile.
+  A.report = function (o) {
+    o = o || {};
+    if (!A.user || !client) return Promise.reject(new Error("Sign in to send a report."));
+    var msg = String(o.message || "").trim().slice(0, 2000);
+    if (!msg) return Promise.reject(new Error("Write a few words first."));
+    var kind = ["typo", "wrong-answer", "audio", "other"].indexOf(o.kind) >= 0 ? o.kind : "other";
+    return client.from("feedback").insert({ user_id: A.user.id, lang: CFG.lang, item_id: o.itemId ? String(o.itemId).slice(0, 80) : null, kind: kind, message: msg, page: (location.pathname + location.search).slice(0, 200) }).then(function (r) {
+      if (r.error) throw new Error(r.error.message);
+    });
+  };
   // The character: the profile's choice wins; a choice made before signing in is saved to the profile.
   // (Skipped when the table has no avatar column yet.)
   function syncAvatar(row) {
@@ -486,14 +550,15 @@
     if (!ch.course && !ch.cards && !ch.settings) return Promise.resolve();
     A.sync = "syncing"; emit();
     return columns(local).then(function (cols) {
-      var upd = Object.assign({ rev: m.rev + 1, updated_at: new Date().toISOString() }, cols);
+      var stamp = new Date().toISOString();
+      var upd = Object.assign({ rev: m.rev + 1, updated_at: stamp, last_active_at: stamp }, cols);
       ["course", "cards", "settings"].forEach(function (k) { if (ch[k]) upd[k] = local[k]; });
-      return client.from(CFG.table).update(upd).eq("user_id", uid).eq("rev", m.rev).select("rev");
+      return client.from(CFG.progress).update(upd).eq("user_id", uid).eq("lang", CFG.lang).eq("rev", m.rev).select("rev");
     }).then(function (w) {
       if (w.error) throw new Error(w.error.message);
       if (!w.data || !w.data.length) return fullSync(0);   // changed elsewhere: merge
       setMarker(markFor(m.rev + 1, local));
-      A.sync = "saved"; A.syncedAt = Date.now(); A.error = null; emit();
+      A.sync = "saved"; A.syncedAt = Date.now(); A.error = null; emit(); flushExtras();
     });
   }
   A.syncNow = function () { clearTimeout(pushTimer); return queue(function () { return fullSync(0); }).catch(fail); };
@@ -507,7 +572,7 @@
   store.onChange(schedulePush);
   document.addEventListener("visibilitychange", function () {
     if (!A.user) return;
-    if (document.hidden) { if (pushTimer) { clearTimeout(pushTimer); queue(push).catch(fail); } }
+    if (document.hidden) { if (pushTimer) { clearTimeout(pushTimer); queue(push).catch(fail); } flushAttempts(); }
     else A.syncNow();
   });
   window.addEventListener("online", function () { if (A.user) A.syncNow(); });
