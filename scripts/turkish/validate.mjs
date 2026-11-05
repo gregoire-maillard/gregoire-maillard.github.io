@@ -13,8 +13,7 @@
 // The schema definitions below mirror PROJECT.md section 5; change both together and run --examples.
 // Conjugate cells and morph tiles are also compared with the morphology engine, assets/js/turkish-morph.js
 // (PROJECT.md 3 and 8); for now its disagreements are warnings. The TYS practice test (exams/, 5.13) is checked
-// against the official test's proportions (7.9). The dialogue simulator's conversations (dialogues/, 5.14) are
-// checked as graphs: every node reached, every path ending, one reply per typed answer, sen and siz (7.10).
+// against the official test's proportions (7.9).
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
@@ -77,7 +76,6 @@ const RE = {
   card: /^fc-\d{4}$/,
   slug: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
   url: /^https:\/\/\S+$/,
-  dialogue: /^dlg-[a-z0-9]+(?:-[a-z0-9]+)*$/,
   day: /^\d{4}-\d{2}-\d{2}$/,
   iso: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/,
 };
@@ -540,27 +538,6 @@ SCHEMA.exam = S.obj({
   }), { min: 4, max: 4 }),
 });
 
-// The dialogue simulator (PROJECT.md 5.14, 6.9, 7.10)
-const DLG_LEVELS = ["a1", "a2", "b1", "b2"];
-const register = S.oneOfLit(["sen", "siz"]);
-const dlgId = S.str({ re: RE.slug });
-const DLG_REPLY = S.obj({
-  tr: T.tr, en: T.en, "accept?": S.arr(T.plain, { min: 1 }), "register?": register, ok: S.bool(), "why?": T.rich,
-  "next?": dlgId, "react?": S.obj({ tr: T.tr, en: T.en }),
-});
-SCHEMA.dialogue = S.obj({
-  id: S.str({ re: RE.dialogue }), level: S.oneOfLit(DLG_LEVELS), order: S.int({ min: 1, max: 20 }), after: S.str({ re: RE.unit }),
-  title: T.en, titleTr: T.tr, setting: T.rich, goal: T.en, minutes: S.int({ min: 2, max: 8 }),
-  cast: S.arr(S.obj({ id: dlgId, name: T.tr, role: T.en, register, why: T.rich, "pitch?": S.num({ min: 0.6, max: 1.4 }) }), { min: 1, max: 4 }),
-  start: dlgId,
-  nodes: S.arr(S.obj({
-    id: dlgId, who: dlgId, tr: T.tr, en: T.en, "note?": T.rich,
-    "turn?": S.obj({ prompt: T.en, "to?": dlgId, replies: S.arr(DLG_REPLY, { min: 2, max: 4 }) }), "end?": T.en,
-  }), { min: 2 }),
-  phrases: S.arr(S.obj({ tr: T.tr, en: T.en, "note?": T.rich }), { min: 4, max: 8 }),
-  review: S.arr(studyRef, { min: 1, max: 4, unique: true }),
-});
-
 // Runs a schema, then the text checks it collected. Returns true when the structure is valid.
 function validate(kind, value, file, cx0 = {}) {
   let ok = true;
@@ -669,10 +646,10 @@ function parseCurriculum() {
 const unitIndex = id => REG.order.indexOf(id);
 
 // ─────────────────────────── content ───────────────────────────
-const C = { levels: new Map(), units: new Map(), lessons: new Map(), grammar: new Map(), culture: new Map(), cardFiles: new Map(), cards: new Map(), exams: new Map(), dialogues: new Map(), files: [], timeline: null, regions: null };
+const C = { levels: new Map(), units: new Map(), lessons: new Map(), grammar: new Map(), culture: new Map(), cardFiles: new Map(), cards: new Map(), exams: new Map(), files: [], timeline: null, regions: null };
 const ROOT_FILES = { "timeline.json": "timeline", "regions.json": "regions" };   // beside index.json (PROJECT.md 5.11, 5.12)
 const deferred = [];
-const DIRS = { levels: "level", units: "unit", lessons: "lesson", grammar: "grammar", culture: "culture", flashcards: "flashcards", exams: "exam", dialogues: "dialogue" };
+const DIRS = { levels: "level", units: "unit", lessons: "lesson", grammar: "grammar", culture: "culture", flashcards: "flashcards", exams: "exam" };
 
 function loadContent() {
   if (!fs.existsSync(DATA)) return;
@@ -703,7 +680,7 @@ function loadFile(kind, fp) {
   const ok = validate(kind, v, label);
   const id = v && v.id;
   if (kind === "timeline" || kind === "regions") { C[kind] = { v, file: label, ok }; return; }
-  const expect = { level: base, unit: base, lesson: base, grammar: `${base}-grammar`, culture: `${base}-culture`, exam: base, dialogue: base }[kind];
+  const expect = { level: base, unit: base, lesson: base, grammar: `${base}-grammar`, culture: `${base}-culture`, exam: base }[kind];
   if (kind !== "flashcards" && id !== expect) { err(label, `id “${id}” should be “${expect}” to match the file name`); return; }
   const rec = { v, file: label, ok };
   if (kind === "level") C.levels.set(id, rec);
@@ -712,7 +689,6 @@ function loadFile(kind, fp) {
   else if (kind === "grammar") C.grammar.set(unitOf(id), rec);
   else if (kind === "culture") C.culture.set(unitOf(id), rec);
   else if (kind === "exam") C.exams.set(id, rec);
-  else if (kind === "dialogue") C.dialogues.set(id, rec);
   else if (kind === "flashcards") {
     const m = base.match(/^fc-(\d{4})-(\d{4})$/);
     if (!m) { err(label, "flashcard files are named fc-NNNN-NNNN.json after their rank range"); return; }
@@ -1300,118 +1276,6 @@ function checkExam(rec, cx) {
   if (indexAnswers.length >= 3 && new Set(indexAnswers).size === 1) warn(file, `every mcq and gap answer is option ${indexAnswers[0] + 1}: options aren't shuffled in a practice test, so spread the right answers`);
 }
 
-// ── the dialogue simulator (5.14, 7.10): the graph, the replies, sen and siz ──
-const DLG = { minTurns: 4, maxTurns: { a1: 8, a2: 8, b1: 12, b2: 12 }, line: 25, reply: 15, note: 40 };
-// Words that address someone as siz or sen (checked on trLower text): the pronoun in any case, the question
-// particle with its ending, a verb in -sInIz; for sen also -(I)yorsun, -(y)AcAksIn and nasılsın, değilsin.
-const SIZ_WORDS = /(?<!\p{L})(?:siz|sizin|size|sizi|sizde|sizden|sizce|sizinle|sizle)(?!\p{L})|s[ıiuü]n[ıiuü]z(?!\p{L})/u;
-const SEN_WORDS = /(?<!\p{L})(?:sen|senin|sana|seni|sende|senden|sence|seninle|senle)(?!\p{L})|(?:m[ıiuü]s[ıiuü]n|yorsun|[ck][ae]ks[ıi]n|nasılsın|değilsin)(?!\p{L})/u;
-function studyRefOk(r, w, cx) {
-  if (RE.gp.test(r)) {
-    if (!REG.points.has(r)) err(w, `unknown grammar point ${r}`);
-    else if (!cx.examples && !C.units.has(REG.points.get(r).unit)) warn(w, `${r} is in ${REG.points.get(r).unit}, which isn't written yet: its link reads “coming soon”`);
-    return;
-  }
-  if (!REG.units.has(r)) err(w, `unknown unit ${r}`);
-  else if (!cx.examples && !C.units.has(r)) warn(w, `${r} isn't written yet: its link reads “coming soon”`);
-}
-function checkDialogue(rec, cx) {
-  const { v, file } = rec;
-  const u = REG.units.get(v.after);
-  if (!u) err(`${file} › after`, `unknown unit ${v.after}`);
-  else if (u.level !== v.level) err(`${file} › after`, `${v.after} isn't a unit of ${CEFR[v.level]}`);
-  else if (!cx.examples && !C.units.has(v.after)) warn(`${file} › after`, `${v.after} isn't written yet`);
-  v.review.forEach((r, k) => studyRefOk(r, `${file} › review[${k}]`, cx));
-  const cast = new Map(), nodes = new Map();
-  v.cast.forEach((p, i) => { if (cast.has(p.id)) err(`${file} › cast[${i}].id`, `cast id “${p.id}” is used twice`); cast.set(p.id, p); });
-  v.nodes.forEach((n, i) => { if (nodes.has(n.id)) err(`${file} › nodes[${i}].id`, `node id “${n.id}” is used twice`); else nodes.set(n.id, { n, i }); });
-  if (!nodes.has(v.start)) err(`${file} › start`, `no node “${v.start}”`);
-  const stat = { branch: false, slip: false, consequence: false, people: new Set() };
-  v.nodes.forEach((n, i) => {
-    const w = `${file} › nodes[${i}]`;
-    if (!cast.has(n.who)) err(`${w}.who`, `“${n.who}” isn't in the cast`);
-    if (!!n.turn === (n.end !== undefined)) err(w, "a node has a turn or an end, never both or neither");
-    if (words(n.tr) > DLG.line) warn(`${w}.tr`, `${words(n.tr)} words; a line has at most ${DLG.line} (PROJECT.md 7.10)`);
-    if (n.note && words(n.note) > DLG.note) warn(`${w}.note`, `${words(n.note)} words; a note has at most ${DLG.note}`);
-    if (!n.turn) return;
-    const t = n.turn, to = t.to || n.who, p = cast.get(to);
-    if (t.to && !cast.has(t.to)) err(`${w}.turn.to`, `“${t.to}” isn't in the cast`);
-    if (p) stat.people.add(p.id);
-    const nexts = new Set(), seen = new Map();
-    let fits = false;
-    t.replies.forEach((r, k) => {
-      const rw = `${w}.turn.replies[${k}]`;
-      if (!r.ok && !r.why) err(rw, "a reply with ok false needs a why");
-      if (r.ok && !r.next) err(rw, "a reply with ok true needs a next");
-      if (r.react && r.next) err(`${rw}.react`, "react is for a reply that comes back to the same turn, without next");
-      if (r.next && !nodes.has(r.next)) err(`${rw}.next`, `no node “${r.next}”`);
-      if (r.ok) { if (r.next) nexts.add(r.next); if (!p || !r.register || r.register === p.register) fits = true; }
-      if (p && r.register && r.register !== p.register) stat.slip = true;
-      if (!r.ok && r.next) stat.consequence = true;
-      if (words(r.tr) > DLG.reply) warn(`${rw}.tr`, `${words(r.tr)} words; a reply has at most ${DLG.reply}`);
-      if (r.why && words(r.why) > DLG.note) warn(`${rw}.why`, `${words(r.why)} words; a why has at most ${DLG.note}`);
-      // the words against the register: a pronoun, misiniz or misin, -sInIz
-      const said = [r.tr, ...(r.accept || []).flatMap(a => expand(a).list || [])];
-      for (const s of said) {
-        const l = trLower(s), siz = SIZ_WORDS.test(l), sen = SEN_WORDS.test(l);
-        if (siz === sen) continue;
-        const want = siz ? "siz" : "sen";
-        if (r.register !== want) { warn(rw, `“${s}” addresses someone with ${want}, but its register is ${r.register || "missing"}`); break; }
-      }
-      // a typed answer must point to one reply only
-      for (const key of checkAccept([r.tr, ...(r.accept || [])], "tr", rw, [], "lenient").keys()) {
-        if (seen.has(key)) err(rw, `“${key}” is also accepted for replies[${seen.get(key)}]: a typed answer must point to one reply`);
-        else seen.set(key, k);
-      }
-    });
-    if (!fits) err(`${w}.turn`, p ? `no ok reply addresses ${p.role} with ${p.register} (or with no form of address)` : "no ok reply");
-    if (nexts.size >= 2) stat.branch = true;
-  });
-  // every node reached from start; from every node an end can be reached
-  if (nodes.has(v.start)) {
-    const reached = new Set([v.start]), stack = [v.start];
-    while (stack.length) {
-      const x = nodes.get(stack.pop());
-      if (x && x.n.turn) for (const r of x.n.turn.replies) if (r.next && nodes.has(r.next) && !reached.has(r.next)) { reached.add(r.next); stack.push(r.next); }
-    }
-    for (const [id, x] of nodes) if (!reached.has(id)) err(`${file} › nodes[${x.i}]`, `“${id}” can't be reached from start`);
-  }
-  const ends = new Set([...nodes.values()].filter(x => x.n.end !== undefined).map(x => x.n.id));
-  for (let grew = true; grew;) {
-    grew = false;
-    for (const [id, x] of nodes) if (!ends.has(id) && x.n.turn && x.n.turn.replies.some(r => r.next && ends.has(r.next))) { ends.add(id); grew = true; }
-  }
-  for (const [id, x] of nodes) if (!ends.has(id)) err(`${file} › nodes[${x.i}]`, `no end can be reached from “${id}”`);
-  if (cx.examples) return;
-  // the mix (7.10): branching, sen and siz, consequences, and the turns on a path
-  if (!stat.branch) warn(file, "no turn has two ok replies that lead to different lines: the conversation doesn't branch");
-  if (!stat.slip) warn(file, "no reply uses the wrong register, so the conversation gives no feedback on sen and siz");
-  if (!stat.consequence) warn(file, "no wrong reply has consequences (a next): every mistake just comes back");
-  let lo = Infinity, hi = 0, steps = 0;
-  const walk = (id, turns, path) => {
-    if (++steps > 200000) return;
-    const x = nodes.get(id);
-    if (!x) return;
-    if (x.n.end !== undefined) { lo = Math.min(lo, turns); hi = Math.max(hi, turns); return; }
-    for (const nx of new Set(x.n.turn.replies.map(r => r.next).filter(Boolean))) if (!path.has(nx)) { path.add(nx); walk(nx, turns + 1, path); path.delete(nx); }
-  };
-  if (nodes.has(v.start)) walk(v.start, 0, new Set([v.start]));
-  const most = DLG.maxTurns[v.level];
-  if (lo < DLG.minTurns) warn(file, `a path to an end has ${lo} turn(s); aim for ${DLG.minTurns} to ${most}`);
-  if (hi > most) warn(file, `a path to an end has ${hi} turns; aim for ${DLG.minTurns} to ${most} at ${CEFR[v.level]}`);
-}
-// every level's dialogues numbered 1, 2, 3… by order
-function checkDialogueOrder() {
-  const by = new Map();
-  for (const rec of C.dialogues.values()) if (rec.ok) by.set(rec.v.level, [...(by.get(rec.v.level) || []), rec]);
-  for (const [lv, list] of by) {
-    const orders = list.map(r => r.v.order).sort((a, b) => a - b);
-    orders.forEach((o, i) => {
-      if (o !== i + 1) err(list.find(r => r.v.order === o).file, `order ${o}: the ${CEFR[lv]} dialogues are numbered ${list.map((_, k) => k + 1).join(", ")}, each once`);
-    });
-  }
-}
-
 function checkFlashFile(rec, cx) {
   const { v, file } = rec;
   if (rec.range && !same(v.range, rec.range)) err(file, `range ${JSON.stringify(v.range)} should be ${JSON.stringify(rec.range)} to match the file name`);
@@ -1538,10 +1402,6 @@ function buildIndex() {
     points,
     flashcards: { files: cardFiles, count: C.cards.size },
     counts: { units: [...C.units.values()].filter(u => u.ok).length, lessons: nLessons, exercises: nEx, cards: C.cards.size },
-    dialogues: [...C.dialogues.values()].filter(r => r.ok)
-      .sort((a, b) => LEVELS.indexOf(a.v.level) - LEVELS.indexOf(b.v.level) || a.v.order - b.v.order)
-      .map(({ v }) => ({ id: v.id, level: v.level, order: v.order, title: v.title, titleTr: v.titleTr, minutes: v.minutes, after: v.after,
-                         cast: v.cast.map(p => ({ role: p.role, register: p.register })) })),
   };
 }
 
@@ -1581,7 +1441,6 @@ function runExamples() {
     if (kind === "regions") checkRegions({ v, file: where }, cx);
     if (kind === "timeline") checkTimeline({ v, file: where }, cx);
     if (kind === "exam") checkExam({ v, file: where }, cx);
-    if (kind === "dialogue") checkDialogue({ v, file: where }, cx);
   }
   if (!n) err(label, "no ```json <kind> examples found");
   return n;
@@ -1670,11 +1529,9 @@ if (opt.examples) {
   if (C.regions && C.regions.ok) checkRegions(C.regions, cx);
   if (C.timeline && C.timeline.ok) checkTimeline(C.timeline, cx);
   for (const rec of C.exams.values()) if (rec.ok) checkExam(rec, cx);
-  for (const rec of C.dialogues.values()) if (rec.ok) checkDialogue(rec, cx);
-  checkDialogueOrder();
   for (const f of deferred) f();
   const nEx = [...C.lessons.values()].reduce((n, l) => n + (l.ok ? l.v.exercises.length : 0), 0);
-  summary = `registry ${REG.levels.size} levels, ${REG.units.size} units, ${REG.points.size} grammar points · content ${C.levels.size} levels, ${C.units.size} units, ${C.lessons.size} lessons (${nEx} exercises), ${C.grammar.size} guides, ${C.culture.size} interludes, ${C.cards.size} cards, ${C.timeline && C.timeline.ok ? C.timeline.v.events.length : 0} timeline events, ${C.regions && C.regions.ok ? C.regions.v.provinces.length : 0} provinces, ${C.exams.size} practice test${C.exams.size === 1 ? "" : "s"}, ${C.dialogues.size} dialogue${C.dialogues.size === 1 ? "" : "s"} · morphology engine: ${MSTAT.cells} cells of ${MSTAT.conjChecked}/${MSTAT.conj} conjugate exercises, ${MSTAT.morphChecked}/${MSTAT.morph} morph exercises`;
+  summary = `registry ${REG.levels.size} levels, ${REG.units.size} units, ${REG.points.size} grammar points · content ${C.levels.size} levels, ${C.units.size} units, ${C.lessons.size} lessons (${nEx} exercises), ${C.grammar.size} guides, ${C.culture.size} interludes, ${C.cards.size} cards, ${C.timeline && C.timeline.ok ? C.timeline.v.events.length : 0} timeline events, ${C.regions && C.regions.ok ? C.regions.v.provinces.length : 0} provinces, ${C.exams.size} practice test${C.exams.size === 1 ? "" : "s"} · morphology engine: ${MSTAT.cells} cells of ${MSTAT.conjChecked}/${MSTAT.conj} conjugate exercises, ${MSTAT.morphChecked}/${MSTAT.morph} morph exercises`;
   if (opt.vocab) runVocab();
   let batchLines = [];
   if (opt.batch) batchLines = runBatch(opt.batch);

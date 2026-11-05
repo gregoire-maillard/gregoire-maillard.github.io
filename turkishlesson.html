@@ -545,7 +545,6 @@
       .x-pt small { font-size: 13px; font-weight: 500; color: var(--muted); }
       .x-skills li.na .x-pt { color: var(--muted); }
       @media (max-width: 599px) { .x-skills li { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; } .x-bar { grid-column: 1 / -1; grid-row: 2; } }
-      .x-key { margin-top: 8px; font-size: 12.5px; color: var(--muted); text-align: left; }
       .x-caveat { margin-top: 16px; font-size: 13.5px; color: var(--muted); text-align: left; }
       .x-caveat b { color: var(--body); }
       .x-rev, .x-ans { margin-top: 28px; text-align: left; }
@@ -1046,7 +1045,6 @@
           var got = r.got != null ? r.got : ok ? it.weight : 0;
           S.correct += got; S.missed += it.weight - got;
           store.answered(it.ex.id, ok);
-          if (T.account && T.account.recordAttempt) T.account.recordAttempt(it.ex.id, ok);   // anonymous exercise stats (item_stats)
           if (got && S.xpPer) { S.xpGot += got * S.xpPer; drawXp(true); }
         }
         S.streak = ok ? S.streak + 1 : 0; drawStreak(ok);
@@ -2144,7 +2142,7 @@
           return '<li class="' + (r.score == null ? "na" : f < XC.WEAK ? "weak" : "") + '"><span class="x-sk">' + SKILL[r.skill] + "<small>" + (r.score == null ? "not taken" : r.sc.rubric ? "marked by you" : r.right + " of " + r.n + " right") + "</small></span>" +
             '<span class="x-bar" aria-hidden="true"><i style="width:' + (f * 100).toFixed(1) + '%"></i><b style="left:' + (X.E.scale.skillMin / r.max * 100).toFixed(1) + '%"></b></span>' +
             '<span class="x-pt">' + (r.score == null ? "–" : one(r.score)) + " <small>/ " + r.max + "</small></span></li>";
-        }).join("") + '</ul><p class="x-key">The line on each bar marks ' + one(X.E.scale.skillMin) + " of 25, the least every skill needs for a level.</p>" + '<p class="x-caveat">' + xCaveat() + "</p>";
+        }).join("") + '</ul><p class="x-caveat">' + xCaveat() + "</p>";
         var weak = taken.filter(function (r) { return r.score / r.max < XC.WEAK; });
         h += '<section class="x-rev" aria-labelledby="x-rev-h"><h2 id="x-rev-h">What to review</h2>';
         if (!weak.length) h += "<p>No weak skill" + (taken.length < rs.length ? " among those you took" : "") + ": every one is at " + Math.round(XC.WEAK * 100) + "% or more. Keep going with the course, and try the test again in a few weeks.</p>";
