@@ -37,6 +37,7 @@ const readJson = p => JSON.parse(fs.readFileSync(p, "utf8"));
 const listJson = dir => (fs.existsSync(path.join(DATA, dir)) ? fs.readdirSync(path.join(DATA, dir)).filter(f => f.endsWith(".json")).sort().map(f => readJson(path.join(DATA, dir, f))) : []);
 const INDEX = readJson(path.join(DATA, "index.json"));
 const LESSONS = listJson("lessons"), GRAMMAR = listJson("grammar"), CULTURE = listJson("culture"), UNITS = listJson("units"), LEVELS = listJson("levels");
+const TIMELINE = fs.existsSync(path.join(DATA, "timeline.json")) ? readJson(path.join(DATA, "timeline.json")) : null;
 const SETTINGS = () => JSON.parse(JSON.stringify(TRK.C.SETTINGS));
 const at = (y, m, d, h = 12, min = 0) => new Date(y, m - 1, d, h, min).getTime();   // local time
 const NOW = at(2026, 10, 14, 10);
@@ -97,6 +98,7 @@ function richStrings() {
   }
   for (const g of GRAMMAR) { push(g.id, g.intro); g.summary.forEach(x => push(g.id, x)); g.sections.forEach(s => blocks(`${g.id} ${s.point}`, s.blocks)); }
   for (const c of CULTURE) { blocks(c.id, c.blocks); (c.questions || []).forEach(q => { push(c.id, q.q); push(c.id, q.explain); }); }
+  if (TIMELINE) { TIMELINE.eras.forEach(e => push(`timeline ${e.id}`, e.intro)); TIMELINE.events.forEach(e => push(`timeline ${e.id}`, e.text)); }
   return out;
 }
 
@@ -244,6 +246,15 @@ test("real content: every accepted answer is correct, every rejected answer wron
 });
 
 // ─────────────────────────── 5.1 the renderer ───────────────────────────
+test("data: content ids, flashcard files and the Culture page's timeline and regions map to their files", () => {
+  assert.equal(TRK.data.url("a1-u05-culture", "v1"), "/assets/data/turkish/culture/a1-u05.json?v=v1");
+  assert.equal(TRK.data.url("flashcards/fc-0001-0200.json"), "/assets/data/turkish/flashcards/fc-0001-0200.json");
+  assert.equal(TRK.data.url("timeline", "abc"), "/assets/data/turkish/timeline.json?v=abc");
+  assert.equal(TRK.data.url("regions"), "/assets/data/turkish/regions.json");
+  assert.equal(TRK.C.PAGES.culture, "/turkishculture.html");
+  assert.throws(() => TRK.data.url("culture"), /Unknown content id/);
+  if (TIMELINE) for (const e of TIMELINE.events) assert.ok(TRK.href(e.id.slice(0, 6), INDEX).ready, `${e.id}: its unit isn't ready`);
+});
 test("rich: Turkish, bold, code, escaped asterisk", () => {
   const h = TRK.rich("*ev* means **house**; `-DA` is a suffix; 2 \\* 3");
   assert.equal(h, '<i lang="tr">ev</i> means <strong>house</strong>; <code class="trk-nw">-DA</code> is a suffix; 2 * 3');

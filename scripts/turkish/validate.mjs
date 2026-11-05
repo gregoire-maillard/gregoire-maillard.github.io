@@ -74,6 +74,7 @@ const RE = {
   gp: /^gp-[a-z0-9]+(?:-[a-z0-9]+)*$/,
   card: /^fc-\d{4}$/,
   slug: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+  url: /^https:\/\/\S+$/,
   day: /^\d{4}-\d{2}-\d{2}$/,
   iso: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/,
 };
@@ -449,6 +450,29 @@ const CARDS_PROGRESS = S.obj({ schema: S.lit(1), updated: isoTime, cards: S.map(
 const SETTINGS = S.obj({ schema: S.lit(1), dailyGoal: S.oneOfLit([10, 20, 30, 50]), newPerDay: S.int({ min: 0, max: 100 }), reviewsPerDay: S.int({ min: 10, max: 9999 }), directions: S.arr(S.oneOfLit(["tr-en", "en-tr"]), { min: 1, max: 2, unique: true }), dayStartHour: S.int({ min: 0, max: 23 }), tts: S.bool(), ttsRate: S.num({ min: 0.5, max: 1.2 }), keyboardBar: S.bool(), unlockAll: S.bool(), onlyTaughtWords: S.bool() });
 SCHEMA.progress = S.obj({ app: S.lit("gregoiremaillard.com/turkish"), schema: S.lit(1), exported: isoTime, course: COURSE_PROGRESS, cards: CARDS_PROGRESS, settings: SETTINGS });
 
+// The Culture page (PROJECT.md 5.11 timeline.json, 5.12 regions.json)
+const REGION_IDS = ["marmara", "aegean", "mediterranean", "central-anatolia", "black-sea", "eastern-anatolia", "southeastern-anatolia"];
+const PROVINCE = /^TR-\d{2}$/;
+const nullable = spec => (v, p, cx) => (v === null ? undefined : spec(v, p, cx));
+const lonLat = S.tuple([S.num({ min: -180, max: 180 }), S.num({ min: -90, max: 90 })]);
+const SHAPE = S.arr(S.arr(S.arr(lonLat, { min: 4 }), { min: 1 }), { min: 1 });
+SCHEMA.timeline = S.obj({
+  eras: S.arr(S.obj({ id: S.str({ re: RE.slug }), title: T.en, dates: T.en, from: nullable(S.int()), to: nullable(S.int()), intro: T.rich }), { min: 1 }),
+  events: S.arr(S.obj({
+    id: S.str({ re: RE.culture }), year: nullable(S.int()), "end?": S.int(), date: T.en, text: T.rich, "legend?": S.lit(true),
+    provinces: S.arr(S.str({ re: PROVINCE }), { unique: true }), "abroad?": T.en,
+    "place?": S.obj({ name: T.en, lat: S.num({ min: -90, max: 90 }), lon: S.num({ min: -180, max: 180 }) }),
+  }), { min: 1 }),
+});
+SCHEMA.regions = S.obj({
+  source: S.obj({ title: T.en, publisher: T.en, version: T.plain, url: S.str({ re: RE.url }), file: S.str({ re: RE.url }), licence: T.en, credit: T.en }),
+  grouping: S.obj({ title: T.en, publisher: T.en, url: S.str({ re: RE.url }), note: T.en }),
+  method: T.en,
+  bbox: S.tuple([S.num({ min: -180, max: 180 }), S.num({ min: -90, max: 90 }), S.num({ min: -180, max: 180 }), S.num({ min: -90, max: 90 })]),
+  regions: S.arr(S.obj({ id: S.oneOfLit(REGION_IDS), en: T.en, tr: T.tr, provinces: S.arr(S.str({ re: PROVINCE }), { min: 1, unique: true }), shape: SHAPE }), { min: 1, max: 7 }),
+  provinces: S.arr(S.obj({ id: S.str({ re: PROVINCE }), name: T.tr, region: S.oneOfLit(REGION_IDS), shape: SHAPE }), { min: 1, max: 81 }),
+});
+
 // Runs a schema, then the text checks it collected. Returns true when the structure is valid.
 function validate(kind, value, file, cx0 = {}) {
   let ok = true;
@@ -555,7 +579,8 @@ function parseCurriculum() {
 const unitIndex = id => REG.order.indexOf(id);
 
 // ─────────────────────────── content ───────────────────────────
-const C = { levels: new Map(), units: new Map(), lessons: new Map(), grammar: new Map(), culture: new Map(), cardFiles: new Map(), cards: new Map(), files: [] };
+const C = { levels: new Map(), units: new Map(), lessons: new Map(), grammar: new Map(), culture: new Map(), cardFiles: new Map(), cards: new Map(), files: [], timeline: null, regions: null };
+const ROOT_FILES = { "timeline.json": "timeline", "regions.json": "regions" };   // beside index.json (PROJECT.md 5.11, 5.12)
 const deferred = [];
 const DIRS = { levels: "level", units: "unit", lessons: "lesson", grammar: "grammar", culture: "culture", flashcards: "flashcards" };
 
@@ -572,7 +597,8 @@ function loadContent() {
         if (!f.endsWith(".json") || fs.statSync(fp).isDirectory()) { err(rel(fp), "unexpected file"); continue; }
         loadFile(DIRS[name], fp);
       }
-    } else if (name !== "index.json") err(rel(full), "unexpected file");
+    } else if (name in ROOT_FILES) loadFile(ROOT_FILES[name], full);
+    else if (name !== "index.json") err(rel(full), "unexpected file");
   }
 }
 
@@ -586,6 +612,7 @@ function loadFile(kind, fp) {
   const base = path.basename(fp, ".json");
   const ok = validate(kind, v, label);
   const id = v && v.id;
+  if (kind === "timeline" || kind === "regions") { C[kind] = { v, file: label, ok }; return; }
   const expect = { level: base, unit: base, lesson: base, grammar: `${base}-grammar`, culture: `${base}-culture` }[kind];
   if (kind !== "flashcards" && id !== expect) { err(label, `id “${id}” should be “${expect}” to match the file name`); return; }
   const rec = { v, file: label, ok };
@@ -914,6 +941,166 @@ function checkCulture(rec, cx) {
   }
 }
 
+// ── the Culture page: regions.json (5.12) and timeline.json (5.11) ──
+// A province's or region's shape: [lon, lat] rings. Ray casting for "inside", and the distance in km to the
+// nearest edge (equirectangular around the point, fine at this scale) for the tolerance of simplified borders.
+function inShape(shape, lon, lat) {
+  let inside = false;
+  for (const poly of shape) for (const ring of poly) {
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [xi, yi] = ring[i], [xj, yj] = ring[j];
+      if ((yi > lat) !== (yj > lat) && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
+    }
+  }
+  return inside;
+}
+function kmToShape(shape, lon, lat) {
+  const kx = 111.32 * Math.cos((lat * Math.PI) / 180), ky = 110.57;
+  let best = Infinity;
+  for (const poly of shape) for (const ring of poly) for (let i = 1; i < ring.length; i++) {
+    const ax = (ring[i - 1][0] - lon) * kx, ay = (ring[i - 1][1] - lat) * ky, bx = (ring[i][0] - lon) * kx, by = (ring[i][1] - lat) * ky;
+    const dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
+    const t = L ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / L)) : 0;
+    best = Math.min(best, Math.hypot(ax + t * dx, ay + t * dy));
+  }
+  return best;
+}
+function checkRegions(rec, cx) {
+  const { v, file } = rec;
+  const [w, south, e, north] = v.bbox;
+  if (!(w < e && south < north)) err(`${file} › bbox`, "should be west, south, east, north");
+  const shapeOk = (shape, where) => shape.forEach((poly, i) => poly.forEach((ring, j) => {
+    const a = ring[0], z = ring[ring.length - 1];
+    if (a[0] !== z[0] || a[1] !== z[1]) err(`${where}[${i}][${j}]`, "ring is not closed (its last point should repeat the first)");
+    if (ring.some(([x, y]) => x < w || x > e || y < south || y > north)) err(`${where}[${i}][${j}]`, "has a point outside bbox");
+  }));
+  v.regions.forEach((r, i) => shapeOk(r.shape, `${file} › regions[${i}].shape`));
+  const byId = new Map();
+  v.provinces.forEach((p, i) => {
+    if (byId.has(p.id)) err(`${file} › provinces[${i}]`, `duplicate province ${p.id}`);
+    byId.set(p.id, p);
+    shapeOk(p.shape, `${file} › provinces[${i}].shape`);
+    const r = v.regions.find(x => x.id === p.region);
+    if (r && !r.provinces.includes(p.id)) err(`${file} › provinces[${i}]`, `${p.id} says ${p.region}, but that region doesn't list it`);
+  });
+  v.regions.forEach((r, i) => r.provinces.forEach(id => {
+    const p = byId.get(id);
+    if (!p) err(`${file} › regions[${i}]`, `lists ${id}, which has no province entry`);
+    else if (p.region !== r.id) err(`${file} › regions[${i}]`, `lists ${id}, whose region is ${p.region}`);
+  }));
+  if (cx.examples) return;
+  if (!same(v.regions.map(r => r.id), REGION_IDS)) err(`${file} › regions`, `should be the seven regions in this order: ${REGION_IDS.join(", ")}`);
+  for (let n = 1; n <= 81; n++) if (!byId.has(`TR-${pad2(n)}`)) err(`${file} › provinces`, `province TR-${pad2(n)} is missing`);
+  const ids = v.provinces.map(p => p.id);
+  if (!same(ids, [...ids].sort())) err(`${file} › provinces`, "should be in the order of their codes");
+}
+
+// The parts of a timeline date (5.11): "1928", "about 660 BCE", "1550s", "16th century", "early 2nd century",
+// "15th–16th century", "1919–1923", "about 7400–5200 BCE", "1950s–1970s". Each part → [first year, last year].
+const ORD = n => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th");
+function dateParts(date) {
+  const bce = /\bBCE$/.test(date);
+  const parts = date.replace(/\s*\bBCE$/, "").split("–");
+  if (parts.length > 2) return null;
+  const centuryWord = /\bcentury$/.test(parts[parts.length - 1]);
+  const out = [];
+  for (const raw of parts) {
+    const t = raw.replace(/^(?:about|early|late|from the|mid-)\s+/, "").replace(/\s*century$/, "").trim();
+    let m, lo, hi, tokens;
+    if ((m = t.match(/^(\d{1,2})(st|nd|rd|th)$/)) && centuryWord) {
+      const c = Number(m[1]);
+      if (m[2] !== ORD(c).slice(-2)) return null;
+      [lo, hi] = [(c - 1) * 100 + 1, c * 100]; tokens = [ORD(c)];
+    } else if ((m = t.match(/^(\d{3,4})s$/))) { [lo, hi] = [Number(m[1]), Number(m[1]) + 9]; tokens = [m[1] + "s"]; }
+    else if ((m = t.match(/^(\d{1,5})$/))) { [lo, hi] = [Number(m[1]), Number(m[1])]; tokens = [m[1]]; }
+    else return null;
+    if (bce) [lo, hi] = [-hi, -lo];
+    out.push({ lo, hi, tokens });
+  }
+  return out;
+}
+// Everything an interlude says, for the check that a timeline date comes from it.
+function interludeText(v) {
+  const out = [v.kicker];
+  const walk = x => { if (typeof x === "string") out.push(x); else if (Array.isArray(x)) x.forEach(walk); else if (x && typeof x === "object") Object.values(x).forEach(walk); };
+  walk(v.blocks);
+  return out.join(" \n ");
+}
+function checkTimeline(rec, cx) {
+  const { v, file } = rec;
+  // eras: in order, each starting the year after the previous one ends; open at both ends
+  v.eras.forEach((e, i) => {
+    const w = `${file} › eras[${i}]`;
+    if (i === 0 && e.from !== null) err(w, "the first era starts with from: null");
+    if (i > 0 && e.from === null) err(w, "only the first era has from: null");
+    if (i === v.eras.length - 1 && e.to !== null) err(w, "the last era runs to today: to: null");
+    if (i < v.eras.length - 1 && e.to === null) err(w, "only the last era has to: null");
+    if (e.from !== null && e.to !== null && e.from > e.to) err(w, "from is after to");
+    if (i > 0 && v.eras[i - 1].to !== null && e.from !== null && e.from !== v.eras[i - 1].to + 1) err(w, `should start in ${v.eras[i - 1].to + 1}, the year after the previous era ends`);
+  });
+  dupes(v.eras.map(e => e.id), `${file} › eras`);
+  const eraOf = y => v.eras.find(e => (e.from === null || y >= e.from) && (e.to === null || y <= e.to));
+  const pins = new Map();
+  const regions = !cx.examples && C.regions && C.regions.ok ? new Map(C.regions.v.provinces.map(p => [p.id, p])) : null;
+  v.events.forEach((ev, i) => {
+    const w = `${file} › events[${i}] (${ev.id})`;
+    // year, end and date agree
+    if (ev.date === "Today") {
+      if (ev.year !== null || ev.end !== undefined) err(w, "date “Today” goes with year: null and no end");
+    } else {
+      if (ev.year === null) err(w, "year: null only with date “Today”");
+      else if (!eraOf(ev.year)) err(w, `year ${ev.year} is in no era`);
+      if (ev.end !== undefined && ev.year !== null && ev.end <= ev.year) err(w, "end should be after year");
+      const parts = dateParts(ev.date);
+      if (!parts) err(w, `date “${ev.date}” is not in a shape of PROJECT.md 5.11`);
+      else {
+        if (parts.length === 2 && ev.end === undefined) err(w, `date “${ev.date}” is a span: give its last year in end`);
+        if (parts.length === 1 && ev.end !== undefined) err(w, `end ${ev.end}, but date “${ev.date}” is not a span`);
+        const inPart = (y, p) => y >= p.lo && y <= p.hi;
+        if (ev.year !== null && !inPart(ev.year, parts[0])) err(w, `year ${ev.year} is not in “${ev.date}”`);
+        if (ev.end !== undefined && parts[1] && !inPart(ev.end, parts[1])) err(w, `end ${ev.end} is not in “${ev.date}”`);
+        // the date comes from the interlude: each year, decade or century of it appears there (or in its kicker)
+        const c = !cx.examples && C.culture.get(unitOf(ev.id));
+        if (c && c.ok) {
+          const t = interludeText(c.v);
+          for (const p of parts) for (const tok of p.tokens) {
+            const n = tok.replace(/\D/g, "");
+            const found = /(st|nd|rd|th)$/.test(tok)
+              ? new RegExp(`(?<!\\d)${tok}\\b|(?<!\\d)${n}\\.\\s*yüzyıl`, "i").test(t)
+              : new RegExp(`(?<![\\d.])${n}(?!\\d)`).test(t.replace(/(\d)\.(\d{3})(?!\d)/g, "$1$2"));
+            if (!found) warn(w, `“${tok}” of the date isn't found in the interlude: take dates from its text (PROJECT.md 5.11)`);
+          }
+        }
+      }
+    }
+    const nw = words(ev.text);
+    if (nw < 10 || nw > 45) warn(w, `text has ${nw} words; aim for 10–45`);
+    if (ev.place && !ev.provinces.length) err(w, "a place needs the province it is in");
+    if (ev.place) {
+      const k = ev.place.name, at = `${ev.place.lat},${ev.place.lon}`;
+      if (pins.has(k) && pins.get(k) !== at) err(w, `place “${k}” is at ${at} here and at ${pins.get(k)} elsewhere`);
+      pins.set(k, at);
+    }
+    if (regions) {
+      for (const id of ev.provinces) if (!regions.has(id)) err(w, `province ${id} is not in regions.json`);
+      if (ev.place && ev.provinces.every(id => regions.has(id))) {
+        const { lat, lon, name } = ev.place;
+        const km = Math.min(...ev.provinces.map(id => { const s = regions.get(id).shape; return inShape(s, lon, lat) ? 0 : kmToShape(s, lon, lat); }));
+        if (km > 10) err(w, `place “${name}” is ${Math.round(km)} km outside ${ev.provinces.join(", ")}`);
+      }
+    }
+  });
+  if (cx.examples) return;
+  // one event per interlude of CURRICULUM.md, in course order
+  const ids = v.events.map(e => e.id), want = REG.order.map(u => `${u}-culture`);
+  dupes(ids, `${file} › events`);
+  for (const id of want) if (!ids.includes(id)) err(`${file} › events`, `no event for ${id}`);
+  for (const id of ids) if (!want.includes(id)) err(`${file} › events`, `${id} is not an interlude of CURRICULUM.md`);
+  const order = ids.filter(id => want.includes(id));
+  if (!same(order, want.filter(id => ids.includes(id)))) err(`${file} › events`, "should follow the course order of CURRICULUM.md");
+  if (!C.regions) err(file, "needs regions.json beside it (PROJECT.md 5.12)");
+}
+
 function checkFlashFile(rec, cx) {
   const { v, file } = rec;
   if (rec.range && !same(v.range, rec.range)) err(file, `range ${JSON.stringify(v.range)} should be ${JSON.stringify(rec.range)} to match the file name`);
@@ -1076,6 +1263,8 @@ function runExamples() {
     if (kind === "grammar") checkGrammar({ v, file: where }, cx);
     if (kind === "culture") checkCulture({ v, file: where }, cx);
     if (kind === "flashcards") checkFlashFile({ v, file: where }, cx);
+    if (kind === "regions") checkRegions({ v, file: where }, cx);
+    if (kind === "timeline") checkTimeline({ v, file: where }, cx);
   }
   if (!n) err(label, "no ```json <kind> examples found");
   return n;
@@ -1161,9 +1350,11 @@ if (opt.examples) {
   for (const rec of C.lessons.values()) if (rec.ok) checkLesson(rec, cx);
   for (const rec of C.grammar.values()) if (rec.ok) checkGrammar(rec, cx);
   for (const rec of C.culture.values()) if (rec.ok) checkCulture(rec, cx);
+  if (C.regions && C.regions.ok) checkRegions(C.regions, cx);
+  if (C.timeline && C.timeline.ok) checkTimeline(C.timeline, cx);
   for (const f of deferred) f();
   const nEx = [...C.lessons.values()].reduce((n, l) => n + (l.ok ? l.v.exercises.length : 0), 0);
-  summary = `registry ${REG.levels.size} levels, ${REG.units.size} units, ${REG.points.size} grammar points · content ${C.levels.size} levels, ${C.units.size} units, ${C.lessons.size} lessons (${nEx} exercises), ${C.grammar.size} guides, ${C.culture.size} interludes, ${C.cards.size} cards · morphology engine: ${MSTAT.cells} cells of ${MSTAT.conjChecked}/${MSTAT.conj} conjugate exercises, ${MSTAT.morphChecked}/${MSTAT.morph} morph exercises`;
+  summary = `registry ${REG.levels.size} levels, ${REG.units.size} units, ${REG.points.size} grammar points · content ${C.levels.size} levels, ${C.units.size} units, ${C.lessons.size} lessons (${nEx} exercises), ${C.grammar.size} guides, ${C.culture.size} interludes, ${C.cards.size} cards, ${C.timeline && C.timeline.ok ? C.timeline.v.events.length : 0} timeline events, ${C.regions && C.regions.ok ? C.regions.v.provinces.length : 0} provinces · morphology engine: ${MSTAT.cells} cells of ${MSTAT.conjChecked}/${MSTAT.conj} conjugate exercises, ${MSTAT.morphChecked}/${MSTAT.morph} morph exercises`;
   if (opt.vocab) runVocab();
   let batchLines = [];
   if (opt.batch) batchLines = runBatch(opt.batch);

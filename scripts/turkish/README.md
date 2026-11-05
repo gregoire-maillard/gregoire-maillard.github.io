@@ -22,6 +22,7 @@ What it checks:
 - **index.json**: up to date with the content (rewrite it with `--index`, which refuses while there are errors).
 - **Morphology** (warnings for now): every `conjugate` cell and every `morph` exercise against the morphology engine, `assets/js/turkish-morph.js`: the cell must accept the engine's form and accept nothing it doesn't build; the tiles must be the base and its suffixes, cut at morpheme boundaries. Slugs and words the engine doesn't model are listed as not checked.
 - **Word list**: `wordlist.tsv` well formed (header `rank`, `lemma`, `pos`, ranks 1–1000 in order, no duplicates), and every flashcard's `tr` and `pos` equal to its rank's row.
+- **Culture page** (`timeline.json`, `regions.json`, PROJECT.md 5.11 and 5.12): one event per interlude, in course order; eras that follow on from each other; a `date` that agrees with `year` and `end`, and (a warning) whose years, decades or centuries appear in the interlude itself; provinces that exist; pins within 10 km of their provinces, one position per place name; the seven regions in order and the 81 provinces, each in its region's list, with closed rings inside `bbox`.
 
 ## The word list
 
@@ -49,6 +50,10 @@ node scripts/turkish/morph-test.mjs --verbose  # also list the forms that pass
 
 A content conversation is done when `--batch <id>` reports its units complete with no errors and `--index` has been run. See `turkish/PROJECT.md`, section 9.
 
+## The regions map
+
+`regions.mjs` writes `assets/data/turkish/regions.json`, the provinces and regions the Culture page (`turkishculture.html`) draws and the validator checks pins against. Its input is Natural Earth's *Admin 1 – States, Provinces* at 1:10m, version 5.1.2, which is in the public domain: download `geojson/ne_10m_admin_1_states_provinces.geojson` from tag v5.1.2 of [natural-earth-vector](https://github.com/nvkelso/natural-earth-vector) (about 40 MB, not kept in the repo), then `node scripts/turkish/regions.mjs <that file>`. It keeps the 81 Turkish provinces by their ISO 3166-2 code, puts each in one of the seven regions of 1941 (the list is in the script), simplifies the shapes with mapshaper 0.7.101 through `npx` (shared borders stay shared) and dissolves the regions. Rerun `validate.mjs --index` afterwards, since the file is part of the content's version.
+
 ## Static pages for dailyturkish.app
 
 `static.mjs` makes the course readable without JavaScript, for search engines. The workflow `.github/workflows/sync-dailyturkish.yml` runs it on the mirror folder before publishing dailyturkish.app; it needs Playwright with Chromium (the workflow installs them). It opens every page in headless Chromium and saves what it renders:
@@ -56,7 +61,7 @@ A content conversation is done when `--batch <id>` reports its units complete wi
 - `guides/<unit>-grammar.html` and `guides/<unit>-culture.html`: one page per grammar guide and interlude, with its own title, description and canonical URL. Units not written yet get a "coming soon" page marked `noindex`.
 - `turkishguide.html` (the index) and the hub (`turkish.html`, `index.html`) with the path filled in.
 - `words/index.html` and `words/1-100.html` … `words/901-1000.html`: the 1,000 flashcard words as a list, 100 per page, built from `assets/data/turkish/flashcards/` (rank, word, part of speech, meanings, example, forms, note, level, the unit that first teaches it), in the frame of `turkishcards.html`, with the CC BY-SA credit for the order of the list. The footers of the hub, the guides and the flashcards page, and Browse's note on ranks, link to it (in the mirror only).
-- `sitemap.xml`: the hub, the index, the flashcards, the privacy page, every written guide and the word list.
+- `sitemap.xml`: the hub, the index, the flashcards, the Culture page, the privacy page, every written guide and the word list.
 - `verbs/index.html` and `verbs/<verb>.html` (`static-verbs.mjs`): the 100 most common verbs of the deck, each with key forms, notes worked out from the engine's lexicon (aorist type, t → d, de-/ye-) unless the card's note already says it, the card's example and note, and 13 tables (6 persons × positive, negative, question) built by `turkish-morph.js`, each linked to its guide section.
 - `grammar-cheat-sheet.html` (`static-cheatsheet.mjs`): harmony, consonant changes, cases, possessives, pronouns, personal endings, tenses, converbs, participles, voices and word order on one page, every example built by the engine.
 - `404.html`, the page GitHub Pages shows for addresses that don't exist (noindex), with links into the course.

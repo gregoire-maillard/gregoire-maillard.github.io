@@ -19,7 +19,7 @@
 //   assets/img/og/<page>.jpg                                  share images (1200×630): one per written guide and word-list
 //                                                            page, daily-turkish.jpg for the rest; og:image on every page
 //   + schema.org JSON-LD: WebSite and Organization on the hub, BreadcrumbList on the guides, the index and the word list
-//   sitemap.xml                                               the hub, the index, cards, privacy, every written guide,
+//   sitemap.xml                                               the hub, the index, cards, culture, privacy, every written guide,
 //                                                            the word list
 // and changes every href="/turkish.html…" in the mirror to "/…" (index.html is the hub, so it keeps one address).
 // The pages keep their scripts: in a browser they render again as usual (progress, speaker buttons, quiz).
@@ -521,6 +521,7 @@ const head = [
   { loc: SITE + "/", lastmod: lastmod(["turkish.html", "assets/data/turkish/index.json"]) },
   { loc: SITE + "/turkishguide.html", lastmod: lastmod(["turkishguide.html", "assets/data/turkish/index.json"]) },
   { loc: SITE + "/turkishcards.html", lastmod: lastmod(["turkishcards.html"]) },
+  { loc: SITE + "/turkishculture.html", lastmod: lastmod(["turkishculture.html", "assets/data/turkish/timeline.json"]) },
   { loc: SITE + "/turkishprivacy.html", lastmod: lastmod(["turkishprivacy.html"]) }
 ];
 writeFileSync(join(OUT, "sitemap.xml"), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +

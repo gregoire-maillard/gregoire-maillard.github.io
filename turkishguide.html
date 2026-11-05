@@ -657,7 +657,7 @@
         } else {
           h += '<p class="doc-kicker">' + esc(doc.kicker) + '<span class="dot">·</span>' + doc.minutes + " min read</p>";
           h += '<h1 class="doc-title" id="top">' + esc(doc.title) + "</h1>";
-          h += '<p class="doc-sub">The interlude of ' + esc(unitLabel(u)) + ', <a href="' + docHref(u, "grammar") + '">' + esc(u.title) + "</a></p>";
+          h += '<p class="doc-sub">The interlude of ' + esc(unitLabel(u)) + ', <a href="' + docHref(u, "grammar") + '">' + esc(u.title) + '</a> · <a href="' + P.culture + "#" + u.id + '-culture">See it on the timeline</a></p>';
           toc.push({ id: "top", label: doc.title });
           h += doc.blocks.map(block).join("");
           toc.push({ id: "words", label: "Words to know" });
@@ -744,10 +744,10 @@
           '<div class="rail-title">Grammar and culture</div>' +
           '<div class="rail-blurb">Each unit has a grammar guide, with a section for every grammar point, and a short culture interlude.</div>' +
           tocHtml(toc, "Levels") +
-          '<div class="rail-foot"><a href="' + P.hub + '">Back to the course</a></div>';
+          '<div class="rail-foot"><a href="' + P.culture + '">The interludes on a timeline and a map</a><br><a href="' + P.hub + '">Back to the course</a></div>';
         var h = '<p class="doc-kicker">Grammar index</p><h1 class="doc-title" id="top">Grammar guides and interludes</h1>' +
           '<p class="lede">Every grammar point of the course, unit by unit, from the alphabet to the language of the press. ' +
-          readyUnits.length + " of " + f.units.length + " units are written so far; the rest are listed as they're planned.</p>" +
+          readyUnits.length + " of " + f.units.length + " units are written so far; the rest are listed as they're planned. The interludes are also on a <a href=\"" + P.culture + "\">timeline and a map</a>.</p>" +
           (readyUnits.length ? '<p class="read-state">' + (read ? '<span class="tick">' + ICON.tick + "</span> You've read " + read + " of the " + readyUnits.length * 2 + " guides and interludes written so far." : "You haven't opened a guide yet: start with <a href=\"" + docHref(readyUnits[0], "grammar") + '">' + esc(readyUnits[0].title) + "</a>.") + "</p>" : "") +
           '<div class="find" role="search"><label for="find">Find a grammar point</label>' +
           '<input id="find" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="plural, -DA, değil, past tense…" aria-describedby="find-n">' +

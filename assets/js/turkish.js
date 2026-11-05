@@ -31,7 +31,7 @@
     DATA: "/assets/data/turkish/",
     APP: "gregoiremaillard.com/turkish",
     KEYS: { course: "trk:v1:course", cards: "trk:v1:cards", settings: "trk:v1:settings" },
-    PAGES: { hub: "/turkish.html", lesson: "/turkishlesson.html", guide: "/turkishguide.html", cards: "/turkishcards.html" },
+    PAGES: { hub: "/turkish.html", lesson: "/turkishlesson.html", guide: "/turkishguide.html", cards: "/turkishcards.html", culture: "/turkishculture.html" },
     GUIDES: "/guides/",   // static page of each guide, e.g. /guides/a1-u02-grammar.html (built for dailyturkish.app only, see guideHref)
     LEVELS: ["a1", "a2", "b1", "b2", "c1", "c2"],
     PERSONS: ["ben", "sen", "o", "biz", "siz", "onlar"],
@@ -392,9 +392,11 @@
     return p;
   }
   // The file of any content ID: "a1", "a1-u05", "a1-u05-l01", "a1-u05-grammar", "a1-u05-culture",
-  // or a flashcard file as listed in index.flashcards.files ("flashcards/fc-0001-0200.json").
+  // a flashcard file as listed in index.flashcards.files ("flashcards/fc-0001-0200.json"),
+  // or the Culture page's "timeline" and "regions" (PROJECT.md 5.11, 5.12).
   function dataPath(id) {
     if (/^flashcards\/fc-\d{4}-\d{4}\.json$/.test(id)) return id;
+    if (id === "timeline" || id === "regions") return id + ".json";
     if (RE.level.test(id)) return "levels/" + id + ".json";
     if (RE.unit.test(id)) return "units/" + id + ".json";
     if (RE.lesson.test(id)) return "lessons/" + id + ".json";
