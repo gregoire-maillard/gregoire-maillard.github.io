@@ -50,7 +50,7 @@
       .at-hdr .at-logo { width: 28px; height: 28px; flex: none; display: block; }
       .at-hdr .at-name { font-size: 18px; line-height: 1; letter-spacing: -0.02em; }
       .at-hdr .at-d { color: #e34b4f; font-weight: 600; }
-      .at-hdr .at-t { color: #242424; font-weight: 750; margin-left: 0.22em; }
+      .at-hdr .at-t { color: #242424; font-weight: 750; }
       .at-hdr .at-tabs { display: flex; flex: 1; align-self: stretch; gap: 8px; }
       .at-hdr .at-push { margin-left: auto; }   /* About, My Profile and Settings sit on the right */
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
@@ -86,6 +86,13 @@
         .at-hdr .at-set { min-width: 34px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 5px; right: 5px; }
       }
+      @media (max-width: 359px) {   /* 320 px (QA-2): the six tabs fit without a sideways scroll, each at least 32 px wide */
+        .at-hdr { --at-m: 8px; }
+        .at-hdr .at-home { min-width: 40px; margin-left: -6px; }
+        .at-hdr .at-tab { padding: 0 3px; min-width: 32px; font-size: 12px; }
+        .at-hdr .at-set { min-width: 32px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 3px; right: 3px; }
+      }
     </style>
     <style>
       /* Reader: the reading layout of stylesheets/styles.css (left rail, reading column; harmony classes
@@ -99,6 +106,8 @@
       @media (max-width: 599px) { :root { --hdr: 56px; } }
       html { scroll-padding-top: calc(var(--hdr) + 24px); -webkit-text-size-adjust: 100%; }
       [hidden] { display: none !important; }
+      /* links inside running text carry an underline as well as their colour (WCAG 1.4.1, QA-2) */
+      main p a:not(.btn), .note a, .help a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; text-decoration-color: rgb(40 122 158 / .55); }
       .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       i[lang="tr"] { color: var(--ink); }
       code { padding: 0.05em 0.3em; color: #333; font-family: var(--mono); font-size: 0.86em; background: #f2f2f0; border-radius: 4px; }
@@ -134,7 +143,7 @@
       .toc-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
       .toc-n { color: var(--muted); font-weight: 400; }
       .chapter-nav a.soon { color: var(--faint); }
-      .chapter-nav a .ch-n { display: inline-block; min-width: 1.4rem; }
+      .chapter-nav a .ch-n { display: inline-block; min-width: 1.4rem; color: #767672; }
       .legend {
         margin-top: 0.9rem; padding-top: 0.8rem; color: var(--muted); font-size: 0.76rem; line-height: 1.6; border-top: 1px solid var(--line);
       }
@@ -158,13 +167,16 @@
       #main h2 {
         margin: 2.8rem 0 1rem; padding-top: 1.7rem; font-size: 1.42rem; border-top: 1px solid var(--line);
       }
-      #main h2 .h-n { margin-right: 0.45rem; color: var(--faint); font-size: 0.8em; font-weight: 500; font-variant-numeric: tabular-nums; }
+      #main h2 .h-n { margin-right: 0.45rem; color: #767672; font-size: 0.8em; font-weight: 500; font-variant-numeric: tabular-nums; }
       #main h3 { margin: 1.6rem 0 0.6rem; font-size: 1.08rem; }
       .hl { animation: hl 2.2s ease-out; }
       @keyframes hl { from { background: var(--blue-wash); box-shadow: 0 0 0 0.4rem var(--blue-wash); } to { background: transparent; box-shadow: 0 0 0 0.4rem transparent; } }
       .blist li::marker { color: var(--faint); }
 
       /* morpheme colouring (TRK.seg with harmony): stem + suffix, suffix vowels front or back */
+      /* the harmony colours of stylesheets/styles.css, a shade darker here so they read at 4.5:1 on white (QA-2) */
+      .front { color: #2471a3; }
+      .suf { color: #1e8449; }
       .trk-seg .suf { margin-left: 0.06em; text-decoration: underline; text-decoration-color: rgb(39 174 96 / 45%); text-decoration-thickness: 1.5px; text-underline-offset: 0.24em; text-decoration-skip-ink: auto; }
       .trk-seg .stem { font-weight: 450; }
 
@@ -181,6 +193,7 @@
       .t td.tr { color: var(--blue-dark); }
       .t th code, .t td code { white-space: nowrap; }
       .rule pre { margin: 0; font: inherit; white-space: pre; }
+      .rule:focus-visible, .tbl:focus-visible { outline: 2px solid var(--blue-dark); outline-offset: 2px; }
 
       /* examples */
       .ex-block { padding: 0.75rem 1.1rem 0.35rem; }
@@ -213,6 +226,7 @@
       /* callouts: styles.css .callout, one colour per kind */
       .callout p { margin: 0; }
       .callout .callout-title { margin: 0 0 0.15rem; color: inherit; font-weight: 600; }
+      .callout a { color: var(--blue-dark); }
       .callout.k-pitfall { color: #4f3a12; background: var(--warm-wash); border-left-color: var(--warm-line); }
       .callout.k-pitfall .callout-label { color: var(--warm); }
       .callout.k-compare { color: var(--body); background: var(--panel); border-left-color: #9a988f; }
@@ -368,7 +382,7 @@
       [data-lvl="b1"] { --lv: #2b7d50; --lv-dark: #1d5c3a; --lv-wash: rgb(43 125 80 / 12%); --lv-tint: rgb(43 125 80 / 5%); --lv-line: rgb(43 125 80 / 35%); }
       [data-lvl="b2"] { --lv: #c2462c; --lv-dark: #9a3420; --lv-wash: rgb(194 70 44 / 11%); --lv-tint: rgb(194 70 44 / 5%); --lv-line: rgb(194 70 44 / 35%); }
       [data-lvl="c1"] { --lv: #6c3f9e; --lv-dark: #51307a; --lv-wash: rgb(108 63 158 / 11%); --lv-tint: rgb(108 63 158 / 5%); --lv-line: rgb(108 63 158 / 35%); }
-      [data-lvl="c2"] { --lv: #b8861a; --lv-dark: #7d5b10; --lv-wash: rgb(184 134 26 / 14%); --lv-tint: rgb(184 134 26 / 6%); --lv-line: rgb(184 134 26 / 40%); --lv-on: #2b2006; }
+      [data-lvl="c2"] { --lv: #b8861a; --lv-dark: #7d5b10; --lv-wash: rgb(184 134 26 / 14%); --lv-tint: rgb(184 134 26 / 6%); --lv-line: rgb(184 134 26 / 40%); --lv-on: #fff; }
       .lv-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: var(--lv-wash); color: var(--lv-dark); font-size: 11.5px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; }
       /* a tile of the wall: laid (unit done) in its level's colour, glazed gold once the unit is mastered */
       .tw-t { position: relative; display: block; aspect-ratio: 1; border-radius: 3px; background: #f3f2ee; box-shadow: inset 0 0 0 1px #e4e3df; }
@@ -387,7 +401,7 @@
       .dt-foot { margin: 48px auto 0; padding: 0 16px 28px; text-align: center;
                  font: 12.5px/1.5 "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
       .dt-foot p { margin: 0; }
-      .dt-foot a { color: #9a9a96; text-decoration: none; }
+      .dt-foot a { color: #6f6f6f; text-decoration: none; }   /* 5:1 on white (was #9a9a96, 2.8:1) */
       .dt-foot a:hover { color: #c43b3f; }
       body.studying .dt-foot { display: none; }
     </style>
@@ -395,7 +409,7 @@
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="/turkish.html" aria-label="Daily Turkish, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#e34b4f"/><circle cx="76" cy="55" r="17" fill="#fff"/><circle cx="83" cy="49" r="16" fill="#e34b4f"/><path d="m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z" fill="#fff"/><path d="M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 90v46" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="3"/><path d="M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="2.5"/></svg><span class="at-name"><span class="at-d">Daily</span><span class="at-t">Turkish</span></span></a>
+        <a class="at-home" href="/turkish.html" aria-label="Daily Turkish, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#e34b4f"/><circle cx="76" cy="55" r="17" fill="#fff"/><circle cx="83" cy="49" r="16" fill="#e34b4f"/><path d="m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z" fill="#fff"/><path d="M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 90v46" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="3"/><path d="M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="2.5"/></svg><span class="at-name"><span class="at-d">Daily</span> <span class="at-t">Turkish</span></span></a>
         <nav class="at-tabs" aria-label="Turkish course">
           <a class="at-tab" href="/turkish.html">Course</a>
           <a class="at-tab" href="/turkishguide.html" aria-current="page">Grammar</a>
@@ -636,7 +650,7 @@
         for (var j = order.length - 1; j > 0; j--) { var r = Math.floor(Math.random() * (j + 1)), t = order[j]; order[j] = order[r]; order[r] = t; }
         return '<div class="quiz" data-q="' + i + '"><div class="quiz-label">Question ' + (i + 1) + " of " + n + '</div><div class="quiz-q">' + R(q.q) + "</div>" +
           '<div class="quiz-opts" role="group" aria-label="Answers to question ' + (i + 1) + '">' + order.map(function (k) {
-            return '<button type="button" class="quiz-btn" data-k="' + k + '"' + (q.optionsLang === "tr" ? ' lang="tr"' : "") + ">" + esc(q.options[k]) + "</button>";
+            return '<button type="button" class="quiz-btn" data-k="' + k + '"' + (q.optionsLang === "tr" ? ' lang="tr"' : "") + ">" + (q.optionsLang === "tr" ? esc(q.options[k]) : R(q.options[k])) + "</button>";
           }).join("") + '</div><div class="quiz-feedback" tabindex="-1"></div><button type="button" class="quiz-reset">Try again</button></div>';
       }
       function renderDoc(u, kind, doc) {
@@ -657,7 +671,7 @@
         } else {
           h += '<p class="doc-kicker">' + esc(doc.kicker) + '<span class="dot">·</span>' + doc.minutes + " min read</p>";
           h += '<h1 class="doc-title" id="top">' + esc(doc.title) + "</h1>";
-          h += '<p class="doc-sub">The interlude of ' + esc(unitLabel(u)) + ', <a href="' + docHref(u, "grammar") + '">' + esc(u.title) + '</a> · <a href="' + P.culture + "#" + u.id + '-culture">See it on the timeline</a></p>';
+          h += '<p class="doc-sub">The interlude of ' + esc(unitLabel(u)) + ', <a href="' + docHref(u, "grammar") + '">' + esc(u.title) + '</a></p>';
           toc.push({ id: "top", label: doc.title });
           h += doc.blocks.map(block).join("");
           toc.push({ id: "words", label: "Words to know" });
@@ -686,7 +700,7 @@
           var words = ($("main").textContent || "").split(/\s+/).filter(Boolean).length;
           $("read-min").innerHTML = '<span class="dot">·</span>About ' + Math.max(1, Math.round(words / 200)) + " min";
         }
-        var desc = T.plain(g ? doc.intro : (doc.blocks.filter(function (b) { return b.type === "p"; })[0] || { text: doc.title }).text);
+        var desc = T.plain(g ? doc.intro : interludeDesc(u, doc));
         // page title for search engines: a guide's seoTitle (the term people search) + its level; an interlude's own title
         setMeta(g ? (doc.seoTitle ? doc.seoTitle + " · " + u.cefr + " grammar" : doc.title + " · Turkish grammar, " + unitLabel(u)) : doc.title + " · Turkish culture", desc, docPath(u, kind));
         afterRender();
@@ -723,7 +737,7 @@
         $("main").innerHTML = '<p class="doc-kicker">Not found</p><h1 class="doc-title" id="top">No such guide</h1>' +
           "<p>There's no grammar guide or interlude called “" + esc(reqId) + "”. Guides are named after their unit, like <code>a1-u02-grammar</code> and <code>a1-u02-culture</code>.</p>" +
           '<nav class="next-grid" aria-label="What next">' + nextCard("Index", "All guides and grammar points", P.guide, true) + nextCard("The course", "Back to the path", P.hub, true) + "</nav>";
-        setMeta("Guide not found · Learn Turkish", "", P.guide);
+        setMeta("Guide not found · Daily Turkish", "", P.guide);
       }
 
       // ── the index: every guide and grammar point (index.json) ──
@@ -744,10 +758,10 @@
           '<div class="rail-title">Grammar and culture</div>' +
           '<div class="rail-blurb">Each unit has a grammar guide, with a section for every grammar point, and a short culture interlude.</div>' +
           tocHtml(toc, "Levels") +
-          '<div class="rail-foot"><a href="' + P.culture + '">The interludes on a timeline and a map</a><br><a href="' + P.hub + '">Back to the course</a></div>';
+          '<div class="rail-foot"><a href="' + P.hub + '">Back to the course</a></div>';
         var h = '<p class="doc-kicker">Grammar index</p><h1 class="doc-title" id="top">Grammar guides and interludes</h1>' +
           '<p class="lede">Every grammar point of the course, unit by unit, from the alphabet to the language of the press. ' +
-          readyUnits.length + " of " + f.units.length + " units are written so far; the rest are listed as they're planned. The interludes are also on a <a href=\"" + P.culture + "\">timeline and a map</a>.</p>" +
+          readyUnits.length + " of " + f.units.length + " units are written so far; the rest are listed as they're planned.</p>" +
           (readyUnits.length ? '<p class="read-state">' + (read ? '<span class="tick">' + ICON.tick + "</span> You've read " + read + " of the " + readyUnits.length * 2 + " guides and interludes written so far." : "You haven't opened a guide yet: start with <a href=\"" + docHref(readyUnits[0], "grammar") + '">' + esc(readyUnits[0].title) + "</a>.") + "</p>" : "") +
           '<div class="find" role="search"><label for="find">Find a grammar point</label>' +
           '<input id="find" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="plural, -DA, değil, past tense…" aria-describedby="find-n">' +
@@ -760,7 +774,7 @@
         }).join("");
         h += '<p class="read-state" id="no-match" hidden>No grammar point matches. Try a shorter word, or a suffix such as <code>-lar</code>.</p>';
         $("main").innerHTML = h;
-        setMeta("Turkish grammar guides and interludes · Learn Turkish", "The grammar guide and culture interlude of every unit of a free Turkish course from A1 to C2, with an index of every grammar point.", P.guide);
+        setMeta("Turkish grammar guides and interludes · Daily Turkish", "The grammar guide and culture interlude of every unit of a free Turkish course from A1 to C2, with an index of every grammar point.", P.guide);
         afterRender();
         var input = $("find"), timer = null;
         input.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(filter, 80); });
@@ -808,12 +822,23 @@
       }
 
       // ── after every render: speakers, contents, quiz, position ──
+      // an interlude's description: its first English paragraph; at B1 the English side of the first parallel block;
+      // at C1–C2, written in Turkish, a line about the reading (QA-2: these had only their title)
+      function interludeDesc(u, doc) {
+        var p = doc.blocks.filter(function (b) { return b.type === "p"; })[0];
+        if (p) return p.text;
+        var par = doc.blocks.filter(function (b) { return b.type === "parallel"; })[0];
+        if (par) return par.en;
+        var q = (doc.questions || []).length;
+        return doc.title + " (" + doc.kicker + "): a " + doc.minutes + "-minute reading in Turkish for " + u.cefr + " learners, with a glossary, " +
+          doc.vocab.length + " words to know" + (q ? " and " + q + " question" + (q > 1 ? "s" : "") : "") + ".";
+      }
       function setMeta(title, desc, path) {
         var abs = "https://dailyturkish.app" + path;   // the course's home, whichever domain serves the page
         document.title = title;
         var set = function (sel, attr, v) { var el = document.querySelector(sel); if (el && v) el.setAttribute(attr, v); };
         set('meta[name="description"]', "content", desc && desc.length > 200 ? desc.slice(0, 197).replace(/\s+\S*$/, "") + "…" : desc);
-        set('meta[property="og:title"]', "content", title.replace(/ · Learn Turkish$/, ""));
+        set('meta[property="og:title"]', "content", title.replace(/ · Daily Turkish$/, ""));
         set('meta[property="og:description"]', "content", desc && desc.length > 200 ? desc.slice(0, 197).replace(/\s+\S*$/, "") + "…" : desc);
         set('link[rel="canonical"]', "href", abs);
         set('meta[property="og:url"]', "content", abs);
@@ -829,8 +854,22 @@
           });
           spy(nav);
         }
+        scrollables();
         position();
       }
+      // A rule or table wider than the column scrolls sideways: it gets a tab stop and a name, so it can be scrolled from the keyboard too.
+      function scrollables() {
+        $("main").querySelectorAll(".rule, .tbl").forEach(function (el) {
+          if (el.scrollWidth > el.clientWidth + 1) {
+            var l = el.querySelector(".rule-label, caption");
+            el.tabIndex = 0;
+            el.setAttribute("role", "region");
+            el.setAttribute("aria-label", l ? l.textContent : el.classList.contains("rule") ? "Rule" : "Table");
+          } else ["tabindex", "role", "aria-label"].forEach(function (a) { el.removeAttribute(a); });
+        });
+      }
+      var scrollWait;
+      window.addEventListener("resize", function () { clearTimeout(scrollWait); scrollWait = setTimeout(scrollables, 150); });
       // Highlights the section being read in the rail's contents (as on turkish101.html).
       function spy(nav) {
         if (!("IntersectionObserver" in window)) return;
@@ -909,7 +948,7 @@
           var k = +b.getAttribute("data-k"), ok = k === q.answer;
           box.querySelectorAll(".quiz-btn").forEach(function (x) { x.disabled = true; if (+x.getAttribute("data-k") === q.answer) x.classList.add("correct"); });
           if (!ok) b.classList.add("wrong");
-          var right = q.optionsLang === "tr" ? '<span lang="tr">' + esc(q.options[q.answer]) + "</span>" : esc(q.options[q.answer]);
+          var right = q.optionsLang === "tr" ? '<span lang="tr">' + esc(q.options[q.answer]) + "</span>" : R(q.options[q.answer]);
           var fb = box.querySelector(".quiz-feedback");
           fb.innerHTML = (ok ? "<strong>Right.</strong>" : "<strong>Not quite.</strong> The answer is " + right + ".") + (q.explain ? " " + R(q.explain) : "");
           fb.className = "quiz-feedback show " + (ok ? "ok" : "bad");

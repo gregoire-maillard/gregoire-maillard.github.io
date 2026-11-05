@@ -115,7 +115,8 @@
     cardKey: /^fc-\d{4}:(?:tr-en|en-tr)$/,
     day: /^\d{4}-\d{2}-\d{2}$/,
     iso: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/,
-    url: /^https:\/\/\S+$/
+    url: /^https:\/\/\S+$/,
+    exam: /^tys-\d+$/      // a practice test of the TYS (PROJECT.md 5.13)
   };
 
   // Link to a grammar guide or interlude ("a1-u02-grammar"). dailyturkish.app has a static page per guide,
@@ -252,7 +253,7 @@
     return { list: out.map(function (s) { return s.replace(/\s+/g, " ").replace(/\s+([.,!?;:…])/g, "$1").trim(); }) };
   }
 
-  var CONTRACTIONS = [
+  var CONTRACTION_LIST = [
     ["i'm", "i am"], ["you're", "you are"], ["we're", "we are"], ["they're", "they are"], ["he's", "he is"], ["she's", "she is"],
     ["it's", "it is"], ["that's", "that is"], ["there's", "there is"], ["here's", "here is"], ["what's", "what is"], ["where's", "where is"],
     ["who's", "who is"], ["how's", "how is"], ["isn't", "is not"], ["aren't", "are not"], ["wasn't", "was not"], ["weren't", "were not"],
@@ -261,7 +262,9 @@
     ["shouldn't", "should not"], ["mustn't", "must not"], ["i'll", "i will"], ["you'll", "you will"], ["he'll", "he will"],
     ["she'll", "she will"], ["it'll", "it will"], ["we'll", "we will"], ["they'll", "they will"], ["i've", "i have"], ["you've", "you have"],
     ["we've", "we have"], ["they've", "they have"], ["i'd", "i would"], ["you'd", "you would"], ["he'd", "he would"], ["she'd", "she would"],
-    ["we'd", "we would"], ["they'd", "they would"], ["let's", "let us"],
+    ["we'd", "we would"], ["they'd", "they would"], ["it'd", "it would"], ["that'd", "that would"],
+    ["there'd", "there would"], ["who'd", "who would"], ["could've", "could have"], ["should've", "should have"],
+    ["would've", "would have"], ["might've", "might have"], ["must've", "must have"], ["who've", "who have"], ["let's", "let us"],
     // the same without the apostrophe, which phone keyboards leave out (inputs have autocorrect off); not its, lets, were, well, ill, id, hed, shed, wed
     ["im", "i am"], ["youre", "you are"], ["theyre", "they are"], ["hes", "he is"], ["shes", "she is"], ["thats", "that is"],
     ["theres", "there is"], ["heres", "here is"], ["whats", "what is"], ["wheres", "where is"], ["whos", "who is"], ["hows", "how is"],
@@ -269,17 +272,30 @@
     ["didnt", "did not"], ["havent", "have not"], ["hasnt", "has not"], ["hadnt", "had not"], ["wont", "will not"], ["wouldnt", "would not"],
     ["cant", "can not"], ["couldnt", "could not"], ["shouldnt", "should not"], ["mustnt", "must not"], ["ive", "i have"], ["youve", "you have"],
     ["weve", "we have"], ["theyve", "they have"], ["youll", "you will"], ["theyll", "they will"], ["itll", "it will"], ["youd", "you would"],
-    ["theyd", "they would"]
-  ].map(function (p) { return [new RegExp("(^|\\s)" + p[0] + "(?=\\s|$)", "g"), "$1" + p[1]]; });
+    ["theyd", "they would"], ["couldve", "could have"], ["shouldve", "should have"], ["wouldve", "would have"],
+    ["mightve", "might have"], ["mustve", "must have"]
+  ];
+  // a learner's 'd is tried as "would" and as "had" (6.4): the same list with "had" for the 'd forms
+  function compileContractions(had) {
+    return CONTRACTION_LIST.map(function (p) {
+      var to = had && /d$/.test(p[0]) && /would$/.test(p[1]) ? p[1].replace(/would$/, "had") : p[1];
+      return [new RegExp("(^|\\s)" + p[0] + "(?=\\s|$)", "g"), "$1" + to];
+    });
+  }
+  var CONTRACTIONS = compileContractions(false), CONTRACTIONS_HAD = compileContractions(true);
+  // 's before "been" is "has" (it's been, it has been), also typed without the apostrophe
+  var HAS_BEEN = /(^|\s)(it|that|there|here|what|who|where|how|he|she)'?s been(?=\s|$)/g;
 
   // Stage-1 normalization (apostrophes kept).
-  function norm(s, lang) {
+  function norm(s, lang, had) {
     s = String(s == null ? "" : s).normalize("NFC").replace(/[’‘ʼ´`]/g, "'").replace(/[“”„"«»]/g, " ");
     s = lang === "tr" ? trLower(s) : s.toLowerCase();
     s = s.replace(/̇/g, "").replace(/[.,!?;:()…¿¡]/g, " ").replace(/[-–—/]/g, " ");
     s = s.replace(/â/g, "a").replace(/î/g, "i").replace(/û/g, "u").replace(/\s+/g, " ").trim();
     if (lang === "en") {
-      for (var i = 0; i < CONTRACTIONS.length; i++) s = s.replace(CONTRACTIONS[i][0], CONTRACTIONS[i][1]);
+      var list = had ? CONTRACTIONS_HAD : CONTRACTIONS;
+      s = s.replace(HAS_BEEN, "$1$2 has been");
+      for (var i = 0; i < list.length; i++) s = s.replace(list[i][0], list[i][1]);
       s = fold(s).replace(/\s+/g, " ").trim();
     }
     return s;
@@ -316,30 +332,36 @@
     var canonical = accepted[0];
     var a = norm(answer, lang);
     if (!a) return { verdict: "wrong", note: "empty", canonical: canonical };
+    // English: a learner's 'd is tried as "would" and as "had" (I'd known → I had known), so the answer can have two readings
+    var as = [a], ah = lang === "en" ? norm(answer, lang, true) : a;
+    if (ah !== a) as.push(ah);
+    var any = function (f) { for (var j = 0; j < as.length; j++) if (f(as[j])) return true; return false; };
     var i, r;
     for (i = 0; i < rejected.length; i++) {                                                   // 3. a predictable mistake
       r = rejected[i];
-      if (norm(r.answer, lang) === a) return { verdict: "wrong", why: r.why, rejected: r.answer, canonical: canonical };
+      var rn = norm(r.answer, lang);
+      if (any(function (x) { return x === rn; })) return { verdict: "wrong", why: r.why, rejected: r.answer, canonical: canonical };
     }
     var exps = [];
     accepted.forEach(function (entry) { expansions(entry).forEach(function (s) { exps.push({ text: s, n: norm(s, lang) }); }); });
-    for (i = 0; i < exps.length; i++) if (exps[i].n === a) return { verdict: "correct", matched: exps[i].text, canonical: canonical };   // 4.
+    for (i = 0; i < exps.length; i++) if (as.indexOf(exps[i].n) >= 0) return { verdict: "correct", matched: exps[i].text, canonical: canonical };   // 4.
     var noApos = function (s) { return s.replace(/'/g, ""); };
-    var a2 = noApos(a);
-    for (i = 0; i < exps.length; i++) if (noApos(exps[i].n) === a2) return { verdict: "almost", note: "apostrophe", matched: exps[i].text, canonical: canonical }; // 5.
+    var a2s = as.map(noApos);
+    for (i = 0; i < exps.length; i++) if (a2s.indexOf(noApos(exps[i].n)) >= 0) return { verdict: "almost", note: "apostrophe", matched: exps[i].text, canonical: canonical }; // 5.
     var folds = lang === "tr" && mode === "lenient";
     if (folds) {                                                                              // 6.
-      var a3 = fold(a2);
+      var a3 = fold(a2s[0]);
       for (i = 0; i < exps.length; i++) if (fold(noApos(exps[i].n)) === a3) return { verdict: "almost", note: "Turkish letters", matched: exps[i].text, canonical: canonical };
     }
     // 6b. a rejected answer give or take apostrophes (and, in lenient Turkish, Turkish letters): still wrong, with its feedback
     var relax = function (s) { return folds ? fold(noApos(s)) : noApos(s); };
     for (i = 0; i < rejected.length; i++) {
       r = rejected[i];
-      if (relax(norm(r.answer, lang)) === relax(a)) return { verdict: "wrong", why: r.why, rejected: r.answer, canonical: canonical };
+      var rr = relax(norm(r.answer, lang));
+      if (any(function (x) { return relax(x) === rr; })) return { verdict: "wrong", why: r.why, rejected: r.answer, canonical: canonical };
     }
-    if (lang === "en") {                                                                      // 7. one typo in a long word
-      var aw = a.split(" ");
+    if (lang === "en") for (var v = 0; v < as.length; v++) {                                 // 7. one typo in a long word
+      var aw = as[v].split(" ");
       for (i = 0; i < exps.length; i++) {
         var ew = exps[i].n.split(" ");
         if (ew.length !== aw.length) continue;
@@ -393,7 +415,7 @@
   }
   // The file of any content ID: "a1", "a1-u05", "a1-u05-l01", "a1-u05-grammar", "a1-u05-culture",
   // a flashcard file as listed in index.flashcards.files ("flashcards/fc-0001-0200.json"),
-  // or the Culture page's "timeline" and "regions" (PROJECT.md 5.11, 5.12).
+  // the Culture page's "timeline" and "regions" (PROJECT.md 5.11, 5.12), or a TYS practice test, "tys-1" (5.13).
   function dataPath(id) {
     if (/^flashcards\/fc-\d{4}-\d{4}\.json$/.test(id)) return id;
     if (id === "timeline" || id === "regions") return id + ".json";
@@ -402,6 +424,7 @@
     if (RE.lesson.test(id)) return "lessons/" + id + ".json";
     if (RE.grammar.test(id)) return "grammar/" + id.slice(0, 6) + ".json";
     if (RE.culture.test(id)) return "culture/" + id.slice(0, 6) + ".json";
+    if (RE.exam.test(id)) return "exams/" + id + ".json";
     throw new Error("Unknown content id " + id);
   }
   var data = {
@@ -1235,7 +1258,8 @@
       });
       return tts._ready;
     },
-    // Speaks Turkish text (markup removed). opts: { slow, rate }. Returns false when there is no Turkish voice.
+    // Speaks Turkish text (markup removed). opts: { slow, rate, pitch }. Returns the utterance (so a page can wait for its
+    // end event), or false when there is no Turkish voice. pitch (0–2, default 1) tells two speakers apart (PROJECT.md 6.8).
     speak: function (text, opts) {
       opts = opts || {};
       if (tts.voice === undefined) tts.voice = tts.find() || undefined;
@@ -1245,6 +1269,7 @@
       u.lang = C.TTS_LANG; u.voice = v;
       var rate = opts.rate || (defaultStore ? defaultStore.settings().ttsRate : C.SETTINGS.ttsRate);
       u.rate = opts.slow ? C.TTS_SLOW : rate;
+      if (opts.pitch) u.pitch = opts.pitch;
       root.speechSynthesis.cancel();
       root.speechSynthesis.speak(u);
       return u;

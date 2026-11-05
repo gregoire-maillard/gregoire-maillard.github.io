@@ -13,7 +13,7 @@
 </script>
     <meta charset="utf-8">
     <title>Turkish flashcards: the 1,000 most useful words</title>
-    <meta name="description" content="The 1,000 most useful Turkish words on spaced repetition, Anki-style: review in both directions, browse and search the deck, and follow your forecast and retention. Free, no account.">
+    <meta name="description" content="The 1,000 most useful Turkish words on Anki-style spaced repetition: review both ways, browse and search the deck, follow your progress. Free, no account.">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <link rel="icon" type="image/png" sizes="64x64" href="/assets/img/daily-turkish-favicon.png">
     <link rel="icon" type="image/svg+xml" href="/assets/img/daily-turkish-favicon.svg">
@@ -49,7 +49,7 @@
       .at-hdr .at-logo { width: 28px; height: 28px; flex: none; display: block; }
       .at-hdr .at-name { font-size: 18px; line-height: 1; letter-spacing: -0.02em; }
       .at-hdr .at-d { color: #e34b4f; font-weight: 600; }
-      .at-hdr .at-t { color: #242424; font-weight: 750; margin-left: 0.22em; }
+      .at-hdr .at-t { color: #242424; font-weight: 750; }
       .at-hdr .at-tabs { display: flex; flex: 1; align-self: stretch; gap: 8px; }
       .at-hdr .at-push { margin-left: auto; }   /* About, My Profile and Settings sit on the right */
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
@@ -85,6 +85,13 @@
         .at-hdr .at-set { min-width: 34px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 5px; right: 5px; }
       }
+      @media (max-width: 359px) {   /* 320 px (QA-2): the six tabs fit without a sideways scroll, each at least 32 px wide */
+        .at-hdr { --at-m: 8px; }
+        .at-hdr .at-home { min-width: 40px; margin-left: -6px; }
+        .at-hdr .at-tab { padding: 0 3px; min-width: 32px; font-size: 12px; }
+        .at-hdr .at-set { min-width: 32px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 3px; right: 3px; }
+      }
     </style>
     <style>
       /* Page: the site's tokens (stylesheets/styles.css), white page, hairline borders, cards like the Mobility Lab's. */
@@ -112,6 +119,8 @@
       .trk-soon small { font-size: .85em; }
       .trk-nw { white-space: nowrap; }
       [hidden] { display: none !important; }
+      /* links inside running text carry an underline as well as their colour (WCAG 1.4.1, QA-2) */
+      main p a:not(.btn), .note a, .help a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; text-decoration-color: rgb(40 122 158 / .55); }
       .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       .num { font-variant-numeric: tabular-nums; }
 
@@ -247,7 +256,7 @@
       .grade.again { color: var(--danger); border-color: #efc4be; }
       .grade.again:hover { background: var(--danger-wash); }
       .grade.good { background: var(--blue); border-color: var(--blue); color: #fff; }
-      .grade.good small { color: rgb(255 255 255 / .85); }
+      .grade.good small { color: #fff; }
       .grade.good:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
       .grade.easy { color: var(--blue-dark); border-color: rgb(40 122 158 / 40%); }
       .grade.easy:hover { background: var(--blue-tint); }
@@ -295,7 +304,7 @@
       .wg { min-width: 0; font-size: 14px; color: var(--body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .wst { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
       .wst .tag { font-weight: 600; gap: 5px; }
-      .wst .tag .cd { font-weight: 500; opacity: .75; }
+      .wst .tag .cd { font-weight: 500; }
       .chev { width: 18px; height: 18px; color: var(--muted); transition: transform .2s; }
       .wrow[open] .chev { transform: rotate(180deg); }
       @media (max-width: 699px) {
@@ -431,7 +440,7 @@
       [data-lvl="b1"] { --lv: #2b7d50; --lv-dark: #1d5c3a; --lv-wash: rgb(43 125 80 / 12%); --lv-tint: rgb(43 125 80 / 5%); --lv-line: rgb(43 125 80 / 35%); }
       [data-lvl="b2"] { --lv: #c2462c; --lv-dark: #9a3420; --lv-wash: rgb(194 70 44 / 11%); --lv-tint: rgb(194 70 44 / 5%); --lv-line: rgb(194 70 44 / 35%); }
       [data-lvl="c1"] { --lv: #6c3f9e; --lv-dark: #51307a; --lv-wash: rgb(108 63 158 / 11%); --lv-tint: rgb(108 63 158 / 5%); --lv-line: rgb(108 63 158 / 35%); }
-      [data-lvl="c2"] { --lv: #b8861a; --lv-dark: #7d5b10; --lv-wash: rgb(184 134 26 / 14%); --lv-tint: rgb(184 134 26 / 6%); --lv-line: rgb(184 134 26 / 40%); --lv-on: #2b2006; }
+      [data-lvl="c2"] { --lv: #b8861a; --lv-dark: #7d5b10; --lv-wash: rgb(184 134 26 / 14%); --lv-tint: rgb(184 134 26 / 6%); --lv-line: rgb(184 134 26 / 40%); --lv-on: #fff; }
       .lv-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: var(--lv-wash); color: var(--lv-dark); font-size: 11.5px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; }
       /* a tile of the wall: laid (unit done) in its level's colour, glazed gold once the unit is mastered */
       .tw-t { position: relative; display: block; aspect-ratio: 1; border-radius: 3px; background: #f3f2ee; box-shadow: inset 0 0 0 1px #e4e3df; }
@@ -450,7 +459,7 @@
       .dt-foot { margin: 48px auto 0; padding: 0 16px 28px; text-align: center;
                  font: 12.5px/1.5 "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
       .dt-foot p { margin: 0; }
-      .dt-foot a { color: #9a9a96; text-decoration: none; }
+      .dt-foot a { color: #6f6f6f; text-decoration: none; }   /* 5:1 on white (was #9a9a96, 2.8:1) */
       .dt-foot a:hover { color: #c43b3f; }
       body.studying .dt-foot { display: none; }
     </style>
@@ -458,7 +467,7 @@
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="/turkish.html" aria-label="Daily Turkish, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#e34b4f"/><circle cx="76" cy="55" r="17" fill="#fff"/><circle cx="83" cy="49" r="16" fill="#e34b4f"/><path d="m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z" fill="#fff"/><path d="M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 90v46" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="3"/><path d="M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="2.5"/></svg><span class="at-name"><span class="at-d">Daily</span><span class="at-t">Turkish</span></span></a>
+        <a class="at-home" href="/turkish.html" aria-label="Daily Turkish, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#e34b4f"/><circle cx="76" cy="55" r="17" fill="#fff"/><circle cx="83" cy="49" r="16" fill="#e34b4f"/><path d="m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z" fill="#fff"/><path d="M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 90v46" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="3"/><path d="M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="2.5"/></svg><span class="at-name"><span class="at-d">Daily</span> <span class="at-t">Turkish</span></span></a>
         <nav class="at-tabs" aria-label="Turkish course">
           <a class="at-tab" href="/turkish.html">Course</a>
           <a class="at-tab" href="/turkishguide.html">Grammar</a>
@@ -825,7 +834,7 @@
           var p = T.srs.preview(st, now, set), names = ["Again", "Hard", "Good", "Easy"], cls = ["again", "hard", "good", "easy"];
           h += '<div class="grades" role="group" aria-label="How well did you remember it?">' + p.map(function (x, i) {
             var iv = T.srs.format(x);
-            return '<button type="button" class="grade ' + cls[i] + '" data-act="grade" data-g="' + (i + 1) + '" aria-label="' + names[i] + ", next in " + esc(iv) + '"><b>' + names[i] + " <kbd>" + (i + 1) + "</kbd></b><small>" + esc(iv) + "</small></button>";
+            return '<button type="button" class="grade ' + cls[i] + '" data-act="grade" data-g="' + (i + 1) + '"><b>' + names[i] + ' <kbd aria-hidden="true">' + (i + 1) + "</kbd></b><small>" + '<span class="sr">, next in </span>' + esc(iv) + "</small></button>";
           }).join("") + "</div>";
         }
         h += '</div><div class="acts"><button type="button" class="btn ghost small" data-act="suspend">Suspend this card</button>' +

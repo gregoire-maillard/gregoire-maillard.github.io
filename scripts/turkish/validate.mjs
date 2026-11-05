@@ -12,7 +12,8 @@
 //
 // The schema definitions below mirror PROJECT.md section 5; change both together and run --examples.
 // Conjugate cells and morph tiles are also compared with the morphology engine, assets/js/turkish-morph.js
-// (PROJECT.md 3 and 8); for now its disagreements are warnings.
+// (PROJECT.md 3 and 8); for now its disagreements are warnings. The TYS practice test (exams/, 5.13) is checked
+// against the official test's proportions (7.9).
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
@@ -110,8 +111,11 @@ function sentenceCase(s, where, lower) {
   if (first !== upper) warn(where, `sentence starts with a lowercase letter: “${s.slice(0, 40)}”`);
 }
 
-function checkTr(s, where, { sentence = true } = {}) {
+function checkTr(s, where, { sentence = true, quotes = true } = {}) {
   if (/[’‘ʼ]/.test(s)) err(where, "Turkish apostrophe must be ' (U+0027), not a typographic one");
+  // direct speech as TDK writes it (PROJECT.md 7.1): the quote keeps its own full stop, “Yarın geliyorum.” dedi
+  const q = quotes && s.match(/[^“”]{0,20},”\s*\p{Ll}+/u);
+  if (q) warn(where, `“…${q[0].trim()}”: TDK style keeps the quote's own punctuation, with no comma before the verb: “Geliyorum.” dedi`);
   for (const ch of new Set(s)) if (/\p{L}/u.test(ch) && !TR_LETTERS.has(ch)) warn(where, `non-Turkish letter “${ch}” in Turkish text`);
   for (const tok of s.split(/[^\p{L}']+/u)) {
     if (/^I[a-zçğıöşü]/.test(tok)) {
@@ -129,6 +133,13 @@ function checkTr(s, where, { sentence = true } = {}) {
 
 function checkEnText(s, where) { sentenceCase(s, where, "en"); bareId(s, where); }
 
+// Markup (PROJECT.md 5.1) is rendered only in Rich and TrRich fields; in plain fields (Tr, En, prompts, options,
+// accept lists, table cells of type tr and en) an asterisk, a backtick or a link shows as raw characters (QA-2).
+function rawMarkup(s, where) {
+  const m = s.match(/\*+[^*]*\*+|\*|`[^`]*`?|\[[^\]]*\]\([^)]*\)?/);
+  if (m) warn(where, `“${m[0].slice(0, 40)}”: markup isn't rendered in a plain-text field; write it without * \` or [ ]( )`);
+}
+
 // learners never see internal IDs: refer to a unit, lesson or grammar point with a [label](ref) link
 function bareId(t, where) {
   const m = t.match(/(?:^|[^\w-])((?:[abc][12]-u\d\d(?:-l\d\d(?:-e\d\d)?)?|gp-[a-z0-9]+(?:-[a-z0-9]+)*))(?![\w-])/);
@@ -136,6 +147,14 @@ function bareId(t, where) {
 }
 
 function checkText(s, lang, where, o) { if (lang === "tr") checkTr(s, where, o); else checkEnText(s, where); }
+
+// Options (mcq, reading, interlude questions): English ones are Rich, rendered with their markup but never with a
+// link (the option is a button or a label); Turkish ones are plain Tr (QA-2, PROJECT.md 5.5).
+function checkOption(o, lang, where, cx) {
+  if (lang === "tr") { checkTr(o, where, { sentence: false }); rawMarkup(o, where); return; }
+  checkRich(o, where, cx); checkEnText(o, where);
+  if (/\]\(/.test(o)) warn(where, "a link in an option: the option is a button, so leave the link to explain");
+}
 
 // inline markup (PROJECT.md 5.1)
 function checkRich(s, where, cx) {
@@ -146,7 +165,7 @@ function checkRich(s, where, cx) {
   if (/\]\(/.test(t)) err(where, "malformed [label](ref) link");
   bareId(t, where);
   t = t.replace(/\*\*([^*\n]+)\*\*/g, (m, inner) => inner);
-  t = t.replace(/\*([^*\n]+)\*/g, (m, inner) => { checkTr(inner.trim(), where + " (Turkish in *…*)", { sentence: false }); return "\u0003"; });
+  t = t.replace(/\*([^*\n]+)\*/g, (m, inner) => { checkTr(inner.trim(), where + " (Turkish in *…*)", { sentence: false, quotes: false }); return "\u0003"; });
   if (t.includes("*")) err(where, "unbalanced * or ** markup (write a literal asterisk as \\*)");
 }
 
@@ -214,7 +233,7 @@ function expand(entry) {
   return { list: out.map(s => s.replace(/\s+/g, " ").replace(/\s+([.,!?;:…])/g, "$1").trim()) };
 }
 
-const CONTRACTIONS = [
+const CONTRACTION_LIST = [
   ["i'm", "i am"], ["you're", "you are"], ["we're", "we are"], ["they're", "they are"], ["he's", "he is"], ["she's", "she is"],
   ["it's", "it is"], ["that's", "that is"], ["there's", "there is"], ["here's", "here is"], ["what's", "what is"], ["where's", "where is"],
   ["who's", "who is"], ["how's", "how is"], ["isn't", "is not"], ["aren't", "are not"], ["wasn't", "was not"], ["weren't", "were not"],
@@ -223,7 +242,9 @@ const CONTRACTIONS = [
   ["shouldn't", "should not"], ["mustn't", "must not"], ["i'll", "i will"], ["you'll", "you will"], ["he'll", "he will"],
   ["she'll", "she will"], ["it'll", "it will"], ["we'll", "we will"], ["they'll", "they will"], ["i've", "i have"], ["you've", "you have"],
   ["we've", "we have"], ["they've", "they have"], ["i'd", "i would"], ["you'd", "you would"], ["he'd", "he would"], ["she'd", "she would"],
-  ["we'd", "we would"], ["they'd", "they would"], ["let's", "let us"],
+  ["we'd", "we would"], ["they'd", "they would"], ["it'd", "it would"], ["that'd", "that would"],
+  ["there'd", "there would"], ["who'd", "who would"], ["could've", "could have"], ["should've", "should have"],
+  ["would've", "would have"], ["might've", "might have"], ["must've", "must have"], ["who've", "who have"], ["let's", "let us"],
   // the same without the apostrophe, which phone keyboards leave out (inputs have autocorrect off); not its, lets, were, well, ill, id, hed, shed, wed
   ["im", "i am"], ["youre", "you are"], ["theyre", "they are"], ["hes", "he is"], ["shes", "she is"], ["thats", "that is"],
   ["theres", "there is"], ["heres", "here is"], ["whats", "what is"], ["wheres", "where is"], ["whos", "who is"], ["hows", "how is"],
@@ -231,17 +252,25 @@ const CONTRACTIONS = [
   ["didnt", "did not"], ["havent", "have not"], ["hasnt", "has not"], ["hadnt", "had not"], ["wont", "will not"], ["wouldnt", "would not"],
   ["cant", "can not"], ["couldnt", "could not"], ["shouldnt", "should not"], ["mustnt", "must not"], ["ive", "i have"], ["youve", "you have"],
   ["weve", "we have"], ["theyve", "they have"], ["youll", "you will"], ["theyll", "they will"], ["itll", "it will"], ["youd", "you would"],
-  ["theyd", "they would"],
-].map(([a, b]) => [new RegExp(`(^|\\s)${a.replace("'", "'")}(?=\\s|$)`, "g"), `$1${b}`]);
+  ["theyd", "they would"], ["couldve", "could have"], ["shouldve", "should have"], ["wouldve", "would have"],
+  ["mightve", "might have"], ["mustve", "must have"],
+];
+// a learner's 'd is tried as "would" and as "had" (6.4): the same list with "had" for the 'd forms
+const compileContractions = had => CONTRACTION_LIST.map(([a, b]) =>
+  [new RegExp(`(^|\\s)${a}(?=\\s|$)`, "g"), `$1${had && /d$/.test(a) && /would$/.test(b) ? b.replace(/would$/, "had") : b}`]);
+const CONTRACTIONS = compileContractions(false), CONTRACTIONS_HAD = compileContractions(true);
+// 's before "been" is "has" (it's been, it has been), also typed without the apostrophe
+const HAS_BEEN = /(^|\s)(it|that|there|here|what|who|where|how|he|she)'?s been(?=\s|$)/g;
 
 // stage-1 normalization of PROJECT.md 6.4 (apostrophes kept)
-function norm(s, lang) {
+function norm(s, lang, had) {
   s = s.normalize("NFC").replace(/[’‘ʼ´`]/g, "'").replace(/[“”„"«»]/g, " ");
   s = lang === "tr" ? trLower(s) : s.toLowerCase();
   s = s.replace(/̇/g, "").replace(/[.,!?;:()…¿¡]/g, " ").replace(/[-–—/]/g, " ");
   s = s.replace(/â/g, "a").replace(/î/g, "i").replace(/û/g, "u").replace(/\s+/g, " ").trim();
   if (lang === "en") {
-    for (const [re, r] of CONTRACTIONS) s = s.replace(re, r);
+    s = s.replace(HAS_BEEN, "$1$2 has been");
+    for (const [re, r] of had ? CONTRACTIONS_HAD : CONTRACTIONS) s = s.replace(re, r);
     s = fold(s).replace(/\s+/g, " ").trim();
   }
   return s;
@@ -257,6 +286,8 @@ function checkAccept(list, lang, where, rejects, mode = "lenient") {
     if (k === 0 && /[[\]()|]/.test(entry)) err(w, "accept[0] is the canonical answer shown to learners: plain text, no [ ] ( ) |");
     const ex = expand(entry);
     if (ex.error) { err(w, `“${entry}”: ${ex.error}`); return; }
+    if (lang === "en" && /(?:^|[\s\[(|])(?:i|you|he|she|it|we|they|that|there|who)['’]d(?=[\s\])|.,!?]|$)/i.test(entry))
+      warn(w, `“${entry}”: write 'd out as “had” or “would” (PROJECT.md 7.3); the checker tries both for a learner's 'd`);
     for (const s of ex.list) {
       if (!s) { err(w, "an expansion is empty"); continue; }
       checkText(s, lang, w, { sentence: k === 0 });
@@ -378,8 +409,9 @@ const S = {
 };
 const T = {
   tr: S.str({ text: "tr" }), en: S.str({ text: "en" }), rich: S.str({ text: "rich" }), trRich: S.str({ text: "trRich" }),
-  seg: S.str({ text: "seg" }), plain: S.str({ text: "plain" }), cell: S.str({ empty: true, text: "plain" }),
+  seg: S.str({ text: "seg" }), plain: S.str({ text: "plain" }), cell: S.str({ empty: true, text: "cell" }),
   mono: S.str({ text: "mono" }), // rule lines: aligned with spaces
+  opt: S.str({ text: "cell" }),   // mcq, reading and interlude options: checked with their optionsLang (checkOption)
 };
 const lang = S.oneOfLit(["tr", "en"]);
 const dia = S.oneOfLit(["strict", "lenient"]);
@@ -406,9 +438,9 @@ const BLOCK = S.union("type", {
 });
 
 const EX_BASE = { id: S.str({ re: RE.exercise }), type: S.oneOfLit(TYPES), "points?": S.arr(gpId, { min: 1, unique: true }), "hint?": T.rich, "explain?": T.rich };
-const mcqQ = S.obj({ q: T.rich, options: S.arr(T.plain, { min: 2, max: 6 }), optionsLang: lang, answer: S.int({ min: 0 }), "explain?": T.rich });
+const mcqQ = S.obj({ q: T.rich, options: S.arr(T.opt, { min: 2, max: 6 }), optionsLang: lang, answer: S.int({ min: 0 }), "explain?": T.rich });
 const EXERCISE = S.union("type", {
-  mcq: S.obj({ ...EX_BASE, question: T.rich, "context?": S.arr(S.obj({ "who?": T.tr, tr: T.tr, "en?": T.en }), { min: 1 }), options: S.arr(T.plain, { min: 2, max: 6 }), optionsLang: lang, answer: S.int({ min: 0 }), "why?": S.map(/^\d+$/, T.rich) }),
+  mcq: S.obj({ ...EX_BASE, question: T.rich, "context?": S.arr(S.obj({ "who?": T.tr, tr: T.tr, "en?": T.en }), { min: 1 }), options: S.arr(T.opt, { min: 2, max: 6 }), optionsLang: lang, answer: S.int({ min: 0 }), "why?": S.map(/^\d+$/, T.rich) }),
   cloze: S.obj({ ...EX_BASE, text: T.plain, en: T.en, blanks: S.arr(S.when(b => b && typeof b === "object" && "options" in b, S.obj({ options: S.arr(T.tr, { min: 2, max: 6 }), answer: S.int({ min: 0 }) }), S.obj({ accept: S.arr(T.plain, { min: 1 }), "reject?": S.arr(reject, { min: 1 }) })), { min: 1, max: 4 }), "diacritics?": dia }),
   translate: S.obj({ ...EX_BASE, from: lang, prompt: T.plain, accept: S.arr(T.plain, { min: 1 }), "reject?": S.arr(reject, { min: 1 }), "diacritics?": dia }),
   wordbank: S.obj({ ...EX_BASE, from: lang, prompt: T.plain, text: T.plain, answer: S.arr(T.plain, { min: 1 }), distractors: S.arr(T.plain, { max: 6 }), "accept?": S.arr(T.plain, { min: 1 }) }),
@@ -473,6 +505,39 @@ SCHEMA.regions = S.obj({
   provinces: S.arr(S.obj({ id: S.str({ re: PROVINCE }), name: T.tr, region: S.oneOfLit(REGION_IDS), shape: SHAPE }), { min: 1, max: 81 }),
 });
 
+// The TYS practice test (PROJECT.md 5.13, 6.8, 7.9). TYS: the official test's minutes per section, points and task
+// points, which the practice keeps in proportion.
+const SKILLS = ["reading", "listening", "writing", "speaking"];
+const TYS = { minutes: { reading: 60, listening: 45, writing: 60, speaking: 15 }, total: 180, points: 25, items: { reading: 40, listening: 30 }, tasks: { writing: [10, 15], speaking: [15, 10] } };
+const studyRef = S.str({ re: /^(?:(?:a1|a2|b1|b2|c1|c2)-u\d{2}|gp-[a-z0-9]+(?:-[a-z0-9]+)*)$/ });
+const trCell = S.str({ empty: true, text: "trCell" });
+const EXAM_ITEM = S.obj({
+  type: S.oneOfLit(["tf", "mcq", "gap", "match"]), "q?": T.tr, "options?": S.arr(T.tr, { min: 3, max: 5 }),
+  answer: (v, p, cx) => { if (typeof v !== "boolean" && !(Number.isInteger(v) && v >= 0)) cx.err(p, "expected true, false or an option index"); },
+  explain: T.rich, "review?": S.arr(studyRef, { min: 1, max: 3, unique: true }),
+});
+const EXAM_TEXT = S.obj({
+  kind: T.en, task: T.rich, "title?": T.tr, "text?": T.trRich, "lines?": S.arr(S.obj({ who: T.tr, tr: T.tr }), { min: 2 }),
+  "prep?": S.int({ min: 10, max: 60 }), "choices?": S.arr(T.tr, { min: 3, max: 6 }), items: S.arr(EXAM_ITEM, { min: 1, max: 6 }),
+});
+const EXAM_TASK = S.obj({
+  kind: T.en, points: S.int({ min: 1, max: 25 }), task: T.rich, "prompt?": T.trRich,
+  "table?": S.obj({ caption: T.tr, head: S.arr(trCell, { min: 2 }), rows: S.arr(S.arr(trCell, { min: 2 }), { min: 1 }) }),
+  "questions?": S.arr(T.tr, { min: 1, max: 4 }), "words?": S.tuple([S.int({ min: 10, max: 500 }), S.int({ min: 10, max: 500 })]),
+  "prep?": S.int({ min: 5, max: 120 }), "speak?": S.int({ min: 10, max: 300 }), models: S.arr(T.trRich, { min: 1, max: 4 }),
+});
+SCHEMA.exam = S.obj({
+  id: S.str({ re: /^tys-\d+$/ }), exam: S.lit("tys"), title: T.en, intro: T.rich, minutes: S.num({ min: 5, max: 180 }),
+  format: S.obj({ source: T.en, url: S.str({ re: RE.url }), checked: S.str({ re: RE.day }) }),
+  scale: S.obj({ source: T.en, url: S.str({ re: RE.url }), skillMin: S.num({ min: 0, max: 25 }), bands: S.arr(S.obj({ level: S.oneOfLit(["B2", "C1", "C2"]), min: S.num({ min: 0, max: 100 }) }), { min: 1, max: 3 }) }),
+  sections: S.arr(S.obj({
+    skill: S.oneOfLit(SKILLS), minutes: S.num({ min: 1, max: 60 }), points: S.int({ min: 1, max: 100 }), intro: T.rich,
+    review: S.arr(studyRef, { min: 1, max: 6, unique: true }),
+    parts: S.arr(S.when(x => x && typeof x === "object" && "items" in x, EXAM_TEXT, EXAM_TASK), { min: 1, max: 4 }),
+    "rubric?": S.arr(S.obj({ name: T.en, bands: S.arr(T.rich, { min: 4, max: 4 }) }), { min: 3, max: 5 }),
+  }), { min: 4, max: 4 }),
+});
+
 // Runs a schema, then the text checks it collected. Returns true when the structure is valid.
 function validate(kind, value, file, cx0 = {}) {
   let ok = true;
@@ -480,13 +545,15 @@ function validate(kind, value, file, cx0 = {}) {
   SCHEMA[kind](value, "", cx);
   for (const [k, s, p] of cx.text) {
     const w = at(cx, p);
-    if (k === "plain") hygiene(s, w);
+    if (k === "plain") { hygiene(s, w); rawMarkup(s, w); }
+    else if (k === "cell") hygiene(s, w);
     else if (k === "mono") hygiene(s, w, { spaces: true });
-    else if (k === "tr") { hygiene(s, w); checkTr(s, w); }
-    else if (k === "en") { hygiene(s, w); checkEnText(s, w); }
+    else if (k === "tr") { hygiene(s, w); checkTr(s, w); rawMarkup(s, w); }
+    else if (k === "en") { hygiene(s, w); checkEnText(s, w); rawMarkup(s, w); }
     else if (k === "rich") { hygiene(s, w); checkRich(s, w, cx); }
     else if (k === "trRich") { hygiene(s, w, { multiline: true }); checkTrRich(s, w, cx); }
     else if (k === "seg") { hygiene(s, w); checkSeg(s, w); }
+    else if (k === "trCell") { hygiene(s, w); checkTr(s, w, { sentence: false }); }
   }
   return ok;
 }
@@ -579,10 +646,10 @@ function parseCurriculum() {
 const unitIndex = id => REG.order.indexOf(id);
 
 // ─────────────────────────── content ───────────────────────────
-const C = { levels: new Map(), units: new Map(), lessons: new Map(), grammar: new Map(), culture: new Map(), cardFiles: new Map(), cards: new Map(), files: [], timeline: null, regions: null };
+const C = { levels: new Map(), units: new Map(), lessons: new Map(), grammar: new Map(), culture: new Map(), cardFiles: new Map(), cards: new Map(), exams: new Map(), files: [], timeline: null, regions: null };
 const ROOT_FILES = { "timeline.json": "timeline", "regions.json": "regions" };   // beside index.json (PROJECT.md 5.11, 5.12)
 const deferred = [];
-const DIRS = { levels: "level", units: "unit", lessons: "lesson", grammar: "grammar", culture: "culture", flashcards: "flashcards" };
+const DIRS = { levels: "level", units: "unit", lessons: "lesson", grammar: "grammar", culture: "culture", flashcards: "flashcards", exams: "exam" };
 
 function loadContent() {
   if (!fs.existsSync(DATA)) return;
@@ -613,7 +680,7 @@ function loadFile(kind, fp) {
   const ok = validate(kind, v, label);
   const id = v && v.id;
   if (kind === "timeline" || kind === "regions") { C[kind] = { v, file: label, ok }; return; }
-  const expect = { level: base, unit: base, lesson: base, grammar: `${base}-grammar`, culture: `${base}-culture` }[kind];
+  const expect = { level: base, unit: base, lesson: base, grammar: `${base}-grammar`, culture: `${base}-culture`, exam: base }[kind];
   if (kind !== "flashcards" && id !== expect) { err(label, `id “${id}” should be “${expect}” to match the file name`); return; }
   const rec = { v, file: label, ok };
   if (kind === "level") C.levels.set(id, rec);
@@ -621,6 +688,7 @@ function loadFile(kind, fp) {
   else if (kind === "lesson") C.lessons.set(id, rec);
   else if (kind === "grammar") C.grammar.set(unitOf(id), rec);
   else if (kind === "culture") C.culture.set(unitOf(id), rec);
+  else if (kind === "exam") C.exams.set(id, rec);
   else if (kind === "flashcards") {
     const m = base.match(/^fc-(\d{4})-(\d{4})$/);
     if (!m) { err(label, "flashcard files are named fc-NNNN-NNNN.json after their rank range"); return; }
@@ -724,7 +792,7 @@ function checkExercise(e, w, unitId, cx) {
   switch (e.type) {
     case "mcq": {
       if (e.answer >= e.options.length) err(`${w}.answer`, "points past the last option");
-      e.options.forEach((o, i) => checkText(o, e.optionsLang, `${w}.options[${i}]`, { sentence: false }));
+      e.options.forEach((o, i) => checkOption(o, e.optionsLang, `${w}.options[${i}]`, cx));
       dupes(e.options.map(o => norm(o, e.optionsLang)), `${w}.options`);
       for (const k of Object.keys(e.why || {})) {
         if (Number(k) >= e.options.length) err(`${w}.why.${k}`, "no such option");
@@ -828,7 +896,7 @@ function checkExercise(e, w, unitId, cx) {
     case "reading": {
       e.questions.forEach((q, i) => {
         if (q.answer >= q.options.length) err(`${w}.questions[${i}].answer`, "points past the last option");
-        q.options.forEach((o, j) => checkText(o, q.optionsLang, `${w}.questions[${i}].options[${j}]`, { sentence: false }));
+        q.options.forEach((o, j) => checkOption(o, q.optionsLang, `${w}.questions[${i}].options[${j}]`, cx));
         dupes(q.options.map(o => norm(o, q.optionsLang)), `${w}.questions[${i}].options`);
       });
       break;
@@ -876,7 +944,8 @@ function checkBlocks(blocks, where, cx) {
           if (!cell) return;
           const cw = `${w}.rows[${r}][${c}]`;
           const t = b.cols[c];
-          if (t === "tr") checkTr(cell, cw, { sentence: false });
+          if (t === "tr") { checkTr(cell, cw, { sentence: false }); rawMarkup(cell, cw); }
+          else if (t === "en") rawMarkup(cell, cw);
           else if (t === "seg") checkSeg(cell, cw);
           else if (t === "rich") checkRich(cell, cw, cx);
         });
@@ -927,7 +996,7 @@ function checkCulture(rec, cx) {
   checkBlocks(v.blocks, `${file} › blocks`, cx);
   (v.questions || []).forEach((q, i) => {
     if (q.answer >= q.options.length) err(`${file} › questions[${i}].answer`, "points past the last option");
-    q.options.forEach((o, j) => checkText(o, q.optionsLang, `${file} › questions[${i}].options[${j}]`, { sentence: false }));
+    q.options.forEach((o, j) => checkOption(o, q.optionsLang, `${file} › questions[${i}].options[${j}]`, cx));
   });
   if (v.sources.length < 2) warn(file, "history and archaeology interludes need at least two sources");
   v.sources.forEach((s, i) => { if (!s.url) warn(`${file} › sources[${i}]`, "add a URL so the fact can be checked"); });
@@ -1101,6 +1170,112 @@ function checkTimeline(rec, cx) {
   if (!C.regions) err(file, "needs regions.json beside it (PROJECT.md 5.12)");
 }
 
+// ── the TYS practice test (5.13): structure by skill, the official proportions (7.9), gaps, answers, links ──
+function checkExam(rec, cx) {
+  const { v, file } = rec;
+  const close = (a, b, d) => Math.abs(a - b) <= d;
+  if (!same(v.sections.map(s => s.skill), SKILLS)) { err(`${file} › sections`, `should be ${SKILLS.join(", ")}, in this order`); return; }
+  const total = v.sections.reduce((n, s) => n + s.minutes, 0);
+  if (!close(total, v.minutes, 1e-9)) err(`${file} › minutes`, `${v.minutes}, but the sections add up to ${total}`);
+  const refOk = (r, w) => {
+    if (RE.gp.test(r)) { if (!REG.points.has(r)) err(w, `unknown grammar point ${r}`); else if (!cx.examples && !C.units.has(REG.points.get(r).unit)) warn(w, `${r} is in ${REG.points.get(r).unit}, which isn't written yet: its link reads “coming soon”`); return; }
+    if (!REG.units.has(r)) err(w, `unknown unit ${r}`);
+    else if (!cx.examples && !C.units.has(r)) warn(w, `${r} isn't written yet: its link reads “coming soon”`);
+  };
+  const indexAnswers = [];
+  v.sections.forEach((s, si) => {
+    const w = `${file} › sections[${si}]`;
+    s.review.forEach((r, k) => refOk(r, `${w}.review[${k}]`));
+    if (!cx.examples) {
+      if (s.points !== TYS.points) warn(`${w}.points`, `${s.points}; every skill is worth ${TYS.points} in the TYS`);
+      const want = v.minutes * TYS.minutes[s.skill] / TYS.total;
+      if (!close(s.minutes, want, 0.5)) warn(`${w}.minutes`, `${s.minutes}; ${s.skill} has ${TYS.minutes[s.skill]} of the TYS's ${TYS.total} minutes, so about ${Math.round(want * 2) / 2} here`);
+    }
+    const textual = s.skill === "reading" || s.skill === "listening";
+    if (textual) {
+      if (s.rubric) err(`${w}.rubric`, `${s.skill} is marked automatically: no rubric`);
+      let n = 0;
+      s.parts.forEach((p, pi) => {
+        const pw = `${w}.parts[${pi}]`;
+        if (!("items" in p)) { err(pw, `${s.skill} parts are texts with items`); return; }
+        if (s.skill === "reading") {
+          if (!p.text) err(pw, "a reading part needs text");
+          if (p.lines || p.prep !== undefined) err(pw, "lines and prep are for listening parts");
+        } else {
+          if (!!p.text === !!p.lines) err(pw, "a listening part has either text (one voice) or lines (a dialogue)");
+          if (p.prep === undefined) err(pw, "a listening part needs prep: the seconds to read its questions first");
+          if (p.lines && new Set(p.lines.map(l => l.who)).size > 2) warn(`${pw}.lines`, "more than two speakers; the page has two pitches");
+        }
+        const gapItems = p.items.filter(it => it.type === "gap");
+        const holes = p.text ? p.text.split("___").length - 1 : 0;
+        if (p.text && /_{4,}/.test(p.text)) err(`${pw}.text`, "a gap is exactly three underscores ___");
+        if (holes !== gapItems.length) err(`${pw}.text`, `${holes} gap(s) in the text but ${gapItems.length} gap item(s)`);
+        if (gapItems.length && s.skill === "listening") err(pw, "gap items are for reading texts");
+        if (p.choices && !p.items.some(it => it.type === "match")) err(`${pw}.choices`, "choices are for match items");
+        if (p.choices) dupes(p.choices.map(o => norm(o, "tr")), `${pw}.choices`);
+        p.items.forEach((it, ii) => {
+          const iw = `${pw}.items[${ii}]`;
+          n++;
+          (it.review || []).forEach((r, k) => refOk(r, `${iw}.review[${k}]`));
+          if (it.type === "tf") {
+            if (typeof it.answer !== "boolean") err(`${iw}.answer`, "a tf item's answer is true (Doğru) or false (Yanlış)");
+            if (!it.q) err(iw, "a tf item needs q, the statement");
+            if (it.options) err(`${iw}.options`, "a tf item has no options: the page shows Doğru and Yanlış");
+            return;
+          }
+          if (typeof it.answer !== "number") { err(`${iw}.answer`, "should be an option index"); return; }
+          const opts = it.type === "match" ? p.choices : it.options;
+          if (it.type === "match") { if (!p.choices) err(pw, "match items need the part's choices"); if (it.options) err(`${iw}.options`, "match items use the part's choices"); if (!it.q) err(iw, "a match item needs q"); }
+          else { if (!it.options) { err(iw, `${it.type} items need options`); return; } dupes(it.options.map(o => norm(o, "tr")), `${iw}.options`); indexAnswers.push(it.answer); }
+          if (it.type === "mcq" && !it.q) err(iw, "an mcq item needs q");
+          if (it.type === "gap" && it.q) err(`${iw}.q`, "a gap item has no q: the page numbers the gap");
+          if (opts && it.answer >= opts.length) err(`${iw}.answer`, "points past the last option");
+        });
+        if (p.text && holes === gapItems.length && holes) {
+          let k = 0;
+          const filled = p.text.replace(/___/g, () => { const it = gapItems[k++]; return (it.options && it.options[it.answer]) || ""; });
+          for (const para of filled.replace(/\*\*/g, "").split("\n\n")) checkTr(para, `${pw}.text (with the gaps filled in)`);
+        }
+      });
+      if (!cx.examples) {
+        const want = TYS.items[s.skill] * s.minutes / TYS.minutes[s.skill];
+        if (Math.abs(n - want) > 1.5) warn(w, `${n} items; ${TYS.items[s.skill]} items in ${TYS.minutes[s.skill]} minutes in the TYS makes about ${Math.round(want)} in ${s.minutes}`);
+      }
+    } else {
+      if (!s.rubric) err(w, `${s.skill} needs a rubric for self-assessment`);
+      if (s.parts.some(p => "items" in p)) { err(`${w}.parts`, `${s.skill} parts are tasks`); return; }
+      const sum = s.parts.reduce((x, p) => x + p.points, 0);
+      if (sum !== s.points) err(`${w}.parts`, `the parts' points add up to ${sum}, not ${s.points}`);
+      if (!cx.examples && !same(s.parts.map(p => p.points), TYS.tasks[s.skill])) warn(`${w}.parts`, `points ${s.parts.map(p => p.points).join(" + ")}; the TYS gives ${TYS.tasks[s.skill].join(" + ")}`);
+      let secs = 0;
+      s.parts.forEach((p, pi) => {
+        const pw = `${w}.parts[${pi}]`;
+        if (p.table) p.table.rows.forEach((r, k) => { if (r.length !== p.table.head.length) err(`${pw}.table.rows[${k}]`, `${r.length} cells for ${p.table.head.length} headings`); });
+        if (s.skill === "writing") {
+          if (!p.words) err(pw, "a writing task needs words, the length to aim for");
+          else if (p.words[0] >= p.words[1]) err(`${pw}.words`, "the range must go up");
+          if (p.questions || p.prep !== undefined || p.speak !== undefined) err(pw, "questions, prep and speak are for speaking parts");
+          if (!p.prompt) err(pw, "a writing task needs its prompt in Turkish");
+          if (p.words && !cx.examples) p.models.forEach((m, k) => { const n = words(m); if (n < p.words[0] || n > p.words[1] * 1.15) warn(`${pw}.models[${k}]`, `${n} words; the task asks for ${p.words[0]}–${p.words[1]}`); });
+        } else {
+          if (p.words || p.table) err(pw, "words and table are for writing tasks");
+          if (p.speak === undefined) err(pw, "a speaking part needs speak, the seconds to answer");
+          if (!p.questions && !p.prompt) err(pw, "a speaking part needs questions (interactive) or a prompt (topic card)");
+          if (p.questions && p.models.length !== p.questions.length) err(`${pw}.models`, "one model answer per question");
+          if (p.questions && p.prep !== undefined) err(`${pw}.prep`, "questions are answered at once; prep is for a topic card");
+          secs += (p.questions ? p.questions.length : 1) * (p.speak || 0) + (p.prep || 0);
+        }
+      });
+      if (s.skill === "speaking" && !close(secs, s.minutes * 60, 30)) warn(`${w}.minutes`, `${s.minutes} minutes, but the parts' prep and speak times add up to ${secs} seconds`);
+    }
+  });
+  const levels = v.scale.bands.map(b => b.level);
+  if (!same(levels, ["B2", "C1", "C2"].filter(l => levels.includes(l)))) err(`${file} › scale.bands`, "bands go B2, C1, C2, in order");
+  v.scale.bands.forEach((b, i) => { if (i && b.min <= v.scale.bands[i - 1].min) err(`${file} › scale.bands[${i}].min`, "each band starts higher than the one before"); });
+  if (v.scale.skillMin > Math.min(...v.sections.map(s => s.points))) err(`${file} › scale.skillMin`, "above a section's points");
+  if (indexAnswers.length >= 3 && new Set(indexAnswers).size === 1) warn(file, `every mcq and gap answer is option ${indexAnswers[0] + 1}: options aren't shuffled in a practice test, so spread the right answers`);
+}
+
 function checkFlashFile(rec, cx) {
   const { v, file } = rec;
   if (rec.range && !same(v.range, rec.range)) err(file, `range ${JSON.stringify(v.range)} should be ${JSON.stringify(rec.range)} to match the file name`);
@@ -1265,6 +1440,7 @@ function runExamples() {
     if (kind === "flashcards") checkFlashFile({ v, file: where }, cx);
     if (kind === "regions") checkRegions({ v, file: where }, cx);
     if (kind === "timeline") checkTimeline({ v, file: where }, cx);
+    if (kind === "exam") checkExam({ v, file: where }, cx);
   }
   if (!n) err(label, "no ```json <kind> examples found");
   return n;
@@ -1352,9 +1528,10 @@ if (opt.examples) {
   for (const rec of C.culture.values()) if (rec.ok) checkCulture(rec, cx);
   if (C.regions && C.regions.ok) checkRegions(C.regions, cx);
   if (C.timeline && C.timeline.ok) checkTimeline(C.timeline, cx);
+  for (const rec of C.exams.values()) if (rec.ok) checkExam(rec, cx);
   for (const f of deferred) f();
   const nEx = [...C.lessons.values()].reduce((n, l) => n + (l.ok ? l.v.exercises.length : 0), 0);
-  summary = `registry ${REG.levels.size} levels, ${REG.units.size} units, ${REG.points.size} grammar points · content ${C.levels.size} levels, ${C.units.size} units, ${C.lessons.size} lessons (${nEx} exercises), ${C.grammar.size} guides, ${C.culture.size} interludes, ${C.cards.size} cards, ${C.timeline && C.timeline.ok ? C.timeline.v.events.length : 0} timeline events, ${C.regions && C.regions.ok ? C.regions.v.provinces.length : 0} provinces · morphology engine: ${MSTAT.cells} cells of ${MSTAT.conjChecked}/${MSTAT.conj} conjugate exercises, ${MSTAT.morphChecked}/${MSTAT.morph} morph exercises`;
+  summary = `registry ${REG.levels.size} levels, ${REG.units.size} units, ${REG.points.size} grammar points · content ${C.levels.size} levels, ${C.units.size} units, ${C.lessons.size} lessons (${nEx} exercises), ${C.grammar.size} guides, ${C.culture.size} interludes, ${C.cards.size} cards, ${C.timeline && C.timeline.ok ? C.timeline.v.events.length : 0} timeline events, ${C.regions && C.regions.ok ? C.regions.v.provinces.length : 0} provinces, ${C.exams.size} practice test${C.exams.size === 1 ? "" : "s"} · morphology engine: ${MSTAT.cells} cells of ${MSTAT.conjChecked}/${MSTAT.conj} conjugate exercises, ${MSTAT.morphChecked}/${MSTAT.morph} morph exercises`;
   if (opt.vocab) runVocab();
   let batchLines = [];
   if (opt.batch) batchLines = runBatch(opt.batch);

@@ -22,7 +22,7 @@
     <link rel="canonical" href="https://dailyturkish.app/turkishlesson.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Daily Turkish">
-    <meta property="og:title" content="Learn Turkish, A1 to C2">
+    <meta property="og:title" content="Turkish lesson · Daily Turkish">
     <meta property="og:description" content="Short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a 1,000-word flashcard deck.">
     <meta property="og:url" content="https://dailyturkish.app/turkishlesson.html">
 
@@ -50,7 +50,7 @@
       .at-hdr .at-logo { width: 28px; height: 28px; flex: none; display: block; }
       .at-hdr .at-name { font-size: 18px; line-height: 1; letter-spacing: -0.02em; }
       .at-hdr .at-d { color: #e34b4f; font-weight: 600; }
-      .at-hdr .at-t { color: #242424; font-weight: 750; margin-left: 0.22em; }
+      .at-hdr .at-t { color: #242424; font-weight: 750; }
       .at-hdr .at-tabs { display: flex; flex: 1; align-self: stretch; gap: 8px; }
       .at-hdr .at-push { margin-left: auto; }   /* About, My Profile and Settings sit on the right */
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
@@ -86,6 +86,13 @@
         .at-hdr .at-set { min-width: 34px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 5px; right: 5px; }
       }
+      @media (max-width: 359px) {   /* 320 px (QA-2): the six tabs fit without a sideways scroll, each at least 32 px wide */
+        .at-hdr { --at-m: 8px; }
+        .at-hdr .at-home { min-width: 40px; margin-left: -6px; }
+        .at-hdr .at-tab { padding: 0 3px; min-width: 32px; font-size: 12px; }
+        .at-hdr .at-set { min-width: 32px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 3px; right: 3px; }
+      }
     </style>
     <style>
       /* Lesson player: the hub's tokens (turkish.html), a single centred column, the answer dock pinned to the bottom. */
@@ -114,6 +121,8 @@
       .trk-soon small { font-size: .85em; }
       .trk-nw { white-space: nowrap; }
       [hidden] { display: none !important; }
+      /* links inside running text carry an underline as well as their colour (WCAG 1.4.1, QA-2) */
+      main p a:not(.btn), .note a, .help a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; text-decoration-color: rgb(40 122 158 / .55); }
       .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       button { font: inherit; }
 
@@ -181,7 +190,7 @@
       .goal { margin-top: 8px; font-size: 16px; color: var(--body); }
       .tip { margin-top: 20px; border: 1px solid var(--lv-line); background: var(--lv-tint); border-radius: var(--r); padding: 14px 16px; font-size: 15px; color: var(--ink); }
       .tip .tip-t { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--lv-dark); margin-bottom: 6px; }
-      .tip .more { display: inline-block; margin-top: 8px; font-size: 14px; font-weight: 600; }
+      .tip .more { display: inline-block; margin-top: 8px; font-size: 14px; font-weight: 600; color: var(--blue-dark); }
       .words { margin-top: 22px; }
       .words h2, .sec-t { font-size: 13px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
       .wlist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
@@ -288,7 +297,7 @@
       .ans.almost { border-color: var(--amber); background: var(--amber-wash); }
       .ans.wrong { border-color: var(--bad); background: var(--bad-wash); }
       .prompt { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
-      .prompt p { font-size: 21px; line-height: 1.4; color: var(--ink); font-weight: 500; padding-top: 2px; }
+      .prompt p { font-size: 21px; line-height: 1.4; color: var(--ink); font-weight: 500; padding-top: 2px; min-width: 0; overflow-wrap: anywhere; }   /* a single long word (C2 unit 6) wraps at 360 px */
       @media (max-width: 599px) { .prompt p { font-size: 19px; } }
 
       /* Turkish letter bar */
@@ -310,12 +319,13 @@
       /* cloze */
       .cloze { font-size: 22px; line-height: 2.1; color: var(--ink); margin-bottom: 6px; }
       .cz-w { white-space: nowrap; }
+      .cz-w:has(.bopts) { white-space: normal; }   /* an option group too wide to sit beside the letters it joins may go to the next line */
       .blank { font: inherit; font-size: 20px; color: var(--ink); border: 0; border-bottom: 2px solid var(--blue); border-radius: 4px 4px 0 0; background: var(--blue-tint); padding: 0 4px; height: 38px; text-align: center; min-width: 3ch; max-width: 100%; vertical-align: baseline; }
       .blank:focus { outline: none; background: var(--blue-wash); }
       .blank.right { border-color: var(--ok); background: var(--ok-wash); }
       .blank.almost { border-color: var(--amber); background: var(--amber-wash); }
       .blank.wrong { border-color: var(--bad); background: var(--bad-wash); }
-      .bopts { display: inline-flex; gap: 4px; vertical-align: baseline; padding: 2px; border-radius: 8px; background: var(--panel); border: 1px dashed var(--faint); }
+      .bopts { display: inline-flex; flex-wrap: wrap; max-width: calc(100% - 1.5ch); gap: 4px; vertical-align: baseline; padding: 2px; border-radius: 8px; background: var(--panel); border: 1px dashed var(--faint); }   /* long options wrap inside the group at 360 px (QA-2) */
       .bopt { position: relative; display: inline-flex; }
       .bopt input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
       .bopt span { display: inline-grid; place-items: center; min-width: 44px; height: 40px; padding: 0 10px; border-radius: 6px; font-size: 19px; line-height: 1; cursor: pointer; color: var(--body); border: 1px solid transparent; }
@@ -343,7 +353,7 @@
       .line.right .tile { border-color: var(--ok-line); background: var(--ok-wash); }
       .line.wrong .tile { border-color: var(--bad-line); background: var(--bad-wash); }
       .tile:disabled { cursor: default; }
-      .build { margin: -6px 0 16px; font-size: 22px; font-weight: 600; color: var(--ink); min-height: 33px; letter-spacing: .01em; }
+      .build { margin: -6px 0 16px; font-size: 22px; font-weight: 600; color: var(--ink); min-height: 33px; letter-spacing: .01em; overflow-wrap: anywhere; }
       @keyframes pop { from { transform: scale(.92); opacity: .6; } to { transform: none; opacity: 1; } }
 
       /* match */
@@ -419,7 +429,7 @@
       .fb-i svg { color: #fff; }
       .fb p, .fb .fb-l { margin-top: 6px; font-size: 14.5px; color: var(--ink); line-height: 1.45; }
       .fb .lbl { display: block; font-size: 12px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 1px; }
-      .fb .big-a { display: flex; align-items: center; gap: 8px; font-size: 16.5px; font-weight: 600; }
+      .fb .big-a { display: flex; align-items: center; gap: 8px; font-size: 16.5px; font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
       .fb .trk-say { width: 32px; height: 32px; }
       .fb .note { color: var(--amber); font-weight: 600; }
       .fb ul { margin: 4px 0 0; padding-left: 18px; }
@@ -454,6 +464,106 @@
       .dlg p { margin-top: 8px; font-size: 15px; }
       .dlg .acts { margin-top: 18px; justify-content: flex-end; }
 
+      /* the TYS practice test (?exam=, PROJECT.md 6.8): start card, sections, countdown, recordings, rubric, results. Site blue: it belongs to no level. */
+      .xsec { flex: none; font-size: 12px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--blue-dark); }
+      .count.warn { color: var(--warm); font-weight: 650; }
+      .x-secs { list-style: none; margin: 22px 0 0; padding: 0; border: 1px solid var(--line); border-radius: var(--r); }
+      .x-secs li { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 14px; }
+      .x-secs li + li { border-top: 1px solid var(--line); }
+      .x-sn { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--blue-wash); color: var(--blue-dark); font-size: 13px; font-weight: 650; }
+      .x-st { display: flex; flex-direction: column; line-height: 1.3; min-width: 0; }
+      .x-st b { color: var(--ink); font-weight: 600; }
+      .x-st small, .x-sp { font-size: 13px; color: var(--muted); }
+      .x-note { margin-top: 18px; border: 1px solid var(--line); background: var(--panel); border-radius: var(--r); padding: 12px 14px; font-size: 14px; }
+      .x-note b { color: var(--ink); }
+      .x-untimed { display: flex; gap: 10px; align-items: flex-start; margin-top: 18px; cursor: pointer; }
+      .x-untimed input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--blue); flex: none; }
+      .x-untimed span { display: flex; flex-direction: column; line-height: 1.35; }
+      .x-untimed b { color: var(--ink); font-weight: 600; }
+      .x-untimed small { font-size: 13px; color: var(--muted); }
+      .x-lede { margin-top: 14px; font-size: 16px; }
+      .x-tabs { display: flex; gap: 8px; margin: 0 0 18px; overflow-x: auto; }
+      .x-tab { display: flex; flex-direction: column; align-items: flex-start; min-height: 48px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); font-size: 14px; font-weight: 600; line-height: 1.25; text-align: left; cursor: pointer; flex: none; }
+      .x-tab small { font-size: 12px; font-weight: 500; color: var(--muted); }
+      .x-tab[aria-selected="true"] { border-color: var(--blue); background: var(--blue-tint); }
+      .x-tab:disabled { cursor: default; opacity: .55; }
+      .x-task { font-size: 16px; color: var(--ink); margin: 0 0 14px; }
+      .x-gap { display: inline-flex; align-items: baseline; gap: 5px; min-width: 6.5em; padding: 0 6px; border-bottom: 2px solid var(--blue); border-radius: 4px 4px 0 0; background: var(--blue-tint); }
+      .x-gn { font-size: 12px; font-weight: 700; color: var(--blue-dark); font-variant-numeric: tabular-nums; }
+      .x-gw { font-weight: 600; }
+      .x-q legend, .x-aq { display: flex; gap: 10px; align-items: flex-start; }
+      .x-n { flex: none; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; background: var(--ink); color: #fff; display: inline-grid; place-items: center; font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; }
+      .opts.x-row { grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); }
+      .opts.x-row .opt { justify-content: center; min-height: 48px; }
+      .x-rec { display: flex; align-items: center; gap: 12px; margin: 4px 0 20px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+      .x-rt { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.35; }
+      .x-rt b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+      .x-rt span { font-size: 13.5px; color: var(--muted); }
+      .x-dot { flex: none; width: 14px; height: 14px; border-radius: 50%; background: var(--faint); display: grid; place-items: center; }
+      .x-rec.on { border-color: var(--blue); background: var(--blue-tint); }
+      .x-rec.on .x-dot { background: var(--blue); animation: x-pulse 1.2s ease-in-out infinite; }
+      .x-rec.done .x-dot { width: 22px; height: 22px; background: var(--ok); color: #fff; }
+      .x-rec.done .x-dot svg { width: 14px; height: 14px; }
+      @keyframes x-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgb(40 122 158 / .45); } 50% { box-shadow: 0 0 0 8px rgb(40 122 158 / 0); } }
+      .x-prompt { margin: 0 0 14px; border-left: 3px solid var(--blue-wash); padding: 2px 0 2px 16px; color: var(--ink); font-size: 16.5px; line-height: 1.55; }
+      .x-table { border-collapse: collapse; margin: 0 0 16px; font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums; }
+      .x-table caption { text-align: left; font-size: 13.5px; color: var(--muted); padding-bottom: 6px; }
+      .x-table th, .x-table td { border-bottom: 1px solid var(--line); padding: 7px 0 7px 18px; text-align: right; }
+      .x-table th[scope="row"], .x-table thead th:first-child { text-align: left; font-weight: 500; padding-left: 0; }
+      .x-table thead th { font-size: 13px; font-weight: 650; color: var(--muted); }
+      .ans.x-ta { min-height: 190px; }
+      .x-wc { margin-top: 8px; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+      .x-wc.ok { color: var(--ok); }
+      .x-confirm { font-size: 14.5px; color: var(--ink); }
+      .x-qn { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+      .x-ask, .x-card { border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; font-size: 20px; line-height: 1.45; color: var(--ink); background: #fff; box-shadow: 0 2px 0 var(--line); }
+      .x-card { font-size: 18px; }
+      .x-card p + p { margin-top: 8px; }
+      .x-cl { display: block; font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+      .x-timer { display: flex; align-items: baseline; justify-content: center; gap: 14px; min-height: 76px; margin-top: 24px; padding: 16px; border-radius: 12px; background: var(--panel); color: var(--muted); }
+      .x-timer.on { background: var(--blue-tint); color: var(--blue-dark); }
+      .x-tl { font-size: 14px; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
+      .x-tn { font-size: 34px; font-weight: 650; line-height: 1.2; color: var(--ink); font-variant-numeric: tabular-nums; }
+      .x-h { font-size: 24px; line-height: 1.25; margin-bottom: 16px; }
+      .x-mine { border: 1px solid var(--line); background: var(--panel); border-radius: var(--r); padding: 12px 14px; color: var(--ink); font-size: 16px; overflow-wrap: anywhere; }
+      .x-qs { margin: 0 0 8px; padding-left: 22px; color: var(--ink); font-size: 16.5px; }
+      .x-help { font-size: 14px; color: var(--muted); margin-top: 8px; }
+      .x-mt { margin-top: 24px; }
+      .x-band .opt { align-items: flex-start; min-height: 0; padding: 10px 14px; font-size: 15px; line-height: 1.4; }
+      .x-band legend { font-size: 16px; }
+      .x-res .end-sub { font-variant-numeric: tabular-nums; }
+      .x-skills { list-style: none; margin: 24px 0 0; padding: 0; border: 1px solid var(--line); border-radius: var(--r); text-align: left; }
+      .x-skills li { display: grid; grid-template-columns: 9.5em minmax(0, 1fr) 5.5em; gap: 14px; align-items: center; padding: 12px 16px; }
+      .x-skills li + li { border-top: 1px solid var(--line); }
+      .x-sk { display: flex; flex-direction: column; color: var(--ink); font-weight: 600; line-height: 1.3; }
+      .x-sk small { font-size: 12.5px; font-weight: 500; color: var(--muted); }
+      .x-bar { position: relative; height: 10px; border-radius: 5px; background: var(--line); }
+      .x-bar i { position: absolute; inset: 0 auto 0 0; border-radius: 5px; background: var(--blue); }
+      .x-bar b { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: var(--ink); opacity: .35; }
+      .x-skills li.weak .x-bar i { background: var(--warm); }
+      .x-pt { text-align: right; font-size: 18px; font-weight: 650; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .x-pt small { font-size: 13px; font-weight: 500; color: var(--muted); }
+      .x-skills li.na .x-pt { color: var(--muted); }
+      @media (max-width: 599px) { .x-skills li { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; } .x-bar { grid-column: 1 / -1; grid-row: 2; } }
+      .x-caveat { margin-top: 16px; font-size: 13.5px; color: var(--muted); text-align: left; }
+      .x-caveat b { color: var(--body); }
+      .x-rev, .x-ans { margin-top: 28px; text-align: left; }
+      .x-rev h2, .x-ans h2 { font-size: 19px; margin-bottom: 10px; }
+      .x-rev h3 { font-size: 15px; margin: 14px 0 6px; }
+      .x-links { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 15px; }
+      .x-links a { font-weight: 600; }
+      .x-ah { font-size: 15px; margin: 16px 0 8px; }
+      .x-ai { margin: 0 0 18px; }
+      .x-aq { font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+      .x-ai.right .x-n { background: var(--ok); }
+      .x-ai.wrong .x-n { background: var(--bad); }
+      .x-you { margin-left: auto; padding-left: 8px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+      .x-none { margin-top: 6px; font-size: 14px; color: var(--bad); }
+      .x-script { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 12px; margin: 0 0 14px; color: var(--ink); font-size: 15.5px; }
+      .x-script dt { padding-top: 2px; font-size: 13px; font-weight: 650; color: var(--muted); }
+      .x-script dd { margin: 0; }
+      .x-marks { margin: 8px 0; font-size: 13.5px; color: var(--muted); }
+      .x-ans .model { margin-top: 10px; }
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { transition: none !important; animation: none !important; }
       }
@@ -475,7 +585,7 @@
       [data-lvl="b1"] { --lv: #2b7d50; --lv-dark: #1d5c3a; --lv-wash: rgb(43 125 80 / 12%); --lv-tint: rgb(43 125 80 / 5%); --lv-line: rgb(43 125 80 / 35%); }
       [data-lvl="b2"] { --lv: #c2462c; --lv-dark: #9a3420; --lv-wash: rgb(194 70 44 / 11%); --lv-tint: rgb(194 70 44 / 5%); --lv-line: rgb(194 70 44 / 35%); }
       [data-lvl="c1"] { --lv: #6c3f9e; --lv-dark: #51307a; --lv-wash: rgb(108 63 158 / 11%); --lv-tint: rgb(108 63 158 / 5%); --lv-line: rgb(108 63 158 / 35%); }
-      [data-lvl="c2"] { --lv: #b8861a; --lv-dark: #7d5b10; --lv-wash: rgb(184 134 26 / 14%); --lv-tint: rgb(184 134 26 / 6%); --lv-line: rgb(184 134 26 / 40%); --lv-on: #2b2006; }
+      [data-lvl="c2"] { --lv: #b8861a; --lv-dark: #7d5b10; --lv-wash: rgb(184 134 26 / 14%); --lv-tint: rgb(184 134 26 / 6%); --lv-line: rgb(184 134 26 / 40%); --lv-on: #fff; }
       .lv-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: var(--lv-wash); color: var(--lv-dark); font-size: 11.5px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; }
       /* a tile of the wall: laid (unit done) in its level's colour, glazed gold once the unit is mastered */
       .tw-t { position: relative; display: block; aspect-ratio: 1; border-radius: 3px; background: #f3f2ee; box-shadow: inset 0 0 0 1px #e4e3df; }
@@ -493,7 +603,7 @@
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="/turkish.html" aria-label="Daily Turkish, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#e34b4f"/><circle cx="76" cy="55" r="17" fill="#fff"/><circle cx="83" cy="49" r="16" fill="#e34b4f"/><path d="m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z" fill="#fff"/><path d="M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 90v46" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="3"/><path d="M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="2.5"/></svg><span class="at-name"><span class="at-d">Daily</span><span class="at-t">Turkish</span></span></a>
+        <a class="at-home" href="/turkish.html" aria-label="Daily Turkish, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#e34b4f"/><circle cx="76" cy="55" r="17" fill="#fff"/><circle cx="83" cy="49" r="16" fill="#e34b4f"/><path d="m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z" fill="#fff"/><path d="M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 90v46" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="3"/><path d="M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="2.5"/></svg><span class="at-name"><span class="at-d">Daily</span> <span class="at-t">Turkish</span></span></a>
         <nav class="at-tabs" aria-label="Turkish course">
           <a class="at-tab" href="/turkish.html" aria-current="page">Course</a>
           <a class="at-tab" href="/turkishguide.html">Grammar</a>
@@ -510,6 +620,7 @@
         <button type="button" class="icon-btn" id="quit" aria-label="Quit">
           <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
+        <span class="xsec" id="xsec" hidden></span>
         <div class="track" id="track" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0"><i id="fill"></i></div>
         <span class="combo" id="combo" aria-hidden="true" hidden></span>
         <span class="xpr" id="xpr" aria-hidden="true" hidden></span>
@@ -545,6 +656,7 @@
            ?review=a1-u01      a unit review: 15 exercises from the unit, half from the learner's mistakes
            ?test=a1-u03        "jump here": 20 exercises from the earlier lessons not done yet; 80% marks them done
            ?practice=mistakes  up to 15 exercises answered wrongly before, oldest first
+           ?exam=tys-1         the TYS practice test: four timed sections, its own flow (section 8, PROJECT.md 6.8)
          Every exercise type has a renderer (section 4) returning { ready, check, key, focus }; the flow (section 3)
          asks it to check, records the first try, re-queues wrong answers and shows the feedback dock. */
       var $ = function (id) { return document.getElementById(id); };
@@ -708,7 +820,7 @@
         return T.data.get(id).then(function (L) {
           S.lesson = L;
           S.items = L.exercises.filter(usable).map(function (ex) { return item(ex, meta); });
-          document.title = L.title + " · Learn Turkish";
+          document.title = L.title + " · Daily Turkish";
           var rec = course.lessons[id];
           var head = '<p class="kicker">' + esc(unitLabel(u)) + " · Lesson " + meta.num + " of " + u.lessons.length + "</p><h1>" + esc(L.title) + '</h1><p class="goal">' + esc(L.goal) + "</p>";
           var tip = "";
@@ -720,7 +832,7 @@
           var words = L.vocab && L.vocab.length ? '<section class="words" aria-labelledby="h-words"><h2 id="h-words">New words</h2><ul class="wlist">' + L.vocab.map(function (v) {
             var rank = v.card ? +v.card.slice(3) : 0;   // fc-0042 → 42: Browse opens the row of a rank searched on its own
             return '<li>' + sayHtml(v.tr) + '<span class="w-txt"><span class="w-tr" lang="tr">' + esc(v.tr) + '</span><span class="w-en">' + esc(v.en) + "</span></span>" +
-              (rank ? '<a class="w-card" href="' + P.cards + "?view=browse&amp;q=" + rank + '" aria-label="' + esc(v.tr) + ' in the flashcards">Card</a>' : "") + "</li>";
+              (rank ? '<a class="w-card" href="' + P.cards + "?view=browse&amp;q=" + rank + '" aria-label="Card: ' + esc(v.tr) + ' in the flashcards">Card</a>' : "") + "</li>";
           }).join("") + "</ul></section>" : "";
           var repeat = rec ? (rec.via === "test" ? "You skipped this lesson with a test. Doing it now earns full XP." : "You've done this lesson before (best " + pct(rec.best) + "). A repeat earns half the XP.") : "";
           start(head + tip + words, plural(S.items.length, "exercise") + (repeat ? " · " + repeat : ""), "Start the lesson");
@@ -747,7 +859,7 @@
           var fromMistakes = chosen.length;
           chosen = chosen.concat(roundRobin(byLesson.map(function (l) { return l.filter(function (c) { return !seen[c.ex.id]; }); }), C.REVIEW_SIZE - chosen.length));
           S.items = shuffle(chosen).map(function (c) { return item(c.ex, c.meta); });
-          document.title = "Review: " + u.title + " · Learn Turkish";
+          document.title = "Review: " + u.title + " · Daily Turkish";
           var rec = course.units[u.id] || {};
           start('<p class="kicker">' + esc(unitLabel(u)) + ' · Review</p><h1>Review: ' + esc(u.title) + '</h1><p class="goal">' +
             plural(S.items.length, "exercise") + " from the unit's " + plural(u.lessons.length, "lesson") + (fromMistakes ? ", " + fromMistakes + " of them from your mistakes" : "") +
@@ -774,7 +886,7 @@
           var units = [];
           ids.forEach(function (id) { var x = S.flat.unit[S.flat.lesson[id].unit]; if (units.indexOf(x) < 0) units.push(x); });
           var n = S.items.length, need = Math.ceil(C.PASS * n - 1e-9);
-          document.title = "Jump to " + unitLabel(u) + " · Learn Turkish";
+          document.title = "Jump to " + unitLabel(u) + " · Daily Turkish";
           start('<p class="kicker">Jump to ' + esc(unitLabel(u)) + '</p><h1>Jump here: ' + esc(u.title) + '</h1><p class="goal">' +
             plural(n, "exercise") + " from " + esc(unitsLabel(units)) + ". Get " + need + " right on the first try (" + pct(C.PASS) + ") and the " +
             plural(ids.length, "lesson") + " before this unit are marked done, so you can start here.</p>",
@@ -799,7 +911,7 @@
         return batch(0).then(function () {
           if (!chosen.length) return message({ kicker: "Practice", title: "Nothing to practise here", text: "Your mistakes are all listening exercises, and this device can't play them.", notice: speechNotice(S.skipped) });
           S.items = chosen.map(function (c) { return item(c.ex, c.meta); });
-          document.title = "Practise your mistakes · Learn Turkish";
+          document.title = "Practise your mistakes · Daily Turkish";
           start('<p class="kicker">Practice</p><h1>Practise your mistakes</h1><p class="goal">' + plural(S.items.length, "exercise") + " you got wrong before, oldest first" +
             (due.length > S.items.length ? " (" + due.length + " in all)" : "") + ". Each one you get right on the first try counts toward clearing it.</p>",
             "Practice earns 1 XP per exercise right on the first try.", "Start practising");
@@ -915,6 +1027,7 @@
       };
       function primary() {
         if ($("quit-dlg").open) return;
+        if (S.mode === "exam") return xGo();
         if (S.phase === "start") return begin();
         if (S.phase === "feedback") return next();
         if (S.phase !== "answer" || !S.view || go.hidden || !S.view.ready()) return;
@@ -968,11 +1081,13 @@
       // A result: { verdict: correct | almost | wrong | partly, note?, noteHtml?, answer?: { text, lang, html?, label? }, why?: Rich[], explain?, meaning?, extra?, got? }
       var RENDER = {};
 
+      // an option's text: English options are Rich (a Turkish word inside them in italics, lang="tr"), Turkish ones plain (QA-2)
+      function optHtml(text, lang) { return lang === "en" ? rich(text) : esc(text); }
       // radio options, shuffled: the content usually lists the right answer first
       function options(name, opts, lang) {
         var ord = shuffle(range(opts.length));
         return { ord: ord, html: '<div class="opts" role="radiogroup">' + ord.map(function (i, k) {
-          return '<label class="opt"><input type="radio" name="' + name + '" value="' + i + '"><span class="k" aria-hidden="true">' + (k + 1) + '</span><span class="ot"' + langAttr(lang) + ">" + esc(opts[i]) + "</span></label>";
+          return '<label class="opt"><input type="radio" name="' + name + '" value="' + i + '"><span class="k" aria-hidden="true">' + (k + 1) + '</span><span class="ot"' + langAttr(lang) + ">" + optHtml(opts[i], lang) + "</span></label>";
         }).join("") + "</div>" };
       }
       function wireOptions(box, name) {
@@ -1038,7 +1153,7 @@
             var s = sel(), ok = s === ex.answer;
             markOptions(box, name, ex.answer, s);
             box.querySelectorAll(".ctx-en").forEach(function (p) { p.hidden = false; });
-            return { verdict: ok ? "correct" : "wrong", answer: ok ? null : { text: ex.options[ex.answer], lang: ex.optionsLang },
+            return { verdict: ok ? "correct" : "wrong", answer: ok ? null : { text: ex.options[ex.answer], lang: ex.optionsLang, html: optHtml(ex.options[ex.answer], ex.optionsLang) },
                      why: !ok && ex.why && ex.why[String(s)] ? [ex.why[String(s)]] : null, explain: ex.explain };
           }
         };
@@ -1359,7 +1474,7 @@
               var s = sels[i](), ok = s === q.answer, fs = box.querySelectorAll(".rq")[i], p = fs.querySelector(".rq-ex");
               markOptions(box, names[i], q.answer, s);
               if (ok) got += 1;
-              if (q.explain || !ok) { p.innerHTML = (ok ? "" : "<b>Answer:</b> <span" + langAttr(q.optionsLang) + ">" + esc(q.options[q.answer]) + "</span>. ") + (q.explain ? rich(q.explain) : ""); p.hidden = false; outLinks(p); }
+              if (q.explain || !ok) { p.innerHTML = (ok ? "" : "<b>Answer:</b> <span" + langAttr(q.optionsLang) + ">" + optHtml(q.options[q.answer], q.optionsLang) + "</span>. ") + (q.explain ? rich(q.explain) : ""); p.hidden = false; outLinks(p); }
             });
             var tr = box.querySelector("#trans");
             if (tr) tr.hidden = false;
@@ -1569,6 +1684,517 @@
         if (p && !touch) p.focus({ preventScroll: true });
       }
 
+      // ───────────── 8. the TYS practice test (?exam=tys-1, PROJECT.md 5.13, 6.8) ─────────────
+      // Its own flow, not the lesson's: four sections, timed, with no feedback until the end; recordings played once;
+      // writing and speaking marked by the learner against model answers and a rubric; then a score per skill and an
+      // indicative level. It borrows this page's options, passage, text box, letter bar, models, dock and end screen.
+      // Nothing is saved or sent: no XP, streak, mistakes list or analytics.
+      var XC = { WEAK: 0.6, LAST: 60, LETTERS: "ABCDEF", TYS: "https://tys.yee.org.tr/" };   // weak: under 60%; LAST: the countdown's last minute
+      var SKILL = { reading: "Reading", listening: "Listening", writing: "Writing", speaking: "Speaking" };
+      var X = null;
+
+      MODES.exam = function () {
+        if (!T.RE.exam || !T.RE.exam.test(S.target || "")) return message({ title: "There's no practice test here", text: "This address doesn't point to a practice test." });
+        return T.data.get(S.target).then(xStart);
+      };
+
+      function mmss(s) { s = Math.max(0, Math.ceil(s - 1e-6)); return Math.floor(s / 60) + ":" + (s % 60 < 10 ? "0" : "") + (s % 60); }
+      function minText(m) { return (m % 1 ? (Math.floor(m) || "") + "½" : m) + " min"; }
+      function one(x) { return (Math.round(x * 10) / 10).toFixed(1).replace(/\.0$/, ""); }
+      function wordCount(s) { return (String(s).match(/[\p{L}\d][\p{L}\d'’-]*/gu) || []).length; }
+      function xSay(t) { var el = $("x-live"); if (!el || !t) return; el.textContent = ""; setTimeout(function () { el.textContent = t; }, 60); }
+      function xItems(sc) { return sc.parts.reduce(function (n, p) { return n + (p.items ? p.items.length : 0); }, 0); }
+      function xFacts(sc) {
+        if (sc.skill === "reading") return minText(sc.minutes) + " · " + plural(sc.parts.length, "text") + ", " + plural(xItems(sc), "question");
+        if (sc.skill === "listening") return minText(sc.minutes) + " to answer, plus the recordings · " + plural(sc.parts.length, "recording") + ", " + plural(xItems(sc), "question");
+        if (sc.skill === "writing") return minText(sc.minutes) + " · " + plural(sc.parts.length, "task");
+        return "About " + minText(Math.ceil(sc.minutes)) + " · " + plural(sc.parts.length, "part");
+      }
+      // The disclaimer and the caveat are written here, not in the data, so no test file can leave them out (7.9).
+      function xDisclaimer() {
+        return '<div class="x-note"><p><b>Unofficial practice.</b> Written for this course and not affiliated with, or endorsed by, the Yunus Emre Enstitüsü. ' +
+          'Its texts and questions are our own; only the format follows the official test. Only the official TYS gives a certificate: see <a href="' + XC.TYS + '">tys.yee.org.tr</a>.</p></div>';
+      }
+      function xNoVoice() {
+        var what = "so the listening section is skipped and no overall level can be given.";
+        if (!T.tts.supported()) return "This browser can't read text aloud, " + what;
+        if (!S.voice) return "No Turkish voice was found on this device, " + what + " To add one, install Turkish in your system's text-to-speech settings, then reload the page.";
+        return "Speech is off in your settings, " + what + ' Turn on “Read Turkish aloud” in <a href="' + P.hub + '#settings" data-keep="1">Settings</a> to take it.';
+      }
+      function xOpts(part, it) { return it.type === "tf" ? ["Doğru", "Yanlış"] : it.type === "match" ? part.choices : it.options; }
+      function xVal(it, j) { return it.type === "tf" ? j === 0 : j; }
+      function xLetters(it) { return it.type === "mcq" || it.type === "gap"; }
+      function xSec() { return X.E.sections[X.sec]; }
+
+      // ── start card ──
+      function xStart(E) {
+        X = { E: E, timed: true, sec: -1, part: 0, ans: {}, txt: {}, band: {}, ended: {}, rec: {}, flat: [], tick: null, left: 0, paused: false, last: 0,
+              prep: null, over: false, onZero: null, warnAt: XC.LAST, warned: true, confirm: null, steps: null, step: 0, token: null, goFn: null, tasks: null, ti: 0 };
+        document.title = E.title + " (unofficial practice) · Daily Turkish";
+        if (!$("x-live")) { var lv = document.createElement("p"); lv.className = "sr"; lv.id = "x-live"; lv.setAttribute("aria-live", "polite"); document.body.appendChild(lv); }
+        S.phase = "xstart"; showBar(false);
+        var rows = E.sections.map(function (sc, i) {
+          return '<li><span class="x-sn" aria-hidden="true">' + (i + 1) + '</span><span class="x-st"><b>' + SKILL[sc.skill] + "</b><small>" + esc(xFacts(sc)) + '</small></span><span class="x-sp">' + sc.points + " points</span></li>";
+        }).join("");
+        screen('<div class="start x-start"><p class="kicker">Practice for the TYS · Unofficial</p><h1>' + esc(E.title) + '</h1><p class="goal">' + rich(E.intro) + "</p>" +
+          '<ol class="x-secs" aria-label="The four sections">' + rows + "</ol>" + xDisclaimer() + (S.speech ? "" : '<p class="notice">' + xNoVoice() + "</p>") +
+          '<label class="x-untimed"><input type="checkbox" id="x-untimed"><span><b>No time limit</b><small>The sections won\'t end on their own; the countdowns still show.</small></span></label>' +
+          '<div class="acts"><button type="button" class="btn primary big" id="x-go">Start the test</button><a class="btn ghost" href="' + P.hub + '">Back to the course</a></div>' +
+          '<p class="meta">About ' + E.minutes + " minutes. Your answers stay on this page: nothing is saved or sent.</p></div>");
+        $("x-go").addEventListener("click", function () { X.timed = !$("x-untimed").checked; xBegin(); });
+      }
+      function xBegin() {
+        if (S.speech) T.tts.speak(" ");   // iOS lets speech start only inside a tap; this first, silent one unlocks it
+        S.started = true;
+        $("quit-go").href = P.hub; $("quit-t").textContent = "Quit the practice test?"; $("quit-p").textContent = "Your answers won't be kept.";
+        window.addEventListener("pagehide", function () { T.tts.cancel(); });
+        xNextSection();
+      }
+      function xNextSection() {
+        xStopClock(); X.goFn = null; X.sec += 1; X.part = 0;
+        if (X.sec >= X.E.sections.length) return xAssessIntro();
+        xIntro();
+      }
+
+      // ── a section's card ──
+      function xIntro() {
+        var E = X.E, sc = xSec(), prev = E.sections[X.sec - 1], nx = E.sections[X.sec + 1];
+        var skip = sc.skill === "listening" && !S.speech;
+        S.phase = "xintro"; showBar(false); $("xsec").hidden = true;
+        var note = prev && X.ended[prev.skill] === "time" ? '<p class="notice">Time\'s up for ' + SKILL[prev.skill].toLowerCase() + ". The answers you gave count.</p>" : "";
+        var body = skip ? '<p class="notice">' + xNoVoice() + "</p>" : '<p class="lede x-lede">' + rich(sc.intro) + "</p>";
+        var label = skip ? (nx ? "Go on to " + SKILL[nx.skill].toLowerCase() : "Go on") : "Start " + SKILL[sc.skill].toLowerCase();
+        screen('<div class="start x-intro">' + note + '<p class="kicker">Section ' + (X.sec + 1) + " of " + E.sections.length + "</p><h1>" + SKILL[sc.skill] + "</h1>" +
+          '<p class="goal">' + esc(xFacts(sc)) + " · " + sc.points + " points</p>" + body + '<div class="acts"><button type="button" class="btn primary big" id="x-start">' + esc(label) + "</button></div></div>");
+        $("x-start").addEventListener("click", function () { if (skip) { X.ended.listening = "skipped"; xNextSection(); } else xRun(); });
+        if (!touch) $("x-start").focus({ preventScroll: true });
+      }
+      function xRun() {
+        var sc = xSec();
+        S.phase = "xrun"; X.confirm = null;
+        $("topbar").hidden = false; $("combo").hidden = true; $("xpr").hidden = true;
+        $("xsec").hidden = false; $("xsec").textContent = SKILL[sc.skill];
+        $("count").title = "Time left";
+        if (sc.skill === "speaking") return xSpeakStart(sc);
+        X.flat = [];
+        sc.parts.forEach(function (p) { (p.items || []).forEach(function (it) { X.flat.push({ p: p, it: it }); }); });
+        xClock(sc.minutes * 60, sc.skill !== "listening", function () {
+          if (X.timed) xFinish("time"); else xSay("Time's up. With no time limit, you can carry on.");
+        });
+        xShow();
+      }
+
+      // ── the countdown: a section's, a recording's reading time, or a speaking step's ──
+      function xClock(secs, running, onZero, warnAt) {
+        xStopClock();
+        X.left = secs; X.paused = !running; X.last = Date.now(); X.over = false; X.onZero = onZero;
+        X.warnAt = warnAt || XC.LAST; X.warned = secs <= X.warnAt;
+        X.tick = setInterval(xTick, 250); xTick();
+      }
+      function xStopClock() { if (X && X.tick) { clearInterval(X.tick); X.tick = null; } }
+      function xTick() {
+        var now = Date.now(), dt = (now - X.last) / 1000;
+        X.last = now;
+        if (X.prep != null) {   // a recording's reading time runs instead of the section's
+          if (X.timed) X.prep -= dt;
+          var pe = $("x-prep");
+          if (pe) pe.textContent = mmss(X.prep);
+          if (X.timed && X.prep <= 0) { X.prep = null; xPlay(); }
+        } else if (!X.paused) X.left -= dt;
+        var c = $("count");
+        c.textContent = mmss(X.left);
+        c.classList.toggle("warn", X.left <= X.warnAt);
+        var tn = $("x-tn");
+        if (tn) tn.textContent = mmss(X.left);
+        if (!X.warned && X.left <= X.warnAt && X.left > 0) { X.warned = true; if (X.warnAt === XC.LAST) xSay("One minute left."); }
+        if (X.left <= 0 && !X.over) { X.over = true; if (X.onZero) X.onZero(); }
+      }
+
+      // ── reading, listening and writing: one text or task at a time ──
+      function xShow() {
+        var sc = xSec(), part = sc.parts[X.part], n = sc.parts.length, base = 0;
+        for (var i = 0; i < X.part; i++) base += sc.parts[i].items ? sc.parts[i].items.length : 0;
+        var what = sc.skill === "writing" ? "Task" : sc.skill === "listening" ? "Recording" : "Text";
+        var tabs = n > 1 ? '<div class="x-tabs" role="tablist" aria-label="' + what + 's">' + sc.parts.map(function (p, k) {
+          return '<button type="button" role="tab" class="x-tab" data-p="' + k + '" aria-selected="' + (k === X.part) + '"' + (sc.skill === "listening" && k !== X.part ? " disabled" : "") + ">" +
+            what + " " + (k + 1) + "<small>" + esc(p.kind) + "</small></button>";
+        }).join("") + "</div>" : "";
+        stage.innerHTML = '<div class="ex x-ex" data-skill="' + sc.skill + '">' + tabs + (sc.skill === "writing" ? xTask(part) : xText(sc, part, base)) + "</div>";
+        prep(stage);
+        if (sc.skill === "writing") {
+          var ta = stage.querySelector("textarea");
+          ta.value = X.txt["w" + X.part] || "";
+          xWords(ta);
+          ta.addEventListener("input", function () { X.txt["w" + X.part] = ta.value; xWords(ta); xProgress(); if (X.confirm) { X.confirm = null; xDock(); } });
+        }
+        if (sc.skill === "listening") xRecStart(part);
+        xDock(); xProgress();
+        window.scrollTo(0, 0);
+        var h = stage.querySelector(".instr");
+        if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
+      }
+      function xText(sc, part, base) {
+        var h = '<div class="ex-head"><p class="instr">' + esc(part.kind) + '</p></div><p class="x-task">' + rich(part.task) + "</p>";
+        if (sc.skill === "reading") h += (part.title ? '<h2 class="rtitle" lang="tr">' + esc(part.title) + "</h2>" : "") +
+          '<div class="passage x-passage">' + xGaps(T.trRich(part.text, { index: S.index }), part, base, function (it, num) { var a = X.ans["reading:" + (num - 1)]; return a != null ? esc(it.options[a]) : ""; }) + "</div>";
+        else h += '<div class="x-rec" id="x-rec" role="status"></div>';
+        return h + part.items.map(function (it, k) { return xItem(sc, part, it, base + k); }).join("");
+      }
+      // Each ___ of a reading text becomes the numbered gap of its gap item; fill(item, number) gives the word shown in it.
+      function xGaps(html, part, base, fill) {
+        var gaps = [];
+        part.items.forEach(function (it, k) { if (it.type === "gap") gaps.push([it, base + k + 1]); });
+        var g = 0;
+        return html.replace(/___/g, function () {
+          var x = gaps[g++] || [null, "?"];
+          return '<span class="x-gap" data-n="' + x[1] + '"><span class="x-gn">' + x[1] + '</span><span class="x-gw">' + (fill && x[0] ? fill(x[0], x[1]) : "") + "</span></span>";
+        });
+      }
+      function xItem(sc, part, it, i) {
+        var key = sc.skill + ":" + i, cur = X.ans[key], letters = xLetters(it);
+        return '<fieldset class="rq x-q" data-k="' + key + '" data-i="' + i + '"><legend><span class="x-n">' + (i + 1) + "</span>" +
+          (it.type === "gap" ? "<span>Gap " + (i + 1) + "</span>" : '<span lang="tr">' + esc(it.q) + "</span>") + "</legend>" +
+          '<div class="opts' + (letters ? "" : " x-row") + '" role="radiogroup">' + xOpts(part, it).map(function (o, j) {
+            var on = cur === xVal(it, j);
+            return '<label class="opt' + (on ? " sel" : "") + '"><input type="radio" name="x' + X.sec + "-" + i + '" value="' + j + '"' + (on ? " checked" : "") + ">" +
+              (letters ? '<span class="k" aria-hidden="true">' + XC.LETTERS[j] + "</span>" : "") + '<span class="ot" lang="tr">' + esc(o) + "</span></label>";
+          }).join("") + "</div></fieldset>";
+      }
+      function xTask(part) {
+        var h = '<div class="ex-head"><p class="instr">' + esc(part.kind) + '</p></div><p class="x-task">' + rich(part.task) + "</p>";
+        if (part.prompt) h += '<div class="x-prompt">' + T.trRich(part.prompt, { index: S.index }) + "</div>";
+        if (part.table) h += xTable(part.table);
+        return h + textArea("tr", "Your text in Turkish", "tall free x-ta") + '<p class="x-wc"></p>';
+      }
+      function xTable(t) {
+        return '<table class="x-table" lang="tr"><caption>' + esc(t.caption) + "</caption><thead><tr>" + t.head.map(function (c) { return '<th scope="col">' + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+          t.rows.map(function (r) { return "<tr>" + r.map(function (c, j) { return j ? "<td>" + esc(c) + "</td>" : '<th scope="row">' + esc(c) + "</th>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>";
+      }
+      function xWords(ta) {
+        var w = xSec().parts[X.part].words, n = wordCount(ta.value), el = stage.querySelector(".x-wc");
+        el.textContent = plural(n, "word") + " · aim for " + w[0] + "–" + w[1];
+        el.classList.toggle("ok", n >= w[0] && n <= w[1]);
+      }
+      function xProgress() {
+        var sc = xSec(), done, total;
+        if (sc.skill === "writing") { total = sc.parts.length; done = sc.parts.filter(function (p, k) { return (X.txt["w" + k] || "").trim(); }).length; }
+        else { total = X.flat.length; done = X.flat.filter(function (f, i) { return X.ans[sc.skill + ":" + i] != null; }).length; }
+        $("fill").style.width = (total ? done / total * 100 : 0).toFixed(1) + "%";
+        $("track").setAttribute("aria-valuenow", total ? (done / total).toFixed(2) : "0");
+        $("track").setAttribute("aria-valuetext", done + " of " + total + (sc.skill === "writing" ? " tasks written" : " questions answered"));
+        return { done: done, total: total };
+      }
+      function xDock() {
+        var sc = xSec(), last = X.part === sc.parts.length - 1, back = X.part > 0 && sc.skill !== "listening";
+        var what = sc.skill === "writing" ? "task" : sc.skill === "listening" ? "recording" : "text", rec = sc.skill === "listening" ? X.rec[X.part] : null;
+        dock.hidden = false; dock.className = "dock" + (back ? " has-left" : "");
+        dockLeft.innerHTML = back ? '<button type="button" class="btn ghost" id="x-back">Back</button>' : "";
+        if (back) $("x-back").addEventListener("click", function () { X.part -= 1; X.confirm = null; xShow(); });
+        fb.innerHTML = X.confirm ? '<p class="x-confirm">' + X.confirm + "</p>" : "";
+        go.hidden = false;
+        go.disabled = !!(rec && rec.state !== "done");
+        go.textContent = !last ? "Next " + what : X.confirm ? "Finish anyway" : "Finish " + SKILL[sc.skill].toLowerCase();
+      }
+      // The dock's main button (primary() hands over to this in exam mode).
+      function xGo() {
+        if (!X) return;
+        if (X.goFn) return X.goFn();
+        if (S.phase !== "xrun") return;
+        var sc = xSec();
+        if (X.part < sc.parts.length - 1) { X.part += 1; X.confirm = null; return xShow(); }
+        if (!X.confirm) {
+          var p = xProgress(), left = p.total - p.done;
+          if (left) {
+            X.confirm = sc.skill === "writing" ? (left === 1 && p.total > 1 ? "One task is still empty." : "Nothing is written yet.") + " Finish the section anyway?"
+              : plural(left, "question is", "questions are") + " still unanswered. A wrong answer costs nothing, so it's worth answering " + (left === 1 ? "it" : "them all") + ".";
+            return xDock();
+          }
+        }
+        xFinish("done");
+      }
+      function xFinish(how) {
+        T.tts.cancel(); X.token = null; X.prep = null;
+        X.ended[xSec().skill] = how;
+        xNextSection();
+      }
+      stage.addEventListener("click", function (e) {
+        if (S.mode !== "exam" || S.phase !== "xrun") return;
+        var t = e.target.closest && e.target.closest(".x-tab");
+        if (!t || t.disabled || +t.dataset.p === X.part) return;
+        X.part = +t.dataset.p; X.confirm = null; xShow();
+      });
+      stage.addEventListener("change", function (e) {
+        if (S.mode !== "exam" || !X) return;
+        var r = e.target, fs = r.closest && r.closest(".x-q, .x-band");
+        if (!fs || r.type !== "radio") return;
+        fs.querySelectorAll(".opt").forEach(function (l) { l.classList.toggle("sel", l.querySelector("input").checked); });
+        if (fs.classList.contains("x-band")) {   // self-assessment: a band for a criterion
+          (X.band[fs.dataset.key] = X.band[fs.dataset.key] || {})[+fs.dataset.c] = +r.value;
+          return xAssessReady();
+        }
+        var i = +fs.dataset.i, f = X.flat[i], j = +r.value;
+        X.ans[fs.dataset.k] = xVal(f.it, j);
+        if (f.it.type === "gap") { var g = stage.querySelector('.x-gap[data-n="' + (i + 1) + '"] .x-gw'); if (g) g.textContent = f.it.options[j]; }
+        xProgress();
+        if (X.confirm) { X.confirm = null; xDock(); }
+      });
+
+      // ── listening: reading time, then the recording, once ──
+      function xRecStart(part) {
+        var rec = X.rec[X.part] || (X.rec[X.part] = { state: "prep" });
+        if (rec.state === "prep") { X.prep = part.prep; X.paused = true; }
+        xRecPanel();
+      }
+      function xRecPanel() {
+        var el = $("x-rec"), rec = X.rec[X.part];
+        if (!el || !rec) return;
+        if (rec.state === "prep") {
+          el.className = "x-rec";
+          el.innerHTML = '<span class="x-dot" aria-hidden="true"></span><div class="x-rt">' + (X.timed
+            ? '<b>The recording starts in <span id="x-prep">' + mmss(X.prep) + "</span></b><span>Read the questions first. It plays once.</span>"
+            : "<b>Read the questions, then play the recording</b><span>It plays once.</span>") + '</div><button type="button" class="btn" id="x-play">' + (X.timed ? "Start now" : "Play") + "</button>";
+          $("x-play").addEventListener("click", function () { X.prep = null; xPlay(); });
+        } else if (rec.state === "play") {
+          el.className = "x-rec on";
+          el.innerHTML = '<span class="x-dot" aria-hidden="true"></span><div class="x-rt"><b>Playing</b><span>Listen carefully: it plays once.</span></div>';
+        } else {
+          el.className = "x-rec done";
+          el.innerHTML = '<span class="x-dot" aria-hidden="true">' + ICON.check + '</span><div class="x-rt"><b>The recording has finished</b><span>Answer the questions, then go on.</span></div>';
+        }
+      }
+      // Sentence by sentence (long utterances stall in some browsers); a dialogue's two speakers get two pitches.
+      function xPlay() {
+        var part = xSec().parts[X.part], rec = X.rec[X.part];
+        if (!rec || rec.state !== "prep") return;
+        rec.state = "play"; X.prep = null; X.paused = true;
+        xRecPanel(); xDock();
+        var who = [];
+        var queue = part.lines ? part.lines.map(function (l) { if (who.indexOf(l.who) < 0) who.push(l.who); return { t: l.tr, pitch: who.indexOf(l.who) ? 0.8 : 1.05 }; })
+          : xSentences(T.plain(part.text)).map(function (t) { return { t: t }; });
+        xSpeakQueue(queue, function () {
+          rec.state = "done"; X.paused = false; X.last = Date.now();
+          xRecPanel(); xDock();
+        });
+      }
+      function xSpeakQueue(queue, then) {
+        var k = 0, token = X.token = {}, rate = store.settings().ttsRate || 0.9;
+        (function step() {
+          if (X.token !== token) return;
+          if (k >= queue.length) { X.token = null; return then(); }
+          var q = queue[k++], done = false, safety = null;
+          var fin = function () { if (done) return; done = true; clearTimeout(safety); setTimeout(step, 300); };
+          var u = T.tts.speak(q.t, { pitch: q.pitch });
+          if (!u) { X.token = null; return then(); }
+          u.onend = fin; u.onerror = fin;
+          safety = setTimeout(fin, 4000 + q.t.length * 120 / rate);   // if a browser never fires end
+        })();
+      }
+      function xSentences(s) { return (s.match(/[^.!?…]+[.!?…]+["”»]?|[^.!?…]+$/g) || [s]).map(function (x) { return x.trim(); }).filter(Boolean); }
+
+      // ── speaking: a question read aloud and a countdown, or a topic card with time to prepare ──
+      function xSpeakStart(sc) {
+        X.steps = [];
+        sc.parts.forEach(function (p, pi) {
+          if (p.questions) p.questions.forEach(function (q, qi) { X.steps.push({ kind: "ask", p: p, pi: pi, qi: qi }); });
+          else { if (p.prep) X.steps.push({ kind: "prep", p: p, pi: pi }); X.steps.push({ kind: "talk", p: p, pi: pi }); }
+        });
+        X.step = 0; xStep();
+      }
+      function xStep() {
+        var st = X.steps[X.step], p = st.p, last = X.step === X.steps.length - 1, nx = X.steps[X.step + 1];
+        $("fill").style.width = (X.step / X.steps.length * 100).toFixed(1) + "%";
+        $("track").setAttribute("aria-valuetext", "Step " + (X.step + 1) + " of " + X.steps.length);
+        var body = st.kind === "ask" ? '<p class="x-qn">Question ' + (st.qi + 1) + " of " + p.questions.length + '</p><div class="x-ask" lang="tr">' + esc(p.questions[st.qi]) + "</div>"
+          : '<div class="x-card"><span class="x-cl">Topic card</span>' + T.trRich(p.prompt, { index: S.index }) + "</div>";
+        stage.innerHTML = '<div class="ex x-ex" data-skill="speaking"><div class="ex-head"><p class="instr" tabindex="-1">' + esc(p.kind) + '</p></div><p class="x-task">' + rich(p.task) + "</p>" + body +
+          '<div class="x-timer" id="x-timer"></div></div>';
+        prep(stage); window.scrollTo(0, 0);
+        stage.querySelector(".instr").focus({ preventScroll: true });
+        dock.hidden = false; dock.className = "dock"; dockLeft.innerHTML = ""; fb.innerHTML = ""; go.hidden = false; go.disabled = false;
+        go.textContent = st.kind === "prep" ? "Start speaking" : last ? "Finish speaking" : nx.pi !== st.pi ? "Next part" : "Next question";
+        X.goFn = xStepNext;
+        var secs = st.kind === "prep" ? p.prep : p.speak;
+        var begin = function () {
+          xClock(secs, true, function () { if (X.timed) xStepNext(); else { xTimerView(); xSay("Time's up. With no time limit, move on when you're ready."); } }, 10);
+          xTimerView();
+          xSay(st.kind === "prep" ? "Prepare: " + secs + " seconds." : "Speak now: " + secs + " seconds.");
+        };
+        if (st.kind === "ask" && S.speech) {   // the examiner reads the question; the countdown starts when the voice stops
+          xStopClock(); X.left = secs; $("count").textContent = mmss(secs);
+          $("x-timer").innerHTML = '<span class="x-tl">Listen to the question</span>';
+          xSpeakQueue([{ t: p.questions[st.qi] }], begin);
+        } else begin();
+      }
+      function xTimerView() {
+        var el = $("x-timer"), st = X.steps && X.steps[X.step];
+        if (!el || !st) return;
+        var over = X.left <= 0;
+        el.innerHTML = '<span class="x-tl">' + (over ? "Time's up" : st.kind === "prep" ? "Prepare" : "Speak now") + '</span><span class="x-tn" id="x-tn">' + mmss(X.left) + "</span>";
+        el.classList.toggle("on", st.kind !== "prep" && !over);
+      }
+      function xStepNext() {
+        T.tts.cancel(); X.token = null; xStopClock();
+        if (X.step >= X.steps.length - 1) { X.steps = null; X.ended.speaking = "done"; return xNextSection(); }
+        X.step += 1; xStep();
+      }
+
+      // ── self-assessment of writing and speaking ──
+      function xAssessIntro() {
+        xStopClock(); S.phase = "xassess"; showBar(false); $("xsec").hidden = true; X.goFn = null;
+        X.tasks = [];
+        X.E.sections.forEach(function (sc) { if (sc.rubric) sc.parts.forEach(function (p, pi) { X.tasks.push({ sc: sc, p: p, pi: pi }); }); });
+        screen('<div class="start x-intro"><p class="kicker">The test is over</p><h1>Now mark your writing and speaking</h1>' +
+          '<p class="lede x-lede">For each task you\'ll see what you wrote, or the questions you answered, then model answers and a rubric. For each criterion, pick the description that fits best. Be strict with yourself: the score is only as useful as your marking.</p>' +
+          '<div class="acts"><button type="button" class="btn primary big" id="x-start">Start marking</button></div></div>');
+        $("x-start").addEventListener("click", function () { X.ti = 0; xAssess(); });
+        if (!touch) $("x-start").focus({ preventScroll: true });
+      }
+      function xMine(t) { return t.sc.skill === "writing" ? (X.txt["w" + t.pi] || "").trim() : null; }
+      function xAssess() {
+        var t = X.tasks[X.ti], sc = t.sc, p = t.p, key = sc.skill + ":" + t.pi, mine = xMine(t), lastT = X.ti === X.tasks.length - 1;
+        S.phase = "xassess";
+        var h = '<div class="ex x-ex x-assess"><div class="ex-head"><p class="instr" tabindex="-1">Mark yourself · ' + (X.ti + 1) + " of " + X.tasks.length + '</p></div><h1 class="x-h">' + SKILL[sc.skill] + " · " + esc(p.kind) + "</h1>";
+        if (sc.skill === "writing") {
+          h += '<p class="sec-t">Your text</p>' + (mine ? '<div class="x-mine" lang="tr">' + esc(mine).replace(/\n/g, "<br>") + '</div><p class="x-wc">' + plural(wordCount(mine), "word") + " · the task asked for " + p.words[0] + "–" + p.words[1] + "</p>"
+            : '<p class="notice">You didn\'t write anything for this task, so it scores 0. Here is a model to compare with next time.</p>');
+        } else {
+          h += '<p class="sec-t">' + (p.questions ? "The questions" : "The topic") + "</p>" + (p.questions ? '<ol class="x-qs" lang="tr">' + p.questions.map(function (q) { return "<li>" + esc(q) + "</li>"; }).join("") + "</ol>"
+            : '<div class="x-card">' + T.trRich(p.prompt, { index: S.index }) + "</div>") + '<p class="x-help">Think back to what you said, or play back your recording if you made one.</p>';
+        }
+        h += '<p class="sec-t x-mt">' + (p.models.length > 1 ? "Model answers" : "Model answer") + '</p><div class="models">' + p.models.map(function (m, i) {
+          return '<div class="model"><div><span class="ml">' + (p.questions ? "Question " + (i + 1) : p.models.length > 1 ? "Model " + (i + 1) : "Model") + "</span>" + T.trRich(m, { index: S.index }) + "</div>" + sayHtml(T.plain(m)) + "</div>";
+        }).join("") + "</div>";
+        if (mine !== "") h += '<p class="sec-t x-mt">Your marks</p>' + sc.rubric.map(function (c, ci) {
+          var cur = (X.band[key] || {})[ci];
+          return '<fieldset class="rq x-band" data-key="' + key + '" data-c="' + ci + '"><legend>' + esc(c.name) + '</legend><div class="opts" role="radiogroup">' + c.bands.map(function (b, bi) {
+            return '<label class="opt' + (cur === bi ? " sel" : "") + '"><input type="radio" name="b' + X.ti + "-" + ci + '" value="' + bi + '"' + (cur === bi ? " checked" : "") + '><span class="k" aria-hidden="true">' + bi + '</span><span class="ot">' + rich(b) + "</span></label>";
+          }).join("") + "</div></fieldset>";
+        }).join("");
+        stage.innerHTML = h + "</div>";
+        prep(stage); window.scrollTo(0, 0);
+        stage.querySelector(".instr").focus({ preventScroll: true });
+        dock.hidden = false; dock.className = "dock" + (X.ti ? " has-left" : ""); fb.innerHTML = "";
+        dockLeft.innerHTML = X.ti ? '<button type="button" class="btn ghost" id="x-back">Back</button>' : "";
+        if (X.ti) $("x-back").addEventListener("click", function () { X.ti -= 1; xAssess(); });
+        go.hidden = false; go.textContent = lastT ? "See my result" : "Next";
+        X.goFn = function () { if (!xMarked(t)) return; if (!lastT) { X.ti += 1; xAssess(); } else xResults(); };
+        xAssessReady();
+      }
+      function xMarked(t) {
+        if (xMine(t) === "") return true;
+        var b = X.band[t.sc.skill + ":" + t.pi] || {};
+        return t.sc.rubric.every(function (c, ci) { return b[ci] != null; });
+      }
+      function xAssessReady() { var t = X.tasks && X.tasks[X.ti]; if (t) go.disabled = !xMarked(t); }
+
+      // ── results: a score per skill, the indicative level, what to review, the answers ──
+      function xScores() {
+        return X.E.sections.map(function (sc) {
+          var r = { sc: sc, skill: sc.skill, max: sc.points, score: null, right: 0, n: 0, missed: [] };
+          if (X.ended[sc.skill] === "skipped") return r;
+          if (sc.rubric) {
+            r.score = sc.parts.reduce(function (s, p, pi) {
+              if (sc.skill === "writing" && !(X.txt["w" + pi] || "").trim()) return s;
+              var b = X.band[sc.skill + ":" + pi] || {}, got = 0;
+              sc.rubric.forEach(function (c, ci) { got += b[ci] || 0; });
+              return s + p.points * got / (3 * sc.rubric.length);
+            }, 0);
+          } else {
+            var i = 0;
+            sc.parts.forEach(function (p) { p.items.forEach(function (it) { r.n += 1; if (X.ans[sc.skill + ":" + i] === it.answer) r.right += 1; else r.missed.push(it); i += 1; }); });
+            r.score = sc.points * r.right / r.n;
+          }
+          return r;
+        });
+      }
+      function xLevel(rs) {
+        var sc = X.E.scale, first = sc.bands[0], band = null;
+        if (rs.some(function (r) { return r.score == null; })) return { level: null, title: "No overall level", why: "The listening section wasn't taken, and the level needs all four skills." };
+        var total = rs.reduce(function (n, r) { return n + r.score; }, 0), low = rs.filter(function (r) { return r.score < sc.skillMin - 1e-9; });
+        sc.bands.forEach(function (b) { if (total >= b.min - 1e-9) band = b; });
+        if (!band) return { level: null, title: "Not yet " + first.level, why: first.level + " starts at " + first.min + " of 100." };
+        if (low.length) return { level: null, title: "Not yet " + first.level, why: "every skill needs at least " + one(sc.skillMin) + " of 25, and " + low.map(function (r) { return SKILL[r.skill].toLowerCase() + " has " + one(r.score); }).join(", ") + "." };
+        if (band.level === "C2") return { level: "C2", title: "the C2 range", why: "the institute no longer awards C2: its certificates stop at C1." };
+        return { level: band.level, title: band.level, why: "" };
+      }
+      function xCaveat() {
+        var s = X.E.scale;
+        return "<b>Indicative only.</b> Since 2022 the Yunus Emre Enstitüsü has set the B2 and C1 score ranges after each exam, with modern test theory, and doesn't publish them. " +
+          'This practice uses the fixed scale the institute <a href="' + esc(s.url) + '">published in 2015</a> (at least ' + one(s.skillMin) + " of 25 in every skill, and a total from " +
+          s.bands.map(function (b) { return b.min + " for " + b.level; }).join(", ") + "), on a test of " + X.E.minutes + " minutes instead of 180, with writing and speaking marked by you. " +
+          'Only the official TYS gives a certificate: <a href="' + XC.TYS + '">tys.yee.org.tr</a>.';
+      }
+      function xRefLink(ref) {
+        var h = T.href(ref, S.index), label;
+        if (T.RE.gp.test(ref)) { var pt = S.index.points[ref], pu = pt && S.flat.unit[pt.unit]; label = (pt ? pt.label : ref) + (pu ? " · " + unitLabel(pu) : ""); }
+        else { var u = S.flat.unit[ref]; label = u ? unitLabel(u) + " · " + u.title : ref; }
+        return "<li>" + (h && h.ready ? '<a href="' + esc(h.href) + '">' + esc(label) + "</a>" : esc(label) + ' <span class="trk-soon"><small>coming soon</small></span>') + "</li>";
+      }
+      function xResults() {
+        xStopClock(); T.tts.cancel();
+        S.phase = "xres"; S.started = false; X.goFn = null; showBar(false); $("xsec").hidden = true;
+        var rs = xScores(), lv = xLevel(rs), taken = rs.filter(function (r) { return r.score != null; });
+        var total = taken.reduce(function (n, r) { return n + r.score; }, 0), max = taken.reduce(function (n, r) { return n + r.max; }, 0);
+        var h = '<div class="end x-res"><div class="badge' + (lv.level ? "" : " fail") + '">' + (lv.level ? ICON.trophy : ICON.retry) + '</div><p class="kicker">TYS practice · Unofficial</p>' +
+          "<h1>" + (lv.level ? "Indicative level: " + esc(lv.title) : esc(lv.title)) + '</h1><p class="end-sub">' + one(total) + " of " + max + (lv.why ? " · " + esc(lv.why.charAt(0).toUpperCase() + lv.why.slice(1)) : "") + "</p>";
+        h += '<ul class="x-skills" aria-label="Score per skill">' + rs.map(function (r) {
+          var f = r.score == null ? 0 : r.score / r.max;
+          return '<li class="' + (r.score == null ? "na" : f < XC.WEAK ? "weak" : "") + '"><span class="x-sk">' + SKILL[r.skill] + "<small>" + (r.score == null ? "not taken" : r.sc.rubric ? "marked by you" : r.right + " of " + r.n + " right") + "</small></span>" +
+            '<span class="x-bar" aria-hidden="true"><i style="width:' + (f * 100).toFixed(1) + '%"></i><b style="left:' + (X.E.scale.skillMin / r.max * 100).toFixed(1) + '%"></b></span>' +
+            '<span class="x-pt">' + (r.score == null ? "–" : one(r.score)) + " <small>/ " + r.max + "</small></span></li>";
+        }).join("") + '</ul><p class="x-caveat">' + xCaveat() + "</p>";
+        var weak = taken.filter(function (r) { return r.score / r.max < XC.WEAK; });
+        h += '<section class="x-rev" aria-labelledby="x-rev-h"><h2 id="x-rev-h">What to review</h2>';
+        if (!weak.length) h += "<p>No weak skill" + (taken.length < rs.length ? " among those you took" : "") + ": every one is at " + Math.round(XC.WEAK * 100) + "% or more. Keep going with the course, and try the test again in a few weeks.</p>";
+        weak.forEach(function (r) {
+          var refs = [];
+          r.missed.concat([{ review: r.sc.review }]).forEach(function (it) { (it.review || []).forEach(function (x) { if (refs.indexOf(x) < 0) refs.push(x); }); });
+          h += "<h3>" + SKILL[r.skill] + " · " + one(r.score) + " of " + r.max + (r.sc.rubric ? "" : ", " + r.right + " of " + r.n + " right") + '</h3><ul class="x-links">' + refs.slice(0, 6).map(xRefLink).join("") + "</ul>";
+        });
+        h += '</section><div class="acts"><a class="btn primary big" href="' + P.lesson + "?exam=" + esc(X.E.id) + '">Take the test again</a><a class="btn" href="' + P.hub + '">Back to the course</a></div>' + xAnswers(rs) + "</div>";
+        screen(h);
+        notices();
+        if (lv.level) setTimeout(function () { confetti(stage.querySelector(".end"), 110); }, 220);
+        var pb = stage.querySelector(".acts .primary");
+        if (pb && !touch) pb.focus({ preventScroll: true });
+      }
+      function xAnswers(rs) {
+        return '<section class="x-ans" aria-labelledby="x-ans-h"><h2 id="x-ans-h">Your answers</h2>' + X.E.sections.map(function (sc, si) {
+          var r = rs[si];
+          return '<details class="more-d"><summary>' + SKILL[sc.skill] + (r.score == null ? " · not taken" : " · " + one(r.score) + " of " + r.max) + '</summary><div class="in">' + (sc.rubric ? xAnsTasks(sc) : xAnsTexts(sc)) + "</div></details>";
+        }).join("") + "</section>";
+      }
+      function xAnsTexts(sc) {
+        var h = "", i = 0;
+        sc.parts.forEach(function (p, pi) {
+          h += '<h3 class="x-ah">' + (sc.skill === "listening" ? "Recording " : "Text ") + (pi + 1) + " · " + esc(p.kind) + "</h3>";
+          if (p.text) h += (p.title ? '<p class="rtitle" lang="tr">' + esc(p.title) + "</p>" : "") + '<div class="passage x-passage">' + xGaps(T.trRich(p.text, { index: S.index }), p, i, function (it) { return esc(it.options[it.answer]); }) + "</div>";
+          if (p.lines) h += '<dl class="x-script" lang="tr">' + p.lines.map(function (l) { return "<dt>" + esc(l.who) + "</dt><dd>" + esc(l.tr) + "</dd>"; }).join("") + "</dl>";
+          p.items.forEach(function (it) {
+            var mine = X.ans[sc.skill + ":" + i], letters = xLetters(it);
+            h += '<div class="x-ai ' + (mine === it.answer ? "right" : "wrong") + '"><p class="x-aq"><span class="x-n">' + (i + 1) + "</span>" + (it.type === "gap" ? "<span>Gap " + (i + 1) + "</span>" : '<span lang="tr">' + esc(it.q) + "</span>") + "</p>" +
+              '<div class="opts' + (letters ? "" : " x-row") + '">' + xOpts(p, it).map(function (o, j) {
+                var v = xVal(it, j);
+                return '<div class="opt off' + (v === it.answer ? " right" : v === mine ? " wrong" : "") + '">' + (letters ? '<span class="k" aria-hidden="true">' + XC.LETTERS[j] + "</span>" : "") +
+                  '<span class="ot" lang="tr">' + esc(o) + "</span>" + (v === mine ? '<span class="x-you">yours</span>' : "") + "</div>";
+              }).join("") + "</div>" + (mine == null ? '<p class="x-none">Not answered.</p>' : "") + '<p class="rq-ex">' + rich(it.explain) + "</p></div>";
+            i += 1;
+          });
+        });
+        return h;
+      }
+      function xAnsTasks(sc) {
+        return sc.parts.map(function (p, pi) {
+          var b = X.band[sc.skill + ":" + pi] || {}, mine = sc.skill === "writing" ? (X.txt["w" + pi] || "").trim() : null;
+          var h = '<h3 class="x-ah">' + esc(p.kind) + "</h3>";
+          if (p.questions) h += '<ol class="x-qs" lang="tr">' + p.questions.map(function (q) { return "<li>" + esc(q) + "</li>"; }).join("") + "</ol>";
+          else if (sc.skill === "speaking") h += '<div class="x-card">' + T.trRich(p.prompt, { index: S.index }) + "</div>";
+          if (sc.skill === "writing") h += mine ? '<div class="x-mine" lang="tr">' + esc(mine).replace(/\n/g, "<br>") + "</div>" : '<p class="x-none">Not written.</p>';
+          if (mine !== "") h += '<p class="x-marks">Your marks: ' + sc.rubric.map(function (c, ci) { return esc(c.name) + " " + (b[ci] || 0) + "/3"; }).join(" · ") + "</p>";
+          return h + p.models.map(function (m, i) { return '<div class="model"><div><span class="ml">' + (p.questions ? "Model, question " + (i + 1) : "Model") + "</span>" + T.trRich(m, { index: S.index }) + "</div></div>"; }).join("");
+        }).join("");
+      }
+
       // ───────────── 7. keyboard, quitting, boot ─────────────
       document.addEventListener("keydown", function (e) {
         if ($("quit-dlg").open || e.altKey || e.ctrlKey || e.metaKey || e.isComposing) return;
@@ -1593,12 +2219,12 @@
       $("quit-stay").addEventListener("click", function () { $("quit-dlg").close(); });
       $("quit-go").addEventListener("click", function () { S.started = false; });
       window.addEventListener("beforeunload", function (e) {
-        if (S.started && S.items.some(function (it) { return it.attempts; })) { e.preventDefault(); e.returnValue = ""; }
+        if (S.started && (S.mode === "exam" || S.items.some(function (it) { return it.attempts; }))) { e.preventDefault(); e.returnValue = ""; }
       });
 
       function boot() {
-        S.mode = params.has("id") ? "lesson" : params.has("review") ? "review" : params.has("test") ? "test" : params.get("practice") === "mistakes" ? "practice" : null;
-        S.target = params.get("id") || params.get("review") || params.get("test") || null;
+        S.mode = params.has("id") ? "lesson" : params.has("review") ? "review" : params.has("test") ? "test" : params.get("practice") === "mistakes" ? "practice" : params.has("exam") ? "exam" : null;
+        S.target = params.get("id") || params.get("review") || params.get("test") || params.get("exam") || null;
         notices();
         Promise.all([T.data.index(), T.tts.ready()]).then(function (r) {
           S.index = r[0]; S.voice = r[1]; S.flat = T.path.flatten(S.index);

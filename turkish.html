@@ -49,7 +49,7 @@
       .at-hdr .at-logo { width: 28px; height: 28px; flex: none; display: block; }
       .at-hdr .at-name { font-size: 18px; line-height: 1; letter-spacing: -0.02em; }
       .at-hdr .at-d { color: #e34b4f; font-weight: 600; }
-      .at-hdr .at-t { color: #242424; font-weight: 750; margin-left: 0.22em; }
+      .at-hdr .at-t { color: #242424; font-weight: 750; }
       .at-hdr .at-tabs { display: flex; flex: 1; align-self: stretch; gap: 8px; }
       .at-hdr .at-push { margin-left: auto; }   /* About, My Profile and Settings sit on the right */
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
@@ -85,6 +85,13 @@
         .at-hdr .at-set { min-width: 34px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 5px; right: 5px; }
       }
+      @media (max-width: 359px) {   /* 320 px (QA-2): the six tabs fit without a sideways scroll, each at least 32 px wide */
+        .at-hdr { --at-m: 8px; }
+        .at-hdr .at-home { min-width: 40px; margin-left: -6px; }
+        .at-hdr .at-tab { padding: 0 3px; min-width: 32px; font-size: 12px; }
+        .at-hdr .at-set { min-width: 32px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 3px; right: 3px; }
+      }
     </style>
     <style>
       /* Page: the site's tokens (stylesheets/styles.css), white page, hairline borders, cards like the Mobility Lab's. */
@@ -110,6 +117,8 @@
       .trk-soon small { font-size: .85em; }
       .trk-nw { white-space: nowrap; }
       [hidden] { display: none !important; }
+      /* links inside running text carry an underline as well as their colour (WCAG 1.4.1, QA-2) */
+      main p a:not(.btn), .note a, .help a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; text-decoration-color: rgb(40 122 158 / .55); }
       .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
       .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 64px; }
@@ -628,8 +637,8 @@
       .about-body h2 { margin: 28px 0 6px; font-size: 17px; font-weight: 650; color: var(--ink); letter-spacing: -0.01em; }
       .about-body h2:first-child { margin-top: 0; }
       .about-body p + p { margin-top: 8px; }
-      .btn.coffee { background: #e34b4f; border-color: #e34b4f; color: #fff; text-decoration: none; }
-      .btn.coffee:hover { background: #c93d41; border-color: #c93d41; color: #fff; }
+      .btn.coffee { background: #c93d41; border-color: #c93d41; color: #fff; text-decoration: none; }   /* 5:1 with white (was #e34b4f, 3.9:1) */
+      .btn.coffee:hover { background: #b03439; border-color: #b03439; color: #fff; }
 
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { transition: none !important; animation: none !important; }
@@ -653,7 +662,7 @@
       [data-lvl="b1"] { --lv: #2b7d50; --lv-dark: #1d5c3a; --lv-wash: rgb(43 125 80 / 12%); --lv-tint: rgb(43 125 80 / 5%); --lv-line: rgb(43 125 80 / 35%); }
       [data-lvl="b2"] { --lv: #c2462c; --lv-dark: #9a3420; --lv-wash: rgb(194 70 44 / 11%); --lv-tint: rgb(194 70 44 / 5%); --lv-line: rgb(194 70 44 / 35%); }
       [data-lvl="c1"] { --lv: #6c3f9e; --lv-dark: #51307a; --lv-wash: rgb(108 63 158 / 11%); --lv-tint: rgb(108 63 158 / 5%); --lv-line: rgb(108 63 158 / 35%); }
-      [data-lvl="c2"] { --lv: #b8861a; --lv-dark: #7d5b10; --lv-wash: rgb(184 134 26 / 14%); --lv-tint: rgb(184 134 26 / 6%); --lv-line: rgb(184 134 26 / 40%); --lv-on: #2b2006; }
+      [data-lvl="c2"] { --lv: #b8861a; --lv-dark: #7d5b10; --lv-wash: rgb(184 134 26 / 14%); --lv-tint: rgb(184 134 26 / 6%); --lv-line: rgb(184 134 26 / 40%); --lv-on: #fff; }
       .lv-tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; background: var(--lv-wash); color: var(--lv-dark); font-size: 11.5px; font-weight: 650; letter-spacing: .02em; white-space: nowrap; }
       /* a tile of the wall: laid (unit done) in its level's colour, glazed gold once the unit is mastered */
       .tw-t { position: relative; display: block; aspect-ratio: 1; border-radius: 3px; background: #f3f2ee; box-shadow: inset 0 0 0 1px #e4e3df; }
@@ -672,7 +681,7 @@
       .dt-foot { margin: 48px auto 0; padding: 0 16px 28px; text-align: center;
                  font: 12.5px/1.5 "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
       .dt-foot p { margin: 0; }
-      .dt-foot a { color: #9a9a96; text-decoration: none; }
+      .dt-foot a { color: #6f6f6f; text-decoration: none; }   /* 5:1 on white (was #9a9a96, 2.8:1) */
       .dt-foot a:hover { color: #c43b3f; }
       body.studying .dt-foot { display: none; }
     </style>
@@ -680,7 +689,7 @@
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="/turkish.html" aria-label="Daily Turkish, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#e34b4f"/><circle cx="76" cy="55" r="17" fill="#fff"/><circle cx="83" cy="49" r="16" fill="#e34b4f"/><path d="m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z" fill="#fff"/><path d="M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 90v46" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="3"/><path d="M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="2.5"/></svg><span class="at-name"><span class="at-d">Daily</span><span class="at-t">Turkish</span></span></a>
+        <a class="at-home" href="/turkish.html" aria-label="Daily Turkish, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#e34b4f"/><circle cx="76" cy="55" r="17" fill="#fff"/><circle cx="83" cy="49" r="16" fill="#e34b4f"/><path d="m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z" fill="#fff"/><path d="M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 90v46" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="3"/><path d="M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4" fill="none" stroke="#f4b7ba" stroke-linecap="round" stroke-width="2.5"/></svg><span class="at-name"><span class="at-d">Daily</span> <span class="at-t">Turkish</span></span></a>
         <nav class="at-tabs" aria-label="Turkish course">
           <a class="at-tab" href="/turkish.html" id="tab-course" aria-current="page">Course</a>
           <a class="at-tab" href="/turkishguide.html">Grammar</a>
@@ -822,8 +831,8 @@
           <h2>Support Daily Turkish</h2>
           <p>Daily Turkish is free to use and has no ads. If it helps you learn, you can buy me a Turkish coffee: it pays for the domain and the time spent writing new units.</p>
           <p style="margin-top:14px"><a class="btn coffee" href="https://buymeacoffee.com/dailyturkish" target="_blank" rel="noopener">☕ Buy me a Turkish coffee</a></p>
-          <h2>Sources</h2>
-          <p>The deck follows a frequency list of Turkish film and TV subtitles: the order is adapted from <a href="https://github.com/hermitdave/FrequencyWords" rel="noopener">FrequencyWords</a> by Hermit Dave (<a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener">CC BY-SA 4.0</a>), built from the OpenSubtitles2018 corpus. Meanings, examples and notes are our own.</p>
+          <h2>Contact</h2>
+          <p>Questions, suggestions, a mistake to report or any other inquiry: write to me at <a href="mailto:gregoire.maillard@yahoo.fr">gregoire.maillard@yahoo.fr</a>.</p>
         </div>
       </section>
       <noscript><p class="notice">The lessons, flashcards and your progress need JavaScript.</p></noscript>
@@ -835,8 +844,7 @@
         <div id="auth-body"></div>
       </div>
     </dialog>
-    <footer class="dt-foot"><p><a href="https://buymeacoffee.com/dailyturkish" target="_blank" rel="noopener">☕ Buy me a Turkish coffee</a></p>
-      <p style="margin-top:6px"><a href="/turkmen/">New: learn Turkmen with Daily Turkmen (beta)</a></p></footer>
+    <footer class="dt-foot"><p><a href="https://buymeacoffee.com/dailyturkish" target="_blank" rel="noopener">☕ Buy me a Turkish coffee</a></p></footer>
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -933,6 +941,8 @@
           '<p class="note">' + note + "</p></div>";
         html += wallHtml(ix, course, set);
         html += cardsPanel(ix, course, set, now);
+        // TYS-1: the practice test for the Türkçe Yeterlik Sınavı (PROJECT.md 6.8), played by the lesson page
+        html += '<div class="card mini"><div class="row"><h3>TYS practice</h3><span class="lmeta">30 min</span></div><p class="counts">A timed practice for the <i lang="tr">Türkçe Yeterlik Sınavı</i>, with all four skills and an indicative level. Unofficial; best from B2.</p><a class="btn" href="' + P.lesson + '?exam=tys-1">Try the practice test</a></div>';
         var m = T.progress.mistakesDue(course).length;
         if (m) html += '<div class="card mini"><div class="row"><h3>Your mistakes</h3></div><p class="counts"><b>' + m + "</b> " + (m === 1 ? "exercise" : "exercises") + ' to try again</p><a class="btn" href="' + P.lesson + '?practice=mistakes">Practise</a></div>';
         var mastered = f.units.filter(function (x) { return course.units[x.id] && course.units[x.id].reviewed; }).length;
@@ -996,7 +1006,7 @@
             else if (T.path.unitDone(ix, course, u.id)) { cls = " laid"; state = "done"; laid += 1; }
             else { cls = " open"; state = "not finished yet"; }
             var isFresh = fr && fr.units[u.id] && cls !== "" && cls !== " open";
-            return '<a class="tw-t' + cls + (isFresh ? " fresh" : "") + '" data-lvl="' + lv.id + '" href="#' + u.id + '" tabindex="-1" title="' +
+            return '<a class="tw-t' + cls + (isFresh ? " fresh" : "") + '" data-lvl="' + lv.id + '" href="#' + u.id + '" tabindex="-1" aria-hidden="true" title="' +
               esc(unitLabel(u) + ": " + u.title + " · Interlude: " + u.interlude + " · " + state) + '"></a>';
           }).join("");
         }).join("");
@@ -1004,8 +1014,8 @@
         var note = !laid ? "Finish a unit to lay its tile. Pass the unit's review to glaze it gold."
           : laid === total ? "The panel is complete. <i lang=\"tr\">Eline sağlık!</i>" : "Pass a unit's review to glaze its tile gold.";
         return '<div class="card wall-card"><div class="mini"><div class="row"><h3>Tile wall</h3><span class="lmeta">' + laid + " of " + total + " laid" + (gold ? " · " + gold + " gold" : "") + "</span></div></div>" +
-          '<div class="wall" role="img" aria-label="' + esc("Tile wall: " + laid + " of " + total + " tiles laid" + (gold ? ", " + gold + " glazed gold" : "") + ", one per finished unit") + '">' + rows + "</div>" +
-          '<p class="wall-note">' + note + ' <a href="' + P.culture + '">See the interludes on a timeline and a map.</a></p></div>';
+          '<div class="wall" role="group" aria-label="' + esc("Tile wall: " + laid + " of " + total + " tiles laid" + (gold ? ", " + gold + " glazed gold" : "") + ", one per finished unit") + '">' + rows + "</div>" +
+          '<p class="wall-note">' + note + '</p></div>';
       }
       function cardsPanel(ix, course, set, now) {
         var head = '<div class="row"><h3>Flashcards</h3>';

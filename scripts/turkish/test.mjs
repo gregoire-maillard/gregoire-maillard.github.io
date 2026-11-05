@@ -38,6 +38,7 @@ const listJson = dir => (fs.existsSync(path.join(DATA, dir)) ? fs.readdirSync(pa
 const INDEX = readJson(path.join(DATA, "index.json"));
 const LESSONS = listJson("lessons"), GRAMMAR = listJson("grammar"), CULTURE = listJson("culture"), UNITS = listJson("units"), LEVELS = listJson("levels");
 const TIMELINE = fs.existsSync(path.join(DATA, "timeline.json")) ? readJson(path.join(DATA, "timeline.json")) : null;
+const EXAMS = listJson("exams");
 const SETTINGS = () => JSON.parse(JSON.stringify(TRK.C.SETTINGS));
 const at = (y, m, d, h = 12, min = 0) => new Date(y, m - 1, d, h, min).getTime();   // local time
 const NOW = at(2026, 10, 14, 10);
@@ -92,13 +93,23 @@ function richStrings() {
       Object.values(e.why || {}).forEach(x => push(e.id, x));
       (e.reject || []).forEach(r => push(e.id, r.why));
       (e.blanks || []).forEach(b => (b.reject || []).forEach(r => push(e.id, r.why)));
-      (e.questions || []).forEach(q => { push(e.id, q.q); push(e.id, q.explain); });
+      (e.questions || []).forEach(q => { push(e.id, q.q); push(e.id, q.explain); if (q.optionsLang === "en") q.options.forEach(x => push(e.id, x)); });
+      if (e.type === "mcq" && e.optionsLang === "en") e.options.forEach(x => push(e.id, x));   // English options are Rich (QA-2)
       (e.checklist || []).forEach(x => push(e.id, x));
     }
   }
   for (const g of GRAMMAR) { push(g.id, g.intro); g.summary.forEach(x => push(g.id, x)); g.sections.forEach(s => blocks(`${g.id} ${s.point}`, s.blocks)); }
-  for (const c of CULTURE) { blocks(c.id, c.blocks); (c.questions || []).forEach(q => { push(c.id, q.q); push(c.id, q.explain); }); }
+  for (const c of CULTURE) { blocks(c.id, c.blocks); (c.questions || []).forEach(q => { push(c.id, q.q); push(c.id, q.explain); if (q.optionsLang === "en") q.options.forEach(x => push(c.id, x)); }); }
   if (TIMELINE) { TIMELINE.eras.forEach(e => push(`timeline ${e.id}`, e.intro)); TIMELINE.events.forEach(e => push(`timeline ${e.id}`, e.text)); }
+  for (const x of EXAMS) {
+    push(x.id, x.intro);
+    for (const s of x.sections) {
+      const w = `${x.id} ${s.skill}`;
+      push(w, s.intro);
+      (s.rubric || []).forEach(c => c.bands.forEach(b => push(w, b)));
+      for (const p of s.parts) { push(w, p.task); (p.items || []).forEach(it => push(w, it.explain)); }
+    }
+  }
   return out;
 }
 
@@ -149,6 +160,11 @@ test("norm: English contractions and folded Turkish letters in names", () => {
   assert.equal(TRK.norm("It cannot be", "en"), "it can not be");
   assert.equal(TRK.norm("Whats your name? Im Can, I dont know", "en"), "what is your name i am can i do not know");   // apostrophe left out on a phone
   assert.equal(TRK.norm("Its colour, lets go, we were well", "en"), "its colour lets go we were well");                // real words stay
+  assert.equal(TRK.norm("You could've called. They might’ve, we mustve", "en"), "you could have called they might have we must have");   // 've (QA-2)
+  assert.equal(TRK.norm("It's been ages, its been a week, he's been here", "en"), "it has been ages it has been a week he has been here"); // 's been
+  assert.equal(TRK.norm("I'd go, she'd known", "en"), "i would go she would known");
+  assert.equal(TRK.norm("I'd go, she'd known", "en", true), "i had go she had known");                                // 'd tried as had too
+  assert.equal(TRK.norm("Id, hed, shed, wed", "en", true), "id hed shed wed");
 });
 test("check: correct, with and without pronoun, punctuation and case ignored", () => {
   const acc = ["Evdeyim.", "Ben evdeyim."];
@@ -188,6 +204,19 @@ test("check: English alternatives, contractions and articles", () => {
   assert.equal(TRK.check("Whats your name", ["What is your name?"], [], "en").verdict, "correct");
   assert.equal(TRK.check("Ayse is here", ["Ayşe is here."], [], "en").verdict, "correct");
 });
+test("check: 'd as would or had, 've and 's been (QA-2)", () => {
+  assert.equal(TRK.check("I'd never had Turkish coffee before", ["I had never had Turkish coffee before."], [], "en").verdict, "correct");
+  assert.equal(TRK.check("If I'd known, I'd have come", ["If I had known, I would have come."], [], "en").verdict, "wrong");   // one reading per answer
+  assert.equal(TRK.check("If I'd known, I would have come", ["If I had known, I would have come."], [], "en").verdict, "correct");
+  assert.equal(TRK.check("I'd like a tea", ["I would like a tea."], [], "en").verdict, "correct");
+  assert.equal(TRK.check("I would told you", ["I had told you!"], [], "en").verdict, "wrong");
+  assert.equal(TRK.check("You could've called me", ["You could have called me!"], [], "en").verdict, "correct");
+  assert.equal(TRK.check("Its been a week", ["It has been a week."], [], "en").verdict, "correct");
+  assert.equal(TRK.check("It is been a week", ["It has been a week."], [], "en").verdict, "wrong");
+  const r = TRK.check("I'd go", ["I went."], [{ answer: "I had gone.", why: "x" }, { answer: "I would go.", why: "Not would." }], "en");
+  assert.deepEqual([r.verdict, r.why], ["wrong", "Not would."]);
+  assert.deepEqual(["verdict", "note"].map(k => TRK.check("I'd forgoten", ["I had forgotten."], [], "en")[k]), ["almost", "typo"]);
+});
 test("check: one typo in an English word of five letters or more → almost (typo)", () => {
   const acc = ["Mehmet is at the office."];
   assert.deepEqual(["verdict", "note"].map(k => TRK.check("Mehmet is at the ofice", acc, [], "en")[k]), ["almost", "typo"]);
@@ -221,10 +250,11 @@ test("parity with validate.mjs: expand() on every accept entry in the content", 
 });
 test("parity with validate.mjs: norm() on every text in the content, in both languages", () => {
   const V = validatorText();
-  const strings = new Set(["İSTANBUL’DA", "I'm here, aren't I?", "Kâğıt… «lütfen»", "i̇yi", "can't—won't", "it’s ´ok` ", "IĞDIR'A"]);
+  const strings = new Set(["İSTANBUL’DA", "I'm here, aren't I?", "I'd known, it's been, could've", "theyd, its been", "Kâğıt… «lütfen»", "i̇yi", "can't—won't", "it’s ´ok` ", "IĞDIR'A"]);
   const walk = v => { if (typeof v === "string") strings.add(v); else if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v === "object") Object.values(v).forEach(walk); };
   [LESSONS, GRAMMAR, CULTURE].forEach(walk);
   for (const s of strings) for (const lang of ["tr", "en"]) assert.equal(TRK.norm(s, lang), V.norm(s, lang), `${lang}: ${s}`);
+  for (const s of strings) assert.equal(TRK.norm(s, "en", true), V.norm(s, "en", true), `en, 'd as had: ${s}`);
   assert.equal(TRK.trLower("IİıiÇ"), V.trLower("IİıiÇ"));
   assert.ok(strings.size > 1000);
 });
@@ -246,11 +276,14 @@ test("real content: every accepted answer is correct, every rejected answer wron
 });
 
 // ─────────────────────────── 5.1 the renderer ───────────────────────────
-test("data: content ids, flashcard files and the Culture page's timeline and regions map to their files", () => {
+test("data: content ids, flashcard files, the Culture page's timeline and regions, and practice tests map to their files", () => {
   assert.equal(TRK.data.url("a1-u05-culture", "v1"), "/assets/data/turkish/culture/a1-u05.json?v=v1");
   assert.equal(TRK.data.url("flashcards/fc-0001-0200.json"), "/assets/data/turkish/flashcards/fc-0001-0200.json");
   assert.equal(TRK.data.url("timeline", "abc"), "/assets/data/turkish/timeline.json?v=abc");
   assert.equal(TRK.data.url("regions"), "/assets/data/turkish/regions.json");
+  assert.equal(TRK.data.url("tys-1", "v1"), "/assets/data/turkish/exams/tys-1.json?v=v1");
+  for (const x of EXAMS) for (const s of x.sections) [s.review, ...s.parts.flatMap(p => (p.items || []).map(it => it.review || []))].flat()
+    .forEach(r => assert.ok(TRK.href(r, INDEX).ready, `${x.id}: review link ${r} isn't ready`));
   assert.equal(TRK.C.PAGES.culture, "/turkishculture.html");
   assert.throws(() => TRK.data.url("culture"), /Unknown content id/);
   if (TIMELINE) for (const e of TIMELINE.events) assert.ok(TRK.href(e.id.slice(0, 6), INDEX).ready, `${e.id}: its unit isn't ready`);
