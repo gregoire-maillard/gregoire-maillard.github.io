@@ -1,0 +1,388 @@
+{
+  "id": "dlg-pharmacy",
+  "level": "a2",
+  "order": 2,
+  "after": "a2-u09",
+  "title": "At the pharmacy",
+  "titleTr": "Eczanede",
+  "setting": "You've had a sore throat for two days. You go into a neighbourhood pharmacy (*eczane*), where pharmacists often give advice before you see a doctor.",
+  "goal": "Describe a symptom, answer the pharmacist's questions and check how to take a medicine.",
+  "minutes": 5,
+  "cast": [
+    {
+      "id": "pharmacist",
+      "name": "Eczacı",
+      "role": "the pharmacist",
+      "register": "siz",
+      "why": "A professional you don't know: *siz*.",
+      "pitch": 1.1
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "pharmacist",
+      "tr": "Merhaba, buyurun. Nasıl yardımcı olabilirim?",
+      "en": "Hello, come in. How can I help?",
+      "turn": {
+        "prompt": "Say your throat hurts.",
+        "replies": [
+          {
+            "tr": "Merhaba. Boğazım ağrıyor.",
+            "en": "Hello. My throat hurts.",
+            "accept": ["Boğazım ağrıyor.", "Merhaba, boğazım çok ağrıyor.", "Boğazım çok ağrıyor."],
+            "ok": true,
+            "next": "since"
+          },
+          {
+            "tr": "Merhaba. Boğazınız ağrıyor mu?",
+            "en": "Hello. Does your throat hurt?",
+            "register": "siz",
+            "ok": false,
+            "why": "*Boğazınız* is the pharmacist's throat. Yours is *boğazım*: *Boğazım ağrıyor.*",
+            "react": {
+              "tr": "Benim mi? Hayır, benim boğazım iyi!",
+              "en": "Mine? No, my throat is fine!"
+            }
+          },
+          {
+            "tr": "Merhaba. Boğaz ağrıyorum.",
+            "en": "Hello. I'm throat aching.",
+            "ok": false,
+            "why": "What aches is the throat, and it's yours: *Boğazım ağrıyor*, “my throat is aching”.",
+            "react": {
+              "tr": "Boğazınız mı ağrıyor?",
+              "en": "Is it your throat that hurts?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "since",
+      "who": "pharmacist",
+      "tr": "Geçmiş olsun. Ne zamandan beri ağrıyor?",
+      "en": "Sorry to hear that. Since when has it been hurting?",
+      "note": "*Geçmiş olsun*, “may it be over”, is said to anyone ill or in trouble. The answer: *Sağ olun* or *Teşekkür ederim*.",
+      "turn": {
+        "prompt": "Thank the pharmacist, and say it's been hurting for two days.",
+        "replies": [
+          {
+            "tr": "Sağ olun. İki gündür ağrıyor.",
+            "en": "Thank you. It's been hurting for two days.",
+            "accept": ["Sağ olun, iki gündür."],
+            "register": "siz",
+            "ok": true,
+            "next": "fever"
+          },
+          {
+            "tr": "Teşekkür ederim. İki gündür ağrıyor.",
+            "en": "Thank you. It's been hurting for two days.",
+            "accept": ["Teşekkürler, iki gündür.", "Teşekkür ederim, iki gündür.", "İki gündür ağrıyor."],
+            "ok": true,
+            "next": "fever"
+          },
+          {
+            "tr": "Sağ ol. İki gündür ağrıyor.",
+            "en": "Thanks. It's been hurting for two days.",
+            "accept": ["Sağ ol, iki gündür."],
+            "register": "sen",
+            "ok": true,
+            "next": "fever"
+          },
+          {
+            "tr": "Sağ olun. İki gün sonra.",
+            "en": "Thank you. In two days.",
+            "register": "siz",
+            "ok": false,
+            "why": "*İki gün sonra* is **in** two days, from now. **For** two days, up to now, is *iki gündür*.",
+            "react": {
+              "tr": "İki gün sonra mı? Yani, ne zamandan beri?",
+              "en": "In two days? I mean, since when?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "fever",
+      "who": "pharmacist",
+      "tr": "Ateşiniz var mı?",
+      "en": "Do you have a temperature?",
+      "turn": {
+        "prompt": "Say whether you have a temperature.",
+        "replies": [
+          {
+            "tr": "Hayır, ateşim yok.",
+            "en": "No, I don't have a temperature.",
+            "accept": ["Hayır, yok.", "Yok, ateşim yok.", "Ateşim yok."],
+            "ok": true,
+            "next": "allergy"
+          },
+          {
+            "tr": "Evet, biraz ateşim var.",
+            "en": "Yes, I have a slight temperature.",
+            "accept": ["Evet, biraz var.", "Evet, ateşim var."],
+            "ok": true,
+            "next": "doctor"
+          },
+          {
+            "tr": "Hayır, ateşiniz yok.",
+            "en": "No, you don't have a temperature.",
+            "register": "siz",
+            "ok": false,
+            "why": "*Ateşiniz* is the pharmacist's. Yours: *Hayır, ateşim yok.*",
+            "react": {
+              "tr": "Ben mi? Ben iyiyim. Ya siz?",
+              "en": "Me? I'm fine. And you?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "doctor",
+      "who": "pharmacist",
+      "tr": "Ateş varsa bir doktora görünmeniz lazım. Bu sokakta bir sağlık ocağı var.",
+      "en": "If there's a temperature, you should see a doctor. There's a health centre on this street.",
+      "note": "A *sağlık ocağı*, now officially *aile sağlığı merkezi*, is the neighbourhood's family doctor. Pharmacists send you there when it's more than a cold.",
+      "turn": {
+        "prompt": "Ask where it is. Or ask whether you can't just take a medicine.",
+        "replies": [
+          {
+            "tr": "Sağlık ocağı tam olarak nerede?",
+            "en": "Where exactly is the health centre?",
+            "accept": ["Sağlık ocağı nerede?", "Tam olarak nerede?"],
+            "ok": true,
+            "next": "end-doctor"
+          },
+          {
+            "tr": "Ama sadece boğazım ağrıyor. Bir ilaç alamaz mıyım?",
+            "en": "But it's only my throat. Can't I just take a medicine?",
+            "accept": ["Bir ilaç alamaz mıyım?", "Ama bir ilaç alamaz mıyım?"],
+            "ok": true,
+            "next": "lozenges"
+          },
+          {
+            "tr": "Doktora görünmeniz lazım.",
+            "en": "You need to see a doctor.",
+            "register": "siz",
+            "ok": false,
+            "why": "That repeats the advice back: *görünmeniz* is about the pharmacist. You're the one going: *Sağlık ocağı nerede?*",
+            "react": {
+              "tr": "Ben mi? Hasta olan sizsiniz!",
+              "en": "Me? You're the one who's ill!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "end-doctor",
+      "who": "pharmacist",
+      "tr": "Köşede, postanenin yanında. Geçmiş olsun!",
+      "en": "On the corner, next to the post office. Get well soon!",
+      "end": "You're off to the health centre to have the temperature looked at."
+    },
+    {
+      "id": "allergy",
+      "who": "pharmacist",
+      "tr": "Bir ilaca alerjiniz var mı?",
+      "en": "Are you allergic to any medicine?",
+      "turn": {
+        "prompt": "Say whether you have an allergy.",
+        "replies": [
+          {
+            "tr": "Hayır, yok.",
+            "en": "No, I'm not.",
+            "accept": ["Hayır, alerjim yok.", "Yok, alerjim yok.", "Alerjim yok."],
+            "ok": true,
+            "next": "lozenges"
+          },
+          {
+            "tr": "Evet, penisiline alerjim var.",
+            "en": "Yes, I'm allergic to penicillin.",
+            "accept": ["Penisiline alerjim var.", "Evet, maalesef penisiline alerjim var."],
+            "ok": true,
+            "next": "allergy-ok"
+          },
+          {
+            "tr": "Hayır, ilacım yok.",
+            "en": "No, I don't have any medicine.",
+            "ok": false,
+            "why": "The question was about **allergies** (*alerji*), not whether you have medicine: *Hayır, alerjim yok.*",
+            "react": {
+              "tr": "Alerji, alerji. Alerjiniz var mı?",
+              "en": "Allergies. Are you allergic to anything?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "allergy-ok",
+      "who": "pharmacist",
+      "tr": "Tamam, bu önemli bir bilgi. Bu pastillerde antibiyotik yok, rahat olun.",
+      "en": "Okay, that's important to know. There are no antibiotics in these lozenges, so don't worry.",
+      "turn": {
+        "prompt": "Say good, and thank the pharmacist.",
+        "replies": [
+          {
+            "tr": "Güzel, teşekkür ederim.",
+            "en": "Good, thank you.",
+            "accept": ["İyi, teşekkür ederim.", "Tamam, teşekkürler."],
+            "ok": true,
+            "next": "lozenges"
+          },
+          {
+            "tr": "Harika, sağ olun.",
+            "en": "Great, thank you.",
+            "register": "siz",
+            "ok": true,
+            "next": "lozenges"
+          }
+        ]
+      }
+    },
+    {
+      "id": "lozenges",
+      "who": "pharmacist",
+      "tr": "Bu pastillerden günde üç tane alın. Bu şurubu da yemekten sonra alın.",
+      "en": "Take three of these lozenges a day. And take this syrup after meals.",
+      "turn": {
+        "prompt": "Check: is the syrup before or after meals?",
+        "replies": [
+          {
+            "tr": "Şurup yemekten sonra, değil mi?",
+            "en": "The syrup's after meals, isn't it?",
+            "accept": ["Şurubu yemekten sonra alıyorum, değil mi?", "Yemekten sonra, değil mi?"],
+            "ok": true,
+            "next": "price"
+          },
+          {
+            "tr": "Şurup yemekten önce, değil mi?",
+            "en": "The syrup's before meals, isn't it?",
+            "ok": false,
+            "why": "The pharmacist said *yemekten sonra*, **after** eating.",
+            "next": "correct"
+          },
+          {
+            "tr": "Günde kaç tane?",
+            "en": "How many a day?",
+            "ok": false,
+            "why": "You've just been told: *günde üç tane*, three a day.",
+            "react": {
+              "tr": "Üç tane. Günde üç.",
+              "en": "Three. Three a day."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "correct",
+      "who": "pharmacist",
+      "tr": "Hayır, sonra! Yemekten sonra, aç karnına değil.",
+      "en": "No, after! After eating, not on an empty stomach.",
+      "turn": {
+        "prompt": "Repeat it, to show you've got it.",
+        "replies": [
+          {
+            "tr": "Tamam, yemekten sonra.",
+            "en": "Okay, after meals.",
+            "accept": ["Anladım, yemekten sonra.", "Tamam, yemekten sonra alıyorum."],
+            "ok": true,
+            "next": "price"
+          },
+          {
+            "tr": "Anladım: aç karnına.",
+            "en": "Got it: on an empty stomach.",
+            "ok": false,
+            "why": "Not on an empty stomach: *aç karnına değil*. After meals: *yemekten sonra*.",
+            "react": {
+              "tr": "Hayır! Yemekten sonra.",
+              "en": "No! After meals."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "price",
+      "who": "pharmacist",
+      "tr": "Hepsi iki yüz kırk lira. Başka bir şey var mı?",
+      "en": "That's 240 lira altogether. Anything else?",
+      "turn": {
+        "prompt": "Say no thanks, and ask whether you can pay by card.",
+        "replies": [
+          {
+            "tr": "Hayır, teşekkürler. Kartla ödeyebilir miyim?",
+            "en": "No, thank you. Can I pay by card?",
+            "accept": ["Hayır, teşekkür ederim. Kartla ödeyebilir miyim?", "Kartla ödeyebilir miyim?"],
+            "ok": true,
+            "next": "end"
+          },
+          {
+            "tr": "Hayır, teşekkürler. Kart alıyor musunuz?",
+            "en": "No, thank you. Do you take cards?",
+            "accept": ["Kart alıyor musunuz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "end"
+          },
+          {
+            "tr": "Hayır, teşekkürler. Kart alıyor musun?",
+            "en": "No, thank you. Do you take cards?",
+            "accept": ["Kart alıyor musun?"],
+            "register": "sen",
+            "ok": true,
+            "next": "end"
+          }
+        ]
+      }
+    },
+    {
+      "id": "end",
+      "who": "pharmacist",
+      "tr": "Tabii. Buyurun, fişiniz. Çabuk iyileşin!",
+      "en": "Of course. Here's your receipt. Get well soon!",
+      "end": "You have lozenges and a syrup, and you know how to take them."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Boğazım ağrıyor.",
+      "en": "My throat hurts.",
+      "note": "What hurts takes the possessive: *başım ağrıyor*, my head aches."
+    },
+    {
+      "tr": "Geçmiş olsun. Sağ olun.",
+      "en": "Get well soon. Thank you."
+    },
+    {
+      "tr": "İki gündür.",
+      "en": "For two days.",
+      "note": "`-DIr` counts a time up to now."
+    },
+    {
+      "tr": "Ateşim yok.",
+      "en": "I don't have a temperature."
+    },
+    {
+      "tr": "Penisiline alerjim var.",
+      "en": "I'm allergic to penicillin.",
+      "note": "What you're allergic to takes the dative."
+    },
+    {
+      "tr": "Yemekten sonra",
+      "en": "After meals",
+      "note": "*Yemekten önce*: before meals."
+    },
+    {
+      "tr": "Kartla ödeyebilir miyim?",
+      "en": "Can I pay by card?"
+    }
+  ],
+  "review": ["a2-u09", "a2-u06", "a1-u09"]
+}

@@ -1,0 +1,423 @@
+{
+  "id": "dlg-complaint",
+  "level": "b2",
+  "order": 3,
+  "after": "b2-u10",
+  "title": "A complaint at a shop",
+  "titleTr": "Mağazada şikâyet",
+  "setting": "Two weeks ago you bought wireless headphones in an electronics shop. Now the left side has gone silent, so you take them back.",
+  "goal": "Make a complaint firmly but politely, cope without a receipt, and get the solution you want.",
+  "minutes": 7,
+  "cast": [
+    {
+      "id": "assistant",
+      "name": "Satış danışmanı",
+      "role": "the sales assistant",
+      "register": "siz",
+      "why": "A shop assistant, however young: *siz*. *Sen* would sound like talking down.",
+      "pitch": 1
+    },
+    {
+      "id": "manager",
+      "name": "Seda Hanım",
+      "role": "Seda Hanım, the store manager",
+      "register": "siz",
+      "why": "The manager, whom you've just met at her work: *siz*, and *Seda Hanım*, never her first name alone.",
+      "pitch": 1.1
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "assistant",
+      "tr": "İyi günler, hoş geldiniz. Size nasıl yardımcı olabilirim?",
+      "en": "Good afternoon, welcome. How can I help you?",
+      "turn": {
+        "prompt": "Say you bought these headphones here two weeks ago, and the left side doesn't work.",
+        "replies": [
+          {
+            "tr": "Bu kulaklığı iki hafta önce buradan aldım, ama sol tarafı çalışmıyor.",
+            "en": "I bought these headphones here two weeks ago, but the left side doesn't work.",
+            "accept": [
+              "Bu kulaklığı iki hafta önce buradan aldım. Sol tarafı çalışmıyor.",
+              "Bu kulaklığı iki hafta önce aldım, ama sol tarafı çalışmıyor.",
+              "İki hafta önce bu kulaklığı buradan aldım, ama sol tarafı çalışmıyor."
+            ],
+            "ok": true,
+            "next": "receipt"
+          },
+          {
+            "tr": "Bu kulaklık bozuk! Hemen paramı geri istiyorum!",
+            "en": "These headphones are broken! I want my money back right now!",
+            "ok": false,
+            "why": "Starting angry rarely helps. Describe the problem first: *Bu kulaklığı iki hafta önce aldım, ama sol tarafı çalışmıyor*.",
+            "next": "calm"
+          },
+          {
+            "tr": "Bu kulaklığı iki hafta önce buradan aldın, ama sol tarafı çalışmıyor.",
+            "en": "You bought these headphones here two weeks ago, but the left side doesn't work.",
+            "register": "sen",
+            "ok": false,
+            "why": "*Aldın* says **he** bought them, and with *sen*. You did: *aldım*.",
+            "react": {
+              "tr": "Ben mi aldım?",
+              "en": "I bought them?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "calm",
+      "who": "assistant",
+      "tr": "Lütfen sakin olun, önce bir bakalım. Ne zaman aldınız?",
+      "en": "Please stay calm, let's have a look first. When did you buy them?",
+      "turn": {
+        "prompt": "Apologise, and explain calmly: two weeks ago, and the left side doesn't work.",
+        "replies": [
+          {
+            "tr": "Haklısınız, kusura bakmayın. İki hafta önce aldım; sol tarafı çalışmıyor.",
+            "en": "You're right, I'm sorry. I bought them two weeks ago; the left side doesn't work.",
+            "accept": ["Kusura bakmayın. İki hafta önce aldım, sol tarafı çalışmıyor."],
+            "register": "siz",
+            "ok": true,
+            "next": "receipt"
+          },
+          {
+            "tr": "İki hafta önce aldım. Sol tarafı çalışmıyor.",
+            "en": "Two weeks ago. The left side doesn't work.",
+            "accept": ["İki hafta önce. Sol tarafı çalışmıyor."],
+            "ok": true,
+            "next": "receipt"
+          },
+          {
+            "tr": "Haklısın, kusura bakma. İki hafta önce aldım.",
+            "en": "You're right, sorry. I bought them two weeks ago.",
+            "register": "sen",
+            "ok": true,
+            "next": "receipt"
+          }
+        ]
+      }
+    },
+    {
+      "id": "receipt",
+      "who": "assistant",
+      "tr": "Anlıyorum. Fişiniz yanınızda mı?",
+      "en": "I see. Do you have the receipt with you?",
+      "turn": {
+        "prompt": "Hand it over with the box. Or say you've lost the receipt, but you paid by card.",
+        "replies": [
+          {
+            "tr": "Evet, buyurun. Kutusu da burada.",
+            "en": "Yes, here you are. The box is here too.",
+            "accept": ["Evet, buyurun.", "Buyurun, fiş ve kutusu."],
+            "register": "siz",
+            "ok": true,
+            "next": "test"
+          },
+          {
+            "tr": "Maalesef fişi kaybettim, ama kartla ödemiştim.",
+            "en": "I'm afraid I've lost the receipt, but I paid by card.",
+            "accept": ["Fişi kaybettim, ama kartla ödemiştim.", "Maalesef fiş yok, ama kartla ödedim."],
+            "ok": true,
+            "next": "card"
+          },
+          {
+            "tr": "Fişiniz yanınızda mı?",
+            "en": "Do you have your receipt with you?",
+            "register": "siz",
+            "ok": false,
+            "why": "That repeats his question back. Answer it: *Evet, buyurun*, or *Fişi kaybettim*.",
+            "react": {
+              "tr": "Benim mi? Sizin fişiniz lazım!",
+              "en": "Mine? It's your receipt we need!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "card",
+      "who": "assistant",
+      "tr": "Sorun değil, kart numaranızla satışı sistemden bulabiliriz. Kartınızı alabilir miyim?",
+      "en": "No problem, we can find the sale in the system from your card number. May I have your card?",
+      "turn": {
+        "prompt": "Hand it over.",
+        "replies": [
+          {
+            "tr": "Tabii, buyurun.",
+            "en": "Of course, here you are.",
+            "accept": ["Buyurun.", "Tabii ki, buyurun."],
+            "register": "siz",
+            "ok": true,
+            "next": "test"
+          },
+          {
+            "tr": "Tabii, al.",
+            "en": "Sure, take it.",
+            "accept": ["Al."],
+            "register": "sen",
+            "ok": true,
+            "next": "test"
+          }
+        ]
+      }
+    },
+    {
+      "id": "test",
+      "who": "assistant",
+      "tr": "Evet, sol tarafta ses yok. Garanti kapsamında, ama değişim için ürünü servise göndermemiz gerekiyor; bu iki üç hafta sürebilir.",
+      "en": "Yes, there's no sound on the left. It's under warranty, but for an exchange we have to send it to the service centre, which can take two or three weeks.",
+      "turn": {
+        "prompt": "Politely point out it's only two weeks old, and ask whether they could exchange it now. Or accept the wait.",
+        "replies": [
+          {
+            "tr": "İki haftalık bir ürün için üç hafta beklemek zor. Hemen değiştirmeniz mümkün mü?",
+            "en": "Waiting three weeks for something two weeks old is hard. Could you exchange it now?",
+            "accept": ["Ürün iki haftalık. Hemen değiştirmeniz mümkün mü?", "Hemen değiştirmeniz mümkün mü?", "Hemen değiştiremez misiniz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "manager"
+          },
+          {
+            "tr": "İki haftalık bir ürün için üç hafta beklemek zor. Hemen değiştirmen mümkün mü?",
+            "en": "Waiting three weeks for something two weeks old is hard. Could you exchange it now?",
+            "accept": ["Hemen değiştirmen mümkün mü?", "Hemen değiştiremez misin?"],
+            "register": "sen",
+            "ok": true,
+            "next": "manager"
+          },
+          {
+            "tr": "Tamam, servise gönderin. Hazır olunca haber verir misiniz?",
+            "en": "All right, send it in. Will you let me know when it's ready?",
+            "accept": ["Tamam, servise gönderin.", "Peki, servise gönderin. Hazır olunca haber verin."],
+            "register": "siz",
+            "ok": true,
+            "next": "service"
+          }
+        ]
+      }
+    },
+    {
+      "id": "service",
+      "who": "assistant",
+      "tr": "Tabii. Yaklaşık üç hafta sürer; hazır olunca size mesaj atarız.",
+      "en": "Of course. It takes about three weeks; we'll text you when it's ready.",
+      "turn": {
+        "prompt": "Thank him and say goodbye.",
+        "replies": [
+          {
+            "tr": "Teşekkürler, iyi çalışmalar.",
+            "en": "Thank you, have a good day.",
+            "accept": ["Teşekkür ederim, iyi çalışmalar.", "Teşekkürler, iyi günler."],
+            "ok": true,
+            "next": "end-service"
+          },
+          {
+            "tr": "Sağ olun, iyi günler.",
+            "en": "Thank you, have a good day.",
+            "register": "siz",
+            "ok": true,
+            "next": "end-service"
+          },
+          {
+            "tr": "Sağ ol, iyi günler.",
+            "en": "Thanks, have a good day.",
+            "register": "sen",
+            "ok": true,
+            "next": "end-service"
+          }
+        ]
+      }
+    },
+    {
+      "id": "manager",
+      "who": "assistant",
+      "tr": "Buna ben karar veremiyorum. Müdürümüzü çağırayım.",
+      "en": "I can't decide that myself. Let me call our manager.",
+      "next": "boss"
+    },
+    {
+      "id": "boss",
+      "who": "manager",
+      "tr": "Merhaba, ben Seda Kaya, mağaza müdürü. Arkadaşım durumu anlattı. Nasıl bir çözüm istersiniz?",
+      "en": "Hello, I'm Seda Kaya, the store manager. My colleague told me what happened. What solution would you like?",
+      "note": "People introduce themselves at work with their full name; you address them by the first name with *Hanım* or *Bey*: *Seda Hanım*.",
+      "turn": {
+        "prompt": "Say that since it broke within two weeks, you'd like either a new one or your money back.",
+        "replies": [
+          {
+            "tr": "Ürün iki haftada bozulduğu için ya yenisiyle değiştirilmesini ya da paramın iadesini rica ediyorum.",
+            "en": "Since it broke within two weeks, I'd like either a replacement or a refund.",
+            "accept": ["Ürün iki haftada bozulduğu için ya yenisini ya da paramı geri istiyorum.", "İki haftada bozulduğu için ya yenisini ya da paramın iadesini rica ediyorum."],
+            "ok": true,
+            "next": "offer"
+          },
+          {
+            "tr": "Seda Hanım, ürün iki haftada bozuldu. Yenisini verirseniz çok sevinirim.",
+            "en": "Seda Hanım, it broke within two weeks. I'd be very glad if you gave me a new one.",
+            "accept": ["Yenisini verirseniz çok sevinirim."],
+            "register": "siz",
+            "ok": true,
+            "next": "offer"
+          },
+          {
+            "tr": "Seda, ürün iki haftada bozuldu. Yenisini verirsen çok sevinirim.",
+            "en": "Seda, it broke within two weeks. I'd be very glad if you gave me a new one.",
+            "register": "sen",
+            "ok": true,
+            "next": "offer"
+          }
+        ]
+      }
+    },
+    {
+      "id": "offer",
+      "who": "manager",
+      "tr": "Haklısınız. Normalde servise göndeririz, ama bu sefer stokta varsa hemen yenisiyle değiştirelim.",
+      "en": "You're right. Normally we'd send it in, but this time, if we have one in stock, let's exchange it right away.",
+      "turn": {
+        "prompt": "Thank her warmly.",
+        "replies": [
+          {
+            "tr": "Çok teşekkür ederim, anlayışınız için.",
+            "en": "Thank you very much for your understanding.",
+            "accept": ["Anlayışınız için çok teşekkür ederim.", "Anlayışınız için teşekkürler."],
+            "register": "siz",
+            "ok": true,
+            "next": "stock"
+          },
+          {
+            "tr": "Çok naziksiniz, teşekkür ederim.",
+            "en": "That's very kind of you, thank you.",
+            "accept": ["Çok naziksiniz."],
+            "register": "siz",
+            "ok": true,
+            "next": "stock"
+          },
+          {
+            "tr": "Çok naziksin, teşekkür ederim.",
+            "en": "That's very kind of you, thank you.",
+            "register": "sen",
+            "ok": true,
+            "next": "stock"
+          }
+        ]
+      }
+    },
+    {
+      "id": "stock",
+      "who": "assistant",
+      "tr": "Maalesef siyahı kalmamış, sadece beyazı var. Beyaz olur mu?",
+      "en": "I'm afraid there are no black ones left, only white. Would white be all right?",
+      "turn": {
+        "prompt": "Accept the white one, or ask for a refund instead.",
+        "replies": [
+          {
+            "tr": "Olur, beyaz da güzel.",
+            "en": "That's fine, white is nice too.",
+            "accept": ["Olur, beyaz olsun.", "Tamam, beyaz da olur."],
+            "ok": true,
+            "next": "end-white"
+          },
+          {
+            "tr": "Beyaz istemiyorum. O zaman paramı iade edebilir misiniz?",
+            "en": "I don't want white. Could you refund me, then?",
+            "accept": ["O zaman paramı iade edebilir misiniz?", "Paramı iade edebilir misiniz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "refund"
+          },
+          {
+            "tr": "Beyaz istemiyorum. O zaman paramı iade edebilir misin?",
+            "en": "I don't want white. Could you refund me, then?",
+            "accept": ["Paramı iade edebilir misin?"],
+            "register": "sen",
+            "ok": true,
+            "next": "refund"
+          }
+        ]
+      }
+    },
+    {
+      "id": "refund",
+      "who": "manager",
+      "tr": "Tabii. Ücret iki üç iş günü içinde kartınıza iade edilir.",
+      "en": "Of course. The amount will be refunded to your card within two or three working days.",
+      "turn": {
+        "prompt": "Thank her and say goodbye.",
+        "replies": [
+          {
+            "tr": "Teşekkürler, iyi çalışmalar.",
+            "en": "Thank you, have a good day.",
+            "accept": ["Teşekkür ederim, iyi çalışmalar.", "Teşekkürler, iyi günler."],
+            "ok": true,
+            "next": "end-refund"
+          },
+          {
+            "tr": "Sağ olun, iyi günler.",
+            "en": "Thank you, have a good day.",
+            "register": "siz",
+            "ok": true,
+            "next": "end-refund"
+          }
+        ]
+      }
+    },
+    {
+      "id": "end-white",
+      "who": "assistant",
+      "tr": "Buyurun, yeni kulaklığınız. Güle güle kullanın!",
+      "en": "Here are your new headphones. Enjoy them!",
+      "end": "You left with new headphones, in white."
+    },
+    {
+      "id": "end-refund",
+      "who": "manager",
+      "tr": "Rica ederim. Yine bekleriz.",
+      "en": "You're welcome. Come again.",
+      "end": "You got your money back: the refund reaches your card within a few days."
+    },
+    {
+      "id": "end-service",
+      "who": "assistant",
+      "tr": "Rica ederim, iyi günler!",
+      "en": "You're welcome, have a good day!",
+      "end": "Your headphones have gone for repair; they'll text you when they're back."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Size nasıl yardımcı olabilirim?",
+      "en": "How can I help you?"
+    },
+    {
+      "tr": "Sol tarafı çalışmıyor.",
+      "en": "The left side doesn't work."
+    },
+    {
+      "tr": "Fişi kaybettim.",
+      "en": "I've lost the receipt."
+    },
+    {
+      "tr": "Garanti kapsamında",
+      "en": "Under warranty"
+    },
+    {
+      "tr": "Paramın iadesini rica ediyorum.",
+      "en": "I'd like a refund, please.",
+      "note": "*Rica ediyorum* after a noun clause is the formal way to ask: *değiştirilmesini rica ediyorum*."
+    },
+    {
+      "tr": "Anlayışınız için teşekkür ederim.",
+      "en": "Thank you for your understanding."
+    },
+    {
+      "tr": "Güle güle kullanın!",
+      "en": "Enjoy it!"
+    }
+  ],
+  "review": ["b2-u05", "b2-u04", "b2-u10"]
+}

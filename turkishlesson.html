@@ -565,6 +565,81 @@
       .x-script dd { margin: 0; }
       .x-marks { margin: 8px 0; font-size: 13.5px; color: var(--muted); }
       .x-ans .model { margin-top: 10px; }
+
+      /* the dialogue simulator (?dialogue=, PROJECT.md 6.9): the list, the start card, the chat, the replies, the debrief.
+         In its level's colour; *siz* chips in the site blue, *sen* chips in the warm brown. */
+      .reg { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 999px; font-size: 12px; font-weight: 650; font-style: italic; white-space: nowrap; vertical-align: 1px; }
+      .reg.siz { background: var(--blue-wash); color: var(--blue-dark); }
+      .reg.sen { background: var(--warm-wash); color: #7f3f0c; }
+      .dl-list section { margin-top: 28px; }
+      .dl-lv { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--lv-dark); margin-bottom: 10px; }
+      .dl-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+      .dl-cards li { border: 1px solid var(--line); border-left: 4px solid var(--lv); border-radius: var(--r); background: #fff; overflow: hidden; }
+      .dl-card { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px 6px; color: var(--ink); text-decoration: none; }
+      .dl-card:hover { background: var(--lv-tint); color: var(--ink); }
+      .dl-card .dl-t { font-size: 16.5px; font-weight: 650; }
+      .dl-tt { color: var(--lv-dark); font-style: italic; }
+      .dl-tt.big { margin-top: 4px; font-size: 18px; }
+      .dl-meta { font-size: 13.5px; color: var(--muted); line-height: 1.6; }
+      .dl-after { display: block; padding: 0 14px 12px; font-size: 13px; color: var(--muted); }
+      .dl-goal { margin-top: 10px; font-size: 15px; }
+      .dl-goal b { color: var(--ink); }
+      .dl-start .sec-t { margin: 22px 0 8px; }
+      .dl-cast { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+      .dl-cast li { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+      .dl-cast b { color: var(--ink); font-size: 15.5px; margin-right: 4px; }
+      .dl-cr { color: var(--body); }
+      .dl-set { border: 0; margin: 0; padding: 0; min-width: 0; }
+      .dl-set legend { padding: 0; }
+      .dl-r { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; cursor: pointer; }
+      .dl-r input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--blue); flex: none; }
+      .dl-r span { display: flex; flex-direction: column; line-height: 1.35; }
+      .dl-r b { color: var(--ink); font-weight: 600; }
+      .dl-r small { font-size: 13px; color: var(--muted); }
+      body.dl-mode .xsec { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--lv-dark); }
+      .dl-chat { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+      .dl-b { max-width: 88%; padding: 10px 14px 6px; border-radius: 14px; }
+      .dl-b.them { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); border-top-left-radius: 4px; }
+      .dl-b.me { align-self: flex-end; background: var(--lv-tint); border: 1px solid var(--lv-line); border-top-right-radius: 4px; }
+      .dl-b.in { animation: rise-in .3s ease-out both; }
+      .dl-who { font-size: 12.5px; font-weight: 650; color: var(--muted); margin-bottom: 2px; }
+      .dl-b .dl-tr { font-size: 17px; line-height: 1.45; color: var(--ink); overflow-wrap: anywhere; }
+      .dl-b .dl-en { margin-top: 2px; font-size: 14px; color: var(--muted); }
+      .dl-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-top: 4px; }
+      .dl-tl, .dl-show { font: inherit; font-size: 13.5px; font-weight: 600; color: var(--blue-dark); background: none; border: 0; padding: 0 4px; min-height: 36px; cursor: pointer; }
+      .dl-show { display: block; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+      .dl-tl:hover, .dl-show:hover { color: var(--ink); }
+      @media (pointer: coarse) { .dl-tl, .dl-show { min-height: 44px; } }
+      .dl-note { margin: 6px 0 4px; padding-left: 10px; border-left: 3px solid var(--lv-line); font-size: 14px; color: var(--body); }
+      .dl-mark { display: inline-flex; align-items: center; margin: 2px 0 6px; padding: 0 8px; height: 22px; border-radius: 999px; font-size: 12px; font-weight: 650; }
+      .dl-mark.slip { background: var(--amber-wash); color: var(--amber); border: 1px solid var(--amber-line); }
+      .dl-mark.miss { background: var(--bad-wash); color: var(--bad); border: 1px solid var(--bad-line); }
+      .dl-opts { display: grid; gap: 10px; }
+      .dl-opt { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 54px; padding: 10px 14px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 10px; background: #fff; color: var(--ink); font: inherit; font-size: 16.5px; text-align: left; cursor: pointer; }
+      .dl-opt:hover { border-color: #cfcfcb; background: var(--panel); }
+      .dl-opt .k { flex: none; width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--line); display: grid; place-items: center; font-size: 12.5px; font-weight: 650; color: var(--muted); }
+      .dl-opt .ot { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; }
+      .dl-opt .oe { font-size: 13.5px; color: var(--muted); }
+      .dl-opt.struck, .dl-opt.struck:hover { cursor: default; background: var(--panel); color: var(--muted); }
+      .dl-opt.struck [lang="tr"] { text-decoration: line-through; }
+      @media (hover: none) { .dl-opt .k { display: none; } }
+      .ans.dl-ta { min-height: 64px; }
+      .dl-prompt { font-size: 15.5px; color: var(--ink); }
+      .dl-prompt .lbl { display: block; font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--lv-dark); margin-bottom: 2px; }
+      .dl-end .dl-again { margin-top: 14px; font-size: 14.5px; }
+      .dl-sec { margin-top: 28px; text-align: left; }
+      .dl-sec h2 { font-size: 19px; margin-bottom: 10px; }
+      .dl-sec .lbl { font-size: 12px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-right: 6px; }
+      .dl-phr, .dl-slips { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+      .dl-phr li, .dl-slips li { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); }
+      .dl-slips li { flex-direction: column; gap: 4px; }
+      .dl-phr li > div { display: flex; flex-direction: column; min-width: 0; }
+      .dl-pt { color: var(--ink); font-weight: 600; font-size: 16px; }
+      .dl-pe { color: var(--muted); font-size: 14px; }
+      .dl-pn { font-size: 14px; margin-top: 2px; }
+      .dl-q { font-size: 13.5px; color: var(--muted); }
+      .dl-log summary { cursor: pointer; font-weight: 650; color: var(--ink); font-size: 16px; min-height: 44px; display: flex; align-items: center; }
+      .dl-log .x-script { margin-top: 8px; }
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { transition: none !important; animation: none !important; }
       }
@@ -658,6 +733,7 @@
            ?test=a1-u03        "jump here": 20 exercises from the earlier lessons not done yet; 80% marks them done
            ?practice=mistakes  up to 15 exercises answered wrongly before, oldest first
            ?exam=tys-1         the TYS practice test: four timed sections, its own flow (section 8, PROJECT.md 6.8)
+           ?dialogue=dlg-cafe  a conversation of the dialogue simulator, its own flow; ?dialogue alone lists them (section 9, PROJECT.md 6.9)
          Every exercise type has a renderer (section 4) returning { ready, check, key, focus }; the flow (section 3)
          asks it to check, records the first try, re-queues wrong answers and shows the feedback dock. */
       var $ = function (id) { return document.getElementById(id); };
@@ -1029,6 +1105,7 @@
       function primary() {
         if ($("quit-dlg").open) return;
         if (S.mode === "exam") return xGo();
+        if (S.mode === "dialogue") return dGo();
         if (S.phase === "start") return begin();
         if (S.phase === "feedback") return next();
         if (S.phase !== "answer" || !S.view || go.hidden || !S.view.ready()) return;
@@ -2197,6 +2274,331 @@
         }).join("");
       }
 
+      // ───────────── 9. the dialogue simulator (?dialogue=dlg-cafe, PROJECT.md 5.14, 6.9) ─────────────
+      // A conversation of 5.14: their lines in a chat, read aloud in each person's pitch; your replies chosen or typed; the
+      // conversation follows the reply's next. Each reply is judged on its meaning (ok) and, apart, on its register against
+      // the person it answers. Only the first answer at each turn counts for the debrief. It borrows this page's top bar,
+      // dock, text box, letter bar and end screen. Nothing is saved or sent: no XP, streak, mistakes list or analytics.
+      var G = null;
+      var DICON = {
+        say: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 8v4h3l4 3V5L6 8H3z" fill="currentColor"/><path d="M13 7.5c1.2 1.2 1.2 3.8 0 5M15.5 5.5c2.3 2.3 2.3 6.7 0 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+        slow: '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 8v4h3l4 3V5L6 8H3z" fill="currentColor"/><path d="M13 8.5c.6.6.6 2.4 0 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
+      };
+
+      MODES.dialogue = function () {
+        var list = (S.index && S.index.dialogues) || [], id = S.target || "";
+        if (T.RE.dialogue && T.RE.dialogue.test(id) && list.some(function (d) { return d.id === id; })) return T.data.get(id).then(dStart);
+        return dList(id ? "There's no conversation at that address, so here are all of them." : "");
+      };
+      function dHref(id) { return P.lesson + "?dialogue" + (id ? "=" + encodeURIComponent(id) : ""); }
+      function regChip(r) { return '<span class="reg ' + r + '" lang="tr">' + r + "</span>"; }
+      function refLabel(ref) {
+        var u = S.flat && S.flat.unit[ref], p = S.index.points && S.index.points[ref];
+        return u ? unitLabel(u) + " · " + u.title : p ? p.label : ref;
+      }
+      function refLink(ref) { var h = T.href(ref, S.index); return h.ready ? '<a href="' + esc(h.href) + '">' + esc(refLabel(ref)) + "</a>" : esc(refLabel(ref)); }
+
+      // ── the list: every conversation, by level ──
+      function dList(notice) {
+        var list = (S.index && S.index.dialogues) || [];
+        S.phase = "dlist"; showBar(false);
+        document.title = "Conversations · Daily Turkish";
+        var h = '<div class="start dl-list"><p class="kicker">Conversations</p><h1>Practise a conversation</h1>' +
+          '<p class="goal">Everyday scenes from A1 to B2. Hear the other person, answer by choosing or typing a reply, and find out whether you gave the right person <i lang="tr">sen</i> or <i lang="tr">siz</i>. None of them is locked.</p>' +
+          (notice ? '<p class="notice">' + esc(notice) + "</p>" : "");
+        (S.index.levels || []).forEach(function (l) {
+          var ds = list.filter(function (d) { return d.level === l.id; });
+          if (!ds.length) return;
+          h += '<section data-lvl="' + l.id + '" aria-labelledby="dl-h-' + l.id + '"><h2 class="dl-lv" id="dl-h-' + l.id + '"><span class="lv-tag">' + esc(l.cefr) + "</span>" + esc(l.title) + '</h2><ul class="dl-cards">' +
+            ds.map(function (d) {
+              var who = d.cast.map(function (c) { return esc(c.role) + " " + regChip(c.register); }).join(", ");
+              return '<li><a class="dl-card" href="' + dHref(d.id) + '"><span class="dl-t">' + esc(d.title) + '</span><span class="dl-tt" lang="tr">' + esc(d.titleTr) + "</span>" +
+                '<span class="dl-meta">' + d.minutes + " min · with " + who + "</span></a>" + '<span class="dl-after">Best after ' + refLink(d.after) + "</span></li>";
+            }).join("") + "</ul></section>";
+        });
+        if (!list.length) h += '<p class="notice">No conversation has been written yet.</p>';
+        h += '<div class="acts"><a class="btn ghost" href="' + P.hub + '">Back to the course</a></div><p class="meta">Nothing is saved or sent: a conversation stays on this page.</p></div>';
+        screen(h, true);
+      }
+
+      // ── the start card ──
+      function dStart(D) {
+        G = { D: D, cast: {}, nodes: {}, typing: false, showEn: false, listen: false, log: [], turns: [], cur: null, turnNo: 0, last: null, token: null,
+              first: true, misses: 0, helped: false, shown: false, struck: {}, order: null, after: null, draft: "", end: null };
+        D.cast.forEach(function (p) { G.cast[p.id] = p; });
+        D.nodes.forEach(function (n) { G.nodes[n.id] = n; });
+        document.body.setAttribute("data-lvl", D.level);
+        document.body.classList.add("dl-mode");
+        document.title = D.title + " · Conversation · Daily Turkish";
+        S.phase = "dstart"; showBar(false);
+        var cast = D.cast.map(function (p) {
+          return '<li><span><b lang="tr">' + esc(p.name) + "</b>" + regChip(p.register) + '</span><span class="dl-cr">' + esc(p.role) + ". " + rich(p.why) + "</span></li>";
+        }).join("");
+        screen('<div class="start dl-start"><p class="kicker">Conversation · ' + esc(D.level.toUpperCase()) + "</p><h1>" + esc(D.title) + '</h1><p class="dl-tt big" lang="tr">' + esc(D.titleTr) + "</p>" +
+          '<p class="goal">' + rich(D.setting) + '</p><p class="dl-goal"><b>You practise:</b> ' + esc(D.goal) + "</p>" +
+          '<h2 class="sec-t">Who you talk to</h2><ul class="dl-cast">' + cast + "</ul>" +
+          '<fieldset class="dl-set"><legend class="sec-t">Answer by</legend>' +
+          '<label class="dl-r"><input type="radio" name="dl-mode" value="choose" checked><span><b>Choosing replies</b><small>Tap one, or press 1 to 4.</small></span></label>' +
+          '<label class="dl-r"><input type="radio" name="dl-mode" value="type"><span><b>Typing them</b><small>Write what you would say; the choices are a tap away.</small></span></label></fieldset>' +
+          '<label class="x-untimed"><input type="checkbox" id="dl-en"><span><b>Show translations</b><small>Otherwise each line has its own Translate button.</small></span></label>' +
+          (S.speech ? '<label class="x-untimed"><input type="checkbox" id="dl-listen"><span><b>Listen first</b><small>Their words stay hidden until you tap Show, or until you answer.</small></span></label>'
+                    : '<p class="notice">' + dNoVoice() + "</p>") +
+          '<div class="acts"><button type="button" class="btn primary big" id="dl-go">Start the conversation</button><a class="btn ghost" href="' + dHref() + '">All conversations</a></div>' +
+          '<p class="meta">About ' + D.minutes + " minutes. Nothing is saved or sent.</p></div>", true);
+        $("dl-go").addEventListener("click", dBegin);
+        if (!touch) $("dl-go").focus({ preventScroll: true });
+      }
+      function dNoVoice() {
+        if (!T.tts.supported()) return "This browser can't read text aloud, so their lines will be shown, not read.";
+        if (!S.voice) return "No Turkish voice was found on this device, so their lines will be shown, not read. To add one, install Turkish in your system's text-to-speech settings, then reload the page.";
+        return 'Speech is off in your settings, so their lines will be shown, not read. Turn on “Read Turkish aloud” in <a href="' + P.hub + '#settings" data-keep="1">Settings</a> to hear them.';
+      }
+      function dBegin() {
+        var m = stage.querySelector('input[name="dl-mode"]:checked');
+        G.typing = !!m && m.value === "type";
+        G.showEn = !!($("dl-en") && $("dl-en").checked);
+        G.listen = !!($("dl-listen") && $("dl-listen").checked);
+        if (S.speech) T.tts.speak(" ");   // iOS lets speech start only inside a tap; this first, silent one unlocks it
+        S.started = true;
+        $("quit-go").href = dHref(); $("quit-t").textContent = "Leave this conversation?"; $("quit-p").textContent = "Nothing in it is saved.";
+        window.addEventListener("pagehide", function () { T.tts.cancel(); });
+        S.phase = "dtalk";
+        $("topbar").hidden = false; $("track").hidden = true; $("combo").hidden = true; $("xpr").hidden = true;
+        $("xsec").hidden = false; $("xsec").textContent = G.D.title; $("count").textContent = "";
+        dock.hidden = true;
+        stage.innerHTML = '<div class="dl-talk"><div class="dl-chat" id="dl-chat" role="log" aria-live="polite" aria-label="The conversation"></div><div id="dl-in"></div></div>';
+        window.scrollTo(0, 0);
+        dLine(G.D.start);
+      }
+
+      // ── their lines: a bubble, read aloud; the next line (a node's next) waits for the end of this one ──
+      function dPerson(id) { return G.cast[id] || { id: id, name: id, role: id, register: null, why: "", pitch: 1 }; }
+      function dLine(id) {
+        var n = G.nodes[id];
+        if (!n) return message({ title: "This conversation has a broken link", text: "Its next line is missing. Try another conversation.", acts: '<a class="btn primary" href="' + dHref() + '">All conversations</a>' });
+        var p = dPerson(n.who);
+        dBubble({ who: n.who, tr: n.tr, en: n.en, note: n.note });
+        if (n.next) return dSay({ tr: n.tr, pitch: p.pitch }, function () { dLine(n.next); });
+        dSay({ tr: n.tr, pitch: p.pitch });
+        if (n.turn) dTurn(n); else dEndReady(n);
+      }
+      // Speaks a line. With then: called once it has been read (or at once, a moment later, without speech).
+      function dSay(line, then) {
+        var token = G.token = {}, done = false, safety = null;
+        G.last = line;
+        var fin = function () { if (done) return; done = true; clearTimeout(safety); if (then && G.token === token) setTimeout(then, 250); };
+        var u = S.speech ? T.tts.speak(line.tr, { pitch: line.pitch }) : false;
+        if (!u) { if (then) setTimeout(fin, S.speech ? 0 : 600); return; }
+        u.onend = fin; u.onerror = fin;
+        safety = setTimeout(fin, 4000 + line.tr.length * 120 / (store.settings().ttsRate || 0.9));   // if a browser never fires end
+      }
+      function dReplay(line, slow) { if (!line || !S.speech) return; G.last = line; T.tts.speak(line.tr, { pitch: line.pitch, slow: !!slow }); }
+      function dBubble(o) {
+        var me = o.who === "me", p = me ? null : dPerson(o.who), hide = !me && G.listen && S.speech;
+        G.log.push(o);
+        var tools = me ? sayHtml(o.tr)
+          : (S.speech ? '<button type="button" class="trk-say dl-say" aria-label="Listen">' + DICON.say + '</button><button type="button" class="trk-say trk-say-slow dl-say" data-slow="1" aria-label="Listen slowly">' + DICON.slow + "</button>" : "");
+        tools += '<button type="button" class="dl-tl" aria-expanded="' + G.showEn + '">' + (G.showEn ? "Hide translation" : "Translate") + "</button>";
+        var el = document.createElement("div");
+        el.className = "dl-b " + (me ? "me" : "them") + (hide ? " hid" : "") + (reduce ? "" : " in");
+        el.innerHTML = (me ? '<div class="dl-who">You</div>' : '<div class="dl-who" lang="tr">' + esc(p.name) + "</div>") +
+          '<p class="dl-tr" lang="tr"' + (hide ? " hidden" : "") + ">" + esc(o.tr) + "</p>" + (hide ? '<button type="button" class="dl-show">Show the words</button>' : "") +
+          '<p class="dl-en"' + (G.showEn ? "" : " hidden") + ">" + esc(o.en) + "</p>" + '<div class="dl-tools">' + tools + "</div>" +
+          (o.mark || "") + (o.note ? '<div class="dl-note">' + rich(o.note) + "</div>" : "");
+        $("dl-chat").appendChild(el);
+        prep(el);
+        el.addEventListener("click", function (e) {
+          var b = e.target.closest("button");
+          if (!b) return;
+          if (b.classList.contains("dl-say")) dReplay({ tr: o.tr, pitch: p && p.pitch }, b.getAttribute("data-slow"));
+          else if (b.classList.contains("dl-show")) dReveal(el);
+          else if (b.classList.contains("dl-tl")) {
+            var en = el.querySelector(".dl-en"), open = en.hidden;
+            en.hidden = !open; b.setAttribute("aria-expanded", String(open)); b.textContent = open ? "Hide translation" : "Translate";
+          }
+        });
+        dScroll(el);
+        return el;
+      }
+      function dReveal(el) { el.classList.remove("hid"); el.querySelector(".dl-tr").hidden = false; var b = el.querySelector(".dl-show"); if (b) b.remove(); }
+      function dRevealAll() { $("dl-chat").querySelectorAll(".dl-b.hid").forEach(dReveal); }
+      // Keeps an element in sight above the dock.
+      function dScroll(el) {
+        requestAnimationFrame(function () {
+          if (!el || !el.isConnected) return;
+          var r = el.getBoundingClientRect(), dh = dock.hidden ? 0 : dock.getBoundingClientRect().height;
+          var over = r.bottom - (window.innerHeight - dh - 12);
+          if (over > 0) window.scrollBy({ top: over, behavior: reduce ? "auto" : "smooth" });
+        });
+      }
+
+      // ── your turn: the prompt in the dock, and the replies as choices or a text box ──
+      function dTurn(n) {
+        G.cur = n; G.first = true; G.misses = 0; G.helped = false; G.shown = !G.typing; G.struck = {}; G.draft = "";
+        G.order = shuffle(range(n.turn.replies.length));
+        G.turnNo += 1; $("count").textContent = "Turn " + G.turnNo;
+        dInput();
+      }
+      function dTo(n) { n = n || G.cur; return dPerson(n.turn.to || n.who); }
+      function dInput() {
+        var n = G.cur, t = n.turn, box = $("dl-in");
+        S.phase = "dturn"; G.after = null;
+        dock.className = "dock"; dockLeft.innerHTML = ""; dock.classList.remove("has-left");
+        fb.innerHTML = '<p class="dl-prompt"><span class="lbl">Your turn' + (t.to && t.to !== n.who ? ', to <span lang="tr">' + esc(dTo().name) + "</span>" : "") + "</span>" + esc(t.prompt) + "</p>";
+        if (G.shown) {
+          box.innerHTML = '<div class="dl-opts" role="group" aria-label="Your reply">' + G.order.map(function (i, k) {
+            var r = t.replies[i], off = !!G.struck[i];
+            return '<button type="button" class="dl-opt' + (off ? " struck" : "") + '" data-i="' + i + '"' + (off ? " disabled" : "") + '><span class="k" aria-hidden="true">' + (k + 1) + "</span>" +
+              '<span class="ot"><span lang="tr">' + esc(r.tr) + "</span>" + (G.showEn ? '<span class="oe">' + esc(r.en) + "</span>" : "") + "</span></button>";
+          }).join("") + "</div>";
+          box.querySelectorAll(".dl-opt").forEach(function (b) { b.addEventListener("click", function () { dChoose(+b.getAttribute("data-i")); }); });
+          go.hidden = true;
+        } else {
+          box.innerHTML = textArea("tr", "Your reply, in Turkish");
+          prep(box);
+          var ta = box.querySelector("textarea");
+          ta.classList.add("dl-ta"); ta.rows = 2; ta.value = G.draft;
+          ta.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); if (!e.shiftKey) dSend(); } });
+          ta.addEventListener("input", function () { G.draft = ta.value; go.disabled = !ta.value.trim(); });
+          dockLeft.innerHTML = '<button type="button" class="btn ghost" id="dl-help">Show the choices</button>'; dock.classList.add("has-left");
+          $("dl-help").addEventListener("click", dHelp);
+          go.hidden = false; go.textContent = "Send"; go.disabled = !ta.value.trim();
+          if (!touch) ta.focus({ preventScroll: true });
+        }
+        dock.hidden = false;
+        dScroll(box);
+      }
+      function dHelp() { G.helped = true; G.shown = true; dInput(); }
+      function dChoose(i) { if (S.phase === "dturn" && !G.struck[i]) dAnswer(G.cur.turn.replies[i], i, null); }
+      // A typed answer is matched against every reply of the turn (6.9): the first correct match, else the first almost.
+      function dMatch(text) {
+        var reps = G.cur.turn.replies, best = null;
+        for (var i = 0; i < reps.length; i++) {
+          var c = T.check(text, [reps[i].tr].concat(reps[i].accept || []), [], "tr", "lenient");
+          if (c.verdict === "correct") return { i: i, c: c };
+          if (c.verdict === "almost" && !best) best = { i: i, c: c };
+        }
+        return best;
+      }
+      function dSend() {
+        if (S.phase !== "dturn" || G.shown) return;
+        var ta = $("dl-in").querySelector("textarea"), text = ta ? ta.value.trim() : "";
+        if (!text) return;
+        var m = dMatch(text);
+        if (m) return dAnswer(G.cur.turn.replies[m.i], m.i, { said: text, c: m.c });
+        G.misses += 1;
+        if (G.first) { G.first = false; G.turns.push({ node: G.cur, r: null, said: text, outcome: "miss", helped: G.helped, to: dTo() }); }
+        var auto = G.misses >= 2;
+        S.phase = "dfeedback";
+        dock.className = "dock bad";
+        fb.innerHTML = '<h2 class="fb-t"><span class="fb-i">' + ICON.cross + "</span>Not one of the replies here</h2><p>The conversation can't follow <i lang=\"tr\">" + esc(text) + "</i>. Read the task again" +
+          (auto ? ", then choose one of the replies." : ", and try another way, or show the choices.") + "</p>";
+        if (auto) { dockLeft.innerHTML = ""; dock.classList.remove("has-left"); go.textContent = "Show the choices"; G.after = function () { G.helped = true; G.shown = true; dInput(); }; }
+        else {
+          dockLeft.innerHTML = '<button type="button" class="btn ghost" id="dl-help">Show the choices</button>'; dock.classList.add("has-left");
+          $("dl-help").addEventListener("click", dHelp);
+          go.textContent = "Try again"; G.after = dInput;
+        }
+        go.hidden = false; go.disabled = false; go.focus({ preventScroll: true });
+      }
+      // The better reply to show after a slip or a miss: an ok one in the person's register, else one with no register.
+      function dBetter(n, not) {
+        var p = dTo(n), reps = n.turn.replies, i;
+        for (i = 0; i < reps.length; i++) if (reps[i] !== not && reps[i].ok && reps[i].register && reps[i].register === p.register) return reps[i];
+        for (i = 0; i < reps.length; i++) if (reps[i] !== not && reps[i].ok && !reps[i].register) return reps[i];
+        return null;
+      }
+      function dAnswer(r, i, typed) {
+        var n = G.cur, p = dTo(), slip = !!(r.register && p.register && r.register !== p.register);
+        var outcome = !r.ok ? "miss" : slip ? "slip" : "natural", almost = !!(typed && typed.c.verdict === "almost");
+        if (G.first) { G.first = false; G.turns.push({ node: n, r: r, said: typed ? typed.said : null, outcome: outcome, helped: G.helped, to: p }); }
+        dRevealAll();
+        $("dl-in").innerHTML = "";
+        var mark = outcome === "slip" ? '<span class="dl-mark slip"><span lang="tr">' + r.register + '</span>&nbsp;→&nbsp;<span lang="tr">' + p.register + "</span></span>"
+          : outcome === "miss" ? '<span class="dl-mark miss">Not quite</span>' : "";
+        dBubble({ who: "me", tr: r.tr, en: r.en, mark: mark });
+        if (outcome === "natural" && !r.why && !almost) { S.phase = "dtalk"; dock.hidden = true; return dLine(r.next); }
+        var kind = outcome === "miss" ? "bad" : outcome === "slip" || almost ? "almost" : "ok";
+        var title = outcome === "miss" ? "Not quite" : outcome === "slip" ? "Right words, wrong register" : almost ? "Almost right" : "Natural";
+        var h = '<h2 class="fb-t"><span class="fb-i">' + (kind === "ok" ? ICON.check : kind === "almost" ? ICON.dash : ICON.cross) + "</span>" + esc(title) + "</h2>";
+        if (almost) h += '<p><span class="note">' + esc(NOTES[typed.c.note] || "Almost") + ':</span> <span lang="tr"><b>' + esc(r.tr) + "</b></span>" + (outcome === "natural" ? " It counts as right." : "") + "</p>";
+        if (slip) {
+          var b = dBetter(n, r);
+          h += '<p>You said <i lang="tr">' + r.register + "</i> to " + esc(p.role) + ". " + rich(p.why) + "</p>" +
+            (b ? '<div class="fb-l"><span class="lbl">Better</span><span class="big-a"><span lang="tr">' + esc(b.tr) + "</span>" + sayHtml(b.tr) + "</span></div>" : "");
+        }
+        if (r.why) h += "<p>" + rich(r.why) + "</p>";
+        S.phase = "dfeedback";
+        dock.className = "dock " + kind; dock.hidden = false; dockLeft.innerHTML = ""; dock.classList.remove("has-left");
+        fb.innerHTML = h; prep(fb);
+        if (r.next) { go.textContent = "Continue"; G.after = function () { S.phase = "dtalk"; dock.hidden = true; dLine(r.next); }; }
+        else {   // they react, and the turn comes again without this reply
+          G.struck[i] = true; G.draft = "";
+          if (r.react) { dBubble({ who: p.id, tr: r.react.tr, en: r.react.en }); dSay({ tr: r.react.tr, pitch: p.pitch }); }
+          go.textContent = "Try again"; G.after = dInput;
+        }
+        go.hidden = false; go.disabled = false; go.focus({ preventScroll: true });
+        dScroll($("dl-chat").lastElementChild);
+      }
+      function dGo() {
+        if (S.phase === "dstart") return dBegin();
+        if (S.phase === "dturn") return dSend();
+        if (S.phase === "dfeedback" && G.after) { var f = G.after; G.after = null; return f(); }
+        if (S.phase === "dend") return dDebrief();
+      }
+      function dEndReady(n) {
+        G.end = n; S.phase = "dend";
+        dRevealAll(); $("dl-in").innerHTML = "";
+        dock.className = "dock ok"; dockLeft.innerHTML = ""; dock.classList.remove("has-left");
+        fb.innerHTML = '<p class="dl-prompt"><span class="lbl">The end</span>' + esc(n.end) + "</p>";
+        go.hidden = false; go.disabled = false; go.textContent = "See how it went"; dock.hidden = false;
+        go.focus({ preventScroll: true });
+        dScroll($("dl-chat").lastElementChild);
+      }
+
+      // ── the debrief: how it went, the key phrases, what to look at again, the whole conversation ──
+      function dDebrief() {
+        var D = G.D;
+        S.phase = "dfin"; S.started = false; T.tts.cancel();
+        dock.hidden = true; $("topbar").hidden = true;
+        var tn = G.turns.length, nat = G.turns.filter(function (x) { return x.outcome === "natural"; }).length;
+        var reg = G.turns.filter(function (x) { return x.r && x.r.register && x.to.register; });
+        var regOk = reg.filter(function (x) { return x.r.register === x.to.register; }).length;
+        var stats = '<div class="stats">' +
+          '<div class="stat"><div><div class="big">' + tn + '</div><div class="lbl">' + (tn === 1 ? "turn" : "turns") + "</div></div></div>" +
+          '<div class="stat"><div><div class="big">' + nat + " <small>of " + tn + '</small></div><div class="lbl">natural replies, first time</div></div></div>' +
+          '<div class="stat"><div><div class="big">' + (reg.length ? regOk + " <small>of " + reg.length + "</small>" : "–") + '</div><div class="lbl"><i lang="tr">sen</i> or <i lang="tr">siz</i> right</div></div></div></div>';
+        var acts = '<div class="acts"><a class="btn primary big" href="' + dHref(D.id) + '">Try it again</a><a class="btn" href="' + dHref() + '">Another conversation</a><a class="btn ghost" href="' + P.hub + '">Back to the course</a></div>';
+        var phrases = '<section class="dl-sec" aria-labelledby="dl-ph"><h2 id="dl-ph">Key phrases</h2><ul class="dl-phr">' + D.phrases.map(function (f) {
+          return '<li><div><span class="dl-pt" lang="tr">' + esc(f.tr) + '</span><span class="dl-pe">' + esc(f.en) + "</span>" + (f.note ? '<span class="dl-pn">' + rich(f.note) + "</span>" : "") + "</div>" + sayHtml(f.tr) + "</li>";
+        }).join("") + "</ul></section>";
+        var off = G.turns.filter(function (x) { return x.outcome !== "natural"; });
+        var again = '<section class="dl-sec" aria-labelledby="dl-ag"><h2 id="dl-ag">To look at again</h2>' + (off.length ? '<ul class="dl-slips">' + off.map(function (x) {
+          var b = dBetter(x.node, x.r), said = x.r ? x.r.tr : x.said;
+          var why = x.outcome === "slip" ? 'You said <i lang="tr">' + x.r.register + "</i> to " + esc(x.to.role) + ". " + rich(x.to.why) : x.r ? (x.r.why ? rich(x.r.why) : "") : "The conversation couldn't follow that answer.";
+          return '<li><p class="dl-q">' + esc(x.node.turn.prompt) + '</p><p><span class="lbl">' + (x.r ? "You said" : "You typed") + '</span><span lang="tr">' + esc(said) + "</span>" + (x.helped ? " (from the choices)" : "") + "</p>" +
+            (b ? '<p><span class="lbl">Better</span><span lang="tr">' + esc(b.tr) + "</span>" + sayHtml(b.tr) + "</p>" : "") + (why ? "<p>" + why + "</p>" : "") + "</li>";
+        }).join("") + "</ul>" : "<p>Nothing: every first answer was natural, and in the right register.</p>") + "</section>";
+        var rev = '<section class="dl-sec" aria-labelledby="dl-rv"><h2 id="dl-rv">Go back to</h2><ul class="x-links">' + D.review.map(function (r) { return "<li>" + refLink(r) + "</li>"; }).join("") + "</ul></section>";
+        var log = '<details class="dl-sec dl-log"><summary>The whole conversation</summary><dl class="x-script">' + G.log.map(function (o) {
+          return "<dt>" + (o.who === "me" ? "You" : '<span lang="tr">' + esc(dPerson(o.who).name) + "</span>") + '</dt><dd><span lang="tr">' + esc(o.tr) + '</span><br><span class="dl-pe">' + esc(o.en) + "</span></dd>";
+        }).join("") + "</dl></details>";
+        screen('<div class="end dl-end"><div class="badge">' + ICON.trophy + '</div><p class="kicker">Conversation over</p><h1>' + esc(D.title) + '</h1><p class="end-sub">' + esc(G.end.end) + "</p>" + stats +
+          '<p class="dl-again">It can go another way next time: try other replies.</p>' + acts + phrases + again + rev + log + "</div>", true);
+      }
+      document.addEventListener("keydown", function (e) {
+        if (S.mode !== "dialogue" || !G || $("quit-dlg").open || e.altKey || e.ctrlKey || e.metaKey || e.isComposing) return;
+        var t = e.target, typing = t.matches && t.matches("input[type=text], textarea");
+        if (e.key === "Enter" && !typing && !t.matches("button, a, summary, input") && (S.phase === "dfeedback" || S.phase === "dend")) { e.preventDefault(); dGo(); return; }
+        if (typing) return;
+        if (S.phase === "dturn" && G.shown && /^[1-4]$/.test(e.key)) {
+          var i = G.order[+e.key - 1];
+          if (i != null) { e.preventDefault(); dChoose(i); }
+          return;
+        }
+        if ((e.key === "r" || e.key === "R") && G.last && /^d(turn|feedback|end|talk)$/.test(S.phase)) { e.preventDefault(); dReplay(G.last); }
+      });
+
       // ───────────── 7. keyboard, quitting, boot ─────────────
       document.addEventListener("keydown", function (e) {
         if ($("quit-dlg").open || e.altKey || e.ctrlKey || e.metaKey || e.isComposing) return;
@@ -2221,12 +2623,12 @@
       $("quit-stay").addEventListener("click", function () { $("quit-dlg").close(); });
       $("quit-go").addEventListener("click", function () { S.started = false; });
       window.addEventListener("beforeunload", function (e) {
-        if (S.started && (S.mode === "exam" || S.items.some(function (it) { return it.attempts; }))) { e.preventDefault(); e.returnValue = ""; }
+        if (S.started && (S.mode === "exam" || S.mode === "dialogue" || S.items.some(function (it) { return it.attempts; }))) { e.preventDefault(); e.returnValue = ""; }
       });
 
       function boot() {
-        S.mode = params.has("id") ? "lesson" : params.has("review") ? "review" : params.has("test") ? "test" : params.get("practice") === "mistakes" ? "practice" : params.has("exam") ? "exam" : null;
-        S.target = params.get("id") || params.get("review") || params.get("test") || params.get("exam") || null;
+        S.mode = params.has("id") ? "lesson" : params.has("review") ? "review" : params.has("test") ? "test" : params.get("practice") === "mistakes" ? "practice" : params.has("exam") ? "exam" : params.has("dialogue") ? "dialogue" : null;
+        S.target = params.get("id") || params.get("review") || params.get("test") || params.get("exam") || params.get("dialogue") || null;
         notices();
         Promise.all([T.data.index(), T.tts.ready()]).then(function (r) {
           S.index = r[0]; S.voice = r[1]; S.flat = T.path.flatten(S.index);

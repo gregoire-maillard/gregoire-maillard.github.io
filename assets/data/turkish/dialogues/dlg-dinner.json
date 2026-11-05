@@ -1,0 +1,439 @@
+{
+  "id": "dlg-dinner",
+  "level": "b2",
+  "order": 2,
+  "after": "b2-u09",
+  "title": "Dinner with a family",
+  "titleTr": "Akşam yemeğinde",
+  "setting": "Your friend Ece has invited you to dinner with her family in Izmir. You arrive at the door with flowers.",
+  "goal": "Be a good guest: greet the family, accept food the Turkish way and thank the cook.",
+  "minutes": 7,
+  "cast": [
+    {
+      "id": "ayten",
+      "name": "Ayten Hanım",
+      "role": "Ece's mother, Ayten Hanım",
+      "register": "siz",
+      "why": "Ece's mother, older and new to you: *siz*, even though she says *sen* to you. Call her *Ayten Hanım* or *teyze*.",
+      "pitch": 1
+    },
+    {
+      "id": "dede",
+      "name": "Dede",
+      "role": "Ece's grandfather",
+      "register": "siz",
+      "why": "An elderly man: *siz*, always, even when he calls you *evladım*, my child.",
+      "pitch": 0.7
+    },
+    {
+      "id": "ece",
+      "name": "Ece",
+      "role": "your friend Ece",
+      "register": "sen",
+      "why": "Your friend: *sen*.",
+      "pitch": 1.2
+    },
+    {
+      "id": "mert",
+      "name": "Mert",
+      "role": "Ece's little brother Mert, nine",
+      "register": "sen",
+      "why": "A child: *sen*.",
+      "pitch": 1.4
+    }
+  ],
+  "start": "door",
+  "nodes": [
+    {
+      "id": "door",
+      "who": "ayten",
+      "tr": "Hoş geldin! Gel, gel, içeri gel.",
+      "en": "Welcome! Come in, come in.",
+      "note": "Ece's mother says *sen* to you, as older people do with the young. You still say *siz* to her.",
+      "turn": {
+        "prompt": "Answer the welcome, and give her the flowers you've brought.",
+        "replies": [
+          {
+            "tr": "Hoş bulduk! Bu çiçekler sizin için.",
+            "en": "Thank you! These flowers are for you.",
+            "accept": ["Hoş bulduk. Bunlar sizin için.", "Hoş bulduk, teyzeciğim. Bu çiçekler sizin için.", "Hoş bulduk! Bu çiçekler size."],
+            "register": "siz",
+            "ok": true,
+            "next": "shoes"
+          },
+          {
+            "tr": "Hoş bulduk! Bu çiçekler senin için.",
+            "en": "Thank you! These flowers are for you.",
+            "accept": ["Hoş bulduk. Bunlar senin için."],
+            "register": "sen",
+            "ok": true,
+            "next": "shoes"
+          },
+          {
+            "tr": "Hoş geldiniz! Bu çiçekler sizin için.",
+            "en": "Welcome! These flowers are for you.",
+            "register": "siz",
+            "ok": false,
+            "why": "*Hoş geldiniz* is the host's line. The guest answers *Hoş bulduk*.",
+            "next": "shoes"
+          }
+        ]
+      }
+    },
+    {
+      "id": "shoes",
+      "who": "ayten",
+      "tr": "Aa, ne zahmet ettin! Çok güzeller. Sana bir terlik vereyim.",
+      "en": "Oh, you shouldn't have! They're lovely. Let me give you some slippers.",
+      "note": "*Ne zahmet ettin*, “what trouble you went to”, thanks you for a gift. Many homes give guests slippers (*terlik*) at the door.",
+      "turn": {
+        "prompt": "Say it was no trouble at all, and thank her.",
+        "replies": [
+          {
+            "tr": "Ne zahmeti, teyzeciğim! Teşekkür ederim.",
+            "en": "No trouble at all! Thank you.",
+            "accept": ["Ne zahmeti! Teşekkür ederim.", "Ne zahmeti, teyze. Teşekkürler."],
+            "ok": true,
+            "next": "ece"
+          },
+          {
+            "tr": "Ne zahmeti, Ayten Hanım. Sağ olun.",
+            "en": "No trouble at all, Ayten Hanım. Thank you.",
+            "accept": ["Ne zahmeti. Sağ olun."],
+            "register": "siz",
+            "ok": true,
+            "next": "ece"
+          },
+          {
+            "tr": "Evet, çok zahmet ettim.",
+            "en": "Yes, it was a lot of trouble.",
+            "ok": false,
+            "why": "Taking it literally, “yes, a lot of trouble”, sounds rude. Play it down: *Ne zahmeti!*",
+            "next": "ece"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ece",
+      "who": "ece",
+      "tr": "Hoş geldin! Gel, seni dedemle tanıştırayım. Dede, bu benim arkadaşım.",
+      "en": "Welcome! Come, let me introduce you to my grandpa. Grandpa, this is my friend.",
+      "next": "dede"
+    },
+    {
+      "id": "dede",
+      "who": "dede",
+      "tr": "Memnun oldum, evladım. Türkçeyi nerede öğrendin?",
+      "en": "Pleased to meet you, my child. Where did you learn Turkish?",
+      "turn": {
+        "prompt": "Say you're pleased to meet him too, and you've been going to a course for a year. Then ask whether he speaks English.",
+        "replies": [
+          {
+            "tr": "Ben de memnun oldum. Bir yıldır kursa gidiyorum. Siz İngilizce biliyor musunuz?",
+            "en": "Pleased to meet you too. I've been going to a course for a year. Do you speak English?",
+            "accept": ["Ben de memnun oldum. Bir yıldır kursa gidiyorum. İngilizce biliyor musunuz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "dede2"
+          },
+          {
+            "tr": "Ben de memnun oldum. Bir yıldır kursa gidiyorum. Sen İngilizce biliyor musun?",
+            "en": "Pleased to meet you too. I've been going to a course for a year. Do you speak English?",
+            "accept": ["Ben de memnun oldum. Bir yıldır kursa gidiyorum. İngilizce biliyor musun?"],
+            "register": "sen",
+            "ok": true,
+            "next": "dede2"
+          },
+          {
+            "tr": "Ben de memnun oldum. Türkçeyi bir yıl sonra öğreneceğim.",
+            "en": "Pleased to meet you too. I'll learn Turkish in a year.",
+            "ok": false,
+            "why": "He asked where you **learned** it, and *bir yıl sonra* is a year from now. Say *Bir yıldır kursa gidiyorum*: for a year, up to now.",
+            "react": {
+              "tr": "Ama şimdi de çok güzel konuşuyorsun!",
+              "en": "But you speak beautifully already!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "dede2",
+      "who": "dede",
+      "tr": "Biraz biliyorum, gençken denizciydim. Ama senin Türkçen çok güzel, maşallah!",
+      "en": "A little: I was a sailor when I was young. But your Turkish is very good, maşallah!",
+      "note": "*Maşallah* praises someone and wards off the evil eye at the same time; people of every belief use it.",
+      "turn": {
+        "prompt": "Thank him modestly.",
+        "replies": [
+          {
+            "tr": "Teşekkür ederim, ama daha çok yolum var.",
+            "en": "Thank you, but I still have a long way to go.",
+            "accept": ["Teşekkürler, ama daha çok yolum var.", "Teşekkür ederim, daha çok yolum var."],
+            "ok": true,
+            "next": "table"
+          },
+          {
+            "tr": "Çok naziksiniz, teşekkür ederim.",
+            "en": "You're very kind, thank you.",
+            "accept": ["Çok naziksiniz."],
+            "register": "siz",
+            "ok": true,
+            "next": "table"
+          },
+          {
+            "tr": "Evet, Türkçem mükemmel.",
+            "en": "Yes, my Turkish is perfect.",
+            "ok": false,
+            "why": "Agreeing outright sounds boastful. Thank him, and play it down: *Daha çok yolum var.*",
+            "next": "table"
+          }
+        ]
+      }
+    },
+    {
+      "id": "table",
+      "who": "ayten",
+      "tr": "Hadi, sofraya buyurun! Çorba soğumasın.",
+      "en": "Come on, everyone to the table! Don't let the soup get cold.",
+      "next": "mert"
+    },
+    {
+      "id": "mert",
+      "who": "mert",
+      "tr": "Sen nerelisin? Senin ülkende kar yağıyor mu?",
+      "en": "Where are you from? Does it snow in your country?",
+      "turn": {
+        "prompt": "Tell him it snows a lot, and ask whether he likes snow.",
+        "replies": [
+          {
+            "tr": "Evet, çok yağıyor. Sen karı seviyor musun?",
+            "en": "Yes, a lot. Do you like snow?",
+            "accept": ["Evet, çok kar yağıyor. Sen karı seviyor musun?", "Evet, çok yağıyor. Karı seviyor musun?"],
+            "register": "sen",
+            "ok": true,
+            "next": "mert2"
+          },
+          {
+            "tr": "Evet, çok yağıyor. Siz karı seviyor musunuz?",
+            "en": "Yes, a lot. Do you like snow?",
+            "accept": ["Evet, çok yağıyor. Karı seviyor musunuz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "mert2"
+          },
+          {
+            "tr": "Evet, çok yağıyor. Kar yağıyor musun?",
+            "en": "Yes, a lot. Are you snowing?",
+            "register": "sen",
+            "ok": false,
+            "why": "*Kar yağıyor musun?* asks whether **he** is snowing. Ask whether he likes it: *Karı seviyor musun?*",
+            "react": {
+              "tr": "Ben mi yağıyorum?",
+              "en": "Am I snowing?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "mert2",
+      "who": "mert",
+      "tr": "Çok seviyorum! Ama İzmir'de hiç yağmıyor.",
+      "en": "I love it! But it never snows in Izmir.",
+      "next": "soup"
+    },
+    {
+      "id": "soup",
+      "who": "ayten",
+      "tr": "Çorba nasıl olmuş? Beğendin mi?",
+      "en": "How did the soup turn out? Do you like it?",
+      "turn": {
+        "prompt": "Say it's delicious, with the phrase that thanks the cook.",
+        "replies": [
+          {
+            "tr": "Çok lezzetli olmuş! Elinize sağlık.",
+            "en": "It's delicious! Thank you for cooking.",
+            "accept": ["Çok lezzetli olmuş! Ellerinize sağlık.", "Çok güzel olmuş! Elinize sağlık.", "Harika olmuş, elinize sağlık!", "Elinize sağlık, çok lezzetli olmuş."],
+            "register": "siz",
+            "ok": true,
+            "next": "more"
+          },
+          {
+            "tr": "Çok lezzetli olmuş! Eline sağlık.",
+            "en": "It's delicious! Thank you for cooking.",
+            "accept": ["Çok lezzetli olmuş! Ellerine sağlık.", "Çok güzel olmuş! Eline sağlık."],
+            "register": "sen",
+            "ok": true,
+            "next": "more"
+          },
+          {
+            "tr": "Çok lezzetli olmuş! Afiyet olsun.",
+            "en": "It's delicious! Enjoy your meal.",
+            "ok": false,
+            "why": "*Afiyet olsun* is the host's wish to you. To the cook: *Elinize sağlık*, “health to your hands”.",
+            "react": {
+              "tr": "Sana da afiyet olsun, canım!",
+              "en": "Enjoy it too, dear!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "more",
+      "who": "ayten",
+      "tr": "Afiyet olsun! Biraz daha koyayım mı?",
+      "en": "Enjoy! Shall I give you a little more?",
+      "note": "Hosts offer more two or three times; a first *no* is often taken as politeness.",
+      "turn": {
+        "prompt": "Accept a little more, or say you're full.",
+        "replies": [
+          {
+            "tr": "Biraz alayım, çok güzel olmuş.",
+            "en": "I'll have a little, it's very good.",
+            "accept": ["Biraz alayım.", "Olur, biraz alayım."],
+            "ok": true,
+            "next": "more-yes"
+          },
+          {
+            "tr": "Yok, sağ olun, doydum.",
+            "en": "No, thank you, I'm full.",
+            "accept": ["Teşekkür ederim, doydum.", "Yok, teşekkürler, doydum."],
+            "register": "siz",
+            "ok": true,
+            "next": "insist"
+          },
+          {
+            "tr": "Yok, sağ ol, doydum.",
+            "en": "No, thanks, I'm full.",
+            "register": "sen",
+            "ok": true,
+            "next": "insist"
+          }
+        ]
+      }
+    },
+    {
+      "id": "more-yes",
+      "who": "ayten",
+      "tr": "Al, al! Misafir baş tacıdır.",
+      "en": "Here you are! A guest is the crown on our head.",
+      "note": "*Misafir baş tacıdır*: the guest is honoured like a crown. Hospitality, in a proverb.",
+      "next": "tea"
+    },
+    {
+      "id": "insist",
+      "who": "ayten",
+      "tr": "Olur mu öyle? Bir kepçe daha, hadi!",
+      "en": "No way! One more ladle, come on!",
+      "turn": {
+        "prompt": "Give in politely, or refuse softly.",
+        "replies": [
+          {
+            "tr": "Peki, ama çok az, lütfen.",
+            "en": "All right, but just a little, please.",
+            "accept": ["Peki, ama çok az.", "Tamam, ama çok az, lütfen."],
+            "ok": true,
+            "next": "more-yes"
+          },
+          {
+            "tr": "Gerçekten doydum, elinize sağlık.",
+            "en": "I'm really full, thank you for the meal.",
+            "accept": ["Gerçekten doydum, ellerinize sağlık."],
+            "register": "siz",
+            "ok": true,
+            "next": "tea"
+          },
+          {
+            "tr": "Hayır! Doydum dedim!",
+            "en": "No! I said I'm full!",
+            "ok": false,
+            "why": "Too blunt with a host. Give in with *Peki, ama çok az*, or refuse softly: *Gerçekten doydum, elinize sağlık*.",
+            "next": "tea"
+          }
+        ]
+      }
+    },
+    {
+      "id": "tea",
+      "who": "ece",
+      "tr": "Çay demlendi. Kim çay içer?",
+      "en": "The tea's brewed. Who wants tea?",
+      "turn": {
+        "prompt": "Say you'd love one, and offer to help her.",
+        "replies": [
+          {
+            "tr": "Ben içerim! Ece, sana yardım edeyim mi?",
+            "en": "I'd love one! Ece, shall I help you?",
+            "accept": ["Ben içerim. Sana yardım edeyim mi?", "Ben içerim! Yardım edeyim mi?"],
+            "register": "sen",
+            "ok": true,
+            "next": "end"
+          },
+          {
+            "tr": "Ben içerim! Ece, size yardım edeyim mi?",
+            "en": "I'd love one! Ece, shall I help you?",
+            "register": "siz",
+            "ok": true,
+            "next": "end"
+          },
+          {
+            "tr": "Ben içerim! Bana yardım eder misin?",
+            "en": "I'd love one! Will you help me?",
+            "register": "sen",
+            "ok": false,
+            "why": "That asks Ece to help **you**. Offer your help: *Sana yardım edeyim mi?*",
+            "react": {
+              "tr": "Neyle? Sen otur, ben getiriyorum!",
+              "en": "With what? You sit down, I'll bring it!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "end",
+      "who": "ece",
+      "tr": "Sağ ol, ama sen otur! Sen misafirsin.",
+      "en": "Thanks, but you sit down! You're the guest.",
+      "end": "Dinner went well: you met the whole family, praised the cook, and kept siz and sen apart."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Hoş bulduk.",
+      "en": "Glad to be here.",
+      "note": "The guest's answer to *Hoş geldin* or *Hoş geldiniz*."
+    },
+    {
+      "tr": "Ne zahmet ettin! Ne zahmeti.",
+      "en": "You shouldn't have! No trouble at all.",
+      "note": "Thanks for a gift, and the modest answer."
+    },
+    {
+      "tr": "Elinize sağlık.",
+      "en": "Thank you for cooking.",
+      "note": "“Health to your hands”, to whoever cooked. *Eline sağlık* with *sen*."
+    },
+    {
+      "tr": "Afiyet olsun.",
+      "en": "Enjoy your meal."
+    },
+    {
+      "tr": "Yok, sağ olun, doydum.",
+      "en": "No, thank you, I'm full."
+    },
+    {
+      "tr": "Daha çok yolum var.",
+      "en": "I still have a long way to go.",
+      "note": "A modest answer to praise."
+    },
+    {
+      "tr": "Misafir baş tacıdır.",
+      "en": "A guest is the crown on our head."
+    }
+  ],
+  "review": ["b2-u09", "a2-u07", "a2-u09"]
+}

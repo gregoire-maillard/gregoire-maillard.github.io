@@ -1,0 +1,380 @@
+{
+  "id": "dlg-doctor",
+  "level": "b1",
+  "order": 1,
+  "after": "b1-u09",
+  "title": "At the doctor's",
+  "titleTr": "Doktorda",
+  "setting": "Your seven-year-old son Can has had a temperature since yesterday, so you take him to the family doctor.",
+  "goal": "Describe a child's symptoms, reassure him, and understand the doctor's instructions.",
+  "minutes": 6,
+  "cast": [
+    {
+      "id": "doctor",
+      "name": "Doktor Bey",
+      "role": "the doctor",
+      "register": "siz",
+      "why": "A doctor you've just met: *siz*, and *Doktor Bey* to address him.",
+      "pitch": 0.85
+    },
+    {
+      "id": "can",
+      "name": "Can",
+      "role": "your son Can, seven",
+      "register": "sen",
+      "why": "Your own child: *sen*, always. *Siz* to him would sound like a joke.",
+      "pitch": 1.4
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "doctor",
+      "tr": "Buyurun, oturun. Şikâyetiniz nedir?",
+      "en": "Come in, sit down. What seems to be the problem?",
+      "note": "*Şikâyet* is a complaint; at the doctor's it means your symptoms.",
+      "turn": {
+        "prompt": "Say your son has had a high temperature since yesterday.",
+        "replies": [
+          {
+            "tr": "Oğlumun dünden beri yüksek ateşi var.",
+            "en": "My son has had a high temperature since yesterday.",
+            "accept": ["Oğlumun dünden beri ateşi var.", "Can'ın dünden beri yüksek ateşi var.", "Oğlumun dünden beri çok ateşi var.", "Dünden beri oğlumun ateşi var."],
+            "ok": true,
+            "next": "symptoms"
+          },
+          {
+            "tr": "Benim dünden beri yüksek ateşim var.",
+            "en": "I've had a high temperature since yesterday.",
+            "ok": false,
+            "why": "That's **your** temperature. It's your son's: *Oğlumun ateşi var*.",
+            "next": "mine"
+          },
+          {
+            "tr": "Oğlum dünden beri yüksek ateş.",
+            "en": "My son high temperature since yesterday.",
+            "ok": false,
+            "why": "A temperature is something you have: *Oğlumun ateşi var*, with the genitive, the possessive and *var*.",
+            "react": {
+              "tr": "Oğlunuzun ateşi mi var?",
+              "en": "Your son has a temperature?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "mine",
+      "who": "doctor",
+      "tr": "Sizin mi? Ama hasta olan Can, değil mi?",
+      "en": "Yours? But it's Can who's ill, isn't it?",
+      "turn": {
+        "prompt": "Apologise, and say it's your son who has the temperature.",
+        "replies": [
+          {
+            "tr": "Evet, pardon. Oğlumun ateşi var.",
+            "en": "Yes, sorry. My son has a temperature.",
+            "accept": ["Pardon, oğlumun ateşi var.", "Özür dilerim, oğlumun ateşi var."],
+            "ok": true,
+            "next": "symptoms"
+          },
+          {
+            "tr": "Evet, pardon. Can'ın ateşi var.",
+            "en": "Yes, sorry. Can has a temperature.",
+            "accept": ["Pardon, Can'ın ateşi var."],
+            "ok": true,
+            "next": "symptoms"
+          }
+        ]
+      }
+    },
+    {
+      "id": "symptoms",
+      "who": "doctor",
+      "tr": "Geçmiş olsun. Başka bir şikâyeti var mı? Öksürüyor mu?",
+      "en": "I'm sorry to hear it. Anything else? Is he coughing?",
+      "turn": {
+        "prompt": "Say he coughs a lot at night and isn't eating. Or say it's only the temperature.",
+        "replies": [
+          {
+            "tr": "Geceleri çok öksürüyor ve hiçbir şey yemiyor.",
+            "en": "He coughs a lot at night, and he isn't eating anything.",
+            "accept": ["Geceleri çok öksürüyor. Hiçbir şey yemiyor.", "Gece çok öksürüyor ve yemek yemiyor."],
+            "ok": true,
+            "next": "exam"
+          },
+          {
+            "tr": "Hayır, sadece ateşi var.",
+            "en": "No, it's only the temperature.",
+            "accept": ["Hayır, sadece ateş.", "Sadece ateşi var."],
+            "ok": true,
+            "next": "exam"
+          },
+          {
+            "tr": "Geceleri çok öksürüyorum.",
+            "en": "I cough a lot at night.",
+            "ok": false,
+            "why": "*Öksürüyorum* is **you** coughing. About Can: *öksürüyor*.",
+            "react": {
+              "tr": "Siz mi öksürüyorsunuz?",
+              "en": "You're the one coughing?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "exam",
+      "who": "doctor",
+      "tr": "Bir bakalım. Can, ağzını açar mısın? Aaa de!",
+      "en": "Let's have a look. Can, will you open your mouth? Say aah!",
+      "turn": {
+        "prompt": "Encourage Can: tell him to open his mouth, it won't hurt.",
+        "to": "can",
+        "replies": [
+          {
+            "tr": "Hadi canım, aç ağzını. Acımaz.",
+            "en": "Come on, darling, open your mouth. It won't hurt.",
+            "accept": ["Ağzını aç, canım. Acımaz.", "Hadi, ağzını aç. Acımaz.", "Hadi canım, ağzını aç. Acımaz."],
+            "register": "sen",
+            "ok": true,
+            "next": "scared"
+          },
+          {
+            "tr": "Hadi, ağzınızı açın. Acımaz.",
+            "en": "Come on, open your mouth. It won't hurt.",
+            "accept": ["Ağzınızı açın. Acımaz."],
+            "register": "siz",
+            "ok": true,
+            "next": "scared"
+          },
+          {
+            "tr": "Hadi canım, aç ağzımı. Acımaz.",
+            "en": "Come on, darling, open my mouth. It won't hurt.",
+            "register": "sen",
+            "ok": false,
+            "why": "*Ağzımı* is **your** mouth. His: *ağzını*.",
+            "react": {
+              "tr": "Senin ağzını mı?",
+              "en": "Your mouth?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "scared",
+      "who": "can",
+      "tr": "Ama iğne olacak mıyım? Korkuyorum!",
+      "en": "But am I going to have an injection? I'm scared!",
+      "turn": {
+        "prompt": "Ask the doctor whether he'll give Can an injection.",
+        "to": "doctor",
+        "replies": [
+          {
+            "tr": "Doktor Bey, iğne yapacak mısınız?",
+            "en": "Doctor, are you going to give him an injection?",
+            "accept": ["İğne yapacak mısınız?", "İğne gerekecek mi, Doktor Bey?", "Doktor Bey, iğne gerekecek mi?"],
+            "register": "siz",
+            "ok": true,
+            "next": "no-needle"
+          },
+          {
+            "tr": "Doktor Bey, iğne yapacak mısın?",
+            "en": "Doctor, are you going to give him an injection?",
+            "accept": ["İğne yapacak mısın?"],
+            "register": "sen",
+            "ok": true,
+            "next": "no-needle"
+          },
+          {
+            "tr": "Can, iğne yapacak mısın?",
+            "en": "Can, are you going to give an injection?",
+            "register": "sen",
+            "ok": false,
+            "why": "That asks **Can** whether he'll give an injection. Ask the doctor, with *siz*: *İğne yapacak mısınız?*",
+            "react": {
+              "tr": "Can mı yapacak? Hayır, hayır!",
+              "en": "Can's going to give it? No, no!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "no-needle",
+      "who": "doctor",
+      "tr": "Hayır, iğne yok, merak etme Can. Bir şurup yazıyorum: günde üç kez, yemekten sonra.",
+      "en": "No, no injection, don't worry, Can. I'm prescribing a syrup: three times a day, after meals.",
+      "turn": {
+        "prompt": "Ask how many days he should take it, or what to do if the fever doesn't go down.",
+        "replies": [
+          {
+            "tr": "Kaç gün kullanacak?",
+            "en": "How many days should he take it?",
+            "accept": ["Kaç gün içecek?", "Kaç gün içmesi lazım?", "Kaç gün kullanması gerekiyor?", "Kaç gün içmesi gerekiyor?"],
+            "ok": true,
+            "next": "days"
+          },
+          {
+            "tr": "Ateşi düşmezse ne yapalım?",
+            "en": "What should we do if his temperature doesn't go down?",
+            "accept": ["Ateşi düşmezse ne yapmalıyız?", "Eğer ateşi düşmezse ne yapalım?"],
+            "ok": true,
+            "next": "ifnot"
+          },
+          {
+            "tr": "Günde kaç kez?",
+            "en": "How many times a day?",
+            "ok": false,
+            "why": "He's just told you: *günde üç kez*, three times a day.",
+            "react": {
+              "tr": "Üç kez, yemekten sonra.",
+              "en": "Three times, after meals."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "days",
+      "who": "doctor",
+      "tr": "Bir hafta. Ateşi düştükten sonra da bitirin, yarıda bırakmayın.",
+      "en": "A week. Finish it even after the fever has gone; don't stop halfway.",
+      "turn": {
+        "prompt": "Ask whether he can go to school tomorrow.",
+        "replies": [
+          {
+            "tr": "Yarın okula gidebilir mi?",
+            "en": "Can he go to school tomorrow?",
+            "accept": ["Can yarın okula gidebilir mi?", "Yarın okula gidebilecek mi?"],
+            "ok": true,
+            "next": "school"
+          },
+          {
+            "tr": "Yarın okula gidebilir misin?",
+            "en": "Can you go to school tomorrow?",
+            "register": "sen",
+            "ok": false,
+            "why": "*Gidebilir misin?* asks the doctor himself, and with *sen*. About Can: *Okula gidebilir mi?*",
+            "react": {
+              "tr": "Ben mi? Ben okulu çoktan bitirdim!",
+              "en": "Me? I finished school long ago!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ifnot",
+      "who": "doctor",
+      "tr": "Üç gün içinde düşmezse tekrar getirin. Gece çok yükselirse acile gidin.",
+      "en": "If it doesn't go down within three days, bring him back. If it goes very high at night, go to the emergency department.",
+      "turn": {
+        "prompt": "Say you understand, and ask whether he can go to school tomorrow.",
+        "replies": [
+          {
+            "tr": "Anladım. Yarın okula gidebilir mi?",
+            "en": "I see. Can he go to school tomorrow?",
+            "accept": ["Tamam, anladım. Yarın okula gidebilir mi?", "Yarın okula gidebilir mi?"],
+            "ok": true,
+            "next": "school"
+          },
+          {
+            "tr": "Yarın okula gidebilir misin?",
+            "en": "Can you go to school tomorrow?",
+            "register": "sen",
+            "ok": false,
+            "why": "*Gidebilir misin?* asks the doctor himself, and with *sen*. About Can: *Okula gidebilir mi?*",
+            "react": {
+              "tr": "Ben mi? Ben okulu çoktan bitirdim!",
+              "en": "Me? I finished school long ago!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "school",
+      "who": "doctor",
+      "tr": "Ateşi düşene kadar evde kalsın, iki üç gün dinlensin.",
+      "en": "He should stay at home until the fever has gone, and rest for two or three days.",
+      "turn": {
+        "prompt": "Tell Can the news: a few days without school! Or thank the doctor.",
+        "to": "can",
+        "replies": [
+          {
+            "tr": "Duydun mu, Can? Birkaç gün okul yok!",
+            "en": "Did you hear that, Can? No school for a few days!",
+            "accept": ["Duydun mu? Birkaç gün okul yok!", "Can, duydun mu? Birkaç gün okula gitmiyorsun!"],
+            "register": "sen",
+            "ok": true,
+            "next": "yay"
+          },
+          {
+            "tr": "Duydunuz mu, Can? Birkaç gün okul yok!",
+            "en": "Did you hear that, Can? No school for a few days!",
+            "register": "siz",
+            "ok": true,
+            "next": "yay"
+          },
+          {
+            "tr": "Çok teşekkür ederim, Doktor Bey.",
+            "en": "Thank you very much, Doctor.",
+            "accept": ["Teşekkür ederim, Doktor Bey.", "Çok teşekkürler, Doktor Bey."],
+            "ok": true,
+            "next": "thanks"
+          }
+        ]
+      }
+    },
+    {
+      "id": "yay",
+      "who": "can",
+      "tr": "Yaşasın! Okul yok!",
+      "en": "Hooray! No school!",
+      "end": "Can has his syrup and a few days off school, and he's delighted."
+    },
+    {
+      "id": "thanks",
+      "who": "doctor",
+      "tr": "Rica ederim. Geçmiş olsun, Can!",
+      "en": "You're welcome. Get well soon, Can!",
+      "end": "Can has a syrup for a week, and stays at home until the fever has gone."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Şikâyetiniz nedir?",
+      "en": "What seems to be the problem?"
+    },
+    {
+      "tr": "Oğlumun ateşi var.",
+      "en": "My son has a temperature.",
+      "note": "Someone's temperature: the genitive, the possessive, then *var*."
+    },
+    {
+      "tr": "Hadi canım, aç ağzını. Acımaz.",
+      "en": "Come on, darling, open your mouth. It won't hurt.",
+      "note": "*Canım*, my dear, is the warmest everyday endearment."
+    },
+    {
+      "tr": "İğne yapacak mısınız?",
+      "en": "Are you going to give an injection?"
+    },
+    {
+      "tr": "Günde üç kez, yemekten sonra",
+      "en": "Three times a day, after meals"
+    },
+    {
+      "tr": "Ateşi düşmezse ne yapalım?",
+      "en": "What should we do if the fever doesn't go down?"
+    },
+    {
+      "tr": "Geçmiş olsun!",
+      "en": "Get well soon!"
+    }
+  ],
+  "review": ["b1-u09", "a2-u09", "a1-u10"]
+}

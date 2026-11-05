@@ -39,6 +39,7 @@ const INDEX = readJson(path.join(DATA, "index.json"));
 const LESSONS = listJson("lessons"), GRAMMAR = listJson("grammar"), CULTURE = listJson("culture"), UNITS = listJson("units"), LEVELS = listJson("levels");
 const TIMELINE = fs.existsSync(path.join(DATA, "timeline.json")) ? readJson(path.join(DATA, "timeline.json")) : null;
 const EXAMS = listJson("exams");
+const DIALOGUES = listJson("dialogues");
 const SETTINGS = () => JSON.parse(JSON.stringify(TRK.C.SETTINGS));
 const at = (y, m, d, h = 12, min = 0) => new Date(y, m - 1, d, h, min).getTime();   // local time
 const NOW = at(2026, 10, 14, 10);
@@ -101,6 +102,12 @@ function richStrings() {
   for (const g of GRAMMAR) { push(g.id, g.intro); g.summary.forEach(x => push(g.id, x)); g.sections.forEach(s => blocks(`${g.id} ${s.point}`, s.blocks)); }
   for (const c of CULTURE) { blocks(c.id, c.blocks); (c.questions || []).forEach(q => { push(c.id, q.q); push(c.id, q.explain); if (q.optionsLang === "en") q.options.forEach(x => push(c.id, x)); }); }
   if (TIMELINE) { TIMELINE.eras.forEach(e => push(`timeline ${e.id}`, e.intro)); TIMELINE.events.forEach(e => push(`timeline ${e.id}`, e.text)); }
+  for (const d of DIALOGUES) {
+    push(d.id, d.setting);
+    d.cast.forEach(p => push(d.id, p.why));
+    d.phrases.forEach(f => push(d.id, f.note));
+    for (const n of d.nodes) { push(`${d.id} ${n.id}`, n.note); (n.turn ? n.turn.replies : []).forEach(r => push(`${d.id} ${n.id}`, r.why)); }
+  }
   for (const x of EXAMS) {
     push(x.id, x.intro);
     for (const s of x.sections) {
@@ -282,6 +289,9 @@ test("data: content ids, flashcard files, the Culture page's timeline and region
   assert.equal(TRK.data.url("timeline", "abc"), "/assets/data/turkish/timeline.json?v=abc");
   assert.equal(TRK.data.url("regions"), "/assets/data/turkish/regions.json");
   assert.equal(TRK.data.url("tys-1", "v1"), "/assets/data/turkish/exams/tys-1.json?v=v1");
+  assert.equal(TRK.data.url("dlg-cafe", "v1"), "/assets/data/turkish/dialogues/dlg-cafe.json?v=v1");
+  assert.deepEqual((INDEX.dialogues || []).map(d => d.id), DIALOGUES.slice().sort((a, b) => TRK.C.LEVELS.indexOf(a.level) - TRK.C.LEVELS.indexOf(b.level) || a.order - b.order).map(d => d.id), "index.json lists every dialogue, by level and order");
+  for (const d of DIALOGUES) [d.after, ...d.review].forEach(r => assert.ok(TRK.href(r, INDEX).ready, `${d.id}: link ${r} isn't ready`));
   for (const x of EXAMS) for (const s of x.sections) [s.review, ...s.parts.flatMap(p => (p.items || []).map(it => it.review || []))].flat()
     .forEach(r => assert.ok(TRK.href(r, INDEX).ready, `${x.id}: review link ${r} isn't ready`));
   assert.equal(TRK.C.PAGES.culture, "/turkishculture.html");

@@ -941,6 +941,9 @@
           '<p class="note">' + note + "</p></div>";
         html += wallHtml(ix, course, set);
         html += cardsPanel(ix, course, set, now);
+        // DLG-1: the dialogue simulator's conversations (PROJECT.md 6.9), played by the lesson page
+        var nd = (ix.dialogues || []).length;
+        if (nd) html += '<div class="card mini"><div class="row"><h3>Conversations</h3><span class="lmeta">' + nd + ' scenes</span></div><p class="counts">Everyday conversations from A1 to B2: hear the other person, answer by tapping or typing, and learn when to say <i lang="tr">sen</i> or <i lang="tr">siz</i>.</p><a class="btn" href="' + P.lesson + '?dialogue">Start a conversation</a></div>';
         // TYS-1: the practice test for the Türkçe Yeterlik Sınavı (PROJECT.md 6.8), played by the lesson page
         html += '<div class="card mini"><div class="row"><h3>TYS practice</h3><span class="lmeta">30 min</span></div><p class="counts">A timed practice for the <i lang="tr">Türkçe Yeterlik Sınavı</i>, with all four skills and an indicative level. Unofficial; best from B2.</p><a class="btn" href="' + P.lesson + '?exam=tys-1">Try the practice test</a></div>';
         var m = T.progress.mistakesDue(course).length;

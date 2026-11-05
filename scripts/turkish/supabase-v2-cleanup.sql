@@ -9,6 +9,18 @@ on conflict (user_id, lang) do update set
   level = excluded.level, updated_at = excluded.updated_at
 where public.enrollments.updated_at < excluded.updated_at;
 
+-- Safety check: stops here, deleting nothing, if anyone's progress isn't in enrollments.
+do $$
+declare missing integer;
+begin
+  select count(*) into missing
+  from public.profiles p
+  left join public.enrollments e on e.user_id = p.user_id and e.lang = 'tr'
+  where (p.course is not null or p.cards is not null)
+    and (e.user_id is null or e.rev < p.rev);
+  if missing > 0 then raise exception 'Stopped: % learner(s) not copied. Nothing was deleted.', missing; end if;
+end $$;
+
 alter table public.profiles
   drop column if exists course, drop column if exists cards, drop column if exists settings,
   drop column if exists xp, drop column if exists lessons_done, drop column if exists words_learned,

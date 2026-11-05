@@ -1,0 +1,364 @@
+{
+  "id": "dlg-directions",
+  "level": "a1",
+  "order": 3,
+  "after": "a1-u12",
+  "title": "Asking the way",
+  "titleTr": "Yol sormak",
+  "setting": "You're looking for the metro in a busy street in Beşiktaş, and step into a small grocer's shop (*bakkal*) to ask the way.",
+  "goal": "Ask the way, check you've understood, chat with a child and say goodbye the right way.",
+  "minutes": 4,
+  "cast": [
+    {
+      "id": "grocer",
+      "name": "Hasan Bey",
+      "role": "Hasan Bey, the grocer",
+      "register": "siz",
+      "why": "An older man you don't know: *siz*, with *Bey* after his first name.",
+      "pitch": 0.75
+    },
+    {
+      "id": "emre",
+      "name": "Emre",
+      "role": "Emre, the grocer's son, twelve",
+      "register": "sen",
+      "why": "Emre is a child: *sen*. *Siz* to a child sounds stiff, even comic.",
+      "pitch": 1.35
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "grocer",
+      "tr": "Buyurun?",
+      "en": "Yes? Can I help you?",
+      "note": "*Buyurun* again: here, “go ahead, what can I do for you?”",
+      "turn": {
+        "prompt": "Excuse yourself and ask where the metro is.",
+        "replies": [
+          {
+            "tr": "Affedersiniz, metro nerede?",
+            "en": "Excuse me, where's the metro?",
+            "accept": ["Affedersiniz, metro nerede, lütfen?"],
+            "register": "siz",
+            "ok": true,
+            "next": "far"
+          },
+          {
+            "tr": "Pardon, metro nerede?",
+            "en": "Sorry, where's the metro?",
+            "accept": ["Metro nerede(, lütfen)?", "Pardon, metro nerede, lütfen?"],
+            "ok": true,
+            "next": "far"
+          },
+          {
+            "tr": "Affedersin, metro nerede?",
+            "en": "Excuse me, where's the metro?",
+            "accept": ["Affedersin, metro nerede, lütfen?"],
+            "register": "sen",
+            "ok": true,
+            "next": "far"
+          },
+          {
+            "tr": "Pardon, metro ne?",
+            "en": "Sorry, what's the metro?",
+            "ok": false,
+            "why": "*Metro ne?* asks what the metro **is**. Where is *nerede*: *Metro nerede?*",
+            "react": {
+              "tr": "Metro ne mi? Tren, tren!",
+              "en": "What's the metro? The train!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "far",
+      "who": "grocer",
+      "tr": "Metro mu? Biraz uzak. Düz gidin, sonra ikinci sokaktan sağa dönün.",
+      "en": "The metro? It's a bit far. Go straight on, then turn right at the second street.",
+      "turn": {
+        "prompt": "Check the directions: the second street, then right?",
+        "replies": [
+          {
+            "tr": "İkinci sokaktan sağa, değil mi?",
+            "en": "Right at the second street, isn't it?",
+            "accept": ["İkinci sokaktan sağa mı?", "İkinci sokak, sonra sağa, değil mi?", "Düz, sonra ikinci sokaktan sağa, değil mi?"],
+            "ok": true,
+            "next": "minutes"
+          },
+          {
+            "tr": "Birinci sokaktan sola, değil mi?",
+            "en": "Left at the first street, isn't it?",
+            "ok": false,
+            "why": "He said *ikinci sokaktan sağa*: the **second** street, to the **right**.",
+            "next": "again"
+          }
+        ]
+      }
+    },
+    {
+      "id": "again",
+      "who": "grocer",
+      "tr": "Hayır, hayır! İkinci sokak, sağa. Sola değil!",
+      "en": "No, no! The second street, to the right. Not left!",
+      "turn": {
+        "prompt": "Repeat the directions to check.",
+        "replies": [
+          {
+            "tr": "Tamam: ikinci sokaktan sağa.",
+            "en": "Okay: right at the second street.",
+            "accept": ["İkinci sokaktan sağa(, tamam).", "Tamam, ikinci sokak, sağa."],
+            "ok": true,
+            "next": "minutes"
+          },
+          {
+            "tr": "Tamam, ikinci sokaktan sola.",
+            "en": "Okay, left at the second street.",
+            "ok": false,
+            "why": "Not left: he said *sağa*, to the right.",
+            "react": {
+              "tr": "Sağa! Sağa!",
+              "en": "Right! To the right!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "minutes",
+      "who": "grocer",
+      "tr": "Evet. On beş dakika. Emre! Oğlum, buraya gel!",
+      "en": "Yes. Fifteen minutes. Emre! Son, come here!",
+      "note": "*Oğlum* (my son) is also how older men talk to boys and young men.",
+      "turn": {
+        "prompt": "Thank him.",
+        "replies": [
+          {
+            "tr": "Çok teşekkür ederim!",
+            "en": "Thank you very much!",
+            "accept": ["Teşekkür ederim!", "Teşekkürler!", "Çok teşekkürler!"],
+            "ok": true,
+            "next": "emre"
+          },
+          {
+            "tr": "Sağ olun!",
+            "en": "Thanks!",
+            "register": "siz",
+            "ok": true,
+            "next": "emre"
+          },
+          {
+            "tr": "Sağ ol!",
+            "en": "Thanks!",
+            "register": "sen",
+            "ok": true,
+            "next": "emre"
+          }
+        ]
+      }
+    },
+    {
+      "id": "emre",
+      "who": "emre",
+      "tr": "Merhaba! Ben Emre. Metroya mı gidiyorsunuz? Ben de o tarafa gidiyorum.",
+      "en": "Hi! I'm Emre. Are you going to the metro? I'm going that way too.",
+      "note": "Children say *siz* to adults they don't know. Adults answer a child with *sen*.",
+      "turn": {
+        "prompt": "Say yes, and ask him how old he is.",
+        "replies": [
+          {
+            "tr": "Evet! Sen kaç yaşındasın?",
+            "en": "Yes! How old are you?",
+            "accept": ["Evet, kaç yaşındasın?", "Kaç yaşındasın?", "Sen kaç yaşındasın?"],
+            "register": "sen",
+            "ok": true,
+            "next": "emre-age"
+          },
+          {
+            "tr": "Evet! Siz kaç yaşındasınız?",
+            "en": "Yes! How old are you?",
+            "accept": ["Evet, kaç yaşındasınız?", "Kaç yaşındasınız?"],
+            "register": "siz",
+            "ok": true,
+            "next": "emre-age"
+          },
+          {
+            "tr": "Evet, on iki yaşındayım.",
+            "en": "Yes, I'm twelve.",
+            "ok": false,
+            "why": "That tells Emre **your** age, and you're not twelve. Ask his: *Kaç yaşındasın?*",
+            "react": {
+              "tr": "Siz mi? Ben on iki yaşındayım!",
+              "en": "You are? I'm twelve!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "emre-age",
+      "who": "emre",
+      "tr": "On iki. Siz turist misiniz?",
+      "en": "Twelve. Are you a tourist?",
+      "turn": {
+        "prompt": "Say whether you're a tourist, and ask whether his school is here.",
+        "replies": [
+          {
+            "tr": "Evet, turistim. Okulun burada mı?",
+            "en": "Yes, I'm a tourist. Is your school here?",
+            "accept": ["Evet. Okulun burada mı?", "Evet, turistim. Senin okulun burada mı?"],
+            "register": "sen",
+            "ok": true,
+            "next": "school"
+          },
+          {
+            "tr": "Hayır, burada oturuyorum.",
+            "en": "No, I live here.",
+            "accept": ["Hayır, ben burada oturuyorum.", "Hayır, turist değilim. Burada oturuyorum."],
+            "ok": true,
+            "next": "neighbour"
+          },
+          {
+            "tr": "Evet, turistim. Okulunuz burada mı?",
+            "en": "Yes, I'm a tourist. Is your school here?",
+            "register": "siz",
+            "ok": true,
+            "next": "school"
+          }
+        ]
+      }
+    },
+    {
+      "id": "school",
+      "who": "emre",
+      "tr": "Evet, okulum şu sokakta. Ben altıncı sınıftayım!",
+      "en": "Yes, my school's on that street. I'm in sixth grade!",
+      "turn": {
+        "prompt": "Say that's nice.",
+        "replies": [
+          {
+            "tr": "Ne güzel!",
+            "en": "How nice!",
+            "accept": ["Çok güzel!", "Ne kadar güzel!"],
+            "ok": true,
+            "next": "metro"
+          },
+          {
+            "tr": "Okul nerede?",
+            "en": "Where's the school?",
+            "ok": false,
+            "why": "He's just told you: *şu sokakta*, on that street.",
+            "react": {
+              "tr": "Şurada, şu sokakta!",
+              "en": "Over there, on that street!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "neighbour",
+      "who": "emre",
+      "tr": "Gerçekten mi? Biz de burada oturuyoruz!",
+      "en": "Really? We live here too!",
+      "turn": {
+        "prompt": "Say that's nice: you're neighbours!",
+        "replies": [
+          {
+            "tr": "Ne güzel! Komşuyuz o zaman!",
+            "en": "How nice! We're neighbours, then!",
+            "accept": ["Ne güzel, komşuyuz!", "Komşuyuz o zaman!"],
+            "ok": true,
+            "next": "metro"
+          },
+          {
+            "tr": "Sen de mi? Ne güzel!",
+            "en": "You too? How nice!",
+            "register": "sen",
+            "ok": true,
+            "next": "metro"
+          },
+          {
+            "tr": "Siz de mi? Ne güzel!",
+            "en": "You too? How nice!",
+            "register": "siz",
+            "ok": true,
+            "next": "metro"
+          }
+        ]
+      }
+    },
+    {
+      "id": "metro",
+      "who": "emre",
+      "tr": "İşte, metro burada!",
+      "en": "Here's the metro!",
+      "turn": {
+        "prompt": "Thank Emre and say goodbye.",
+        "replies": [
+          {
+            "tr": "Teşekkürler, Emre! Hoşça kal!",
+            "en": "Thanks, Emre! Bye!",
+            "accept": ["Teşekkür ederim, Emre! Hoşça kal!", "Çok teşekkürler! Hoşça kal!", "Sağ ol, Emre! Hoşça kal!"],
+            "register": "sen",
+            "ok": true,
+            "next": "bye"
+          },
+          {
+            "tr": "Teşekkürler, Emre! Hoşça kalın!",
+            "en": "Thanks, Emre! Goodbye!",
+            "register": "siz",
+            "ok": true,
+            "next": "bye"
+          },
+          {
+            "tr": "Teşekkürler, Emre! Güle güle!",
+            "en": "Thanks, Emre! Bye!",
+            "ok": false,
+            "why": "*Güle güle* is said by the one who stays. You're the one leaving, so: *Hoşça kal*."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bye",
+      "who": "emre",
+      "tr": "Güle güle! İyi yolculuklar!",
+      "en": "Bye! Have a good trip!",
+      "end": "You found the metro, with Emre's help."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Affedersiniz, metro nerede?",
+      "en": "Excuse me, where's the metro?",
+      "note": "*Affedersin* to a friend."
+    },
+    {
+      "tr": "Düz gidin, sonra sağa dönün.",
+      "en": "Go straight on, then turn right."
+    },
+    {
+      "tr": "İkinci sokaktan sağa, değil mi?",
+      "en": "Right at the second street, isn't it?",
+      "note": "*Değil mi?* at the end checks you've understood."
+    },
+    {
+      "tr": "Kaç yaşındasın?",
+      "en": "How old are you?",
+      "note": "To a child. Adults are rarely asked."
+    },
+    {
+      "tr": "Komşuyuz!",
+      "en": "We're neighbours!"
+    },
+    {
+      "tr": "Hoşça kal! Güle güle!",
+      "en": "Bye! Bye!",
+      "note": "The one leaving says *Hoşça kal*, the one staying *Güle güle*."
+    }
+  ],
+  "review": ["a1-u12", "a1-u11", "a1-u07"]
+}

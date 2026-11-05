@@ -1,0 +1,415 @@
+{
+  "id": "dlg-hotel",
+  "level": "a2",
+  "order": 3,
+  "after": "a2-u12",
+  "title": "At the hotel",
+  "titleTr": "Otelde",
+  "setting": "You arrive at a small family-run hotel (*pansiyon*) in Göreme, in Cappadocia, famous for the hot-air balloons that rise at dawn.",
+  "goal": "Check in, ask about the room, and chat with the owner's daughter.",
+  "minutes": 5,
+  "cast": [
+    {
+      "id": "ayse",
+      "name": "Ayşe Hanım",
+      "role": "Ayşe Hanım, who runs the hotel",
+      "register": "siz",
+      "why": "An adult you've just met, at her work: *siz*, with *Hanım* after her first name.",
+      "pitch": 1.05
+    },
+    {
+      "id": "zeynep",
+      "name": "Zeynep",
+      "role": "her daughter Zeynep, eight",
+      "register": "sen",
+      "why": "A child: *sen*. Adults say *sen* to children, and children say *siz* to adults they don't know.",
+      "pitch": 1.4
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "ayse",
+      "tr": "Hoş geldiniz! Rezervasyonunuz var mı?",
+      "en": "Welcome! Do you have a reservation?",
+      "turn": {
+        "prompt": "Answer the welcome, and say you've booked three nights. Or say you haven't booked.",
+        "replies": [
+          {
+            "tr": "Hoş bulduk. Evet, üç gecelik rezervasyonum var.",
+            "en": "Thank you. Yes, I've booked three nights.",
+            "accept": ["Hoş bulduk. Evet, üç gece için rezervasyonum var.", "Evet, üç gecelik rezervasyonum var.", "Evet, üç gece için rezervasyonum var."],
+            "ok": true,
+            "next": "passport"
+          },
+          {
+            "tr": "Hoş bulduk. Hayır, yok. Boş odanız var mı?",
+            "en": "Thank you. No, I haven't. Do you have a room free?",
+            "accept": ["Hayır, yok. Boş odanız var mı?", "Hoş bulduk. Boş odanız var mı?"],
+            "register": "siz",
+            "ok": true,
+            "next": "no-booking"
+          },
+          {
+            "tr": "Hoş geldiniz. Evet, üç gecelik rezervasyonum var.",
+            "en": "Welcome. Yes, I've booked three nights.",
+            "ok": false,
+            "why": "*Hoş geldiniz* is the host's line; the guest answers *Hoş bulduk*. She smiles, and carries on.",
+            "next": "passport"
+          }
+        ]
+      }
+    },
+    {
+      "id": "no-booking",
+      "who": "ayse",
+      "tr": "Bir odamız boş, ama sadece iki gece için. Olur mu?",
+      "en": "We have one room free, but only for two nights. Is that all right?",
+      "turn": {
+        "prompt": "Say two nights will do.",
+        "replies": [
+          {
+            "tr": "Olur, iki gece yeter.",
+            "en": "That's fine, two nights is enough.",
+            "accept": ["Tamam, iki gece yeter.", "Olur, iki gece yeterli."],
+            "ok": true,
+            "next": "passport"
+          },
+          {
+            "tr": "Olur, sağ olun.",
+            "en": "That's fine, thank you.",
+            "register": "siz",
+            "ok": true,
+            "next": "passport"
+          },
+          {
+            "tr": "Olur, sağ ol.",
+            "en": "That's fine, thanks.",
+            "register": "sen",
+            "ok": true,
+            "next": "passport"
+          }
+        ]
+      }
+    },
+    {
+      "id": "passport",
+      "who": "ayse",
+      "tr": "Harika. Pasaportunuzu alabilir miyim?",
+      "en": "Lovely. May I have your passport?",
+      "note": "*Buyurun* is also what you say as you hand something over. To a friend or a child: *buyur*.",
+      "turn": {
+        "prompt": "Hand it over.",
+        "replies": [
+          {
+            "tr": "Tabii, buyurun.",
+            "en": "Of course, here you are.",
+            "accept": ["Buyurun.", "Tabii ki, buyurun."],
+            "register": "siz",
+            "ok": true,
+            "next": "room"
+          },
+          {
+            "tr": "Tabii, buyur.",
+            "en": "Of course, here you are.",
+            "accept": ["Buyur."],
+            "register": "sen",
+            "ok": true,
+            "next": "room"
+          },
+          {
+            "tr": "Pasaportunuz nerede?",
+            "en": "Where's your passport?",
+            "register": "siz",
+            "ok": false,
+            "why": "*Pasaportunuz* is **hers**. She's asking for yours: hand it over with *Buyurun*.",
+            "react": {
+              "tr": "Benimki mi? Sizinki lazım!",
+              "en": "Mine? I need yours!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "room",
+      "who": "ayse",
+      "tr": "Teşekkürler. Odanız ikinci katta, yirmi bir numara. Kahvaltı yedi buçuktan ona kadar.",
+      "en": "Thank you. Your room's on the second floor, number 21. Breakfast is from half past seven to ten.",
+      "turn": {
+        "prompt": "Ask whether there's internet in the room, or a lift.",
+        "replies": [
+          {
+            "tr": "Odada internet var mı?",
+            "en": "Is there internet in the room?",
+            "accept": ["Odada internet var mı acaba?", "İnternet var mı?", "Odada kablosuz internet var mı?"],
+            "ok": true,
+            "next": "wifi"
+          },
+          {
+            "tr": "Asansör var mı?",
+            "en": "Is there a lift?",
+            "accept": ["Burada asansör var mı?", "Otelde asansör var mı?"],
+            "ok": true,
+            "next": "stairs"
+          },
+          {
+            "tr": "Kahvaltı saat kaçta bitiyor?",
+            "en": "What time does breakfast end?",
+            "ok": false,
+            "why": "She's just told you: *ona kadar*, until ten.",
+            "react": {
+              "tr": "Saat onda.",
+              "en": "At ten."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "wifi",
+      "who": "ayse",
+      "tr": "Var, şifresi odada yazıyor. Zeynep! Kızım, misafirimize odasını göster.",
+      "en": "There is; the password's written in the room. Zeynep! Darling, show our guest to the room.",
+      "turn": {
+        "prompt": "Thank her.",
+        "replies": [
+          {
+            "tr": "Çok teşekkür ederim.",
+            "en": "Thank you very much.",
+            "accept": ["Teşekkür ederim.", "Teşekkürler."],
+            "ok": true,
+            "next": "zeynep"
+          },
+          {
+            "tr": "Sağ olun.",
+            "en": "Thanks.",
+            "register": "siz",
+            "ok": true,
+            "next": "zeynep"
+          },
+          {
+            "tr": "Sağ ol.",
+            "en": "Thanks.",
+            "register": "sen",
+            "ok": true,
+            "next": "zeynep"
+          }
+        ]
+      }
+    },
+    {
+      "id": "stairs",
+      "who": "ayse",
+      "tr": "Maalesef yok, ama merdiven kolay. Zeynep! Kızım, misafirimize yardım et.",
+      "en": "I'm afraid not, but the stairs are easy. Zeynep! Darling, help our guest.",
+      "turn": {
+        "prompt": "Thank her.",
+        "replies": [
+          {
+            "tr": "Çok teşekkür ederim.",
+            "en": "Thank you very much.",
+            "accept": ["Teşekkür ederim.", "Teşekkürler."],
+            "ok": true,
+            "next": "zeynep"
+          },
+          {
+            "tr": "Sağ olun.",
+            "en": "Thanks.",
+            "register": "siz",
+            "ok": true,
+            "next": "zeynep"
+          },
+          {
+            "tr": "Sağ ol.",
+            "en": "Thanks.",
+            "register": "sen",
+            "ok": true,
+            "next": "zeynep"
+          }
+        ]
+      }
+    },
+    {
+      "id": "zeynep",
+      "who": "zeynep",
+      "tr": "Merhaba! Ben Zeynep. Valiz çok ağır mı? Ben taşıyabilirim!",
+      "en": "Hi! I'm Zeynep. Is the suitcase very heavy? I can carry it!",
+      "turn": {
+        "prompt": "Thank her: it isn't heavy. Then ask whether she lives here.",
+        "replies": [
+          {
+            "tr": "Teşekkürler, ağır değil. Sen burada mı oturuyorsun?",
+            "en": "Thanks, it isn't heavy. Do you live here?",
+            "accept": ["Sağ ol, ağır değil. Burada mı oturuyorsun?", "Teşekkür ederim, ağır değil. Sen burada mı oturuyorsun?", "Teşekkürler, ağır değil. Burada mı oturuyorsun?"],
+            "register": "sen",
+            "ok": true,
+            "next": "zeynep2"
+          },
+          {
+            "tr": "Teşekkürler, ağır değil. Siz burada mı oturuyorsunuz?",
+            "en": "Thanks, it isn't heavy. Do you live here?",
+            "accept": ["Teşekkürler, ağır değil. Burada mı oturuyorsunuz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "zeynep2"
+          },
+          {
+            "tr": "Evet, ben Zeynep.",
+            "en": "Yes, I'm Zeynep.",
+            "ok": false,
+            "why": "*Ben Zeynep* says **you** are Zeynep. Answer her instead: the suitcase isn't heavy, *ağır değil*.",
+            "react": {
+              "tr": "Hayır, Zeynep benim!",
+              "en": "No, I'm Zeynep!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "zeynep2",
+      "who": "zeynep",
+      "tr": "Evet! Burası bizim evimiz, otel de bizim. Kapadokya'yı seviyor musunuz?",
+      "en": "Yes! This is our house, and the hotel is ours too. Do you like Cappadocia?",
+      "turn": {
+        "prompt": "Say you love it, and you'll see the balloons tomorrow. Or say it's your first time here.",
+        "replies": [
+          {
+            "tr": "Çok seviyorum! Yarın balonları göreceğim.",
+            "en": "I love it! I'll see the balloons tomorrow.",
+            "accept": ["Evet, çok seviyorum! Yarın balonları göreceğim.", "Çok seviyorum. Yarın sabah balonları göreceğim."],
+            "ok": true,
+            "next": "balloons"
+          },
+          {
+            "tr": "Bilmiyorum, ilk defa geldim.",
+            "en": "I don't know yet, it's my first time here.",
+            "accept": ["Bilmiyorum, ilk kez geldim.", "Bilmiyorum, buraya ilk defa geldim."],
+            "ok": true,
+            "next": "first"
+          },
+          {
+            "tr": "Evet, seviyorsunuz.",
+            "en": "Yes, you love it.",
+            "register": "siz",
+            "ok": false,
+            "why": "*Seviyorsunuz* says **you** (plural, or polite) love it, about someone else. About yourself: *seviyorum*.",
+            "react": {
+              "tr": "Ben mi? Ben de seviyorum!",
+              "en": "Me? I love it too!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "balloons",
+      "who": "zeynep",
+      "tr": "Ben de! Sabah altıda gökyüzü balon dolu oluyor. Görüşürüz!",
+      "en": "Me too! At six in the morning the sky fills with balloons. See you!",
+      "turn": {
+        "prompt": "Say goodbye to her.",
+        "replies": [
+          {
+            "tr": "Görüşürüz, Zeynep!",
+            "en": "See you, Zeynep!",
+            "accept": ["Görüşürüz!", "Görüşmek üzere, Zeynep!"],
+            "ok": true,
+            "next": "goodnight"
+          },
+          {
+            "tr": "Hoşça kal, Zeynep!",
+            "en": "Bye, Zeynep!",
+            "accept": ["Hoşça kal!"],
+            "register": "sen",
+            "ok": true,
+            "next": "goodnight"
+          },
+          {
+            "tr": "Hoşça kalın, Zeynep!",
+            "en": "Goodbye, Zeynep!",
+            "accept": ["Hoşça kalın!"],
+            "register": "siz",
+            "ok": true,
+            "next": "goodnight"
+          }
+        ]
+      }
+    },
+    {
+      "id": "first",
+      "who": "zeynep",
+      "tr": "İlk defa mı? O zaman yarın erken kalkın, balonlar çok güzel! Görüşürüz!",
+      "en": "Your first time? Then get up early tomorrow: the balloons are beautiful! See you!",
+      "turn": {
+        "prompt": "Say goodbye to her.",
+        "replies": [
+          {
+            "tr": "Görüşürüz, Zeynep!",
+            "en": "See you, Zeynep!",
+            "accept": ["Görüşürüz!", "Görüşmek üzere, Zeynep!"],
+            "ok": true,
+            "next": "goodnight"
+          },
+          {
+            "tr": "Hoşça kal, Zeynep!",
+            "en": "Bye, Zeynep!",
+            "accept": ["Hoşça kal!"],
+            "register": "sen",
+            "ok": true,
+            "next": "goodnight"
+          },
+          {
+            "tr": "Hoşça kalın, Zeynep!",
+            "en": "Goodbye, Zeynep!",
+            "accept": ["Hoşça kalın!"],
+            "register": "siz",
+            "ok": true,
+            "next": "goodnight"
+          }
+        ]
+      }
+    },
+    {
+      "id": "goodnight",
+      "who": "zeynep",
+      "tr": "Güle güle! İyi geceler!",
+      "en": "Bye! Good night!",
+      "end": "You've checked in, and Zeynep showed you to your room."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Rezervasyonum var.",
+      "en": "I have a reservation."
+    },
+    {
+      "tr": "Boş odanız var mı?",
+      "en": "Do you have a room free?"
+    },
+    {
+      "tr": "Buyurun.",
+      "en": "Here you are.",
+      "note": "As you hand something over; *buyur* to a friend or a child."
+    },
+    {
+      "tr": "Odada internet var mı?",
+      "en": "Is there internet in the room?"
+    },
+    {
+      "tr": "Ağır değil.",
+      "en": "It isn't heavy."
+    },
+    {
+      "tr": "İlk defa geldim.",
+      "en": "It's my first time here."
+    },
+    {
+      "tr": "Görüşürüz!",
+      "en": "See you!"
+    }
+  ],
+  "review": ["a2-u03", "a2-u12", "a1-u05"]
+}

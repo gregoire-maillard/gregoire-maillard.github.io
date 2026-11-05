@@ -1,0 +1,421 @@
+{
+  "id": "dlg-landlord",
+  "level": "b1",
+  "order": 2,
+  "after": "b1-u10",
+  "title": "Calling the landlord",
+  "titleTr": "Ev sahibiyle",
+  "setting": "It's January in Ankara, and since yesterday your flat's boiler (*kombi*) hasn't worked: no heating, no hot water. You call your landlord.",
+  "goal": "Report a breakdown, arrange a repair and settle who pays, without upsetting anyone.",
+  "minutes": 6,
+  "cast": [
+    {
+      "id": "landlord",
+      "name": "Murat Bey",
+      "role": "your landlord, Murat Bey",
+      "register": "siz",
+      "why": "Your landlord: older, and someone you deal with formally. *Siz*, with *Bey* after his first name.",
+      "pitch": 0.8
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "landlord",
+      "tr": "Alo? Efendim?",
+      "en": "Hello? Yes?",
+      "note": "*Efendim?* answers the phone. It also asks someone to repeat: “sorry?”",
+      "turn": {
+        "prompt": "Greet him, and say who you are: his tenant on the third floor.",
+        "replies": [
+          {
+            "tr": "Merhaba Murat Bey, ben üçüncü kattaki kiracınız.",
+            "en": "Hello, Murat Bey, it's your tenant on the third floor.",
+            "accept": ["İyi günler Murat Bey, ben üçüncü kattaki kiracınız.", "Merhaba Murat Bey, üçüncü kattaki kiracınız."],
+            "register": "siz",
+            "ok": true,
+            "next": "what"
+          },
+          {
+            "tr": "Merhaba Murat Bey, ben üçüncü kattaki kiracıyım.",
+            "en": "Hello, Murat Bey, I'm the tenant on the third floor.",
+            "accept": ["İyi günler Murat Bey, ben üçüncü kattaki kiracıyım."],
+            "ok": true,
+            "next": "what"
+          },
+          {
+            "tr": "Merhaba Murat, ben üçüncü kattaki kiracın.",
+            "en": "Hi, Murat, it's your tenant on the third floor.",
+            "register": "sen",
+            "ok": true,
+            "why": "Leaving out *Bey* as well makes it sound as if you were talking to an old friend.",
+            "next": "what"
+          },
+          {
+            "tr": "Merhaba Murat Bey, siz üçüncü kattaki kiracı mısınız?",
+            "en": "Hello, Murat Bey, are you the tenant on the third floor?",
+            "register": "siz",
+            "ok": false,
+            "why": "That asks whether **he** is the tenant. You are: *Ben üçüncü kattaki kiracınız*.",
+            "react": {
+              "tr": "Ben mi? Ben ev sahibiyim!",
+              "en": "Me? I'm the landlord!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "what",
+      "who": "landlord",
+      "tr": "Ha, merhaba! Nasılsınız? Bir sorun mu var?",
+      "en": "Oh, hello! How are you? Is there a problem?",
+      "turn": {
+        "prompt": "Say the boiler broke down yesterday, and there's no hot water.",
+        "replies": [
+          {
+            "tr": "İyiyim, teşekkürler, ama kombi dün bozuldu. Sıcak su yok.",
+            "en": "I'm fine, thanks, but the boiler broke down yesterday. There's no hot water.",
+            "accept": ["Kombi dün bozuldu, sıcak su yok.", "Dün kombi bozuldu. Sıcak su yok.", "Maalesef kombi dün bozuldu. Sıcak su yok."],
+            "ok": true,
+            "next": "when"
+          },
+          {
+            "tr": "İyiyim, siz nasılsınız? Kombi dün bozuldu.",
+            "en": "I'm fine, how are you? The boiler broke down yesterday.",
+            "register": "siz",
+            "ok": true,
+            "next": "when"
+          },
+          {
+            "tr": "Kombi dün bozdu. Sıcak su yok.",
+            "en": "The boiler broke it yesterday. There's no hot water.",
+            "ok": false,
+            "why": "*Bozmak* is to break something. A thing that breaks down by itself *bozulur*: *Kombi bozuldu*.",
+            "react": {
+              "tr": "Kim bozdu? Neyi bozdu?",
+              "en": "Who broke what?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "when",
+      "who": "landlord",
+      "tr": "Geçmiş olsun! Hemen bir tamirci çağırırım. Yarın sabah evde olacak mısınız?",
+      "en": "Oh dear! I'll call a repairman right away. Will you be at home tomorrow morning?",
+      "turn": {
+        "prompt": "Say you work in the morning, but you're home after three. Or say yes, you'll be in.",
+        "replies": [
+          {
+            "tr": "Sabah çalışıyorum, ama saat üçten sonra evdeyim.",
+            "en": "I work in the morning, but I'm home after three.",
+            "accept": ["Sabah işteyim, ama üçten sonra evdeyim.", "Sabah çalışıyorum. Üçten sonra evdeyim."],
+            "ok": true,
+            "next": "afternoon"
+          },
+          {
+            "tr": "Evet, sabah evdeyim.",
+            "en": "Yes, I'm home in the morning.",
+            "accept": ["Evet, evde olacağım.", "Evet, sabah evde olacağım."],
+            "ok": true,
+            "next": "morning"
+          },
+          {
+            "tr": "Sağ olun. Yarın sabah evde olacaksınız.",
+            "en": "Thank you. You'll be at home tomorrow morning.",
+            "register": "siz",
+            "ok": false,
+            "why": "*Olacaksınız* says **he** will be at home. About yourself: *Evde olacağım*, or *evdeyim*.",
+            "next": "confused"
+          }
+        ]
+      }
+    },
+    {
+      "id": "confused",
+      "who": "landlord",
+      "tr": "Ben mi? Hayır, ben gelmiyorum, tamirci geliyor. Siz evde misiniz?",
+      "en": "Me? No, I'm not coming, the repairman is. Will you be at home?",
+      "turn": {
+        "prompt": "Say you work in the morning, but you're home after three. Or say yes, you'll be in.",
+        "replies": [
+          {
+            "tr": "Sabah çalışıyorum, ama saat üçten sonra evdeyim.",
+            "en": "I work in the morning, but I'm home after three.",
+            "accept": ["Sabah işteyim, ama üçten sonra evdeyim.", "Sabah çalışıyorum. Üçten sonra evdeyim."],
+            "ok": true,
+            "next": "afternoon"
+          },
+          {
+            "tr": "Evet, sabah evdeyim.",
+            "en": "Yes, I'm home in the morning.",
+            "accept": ["Evet, evde olacağım.", "Evet, sabah evde olacağım."],
+            "ok": true,
+            "next": "morning"
+          }
+        ]
+      }
+    },
+    {
+      "id": "afternoon",
+      "who": "landlord",
+      "tr": "Tamam, öğleden sonra dörtte gelsin. Anahtarı kapıcıya da bırakabilirsiniz.",
+      "en": "Fine, let's say he comes at four in the afternoon. You can also leave the key with the caretaker.",
+      "turn": {
+        "prompt": "Ask who will pay for the repair.",
+        "replies": [
+          {
+            "tr": "Peki, tamirin parasını kim ödeyecek?",
+            "en": "All right, and who will pay for the repair?",
+            "accept": ["Tamirin parasını kim ödeyecek?", "Tamir parasını kim ödeyecek?", "Peki, tamir masrafını kim ödeyecek?"],
+            "ok": true,
+            "next": "pay"
+          },
+          {
+            "tr": "Tamirin parasını siz ödeyeceksiniz, değil mi?",
+            "en": "You'll pay for the repair, won't you?",
+            "accept": ["Tamir parasını siz ödeyeceksiniz, değil mi?"],
+            "register": "siz",
+            "ok": true,
+            "next": "pay"
+          },
+          {
+            "tr": "Tamirin parasını sen ödeyeceksin, değil mi?",
+            "en": "You'll pay for the repair, won't you?",
+            "register": "sen",
+            "ok": true,
+            "next": "pay"
+          }
+        ]
+      }
+    },
+    {
+      "id": "morning",
+      "who": "landlord",
+      "tr": "Harika, o zaman saat onda gelsin.",
+      "en": "Great, then let's say he comes at ten.",
+      "turn": {
+        "prompt": "Ask who will pay for the repair.",
+        "replies": [
+          {
+            "tr": "Peki, tamirin parasını kim ödeyecek?",
+            "en": "All right, and who will pay for the repair?",
+            "accept": ["Tamirin parasını kim ödeyecek?", "Tamir parasını kim ödeyecek?", "Peki, tamir masrafını kim ödeyecek?"],
+            "ok": true,
+            "next": "pay"
+          },
+          {
+            "tr": "Tamirin parasını siz ödeyeceksiniz, değil mi?",
+            "en": "You'll pay for the repair, won't you?",
+            "accept": ["Tamir parasını siz ödeyeceksiniz, değil mi?"],
+            "register": "siz",
+            "ok": true,
+            "next": "pay"
+          },
+          {
+            "tr": "Tamirin parasını sen ödeyeceksin, değil mi?",
+            "en": "You'll pay for the repair, won't you?",
+            "register": "sen",
+            "ok": true,
+            "next": "pay"
+          }
+        ]
+      }
+    },
+    {
+      "id": "pay",
+      "who": "landlord",
+      "tr": "Kombi eskiyse parasını ben öderim, tabii. Ama biri bozduysa, o başka.",
+      "en": "If the boiler's just old, I'll pay, of course. But if someone broke it, that's different.",
+      "turn": {
+        "prompt": "Say nobody broke it: it simply stopped by itself. Or point out that it's very old.",
+        "replies": [
+          {
+            "tr": "Kimse bozmadı. Dün kendi kendine durdu.",
+            "en": "Nobody broke it. It just stopped by itself yesterday.",
+            "accept": ["Kimse bozmadı, kendi kendine durdu.", "Hiç kimse bozmadı. Dün kendi kendine durdu."],
+            "ok": true,
+            "next": "deal"
+          },
+          {
+            "tr": "Kombi çok eski. Ne zaman takıldı?",
+            "en": "The boiler's very old. When was it put in?",
+            "accept": ["Kombi çok eski. Ne zaman takılmıştı?"],
+            "ok": true,
+            "next": "old"
+          },
+          {
+            "tr": "Ben bozmadım, siz bozdunuz!",
+            "en": "I didn't break it, you did!",
+            "register": "siz",
+            "ok": false,
+            "why": "That accuses Murat Bey, who hasn't been in the flat. Just say it stopped by itself: *Kimse bozmadı, kendi kendine durdu*.",
+            "next": "angry"
+          }
+        ]
+      }
+    },
+    {
+      "id": "old",
+      "who": "landlord",
+      "tr": "Evet, on beş yıllık. Belki artık yenisi takılmalı.",
+      "en": "Yes, it's fifteen years old. Maybe it's time a new one was put in.",
+      "turn": {
+        "prompt": "Agree politely.",
+        "replies": [
+          {
+            "tr": "Bence de. Yenisi daha az gaz harcar.",
+            "en": "I think so too. A new one would use less gas.",
+            "accept": ["Bence de.", "Bence de, yenisi daha iyi olur."],
+            "ok": true,
+            "next": "deal"
+          },
+          {
+            "tr": "Haklısınız, çok eski.",
+            "en": "You're right, it's very old.",
+            "accept": ["Haklısınız."],
+            "register": "siz",
+            "ok": true,
+            "next": "deal"
+          },
+          {
+            "tr": "Haklısın, çok eski.",
+            "en": "You're right, it's very old.",
+            "accept": ["Haklısın."],
+            "register": "sen",
+            "ok": true,
+            "next": "deal"
+          }
+        ]
+      }
+    },
+    {
+      "id": "angry",
+      "who": "landlord",
+      "tr": "Ben mi? Ben o daireye bir yıldır girmedim!",
+      "en": "Me? I haven't set foot in that flat for a year!",
+      "turn": {
+        "prompt": "Apologise: that's not what you meant.",
+        "replies": [
+          {
+            "tr": "Özür dilerim, öyle demek istemedim. Kendi kendine durdu.",
+            "en": "I'm sorry, that's not what I meant. It stopped by itself.",
+            "accept": ["Özür dilerim, öyle demek istemedim.", "Pardon, öyle demek istemedim. Kendi kendine durdu."],
+            "ok": true,
+            "next": "deal"
+          },
+          {
+            "tr": "Affedersiniz, yanlış anlaşıldı. Kimse bozmadı.",
+            "en": "Excuse me, that came out wrong. Nobody broke it.",
+            "accept": ["Affedersiniz, yanlış anlaşıldı."],
+            "register": "siz",
+            "ok": true,
+            "next": "deal"
+          }
+        ]
+      }
+    },
+    {
+      "id": "deal",
+      "who": "landlord",
+      "tr": "Tamam, merak etmeyin, yarın tamir edilir. Bu gece için elektrikli bir ısıtıcınız var mı?",
+      "en": "All right, don't worry, it'll be repaired tomorrow. Do you have an electric heater for tonight?",
+      "turn": {
+        "prompt": "Say no, and ask whether he could bring one. Or say yes, so it's no problem.",
+        "replies": [
+          {
+            "tr": "Hayır, yok. Bir tane getirebilir misiniz?",
+            "en": "No, I don't. Could you bring one?",
+            "accept": ["Maalesef yok. Bir tane getirebilir misiniz?", "Yok. Bir tane getirebilir misiniz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "heater"
+          },
+          {
+            "tr": "Hayır, yok. Bir tane getirebilir misin?",
+            "en": "No, I don't. Could you bring one?",
+            "accept": ["Maalesef yok. Bir tane getirebilir misin?"],
+            "register": "sen",
+            "ok": true,
+            "next": "heater"
+          },
+          {
+            "tr": "Evet, var. Sorun değil.",
+            "en": "Yes, I have one. It's no problem.",
+            "accept": ["Evet, var, sorun yok.", "Var, sorun değil."],
+            "ok": true,
+            "next": "bye"
+          }
+        ]
+      }
+    },
+    {
+      "id": "heater",
+      "who": "landlord",
+      "tr": "Tabii, akşam yedide getiririm. Evde olursunuz, değil mi?",
+      "en": "Of course, I'll bring it at seven this evening. You'll be in, won't you?",
+      "turn": {
+        "prompt": "Say yes, of course, and thank him.",
+        "replies": [
+          {
+            "tr": "Tabii, evdeyim. Çok teşekkür ederim!",
+            "en": "Of course, I'll be in. Thank you so much!",
+            "accept": ["Evet, evdeyim. Çok teşekkürler!", "Tabii, çok teşekkür ederim!"],
+            "ok": true,
+            "next": "bye"
+          },
+          {
+            "tr": "Tabii, sağ olun!",
+            "en": "Of course, thank you!",
+            "register": "siz",
+            "ok": true,
+            "next": "bye"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bye",
+      "who": "landlord",
+      "tr": "Rica ederim. Geçmiş olsun, iyi akşamlar.",
+      "en": "You're welcome. Sorry about the trouble, have a good evening.",
+      "end": "The boiler will be repaired tomorrow, at Murat Bey's cost."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Alo? Efendim?",
+      "en": "Hello? Yes?"
+    },
+    {
+      "tr": "Ben üçüncü kattaki kiracınız.",
+      "en": "It's your tenant on the third floor."
+    },
+    {
+      "tr": "Kombi bozuldu.",
+      "en": "The boiler has broken down.",
+      "note": "*Bozulmak*: to break down by itself. *Bozmak*: to break something."
+    },
+    {
+      "tr": "Sıcak su yok.",
+      "en": "There's no hot water."
+    },
+    {
+      "tr": "Tamirin parasını kim ödeyecek?",
+      "en": "Who will pay for the repair?"
+    },
+    {
+      "tr": "Kendi kendine durdu.",
+      "en": "It stopped by itself."
+    },
+    {
+      "tr": "Merak etmeyin.",
+      "en": "Don't worry.",
+      "note": "*Merak etme* to a friend."
+    }
+  ],
+  "review": ["b1-u10", "b1-u09", "a2-u10"]
+}

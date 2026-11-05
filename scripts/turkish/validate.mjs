@@ -555,7 +555,7 @@ SCHEMA.dialogue = S.obj({
   start: dlgId,
   nodes: S.arr(S.obj({
     id: dlgId, who: dlgId, tr: T.tr, en: T.en, "note?": T.rich,
-    "turn?": S.obj({ prompt: T.en, "to?": dlgId, replies: S.arr(DLG_REPLY, { min: 2, max: 4 }) }), "end?": T.en,
+    "turn?": S.obj({ prompt: T.en, "to?": dlgId, replies: S.arr(DLG_REPLY, { min: 2, max: 4 }) }), "next?": dlgId, "end?": T.en,
   }), { min: 2 }),
   phrases: S.arr(S.obj({ tr: T.tr, en: T.en, "note?": T.rich }), { min: 4, max: 8 }),
   review: S.arr(studyRef, { min: 1, max: 4, unique: true }),
@@ -1315,6 +1315,8 @@ function studyRefOk(r, w, cx) {
   if (!REG.units.has(r)) err(w, `unknown unit ${r}`);
   else if (!cx.examples && !C.units.has(r)) warn(w, `${r} isn't written yet: its link reads “coming soon”`);
 }
+// where a node leads: the next lines of its replies, or its own next
+const outs = n => [...new Set(n.turn ? n.turn.replies.map(r => r.next).filter(Boolean) : n.next !== undefined ? [n.next] : [])];
 function checkDialogue(rec, cx) {
   const { v, file } = rec;
   const u = REG.units.get(v.after);
@@ -1330,9 +1332,20 @@ function checkDialogue(rec, cx) {
   v.nodes.forEach((n, i) => {
     const w = `${file} › nodes[${i}]`;
     if (!cast.has(n.who)) err(`${w}.who`, `“${n.who}” isn't in the cast`);
-    if (!!n.turn === (n.end !== undefined)) err(w, "a node has a turn or an end, never both or neither");
+    if ([!!n.turn, n.next !== undefined, n.end !== undefined].filter(Boolean).length !== 1) err(w, "a node has exactly one of turn, next and end");
     if (words(n.tr) > DLG.line) warn(`${w}.tr`, `${words(n.tr)} words; a line has at most ${DLG.line} (PROJECT.md 7.10)`);
     if (n.note && words(n.note) > DLG.note) warn(`${w}.note`, `${words(n.note)} words; a note has at most ${DLG.note}`);
+    if (n.next !== undefined) {
+      const x = nodes.get(n.next);
+      if (!x) err(`${w}.next`, `no node “${n.next}”`);
+      else if (x.n.who === n.who) warn(`${w}.next`, `“${n.next}” is said by the same person: make the two one line`);
+      // lines linked by next must reach a turn or an end, not loop
+      const chain = new Set([n.id]);
+      for (let y = x; y && y.n.next !== undefined; y = nodes.get(y.n.next)) {
+        if (chain.has(y.n.id)) { err(`${w}.next`, `lines linked by next loop back to “${y.n.id}”`); break; }
+        chain.add(y.n.id);
+      }
+    }
     if (!n.turn) return;
     const t = n.turn, to = t.to || n.who, p = cast.get(to);
     if (t.to && !cast.has(t.to)) err(`${w}.turn.to`, `“${t.to}” isn't in the cast`);
@@ -1372,14 +1385,14 @@ function checkDialogue(rec, cx) {
     const reached = new Set([v.start]), stack = [v.start];
     while (stack.length) {
       const x = nodes.get(stack.pop());
-      if (x && x.n.turn) for (const r of x.n.turn.replies) if (r.next && nodes.has(r.next) && !reached.has(r.next)) { reached.add(r.next); stack.push(r.next); }
+      for (const nx of x ? outs(x.n) : []) if (nodes.has(nx) && !reached.has(nx)) { reached.add(nx); stack.push(nx); }
     }
     for (const [id, x] of nodes) if (!reached.has(id)) err(`${file} › nodes[${x.i}]`, `“${id}” can't be reached from start`);
   }
   const ends = new Set([...nodes.values()].filter(x => x.n.end !== undefined).map(x => x.n.id));
   for (let grew = true; grew;) {
     grew = false;
-    for (const [id, x] of nodes) if (!ends.has(id) && x.n.turn && x.n.turn.replies.some(r => r.next && ends.has(r.next))) { ends.add(id); grew = true; }
+    for (const [id, x] of nodes) if (!ends.has(id) && outs(x.n).some(nx => ends.has(nx))) { ends.add(id); grew = true; }
   }
   for (const [id, x] of nodes) if (!ends.has(id)) err(`${file} › nodes[${x.i}]`, `no end can be reached from “${id}”`);
   if (cx.examples) return;
@@ -1393,7 +1406,8 @@ function checkDialogue(rec, cx) {
     const x = nodes.get(id);
     if (!x) return;
     if (x.n.end !== undefined) { lo = Math.min(lo, turns); hi = Math.max(hi, turns); return; }
-    for (const nx of new Set(x.n.turn.replies.map(r => r.next).filter(Boolean))) if (!path.has(nx)) { path.add(nx); walk(nx, turns + 1, path); path.delete(nx); }
+    const t = x.n.turn ? 1 : 0;
+    for (const nx of outs(x.n)) if (!path.has(nx)) { path.add(nx); walk(nx, turns + t, path); path.delete(nx); }
   };
   if (nodes.has(v.start)) walk(v.start, 0, new Set([v.start]));
   const most = DLG.maxTurns[v.level];

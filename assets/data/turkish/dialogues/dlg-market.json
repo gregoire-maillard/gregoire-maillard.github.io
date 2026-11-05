@@ -1,0 +1,464 @@
+{
+  "id": "dlg-market",
+  "level": "a2",
+  "order": 1,
+  "after": "a2-u07",
+  "title": "Bargaining in the bazaar",
+  "titleTr": "Çarşıda pazarlık",
+  "setting": "In Istanbul's Grand Bazaar a blue plate in a small ceramics shop catches your eye. Here, prices are made to be bargained.",
+  "goal": "Ask a price, bargain it down, and know when to walk away.",
+  "minutes": 5,
+  "cast": [
+    {
+      "id": "vendor",
+      "name": "Dükkân sahibi",
+      "role": "the shopkeeper",
+      "register": "siz",
+      "why": "A shopkeeper you don't know gets *siz*, however friendly he is, and even if he says *sen* to you.",
+      "pitch": 0.85
+    },
+    {
+      "id": "boy",
+      "name": "Çırak",
+      "role": "the shop's young apprentice",
+      "register": "sen",
+      "why": "A boy running errands for the shop: *sen*.",
+      "pitch": 1.3
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "vendor",
+      "tr": "Hoş geldiniz! Buyurun, bakın. Bakmak bedava!",
+      "en": "Welcome! Come in, have a look. Looking is free!",
+      "note": "*Bakmak bedava*, “looking costs nothing”, is a classic line of the bazaar.",
+      "turn": {
+        "prompt": "Ask how much the blue plate is.",
+        "replies": [
+          {
+            "tr": "Hoş bulduk. Bu mavi tabak ne kadar?",
+            "en": "Thank you. How much is this blue plate?",
+            "accept": ["Bu mavi tabak ne kadar?", "Mavi tabak ne kadar?", "[Bu mavi|Mavi] tabak kaç lira?"],
+            "ok": true,
+            "next": "price"
+          },
+          {
+            "tr": "Bu mavi tabak ne kadar güzel!",
+            "en": "How beautiful this blue plate is!",
+            "ok": true,
+            "why": "A compliment, and he'll love it, but you haven't asked the price yet.",
+            "next": "pleased"
+          },
+          {
+            "tr": "Bu mavi tabağı ne kadar?",
+            "en": "How much this blue plate?",
+            "ok": false,
+            "why": "No accusative here: the plate is the subject of the question. *Bu mavi tabak ne kadar?*",
+            "react": {
+              "tr": "Hangisi? Bu mu?",
+              "en": "Which one? This one?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "price",
+      "who": "vendor",
+      "tr": "Bu el yapımı. Bin iki yüz lira.",
+      "en": "This one's handmade. 1,200 lira.",
+      "turn": {
+        "prompt": "Say it's very expensive, and ask for a discount.",
+        "replies": [
+          {
+            "tr": "Çok pahalı! İndirim yapar mısınız?",
+            "en": "That's very expensive! Will you give me a discount?",
+            "accept": ["Çok pahalı! Biraz indirim yapar mısınız?", "Çok pahalı! [Biraz indirim|İndirim] yapabilir misiniz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "offer"
+          },
+          {
+            "tr": "Çok pahalı! İndirim yapar mısın?",
+            "en": "That's very expensive! Will you give me a discount?",
+            "accept": ["Çok pahalı! Biraz indirim yapar mısın?"],
+            "register": "sen",
+            "ok": true,
+            "next": "offer"
+          },
+          {
+            "tr": "Tamam, alıyorum.",
+            "en": "Okay, I'll take it.",
+            "ok": true,
+            "why": "You can, but in the bazaar the first price is only an opening: everyone bargains.",
+            "next": "full-price"
+          },
+          {
+            "tr": "Çok ucuz! İndirim yapar mısınız?",
+            "en": "That's very cheap! Will you give me a discount?",
+            "register": "siz",
+            "ok": false,
+            "why": "*Ucuz* means cheap. Too much is *pahalı*: *Çok pahalı!*",
+            "react": {
+              "tr": "Ucuz mu? O zaman hemen alın!",
+              "en": "Cheap? Then buy it right away!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "pleased",
+      "who": "vendor",
+      "tr": "Değil mi? El yapımı! Bin iki yüz lira.",
+      "en": "Isn't it? It's handmade! 1,200 lira.",
+      "turn": {
+        "prompt": "Say it's very expensive, and ask for a discount.",
+        "replies": [
+          {
+            "tr": "Çok pahalı! İndirim yapar mısınız?",
+            "en": "That's very expensive! Will you give me a discount?",
+            "accept": ["Çok pahalı! Biraz indirim yapar mısınız?", "Çok pahalı! [Biraz indirim|İndirim] yapabilir misiniz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "offer"
+          },
+          {
+            "tr": "Çok pahalı! İndirim yapar mısın?",
+            "en": "That's very expensive! Will you give me a discount?",
+            "accept": ["Çok pahalı! Biraz indirim yapar mısın?"],
+            "register": "sen",
+            "ok": true,
+            "next": "offer"
+          },
+          {
+            "tr": "Tamam, alıyorum.",
+            "en": "Okay, I'll take it.",
+            "ok": true,
+            "why": "You can, but in the bazaar the first price is only an opening: everyone bargains.",
+            "next": "full-price"
+          },
+          {
+            "tr": "Çok ucuz! İndirim yapar mısınız?",
+            "en": "That's very cheap! Will you give me a discount?",
+            "register": "siz",
+            "ok": false,
+            "why": "*Ucuz* means cheap. Too much is *pahalı*: *Çok pahalı!*",
+            "react": {
+              "tr": "Ucuz mu? O zaman hemen alın!",
+              "en": "Cheap? Then buy it right away!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "offer",
+      "who": "vendor",
+      "tr": "Sizin için bin lira olsun. Son fiyat!",
+      "en": "For you, let's say 1,000. That's my final price!",
+      "note": "*Son fiyat*, the final price, is rarely final.",
+      "turn": {
+        "prompt": "Offer 700 lira, or say you'll look at other shops.",
+        "replies": [
+          {
+            "tr": "Yedi yüz lira olur mu?",
+            "en": "Would 700 lira do?",
+            "accept": ["Yedi yüz olur mu?", "Yedi yüz lira vereyim.", "Yedi yüz vereyim."],
+            "ok": true,
+            "next": "tea"
+          },
+          {
+            "tr": "Teşekkürler, ama başka dükkânlara da bakacağım.",
+            "en": "Thanks, but I'll look at other shops too.",
+            "accept": ["Teşekkürler, ama başka bir dükkâna bakacağım.", "Teşekkür ederim, ama başka dükkânlara da bakacağım."],
+            "ok": true,
+            "next": "walk"
+          },
+          {
+            "tr": "Bin beş yüz lira olur mu?",
+            "en": "Would 1,500 lira do?",
+            "ok": false,
+            "why": "That's more than he's asking! Offer less: *Yedi yüz lira olur mu?*",
+            "next": "happy"
+          }
+        ]
+      }
+    },
+    {
+      "id": "tea",
+      "who": "boy",
+      "tr": "Buyurun, çayınız.",
+      "en": "Here's your tea.",
+      "note": "Shops in the bazaar often send a boy for tea while the bargaining goes on.",
+      "turn": {
+        "prompt": "Thank the boy.",
+        "replies": [
+          {
+            "tr": "Sağ ol!",
+            "en": "Thanks!",
+            "accept": ["Sağ ol, eline sağlık!"],
+            "register": "sen",
+            "ok": true,
+            "next": "counter"
+          },
+          {
+            "tr": "Teşekkürler!",
+            "en": "Thank you!",
+            "accept": ["Teşekkür ederim!", "Çok teşekkürler!"],
+            "ok": true,
+            "next": "counter"
+          },
+          {
+            "tr": "Sağ olun!",
+            "en": "Thanks!",
+            "register": "siz",
+            "ok": true,
+            "next": "counter"
+          }
+        ]
+      }
+    },
+    {
+      "id": "counter",
+      "who": "vendor",
+      "tr": "Yedi yüz mü? Çok az! Sekiz yüz elli olsun.",
+      "en": "Seven hundred? That's too little! Let's say 850.",
+      "turn": {
+        "prompt": "Meet him halfway: offer 800, and say you'll take it. Or accept 850.",
+        "replies": [
+          {
+            "tr": "Sekiz yüz olsun, alıyorum.",
+            "en": "Make it 800 and I'll take it.",
+            "accept": ["Sekiz yüz lira olsun, alıyorum.", "Sekiz yüz olsun, tamam mı?"],
+            "ok": true,
+            "next": "deal"
+          },
+          {
+            "tr": "Tamam, sekiz yüz elli.",
+            "en": "Okay, 850.",
+            "accept": ["Tamam, sekiz yüz elli lira.", "Peki, sekiz yüz elli olsun."],
+            "ok": true,
+            "next": "deal850"
+          },
+          {
+            "tr": "Sekiz yüz olsun, alıyorsunuz.",
+            "en": "Make it 800, you're buying it.",
+            "register": "siz",
+            "ok": false,
+            "why": "*Alıyorsunuz* says **he** is buying. You're the buyer: *alıyorum*.",
+            "react": {
+              "tr": "Ben mi alıyorum?",
+              "en": "I'm buying it?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "walk",
+      "who": "vendor",
+      "tr": "Durun, durun! Gitmeyin! Sekiz yüz olsun, sadece sizin için.",
+      "en": "Wait, wait! Don't go! Let's say 800, just for you.",
+      "note": "Walking away is the strongest move in a bargain, and every shopkeeper knows it.",
+      "turn": {
+        "prompt": "Accept the offer, or leave anyway.",
+        "replies": [
+          {
+            "tr": "Tamam, anlaştık!",
+            "en": "Okay, it's a deal!",
+            "accept": ["Anlaştık!", "Tamam, sekiz yüz. Anlaştık!", "Tamam, alıyorum."],
+            "ok": true,
+            "next": "deal"
+          },
+          {
+            "tr": "Tamam, siz kazandınız!",
+            "en": "Okay, you win!",
+            "register": "siz",
+            "ok": true,
+            "next": "deal"
+          },
+          {
+            "tr": "Tamam, sen kazandın!",
+            "en": "Okay, you win!",
+            "register": "sen",
+            "ok": true,
+            "next": "deal"
+          },
+          {
+            "tr": "Hayır, teşekkürler. İyi günler!",
+            "en": "No, thank you. Have a good day!",
+            "ok": true,
+            "next": "left"
+          }
+        ]
+      }
+    },
+    {
+      "id": "full-price",
+      "who": "vendor",
+      "tr": "Harika! Hayırlı olsun! Kartla mı ödüyorsunuz, nakit mi?",
+      "en": "Wonderful! Congratulations! Are you paying by card or in cash?",
+      "turn": {
+        "prompt": "Say how you'll pay.",
+        "replies": [
+          {
+            "tr": "Kartla, lütfen.",
+            "en": "By card, please.",
+            "accept": ["Kartla ödüyorum(, lütfen).", "Kartla ödeyeceğim."],
+            "ok": true,
+            "next": "wrap"
+          },
+          {
+            "tr": "Nakit. Buyurun.",
+            "en": "Cash. Here you are.",
+            "accept": ["Nakit ödüyorum. Buyurun.", "Nakit ödeyeceğim. Buyurun."],
+            "register": "siz",
+            "ok": true,
+            "next": "wrap"
+          },
+          {
+            "tr": "Nakit. Buyur.",
+            "en": "Cash. Here you are.",
+            "register": "sen",
+            "ok": true,
+            "next": "wrap"
+          }
+        ]
+      }
+    },
+    {
+      "id": "happy",
+      "who": "vendor",
+      "tr": "Bin beş yüz mü? Tabii, tabii! Kartla mı ödüyorsunuz, nakit mi?",
+      "en": "1,500? Of course, of course! Are you paying by card or in cash?",
+      "turn": {
+        "prompt": "Say how you'll pay.",
+        "replies": [
+          {
+            "tr": "Kartla, lütfen.",
+            "en": "By card, please.",
+            "accept": ["Kartla ödüyorum(, lütfen).", "Kartla ödeyeceğim."],
+            "ok": true,
+            "next": "wrap"
+          },
+          {
+            "tr": "Nakit. Buyurun.",
+            "en": "Cash. Here you are.",
+            "accept": ["Nakit ödüyorum. Buyurun.", "Nakit ödeyeceğim. Buyurun."],
+            "register": "siz",
+            "ok": true,
+            "next": "wrap"
+          },
+          {
+            "tr": "Nakit. Buyur.",
+            "en": "Cash. Here you are.",
+            "register": "sen",
+            "ok": true,
+            "next": "wrap"
+          }
+        ]
+      }
+    },
+    {
+      "id": "wrap",
+      "who": "vendor",
+      "tr": "Buyurun, tabağınız. Güle güle kullanın!",
+      "en": "Here's your plate. Enjoy it!",
+      "note": "*Güle güle kullanın*, “use it with smiles”, is said to anyone who has just bought something.",
+      "turn": {
+        "prompt": "Thank him and say goodbye.",
+        "replies": [
+          {
+            "tr": "Teşekkürler, iyi günler!",
+            "en": "Thank you, have a good day!",
+            "accept": ["Teşekkür ederim, iyi günler!"],
+            "ok": true,
+            "next": "end-full"
+          },
+          {
+            "tr": "Sağ olun, iyi işler!",
+            "en": "Thank you, all the best with your business!",
+            "accept": ["Sağ olun, kolay gelsin!"],
+            "register": "siz",
+            "ok": true,
+            "next": "end-full"
+          },
+          {
+            "tr": "Sağ ol, iyi işler!",
+            "en": "Thanks, all the best with your business!",
+            "register": "sen",
+            "ok": true,
+            "next": "end-full"
+          }
+        ]
+      }
+    },
+    {
+      "id": "deal",
+      "who": "vendor",
+      "tr": "Anlaştık! Hayırlı olsun, güle güle kullanın!",
+      "en": "It's a deal! Congratulations, enjoy it!",
+      "note": "*Güle güle kullanın*, “use it with smiles”, is said to anyone who has just bought something.",
+      "end": "You bargained the plate down from 1,200 to 800 lira."
+    },
+    {
+      "id": "deal850",
+      "who": "vendor",
+      "tr": "Hayırlı olsun! Güle güle kullanın!",
+      "en": "Congratulations! Enjoy it!",
+      "end": "You paid 850 lira: a fair price, after a little bargaining."
+    },
+    {
+      "id": "end-full",
+      "who": "vendor",
+      "tr": "Size de! Yine bekleriz.",
+      "en": "Same to you! Come again.",
+      "end": "You bought the plate, but paid more than you had to: in the bazaar the first price is only where bargaining starts."
+    },
+    {
+      "id": "left",
+      "who": "vendor",
+      "tr": "Peki, nasıl isterseniz. Yine bekleriz!",
+      "en": "All right, as you like. Come again!",
+      "end": "You left without buying: there are thousands of other shops in the bazaar."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Bu ne kadar?",
+      "en": "How much is this?",
+      "note": "*Kaç lira?* asks the same."
+    },
+    {
+      "tr": "Çok pahalı!",
+      "en": "That's very expensive!"
+    },
+    {
+      "tr": "İndirim yapar mısınız?",
+      "en": "Will you give me a discount?",
+      "note": "*Yapar mısın?* to a friend."
+    },
+    {
+      "tr": "Yedi yüz lira olur mu?",
+      "en": "Would 700 lira do?"
+    },
+    {
+      "tr": "Anlaştık!",
+      "en": "It's a deal!"
+    },
+    {
+      "tr": "İyi işler!",
+      "en": "All the best with your business!",
+      "note": "A goodbye for shopkeepers and anyone at work."
+    },
+    {
+      "tr": "Güle güle kullanın!",
+      "en": "Enjoy it!",
+      "note": "Said to someone who has just bought something."
+    }
+  ],
+  "review": ["a2-u04", "a2-u07", "a1-u11"]
+}

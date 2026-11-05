@@ -1,0 +1,408 @@
+{
+  "id": "dlg-interview",
+  "level": "b2",
+  "order": 1,
+  "after": "b2-u05",
+  "title": "A job interview",
+  "titleTr": "İş görüşmesi",
+  "setting": "You've applied to be a project coordinator at a mid-sized company in Istanbul. Elif Hanım from HR and Kerem, the team lead, interview you.",
+  "goal": "Present yourself, answer interview questions, and switch between siz and sen when you're invited to.",
+  "minutes": 7,
+  "cast": [
+    {
+      "id": "elif",
+      "name": "Elif Hanım",
+      "role": "Elif Hanım, the HR manager",
+      "register": "siz",
+      "why": "The person interviewing you: *siz*, and *Elif Hanım*.",
+      "pitch": 1.05
+    },
+    {
+      "id": "kerem",
+      "name": "Kerem",
+      "role": "Kerem, the team lead",
+      "register": "sen",
+      "why": "Kerem asked you to say *sen*, as everyone in his team does. Keep *siz* for Elif Hanım.",
+      "pitch": 0.9
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "elif",
+      "tr": "Hoş geldiniz, buyurun oturun. Bizi kolay buldunuz mu?",
+      "en": "Welcome, please sit down. Did you find us easily?",
+      "turn": {
+        "prompt": "Thank her, and say yes: the office is very close to the metro.",
+        "replies": [
+          {
+            "tr": "Teşekkür ederim. Evet, ofisiniz metroya çok yakın.",
+            "en": "Thank you. Yes, your office is very close to the metro.",
+            "accept": ["Teşekkürler, evet. Ofisiniz metroya çok yakın.", "Evet, kolay buldum. Ofisiniz metroya çok yakın."],
+            "register": "siz",
+            "ok": true,
+            "next": "kerem"
+          },
+          {
+            "tr": "Teşekkür ederim. Evet, ofis metroya çok yakın.",
+            "en": "Thank you. Yes, the office is very close to the metro.",
+            "accept": ["Evet, kolay buldum. Ofis metroya çok yakın.", "Teşekkürler, evet. Ofis metroya çok yakın."],
+            "ok": true,
+            "next": "kerem"
+          },
+          {
+            "tr": "Teşekkür ederim. Evet, ofisin metroya çok yakın.",
+            "en": "Thank you. Yes, your office is very close to the metro.",
+            "register": "sen",
+            "ok": true,
+            "next": "kerem"
+          }
+        ]
+      }
+    },
+    {
+      "id": "kerem",
+      "who": "kerem",
+      "tr": "Merhaba, ben Kerem, ekibin lideriyim. Bu arada burada herkes birbirine sen der; bana da sen diyebilirsin.",
+      "en": "Hi, I'm Kerem, the team lead. By the way, everyone here says sen to each other, so you can say sen to me too.",
+      "note": "In many young companies colleagues say *sen* to each other. When someone invites you to, take them up on it, and keep *siz* for everyone else.",
+      "turn": {
+        "prompt": "Say you're pleased to meet him, and ask how long he's worked here.",
+        "replies": [
+          {
+            "tr": "Memnun oldum, Kerem. Ne zamandır burada çalışıyorsun?",
+            "en": "Nice to meet you, Kerem. How long have you worked here?",
+            "accept": ["Memnun oldum. Ne zamandır burada çalışıyorsun?", "Memnun oldum, Kerem. Sen ne zamandır burada çalışıyorsun?", "Memnun oldum. Kaç yıldır burada çalışıyorsun?"],
+            "register": "sen",
+            "ok": true,
+            "next": "kerem2"
+          },
+          {
+            "tr": "Memnun oldum, Kerem Bey. Ne zamandır burada çalışıyorsunuz?",
+            "en": "Nice to meet you, Kerem Bey. How long have you worked here?",
+            "accept": ["Memnun oldum. Ne zamandır burada çalışıyorsunuz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "kerem2"
+          },
+          {
+            "tr": "Memnun oldum, Kerem. Ne zaman burada çalışacaksın?",
+            "en": "Nice to meet you, Kerem. When will you work here?",
+            "register": "sen",
+            "ok": false,
+            "why": "*Çalışacaksın* is the future, but he already works here. How long, up to now: *Ne zamandır çalışıyorsun?*",
+            "react": {
+              "tr": "Zaten burada çalışıyorum!",
+              "en": "I already work here!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "kerem2",
+      "who": "kerem",
+      "tr": "Üç yıldır. Şirketin ilk çalışanlarındanım.",
+      "en": "Three years. I'm one of the company's first employees.",
+      "next": "q1"
+    },
+    {
+      "id": "q1",
+      "who": "elif",
+      "tr": "Biraz kendinizden bahseder misiniz? Neden bu pozisyona başvurdunuz?",
+      "en": "Would you tell us a little about yourself? Why did you apply for this position?",
+      "turn": {
+        "prompt": "Say you've been a project assistant for three years, and you applied because you'd like to work in a bigger team.",
+        "replies": [
+          {
+            "tr": "Üç yıldır proje asistanıyım. Daha büyük bir ekipte çalışmak istediğim için başvurdum.",
+            "en": "I've been a project assistant for three years. I applied because I'd like to work in a bigger team.",
+            "accept": [
+              "Üç yıldır proje asistanı olarak çalışıyorum. Daha büyük bir ekipte çalışmak istediğim için başvurdum.",
+              "Üç yıldır proje asistanıyım. Daha büyük bir ekipte çalışmak istiyorum."
+            ],
+            "ok": true,
+            "next": "q2"
+          },
+          {
+            "tr": "Üç yıldır proje asistanıyım. Açıkçası daha yüksek bir maaş istiyorum.",
+            "en": "I've been a project assistant for three years. To be honest, I'd like a higher salary.",
+            "ok": true,
+            "why": "Honest, but opening with the salary rarely makes the best first impression.",
+            "next": "salary"
+          },
+          {
+            "tr": "Üç yıl sonra proje asistanı olacağım.",
+            "en": "In three years I'll be a project assistant.",
+            "ok": false,
+            "why": "*Üç yıl sonra* is three years from now. For three years up to now: *Üç yıldır proje asistanıyım*.",
+            "react": {
+              "tr": "Anlayamadım. Şu an ne iş yapıyorsunuz?",
+              "en": "I didn't follow. What do you do at the moment?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "salary",
+      "who": "elif",
+      "tr": "Anlıyorum. Maaşı sürecin sonunda konuşuruz. Peki, bu işte sizi en çok ne heyecanlandırıyor?",
+      "en": "I see. We'll talk about the salary at the end of the process. So what excites you most about this job?",
+      "turn": {
+        "prompt": "Say what excites you most: the chance to work on international projects.",
+        "replies": [
+          {
+            "tr": "En çok uluslararası projelerde çalışma fırsatı.",
+            "en": "Most of all, the chance to work on international projects.",
+            "accept": ["Uluslararası projelerde çalışma fırsatı.", "En çok, uluslararası projelerde çalışmak."],
+            "ok": true,
+            "next": "q2"
+          },
+          {
+            "tr": "Açıkçası ekibiniz çok iyi görünüyor.",
+            "en": "To be honest, your team looks very good.",
+            "accept": ["Ekibiniz çok iyi görünüyor."],
+            "register": "siz",
+            "ok": true,
+            "next": "q2"
+          },
+          {
+            "tr": "Açıkçası ekibin çok iyi görünüyor.",
+            "en": "To be honest, your team looks very good.",
+            "register": "sen",
+            "ok": true,
+            "next": "q2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "q2",
+      "who": "elif",
+      "tr": "Güzel. Ekip çalışmasında karşılaştığınız zor bir durumu anlatabilir misiniz?",
+      "en": "Good. Could you describe a difficult situation you faced while working in a team?",
+      "turn": {
+        "prompt": "Say two colleagues couldn't agree; you talked to both, and you found a solution together.",
+        "replies": [
+          {
+            "tr": "İki iş arkadaşım anlaşamamıştı. İkisiyle de konuştum ve bir çözüm bulduk.",
+            "en": "Two colleagues of mine couldn't agree. I talked to both of them, and we found a solution.",
+            "accept": [
+              "İki iş arkadaşım anlaşamıyordu. İkisiyle de konuştum ve birlikte bir çözüm bulduk.",
+              "İki iş arkadaşım anlaşamamıştı. İkisiyle de konuştum, bir çözüm bulduk."
+            ],
+            "ok": true,
+            "next": "kerem-q"
+          },
+          {
+            "tr": "Hiç zor bir durum yaşamadım.",
+            "en": "I've never had a difficult situation.",
+            "ok": false,
+            "why": "Never a single problem sounds evasive in an interview: they want to see how you handle one. Give an example.",
+            "next": "never"
+          },
+          {
+            "tr": "Zor bir durumu anlatabilirim.",
+            "en": "I can describe a difficult situation.",
+            "ok": false,
+            "why": "That says you **can** describe one. Now do it: *İki iş arkadaşım anlaşamamıştı…*",
+            "react": {
+              "tr": "Lütfen, dinliyoruz.",
+              "en": "Please, we're listening."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "never",
+      "who": "elif",
+      "tr": "Hiç mi? Herkesin işinde zor anlar olur. Bir örnek düşünebilir misiniz?",
+      "en": "Never? Everyone has difficult moments at work. Could you think of an example?",
+      "turn": {
+        "prompt": "Give the example: two colleagues couldn't agree, and you helped them find a solution.",
+        "replies": [
+          {
+            "tr": "Evet, aslında bir örnek var: iki iş arkadaşım anlaşamamıştı ve onları konuşturdum.",
+            "en": "Yes, actually there is one: two colleagues couldn't agree, and I got them talking.",
+            "accept": ["Aslında bir örnek var. İki iş arkadaşım anlaşamamıştı, ikisiyle de konuştum."],
+            "ok": true,
+            "next": "kerem-q"
+          },
+          {
+            "tr": "Haklısınız. İki iş arkadaşım anlaşamamıştı; ikisiyle de konuştum ve bir çözüm bulduk.",
+            "en": "You're right. Two colleagues couldn't agree; I talked to both, and we found a solution.",
+            "register": "siz",
+            "ok": true,
+            "next": "kerem-q"
+          }
+        ]
+      }
+    },
+    {
+      "id": "kerem-q",
+      "who": "kerem",
+      "tr": "Ben de bir şey sorayım: tablolarla, verilerle çalışmayı sever misin?",
+      "en": "Let me ask something too: do you like working with spreadsheets and data?",
+      "turn": {
+        "prompt": "Say yes: you used to prepare the monthly reports. Then ask whether he works with data too.",
+        "replies": [
+          {
+            "tr": "Evet, aylık raporları ben hazırlıyordum. Sen de verilerle mi çalışıyorsun?",
+            "en": "Yes, I used to prepare the monthly reports. Do you work with data too?",
+            "accept": [
+              "Evet, son işimde aylık raporları ben hazırlıyordum. Sen de verilerle mi çalışıyorsun?",
+              "Severim, aylık raporları ben hazırlıyordum. Sen de verilerle mi çalışıyorsun?"
+            ],
+            "register": "sen",
+            "ok": true,
+            "next": "kerem-a"
+          },
+          {
+            "tr": "Evet, aylık raporları ben hazırlıyordum. Siz de verilerle mi çalışıyorsunuz?",
+            "en": "Yes, I used to prepare the monthly reports. Do you work with data too?",
+            "register": "siz",
+            "ok": true,
+            "next": "kerem-a"
+          },
+          {
+            "tr": "Evet, aylık raporları siz hazırlıyordunuz.",
+            "en": "Yes, you used to prepare the monthly reports.",
+            "register": "siz",
+            "ok": false,
+            "why": "*Siz hazırlıyordunuz* says **he** prepared them. You did: *ben hazırlıyordum*.",
+            "react": {
+              "tr": "Ben mi? Seninle daha bugün tanıştık!",
+              "en": "Me? We only met today!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "kerem-a",
+      "who": "kerem",
+      "tr": "Evet, her gün! O zaman çok iyi anlaşacağız.",
+      "en": "Yes, every day! Then we'll get on very well.",
+      "next": "end-q"
+    },
+    {
+      "id": "end-q",
+      "who": "elif",
+      "tr": "Bizim sorularımız bu kadar. Sizin sormak istediğiniz bir şey var mı?",
+      "en": "That's all our questions. Is there anything you'd like to ask?",
+      "note": "Always have a question ready: it shows you're interested.",
+      "turn": {
+        "prompt": "Ask when they'll make their decision, or what a day in this job looks like.",
+        "replies": [
+          {
+            "tr": "Kararınızı ne zaman vereceğinizi öğrenebilir miyim?",
+            "en": "May I ask when you'll make your decision?",
+            "accept": ["Ne zaman karar vereceğinizi öğrenebilir miyim?", "Ne zaman karar vereceksiniz?", "Kararınızı ne zaman vereceksiniz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "decision"
+          },
+          {
+            "tr": "Bu pozisyonda bir gün nasıl geçiyor?",
+            "en": "What's a day like in this position?",
+            "accept": ["Bu işte bir gün nasıl geçiyor?", "Bu pozisyonda bir günüm nasıl geçecek?"],
+            "ok": true,
+            "next": "day"
+          },
+          {
+            "tr": "Kararını ne zaman vereceğini öğrenebilir miyim?",
+            "en": "May I ask when you'll make your decision?",
+            "accept": ["Ne zaman karar vereceksin?"],
+            "register": "sen",
+            "ok": true,
+            "next": "decision"
+          }
+        ]
+      }
+    },
+    {
+      "id": "day",
+      "who": "kerem",
+      "tr": "Güzel soru! Sabah kısa bir toplantı, sonra projeler. Cuma öğleden sonraları da hep birlikte kahve içeriz.",
+      "en": "Good question! A short meeting in the morning, then projects. And on Friday afternoons we all have coffee together.",
+      "next": "decision"
+    },
+    {
+      "id": "decision",
+      "who": "elif",
+      "tr": "Önümüzdeki hafta içinde size e-postayla dönüş yapacağız. Geldiğiniz için teşekkür ederiz.",
+      "en": "We'll get back to you by email within the next week. Thank you for coming.",
+      "note": "*İyi çalışmalar*, “good work”, wishes people at work a good day.",
+      "turn": {
+        "prompt": "Thank them both, and say goodbye.",
+        "replies": [
+          {
+            "tr": "Ben teşekkür ederim. İyi çalışmalar!",
+            "en": "Thank you. Have a good day at work!",
+            "accept": ["Asıl ben teşekkür ederim. İyi çalışmalar!", "Ben teşekkür ederim, iyi günler!"],
+            "ok": true,
+            "next": "end"
+          },
+          {
+            "tr": "Ben teşekkür ederim. Görüşmek üzere!",
+            "en": "Thank you. Hope to see you again!",
+            "accept": ["Asıl ben teşekkür ederim. Görüşmek üzere!"],
+            "ok": true,
+            "next": "end"
+          },
+          {
+            "tr": "Rica ederim. İyi günler!",
+            "en": "You're welcome. Have a good day!",
+            "ok": false,
+            "why": "*Rica ederim* answers a thank-you, as if you'd done them a favour. Thank them back: *Ben teşekkür ederim*.",
+            "next": "end"
+          }
+        ]
+      }
+    },
+    {
+      "id": "end",
+      "who": "elif",
+      "tr": "Görüşmek üzere, iyi günler.",
+      "en": "Hope to see you soon. Have a good day.",
+      "end": "The interview is over: they'll write within a week."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Kendinizden bahseder misiniz?",
+      "en": "Would you tell us about yourself?"
+    },
+    {
+      "tr": "Üç yıldır proje asistanıyım.",
+      "en": "I've been a project assistant for three years."
+    },
+    {
+      "tr": "Daha büyük bir ekipte çalışmak istediğim için başvurdum.",
+      "en": "I applied because I'd like to work in a bigger team.",
+      "note": "`-DIğI için` gives the reason."
+    },
+    {
+      "tr": "Bana sen diyebilirsin.",
+      "en": "You can say sen to me.",
+      "note": "An invitation to *sen*: take it, with that person only."
+    },
+    {
+      "tr": "Kararınızı ne zaman vereceğinizi öğrenebilir miyim?",
+      "en": "May I ask when you'll make your decision?"
+    },
+    {
+      "tr": "İyi çalışmalar!",
+      "en": "Have a good day at work!",
+      "note": "Said to people at work, as you leave."
+    },
+    {
+      "tr": "Görüşmek üzere.",
+      "en": "Hope to see you again."
+    }
+  ],
+  "review": ["b2-u04", "b2-u05", "b1-u08", "b1-u01"]
+}

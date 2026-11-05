@@ -1,0 +1,451 @@
+{
+  "id": "dlg-cafe",
+  "level": "a1",
+  "order": 1,
+  "after": "a1-u12",
+  "title": "At the café",
+  "titleTr": "Kafede",
+  "setting": "You meet your friend Deniz at a small café in Kadıköy, on Istanbul's Asian side. The waiter comes to your table.",
+  "goal": "Answer a welcome, order for two, thank the waiter and settle who pays.",
+  "minutes": 4,
+  "cast": [
+    {
+      "id": "waiter",
+      "name": "Garson",
+      "role": "the waiter",
+      "register": "siz",
+      "why": "A waiter is a stranger at work, so *siz*, as with anyone who serves you.",
+      "pitch": 0.85
+    },
+    {
+      "id": "deniz",
+      "name": "Deniz",
+      "role": "your friend Deniz",
+      "register": "sen",
+      "why": "Deniz is your friend: *sen*. *Siz* would sound cold, as if you had just met.",
+      "pitch": 1.2
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "waiter",
+      "tr": "Hoş geldiniz!",
+      "en": "Welcome!",
+      "note": "*Hoş geldiniz* has a set answer: *Hoş bulduk*, roughly “we've found it pleasant”.",
+      "turn": {
+        "prompt": "Answer the welcome.",
+        "replies": [
+          {
+            "tr": "Hoş bulduk.",
+            "en": "Glad to be here.",
+            "ok": true,
+            "next": "what"
+          },
+          {
+            "tr": "Teşekkür ederim.",
+            "en": "Thank you.",
+            "accept": ["Teşekkürler."],
+            "ok": true,
+            "why": "Polite, but *Hoş geldiniz* has its own answer, and everyone expects it: *Hoş bulduk*.",
+            "next": "what"
+          },
+          {
+            "tr": "Hoş geldiniz.",
+            "en": "Welcome.",
+            "ok": false,
+            "why": "That's the waiter's line. The guest answers *Hoş geldiniz* with *Hoş bulduk*."
+          }
+        ]
+      }
+    },
+    {
+      "id": "what",
+      "who": "waiter",
+      "tr": "Buyurun, ne alırsınız?",
+      "en": "Go ahead: what will you have?",
+      "note": "*Ne alırsınız?* is how waiters take your order. Its tense, the aorist, comes in [A2 unit 4](a2-u04).",
+      "turn": {
+        "prompt": "Ask Deniz what she would like.",
+        "to": "deniz",
+        "replies": [
+          {
+            "tr": "Deniz, sen ne istiyorsun?",
+            "en": "Deniz, what would you like?",
+            "accept": ["Sen ne istiyorsun(, Deniz)?", "Ne istiyorsun(, Deniz)?", "Deniz, ne istiyorsun?"],
+            "register": "sen",
+            "ok": true,
+            "next": "deniz"
+          },
+          {
+            "tr": "Deniz, siz ne istiyorsunuz?",
+            "en": "Deniz, what would you like?",
+            "accept": ["Siz ne istiyorsunuz(, Deniz)?", "Ne istiyorsunuz(, Deniz)?"],
+            "register": "siz",
+            "ok": true,
+            "next": "deniz"
+          },
+          {
+            "tr": "Ben ne istiyorum?",
+            "en": "What do I want?",
+            "ok": false,
+            "why": "*Ben ne istiyorum?* asks what **you** want. Ask Deniz, with *sen*: *Sen ne istiyorsun?*",
+            "react": {
+              "tr": "Sen mi? Bilmiyorum!",
+              "en": "You? I don't know!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "deniz",
+      "who": "deniz",
+      "tr": "Ben çay istiyorum. Sen ne alıyorsun?",
+      "en": "I'd like tea. What are you having?",
+      "turn": {
+        "prompt": "Order for you both: a tea for Deniz, and a tea or a coffee for you.",
+        "to": "waiter",
+        "replies": [
+          {
+            "tr": "İki çay, lütfen.",
+            "en": "Two teas, please.",
+            "accept": ["İki tane çay, lütfen.", "[Biz iki|İki] çay istiyoruz(, lütfen)."],
+            "ok": true,
+            "next": "tea"
+          },
+          {
+            "tr": "Bir çay, bir de kahve, lütfen.",
+            "en": "A tea, and a coffee too, please.",
+            "accept": ["Bir çay ve bir kahve, lütfen.", "Bir çay, bir kahve, lütfen.", "[Biz bir|Bir] çay ve bir kahve istiyoruz(, lütfen)."],
+            "ok": true,
+            "next": "coffee"
+          },
+          {
+            "tr": "İki çaylar, lütfen.",
+            "en": "Two teas, please.",
+            "ok": false,
+            "why": "After a number a noun stays singular: *iki çay*, *üç simit*.",
+            "react": {
+              "tr": "İki çay mı?",
+              "en": "Two teas?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "tea",
+      "who": "waiter",
+      "tr": "Tabii, iki çay. Simit de istiyor musunuz?",
+      "en": "Of course, two teas. Would you like a simit too?",
+      "note": "A *simit* is a sesame-crusted bread ring, the classic snack with tea in Istanbul.",
+      "turn": {
+        "prompt": "Say whether you'd like a simit.",
+        "replies": [
+          {
+            "tr": "Evet, bir simit, lütfen.",
+            "en": "Yes, one simit, please.",
+            "accept": ["Evet, bir tane, lütfen.", "Evet, lütfen.", "Bir simit, lütfen."],
+            "ok": true,
+            "next": "served"
+          },
+          {
+            "tr": "Hayır, teşekkürler.",
+            "en": "No, thank you.",
+            "accept": ["Hayır, teşekkür ederim."],
+            "ok": true,
+            "next": "served"
+          },
+          {
+            "tr": "Evet, simit istiyor musunuz?",
+            "en": "Yes, would you like a simit?",
+            "register": "siz",
+            "ok": false,
+            "why": "That asks the waiter his own question back. Answer it: *Evet, bir simit, lütfen.*",
+            "react": {
+              "tr": "Ben mi? Hayır, teşekkürler!",
+              "en": "Me? No, thank you!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "coffee",
+      "who": "waiter",
+      "tr": "Kahve nasıl olsun? Sade mi, orta mı, şekerli mi?",
+      "en": "How would you like the coffee: plain, medium or sweet?",
+      "note": "Turkish coffee is boiled with its sugar, so you choose when you order: *sade* has none, *orta* some, *şekerli* a lot.",
+      "turn": {
+        "prompt": "Say how you'd like it: with some sugar, or none.",
+        "replies": [
+          {
+            "tr": "Orta, lütfen.",
+            "en": "Medium, please.",
+            "accept": ["Orta olsun(, lütfen).", "Orta şekerli, lütfen."],
+            "ok": true,
+            "next": "served"
+          },
+          {
+            "tr": "Sade, lütfen.",
+            "en": "Plain, please.",
+            "accept": ["Sade olsun(, lütfen).", "Şekersiz, lütfen."],
+            "ok": true,
+            "next": "served"
+          },
+          {
+            "tr": "Kahve yok.",
+            "en": "There's no coffee.",
+            "ok": false,
+            "why": "*Kahve yok* says there is no coffee. Say how you'd like it: *orta* (some sugar) or *sade* (none).",
+            "react": {
+              "tr": "Var, var! Sade mi, orta mı?",
+              "en": "We have it! Plain or medium?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "served",
+      "who": "waiter",
+      "tr": "Buyurun. Afiyet olsun!",
+      "en": "Here you are. Enjoy!",
+      "note": "*Afiyet olsun* is said to anyone eating or drinking. You answer with thanks, never with *Afiyet olsun* back.",
+      "turn": {
+        "prompt": "Thank the waiter.",
+        "replies": [
+          {
+            "tr": "Teşekkür ederim.",
+            "en": "Thank you.",
+            "accept": ["Teşekkürler.", "Çok teşekkür ederim.", "Çok teşekkürler."],
+            "ok": true,
+            "next": "bill"
+          },
+          {
+            "tr": "Sağ olun.",
+            "en": "Thanks.",
+            "register": "siz",
+            "ok": true,
+            "next": "bill"
+          },
+          {
+            "tr": "Sağ ol.",
+            "en": "Thanks.",
+            "register": "sen",
+            "ok": true,
+            "next": "bill"
+          },
+          {
+            "tr": "Afiyet olsun.",
+            "en": "Enjoy.",
+            "ok": false,
+            "why": "*Afiyet olsun* is the waiter's wish to you. Thank him instead: *Teşekkür ederim* or *Sağ olun*."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bill",
+      "who": "deniz",
+      "tr": "Hesabı ben ödüyorum, tamam mı?",
+      "en": "I'm paying the bill, okay?",
+      "note": "Friends in Turkey often argue over who pays; whoever invited usually wins.",
+      "turn": {
+        "prompt": "Insist that you're paying today, or thank Deniz.",
+        "replies": [
+          {
+            "tr": "Hayır, bugün ben ödüyorum!",
+            "en": "No, I'm paying today!",
+            "accept": ["Olmaz, bugün ben ödüyorum!", "Hayır, ben ödüyorum!", "Bugün ben ödüyorum!"],
+            "ok": true,
+            "next": "okfine"
+          },
+          {
+            "tr": "Tamam, çok teşekkür ederim!",
+            "en": "Okay, thank you so much!",
+            "accept": ["Tamam, teşekkür ederim!", "Tamam, teşekkürler!"],
+            "ok": true,
+            "next": "deniz-pays"
+          },
+          {
+            "tr": "Teşekkür ederim, çok naziksiniz!",
+            "en": "Thank you, you're very kind!",
+            "register": "siz",
+            "ok": true,
+            "next": "deniz-pays"
+          }
+        ]
+      }
+    },
+    {
+      "id": "okfine",
+      "who": "deniz",
+      "tr": "Peki, peki, sen bilirsin!",
+      "en": "All right, all right, as you like!",
+      "note": "*Sen bilirsin*, “you know best”, is how you give in gracefully.",
+      "turn": {
+        "prompt": "Ask the waiter for the bill.",
+        "to": "waiter",
+        "replies": [
+          {
+            "tr": "Hesabı getirin, lütfen.",
+            "en": "Bring the bill, please.",
+            "accept": ["Hesabı getirin."],
+            "register": "siz",
+            "ok": true,
+            "next": "pay"
+          },
+          {
+            "tr": "Hesabı getir, lütfen.",
+            "en": "Bring the bill, please.",
+            "accept": ["Hesabı getir."],
+            "register": "sen",
+            "ok": true,
+            "next": "pay"
+          },
+          {
+            "tr": "Hesap, lütfen.",
+            "en": "The bill, please.",
+            "ok": true,
+            "next": "pay"
+          },
+          {
+            "tr": "Hesabı getiriyorum.",
+            "en": "I'm bringing the bill.",
+            "ok": false,
+            "why": "*Getiriyorum* says **you** are bringing it. Ask the waiter with the imperative: *Hesabı getirin, lütfen.*",
+            "next": "confused"
+          }
+        ]
+      }
+    },
+    {
+      "id": "pay",
+      "who": "waiter",
+      "tr": "Buyurun, hesabınız: yüz yirmi lira. Kartla mı, nakit mi?",
+      "en": "Here's your bill: 120 lira. By card or in cash?",
+      "turn": {
+        "prompt": "Say how you'll pay.",
+        "replies": [
+          {
+            "tr": "Kartla, lütfen.",
+            "en": "By card, please.",
+            "accept": ["Kartla ödüyorum(, lütfen).", "Kredi kartıyla, lütfen."],
+            "ok": true,
+            "next": "end-card"
+          },
+          {
+            "tr": "Nakit. Buyurun.",
+            "en": "Cash. Here you are.",
+            "accept": ["Nakit ödüyorum. Buyurun."],
+            "register": "siz",
+            "ok": true,
+            "next": "end-cash"
+          },
+          {
+            "tr": "Nakit. Buyur.",
+            "en": "Cash. Here you are.",
+            "register": "sen",
+            "ok": true,
+            "next": "end-cash"
+          }
+        ]
+      }
+    },
+    {
+      "id": "confused",
+      "who": "waiter",
+      "tr": "Siz mi getiriyorsunuz? Yok, ben getiriyorum! Buyurun, hesabınız. Kartla mı, nakit mi?",
+      "en": "You're bringing it? No, I am! Here's your bill. By card or in cash?",
+      "turn": {
+        "prompt": "Say how you'll pay.",
+        "replies": [
+          {
+            "tr": "Kartla, lütfen.",
+            "en": "By card, please.",
+            "accept": ["Kartla ödüyorum(, lütfen).", "Kredi kartıyla, lütfen."],
+            "ok": true,
+            "next": "end-card"
+          },
+          {
+            "tr": "Nakit. Buyurun.",
+            "en": "Cash. Here you are.",
+            "accept": ["Nakit ödüyorum. Buyurun."],
+            "register": "siz",
+            "ok": true,
+            "next": "end-cash"
+          },
+          {
+            "tr": "Nakit. Buyur.",
+            "en": "Cash. Here you are.",
+            "register": "sen",
+            "ok": true,
+            "next": "end-cash"
+          }
+        ]
+      }
+    },
+    {
+      "id": "deniz-pays",
+      "who": "deniz",
+      "tr": "Rica ederim. Ama bir dahaki sefere sen ödüyorsun!",
+      "en": "You're welcome. But next time, you're paying!",
+      "end": "Deniz paid this time; the next round is yours."
+    },
+    {
+      "id": "end-card",
+      "who": "waiter",
+      "tr": "Tabii. Teşekkürler, yine bekleriz!",
+      "en": "Of course. Thank you, come again!",
+      "note": "*Yine bekleriz*, “we'll expect you again”, is how shops and cafés say goodbye.",
+      "end": "You paid by card, after insisting it was your treat."
+    },
+    {
+      "id": "end-cash",
+      "who": "waiter",
+      "tr": "Teşekkürler, yine bekleriz!",
+      "en": "Thank you, come again!",
+      "end": "You paid in cash, after insisting it was your treat."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Hoş geldiniz! Hoş bulduk.",
+      "en": "Welcome! Glad to be here.",
+      "note": "The welcome and its answer, at every door."
+    },
+    {
+      "tr": "Sen ne istiyorsun?",
+      "en": "What would you like?",
+      "note": "To a friend. To a stranger: *Siz ne istiyorsunuz?*"
+    },
+    {
+      "tr": "İki çay, lütfen.",
+      "en": "Two teas, please.",
+      "note": "After a number the noun stays singular."
+    },
+    {
+      "tr": "Afiyet olsun!",
+      "en": "Enjoy your meal!",
+      "note": "Said to someone eating or drinking; the answer is thanks."
+    },
+    {
+      "tr": "Sağ olun.",
+      "en": "Thanks.",
+      "note": "*Sağ ol* to a friend."
+    },
+    {
+      "tr": "Hesabı getirin, lütfen.",
+      "en": "Bring the bill, please.",
+      "note": "`-(y)In` is the imperative for *siz*; the bare stem, *getir*, is for *sen*."
+    },
+    {
+      "tr": "Kartla mı, nakit mi?",
+      "en": "By card or in cash?"
+    }
+  ],
+  "review": ["a1-u12", "a1-u11", "a1-u06"]
+}

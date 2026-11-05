@@ -117,7 +117,8 @@
     day: /^\d{4}-\d{2}-\d{2}$/,
     iso: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/,
     url: /^https:\/\/\S+$/,
-    exam: /^tys-\d+$/      // a practice test of the TYS (PROJECT.md 5.13)
+    exam: /^tys-\d+$/,     // a practice test of the TYS (PROJECT.md 5.13)
+    dialogue: /^dlg-[a-z0-9]+(?:-[a-z0-9]+)*$/   // a conversation of the dialogue simulator (PROJECT.md 5.14)
   };
 
   // Link to a grammar guide or interlude ("a1-u02-grammar"). dailyturkish.app has a static page per guide,
@@ -416,7 +417,8 @@
   }
   // The file of any content ID: "a1", "a1-u05", "a1-u05-l01", "a1-u05-grammar", "a1-u05-culture",
   // a flashcard file as listed in index.flashcards.files ("flashcards/fc-0001-0200.json"),
-  // the Culture page's "timeline" and "regions" (PROJECT.md 5.11, 5.12), or a TYS practice test, "tys-1" (5.13).
+  // the Culture page's "timeline" and "regions" (PROJECT.md 5.11, 5.12), a TYS practice test, "tys-1" (5.13),
+  // or a conversation of the dialogue simulator, "dlg-cafe" (5.14).
   function dataPath(id) {
     if (/^flashcards\/fc-\d{4}-\d{4}\.json$/.test(id)) return id;
     if (id === "timeline" || id === "regions") return id + ".json";
@@ -426,6 +428,7 @@
     if (RE.grammar.test(id)) return "grammar/" + id.slice(0, 6) + ".json";
     if (RE.culture.test(id)) return "culture/" + id.slice(0, 6) + ".json";
     if (RE.exam.test(id)) return "exams/" + id + ".json";
+    if (RE.dialogue.test(id)) return "dialogues/" + id + ".json";
     throw new Error("Unknown content id " + id);
   }
   var data = {

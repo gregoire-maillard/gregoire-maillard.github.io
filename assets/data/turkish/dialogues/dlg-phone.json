@@ -1,0 +1,511 @@
+{
+  "id": "dlg-phone",
+  "level": "b1",
+  "order": 3,
+  "after": "b1-u12",
+  "title": "A phone call",
+  "titleTr": "Telefonda",
+  "setting": "You call your friend Selin, from your Turkish course, one evening. Her mother answers the phone.",
+  "goal": "Ask for someone on the phone, leave a message, and make plans with a friend.",
+  "minutes": 6,
+  "cast": [
+    {
+      "id": "nermin",
+      "name": "Nermin Hanım",
+      "role": "Selin's mother, Nermin Hanım",
+      "register": "siz",
+      "why": "Your friend's mother, older and new to you: *siz*. Many young people call her *teyze*, aunt, still with *siz*.",
+      "pitch": 0.95
+    },
+    {
+      "id": "selin",
+      "name": "Selin",
+      "role": "your friend Selin",
+      "register": "sen",
+      "why": "Selin is your friend from the course: *sen*.",
+      "pitch": 1.2
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "nermin",
+      "tr": "Alo, buyurun?",
+      "en": "Hello, yes?",
+      "note": "*Alo* answers the phone; *buyurun* invites you to speak.",
+      "turn": {
+        "prompt": "Say good evening, and ask to speak to Selin.",
+        "replies": [
+          {
+            "tr": "İyi akşamlar. Selin'le görüşebilir miyim?",
+            "en": "Good evening. Could I speak to Selin?",
+            "accept": ["Merhaba, Selin'le görüşebilir miyim?", "İyi akşamlar, Selin'le konuşabilir miyim?", "İyi akşamlar. Selin evde mi?"],
+            "ok": true,
+            "next": "out"
+          },
+          {
+            "tr": "İyi akşamlar. Selin'i verir misiniz?",
+            "en": "Good evening. Could you put Selin on?",
+            "accept": ["Merhaba, Selin'i verir misiniz?", "İyi akşamlar, Selin'i verebilir misiniz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "out"
+          },
+          {
+            "tr": "İyi akşamlar. Selin'i verir misin?",
+            "en": "Good evening. Could you put Selin on?",
+            "accept": ["Merhaba, Selin'i verir misin?"],
+            "register": "sen",
+            "ok": true,
+            "next": "out"
+          },
+          {
+            "tr": "İyi akşamlar. Ben Selin.",
+            "en": "Good evening. It's Selin.",
+            "ok": false,
+            "why": "*Ben Selin* says you **are** Selin. Ask for her: *Selin'le görüşebilir miyim?*",
+            "react": {
+              "tr": "Efendim? Siz kimsiniz?",
+              "en": "Sorry? Who are you?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "out",
+      "who": "nermin",
+      "tr": "Selin şu an evde yok, markete gitti. Kim arıyor?",
+      "en": "Selin isn't home right now, she's gone to the shop. Who's calling?",
+      "turn": {
+        "prompt": "Say you're Selin's friend from the course. You might also ask whether she's Selin's mother.",
+        "replies": [
+          {
+            "tr": "Ben Selin'in kurstaki arkadaşıyım.",
+            "en": "I'm Selin's friend from the course.",
+            "accept": ["Selin'in kurstaki arkadaşıyım.", "Ben Selin'in arkadaşıyım, kurstan.", "Ben Selin'in arkadaşıyım."],
+            "ok": true,
+            "next": "message"
+          },
+          {
+            "tr": "Ben Selin'in kurstaki arkadaşıyım. Siz annesi misiniz?",
+            "en": "I'm Selin's friend from the course. Are you her mother?",
+            "accept": ["Selin'in arkadaşıyım. Siz annesi misiniz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "mother"
+          },
+          {
+            "tr": "Selin'in kurstaki arkadaşısınız.",
+            "en": "You're Selin's friend from the course.",
+            "register": "siz",
+            "ok": false,
+            "why": "*Arkadaşısınız* says **she** is Selin's friend. About yourself: *arkadaşıyım*.",
+            "react": {
+              "tr": "Ben mi? Ben Selin'in annesiyim!",
+              "en": "Me? I'm Selin's mother!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "mother",
+      "who": "nermin",
+      "tr": "Evet, annesiyim. Memnun oldum! Selin sizden çok bahsediyor.",
+      "en": "Yes, I'm her mother. Nice to meet you! Selin talks about you a lot.",
+      "turn": {
+        "prompt": "Say you're pleased to meet her too.",
+        "replies": [
+          {
+            "tr": "Ben de memnun oldum.",
+            "en": "Nice to meet you too.",
+            "accept": ["Ben de çok memnun oldum."],
+            "ok": true,
+            "next": "message"
+          },
+          {
+            "tr": "Ben de memnun oldum. Selin de sizden çok bahsediyor.",
+            "en": "Nice to meet you too. Selin talks about you a lot too.",
+            "register": "siz",
+            "ok": true,
+            "next": "message"
+          },
+          {
+            "tr": "Ben de memnun oldum. Selin de senden çok bahsediyor.",
+            "en": "Nice to meet you too. Selin talks about you a lot too.",
+            "register": "sen",
+            "ok": true,
+            "next": "message"
+          }
+        ]
+      }
+    },
+    {
+      "id": "message",
+      "who": "nermin",
+      "tr": "Bir mesajınız var mı? Selin gelince söylerim.",
+      "en": "Do you have a message? I'll tell Selin when she gets back.",
+      "turn": {
+        "prompt": "Ask her to tell Selin to call you back. Or say there's no need: you'll call again tomorrow.",
+        "replies": [
+          {
+            "tr": "Evet, beni aramasını söyler misiniz?",
+            "en": "Yes, could you tell her to call me?",
+            "accept": ["Beni aramasını söyler misiniz?", "Selin'e beni aramasını söyler misiniz?", "Evet, Selin beni arasın, lütfen.", "Selin beni arasın, lütfen."],
+            "register": "siz",
+            "ok": true,
+            "next": "number"
+          },
+          {
+            "tr": "Evet, beni aramasını söyler misin?",
+            "en": "Yes, could you tell her to call me?",
+            "accept": ["Selin'e beni aramasını söyler misin?"],
+            "register": "sen",
+            "ok": true,
+            "next": "number"
+          },
+          {
+            "tr": "Hayır, gerek yok. Yarın tekrar ararım.",
+            "en": "No, there's no need. I'll call again tomorrow.",
+            "accept": ["Gerek yok, yarın tekrar ararım.", "Hayır, teşekkürler. Yarın tekrar ararım."],
+            "ok": true,
+            "next": "no-message"
+          },
+          {
+            "tr": "Evet, sizi aramasını söyler misiniz?",
+            "en": "Yes, could you tell her to call you?",
+            "register": "siz",
+            "ok": false,
+            "why": "*Sizi aramasını* asks Selin to call **her mother**. You want her to call you: *beni aramasını*.",
+            "next": "confused"
+          }
+        ]
+      }
+    },
+    {
+      "id": "confused",
+      "who": "nermin",
+      "tr": "Beni mi? Ama ben evdeyim! Selin'in sizi aramasını mı istiyorsunuz?",
+      "en": "Me? But I'm at home! You want Selin to call you?",
+      "turn": {
+        "prompt": "Say yes, sorry: you'd like her to call you.",
+        "replies": [
+          {
+            "tr": "Evet, pardon. Beni aramasını söyler misiniz?",
+            "en": "Yes, sorry. Could you tell her to call me?",
+            "accept": ["Pardon, beni aramasını söyler misiniz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "number"
+          },
+          {
+            "tr": "Evet, evet! Beni arasın, lütfen.",
+            "en": "Yes, yes! I'd like her to call me, please.",
+            "accept": ["Evet, beni arasın, lütfen."],
+            "ok": true,
+            "next": "number"
+          }
+        ]
+      }
+    },
+    {
+      "id": "number",
+      "who": "nermin",
+      "tr": "Tabii, söylerim. Numaranız Selin'de var mı?",
+      "en": "Of course, I'll tell her. Does Selin have your number?",
+      "turn": {
+        "prompt": "Say yes, and thank her.",
+        "replies": [
+          {
+            "tr": "Evet, var. Çok teşekkür ederim.",
+            "en": "Yes, she does. Thank you very much.",
+            "accept": ["Evet, var. Teşekkürler.", "Var, çok teşekkür ederim."],
+            "ok": true,
+            "next": "door"
+          },
+          {
+            "tr": "Evet, var. Sağ olun.",
+            "en": "Yes, she does. Thank you.",
+            "register": "siz",
+            "ok": true,
+            "next": "door"
+          },
+          {
+            "tr": "Evet, var. Sağ ol.",
+            "en": "Yes, she does. Thanks.",
+            "register": "sen",
+            "ok": true,
+            "next": "door"
+          }
+        ]
+      }
+    },
+    {
+      "id": "door",
+      "who": "nermin",
+      "tr": "Aa, kapı çaldı! Selin geldi galiba. Bir dakika, veriyorum.",
+      "en": "Oh, there's the door! I think Selin's back. One moment, I'll put her on.",
+      "note": "On the phone *vermek*, to give, is to hand the phone over: *Selin'i verir misiniz?*, *Veriyorum*.",
+      "turn": {
+        "prompt": "Say of course, you'll wait.",
+        "replies": [
+          {
+            "tr": "Tabii, bekliyorum.",
+            "en": "Of course, I'll wait.",
+            "accept": ["Tamam, bekliyorum.", "Tabii, teşekkürler. Bekliyorum."],
+            "ok": true,
+            "next": "selin"
+          },
+          {
+            "tr": "Tabii, sağ olun. Bekliyorum.",
+            "en": "Of course, thank you. I'll wait.",
+            "register": "siz",
+            "ok": true,
+            "next": "selin"
+          },
+          {
+            "tr": "Tabii, sağ ol. Bekliyorum.",
+            "en": "Of course, thanks. I'll wait.",
+            "register": "sen",
+            "ok": true,
+            "next": "selin"
+          }
+        ]
+      }
+    },
+    {
+      "id": "no-message",
+      "who": "nermin",
+      "tr": "Peki, nasıl isterseniz. Aa, kapı çaldı! Selin geldi galiba. Bir dakika, veriyorum.",
+      "en": "All right, as you like. Oh, there's the door! I think Selin's back. One moment, I'll put her on.",
+      "turn": {
+        "prompt": "Say of course, you'll wait.",
+        "replies": [
+          {
+            "tr": "Tabii, bekliyorum.",
+            "en": "Of course, I'll wait.",
+            "accept": ["Tamam, bekliyorum.", "Tabii, teşekkürler. Bekliyorum."],
+            "ok": true,
+            "next": "selin"
+          },
+          {
+            "tr": "Tabii, sağ olun. Bekliyorum.",
+            "en": "Of course, thank you. I'll wait.",
+            "register": "siz",
+            "ok": true,
+            "next": "selin"
+          },
+          {
+            "tr": "Tabii, sağ ol. Bekliyorum.",
+            "en": "Of course, thanks. I'll wait.",
+            "register": "sen",
+            "ok": true,
+            "next": "selin"
+          }
+        ]
+      }
+    },
+    {
+      "id": "selin",
+      "who": "selin",
+      "tr": "Alo, selam! Annemle tanıştın mı? Ne haber?",
+      "en": "Hello, hi! Did you meet my mum? What's up?",
+      "turn": {
+        "prompt": "Say hi, and ask whether she's free on Saturday.",
+        "replies": [
+          {
+            "tr": "Selam! Evet, annen çok tatlı. Cumartesi boş musun?",
+            "en": "Hi! Yes, your mum's lovely. Are you free on Saturday?",
+            "accept": ["Selam! Cumartesi boş musun?", "Selam! Evet, tanıştık. Cumartesi boş musun?"],
+            "register": "sen",
+            "ok": true,
+            "next": "plan"
+          },
+          {
+            "tr": "Selam! Evet, anneniz çok tatlı. Cumartesi boş musunuz?",
+            "en": "Hi! Yes, your mum's lovely. Are you free on Saturday?",
+            "accept": ["Selam! Cumartesi boş musunuz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "plan"
+          },
+          {
+            "tr": "Selam! Cumartesi boş muyum?",
+            "en": "Hi! Am I free on Saturday?",
+            "ok": false,
+            "why": "*Boş muyum?* asks whether **you** are free. Ask Selin: *Boş musun?*",
+            "react": {
+              "tr": "Bilmem, sen söyle!",
+              "en": "How should I know? You tell me!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "plan",
+      "who": "selin",
+      "tr": "Cumartesi mi? Öğlene kadar çalışıyorum, ama akşam boşum. Ne yapalım?",
+      "en": "Saturday? I work until noon, but I'm free in the evening. What shall we do?",
+      "turn": {
+        "prompt": "Suggest the cinema, or dinner out.",
+        "replies": [
+          {
+            "tr": "Sinemaya gidelim mi? Yeni bir film başladı.",
+            "en": "Shall we go to the cinema? A new film has just come out.",
+            "accept": ["Sinemaya gidelim mi?", "Akşam sinemaya gidelim mi?"],
+            "ok": true,
+            "next": "cinema"
+          },
+          {
+            "tr": "Bir lokantada yemek yiyelim mi?",
+            "en": "Shall we have dinner in a restaurant?",
+            "accept": ["Dışarıda yemek yiyelim mi?", "Akşam yemeğe çıkalım mı?", "Bir lokantaya gidelim mi?"],
+            "ok": true,
+            "next": "dinner"
+          },
+          {
+            "tr": "Cumartesi çalışıyor musun?",
+            "en": "Are you working on Saturday?",
+            "register": "sen",
+            "ok": false,
+            "why": "She's just said she works until noon (*öğlene kadar*) and is free in the evening.",
+            "react": {
+              "tr": "Öğlene kadar, dedim. Akşam boşum!",
+              "en": "Until noon, I said. I'm free in the evening!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cinema",
+      "who": "selin",
+      "tr": "Olur! Saat sekizdeki seansa gidelim. Sinemanın önünde buluşalım mı?",
+      "en": "Sure! Let's go to the eight o'clock showing. Shall we meet in front of the cinema?",
+      "turn": {
+        "prompt": "Agree, and say you'll be there at a quarter to eight.",
+        "replies": [
+          {
+            "tr": "Tamam! Sekize çeyrek kala orada olacağım.",
+            "en": "Okay! I'll be there at a quarter to eight.",
+            "accept": ["Tamam, sekize çeyrek kala oradayım.", "Olur, sekize çeyrek kala orada olacağım."],
+            "ok": true,
+            "next": "bye"
+          },
+          {
+            "tr": "Tamam, anlaştık. Görüşürüz!",
+            "en": "Okay, it's a deal. See you!",
+            "accept": ["Anlaştık, görüşürüz!", "Tamam, anlaştık!"],
+            "ok": true,
+            "next": "bye"
+          },
+          {
+            "tr": "Tamam! Sekize çeyrek kala orada olacaksın.",
+            "en": "Okay! You'll be there at a quarter to eight.",
+            "register": "sen",
+            "ok": false,
+            "why": "*Olacaksın* is about Selin. About yourself: *orada olacağım*.",
+            "react": {
+              "tr": "Ben mi? Peki, ama sen de gel!",
+              "en": "Me? Fine, but you come too!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "dinner",
+      "who": "selin",
+      "tr": "Süper fikir! Kadıköy'de çok güzel bir balıkçı biliyorum. Sekizde orada olalım mı?",
+      "en": "Great idea! I know a lovely fish restaurant in Kadıköy. Shall we be there at eight?",
+      "turn": {
+        "prompt": "Agree, or say you don't like fish.",
+        "replies": [
+          {
+            "tr": "Tamam, sekizde orada olurum.",
+            "en": "Okay, I'll be there at eight.",
+            "accept": ["Tamam, sekizde oradayım.", "Olur, sekizde orada olacağım."],
+            "ok": true,
+            "next": "bye"
+          },
+          {
+            "tr": "Aslında balık sevmiyorum. Başka bir yer olur mu?",
+            "en": "Actually, I don't like fish. Could we go somewhere else?",
+            "accept": ["Balık sevmiyorum, başka bir yer olur mu?", "Ben balık sevmem. Başka bir yer olur mu?"],
+            "ok": true,
+            "next": "other"
+          }
+        ]
+      }
+    },
+    {
+      "id": "other",
+      "who": "selin",
+      "tr": "Hiç sorun değil! O zaman Moda'daki köfteciye gidelim, orası da çok iyi.",
+      "en": "No problem at all! Then let's go to the meatball place in Moda, that's very good too.",
+      "turn": {
+        "prompt": "Agree.",
+        "replies": [
+          {
+            "tr": "Harika, sekizde orada olurum.",
+            "en": "Great, I'll be there at eight.",
+            "accept": ["Harika, sekizde oradayım.", "Süper, görüşürüz!"],
+            "ok": true,
+            "next": "bye"
+          },
+          {
+            "tr": "Olur, köfteyi çok severim!",
+            "en": "Sure, I love köfte!",
+            "accept": ["Köfteyi çok severim!"],
+            "ok": true,
+            "next": "bye"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bye",
+      "who": "selin",
+      "tr": "Süper! Cumartesi görüşürüz. Annemin de selamı var!",
+      "en": "Great! See you on Saturday. And my mum says hi!",
+      "note": "*Annemin selamı var*, “my mother sends her greetings”, often ends a call. You answer: *Sen de benden selam söyle*, say hi from me too.",
+      "end": "You've made plans with Selin for Saturday evening."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Alo? Buyurun.",
+      "en": "Hello? Yes?"
+    },
+    {
+      "tr": "Selin'le görüşebilir miyim?",
+      "en": "Could I speak to Selin?"
+    },
+    {
+      "tr": "Selin'i verir misiniz?",
+      "en": "Could you put Selin on?",
+      "note": "On the phone *vermek*, to give, is to hand the phone to someone."
+    },
+    {
+      "tr": "Beni aramasını söyler misiniz?",
+      "en": "Could you tell her to call me?",
+      "note": "A request passed on: `-mA` with a possessive, then *söylemek*."
+    },
+    {
+      "tr": "Bir dakika, veriyorum.",
+      "en": "One moment, I'll put her on."
+    },
+    {
+      "tr": "Cumartesi boş musun?",
+      "en": "Are you free on Saturday?"
+    },
+    {
+      "tr": "Annemin selamı var.",
+      "en": "My mother says hi."
+    }
+  ],
+  "review": ["b1-u12", "a2-u07", "a2-u10"]
+}

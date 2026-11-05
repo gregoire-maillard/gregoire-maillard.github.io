@@ -1,0 +1,412 @@
+{
+  "id": "dlg-taxi",
+  "level": "a1",
+  "order": 2,
+  "after": "a1-u12",
+  "title": "Taking a taxi",
+  "titleTr": "Taksiyle",
+  "setting": "You stop a taxi in Kadıköy to cross the city to Sultanahmet, Istanbul's old centre. The driver is in a chatty mood.",
+  "goal": "Give a destination, chat with the driver, ask him to stop and pay.",
+  "minutes": 4,
+  "cast": [
+    {
+      "id": "driver",
+      "name": "Taksici",
+      "role": "the taxi driver",
+      "register": "siz",
+      "why": "A stranger at work, so *siz*. Drivers may call you *abla* or *abi* and say *sen*; you still say *siz*.",
+      "pitch": 0.8
+    }
+  ],
+  "start": "hello",
+  "nodes": [
+    {
+      "id": "hello",
+      "who": "driver",
+      "tr": "Merhaba, buyurun! Nereye gidiyoruz?",
+      "en": "Hello, get in! Where are we going?",
+      "note": "Drivers often say *we*: *Nereye gidiyoruz?* simply asks where to.",
+      "turn": {
+        "prompt": "Say you're going to Sultanahmet.",
+        "replies": [
+          {
+            "tr": "Sultanahmet'e, lütfen.",
+            "en": "To Sultanahmet, please.",
+            "accept": ["Sultanahmet'e gidiyorum(, lütfen).", "Sultanahmet'e gidiyoruz(, lütfen)."],
+            "ok": true,
+            "next": "from"
+          },
+          {
+            "tr": "Sultanahmet, lütfen.",
+            "en": "Sultanahmet, please.",
+            "ok": true,
+            "why": "He'll understand, but Turkish says where to with the dative: *Sultanahmet'e, lütfen*.",
+            "next": "from"
+          },
+          {
+            "tr": "Sultanahmet'te, lütfen.",
+            "en": "In Sultanahmet, please.",
+            "ok": false,
+            "why": "*-te* is the locative, **in** Sultanahmet. Going **to** a place takes the dative: *Sultanahmet'e*.",
+            "react": {
+              "tr": "Sultanahmet'e mi?",
+              "en": "To Sultanahmet?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "from",
+      "who": "driver",
+      "tr": "Tamam, Sultanahmet'e. Nerelisiniz?",
+      "en": "All right, Sultanahmet. Where are you from?",
+      "note": "Expect this question everywhere. *Nereli* asks where someone is from: *Nerelisiniz?*, or *Nerelisin?* to a friend.",
+      "turn": {
+        "prompt": "Say where you're from: Canada, or England.",
+        "replies": [
+          {
+            "tr": "Kanada'danım.",
+            "en": "I'm from Canada.",
+            "accept": ["Ben Kanada'danım.", "Kanada'dan geliyorum.", "(Ben) Kanadalıyım."],
+            "ok": true,
+            "next": "canada"
+          },
+          {
+            "tr": "İngiltere'denim.",
+            "en": "I'm from England.",
+            "accept": ["Ben İngiltere'denim.", "İngiltere'den geliyorum.", "(Ben) İngilizim."],
+            "ok": true,
+            "next": "england"
+          },
+          {
+            "tr": "Kanada'dayım.",
+            "en": "I'm in Canada.",
+            "ok": false,
+            "why": "*Kanada'dayım* puts you **in** Canada now. **From** takes the ablative: *Kanada'danım*.",
+            "react": {
+              "tr": "Kanada'da mı? Burası İstanbul!",
+              "en": "In Canada? This is Istanbul!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "canada",
+      "who": "driver",
+      "tr": "Kanada! Orada kış çok soğuk, değil mi?",
+      "en": "Canada! The winter's very cold there, isn't it?",
+      "turn": {
+        "prompt": "Agree, and ask where he's from.",
+        "replies": [
+          {
+            "tr": "Evet, çok soğuk. Siz nerelisiniz?",
+            "en": "Yes, very cold. Where are you from?",
+            "accept": ["Evet, çok soğuk. Nerelisiniz?", "Evet, çok. Siz nerelisiniz?", "Evet, çok soğuk. Siz nereden geliyorsunuz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "trabzon"
+          },
+          {
+            "tr": "Evet, çok soğuk. Sen nerelisin?",
+            "en": "Yes, very cold. Where are you from?",
+            "accept": ["Evet, çok soğuk. Nerelisin?", "Evet, çok. Sen nerelisin?"],
+            "register": "sen",
+            "ok": true,
+            "next": "trabzon"
+          },
+          {
+            "tr": "Evet, çok soğuksunuz.",
+            "en": "Yes, you're very cold.",
+            "register": "siz",
+            "ok": false,
+            "why": "*Soğuksunuz* says the driver is cold. It's the weather: *Evet, çok soğuk.*",
+            "react": {
+              "tr": "Ben mi? Hayır, ben iyiyim!",
+              "en": "Me? No, I'm fine!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "england",
+      "who": "driver",
+      "tr": "İngiltere! Orada çok yağmur yağıyor, değil mi?",
+      "en": "England! It rains a lot there, doesn't it?",
+      "turn": {
+        "prompt": "Agree, and ask where he's from.",
+        "replies": [
+          {
+            "tr": "Evet, çok yağıyor. Siz nerelisiniz?",
+            "en": "Yes, a lot. Where are you from?",
+            "accept": ["Evet, çok yağıyor. Nerelisiniz?", "Evet, çok. Siz nerelisiniz?"],
+            "register": "siz",
+            "ok": true,
+            "next": "trabzon"
+          },
+          {
+            "tr": "Evet, çok yağıyor. Sen nerelisin?",
+            "en": "Yes, a lot. Where are you from?",
+            "accept": ["Evet, çok yağıyor. Nerelisin?"],
+            "register": "sen",
+            "ok": true,
+            "next": "trabzon"
+          },
+          {
+            "tr": "Evet, çok yağıyor. Siz neredesiniz?",
+            "en": "Yes, a lot. Where are you?",
+            "register": "siz",
+            "ok": false,
+            "why": "*Neredesiniz?* asks where he **is**: in the car, driving you. Where someone is from: *Nerelisiniz?*",
+            "react": {
+              "tr": "Buradayım, arabadayım!",
+              "en": "I'm here, in the car!"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "trabzon",
+      "who": "driver",
+      "tr": "Ben Trabzonluyum, ama otuz yıldır İstanbul'dayım.",
+      "en": "I'm from Trabzon, but I've been in Istanbul for thirty years.",
+      "note": "Trabzon is on the Black Sea coast. The suffix `-lI` (*Trabzonlu*, from Trabzon) comes in [A2 unit 12](a2-u12).",
+      "turn": {
+        "prompt": "Say Istanbul is very beautiful, or ask whether Trabzon is beautiful too.",
+        "replies": [
+          {
+            "tr": "İstanbul çok güzel!",
+            "en": "Istanbul is very beautiful!",
+            "accept": ["İstanbul gerçekten çok güzel!"],
+            "ok": true,
+            "next": "arrive"
+          },
+          {
+            "tr": "Trabzon da güzel mi?",
+            "en": "Is Trabzon beautiful too?",
+            "accept": ["Trabzon da çok güzel mi?", "İstanbul çok güzel. Trabzon da güzel mi?"],
+            "ok": true,
+            "next": "trabzon-nice"
+          },
+          {
+            "tr": "İstanbul'da çok güzel.",
+            "en": "In Istanbul very beautiful.",
+            "ok": false,
+            "why": "*İstanbul'da* means **in** Istanbul, so the sentence lacks what's beautiful. The city itself: *İstanbul çok güzel!*",
+            "react": {
+              "tr": "İstanbul'da ne güzel?",
+              "en": "What's beautiful in Istanbul?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "trabzon-nice",
+      "who": "driver",
+      "tr": "Çok güzel! Yeşil, deniz var, çay var. Gidin, görün!",
+      "en": "Very beautiful! Green, there's the sea, there's tea. Go and see it!",
+      "turn": {
+        "prompt": "Thank him for the tip.",
+        "replies": [
+          {
+            "tr": "Tamam, teşekkür ederim!",
+            "en": "All right, thank you!",
+            "accept": ["Teşekkür ederim!", "Teşekkürler!"],
+            "ok": true,
+            "next": "arrive"
+          },
+          {
+            "tr": "Sağ olun!",
+            "en": "Thanks!",
+            "register": "siz",
+            "ok": true,
+            "next": "arrive"
+          },
+          {
+            "tr": "Sağ ol!",
+            "en": "Thanks!",
+            "register": "sen",
+            "ok": true,
+            "next": "arrive"
+          }
+        ]
+      }
+    },
+    {
+      "id": "arrive",
+      "who": "driver",
+      "tr": "Geldik, burası Sultanahmet. Nerede duralım?",
+      "en": "We're here, this is Sultanahmet. Where shall I stop?",
+      "turn": {
+        "prompt": "Ask him to stop here.",
+        "replies": [
+          {
+            "tr": "Burada durun, lütfen.",
+            "en": "Stop here, please.",
+            "accept": ["Burada durun.", "Lütfen burada durun."],
+            "register": "siz",
+            "ok": true,
+            "next": "fare"
+          },
+          {
+            "tr": "Burada dur, lütfen.",
+            "en": "Stop here, please.",
+            "accept": ["Burada dur."],
+            "register": "sen",
+            "ok": true,
+            "next": "fare"
+          },
+          {
+            "tr": "Burada duruyorum.",
+            "en": "I'm stopping here.",
+            "ok": false,
+            "why": "*Duruyorum* says **you** are stopping. Ask him with the imperative: *Burada durun, lütfen.*",
+            "react": {
+              "tr": "Burada mı?",
+              "en": "Here?"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "fare",
+      "who": "driver",
+      "tr": "Tamam. İki yüz on lira, lütfen.",
+      "en": "All right. That's 210 lira, please.",
+      "turn": {
+        "prompt": "Ask whether he takes cards, or just pay.",
+        "replies": [
+          {
+            "tr": "Kart geçiyor mu?",
+            "en": "Do you take cards?",
+            "accept": ["Kredi kartı geçiyor mu?", "Kartla ödüyorum, olur mu?"],
+            "ok": true,
+            "next": "cash-only"
+          },
+          {
+            "tr": "Buyurun, iki yüz on lira.",
+            "en": "Here you are, 210 lira.",
+            "accept": ["Buyurun.", "Buyurun, iki yüz on."],
+            "register": "siz",
+            "ok": true,
+            "next": "end"
+          },
+          {
+            "tr": "İki yüz lira, tamam mı?",
+            "en": "200 lira, okay?",
+            "ok": false,
+            "why": "In a taxi the meter decides, and haggling over ten lira sounds rude. Pay what it says: *Buyurun, iki yüz on lira.*",
+            "next": "meter"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cash-only",
+      "who": "driver",
+      "tr": "Maalesef kart yok, sadece nakit.",
+      "en": "Sorry, no cards, cash only.",
+      "note": "Many taxis take cards now, but not all of them: keep some cash.",
+      "turn": {
+        "prompt": "Say it's no problem, and give him the cash.",
+        "replies": [
+          {
+            "tr": "Sorun değil. Buyurun.",
+            "en": "No problem. Here you are.",
+            "accept": ["Tamam, sorun değil. Buyurun.", "Sorun yok, buyurun."],
+            "register": "siz",
+            "ok": true,
+            "next": "end"
+          },
+          {
+            "tr": "Çok pahalı!",
+            "en": "That's very expensive!",
+            "ok": false,
+            "why": "It's the meter's price, so arguing won't help. Pay and thank him: *Sorun değil, buyurun.*"
+          }
+        ]
+      }
+    },
+    {
+      "id": "meter",
+      "who": "driver",
+      "tr": "Taksimetre iki yüz on diyor! Ama peki, iki yüz olsun.",
+      "en": "The meter says 210! But all right, make it 200.",
+      "note": "Taxis go by the meter (*taksimetre*): bargaining is for the bazaar, not the taxi.",
+      "turn": {
+        "prompt": "Pay, and thank him.",
+        "replies": [
+          {
+            "tr": "Teşekkür ederim. Buyurun.",
+            "en": "Thank you. Here you are.",
+            "accept": ["Teşekkürler, buyurun."],
+            "register": "siz",
+            "ok": true,
+            "next": "end"
+          },
+          {
+            "tr": "Sağ olun, buyurun.",
+            "en": "Thank you, here you are.",
+            "register": "siz",
+            "ok": true,
+            "next": "end"
+          },
+          {
+            "tr": "Sağ ol, buyur.",
+            "en": "Thanks, here you are.",
+            "register": "sen",
+            "ok": true,
+            "next": "end"
+          }
+        ]
+      }
+    },
+    {
+      "id": "end",
+      "who": "driver",
+      "tr": "Teşekkürler. İyi günler, iyi gezmeler!",
+      "en": "Thank you. Have a nice day, enjoy your sightseeing!",
+      "end": "You got to Sultanahmet and paid the driver."
+    }
+  ],
+  "phrases": [
+    {
+      "tr": "Sultanahmet'e, lütfen.",
+      "en": "To Sultanahmet, please.",
+      "note": "Where to takes the dative: *-(y)A*."
+    },
+    {
+      "tr": "Nerelisiniz?",
+      "en": "Where are you from?",
+      "note": "*Nerelisin?* to a friend."
+    },
+    {
+      "tr": "Kanada'danım.",
+      "en": "I'm from Canada.",
+      "note": "From takes the ablative, then the ending of *to be*."
+    },
+    {
+      "tr": "Siz nerelisiniz?",
+      "en": "And where are you from?"
+    },
+    {
+      "tr": "Burada durun, lütfen.",
+      "en": "Stop here, please.",
+      "note": "*Burada dur* to a friend."
+    },
+    {
+      "tr": "Kart geçiyor mu?",
+      "en": "Do you take cards?"
+    },
+    {
+      "tr": "Sorun değil.",
+      "en": "No problem."
+    }
+  ],
+  "review": ["a1-u07", "a1-u12", "a1-u03"]
+}
