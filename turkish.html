@@ -642,6 +642,84 @@
       .btn.coffee { background: #c93d41; border-color: #c93d41; color: #fff; text-decoration: none; }   /* 5:1 with white (was #e34b4f, 3.9:1) */
       .btn.coffee:hover { background: #b03439; border-color: #b03439; color: #fff; }
 
+      /* FX-2 (PROJECT.md 3): the level colours carried further, on every width (idea 5), and on phones the lessons as a trail
+         (idea 6, below 600 px, where the page is one column, as in the app). */
+      .today .card.next[data-lvl] { position: relative; overflow: hidden; isolation: isolate; border: 0; background: var(--lv); color: #fff; box-shadow: 0 4px 0 var(--lv-dark); }
+      .today .card.next[data-lvl]::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke-width='1.3'%3E%3Cg stroke='%23ffffff'%3E%3Crect x='21' y='21' width='22' height='22'/%3E%3Crect x='21' y='21' width='22' height='22' transform='rotate%2845 32 32%29'/%3E%3Ccircle cx='0' cy='0' r='11'/%3E%3Ccircle cx='64' cy='0' r='11'/%3E%3Ccircle cx='0' cy='64' r='11'/%3E%3Ccircle cx='64' cy='64' r='11'/%3E%3C/g%3E%3Cg stroke='%23ffffff'%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3Cpath d='M32 -5l5 5-5 5-5-5zM32 59l5 5-5 5-5-5zM-5 32l5-5 5 5-5 5zM59 32l5-5 5 5-5 5z'/%3E%3Cpath d='M0 5.5a5.5 5.5 0 0 0 5.5-5.5M58.5 0a5.5 5.5 0 0 0 5.5 5.5M64 58.5a5.5 5.5 0 0 0-5.5 5.5M5.5 64a5.5 5.5 0 0 0-5.5-5.5'/%3E%3C/g%3E%3Cg stroke='%23ffffff'%3E%3Cpath d='M32 17.5v-4M32 46.5v4M17.5 32h-4M46.5 32h4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") 0 0 / 64px 64px; opacity: .11; pointer-events: none; }
+      .today .card.next[data-lvl] .eyebrow { color: #fff; opacity: .9; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; font-size: 11.5px; }
+      .today .card.next[data-lvl] h3 { color: #fff; }
+      .today .card.next[data-lvl] .sub { color: #fff; opacity: .88; }
+      .today .card.next[data-lvl] .btn.primary { background: #fff; border-color: #fff; color: var(--lv-dark); font-weight: 700; --edge: rgb(0 0 0 / .22); }
+      .today .card.next[data-lvl] .btn.primary:hover { background: #f4f3ef; border-color: #f4f3ef; }
+      .nx-bar { display: flex; align-items: center; gap: 10px; margin: 12px 0 2px; font-size: 12.5px; font-weight: 600; }
+      .nx-bar span { flex: 1; height: 8px; border-radius: 8px; background: rgb(255 255 255 / .25); overflow: hidden; }
+      .nx-bar i { display: block; height: 100%; min-width: 8px; border-radius: 8px; background: #fff; }
+      .lvl-chip { box-shadow: 0 3px 0 var(--line); }
+      .lvl-chip.here { background: var(--lv); border-color: var(--lv); color: var(--lv-on); box-shadow: 0 3px 0 var(--lv-dark); }
+      .lvl-chip.here small { color: var(--lv-on); opacity: .85; }
+      .lvl-chip.here::before { background: var(--lv-on); }
+      .lvl-chip.here:hover { color: var(--lv-on); }
+      .level.has-content .badge { box-shadow: 0 3px 0 var(--lv-dark); }
+      .lvl-bar { height: 8px; border-radius: 8px; background: var(--lv-wash); }
+      .lvl-bar i { border-radius: 8px; min-width: 8px; }
+      .level[open] { border-top: 3px solid var(--lv); background: linear-gradient(var(--lv-tint), var(--lv-tint)); margin: 0 -16px; padding: 0 16px; border-radius: 0 0 14px 14px; }
+      .level[open] + .level { margin-top: 8px; }
+      .unit .ucard { overflow: hidden; }
+      .unit.is-here .ucard { border-color: var(--lv-line); box-shadow: 0 3px 0 var(--lv-line); }
+      .unit.is-here .uhead, .unit.st-done .uhead { position: relative; isolation: isolate; margin: -14px -16px 0; padding: 12px 16px; }
+      .unit.is-here .uhead { background: var(--lv); color: #fff; }
+      .unit.is-here .uhead::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke-width='1.3'%3E%3Cg stroke='%23ffffff'%3E%3Crect x='21' y='21' width='22' height='22'/%3E%3Crect x='21' y='21' width='22' height='22' transform='rotate%2845 32 32%29'/%3E%3Ccircle cx='0' cy='0' r='11'/%3E%3Ccircle cx='64' cy='0' r='11'/%3E%3Ccircle cx='0' cy='64' r='11'/%3E%3Ccircle cx='64' cy='64' r='11'/%3E%3C/g%3E%3Cg stroke='%23ffffff'%3E%3Ccircle cx='32' cy='32' r='5'/%3E%3Cpath d='M32 -5l5 5-5 5-5-5zM32 59l5 5-5 5-5-5zM-5 32l5-5 5 5-5 5zM59 32l5-5 5 5-5 5z'/%3E%3Cpath d='M0 5.5a5.5 5.5 0 0 0 5.5-5.5M58.5 0a5.5 5.5 0 0 0 5.5 5.5M64 58.5a5.5 5.5 0 0 0-5.5 5.5M5.5 64a5.5 5.5 0 0 0-5.5-5.5'/%3E%3C/g%3E%3Cg stroke='%23ffffff'%3E%3Cpath d='M32 17.5v-4M32 46.5v4M17.5 32h-4M46.5 32h4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") 0 0 / 64px 64px; opacity: .11; }
+      .unit.is-here .ukick, .unit.is-here .uprog, .unit.is-here .uhead h3, .unit.is-here .utr { color: #fff; }
+      .unit.is-here .utr, .unit.is-here .ukick { opacity: .9; }
+      .unit.st-done .uhead { background: var(--lv-wash); }
+      .unit.st-done .ukick { color: var(--lv-dark); }
+      .unit.is-here .lessons, .unit.st-done .lessons { border-top: 0; }
+      .lgo { background: var(--lv); color: var(--lv-on); box-shadow: 0 3px 0 var(--lv-dark); height: 30px; padding: 0 14px; font-weight: 650; }
+      .lesson.done .lnum { box-shadow: 0 2px 0 var(--lv-dark); }
+      .trail, .ferry { display: none; }
+      @media (max-width: 599px) {
+        .unit.is-here .uhead, .unit.st-done .uhead { margin: -12px -14px 0; padding: 12px 14px; }
+        .level[open] { margin: 0 -16px; }
+        /* the trail replaces the list of lessons; the unit's own node and the timeline go */
+        .units::before { display: none; }
+        .unit:not(.planned) { grid-template-columns: minmax(0, 1fr); }
+        .unit:not(.planned) > .node { display: none; }
+        .unit .lessons, .uacts .pill.p-review { display: none; }
+        .trail { display: block; position: relative; margin: 10px 0 4px; }
+        .trail > ol { position: relative; list-style: none; margin: 0; padding: 0; }
+        .trail > svg { position: absolute; left: 50%; top: 0; margin-left: -160px; overflow: visible; pointer-events: none; }
+        .tn { position: relative; height: 92px; display: flex; justify-content: center; }
+        .tn.rv { height: 124px; }
+        .tnode { position: relative; margin-top: 14px; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; transform: translateX(var(--dx, 0)); color: #fff; text-decoration: none; transition: transform .08s ease-out, box-shadow .08s ease-out; }
+        .tnode svg { width: 26px; height: 26px; }
+        .tnode.done { background: var(--lv); box-shadow: 0 6px 0 var(--lv-dark); }
+        .tnode.next, .tnode.open { background: var(--lv); box-shadow: 0 6px 0 var(--lv-dark); font-size: 20px; font-weight: 750; }
+        .tnode.open { background: #fff; color: var(--lv-dark); border: 3px solid var(--lv); box-shadow: 0 6px 0 var(--lv-line); }
+        .tnode.next::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 4px solid var(--lv-line); animation: ping 2.2s ease-out 1s infinite; pointer-events: none; }
+        .tnode.locked { background: #e9e8e3; color: #a9a8a2; box-shadow: 0 6px 0 #d4d3cd; }
+        .tnode.locked svg { width: 20px; height: 20px; }
+        a.tnode:active { transform: translateX(var(--dx, 0)) translateY(4px); box-shadow: 0 2px 0 var(--lv-dark); }
+        .tnode.rev { width: 56px; height: 56px; margin-top: 20px; border-radius: 14px; transform: translateX(var(--dx, 0)) rotate(45deg); background: #efe9d8; color: #b8a777; box-shadow: 0 6px 0 #d9cfb2; }
+        .tnode.rev > * { transform: rotate(-45deg); }
+        .tnode.rev.ready { background: #fff; color: var(--gold); border: 3px solid var(--gold); box-shadow: 0 6px 0 var(--gold-wash); }
+        .tnode.rev.gold { background: var(--gold-shine); color: #fff; box-shadow: 0 6px 0 var(--gold-dark); }
+        a.tnode.rev:active { transform: translateX(var(--dx, 0)) translateY(4px) rotate(45deg); }
+        .tlab { position: absolute; left: 50%; top: 100px; width: 140px; margin-left: -70px; transform: translateX(var(--dx, 0)); text-align: center; font-size: 12px; font-weight: 650; color: var(--muted); }
+        .tcall { position: relative; z-index: 1; height: 132px; display: flex; justify-content: center; }
+        .tbub { position: relative; box-sizing: border-box; width: min(280px, 100%); height: 116px; margin-top: 4px; padding: 10px 14px 12px; border-radius: 14px; background: #fff; border: 1px solid var(--lv-line); box-shadow: 0 8px 24px rgb(0 0 0 / .08); display: flex; flex-direction: column; }
+        .tbub::before { content: ""; position: absolute; left: calc(50% + var(--dx, 0px) - 7px); top: -8px; width: 13px; height: 13px; background: #fff; border-left: 1px solid var(--lv-line); border-top: 1px solid var(--lv-line); transform: rotate(45deg); }
+        .tbub .k { font-size: 11.5px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--lv-dark); }
+        .tbub b { font-size: 16px; font-weight: 650; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tbub .btn { margin-top: auto; min-height: 42px; background: var(--lv); border-color: var(--lv); color: var(--lv-on); --edge: var(--lv-dark); }
+        .tpal { position: absolute; top: 4px; display: flex; flex-direction: column; align-items: center; gap: 3px; pointer-events: none; }
+        .tpal .say { padding: 3px 9px; border-radius: 9px; background: #fff; border: 1px solid var(--line); box-shadow: 0 3px 10px rgb(0 0 0 / .06); font-family: var(--serif, "Lora"), Georgia, serif; font-weight: 600; font-size: 14px; color: var(--ink); white-space: nowrap; }
+        .ferry { display: block; position: relative; height: 92px; margin: 2px -16px 6px; }
+        .ferry svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .ferry .boat { position: absolute; left: 50%; top: 18px; width: 70px; height: 46px; margin-left: -35px; animation: bob 3.2s ease-in-out infinite; }
+        .ferry p { position: absolute; left: 0; right: 0; top: 0; text-align: center; font-size: 12px; font-weight: 650; color: #1b3f7d; }
+      }
+      @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(3px) rotate(1deg); } }
+
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { transition: none !important; animation: none !important; }
         html { scroll-behavior: auto; }
@@ -939,6 +1017,7 @@
           html += '<div class="card next" data-lvl="' + esc(u.level) + '"><p class="eyebrow">' + (done ? "Continue" : "Start here") + " · " + esc(unitLabel(u)) + "</p>" +
             "<h3>" + esc(next.title) + "</h3>" +
             '<p class="sub">Lesson ' + next.num + " of " + u.lessons.length + " · " + esc(u.title) + " · " + plural(next.exercises, "exercise") + "</p>" +
+            nextBar(u, course, set) +
             '<a class="btn primary block" href="' + P.lesson + "?id=" + esc(next.id) + '">' + (done ? "Continue" : "Start the first lesson") + "</a></div>";
         } else {
           var np = T.path.nextPlanned(ix), mistakes = T.progress.mistakesDue(course).length;
@@ -967,6 +1046,11 @@
         var mastered = f.units.filter(function (x) { return course.units[x.id] && course.units[x.id].reviewed; }).length;
         html += '<p class="totals"><b>' + course.xp.total + "</b> XP · <b>" + done + "</b> " + (done === 1 ? "lesson" : "lessons") + " completed" + (mastered ? " · <b>" + mastered + "</b> " + (mastered === 1 ? "unit" : "units") + " mastered" : "") + "</p>";
         $("today").innerHTML = html;
+      }
+      // FX-2: the unit's progress on the Continue card (lessons done of the unit's lessons)
+      function nextBar(u, course, set) {
+        var us = T.path.unitState(st.index, course, set, u.id), w = Math.round(100 * us.done / (us.total || 1));
+        return '<div class="nx-bar" aria-hidden="true"><span><i style="width:' + w + '%"></i></span>' + us.done + " of " + us.total + " done</div>";
       }
       // The greeting (UI-5): signed in, the chosen character (or the initial) says "Merhaba, <name>!" and leads to My Profile.
       // Signed out (ACCT-1), a welcome card: the A1 character says hello, with "Create an account" and "Sign in", which open
@@ -1077,20 +1161,22 @@
           body += '<p class="lvl-sum">' + T.rich(L.summary, { index: st.index }) + "</p>";
           if (L.canDo && L.canDo.length) body += '<ul class="cando" aria-label="By the end of ' + lv.cefr + ', you can">' + L.canDo.map(function (c) { return "<li>" + esc(c) + "</li>"; }).join("") + "</ul>";
         }
-        body += '<ol class="units">' + lv.units.map(function (u) { return renderUnit(f.unit[u.id], course, set, next); }).join("") + "</ol>";
+        body += '<ol class="units">' + lv.units.map(function (u, k) { return renderUnit(f.unit[u.id], course, set, next, k); }).join("") + "</ol>";
         return '<details class="level' + (s.ready ? " has-content" : "") + '" id="' + lv.id + '" data-lvl="' + lv.id + '"' + (open ? " open" : "") + ">" +
           '<summary><span class="badge" aria-hidden="true">' + lv.cefr + '</span><span><span class="lvl-title"><span class="sr">' + lv.cefr + ": </span>" + esc(lv.title) + '</span><span class="lvl-meta">' + meta + "</span>" +
           (s.ready ? '<span class="lvl-bar" aria-hidden="true"><i style="width:' + Math.round(100 * s.doneUnits / s.total) + '%"></i></span>' : "") + "</span>" + ICON.chev + "</summary>" +
           '<div class="lvl-body">' + body + "</div></details>";
       }
-      function renderUnit(u, course, set, next) {
+      function renderUnit(u, course, set, next, k) {
         if (u.status !== "ready") {
           return '<li class="unit planned" id="' + u.id + '"><span class="node" aria-hidden="true">' + u.num + '</span><div class="pcard"><span class="pnum">Unit ' + u.num + '</span><span class="pt">' + esc(u.title) + '</span><span class="ptr" lang="tr">' + esc(u.titleTr) + '</span><span class="tag soon">Coming soon</span></div></li>';
         }
         var us = T.path.unitState(st.index, course, set, u.id), rec = course.units[u.id] || {};
         var nodeInner = us.status === "done" ? ICON.check : u.num;
         var fresh = st.fresh && st.fresh.units[u.id] && us.status === "done" ? " fresh" : "";
-        var h = '<li class="unit st-' + us.status + fresh + '" id="' + u.id + '" style="--p:' + Math.round(100 * us.done / us.total) + '%">' +
+        var here = next && next.unit === u.id ? " is-here" : "";
+        var h = '<li class="unit st-' + us.status + fresh + here + '" id="' + u.id + '" style="--p:' + Math.round(100 * us.done / us.total) + '%">' +
+          (k ? FERRY : "") +
           '<span class="node" aria-hidden="true">' + nodeInner + "</span>" +
           '<article class="ucard" aria-labelledby="t-' + u.id + '"><div class="uhead">' +
           '<p class="ukick">' + esc(unitLabel(u)) + (us.mastered ? ' <span class="tag mastered">Mastered</span>' : "") + "</p>" +
@@ -1105,6 +1191,7 @@
           if (!unlocked) return '<li><span class="lesson locked" title="Finish the lesson before this one first"><span class="lnum">' + ICON.lock + '</span><span class="lt">' + esc(l.title) + '<span class="sr"> (locked)</span></span><span></span></span></li>';
           return '<li><a class="lesson ' + (isNext ? "next" : "open") + '" href="' + href + '"><span class="lnum">' + l.num + '</span><span class="lt">' + esc(l.title) + "</span>" + (isNext ? '<span class="lgo">Start</span>' : '<span class="lmeta">' + plural(l.exercises, "exercise") + "</span>") + "</a></li>";
         }).join("") + "</ol>";
+        h += trailHtml(u, us, course, set, next);
         h += '<p class="upoints">Grammar: ' + u.points.map(function (gp) {
           var p = st.index.points[gp];
           return '<a href="' + T.guideHref(u.id + "-grammar", gp) + '">' + esc((p ? p.label : gp).replace(/(^|\s)-(?=\S)/g, "$1\u2011")) + "</a>";
@@ -1112,10 +1199,58 @@
         h += '<div class="uacts">' +
           '<a class="pill" href="' + T.guideHref(u.id + "-grammar") + '">Grammar guide' + (rec.guide ? ' <span class="ok">' + ICON.check + '</span><span class="sr"> (read)</span>' : "") + "</a>" +
           '<a class="pill" href="' + T.guideHref(u.id + "-culture") + '">Interlude<span class="long">: ' + esc(u.interlude) + "</span>" + (rec.culture ? ' <span class="ok">' + ICON.check + '</span><span class="sr"> (read)</span>' : "") + "</a>";
-        if (us.status === "done") h += '<a class="pill' + (us.mastered ? "" : " strong") + '" href="' + P.lesson + "?review=" + u.id + '">' + (us.mastered ? "Review again" : "Review the unit") + "</a>";
+        if (us.status === "done") h += '<a class="pill p-review' + (us.mastered ? "" : " strong") + '" href="' + P.lesson + "?review=" + u.id + '">' + (us.mastered ? "Review again" : "Review the unit") + "</a>";
         if (us.status === "locked") h += '<a class="pill strong" href="' + P.lesson + "?test=" + u.id + '" title="A 20-exercise test on the units before this one; 80% opens this unit">Jump here</a>';
         h += "</div></article></li>";
         return h;
+      }
+      // ── FX-2 (idea 6): on phones, a unit's lessons as a trail of round buttons ──
+      // Each lesson is a row 92 px high with its node 64 px wide, swinging left and right (TR.dx); the next lesson is followed by
+      // a card with its title and Start, and the learner's character stands beside it. Last, the unit review as a diamond: grey
+      // until the unit is done, outlined once it can be taken, gold once mastered. An SVG line joins the nodes' centres:
+      // solid in the level colour up to the next lesson, dotted grey after it. The list (.lessons) stays for wider screens.
+      var TR = { dx: [0, 56, 0, -56], row: 92, call: 132, rev: 124 };
+      var FERRY = '<div class="ferry" aria-hidden="true"><p>Next stop</p><svg viewBox="0 0 390 92" preserveAspectRatio="none"><path d="M0 60Q24 52 48 60T96 60T144 60T192 60T240 60T288 60T336 60T384 60T432 60V92H0Z" fill="#2452a0" fill-opacity=".1"/><path d="M0 60Q24 52 48 60T96 60T144 60T192 60T240 60T288 60T336 60T384 60T432 60" fill="none" stroke="#2452a0" stroke-opacity=".35" stroke-width="2"/><path d="M0 78Q24 72 48 78T96 78T144 78T192 78T240 78T288 78T336 78T384 78T432 78" fill="none" stroke="#2452a0" stroke-opacity=".18" stroke-width="2"/></svg>' +
+        '<svg class="boat" viewBox="0 0 70 46"><path d="M4 34h62l-7 10H11z" fill="#fff" stroke="#1b3f7d" stroke-width="2" stroke-linejoin="round"/><rect x="12" y="22" width="44" height="12" rx="2" fill="#fff" stroke="#1b3f7d" stroke-width="2"/><rect x="20" y="12" width="24" height="10" rx="2" fill="#fff" stroke="#1b3f7d" stroke-width="2"/><rect x="28" y="2" width="7" height="10" fill="#c2462c" stroke="#1b3f7d" stroke-width="2"/><circle cx="20" cy="28" r="1.8" fill="#1b3f7d"/><circle cx="28" cy="28" r="1.8" fill="#1b3f7d"/><circle cx="36" cy="28" r="1.8" fill="#1b3f7d"/><circle cx="44" cy="28" r="1.8" fill="#1b3f7d"/></svg></div>';
+      var STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" fill="currentColor"/></svg>';
+      function trailHtml(u, us, course, set, next) {
+        var rows = "", pts = [], y = 0, cut = -1, k = 0;
+        u.lessons.forEach(function (l, i) {
+          var r = course.lessons[l.id], unlocked = T.path.lessonUnlocked(st.index, course, set, l.id), isNext = next && next.id === l.id;
+          var dx = TR.dx[i % 4], href = P.lesson + "?id=" + l.id, name = "Lesson " + l.num + ": " + l.title;
+          pts.push([dx, y + 46]);
+          if (isNext) cut = pts.length - 1;
+          var node = r ? '<a class="tnode done" href="' + href + '" style="--dx:' + dx + 'px" aria-label="' + esc(name) + ', done" title="' + esc(l.title) + '">' + ICON.check + "</a>"
+            : !unlocked ? '<span class="tnode locked" style="--dx:' + dx + 'px" role="img" aria-label="' + esc(name) + ', locked" title="' + esc(l.title) + '">' + ICON.lock + "</span>"
+            : '<a class="tnode ' + (isNext ? "next" : "open") + '" href="' + href + '" style="--dx:' + dx + 'px" aria-label="' + esc(name) + (isNext ? ", next" : "") + '" title="' + esc(l.title) + '">' + (isNext ? STAR : l.num) + "</a>";
+          var pal = "";
+          if (isNext && A && A.avatarSvg) {
+            var av = A.avatarSvg((A.avatar && A.avatar()) || A.START || "tekir", 54);
+            if (av) pal = '<span class="tpal" aria-hidden="true" style="' + (dx > 0 ? "left:6%" : "right:6%") + '"><span class="say" lang="tr">Hadi!</span>' + av + "</span>";
+          }
+          rows += '<li class="tn">' + node + pal + "</li>";
+          y += TR.row;
+          if (isNext) {
+            rows += '<li class="tcall"><div class="tbub" style="--dx:' + dx + 'px"><span class="k">Lesson ' + l.num + " of " + u.lessons.length + '</span><b title="' + esc(l.title) + '">' + esc(l.title) + '</b>' +
+              '<a class="btn primary" href="' + href + '">Start · ' + plural(l.exercises, "exercise") + "</a></div></li>";
+            y += TR.call;
+          }
+          k = i;
+        });
+        var dxr = TR.dx[(k + 1) % 4], ready = us.status === "done";
+        pts.push([dxr, y + 48]);
+        var rv = '<span class="tnode rev' + (us.mastered ? " gold" : "") + '" style="--dx:' + dxr + 'px" role="img" aria-label="Unit review, locked until the unit is done"><span>' + STAR + "</span></span>";
+        if (ready) rv = '<a class="tnode rev' + (us.mastered ? " gold" : " ready") + '" style="--dx:' + dxr + 'px" href="' + P.lesson + "?review=" + u.id + '" aria-label="' + (us.mastered ? "Unit review, mastered: review again" : "Review the unit") + '"><span>' + STAR + "</span></a>";
+        rows += '<li class="tn rv">' + rv + '<span class="tlab" style="--dx:' + dxr + 'px">' + (us.mastered ? "Mastered" : "Unit review") + "</span></li>";
+        y += TR.rev;
+        // the line: solid up to the next lesson (or all of it when the unit is done), dotted after
+        var upto = cut >= 0 ? cut : ready ? pts.length - 1 : 0;
+        function d(p) { var s = "M" + (160 + p[0][0]) + " " + p[0][1]; for (var i = 1; i < p.length; i++) { var m = (p[i - 1][1] + p[i][1]) / 2; s += "C" + (160 + p[i - 1][0]) + " " + m + " " + (160 + p[i][0]) + " " + m + " " + (160 + p[i][0]) + " " + p[i][1]; } return s; }
+        var a = pts.slice(0, upto + 1), b = pts.slice(upto);
+        var svg = '<svg width="320" height="' + y + '" aria-hidden="true">' +
+          (a.length > 1 ? '<path d="' + d(a) + '" fill="none" stroke="var(--lv)" stroke-opacity=".35" stroke-width="10" stroke-linecap="round"/>' : "") +
+          (b.length > 1 ? '<path d="' + d(b) + '" fill="none" stroke="#d4d3cd" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 14"/>' : "") + "</svg>";
+        return '<div class="trail">' + svg + '<ol aria-label="Lessons">' + rows + "</ol></div>";
       }
       $("levels").addEventListener("toggle", function (e) {
         if (e.target.classList && e.target.classList.contains("level")) st.open[e.target.id] = e.target.open;
