@@ -83,7 +83,7 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
     - **App Review Information:** sign-in required: **unticked** · your name, phone and email (Apple only) ·
       Notes:
 
-      > A complete offline Turkish course (A1–C1; C2 in preparation): lessons with instant feedback, a grammar guide per unit and
+      > A complete offline Turkish course (A1–C2): lessons with instant feedback, a grammar guide per unit and
       > spaced-repetition flashcards, all built into the app. No account needed. Native features:
       > daily study reminders as local notifications (Settings › Daily reminder); haptic feedback on right and
       > wrong answers, finished lessons and the daily goal (Settings › Haptics); progress export through the

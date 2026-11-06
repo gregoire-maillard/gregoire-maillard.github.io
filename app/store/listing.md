@@ -2,9 +2,9 @@
 
 Ready to paste into App Store Connect (see `app/RELEASE.md`, section D). Every limit below was checked by counting characters
 (`len()` in Python, which counts the way App Store Connect does for these texts: ç, ğ, ı, İ, ö, ş, ü and • are one character each).
-Figures in the texts come from the app's own `app/www/assets/data/turkish/index.json`, after the 4+ content filter (54 units, 208 lessons,
-2,695 exercises, 985 cards; C2's 6 units
-are "planned") and from the pages themselves (32 achievements, the reminder, haptics, Export/Import).
+Figures in the texts come from the app's own `app/www/assets/data/turkish/index.json`, after the 4+ content filter (60 units, 226 lessons,
+2,875 exercises, 985 cards; all six levels, A1 to C2, are ready; 12 conversations and 1 practice test; checked in APP-7)
+and from the pages themselves (32 achievements, the reminder, haptics, Export/Import).
 
 | Field | Characters | Limit |
 |---|---|---|
@@ -12,13 +12,13 @@ are "planned") and from the pages themselves (32 achievements, the reminder, hap
 | Subtitle | 27 | 30 |
 | Promotional text | 160 | 170 |
 | Keywords | 99 | 100 |
-| Description | 2,198 | 4,000 |
+| Description | 2,329 | 4,000 |
 | What's New | 221 | 4,000 |
-| App Review notes | 900 | 4,000 |
+| App Review notes | 878 | 4,000 |
 
 ## App Information (General › App Information)
 
-**Name** (13/30). The name must be free on the App Store; if App Store Connect says it is taken, "Daily Turkish: A1 to C1" (23/30) is a fallback.
+**Name** (13/30). The name must be free on the App Store; if App Store Connect says it is taken, "Daily Turkish: A1 to C2" (23/30) is a fallback.
 
 ```text
 Daily Turkish
@@ -27,7 +27,7 @@ Daily Turkish
 **Subtitle** (27/30)
 
 ```text
-Learn Turkish from A1 to C1
+Learn Turkish from A1 to C2
 ```
 
 **Category:** Education (primary). Secondary: none, or Reference.
@@ -46,7 +46,7 @@ Answer **No** or **None** to every question: the result is **4+**.
 
 This is accurate because the app's copy of the course is filtered at build time (`app/scripts/content-4plus.mjs`,
 PROJECT.md APP-6). It leaves out or rewords everything that pushed the rating up: alcohol and tobacco (*bira*, *şarap*, *rakı*,
-*sigara*…), drugs, swearing (*lanet*), the *seks* card, weapons and killing vocabulary, and, in the history interludes,
+*sigara*…), drugs, swearing (*lanet*, *kahrolası*), the *seks* card, weapons and killing vocabulary, and, in the history interludes,
 executions, killings, political violence, the 1980 coup and the 1915–1916 passage. The website keeps all of it. The build fails if
 any such word comes back into the app's data, so these answers stay true until the rules change.
 
@@ -62,8 +62,8 @@ any such word comes back into the app's data, so these answers stay true until t
 
 What stays, and why it is still "None": plain historical facts (the War of Independence, sieges, the conquest of 1453), natural
 deaths, words like *kan* (blood) in medical phrases, the proverb *Ateş olmayan yerden duman çıkmaz* (smoke and fire), a king's
-curse on a ruined city in the Hittite interlude, and *piyango* (lottery) as a word in one lesson. None of these is a depiction of
-violence, a mature theme or gambling.
+curse on a ruined city in the Hittite interlude, *piyango* (lottery) as a word in one lesson, and a doctor's visit and a pharmacy among the conversations (language practice,
+no medical advice). None of these is a depiction of violence, a mature theme, gambling or medical information.
 
 ## Pricing and Availability
 
@@ -74,21 +74,22 @@ Price: Free (USD 0). Availability: all countries and regions.
 **Promotional text** (160/170). Can be changed at any time without a new version.
 
 ```text
-A Turkish course in short daily lessons, from A1 to C1, with a grammar guide for every unit and 985 high-frequency words to review. Works offline. Free, no ads.
+A Turkish course in short daily lessons, from A1 to C2, with a grammar guide for every unit and 985 high-frequency words to review. Works offline. Free, no ads.
 ```
 
-**Description** (2,198/4,000)
+**Description** (2,329/4,000)
 
 ```text
 Daily Turkish is a Turkish course for English speakers, built for a few minutes a day. Everything is inside the app: it works offline, needs no account and has no ads.
 
 THE COURSE
-• 208 short lessons in 54 units, from your first "merhaba" (A1) up to C1. The C2 level is being written.
-• About 2,700 exercises: multiple choice, fill in the blanks, translation both ways, word tiles, building a word from its suffixes, conjugation tables, matching pairs, listening and reading.
+• 226 short lessons in 60 units, from your first "merhaba" (A1) up to C2.
+• Nearly 2,900 exercises: multiple choice, fill in the blanks, translation both ways, word tiles, building a word from its suffixes, conjugation tables, matching pairs, listening and reading.
 • Feedback right after each answer, with explanations for the usual mistakes.
 • A letter bar under the text field for ç, ğ, ı, İ, ö, ş and ü.
 • The exercises you miss are kept, and a Practise session brings them back until you get them right.
 • A review at the end of each unit, and a test to skip ahead if you already know the basics.
+• 12 conversations from A1 to B2, in a café, a taxi, a pharmacy, a job interview and more: choose or type your reply, and the conversation follows what you say.
 
 GRAMMAR, EXPLAINED
 • A grammar guide for every unit, in plain English with tables and examples: vowel harmony, the cases, the past, present, future and aorist, the conditional, the passive and the causative, participles and much more.
@@ -114,7 +115,7 @@ The app and its explanations are in English.
 ```
 
 **Keywords** (99/100). Comma-separated, no spaces after commas. Words already in the name and subtitle ("daily", "turkish",
-"learn", "from", "a1", "to", "c1") are left out, since Apple already indexes them; no other app's name is used.
+"learn", "from", "a1", "to", "c2") are left out, since Apple already indexes them; no other app's name is used.
 
 ```text
 türkçe,turkce,language,lessons,grammar,vocabulary,flashcards,words,verbs,spaced repetition,beginner
@@ -128,7 +129,7 @@ türkçe,turkce,language,lessons,grammar,vocabulary,flashcards,words,verbs,space
 the record, or reuse it for 1.1.
 
 ```text
-The first version of Daily Turkish: 208 lessons from A1 to C1, a grammar guide and a culture interlude for every unit, 985 flashcards with spaced repetition, a daily reminder, and progress export and import through Files.
+The first version of Daily Turkish: 226 lessons from A1 to C2, a grammar guide and a culture interlude for every unit, 985 flashcards with spaced repetition, a daily reminder, and progress export and import through Files.
 ```
 
 **Screenshots, 6.9-inch display** (1320 × 2868 px, portrait, in this order), from `app/store/screenshots/`:
@@ -147,10 +148,10 @@ not real progress. 6.9-inch screenshots are scaled down for the smaller iPhones,
 
 Sign-in required: **unticked**. Contact: your first and last name, phone and email (seen by Apple only).
 
-**Notes** (900/4,000)
+**Notes** (878/4,000)
 
 ```text
-Daily Turkish is a complete offline Turkish course (levels A1 to C1; C2 is in preparation): 208 lessons with instant feedback, a grammar guide per unit and 985 spaced-repetition flashcards, all built into the app. No account, no sign-in, no network needed.
+Daily Turkish is a complete offline Turkish course (levels A1 to C2): 226 lessons with instant feedback, a grammar guide per unit and 985 spaced-repetition flashcards, all built into the app. No account, no sign-in, no network needed.
 
 Native features:
 - Daily study reminder as a local notification (Course tab, gear icon > Settings > Daily reminder; off by default).
