@@ -1189,7 +1189,7 @@
         if (st.voice === undefined) { el.textContent = "Looking for a Turkish voice…"; return; }
         if (!st.voice) { el.textContent = T.tts.HELP; btn.disabled = true; return; }
         btn.disabled = !s.tts;
-        el.textContent = s.tts ? "Voice: " + st.voice.name + " (" + st.voice.lang + ")." : "Speech is off: speaker buttons are hidden and listening exercises are skipped.";
+        el.textContent = s.tts ? "Voice: " + st.voice.name + " (" + st.voice.lang + ")" + (T.tts.voice2 ? "; second speaker in dialogues: " + T.tts.voice2.name : "") + "." + (T.tts.basic(st.voice) ? " " + T.tts.UPGRADE : "") : "Speech is off: speaker buttons are hidden and listening exercises are skipped.";
       }
       function save(patch) { store.setSettings(patch); }
       document.querySelectorAll('#s-goal input').forEach(function (r) { r.addEventListener("change", function () { save({ dailyGoal: +r.value }); }); });

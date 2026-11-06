@@ -49,7 +49,7 @@
     EXPAND_MAX: 200, TYPO_MIN: 5,
     // 6.5 speech
     LANG: "tr",            // the course's language code: its rows in Supabase (enrollments, activity_days…)
-    TTS_LANG: "tr-TR", TTS_SLOW: 0.6, TTS_WAIT: 1500,
+    TTS_LANG: "tr-TR", TTS_SLOW: 0.75, TTS_WAIT: 1500,
     LETTERS: ["ç", "ğ", "ı", "ö", "ş", "ü"], LETTERS_UP: ["Ç", "Ğ", "İ", "Ö", "Ş", "Ü"],
     // 6.6 scheduler: steps in minutes, intervals in days (Anki's defaults)
     SRS: {
@@ -1241,12 +1241,36 @@
     voice: undefined,        // undefined: not looked for yet; null: no Turkish voice on this device
     HELP: "No Turkish voice was found on this device, so listening exercises are skipped. To add one, install Turkish in your system's text-to-speech settings (on iPhone and iPad: Settings › Accessibility › Spoken Content › Voices; on a Mac: System Settings › Accessibility › Spoken Content › System voice › Manage Voices), then reload the page.",
     supported: function () { return !!(root && root.speechSynthesis && root.SpeechSynthesisUtterance); },
-    find: function () {
-      if (!tts.supported()) return null;
-      var vs = root.speechSynthesis.getVoices() || [];
-      for (var i = 0; i < vs.length; i++) if (/^tr(?:[-_]|$)/i.test(vs[i].lang || "")) return vs[i];
-      return null;
+    // Turkish voices, best first. Many devices list a basic voice before a far better one (on Apple devices the
+    // compact Yelda comes before Yelda (Enhanced) or (Premium)), so the first one found is not taken blindly.
+    score: function (v) {
+      var id = ((v.voiceURI || "") + " " + (v.name || "")).toLowerCase(), s = 0;
+      if (/premium/.test(id)) s += 40;
+      else if (/enhanced|neural|natural|online/.test(id)) s += 30;
+      if (/google/.test(id)) s += 20;
+      if (/compact/.test(id)) s -= 10;
+      if (/eloquence|novelty/.test(id)) s -= 30;
+      if (/^tr[-_]tr$/i.test(v.lang || "")) s += 2;
+      if (v["default"]) s += 1;
+      return s;
     },
+    list: function () {
+      if (!tts.supported()) return [];
+      var vs = (root.speechSynthesis.getVoices() || []).filter(function (v) { return /^tr(?:[-_]|$)/i.test(v.lang || ""); });
+      return vs.map(function (v, i) { return { v: v, s: tts.score(v), i: i }; })
+        .sort(function (a, b) { return b.s - a.s || a.i - b.i; }).map(function (x) { return x.v; });
+    },
+    // The person behind a voice: "Yelda (Enhanced)" and "Yelda" are the same speaker.
+    person: function (v) { return (v && v.name || "").replace(/\s*\(.*?\)\s*/g, " ").replace(/\b(premium|enhanced|compact)\b/gi, "").trim().toLowerCase(); },
+    find: function () {
+      var vs = tts.list(), best = vs[0] || null;
+      tts.voice2 = null;
+      for (var i = 1; best && i < vs.length; i++) if (tts.person(vs[i]) !== tts.person(best)) { tts.voice2 = vs[i]; break; }
+      return best;
+    },
+    // A basic voice on an Apple device, where a better Turkish one can be downloaded for free.
+    basic: function (v) { var id = (v && v.voiceURI || "").toLowerCase(); return /^com\.apple\./.test(id) && !/premium|enhanced/.test(id); },
+    UPGRADE: "For a more natural voice, download Yelda (Enhanced) or (Premium): on iPhone and iPad, Settings › Accessibility › Spoken Content › Voices › Turkish; on a Mac, System Settings › Accessibility › Spoken Content › System voice › Manage Voices. Then reload the page.",
     // Resolves with the Turkish voice, or null. Voices load asynchronously in most browsers.
     ready: function () {
       if (tts._ready) return tts._ready;
@@ -1258,22 +1282,26 @@
         if (v) return finish(v);
         var onChange = function () { var w = tts.find(); if (w) finish(w); };
         if (root.speechSynthesis.addEventListener) root.speechSynthesis.addEventListener("voiceschanged", onChange);
+        // Voices can keep arriving after the first one (or a better one be installed): keep the best.
+        if (root.speechSynthesis.addEventListener) root.speechSynthesis.addEventListener("voiceschanged", function () { if (done) { var w = tts.find(); if (w) tts.voice = w; } });
         setTimeout(function () { finish(tts.find()); }, C.TTS_WAIT);
       });
       return tts._ready;
     },
     // Speaks Turkish text (markup removed). opts: { slow, rate, pitch }. Returns the utterance (so a page can wait for its
-    // end event), or false when there is no Turkish voice. pitch (0–2, default 1) tells two speakers apart (PROJECT.md 6.8).
+    // end event), or false when there is no Turkish voice. pitch (0–2, default 1) tells two speakers apart (PROJECT.md 6.8):
+    // a pitch below 1 asks for the second voice when the device has another Turkish speaker, with the pitch softened.
     speak: function (text, opts) {
       opts = opts || {};
       if (tts.voice === undefined) tts.voice = tts.find() || undefined;
       var v = tts.voice;
       if (!v) { tts.ready(); return false; }
       var u = new root.SpeechSynthesisUtterance(plain(text));
-      u.lang = C.TTS_LANG; u.voice = v;
+      var alt = opts.pitch && opts.pitch < 1 && tts.voice2;
+      u.lang = C.TTS_LANG; u.voice = alt ? tts.voice2 : v;
       var rate = opts.rate || (defaultStore ? defaultStore.settings().ttsRate : C.SETTINGS.ttsRate);
-      u.rate = opts.slow ? C.TTS_SLOW : rate;
-      if (opts.pitch) u.pitch = opts.pitch;
+      u.rate = opts.slow ? Math.min(C.TTS_SLOW, rate * 0.85) : rate;
+      if (opts.pitch) u.pitch = alt ? 1 + (opts.pitch - 1) / 2 : opts.pitch;
       root.speechSynthesis.cancel();
       root.speechSynthesis.speak(u);
       return u;
