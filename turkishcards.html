@@ -452,7 +452,7 @@
       .tw-t.laid::before, .tw-t.gold::before { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .85); border-radius: 1px; transform: rotate(45deg); }
       .tw-t.laid::after, .tw-t.gold::after { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .55); border-radius: 1px; }
     </style>
-    <script defer src="/assets/js/turkish.js"></script>
+    <script defer src="/assets/js/turkish.js?v=20261106"></script>
     <script defer src="/assets/js/turkish-account.js"></script>
     <style>
       /* Footer: one line asking for a Turkish coffee (buymeacoffee.com/dailyturkish) */
@@ -1317,7 +1317,7 @@
         if (S.voice === undefined) { el.textContent = "Looking for a Turkish voice…"; return; }
         if (!S.voice) { el.textContent = T.tts.HELP; btn.disabled = true; return; }
         btn.disabled = !s.tts;
-        el.textContent = s.tts ? "Voice: " + S.voice.name + " (" + S.voice.lang + ")" + (T.tts.voice2 ? "; second speaker in dialogues: " + T.tts.voice2.name : "") + "." + (T.tts.basic(S.voice) ? " " + T.tts.UPGRADE : "") : "Speech is off: words aren't read aloud and speaker buttons are hidden.";
+        el.textContent = s.tts ? "Voice: " + S.voice.name + " (" + S.voice.lang + ")" + (T.tts.voice2 ? "; second speaker in dialogues: " + T.tts.voice2.name : "") + "." + (T.tts.basic && T.tts.basic(S.voice) ? " " + T.tts.UPGRADE : "") : "Speech is off: words aren't read aloud and speaker buttons are hidden.";
       }
       function save(patch) { if (!blocked("settings")) store.setSettings(patch); }
       function numberSetting(id, key, min, max) {

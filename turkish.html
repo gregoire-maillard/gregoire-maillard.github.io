@@ -635,7 +635,7 @@
       .about[hidden] { display: none; }
       /* About: the column lines up with the logo in the header instead of the narrower course grid */
       @media (min-width: 1280px) { main.wrap:has(> #about:not([hidden])) { max-width: calc(1320px + 80px); padding-inline: 40px; } }
-      .about-body { max-width: 720px; font-size: 15px; line-height: 1.6; color: var(--body); }
+      .about-body { max-width: none; font-size: 15px; line-height: 1.6; color: var(--body); }
       .about-body h2 { margin: 28px 0 6px; font-size: 17px; font-weight: 650; color: var(--ink); letter-spacing: -0.01em; }
       .about-body h2:first-child { margin-top: 0; }
       .about-body p + p { margin-top: 8px; }
@@ -676,7 +676,7 @@
       .tw-t.laid::before, .tw-t.gold::before { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .85); border-radius: 1px; transform: rotate(45deg); }
       .tw-t.laid::after, .tw-t.gold::after { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .55); border-radius: 1px; }
     </style>
-    <script defer src="/assets/js/turkish.js"></script>
+    <script defer src="/assets/js/turkish.js?v=20261106"></script>
     <script defer src="/assets/js/turkish-account.js"></script>
     <style>
       /* Footer: one line asking for a Turkish coffee (buymeacoffee.com/dailyturkish) */
@@ -1189,7 +1189,7 @@
         if (st.voice === undefined) { el.textContent = "Looking for a Turkish voice…"; return; }
         if (!st.voice) { el.textContent = T.tts.HELP; btn.disabled = true; return; }
         btn.disabled = !s.tts;
-        el.textContent = s.tts ? "Voice: " + st.voice.name + " (" + st.voice.lang + ")" + (T.tts.voice2 ? "; second speaker in dialogues: " + T.tts.voice2.name : "") + "." + (T.tts.basic(st.voice) ? " " + T.tts.UPGRADE : "") : "Speech is off: speaker buttons are hidden and listening exercises are skipped.";
+        el.textContent = s.tts ? "Voice: " + st.voice.name + " (" + st.voice.lang + ")" + (T.tts.voice2 ? "; second speaker in dialogues: " + T.tts.voice2.name : "") + "." + (T.tts.basic && T.tts.basic(st.voice) ? " " + T.tts.UPGRADE : "") : "Speech is off: speaker buttons are hidden and listening exercises are skipped.";
       }
       function save(patch) { store.setSettings(patch); }
       document.querySelectorAll('#s-goal input').forEach(function (r) { r.addEventListener("change", function () { save({ dailyGoal: +r.value }); }); });
