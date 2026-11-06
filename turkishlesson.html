@@ -1819,7 +1819,7 @@
           '<ol class="x-secs" aria-label="The four sections">' + rows + "</ol>" + xDisclaimer() + (S.speech ? "" : '<p class="notice">' + xNoVoice() + "</p>") +
           '<label class="x-untimed"><input type="checkbox" id="x-untimed"><span><b>No time limit</b><small>The sections won\'t end on their own; the countdowns still show.</small></span></label>' +
           '<div class="acts"><button type="button" class="btn primary big" id="x-go">Start the test</button><a class="btn ghost" href="' + P.hub + '">Back to the course</a></div>' +
-          '<p class="meta">About ' + E.minutes + " minutes. Your answers stay on this page: nothing is saved or sent.</p></div>");
+          '<p class="meta">About ' + E.minutes + " minutes.</p></div>");
         $("x-go").addEventListener("click", function () { X.timed = !$("x-untimed").checked; xBegin(); });
       }
       function xBegin() {
@@ -2317,7 +2317,7 @@
             }).join("") + "</ul></section>";
         });
         if (!list.length) h += '<p class="notice">No conversation has been written yet.</p>';
-        h += '<div class="acts"><a class="btn ghost" href="' + P.hub + '">Back to the course</a></div><p class="meta">Nothing is saved or sent: a conversation stays on this page.</p></div>';
+        h += '<div class="acts"><a class="btn ghost" href="' + P.hub + '">Back to the course</a></div></div>';
         screen(h, true);
       }
 

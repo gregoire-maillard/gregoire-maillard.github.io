@@ -633,6 +633,8 @@
       .char-note b { color: var(--ink); }
 
       .about[hidden] { display: none; }
+      /* About: the column lines up with the logo in the header instead of the narrower course grid */
+      @media (min-width: 1280px) { main.wrap:has(> #about:not([hidden])) { max-width: calc(1320px + 80px); padding-inline: 40px; } }
       .about-body { max-width: 720px; font-size: 15px; line-height: 1.6; color: var(--body); }
       .about-body h2 { margin: 28px 0 6px; font-size: 17px; font-weight: 650; color: var(--ink); letter-spacing: -0.01em; }
       .about-body h2:first-child { margin-top: 0; }
@@ -718,7 +720,7 @@
         </aside>
 
         <section class="path" aria-labelledby="h-path">
-          <div class="path-head"><h2 id="h-path">The path</h2><span id="path-meta"></span></div>
+          <div class="path-head"><h2 id="h-path">The path</h2></div>
           <nav class="lvl-nav" id="lvl-nav" aria-label="Levels"></nav>
           <div id="levels"></div>
         </section>
@@ -824,8 +826,8 @@
           <h2>The course</h2>
           <p>Turkish follows the spelling of the Türk Dil Kurumu; speech uses your device's own Turkish voice.</p>
           <h2>The method</h2>
-          <p><b>Anki and spaced repetition.</b> Anki is the free flashcard app that made spaced repetition popular. After each card you grade how well you remembered it (Again, Hard, Good or Easy), and it comes back just before you would forget it: tomorrow, then in a few days, then weeks and months later. A few minutes a day are enough to keep thousands of words. The flashcards here use Anki's own algorithm (SM-2) with its default settings, the same four grades with the next interval shown on each button, and Anki's statistics (a card is “mature” after 21 days).</p>
-          <p><b>Fluent Forever.</b> In his book <cite>Fluent Forever</cite> (2014), Gabriel Wyner argues for learning pronunciation first, the most frequent words before the rare ones, words in real sentences rather than lists, recalling actively instead of just recognising, and letting spaced repetition do the remembering. Daily Turkish follows this: the course opens with the letters and their sounds and every Turkish word can be played aloud; the deck is the 1,000 most frequent words, in order; every card has an example sentence; and words are practised in both directions, English → Turkish once you recognise the Turkish. Where it differs: Wyner recommends making your own cards with pictures instead of translations, while these cards come ready-made with English meanings, to save you the time.</p>
+          <p><b>Spaced repetition.</b> The flashcards run on Anki's algorithm (SM-2) with its default settings. You grade each card Again, Hard, Good or Easy, and it comes back just before you would forget it: tomorrow, in a few days, then weeks and months later. A few minutes a day are enough to keep thousands of words.</p>
+          <p><b>Fluent Forever.</b> The course follows Gabriel Wyner's book (2014): sounds first, the most frequent words first, every word in a real sentence, and active recall in both directions. One difference: Wyner says to make your own cards with pictures; here they come ready-made with English meanings, to save you the time.</p>
           <h2>Your progress</h2>
           <p id="about-where">Without a profile, your progress lives in this browser's storage only, and clearing your browsing data erases it. With a <a href="#profile">profile</a>, it's also saved online.</p>
           <h2>Support Daily Turkish</h2>
@@ -934,11 +936,11 @@
         }
         html = helloHtml() + html;
         var g = T.progress.goal(course, set, now), s = T.progress.streak(course, set, now);
-        var note = s.done ? "Today counts toward your streak." : s.current ? "Finish a lesson or study 10 cards today to keep your streak." : "Finish a lesson today to start a streak.";
+        var note = s.done ? "" : s.current ? "Finish a lesson or study 10 cards today to keep your streak." : "Finish a lesson today to start a streak.";
         html += '<div class="card stats" aria-label="Today\'s progress">' +
           '<div class="stat">' + ring(g.ratio, g.met) + '<div><div class="big">' + g.xp + ' <small>XP</small></div><div class="lbl">' + (g.met ? "Goal met" : "of " + g.goal + " today") + "</div></div></div>" +
           '<div class="stat"><span class="flame' + (s.current ? " on" : "") + '">' + ICON.flame + '</span><div><div class="big">' + plural(s.current, "day") + '</div><div class="lbl">Streak' + (s.best > s.current ? " · best " + s.best : "") + "</div></div></div>" +
-          '<p class="note">' + note + "</p></div>";
+          (note ? '<p class="note">' + note + "</p>" : "") + "</div>";
         html += wallHtml(ix, course, set);
         html += cardsPanel(ix, course, set, now);
         // DLG-1: the dialogue simulator's conversations (PROJECT.md 6.9), played by the lesson page
@@ -1046,8 +1048,6 @@
         if (!ix) return;
         var course = store.course(), set = store.settings(), f = T.path.flatten(ix), next = T.path.nextLesson(ix, course);
         var hereLevel = next ? next.level : null;
-        var unitsDone = f.units.filter(function (u) { return T.path.unitDone(ix, course, u.id); }).length;
-        $("path-meta").textContent = unitsDone + " of " + f.units.length + " units completed";
         $("lvl-nav").innerHTML = ix.levels.map(function (lv) {
           var s = levelStats(lv, course);
           return '<a class="lvl-chip' + (lv.id === hereLevel ? " here" : "") + '" data-lvl="' + lv.id + '" href="#' + lv.id + '">' + lv.cefr + " <small>" + (s.ready ? s.doneUnits + "/" + s.total : "soon") + "</small></a>";

@@ -747,7 +747,6 @@
         var readyUnits = f.units.filter(function (u) { return u.status === "ready"; });
         var read = 0;
         readyUnits.forEach(function (u) { var r = course.units[u.id] || {}; if (r.guide) read++; if (r.culture) read++; });
-        var nPoints = Object.keys(ix.points).length, nReadyPoints = Object.keys(ix.points).filter(function (k) { return ix.points[k].ready; }).length;
         var levels = ix.levels.map(function (lv) {
           var units = lv.units.map(function (x) { return f.unit[x.id]; });
           return { lv: lv, units: units, ready: units.filter(function (u) { return u.status === "ready"; }).length };
@@ -762,10 +761,10 @@
         var h = '<p class="doc-kicker">Grammar index</p><h1 class="doc-title" id="top">Grammar guides and interludes</h1>' +
           '<p class="lede">Every grammar point of the course, unit by unit, from the alphabet to the language of the press. ' +
           readyUnits.length + " of " + f.units.length + " units are written so far; the rest are listed as they're planned.</p>" +
-          (readyUnits.length ? '<p class="read-state">' + (read ? '<span class="tick">' + ICON.tick + "</span> You've read " + read + " of the " + readyUnits.length * 2 + " guides and interludes written so far." : "You haven't opened a guide yet: start with <a href=\"" + docHref(readyUnits[0], "grammar") + '">' + esc(readyUnits[0].title) + "</a>.") + "</p>" : "") +
+          (readyUnits.length && !read ? '<p class="read-state">' + ("You haven't opened a guide yet: start with <a href=\"" + docHref(readyUnits[0], "grammar") + '">' + esc(readyUnits[0].title) + "</a>.") + "</p>" : "") +
           '<div class="find" role="search"><label for="find">Find a grammar point</label>' +
           '<input id="find" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="plural, -DA, değil, past tense…" aria-describedby="find-n">' +
-          '<p class="find-n" id="find-n" aria-live="polite">' + nReadyPoints + " of " + nPoints + " grammar points written</p></div>";
+          '<p class="find-n" id="find-n" aria-live="polite"></p></div>';
         h += levels.map(function (L) {
           var lv = L.lv;
           return '<div class="ix-level" data-level="' + lv.id + '"><h2 id="' + lv.id + '">' + esc(lv.cefr + " · " + lv.title) + "</h2>" +
@@ -792,7 +791,7 @@
             li.hidden = !any;
           });
           $("main").querySelectorAll(".ix-level").forEach(function (d) { d.hidden = !d.querySelector(".ix-unit:not([hidden])"); });
-          $("find-n").textContent = q ? (shown === 1 ? "1 grammar point matches" : shown + " grammar points match") : nReadyPoints + " of " + nPoints + " grammar points written";
+          $("find-n").textContent = q ? (shown === 1 ? "1 grammar point matches" : shown + " grammar points match") : "";
           $("no-match").hidden = !(q && !shown);
         }
       }
@@ -808,14 +807,14 @@
         var tick = function (on, what) { return on ? '<span class="tick" title="Read">' + ICON.tick + '</span><span class="sr"> (' + what + " read)</span>" : ""; };
         var head = '<div class="ix-head"><span class="ix-num">Unit ' + u.num + "</span>" +
           '<h3 class="ix-title">' + (ready ? '<a href="' + docHref(u, "grammar") + '">' + esc(u.title) + "</a>" : esc(u.title)) + ' <span class="ix-tr" lang="tr">' + esc(u.titleTr) + "</span></h3>" +
-          (ready ? "<span></span>" : '<span class="tag-soon">Coming soon</span>') + "</div>";
+          (ready ? (r.guide ? '<span class="tick ix-read" title="Guide read">' + ICON.tick + '</span><span class="sr"> (guide read)</span>' : "<span></span>") : '<span class="tag-soon">Coming soon</span>') + "</div>";
         var points = '<ul class="ix-points">' + u.points.map(function (gp) {
           var p = ix.points[gp] || { label: gp }, k = fold(p.label + " " + gp.replace(/-/g, " "));
           var lab = '<span class="lab" data-t="' + esc(p.label) + '">' + esc(p.label) + "</span>";
           return '<li id="' + esc(gp) + '" data-k="' + esc(k) + '">' + (ready ? '<a href="' + docHref(u, "grammar") + "#" + esc(gp) + '">' + lab + "</a>" : lab) + "</li>";
         }).join("") + "</ul>";
         var docs = '<p class="ix-docs">' + (ready
-          ? '<a href="' + docHref(u, "grammar") + '">Grammar guide' + tick(r.guide, "guide") + "</a>" + '<a href="' + docHref(u, "culture") + '">Interlude: ' + esc(u.interlude) + tick(r.culture, "interlude") + "</a>"
+          ? '<a href="' + docHref(u, "culture") + '">Interlude: ' + esc(u.interlude) + tick(r.culture, "interlude") + "</a>"
           : '<span class="trk-soon">Interlude: ' + esc(u.interlude) + " <small>(coming soon)</small></span>") + "</p>";
         return '<li class="ix-unit' + (ready ? "" : " planned") + '" id="' + u.id + '" data-k="' + esc(fold(u.title + " " + u.titleTr + " " + u.interlude + " " + u.cefr + " unit " + u.num)) + '">' +
           head + '<div class="ix-body">' + points + docs + "</div></li>";
