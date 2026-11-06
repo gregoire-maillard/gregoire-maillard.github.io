@@ -343,7 +343,7 @@ async function render(path, ready) {
       title: document.title, description: v('meta[name="description"]', "content"),
       ogTitle: v('meta[property="og:title"]', "content"), ogDescription: v('meta[property="og:description"]', "content"),
       canonical: v('link[rel="canonical"]', "href"),
-      rail: h("rail"), main: h("main"), lvlNav: h("lvl-nav"), levels: h("levels"), pathMeta: h("path-meta")
+      rail: h("rail"), main: h("main"), lvlNav: h("lvl-nav"), levels: h("levels")
     };
   });
 }
@@ -408,7 +408,6 @@ try {
   const hub = await render("/turkish.html", () => !!document.querySelector("#levels details.level"));
   for (const f of ["turkish.html", "index.html"]) {
     let s = readFileSync(join(OUT, f), "utf8");
-    s = swap(s, /<span id="path-meta"><\/span>/, `<span id="path-meta">${hub.pathMeta}</span>`, "#path-meta");
     s = swap(s, /<nav class="lvl-nav" id="lvl-nav" aria-label="Levels"><\/nav>/, `<nav class="lvl-nav" id="lvl-nav" aria-label="Levels">${hub.lvlNav}</nav>`, "#lvl-nav");
     s = swap(s, /<div id="levels"><\/div>/, `<div id="levels">${hub.levels}</div>`, "#levels");
     writeFileSync(join(OUT, f), addLd(addWordsLink(s, f), HOME_LD, f));
