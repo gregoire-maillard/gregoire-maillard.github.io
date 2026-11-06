@@ -756,16 +756,15 @@
           tocHtml(toc, "Levels") +
           '<div class="rail-foot"><a href="' + P.hub + '">Back to the course</a></div>';
         var h = '<p class="doc-kicker">Grammar index</p><h1 class="doc-title" id="top">Grammar guides and interludes</h1>' +
-          '<p class="lede">Every grammar point of the course, unit by unit, from the alphabet to telling a story. ' +
-          readyUnits.length + " of " + f.units.length + " units are written so far; the rest are listed as they're planned.</p>" + BETA +
+          '<p class="lede">Every grammar point of the course, unit by unit, from the alphabet to telling a story.</p>' + BETA +
           (readyUnits.length ? '<p class="read-state">' + (read ? '<span class="tick">' + ICON.tick + "</span> You've read " + read + " of the " + readyUnits.length * 2 + " guides and interludes written so far." : "You haven't opened a guide yet: start with <a href=\"" + docHref(readyUnits[0], "grammar") + '">' + esc(readyUnits[0].title) + "</a>.") + "</p>" : "") +
           '<div class="find" role="search"><label for="find">Find a grammar point</label>' +
           '<input id="find" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="plural, -lar, däl, past tense…" aria-describedby="find-n">' +
-          '<p class="find-n" id="find-n" aria-live="polite">' + nReadyPoints + " of " + nPoints + " grammar points written</p></div>";
+          '<p class="find-n" id="find-n" aria-live="polite"></p></div>';
         h += levels.map(function (L) {
           var lv = L.lv;
           return '<div class="ix-level" data-level="' + lv.id + '"><h2 id="' + lv.id + '">' + esc(lv.cefr + " · " + lv.title) + "</h2>" +
-            '<p class="ix-meta">' + (L.ready ? L.ready + " of " + L.units.length + " units written" : L.units.length + " units · coming soon") + "</p>" +
+            (L.ready ? "" : '<p class="ix-meta">' + L.units.length + " units · coming soon</p>") +
             '<ol class="ix-units">' + L.units.map(function (u) { return indexUnit(u, course); }).join("") + "</ol></div>";
         }).join("");
         h += '<p class="read-state" id="no-match" hidden>No grammar point matches. Try a shorter word, or a suffix such as <code>-lar</code>.</p>';
@@ -788,7 +787,7 @@
             li.hidden = !any;
           });
           $("main").querySelectorAll(".ix-level").forEach(function (d) { d.hidden = !d.querySelector(".ix-unit:not([hidden])"); });
-          $("find-n").textContent = q ? (shown === 1 ? "1 grammar point matches" : shown + " grammar points match") : nReadyPoints + " of " + nPoints + " grammar points written";
+          $("find-n").textContent = q ? (shown === 1 ? "1 grammar point matches" : shown + " grammar points match") : "";
           $("no-match").hidden = !(q && !shown);
         }
       }
