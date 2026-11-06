@@ -739,6 +739,9 @@
       .dock.almost .go { --edge: #4f3605; }
       .btn:not(.ghost):not(:disabled):active, .opt:not(.off):active, .tile:not(:disabled):not(.used):active, .dl-opt:not(.struck):active, .grade:not(:disabled):active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
       .btn:disabled, .tile.used, .tile:disabled, .opt.off:not(.right):not(.wrong), .dl-opt.struck { box-shadow: none; }
+      /* the focus ring follows the button's face and its edge together (an outline would cut across the edge) */
+      .btn:not(.ghost):focus-visible, .dl-opt:focus-visible, .tile:focus-visible, .grade:focus-visible, .opt:has(input:focus-visible) { outline: 2px solid transparent; box-shadow: 0 3px 0 var(--edge), 0 0 0 2px #fff, 0 3px 0 2px #fff, 0 0 0 4px var(--blue-dark), 0 3px 0 4px var(--blue-dark); }
+      .opt:focus-within { outline: none; }
     </style>
     <script defer src="/assets/js/turkish.js?v=20261106"></script>
     <script defer src="/assets/js/turkish-account.js"></script>
