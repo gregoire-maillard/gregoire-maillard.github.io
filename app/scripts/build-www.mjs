@@ -2,7 +2,8 @@
 //
 // The website stays the source of truth: nothing in the repo root is changed. This script copies
 // the same files the dailyturkish.app mirror uses (.github/workflows/sync-dailyturkish.yml, keep the
-// two lists in step), then, in the copies only:
+// two lists in step; one exception: the Culture page, turkishculture.html, and its data stay out of the app
+// while Grégoire keeps the page on pause, PROJECT.md APP-7), then, in the copies only:
 //   - makes turkish.html the start page (index.html), as the mirror does;
 //   - removes the Google tag snippet from every page, the privacy page too (no analytics in the app, and it works offline);
 //   - flags every page with <html data-app="ios">: turkish.js reads it as TRK.app, so the pages show no online profile
@@ -31,7 +32,7 @@ const SITE = resolve(APP, "..");
 const OUT = join(APP, "www");
 
 const FILES = [
-  "turkish.html", "turkishcards.html", "turkishguide.html", "turkishlesson.html", "turkishprivacy.html", "turkishculture.html",
+  "turkish.html", "turkishcards.html", "turkishguide.html", "turkishlesson.html", "turkishprivacy.html",
   "assets/js/turkish.js", "assets/js/turkish-account.js",
   "assets/data/turkish", "assets/fonts",
   "assets/img/favicon.png", "assets/img/ataturk.png", "assets/img/ataturk.webp",
@@ -39,6 +40,8 @@ const FILES = [
   "assets/img/daily-turkish-apple-touch-icon.png", "assets/img/daily-turkish-logo.svg",
   "stylesheets/styles.css",
 ];
+// Paused for the app (APP-7): the Culture page's data, copied with assets/data/turkish, is removed again.
+const PAUSED_DATA = ["assets/data/turkish/timeline.json", "assets/data/turkish/regions.json"];
 const PAGES = ["turkish.html", "turkishcards.html", "turkishguide.html", "turkishlesson.html"];
 
 // App-only scripts: [file in www, source]
@@ -71,6 +74,7 @@ for (const p of FILES) {
   if (!existsSync(from)) { console.warn("build-www: skipped missing " + p); continue; }
   cp(from, join(OUT, p));
 }
+for (const p of PAUSED_DATA) rmSync(join(OUT, p), { force: true });
 for (const [to, from] of [...APP_SCRIPTS, APP_CSS]) {
   const src = join(APP, from);
   if (!existsSync(src)) fail(from + " not found (run npm install in app/)");
@@ -135,6 +139,22 @@ for (const page of readdirSync(OUT).filter((f) => f.endsWith(".html"))) {
   }
   if (/EMAIL_TODO/.test(html)) console.warn("build-www: " + page + " still has the EMAIL_TODO placeholder (contact email)");
 }
+// Nothing in the app may open the paused Culture page (APP-7) or the Turkmen course: no file, no link in a page,
+// a script or the course data (page links, Markdown links, C.PAGES.culture used in a script).
+if (existsSync(join(OUT, "turkishculture.html"))) fail("turkishculture.html is in www (the Culture page is paused in the app)");
+const banned = [];
+(function scan(d) {
+  for (const e of readdirSync(d, { withFileTypes: true })) {
+    const p = join(d, e.name);
+    if (e.isDirectory()) { scan(p); continue; }
+    if (!/\.(html|js|json|css)$/.test(e.name)) continue;
+    const s = readFileSync(p, "utf8"), rel = p.slice(OUT.length + 1);
+    if (/turkishculture/.test(s.replace(/culture: "\/turkishculture\.html"/, ""))) banned.push(rel + ": turkishculture");
+    if (/PAGES\.culture|PAGES\[["']culture["']\]/.test(s)) banned.push(rel + ": PAGES.culture");
+    if (/(?:href|src)\s*=\s*["'][^"']*turkmen|\]\([^)]*turkmen|["'(]\/?turkmen\/|dailyturkmen/i.test(s)) banned.push(rel + ": a Turkmen course link");
+  }
+})(OUT);
+if (banned.length) fail("links the app must not have (APP-7):\n  " + banned.join("\n  "));
 if (missing.length) fail("files the pages use but www lacks (add them to FILES and to sync-dailyturkish.yml):\n  " + [...new Set(missing)].join("\n  "));
 
 let count = 0;

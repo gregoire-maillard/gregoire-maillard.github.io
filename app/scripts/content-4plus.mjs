@@ -178,6 +178,9 @@ export const EDITS = [
   // ── index.json: the grammar point labels follow the renamed guide sections ──
   { file: "index.json", path: "points/gp-impersonal-passive/label", find: "Burada sigara içilmez", replace: "Burada fotoğraf çekilmez" },
   { file: "index.json", path: "points/gp-double-causative/label", find: "Öldürtmek, yaptırtmak", replace: "Pişirtmek, yaptırtmak" },
+  // ── c2-u02 (C2-1): the curse *kahrolası* "damned" as an example of the old -(y)AsI form (APP-7) ──
+  { file: G("c2-u02"), path: "sections/1/blocks/4/text", find: "survives in a few fixed words: *olası* (possible, [C1 unit 2](gp-epistemic-adverbs)), and curses such as *kahrolası* (damned, literally may it be ruined). With", replace: "survives in a few fixed words such as *olası* (possible, [C1 unit 2](gp-epistemic-adverbs)). With" },
+  { file: G("c2-u02"), path: "summary/3", find: "*doyasıya*, *ölesiye*, *kahrolası* keep the same form.", replace: "*olası*, *doyasıya* and *ölesiye* keep the same form." },
 ];
 
 // The app's pages and turkish.js: the deck's size, once the cards above are gone ({N}).
