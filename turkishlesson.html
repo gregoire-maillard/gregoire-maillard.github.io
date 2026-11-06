@@ -640,6 +640,59 @@
       .dl-q { font-size: 13.5px; color: var(--muted); }
       .dl-log summary { cursor: pointer; font-weight: 650; color: var(--ink); font-size: 16px; min-height: 44px; display: flex; align-items: center; }
       .dl-log .x-script { margin-top: 8px; }
+      /* FX-1 (PROJECT.md 6.10): the conversations' faces (turkish-cast.js) and the learner's character as a companion */
+      .cf { display: block; flex: none; overflow: visible; }
+      .cf .ey, .cf .bw, .cf .m-o { transform-box: fill-box; transform-origin: center; }
+      .cf .bw { transition: transform .25s ease; }
+      .cf .m-h, .cf .m-n, .cf .m-p, .cf .m-o, .cf .ey-h { display: none; }
+      .cf[data-mood="happy"] .m-s, .cf[data-mood="happy"] .ey { display: none; }
+      .cf[data-mood="happy"] .m-h, .cf[data-mood="happy"] .ey-h { display: inline; }
+      .cf[data-mood="unsure"] .m-s { display: none; }
+      .cf[data-mood="unsure"] .m-n { display: inline; }
+      .cf[data-mood="unsure"] .bw-r, .cf[data-mood="puzzled"] .bw-r { transform: translateY(-1.8px) rotate(-12deg); }
+      .cf[data-mood="puzzled"] .bw-l { transform: translateY(.4px) rotate(10deg); }
+      .cf[data-mood="puzzled"] .m-s { display: none; }
+      .cf[data-mood="puzzled"] .m-p { display: inline; }
+      .cf.talk .mo { display: none; }
+      .cf.talk .m-o { display: inline; animation: cf-talk .42s ease-in-out infinite; }
+      .cf.live .ey { animation: cf-blink 4.6s var(--blink, 0s) infinite; }
+      .cf.pop { animation: cf-pop .5s cubic-bezier(.3, 1.6, .5, 1); }
+      .cf.tilt { animation: cf-tilt .7s ease-in-out; }
+      @keyframes cf-talk { 0%, 100% { transform: scaleY(.3); } 35% { transform: scaleY(1); } 60% { transform: scaleY(.45); } 80% { transform: scaleY(.9); } }
+      @keyframes cf-blink { 0%, 95%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+      @keyframes cf-pop { 0% { transform: scale(1); } 40% { transform: scale(1.14) translateY(-3px); } 100% { transform: none; } }
+      @keyframes cf-tilt { 0%, 100% { transform: none; } 30% { transform: rotate(-8deg); } 65% { transform: rotate(5deg); } }
+      .dl-card { position: relative; }
+      .dl-card .dl-t, .dl-card .dl-tt { padding-right: 104px; }
+      .dl-faces { position: absolute; top: 12px; right: 12px; display: flex; flex-direction: row-reverse; }
+      .dl-faces .cf { width: 34px; height: 34px; margin-left: -9px; border-radius: 50%; box-shadow: 0 0 0 2px #fff; }
+      .dl-card:hover .dl-faces .cf { box-shadow: 0 0 0 2px var(--lv-tint), 0 0 0 2px #fff; }
+      .dl-cast li.has-face { flex-direction: row; align-items: flex-start; gap: 14px; }
+      .dl-cast li.has-face > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+      .dl-b.them { position: relative; margin-left: 48px; max-width: calc(88% - 48px); }
+      .dl-b.them > .dl-face { position: absolute; left: -48px; top: -2px; }
+      .dl-endfaces { display: flex; justify-content: center; gap: 6px; margin: -4px 0 12px; }
+      /* the companion: rises from behind the dock at a run of right answers, or after one breaks */
+      .buddy-peek { position: absolute; bottom: 100%; right: max(16px, calc(50% - var(--col) / 2)); height: 84px; display: flex; align-items: flex-end; gap: 8px; overflow: hidden; pointer-events: none; padding: 0 2px; }
+      .buddy-peek .bp-av { transform: translateY(105%); transition: transform .32s cubic-bezier(.3, 1.4, .5, 1); }
+      .buddy-peek .bp-av svg { width: 60px; height: 60px; filter: drop-shadow(0 2px 3px rgb(0 0 0 / .12)); }
+      .buddy-peek .bp-say { margin-bottom: 30px; opacity: 0; transform: translateX(6px) scale(.9); transform-origin: right center; transition: opacity .2s ease .18s, transform .25s cubic-bezier(.3, 1.6, .5, 1) .18s; }
+      .buddy-peek.up .bp-av { transform: translateY(6px); }
+      .buddy-peek.up .bp-say { opacity: 1; transform: none; }
+      .buddy-peek.up .bp-av.hop svg { animation: buddy-hop .6s ease-out .3s 2; }
+      .buddy-peek.up .bp-av.sad svg { animation: cf-tilt .8s ease-in-out .3s; }
+      .bp-say, .end-buddy .bp-say { position: relative; display: flex; flex-direction: column; padding: 6px 11px; border-radius: 12px; background: #fff; border: 1px solid var(--line); box-shadow: 0 4px 14px rgb(0 0 0 / .08); white-space: nowrap; text-align: left; }
+      .bp-say b { font-family: var(--serif, inherit); font-size: 16px; color: var(--ink); font-weight: 650; line-height: 1.25; }
+      .bp-say small { font-size: 12px; color: var(--muted); }
+      .bp-say::after { content: ""; position: absolute; right: -6px; bottom: 10px; width: 10px; height: 10px; background: #fff; border-right: 1px solid var(--line); border-top: 1px solid var(--line); transform: rotate(45deg); }
+      @keyframes buddy-hop { 0%, 100% { transform: none; } 35% { transform: translateY(-10px) rotate(-4deg); } 60% { transform: translateY(0) scaleY(.94); } }
+      .end-top { display: flex; justify-content: center; align-items: flex-end; gap: 4px; margin-bottom: 14px; }
+      .end-top .badge { margin: 0; }
+      .end-buddy { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-right: -64px; animation: rise-in .4s ease-out .5s both; }
+      .end-buddy .bp-say { order: -1; }
+      .end-buddy .bp-say::after { left: 14px; right: auto; bottom: -6px; transform: rotate(135deg); }
+      .end-buddy svg { animation: buddy-hop .6s ease-out 1s 2; }
+      .end-buddy.sad svg { animation: cf-tilt .8s ease-in-out 1s; }
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { transition: none !important; animation: none !important; }
       }
@@ -672,9 +725,24 @@
       .tw-t.laid[data-lvl="c2"]::after { border-color: rgb(43 32 6 / .35); }
       .tw-t.laid::before, .tw-t.gold::before { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .85); border-radius: 1px; transform: rotate(45deg); }
       .tw-t.laid::after, .tw-t.gold::after { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .55); border-radius: 1px; }
+      /* FX-1 (PROJECT.md 3): chunky buttons. A solid bottom edge a shade darker than the button, and the button sinks onto it
+         when pressed. The same rules sit in the four pages' shared block; --edge is the colour of the edge. */
+      .btn:not(.ghost), .opt, .tile, .dl-opt, .grade { --edge: #d6d5cf; box-shadow: 0 3px 0 var(--edge); transition: transform .08s ease-out, box-shadow .08s ease-out, background-color .15s, border-color .15s, color .15s; }
+      .opt, .tile, .dl-opt { border-bottom-width: 1px; }
+      .btn.primary, .grade.good { --edge: #12506c; }
+      .opt.sel { --edge: var(--blue); }
+      .opt.right { --edge: #9ccaae; }
+      .opt.wrong, .grade.again { --edge: #e6aba2; }
+      .grade.easy { --edge: rgb(40 122 158 / 45%); }
+      .dock.ok .go { --edge: #1a4d2f; }
+      .dock.bad .go { --edge: #6b170f; }
+      .dock.almost .go { --edge: #4f3605; }
+      .btn:not(.ghost):not(:disabled):active, .opt:not(.off):active, .tile:not(:disabled):not(.used):active, .dl-opt:not(.struck):active, .grade:not(:disabled):active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+      .btn:disabled, .tile.used, .tile:disabled, .opt.off:not(.right):not(.wrong), .dl-opt.struck { box-shadow: none; }
     </style>
     <script defer src="/assets/js/turkish.js?v=20261106"></script>
     <script defer src="/assets/js/turkish-account.js"></script>
+    <script defer src="/assets/js/turkish-cast.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -740,6 +808,7 @@
       var T = window.TRK;
       if (!T) { $("stage").innerHTML = '<p class="notice err">The course script didn\'t load. Reload the page to try again.</p>'; return; }
       var store = T.store, esc = T.esc, C = T.C, P = C.PAGES;
+      var CAST = T.cast || null;   // FX-1: faces and the companion (turkish-cast.js); the page works without them
       store.course(); store.cards(); store.settings();   // read all three now, so a storage problem shows at once
       var stage = $("stage"), dock = $("dock"), go = $("go"), fb = $("fb"), dockLeft = $("dock-left");
       var params = new URLSearchParams(location.search);
@@ -1062,6 +1131,7 @@
 
       // ───────────── 3b. the flow: show, check, feedback, next ─────────────
       function next() {
+        unpeek();
         if (S.stop || !S.queue.length) return end();
         S.cur = S.queue.shift();
         render(S.cur);
@@ -1126,6 +1196,7 @@
           if (T.account && T.account.recordAttempt) T.account.recordAttempt(it.ex.id, ok);   // anonymous exercise stats (item_stats)
           if (got && S.xpPer) { S.xpGot += got * S.xpPer; drawXp(true); }
         }
+        S.broke = ok ? 0 : S.streak;   // FX-1: the run this answer ended, for the companion
         S.streak = ok ? S.streak + 1 : 0; drawStreak(ok);
         var again = !ok && S.retries && it.ex.type !== "open" && it.attempts <= C.RETRIES;
         if (again) { it.retry = true; S.queue.push(it); } else it.done = true;
@@ -1153,7 +1224,24 @@
         go.hidden = false; go.disabled = false;
         go.textContent = S.stop || (!S.queue.length) ? "See the result" : "Continue";
         go.focus({ preventScroll: true });
+        // FX-1: the companion only at a run of right answers (3, 5, 10, then every 5) or when a run of 3 or more breaks
+        var n = S.streak;
+        if (ok && kind === "ok" && (n === 3 || n === 5 || n === 10 || (n > 10 && n % 5 === 0))) peek(CAST && CAST.cheer("streak", n), "hop");
+        else if (!ok && S.broke >= 3) peek(CAST && CAST.cheer("oops"), "sad");
       }
+      // The learner's character rises from behind the dock with a short Turkish phrase, then goes back down (FX-1).
+      var peekT = null;
+      function peek(say, kind) {
+        var av = CAST && say ? CAST.buddy(60) : "";
+        if (!av) return;
+        var el = $("buddy-peek");
+        if (!el) { el = document.createElement("div"); el.id = "buddy-peek"; el.className = "buddy-peek"; el.setAttribute("aria-hidden", "true"); dock.appendChild(el); }
+        el.innerHTML = '<span class="bp-say"><b lang="tr">' + esc(say.tr) + "</b><small>" + esc(say.en) + '</small></span><span class="bp-av ' + kind + '">' + av + "</span>";
+        el.classList.remove("up"); void el.offsetWidth;
+        requestAnimationFrame(function () { el.classList.add("up"); });
+        clearTimeout(peekT); peekT = setTimeout(unpeek, 2800);
+      }
+      function unpeek() { clearTimeout(peekT); var el = $("buddy-peek"); if (el) el.classList.remove("up"); }
 
       // ───────────── 4. the ten exercise types (5.5) ─────────────
       // R(ex, box, api) fills box and returns { instr, ready(), check() → result, key(digit)?, focus()?, shown()?, checkLabel?, noCheck? }.
@@ -1728,7 +1816,9 @@
       }
       function endScreen(o) {
         var res = o.res, score = S.counted ? S.correct / S.counted : 0;
-        var h = '<div class="end"><div class="badge' + (o.ok ? "" : " fail") + '">' + (o.ok ? ICON.trophy : ICON.retry) + "</div>" +
+        var perfect = o.ok && S.counted && S.correct === S.counted, say = CAST && CAST.cheer(!o.ok ? "retry" : perfect ? "perfect" : "done"), av = say ? CAST.buddy(64) : "";
+        var h = '<div class="end"><div class="end-top"><div class="badge' + (o.ok ? "" : " fail") + '">' + (o.ok ? ICON.trophy : ICON.retry) + "</div>" +
+          (av ? '<div class="end-buddy' + (o.ok ? "" : " sad") + '" aria-hidden="true"><span class="bp-say"><b lang="tr">' + esc(say.tr) + "</b><small>" + esc(say.en) + "</small></span>" + av + "</div>" : "") + "</div>" +
           '<p class="kicker">' + esc(o.kicker) + "</p><h1>" + esc(o.title) + '</h1><p class="end-sub">' + esc(o.sub) + "</p>";
         var stats = ['<div class="stat"><div><div class="big">' + pct(score) + '</div><div class="lbl">right on the first try · ' + S.correct + " of " + S.counted + "</div></div></div>"];
         if (!o.noXp) {
@@ -2312,7 +2402,8 @@
           h += '<section data-lvl="' + l.id + '" aria-labelledby="dl-h-' + l.id + '"><h2 class="dl-lv" id="dl-h-' + l.id + '"><span class="lv-tag">' + esc(l.cefr) + "</span>" + esc(l.title) + '</h2><ul class="dl-cards">' +
             ds.map(function (d) {
               var who = d.cast.map(function (c) { return esc(c.role) + " " + regChip(c.register); }).join(", ");
-              return '<li><a class="dl-card" href="' + dHref(d.id) + '"><span class="dl-t">' + esc(d.title) + '</span><span class="dl-tt" lang="tr">' + esc(d.titleTr) + "</span>" +
+              var faces = CAST ? '<span class="dl-faces" aria-hidden="true">' + d.cast.map(function (c, k) { return CAST.face(d.id, k, 34); }).join("") + "</span>" : "";
+              return '<li><a class="dl-card" href="' + dHref(d.id) + '">' + faces + '<span class="dl-t">' + esc(d.title) + '</span><span class="dl-tt" lang="tr">' + esc(d.titleTr) + "</span>" +
                 '<span class="dl-meta">' + d.minutes + " min · with " + who + "</span></a>" + '<span class="dl-after">Best after ' + refLink(d.after) + "</span></li>";
             }).join("") + "</ul></section>";
         });
@@ -2332,7 +2423,8 @@
         document.title = D.title + " · Conversation · Daily Turkish";
         S.phase = "dstart"; showBar(false);
         var cast = D.cast.map(function (p) {
-          return '<li><span><b lang="tr">' + esc(p.name) + "</b>" + regChip(p.register) + '</span><span class="dl-cr">' + esc(p.role) + ". " + rich(p.why) + "</span></li>";
+          var info = '<span><b lang="tr">' + esc(p.name) + "</b>" + regChip(p.register) + '</span><span class="dl-cr">' + esc(p.role) + ". " + rich(p.why) + "</span>";
+          return CAST ? '<li class="has-face">' + CAST.face(D.id, p, 52, { live: true }) + "<div>" + info + "</div></li>" : "<li>" + info + "</li>";
         }).join("");
         screen('<div class="start dl-start"><p class="kicker">Conversation · ' + esc(D.level.toUpperCase()) + "</p><h1>" + esc(D.title) + '</h1><p class="dl-tt big" lang="tr">' + esc(D.titleTr) + "</p>" +
           '<p class="goal">' + rich(D.setting) + '</p><p class="dl-goal"><b>You practise:</b> ' + esc(D.goal) + "</p>" +
@@ -2376,23 +2468,41 @@
       function dLine(id) {
         var n = G.nodes[id];
         if (!n) return message({ title: "This conversation has a broken link", text: "Its next line is missing. Try another conversation.", acts: '<a class="btn primary" href="' + dHref() + '">All conversations</a>' });
-        var p = dPerson(n.who);
-        dBubble({ who: n.who, tr: n.tr, en: n.en, note: n.note });
-        if (n.next) return dSay({ tr: n.tr, pitch: p.pitch }, function () { dLine(n.next); });
-        dSay({ tr: n.tr, pitch: p.pitch });
+        var p = dPerson(n.who), face = dFaceOf(dBubble({ who: n.who, tr: n.tr, en: n.en, note: n.note }));
+        if (n.next) return dSay({ tr: n.tr, pitch: p.pitch, face: face }, function () { dLine(n.next); });
+        dSay({ tr: n.tr, pitch: p.pitch, face: face });
         if (n.turn) dTurn(n); else dEndReady(n);
       }
       // Speaks a line. With then: called once it has been read (or at once, a moment later, without speech).
       function dSay(line, then) {
         var token = G.token = {}, done = false, safety = null;
         G.last = line;
-        var fin = function () { if (done) return; done = true; clearTimeout(safety); if (then && G.token === token) setTimeout(then, 250); };
+        var fin = function () { if (done) return; done = true; clearTimeout(safety); dTalk(line.face, false); if (then && G.token === token) setTimeout(then, 250); };
         var u = S.speech ? T.tts.speak(line.tr, { pitch: line.pitch }) : false;
-        if (!u) { if (then) setTimeout(fin, S.speech ? 0 : 600); return; }
+        if (!u) {   // shown, not read: the face still mouths the line for a moment (FX-1)
+          if (line.face && !reduce) { dTalk(line.face, true); setTimeout(function () { dTalk(line.face, false); }, Math.min(2400, 500 + line.tr.length * 40)); }
+          if (then) setTimeout(fin, S.speech ? 0 : 600);
+          return;
+        }
+        u.onstart = function () { dTalk(line.face, true); };
         u.onend = fin; u.onerror = fin;
         safety = setTimeout(fin, 4000 + line.tr.length * 120 / (store.settings().ttsRate || 0.9));   // if a browser never fires end
       }
-      function dReplay(line, slow) { if (!line || !S.speech) return; G.last = line; T.tts.speak(line.tr, { pitch: line.pitch, slow: !!slow }); }
+      function dReplay(line, slow) {
+        if (!line || !S.speech) return;
+        G.last = line;
+        var u = T.tts.speak(line.tr, { pitch: line.pitch, slow: !!slow });
+        if (u && line.face) { u.onstart = function () { dTalk(line.face, true); }; u.onend = u.onerror = function () { dTalk(line.face, false); }; }
+      }
+      // FX-1: faces. A bubble's face (only the latest one blinks), its mouth while a line is read, and the reaction of the
+      // person you answered: happy for a natural reply, a raised eyebrow for a register slip, puzzled for a miss.
+      function dFaceOf(el) { return el && el.querySelector(".cf"); }
+      function dTalk(face, on) { if (CAST && face) CAST.talk(face, on); }
+      function dReact(id, outcome) {
+        if (!CAST) return;
+        var all = $("dl-chat").querySelectorAll('.dl-b.them[data-who="' + id + '"] .cf'), f = all[all.length - 1];
+        if (f) CAST.mood(f, outcome === "natural" ? "happy" : outcome === "slip" ? "unsure" : "puzzled", !reduce);
+      }
       function dBubble(o) {
         var me = o.who === "me", p = me ? null : dPerson(o.who), hide = !me && G.listen && S.speech;
         G.log.push(o);
@@ -2401,7 +2511,9 @@
         tools += '<button type="button" class="dl-tl" aria-expanded="' + G.showEn + '">' + (G.showEn ? "Hide translation" : "Translate") + "</button>";
         var el = document.createElement("div");
         el.className = "dl-b " + (me ? "me" : "them") + (hide ? " hid" : "") + (reduce ? "" : " in");
-        el.innerHTML = (me ? '<div class="dl-who">You</div>' : '<div class="dl-who" lang="tr">' + esc(p.name) + "</div>") +
+        if (!me) el.setAttribute("data-who", o.who);
+        if (!me && CAST) $("dl-chat").querySelectorAll(".cf.live").forEach(function (f) { f.classList.remove("live"); });
+        el.innerHTML = (!me && CAST ? '<span class="dl-face">' + CAST.face(G.D.id, p, 38, { live: true }) + "</span>" : "") + (me ? '<div class="dl-who">You</div>' : '<div class="dl-who" lang="tr">' + esc(p.name) + "</div>") +
           '<p class="dl-tr" lang="tr"' + (hide ? " hidden" : "") + ">" + esc(o.tr) + "</p>" + (hide ? '<button type="button" class="dl-show">Show the words</button>' : "") +
           '<p class="dl-en"' + (G.showEn ? "" : " hidden") + ">" + esc(o.en) + "</p>" + '<div class="dl-tools">' + tools + "</div>" +
           (o.mark || "") + (o.note ? '<div class="dl-note">' + rich(o.note) + "</div>" : "");
@@ -2410,7 +2522,7 @@
         el.addEventListener("click", function (e) {
           var b = e.target.closest("button");
           if (!b) return;
-          if (b.classList.contains("dl-say")) dReplay({ tr: o.tr, pitch: p && p.pitch }, b.getAttribute("data-slow"));
+          if (b.classList.contains("dl-say")) dReplay({ tr: o.tr, pitch: p && p.pitch, face: dFaceOf(el) }, b.getAttribute("data-slow"));
           else if (b.classList.contains("dl-show")) dReveal(el);
           else if (b.classList.contains("dl-tl")) {
             var en = el.querySelector(".dl-en"), open = en.hidden;
@@ -2517,6 +2629,7 @@
         var mark = outcome === "slip" ? '<span class="dl-mark slip"><span lang="tr">' + r.register + '</span>&nbsp;→&nbsp;<span lang="tr">' + p.register + "</span></span>"
           : outcome === "miss" ? '<span class="dl-mark miss">Not quite</span>' : "";
         dBubble({ who: "me", tr: r.tr, en: r.en, mark: mark });
+        dReact(p.id, outcome);
         if (outcome === "natural" && !r.why && !almost) { S.phase = "dtalk"; dock.hidden = true; return dLine(r.next); }
         var kind = outcome === "miss" ? "bad" : outcome === "slip" || almost ? "almost" : "ok";
         var title = outcome === "miss" ? "Not quite" : outcome === "slip" ? "Right words, wrong register" : almost ? "Almost right" : "Natural";
@@ -2534,7 +2647,7 @@
         if (r.next) { go.textContent = "Continue"; G.after = function () { S.phase = "dtalk"; dock.hidden = true; dLine(r.next); }; }
         else {   // they react, and the turn comes again without this reply
           G.struck[i] = true; G.draft = "";
-          if (r.react) { dBubble({ who: p.id, tr: r.react.tr, en: r.react.en }); dSay({ tr: r.react.tr, pitch: p.pitch }); }
+          if (r.react) { var rf = dFaceOf(dBubble({ who: p.id, tr: r.react.tr, en: r.react.en })); if (CAST && rf) CAST.mood(rf, "puzzled"); dSay({ tr: r.react.tr, pitch: p.pitch, face: rf }); }
           go.textContent = "Try again"; G.after = dInput;
         }
         go.hidden = false; go.disabled = false; go.focus({ preventScroll: true });
@@ -2583,7 +2696,8 @@
         var log = '<details class="dl-sec dl-log"><summary>The whole conversation</summary><dl class="x-script">' + G.log.map(function (o) {
           return "<dt>" + (o.who === "me" ? "You" : '<span lang="tr">' + esc(dPerson(o.who).name) + "</span>") + '</dt><dd><span lang="tr">' + esc(o.tr) + '</span><br><span class="dl-pe">' + esc(o.en) + "</span></dd>";
         }).join("") + "</dl></details>";
-        screen('<div class="end dl-end"><div class="badge">' + ICON.trophy + '</div><p class="kicker">Conversation over</p><h1>' + esc(D.title) + '</h1><p class="end-sub">' + esc(G.end.end) + "</p>" + stats +
+        var endFaces = CAST ? '<div class="dl-endfaces" aria-hidden="true">' + D.cast.map(function (p) { return CAST.face(D.id, p, 48, { mood: "happy" }); }).join("") + "</div>" : "";
+        screen('<div class="end dl-end"><div class="badge">' + ICON.trophy + "</div>" + endFaces + '<p class="kicker">Conversation over</p><h1>' + esc(D.title) + '</h1><p class="end-sub">' + esc(G.end.end) + "</p>" + stats +
           '<p class="dl-again">It can go another way next time: try other replies.</p>' + acts + phrases + again + rev + log + "</div>", true);
       }
       document.addEventListener("keydown", function (e) {

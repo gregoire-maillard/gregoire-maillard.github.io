@@ -393,6 +393,20 @@
       .tw-t.laid[data-lvl="c2"]::after { border-color: rgb(43 32 6 / .35); }
       .tw-t.laid::before, .tw-t.gold::before { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .85); border-radius: 1px; transform: rotate(45deg); }
       .tw-t.laid::after, .tw-t.gold::after { content: ""; position: absolute; inset: 26%; border: 1.5px solid rgb(255 255 255 / .55); border-radius: 1px; }
+      /* FX-1 (PROJECT.md 3): chunky buttons. A solid bottom edge a shade darker than the button, and the button sinks onto it
+         when pressed. The same rules sit in the four pages' shared block; --edge is the colour of the edge. */
+      .btn:not(.ghost), .opt, .tile, .dl-opt, .grade { --edge: #d6d5cf; box-shadow: 0 3px 0 var(--edge); transition: transform .08s ease-out, box-shadow .08s ease-out, background-color .15s, border-color .15s, color .15s; }
+      .opt, .tile, .dl-opt { border-bottom-width: 1px; }
+      .btn.primary, .grade.good { --edge: #12506c; }
+      .opt.sel { --edge: var(--blue); }
+      .opt.right { --edge: #9ccaae; }
+      .opt.wrong, .grade.again { --edge: #e6aba2; }
+      .grade.easy { --edge: rgb(40 122 158 / 45%); }
+      .dock.ok .go { --edge: #1a4d2f; }
+      .dock.bad .go { --edge: #6b170f; }
+      .dock.almost .go { --edge: #4f3605; }
+      .btn:not(.ghost):not(:disabled):active, .opt:not(.off):active, .tile:not(:disabled):not(.used):active, .dl-opt:not(.struck):active, .grade:not(:disabled):active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+      .btn:disabled, .tile.used, .tile:disabled, .opt.off:not(.right):not(.wrong), .dl-opt.struck { box-shadow: none; }
     </style>
     <script defer src="/assets/js/turkish.js?v=20261106"></script>
     <script defer src="/assets/js/turkish-account.js"></script>

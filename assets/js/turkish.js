@@ -23,6 +23,8 @@
   var TRK = factory(root);
   if (typeof module === "object" && module.exports) module.exports = TRK;
   if (root && root.document) root.TRK = TRK;
+  // FX-1: iOS Safari shows :active (the chunky buttons sinking) only once the page listens to touches
+  if (root && root.document && root.addEventListener) root.document.addEventListener("touchstart", function () {}, { passive: true });
 })(typeof window !== "undefined" ? window : globalThis, function (root) {
   "use strict";
 

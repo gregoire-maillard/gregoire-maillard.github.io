@@ -33,7 +33,7 @@ const OUT = join(APP, "www");
 
 const FILES = [
   "turkish.html", "turkishcards.html", "turkishguide.html", "turkishlesson.html", "turkishprivacy.html",
-  "assets/js/turkish.js", "assets/js/turkish-account.js",
+  "assets/js/turkish.js", "assets/js/turkish-account.js", "assets/js/turkish-cast.js",
   "assets/data/turkish", "assets/fonts",
   "assets/img/favicon.png", "assets/img/ataturk.png", "assets/img/ataturk.webp",
   "assets/img/daily-turkish-favicon.svg", "assets/img/daily-turkish-favicon.png",
