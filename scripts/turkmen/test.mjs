@@ -307,6 +307,23 @@ test("real content: every accepted answer is correct, every rejected answer wron
   if (LESSONS.length) assert.ok(n > 50, `only ${n} accepted answers found`);
 });
 
+test("real content: a question particle typed apart is almost (particle), in every exercise that asks with -mY (A1-2)", () => {
+  // the particle is written attached (TM-PROJECT.md 7.1); typed apart it is never accepted but "almost" (6.4, 7.3)
+  const host = /^(\p{L}+?)(m[yi])(\?)?$/u, seen = new Set();
+  for (const [w, e, i, s] of typedSpecs()) {
+    if (s.lang !== "tk") continue;
+    const words = s.accept[0].replace(/[.,!—–]/g, " ").split(/\s+/).filter(Boolean);
+    const k = words.findIndex(x => host.test(x) && /^(.*)(my|mi)\??$/u.test(x) && TKM.joinParticle(TKM.norm(x.replace(host, "$1 $2$3"), "tk")) === TKM.norm(x, "tk"));
+    if (k < 0) continue;
+    const apart = words.map((x, j) => j === k ? x.replace(host, "$1 $2$3") : x).join(" ");
+    const r = TKM.checkExercise(e, apart, i);
+    if (r.verdict === "correct") continue;   // a word that only looks like it ends in the particle (kim, gelmi…) is left alone
+    assert.deepEqual([r.verdict, r.note], ["almost", "particle"], `${w}: “${apart}”`);
+    seen.add(e.id);
+  }
+  for (const id of ["a1-u04-l02-e04", "a1-u05-l01-e11", "a1-u06-l03-e04"]) assert.ok(seen.has(id), `${id} should ask with -mY`);
+});
+
 // ─────────────────────────── 5.1 the renderer ───────────────────────────
 test("rich: Turkmen, bold, code, escaped asterisk", () => {
   const h = TKM.rich("*öý* means **house**; `-dA` is a suffix; 2 \\* 3");

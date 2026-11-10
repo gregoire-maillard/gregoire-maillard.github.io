@@ -1,0 +1,218 @@
+{
+  "id": "a1-u05-l02",
+  "unit": "a1-u05",
+  "order": 2,
+  "title": "Is there a café here?",
+  "goal": "Say what there is and isn't somewhere with bar and ýok, and ask about it.",
+  "points": ["gp-bar-yok", "gp-locative"],
+  "intro": {
+    "text": "*bar* says that something is there, *ýok* that it isn't. Both come at the end, usually after a place: *Bu ýerde kafe bar* (there is a café here), *Aşhanada suw ýok* (there is no water in the kitchen).",
+    "see": "gp-bar-yok"
+  },
+  "vocab": [
+    {
+      "tk": "bar",
+      "en": "there is, there are",
+      "pos": "adj",
+      "card": "fc-0015"
+    },
+    {
+      "tk": "ýok",
+      "en": "there is not, there are not",
+      "pos": "adj",
+      "card": "fc-0027"
+    },
+    {
+      "tk": "bu ýerde",
+      "en": "here",
+      "pos": "adv",
+      "card": "fc-0025"
+    },
+    {
+      "tk": "dükan",
+      "en": "shop",
+      "pos": "noun"
+    },
+    {
+      "tk": "kafe",
+      "en": "café",
+      "pos": "noun"
+    },
+    {
+      "tk": "bazar",
+      "en": "market",
+      "pos": "noun"
+    },
+    {
+      "tk": "hassahana",
+      "en": "hospital",
+      "pos": "noun"
+    },
+    {
+      "tk": "kitaphana",
+      "en": "library",
+      "pos": "noun"
+    },
+    {
+      "tk": "suw",
+      "en": "water",
+      "pos": "noun",
+      "card": "fc-0195"
+    },
+    {
+      "tk": "köp",
+      "en": "many, a lot",
+      "pos": "adv",
+      "card": "fc-0017"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u05-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["dükan", "shop"],
+        ["kafe", "café"],
+        ["bazar", "market"],
+        ["hassahana", "hospital"],
+        ["kitaphana", "library"],
+        ["suw", "water"]
+      ]
+    },
+    {
+      "id": "a1-u05-l02-e02",
+      "type": "mcq",
+      "points": ["gp-bar-yok"],
+      "question": "How do you say **There is a café here**?",
+      "options": ["Bu ýerde kafe bar.", "Bu ýerde kafe.", "Bu ýerde kafe ýok.", "Bu ýerde bar kafe."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "To say that something **is there**, end with *bar*.",
+        "2": "*ýok* says that there **isn't** one.",
+        "3": "*bar* comes at the end of the sentence."
+      },
+      "explain": "Place, thing, *bar*: *Bu ýerde kafe bar*."
+    },
+    {
+      "id": "a1-u05-l02-e03",
+      "type": "translate",
+      "points": ["gp-bar-yok"],
+      "from": "tk",
+      "prompt": "Otagda stol bar, oturgyç ýok.",
+      "accept": [
+        "There is a table in the room, there is no chair.",
+        "There is a table in the room but no chair.",
+        "There is a table in the room, but there is no chair."
+      ]
+    },
+    {
+      "id": "a1-u05-l02-e04",
+      "type": "translate",
+      "points": ["gp-bar-yok", "gp-question-my"],
+      "from": "en",
+      "prompt": "Is there a hospital in the village?",
+      "accept": ["Obada hassahana barmy?"],
+      "explain": "Place first (*obada*), then the thing, then *barmy?*"
+    },
+    {
+      "id": "a1-u05-l02-e05",
+      "type": "cloze",
+      "points": ["gp-bar-yok", "gp-question-my"],
+      "text": "Bu ýerde dükan ___? — Ýok, dükan ___.",
+      "en": "Is there a shop here? — No, there isn't a shop.",
+      "blanks": [
+        {
+          "accept": ["barmy"]
+        },
+        {
+          "accept": ["ýok"],
+          "reject": [
+            {
+              "answer": "däl",
+              "why": "*däl* says what something is **not**. To say that something **isn't there**, use *ýok*."
+            }
+          ]
+        }
+      ],
+      "explain": "*barmy?* asks whether it is there; *ýok* answers that it isn't."
+    },
+    {
+      "id": "a1-u05-l02-e06",
+      "type": "translate",
+      "points": ["gp-bar-yok"],
+      "from": "en",
+      "prompt": "There is no water in the kitchen.",
+      "accept": ["Aşhanada suw ýok."],
+      "reject": [
+        {
+          "answer": "Aşhanada suw däl.",
+          "why": "*däl* says what something is **not**. To say there **isn't any**, use *ýok*: *suw ýok*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u05-l02-e07",
+      "type": "mcq",
+      "points": ["gp-bar-yok"],
+      "question": "*Şäherde kafe köp.* What does it mean?",
+      "options": ["There are many cafés in the city.", "There is one café in the city.", "There are no cafés in the city."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*köp* means **many**, **a lot**.",
+        "2": "That would end in *ýok*."
+      },
+      "explain": "*köp*: many. After *köp* the noun usually stays singular: *kafe köp*."
+    },
+    {
+      "id": "a1-u05-l02-e08",
+      "type": "translate",
+      "points": ["gp-bar-yok", "gp-question-my"],
+      "from": "tk",
+      "prompt": "Bu ýerde kitaphana ýokmy?",
+      "accept": ["Is there no library here?", "Isn't there a library here?", "Is there not a library here?"]
+    },
+    {
+      "id": "a1-u05-l02-e09",
+      "type": "wordbank",
+      "points": ["gp-bar-yok"],
+      "from": "tk",
+      "prompt": "Bazarda çaý köp.",
+      "text": "There is a lot of tea at the market.",
+      "answer": ["There", "is", "a", "lot", "of", "tea", "at", "the", "market"],
+      "distractors": ["no", "many", "coffee"]
+    },
+    {
+      "id": "a1-u05-l02-e10",
+      "type": "translate",
+      "points": ["gp-bar-yok", "gp-answers"],
+      "from": "en",
+      "prompt": "Is there water? — Yes, there is.",
+      "accept": ["Suw barmy? — Hawa, bar."]
+    },
+    {
+      "id": "a1-u05-l02-e11",
+      "type": "mcq",
+      "points": ["gp-bar-yok", "gp-dal"],
+      "question": "The café exists, but it isn't **here**. Which sentence fits?",
+      "options": ["Kafe bu ýerde däl.", "Bu ýerde kafe ýok.", "Kafe ýok däl."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "This says there is no café here at all.",
+        "2": "*ýok* and *däl* don't go together like this."
+      },
+      "explain": "*bu ýerde* is a description of where the café is, and a description is negated with *däl*."
+    },
+    {
+      "id": "a1-u05-l02-e12",
+      "type": "translate",
+      "points": ["gp-bar-yok", "gp-locative"],
+      "from": "en",
+      "prompt": "There are many shops in Ashgabat.",
+      "accept": ["Aşgabatda dükan köp.", "Aşgabatda dükanlar köp."],
+      "explain": "The place first, *Aşgabatda*, then the thing, then *köp*."
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "id": "a1-u04-l02",
+  "unit": "a1-u04",
+  "order": 2,
+  "title": "Are you ready?",
+  "goal": "Ask yes-no questions with -mY written onto the word, and answer them.",
+  "points": ["gp-question-my", "gp-answers", "gp-dal"],
+  "intro": {
+    "text": "To ask a yes-no question, add `-mY` to the word you ask about, with no space: *-my* after a back vowel, *-mi* after a front one. *Sen ýadawmy?* (Are you tired?), *Bu täzemi?* (Is this new?)",
+    "see": "gp-question-my"
+  },
+  "vocab": [
+    {
+      "tk": "-my",
+      "en": "question particle: written onto the word (-mi after a front vowel)",
+      "pos": "particle",
+      "card": "fc-0003"
+    },
+    {
+      "tk": "elbetde",
+      "en": "of course",
+      "pos": "adv",
+      "card": "fc-0134"
+    },
+    {
+      "tk": "dogry",
+      "en": "right, correct",
+      "pos": "adj",
+      "card": "fc-0112"
+    },
+    {
+      "tk": "ýalňyş",
+      "en": "wrong",
+      "pos": "adj"
+    },
+    {
+      "tk": "taýýar",
+      "en": "ready",
+      "pos": "adj"
+    },
+    {
+      "tk": "meşgul",
+      "en": "busy",
+      "pos": "adj"
+    },
+    {
+      "tk": "boş",
+      "en": "free; empty",
+      "pos": "adj"
+    },
+    {
+      "tk": "aňsat",
+      "en": "easy",
+      "pos": "adj"
+    },
+    {
+      "tk": "kyn",
+      "en": "difficult, hard",
+      "pos": "adj",
+      "card": "fc-0120"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u04-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["taýýar", "ready"],
+        ["meşgul", "busy"],
+        ["boş", "free"],
+        ["aňsat", "easy"],
+        ["kyn", "difficult"],
+        ["ýalňyş", "wrong"]
+      ]
+    },
+    {
+      "id": "a1-u04-l02-e02",
+      "type": "mcq",
+      "points": ["gp-question-my"],
+      "question": "How do you ask **Are you tired?** (to a friend)",
+      "options": ["Sen ýadawmy?", "Sen ýadaw my?", "Sen ýadawmi?", "Sen ýadawmu?"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The particle is written onto the word: *ýadawmy*.",
+        "2": "The last vowel of *ýadaw* is *a*, a back vowel, so the particle is *-my*.",
+        "3": "The particle's own vowel is never *u*: *-my*."
+      },
+      "explain": "*ýadaw* + *-my*: one word. Your voice rises on it, as in an English question."
+    },
+    {
+      "id": "a1-u04-l02-e03",
+      "type": "morph",
+      "points": ["gp-question-my"],
+      "base": "täze",
+      "gloss": "Is it new?",
+      "parts": ["täze", "mi"],
+      "distractors": ["my", "mu", "me"],
+      "result": "täzemi",
+      "explain": "The last vowel of *täze* is *e*, a front vowel: *-mi*. The particle's own vowel never becomes *u* or *ü*."
+    },
+    {
+      "id": "a1-u04-l02-e04",
+      "type": "translate",
+      "points": ["gp-question-my", "gp-personal-pronouns"],
+      "from": "en",
+      "prompt": "Are you busy? (to a friend)",
+      "accept": ["Sen meşgulmy?", "Sen meşgulmysyň?", "Meşgulmysyň?"],
+      "reject": [
+        {
+          "answer": "Meşgulmy?",
+          "why": "Without a subject, *meşgulmy?* could be about anyone. Keep *sen*: *Sen meşgulmy?*"
+        }
+      ],
+      "explain": "*meşgul* ends in the back vowel *u*: *-my*. Written onto the word: *meşgulmy*."
+    },
+    {
+      "id": "a1-u04-l02-e05",
+      "type": "cloze",
+      "points": ["gp-question-my"],
+      "text": "Bu kitap aňsat___?",
+      "en": "Is this book easy?",
+      "blanks": [
+        {
+          "accept": ["my"],
+          "reject": [
+            {
+              "answer": "mi",
+              "why": "The last vowel of *aňsat* is *a*, a back vowel: *-my*."
+            }
+          ]
+        }
+      ],
+      "explain": "*aňsat* ends in back *a*: *aňsatmy?*"
+    },
+    {
+      "id": "a1-u04-l02-e06",
+      "type": "translate",
+      "points": ["gp-question-my"],
+      "from": "tk",
+      "prompt": "Siz taýýarmy?",
+      "accept": ["Are you ready?"]
+    },
+    {
+      "id": "a1-u04-l02-e07",
+      "type": "mcq",
+      "points": ["gp-answers", "gp-dal"],
+      "question": "*Çaý gyzgynmy?* — *Ýok, …* How does the answer go on?",
+      "options": ["gyzgyn däl.", "gyzgynmy.", "gyzgyn ýok.", "däl gyzgyn."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The answer is a statement, not a question: no *-my*.",
+        "2": "For **not hot**, use *däl*, not *ýok*.",
+        "3": "*däl* comes after the word."
+      },
+      "explain": "*Ýok, gyzgyn däl*: no, it isn't hot."
+    },
+    {
+      "id": "a1-u04-l02-e08",
+      "type": "translate",
+      "points": ["gp-question-my"],
+      "from": "en",
+      "prompt": "Is the tea hot?",
+      "accept": ["Çaý gyzgynmy?"],
+      "explain": "The question is about *gyzgyn*, so the particle goes on it: *gyzgynmy?*"
+    },
+    {
+      "id": "a1-u04-l02-e09",
+      "type": "cloze",
+      "points": ["gp-question-my", "gp-dal"],
+      "text": "Sen talyp ___? — Ýok, men mugallym.",
+      "en": "Aren't you a student? — No, I'm a teacher.",
+      "blanks": [
+        {
+          "options": ["dälmi", "däl mi", "ýokmy"],
+          "answer": 0
+        }
+      ],
+      "explain": "*däl* takes the particle too, written onto it: *dälmi?*"
+    },
+    {
+      "id": "a1-u04-l02-e10",
+      "type": "wordbank",
+      "points": ["gp-answers"],
+      "from": "tk",
+      "prompt": "Elbetde, men taýýar.",
+      "text": "Of course, I am ready.",
+      "answer": ["Of", "course", "I", "am", "ready"],
+      "distractors": ["busy", "you", "not"]
+    },
+    {
+      "id": "a1-u04-l02-e11",
+      "type": "translate",
+      "points": ["gp-dal"],
+      "from": "tk",
+      "prompt": "Bu dogry däl.",
+      "accept": ["This is not right.", "This is not correct.", "That is not [right|correct]", "This is wrong"]
+    },
+    {
+      "id": "a1-u04-l02-e12",
+      "type": "mcq",
+      "points": ["gp-question-my"],
+      "question": "Which question asks whether it is **Merdan** at the door?",
+      "options": ["Merdanmy?", "Merdan meşgulmy?", "Merdan taýýarmy?"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "This asks whether Merdan is busy.",
+        "2": "This asks whether Merdan is ready."
+      },
+      "explain": "The particle goes on the word you ask about: *Merdanmy?* Is it Merdan?"
+    }
+  ]
+}

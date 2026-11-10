@@ -1,0 +1,222 @@
+{
+  "id": "a1-u05-l01",
+  "unit": "a1-u05",
+  "order": 1,
+  "title": "At home, at school",
+  "goal": "Say where someone or something is with -da and -de.",
+  "points": ["gp-locative"],
+  "intro": {
+    "text": "Add `-dA` to a noun to say where: *-da* after a back vowel, *-de* after a front one. *öýde* (at home), *otagda* (in the room), *mekdepde* (at school). The *d* never changes.",
+    "see": "gp-locative"
+  },
+  "vocab": [
+    {
+      "tk": "otag",
+      "en": "room",
+      "pos": "noun"
+    },
+    {
+      "tk": "aşhana",
+      "en": "kitchen",
+      "pos": "noun"
+    },
+    {
+      "tk": "synp",
+      "en": "classroom; class",
+      "pos": "noun"
+    },
+    {
+      "tk": "işhana",
+      "en": "office",
+      "pos": "noun"
+    },
+    {
+      "tk": "şäher",
+      "en": "city, town",
+      "pos": "noun"
+    },
+    {
+      "tk": "oba",
+      "en": "village",
+      "pos": "noun"
+    },
+    {
+      "tk": "nirede",
+      "en": "where",
+      "pos": "adv",
+      "card": "fc-0064"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u05-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["otag", "room"],
+        ["aşhana", "kitchen"],
+        ["synp", "classroom"],
+        ["işhana", "office"],
+        ["şäher", "city"],
+        ["oba", "village"]
+      ]
+    },
+    {
+      "id": "a1-u05-l01-e02",
+      "type": "mcq",
+      "points": ["gp-locative"],
+      "question": "How do you say **in the kitchen**?",
+      "options": ["aşhanada", "aşhanade", "aşhanata", "aşhanda"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The last vowel of *aşhana* is *a*, a back vowel, so the ending is *-da*.",
+        "2": "The *d* of this ending never changes: *-da*.",
+        "3": "The ending goes onto the whole word: *aşhana* + *-da*."
+      },
+      "explain": "Back vowel *a*: *aşhana* + *-da* = *aşhanada*."
+    },
+    {
+      "id": "a1-u05-l01-e03",
+      "type": "morph",
+      "points": ["gp-locative"],
+      "base": "mekdep",
+      "gloss": "At school",
+      "parts": ["mekdep", "de"],
+      "distractors": ["da", "te", "mekdeb"],
+      "result": "mekdepde",
+      "explain": "The last vowel is *e*, a front vowel: *-de*. The *d* never changes, and the *p* of *mekdep* stays before it: *mekdepde*."
+    },
+    {
+      "id": "a1-u05-l01-e04",
+      "type": "cloze",
+      "points": ["gp-locative"],
+      "text": "Aýna synp___, Merdan öý___.",
+      "en": "Aýna is in the classroom, Merdan is at home.",
+      "blanks": [
+        {
+          "accept": ["da"],
+          "reject": [
+            {
+              "answer": "de",
+              "why": "The last vowel of *synp* is *y*, a back vowel, so the ending takes *a*: *synpda*."
+            }
+          ]
+        },
+        {
+          "options": ["de", "da"],
+          "answer": 0
+        }
+      ],
+      "explain": "*synp* has the back vowel *y*: *-da*; *öý* has the front vowel *ö*: *-de*."
+    },
+    {
+      "id": "a1-u05-l01-e05",
+      "type": "translate",
+      "points": ["gp-locative", "gp-copula-present"],
+      "from": "en",
+      "prompt": "I am at home.",
+      "accept": ["Men öýde.", "(Men) öýdedirin."],
+      "reject": [
+        {
+          "answer": "Öýde.",
+          "why": "*Öýde* alone doesn't say who is at home, so keep the subject: *Men öýde*."
+        }
+      ],
+      "explain": "*öý* + *-de* (at home). After a pronoun, **to be** needs no word: *Men öýde*."
+    },
+    {
+      "id": "a1-u05-l01-e06",
+      "type": "translate",
+      "points": ["gp-locative"],
+      "from": "tk",
+      "prompt": "Mugallym synpda.",
+      "accept": ["The teacher is in the classroom.", "The teacher is in (the) class."]
+    },
+    {
+      "id": "a1-u05-l01-e07",
+      "type": "translate",
+      "points": ["gp-locative", "gp-question-words"],
+      "from": "en",
+      "prompt": "Where are you? (to a friend)",
+      "accept": ["Sen nirede?"],
+      "reject": [
+        {
+          "answer": "Sen niredemi?",
+          "why": "*nirede* already asks, so it takes no *-mi*: *Sen nirede?*"
+        }
+      ]
+    },
+    {
+      "id": "a1-u05-l01-e08",
+      "type": "mcq",
+      "points": ["gp-locative"],
+      "question": "Where is Döwran?",
+      "context": [
+        {
+          "who": "Merjen",
+          "tk": "Döwran, sen nirede?",
+          "en": "Döwran, where are you?"
+        },
+        {
+          "who": "Döwran",
+          "tk": "Men işhanada. Sen öýdemi?"
+        }
+      ],
+      "options": ["At the office.", "At home.", "At school."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Döwran asks whether **Merjen** is at home: *Sen öýdemi?*",
+        "2": "At school would be *mekdepde*."
+      },
+      "explain": "*Men işhanada*: *işhana* + *-da*, at the office."
+    },
+    {
+      "id": "a1-u05-l01-e09",
+      "type": "translate",
+      "points": ["gp-locative", "gp-dal"],
+      "from": "tk",
+      "prompt": "Olar şäherde däl, obada.",
+      "accept": [
+        "They are not in the city, they are in the village.",
+        "They are not in the town, they are in the village.",
+        "They are in the village, not in the city."
+      ]
+    },
+    {
+      "id": "a1-u05-l01-e10",
+      "type": "wordbank",
+      "points": ["gp-locative"],
+      "from": "en",
+      "prompt": "Where is the book? — On the table.",
+      "text": "Kitap nirede? — Stolda.",
+      "answer": ["Kitap", "nirede", "Stolda"],
+      "distractors": ["stol", "nireli", "haçan"]
+    },
+    {
+      "id": "a1-u05-l01-e11",
+      "type": "translate",
+      "points": ["gp-locative", "gp-question-my"],
+      "from": "en",
+      "prompt": "Is Merdan at school?",
+      "accept": ["Merdan mekdepdemi?"],
+      "explain": "The question is about the place, so the particle goes on it: *mekdepde* + *-mi*."
+    },
+    {
+      "id": "a1-u05-l01-e12",
+      "type": "cloze",
+      "points": ["gp-locative", "gp-dal"],
+      "text": "Kitap otag___ däl, aşhana___.",
+      "en": "The book isn't in the room, it's in the kitchen.",
+      "blanks": [
+        {
+          "accept": ["da"]
+        },
+        {
+          "accept": ["da"]
+        }
+      ],
+      "explain": "*otag* and *aşhana* both end in back *a*: *otagda*, *aşhanada*."
+    }
+  ]
+}

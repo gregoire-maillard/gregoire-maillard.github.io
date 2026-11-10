@@ -75,7 +75,8 @@
     },
     // the closed list of verbs whose final t becomes d before a vowel and before -ýAr (gidýär, gidip, gider, but
     // gitdi, gitjek); every other verb keeps its consonant (satýar, tutup, çykar). Compounds follow their last word.
-    verbSoft: { git: "gid", et: "ed", "aýt": "aýd", "gaýt": "gaýd", seret: "sered", "eşit": "eşid", "äkit": "äkid", "öýt": "öýd" },
+    verbSoft: { git: "gid", et: "ed", "aýt": "aýd", "gaýt": "gaýd", seret: "sered", "eşit": "eşid", "äkit": "äkid", "öýt": "öýd",
+      "öwret": "öwred" },   // öwredýär "teaches" (in print, science.gov.tm), öwretmeli (A1-2)
     // one-syllable loanwords: the rounding rule gives stoluň, the spelling stolyň is also accepted (open question 1)
     loanRound: ["stol", "sport", "klub", "tort", "kod", "gol", "port", "post", "front", "kort", "forum"],
     // the posture verbs that make the progressive after -(Y)p, in the form they take endings (otyryn, durun)
@@ -311,15 +312,30 @@
     var vowelEnd = isV(letters(body(X)).slice(-1));
     var dyrP = function () { return person(attach(X, "dYr", { id: "DYR", cat: "f" }), E1, p); };   // talypdyryn … talypdyrlar
     if (t === "pres") {
+      // Questions (settled in A1-2): the zero form with -mY first in every person (Sen talypmy?, dälmi?); with a
+      // second-person ending the particle comes first, talypmysyň, talypmysyňyz (gurgunmysyňyz in the Five Colleges
+      // Turkmen glossary; alypmysyň, alypmysyňyz beside alypdyrynmy, alypdyrysmy in the SIL grammar), then the
+      // colloquial talypmyň; the bare ending before the particle (talypsyňmy) last, untaught. First persons: the
+      // formal -dYr with the ending (talypdyrynmy), then the bare ending, not after a vowel (no öýdenmi).
       if (q) {
         if (p === 2) return [[Q(X)]];
         if (p === 5) return [[Q(X)], [Q(person(X, E1, 5))]];
-        return [[Q(X)]].concat(e1(X, p, true));                                     // talypmy, talypsyňmy, talypmyň
+        if (p === 1 || p === 4) {
+          out = [[Q(X)], [attach(Q(X), E1[p], { id: "P" + (p + 1) })]];              // talypmy, talypmysyň(yz)
+          if (p === 1) out.push([attach(Q(X), "ň", { id: "P2" })]);                   // talypmyň
+          out.push([Q(person(X, E1, p))]);                                            // talypsyňmy
+          return out;
+        }
+        out = [[Q(X)], [Q(dyrP())]];                                                  // talypmy, talypdyrynmy
+        if (!vowelEnd) out.push([Q(person(X, E1, p))]);                               // talybynmy (not öýdenmi)
+        return out;
       }
       if (p === 2) return [[X], [dyrP()]];                                           // talyp, talypdyr
       if (p === 5) return [[X], [person(X, E1, 5)], [dyrP()]];                       // talyp, talyplar, talypdyrlar
       out = [[X], [dyrP()]];                                                         // talyp, talypdyryn
       if (!(vowelEnd && (p === 0 || p === 3))) out.push([person(X, E1, p)]);         // talybyn (not öýden: "from home")
+      // däl with a second-person ending is in print (Sen … dälsiň, the SIL dictionary under diň): before däldirsiň
+      if (neg && (p === 1 || p === 4)) out = [out[0], out[2], out[1]];
       return out;
     }
     if (t === "dyr") {                                                               // first and second persons: positive only

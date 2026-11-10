@@ -1,0 +1,219 @@
+{
+  "id": "a1-u05-l04",
+  "unit": "a1-u05",
+  "order": 4,
+  "title": "Nobody's home",
+  "goal": "Say where things are around the house, say nobody and nothing, and follow a short phone call.",
+  "points": ["gp-bar-yok", "gp-locative", "gp-place-words"],
+  "intro": {
+    "text": "With *ýok*, *hiç kim* means **nobody** and *hiç zat* **nothing**: *Öýde hiç kim ýok* (there's nobody at home), *Otagda hiç zat ýok* (there's nothing in the room).",
+    "see": "gp-bar-yok"
+  },
+  "vocab": [
+    {
+      "tk": "hiç kim",
+      "en": "nobody (with ýok)",
+      "pos": "pron",
+      "card": "fc-0135"
+    },
+    {
+      "tk": "hiç zat",
+      "en": "nothing (with ýok)",
+      "pos": "pron"
+    },
+    {
+      "tk": "jaý",
+      "en": "building; house",
+      "pos": "noun"
+    },
+    {
+      "tk": "ýatak",
+      "en": "bed",
+      "pos": "noun"
+    },
+    {
+      "tk": "diwan",
+      "en": "sofa",
+      "pos": "noun"
+    },
+    {
+      "tk": "şkaf",
+      "en": "wardrobe, cupboard",
+      "pos": "noun"
+    },
+    {
+      "tk": "çyra",
+      "en": "lamp",
+      "pos": "noun"
+    },
+    {
+      "tk": "Alo?",
+      "en": "Hello? (on the phone)",
+      "pos": "phrase"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u05-l04-e01",
+      "type": "match",
+      "pairs": [
+        ["ýatak", "bed"],
+        ["diwan", "sofa"],
+        ["şkaf", "wardrobe"],
+        ["çyra", "lamp"],
+        ["jaý", "building"]
+      ]
+    },
+    {
+      "id": "a1-u05-l04-e02",
+      "type": "translate",
+      "points": ["gp-bar-yok", "gp-locative"],
+      "from": "tk",
+      "prompt": "Öýde hiç kim ýok.",
+      "accept": [
+        "There is nobody at home.",
+        "Nobody is at home.",
+        "There is no one at home.",
+        "No one is at home.",
+        "Nobody is home."
+      ]
+    },
+    {
+      "id": "a1-u05-l04-e03",
+      "type": "translate",
+      "points": ["gp-bar-yok"],
+      "from": "en",
+      "prompt": "There is nothing in the room.",
+      "accept": ["Otagda hiç zat ýok."],
+      "explain": "*hiç zat*, nothing, goes with *ýok*."
+    },
+    {
+      "id": "a1-u05-l04-e04",
+      "type": "mcq",
+      "points": ["gp-locative"],
+      "question": "Where is Merjen?",
+      "context": [
+        {
+          "who": "Aýgül",
+          "tk": "Alo? Merjen, sen öýdemi?",
+          "en": "Hello? Merjen, are you at home?"
+        },
+        {
+          "who": "Merjen",
+          "tk": "Ýok, men öýde däl, men kitaphanada."
+        }
+      ],
+      "options": ["At the library.", "At home.", "At the shop."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Merjen says she is **not** at home: *öýde däl*.",
+        "2": "A shop would be *dükanda*."
+      },
+      "explain": "*kitaphana* + *-da*: at the library."
+    },
+    {
+      "id": "a1-u05-l04-e05",
+      "type": "cloze",
+      "points": ["gp-bar-yok"],
+      "text": "Otagda ýatak bar, ýöne diwan ___.",
+      "en": "There is a bed in the room, but there is no sofa.",
+      "blanks": [
+        {
+          "accept": ["ýok"],
+          "reject": [
+            {
+              "answer": "däl",
+              "why": "To say that there **isn't** one, use *ýok*. *däl* negates a description."
+            }
+          ]
+        }
+      ],
+      "explain": "*diwan ýok*: there is no sofa."
+    },
+    {
+      "id": "a1-u05-l04-e06",
+      "type": "translate",
+      "points": ["gp-locative", "gp-question-my"],
+      "from": "en",
+      "prompt": "Is the lamp on the table?",
+      "accept": ["Çyra stoldamy?"],
+      "explain": "*stol* + *-da* + *-my*: on the table?"
+    },
+    {
+      "id": "a1-u05-l04-e07",
+      "type": "translate",
+      "points": ["gp-locative", "gp-place-words"],
+      "from": "tk",
+      "prompt": "Şkaf otagda däl, ol ýerde.",
+      "accept": [
+        "The wardrobe is not in the room, it is over there.",
+        "The wardrobe is not in the room, it is there.",
+        "The cupboard is not in the room, it is (over) there."
+      ]
+    },
+    {
+      "id": "a1-u05-l04-e08",
+      "type": "wordbank",
+      "points": ["gp-bar-yok", "gp-question-my"],
+      "from": "tk",
+      "prompt": "Jaýda hiç kim ýokmy?",
+      "text": "Is there nobody in the building?",
+      "answer": ["Is", "there", "nobody", "in", "the", "building"],
+      "distractors": ["somebody", "house", "not"],
+      "accept": ["Is there nobody in the house?"]
+    },
+    {
+      "id": "a1-u05-l04-e09",
+      "type": "mcq",
+      "points": ["gp-bar-yok"],
+      "question": "*Merdan işhanada ýok.* What does it mean?",
+      "options": ["Merdan isn't at the office.", "There is no office.", "Merdan is at the office."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "That would be *Işhana ýok*.",
+        "2": "*ýok* makes it negative."
+      },
+      "explain": "With a person, *ýok* says they are away: Merdan isn't at the office."
+    },
+    {
+      "id": "a1-u05-l04-e10",
+      "type": "translate",
+      "points": ["gp-bar-yok", "gp-locative"],
+      "from": "en",
+      "prompt": "Nobody is in the classroom.",
+      "accept": ["Synpda hiç kim ýok."]
+    },
+    {
+      "id": "a1-u05-l04-e11",
+      "type": "translate",
+      "points": ["gp-locative"],
+      "from": "tk",
+      "prompt": "Alo? Aýna, sen nirede?",
+      "accept": ["Hello? Aýna, where are you?"]
+    },
+    {
+      "id": "a1-u05-l04-e12",
+      "type": "mcq",
+      "points": ["gp-place-words", "gp-bar-yok"],
+      "question": "*Sende pul barmy?* Which answer means **No, I don't have any money**?",
+      "options": ["Ýok, mende pul ýok.", "Ýok, sende pul ýok.", "Ýok, men pul däl."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*sende* is **with you**: the answer is about you, so *mende*.",
+        "2": "This says **I am not money**."
+      },
+      "explain": "*mende pul ýok*: I have no money on me."
+    },
+    {
+      "id": "a1-u05-l04-e13",
+      "type": "translate",
+      "points": ["gp-bar-yok", "gp-locative"],
+      "from": "en",
+      "prompt": "There is a sofa in the room, but there is no lamp.",
+      "accept": ["Otagda diwan bar, ýöne çyra ýok."]
+    }
+  ]
+}

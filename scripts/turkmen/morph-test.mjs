@@ -194,6 +194,34 @@ para("copula-present-question", "talyp", "-|talypmyň|-|-|talypmysyňyz|-", true
 para("copula-present-question", "gowy", "-|-|gowumy|-|-|-");
 para("copula-present-negative-question", "talyp", "talyp dälmi|talyp dälmi|talyp dälmi|talyp dälmi|talyp dälmi|talyp dälmi");
 para("copula-present-negative-question", "talyp", "talyp dälinmi|talyp dälsiňmi|-|talyp dälismi|talyp dälsiňizmi|talyp dällermi", true);
+// questions and däl in every person, settled in A1-2 (TM-CURRICULUM.md, open question 2): the zero form with -mY
+// first; with a second-person ending the particle comes first (talypmysyň, as gurgunmysyňyz, alypmysyň in print);
+// the bare ending before the particle last; däl takes a second-person ending in print (Sen … dälsiň)
+const vars = (slug, base, p) => M.form(slug, base, p).variants;
+check("question, sen: talypmy, talypmysyň, talypmyň, talypsyňmy", () => vars("copula-present-question", "talyp", "sen"),
+  ["talypmy", "talypmysyň", "talypmyň", "talypsyňmy"]);
+check("question, siz: talypmy, talypmysyňyz, talypsyňyzmy", () => vars("copula-present-question", "talyp", "siz"),
+  ["talypmy", "talypmysyňyz", "talypsyňyzmy"]);
+check("question, men: talypmy, the formal talypdyrynmy, the bare talybynmy", () => vars("copula-present-question", "talyp", "men"),
+  ["talypmy", "talypdyrynmy", "talybynmy"]);
+check("question after a vowel: no bare first-person ending (öýdemi, öýdedirismi; not öýdesmi)", () => vars("copula-present-question", "öýde", "biz"),
+  ["öýdemi", "öýdedirismi"]);
+check("question after a vowel, siz: öýdemisiňiz", () => vars("copula-present-question", "öýde", "siz")[1], "öýdemisiňiz");
+check("negative question, sen: talyp dälmi, dälmisiň, dälmiň, dälsiňmi", () => vars("copula-present-negative-question", "talyp", "sen"),
+  ["talyp dälmi", "talyp dälmisiň", "talyp dälmiň", "talyp dälsiňmi"]);
+check("negative, sen: talyp däl, dälsiň, däldirsiň", () => vars("copula-present-negative", "talyp", "sen"),
+  ["talyp däl", "talyp dälsiň", "talyp däldirsiň"]);
+check("negative, siz: ýadaw däl, dälsiňiz, däldirsiňiz", () => vars("copula-present-negative", "ýadaw", "siz"),
+  ["ýadaw däl", "ýadaw dälsiňiz", "ýadaw däldirsiňiz"]);
+check("negative, men: talyp däl, däldirin, dälin", () => vars("copula-present-negative", "talyp", "men"),
+  ["talyp däl", "talyp däldirin", "talyp dälin"]);
+para("copula-present-question", "ýadaw", "ýadawmy|ýadawmy|ýadawmy|ýadawmy|ýadawmy|ýadawmy");
+para("copula-present-question", "öýde", "öýdemi|öýdemi|öýdemi|öýdemi|öýdemi|öýdemi");
+para("copula-present-question", "türkmen", "-|türkmenmisiň|-|-|türkmenmisiňiz|-", true);
+para("copula-present-negative-question", "öýde", "öýde dälmi|öýde dälmi|öýde dälmi|öýde dälmi|öýde dälmi|öýde dälmi");
+para("copula-present-question", "bar", "-|-|barmy|-|-|-");
+para("copula-present-question", "ýok", "-|-|ýokmy|-|-|-");
+para("copula-present-question", "gowy", "-|-|gowymy|-|-|-", true);
 para("copula-dyr", "talyp", "talypdyryn|talypdyrsyň|talypdyr|talypdyrys|talypdyrsyňyz|talypdyrlar");
 para("copula-dyr", "öýde", "öýdedirin|öýdedirsiň|öýdedir|öýdediris|öýdedirsiňiz|öýdedirler");
 para("copula-dyr", "türkmen", "türkmendirin|türkmendirsiň|türkmendir|türkmendiris|türkmendirsiňiz|türkmendirler");
@@ -231,9 +259,17 @@ for (const [v, men, ol] of [["gitmek", "gidýärin", "gidýär"], ["etmek", "ed�
   ["pikir etmek", "pikir edýärin", "pikir edýär"], ["kömek etmek", "kömek edýärin", "kömek edýär"], ["satmak", "satýaryn", "satýar"], ["ýatmak", "ýatýaryn", "ýatýar"],
   ["tutmak", "tutýaryn", "tutýar"], ["atmak", "atýaryn", "atýar"], ["ýetmek", "ýetýärin", "ýetýär"], ["ötmek", "ötýärin", "ötýär"],
   ["diýmek", "diýýärin", "diýýär"], ["iýmek", "iýýärin", "iýýär"], ["goýmak", "goýýaryn", "goýýar"], ["çykmak", "çykýaryn", "çykýar"],
-  ["tapmak", "tapýaryn", "tapýar"], ["geçmek", "geçýärin", "geçýär"], ["içmek", "içýärin", "içýär"], ["ýazmak", "ýazýaryn", "ýazýar"]]) {
+  ["tapmak", "tapýaryn", "tapýar"], ["geçmek", "geçýärin", "geçýär"], ["içmek", "içýärin", "içýär"], ["ýazmak", "ýazýaryn", "ýazýar"],
+  ["öwretmek", "öwredýärin", "öwredýär"]]) {
   para("present", v, `${men}|-|${ol}|-|-|-`);
 }
+// öwretmek "to teach" joins the list in A1-2: öwredýär in print (a Turkmen article on science.gov.tm), öwretmeli
+// (a Turkmen dialogue in the Five Colleges materials); t stays before a consonant
+check("öwretmek: öwredýär, öwredip, öwreder, öwrediň; öwretdi, öwretjek, öwretmeli, öwretmeýär", () =>
+  [third("present", "öwretmek"), M.converb("öwretmek").text, third("aorist", "öwretmek"), M.form("imperative", "öwretmek", "siz").text,
+   third("past", "öwretmek"), third("future", "öwretmek"), third("necessitative", "öwretmek"), third("present-negative", "öwretmek")],
+  ["öwredýär", "öwredip", "öwreder", "öwrediň", "öwretdi", "öwretjek", "öwretmeli", "öwretmeýär"]);
+para("present-question", "öwretmek", "-|öwredýärsiňmi|-|-|öwredýärsiňizmi|-");
 check("the negative keeps t: gitmeýär, etmeýärin", () => [third("present-negative", "gitmek"), M.form("present-negative", "etmek", "men").text], ["gitmeýär", "etmeýärin"]);
 // past -dY
 para("past", "gelmek", "geldim|geldiň|geldi|geldik|geldiňiz|geldiler");

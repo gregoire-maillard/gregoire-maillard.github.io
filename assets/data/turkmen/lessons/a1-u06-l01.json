@@ -1,0 +1,248 @@
+{
+  "id": "a1-u06-l01",
+  "unit": "a1-u06",
+  "order": 1,
+  "title": "What are you doing?",
+  "goal": "Find a verb's stem and say what people are doing with -ýAr.",
+  "points": ["gp-infinitive-stem", "gp-present-yar"],
+  "intro": {
+    "text": "Drop *-mak* or *-mek* to find the stem: *oka-mak* → *oka-*. Then add `-ýAr` (*-ýar* or *-ýär*) and an ending for the person: *okaýaryn* (I read), *okaýar* (she reads), *işleýäris* (we work).",
+    "see": "gp-present-yar"
+  },
+  "vocab": [
+    {
+      "tk": "etmek",
+      "en": "to do, to make",
+      "pos": "verb",
+      "card": "fc-0011"
+    },
+    {
+      "tk": "okamak",
+      "en": "to read; to study",
+      "pos": "verb"
+    },
+    {
+      "tk": "ýazmak",
+      "en": "to write",
+      "pos": "verb"
+    },
+    {
+      "tk": "işlemek",
+      "en": "to work",
+      "pos": "verb",
+      "card": "fc-0061"
+    },
+    {
+      "tk": "gürlemek",
+      "en": "to speak, to talk",
+      "pos": "verb",
+      "card": "fc-0067"
+    },
+    {
+      "tk": "ýaşamak",
+      "en": "to live",
+      "pos": "verb",
+      "card": "fc-0128"
+    },
+    {
+      "tk": "hat",
+      "en": "letter (that you write)",
+      "pos": "noun"
+    },
+    {
+      "tk": "türkmençe",
+      "en": "in Turkmen; Turkmen (the language)",
+      "pos": "adv"
+    },
+    {
+      "tk": "iňlisçe",
+      "en": "in English; English (the language)",
+      "pos": "adv"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u06-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["okamak", "to read"],
+        ["ýazmak", "to write"],
+        ["işlemek", "to work"],
+        ["gürlemek", "to speak"],
+        ["ýaşamak", "to live"],
+        ["etmek", "to do"]
+      ]
+    },
+    {
+      "id": "a1-u06-l01-e02",
+      "type": "mcq",
+      "points": ["gp-infinitive-stem"],
+      "question": "What is the stem of *okamak*, to read?",
+      "options": ["oka-", "okam-", "okamak", "ok-"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "Drop the whole *-mak*, not just *-ak*.",
+        "2": "*okamak* is the dictionary form; endings go on the stem.",
+        "3": "The *a* before *-mak* belongs to the stem: *oka-*."
+      },
+      "explain": "*oka-mak*: take off *-mak*, keep *oka-*."
+    },
+    {
+      "id": "a1-u06-l01-e03",
+      "type": "morph",
+      "points": ["gp-present-yar", "gp-infinitive-stem"],
+      "base": "okamak",
+      "gloss": "I am reading",
+      "parts": ["oka", "ýar", "yn"],
+      "distractors": ["ýär", "in", "okam"],
+      "result": "okaýaryn",
+      "explain": "*oka-* + *-ýar* (back vowel *a*) + *-yn* (I): *okaýaryn*."
+    },
+    {
+      "id": "a1-u06-l01-e04",
+      "type": "conjugate",
+      "points": ["gp-present-yar"],
+      "base": "okamak",
+      "form": "present",
+      "label": "*okamak* in the present: I read, you read…",
+      "cells": [
+        {
+          "p": "men",
+          "accept": ["okaýaryn"]
+        },
+        {
+          "p": "sen",
+          "accept": ["okaýarsyň"]
+        },
+        {
+          "p": "ol",
+          "accept": ["okaýar"]
+        },
+        {
+          "p": "biz",
+          "accept": ["okaýarys"]
+        },
+        {
+          "p": "siz",
+          "accept": ["okaýarsyňyz"]
+        },
+        {
+          "p": "olar",
+          "accept": ["okaýarlar", "okaýar"]
+        }
+      ],
+      "explain": "The last vowel of *oka-* is *a*: *-ýar*, then *-yn, -syň, —, -ys, -syňyz, -lar*."
+    },
+    {
+      "id": "a1-u06-l01-e05",
+      "type": "translate",
+      "points": ["gp-present-yar"],
+      "from": "en",
+      "prompt": "She is writing a letter.",
+      "accept": ["Ol hat ýazýar.", "Hat ýazýar."],
+      "explain": "*ýaz-* + *-ýar*. The ending already says who, so the pronoun can go."
+    },
+    {
+      "id": "a1-u06-l01-e06",
+      "type": "translate",
+      "points": ["gp-present-yar"],
+      "from": "tk",
+      "prompt": "Biz Aşgabatda ýaşaýarys.",
+      "accept": ["We live in Ashgabat.", "We are living in Ashgabat."]
+    },
+    {
+      "id": "a1-u06-l01-e07",
+      "type": "cloze",
+      "points": ["gp-present-yar"],
+      "text": "Men iňlisçe gürle___.",
+      "en": "I speak English.",
+      "blanks": [
+        {
+          "accept": ["ýärin"],
+          "reject": [
+            {
+              "answer": "ýerin",
+              "why": "In *-ýär* the vowel is *ä*, not *e*: *gürleýärin*."
+            },
+            {
+              "answer": "ýaryn",
+              "why": "The last vowel of *gürle-* is *e*, a front vowel: *-ýärin*."
+            }
+          ]
+        }
+      ],
+      "explain": "*gürle-* + *-ýär* + *-in*: *gürleýärin*."
+    },
+    {
+      "id": "a1-u06-l01-e08",
+      "type": "translate",
+      "points": ["gp-present-yar", "gp-question-words"],
+      "from": "en",
+      "prompt": "What are you doing? (to a friend)",
+      "accept": ["Sen näme edýärsiň?", "Näme edýärsiň?"],
+      "explain": "*etmek* is one of the verbs whose *t* becomes *d* before *-ýär*: *edýärsiň*."
+    },
+    {
+      "id": "a1-u06-l01-e09",
+      "type": "mcq",
+      "points": ["gp-present-yar"],
+      "question": "Which form means **he works**?",
+      "options": ["işleýär", "işlýär", "işleýer"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The stem is *işle-*: keep its *e*.",
+        "2": "*-ýär* is written with *ä*."
+      },
+      "explain": "*işle-* + *-ýär*: *işleýär*."
+    },
+    {
+      "id": "a1-u06-l01-e10",
+      "type": "translate",
+      "points": ["gp-present-yar"],
+      "from": "tk",
+      "prompt": "Merjen türkmençe gürleýär.",
+      "accept": ["Merjen speaks Turkmen.", "Merjen is speaking Turkmen.", "Merjen is speaking in Turkmen."]
+    },
+    {
+      "id": "a1-u06-l01-e11",
+      "type": "wordbank",
+      "points": ["gp-present-yar", "gp-locative"],
+      "from": "en",
+      "prompt": "They work in Mary.",
+      "text": "Olar Maryda işleýärler.",
+      "answer": ["Olar", "Maryda", "işleýärler"],
+      "distractors": ["işleýäris", "Mary", "ýaşaýarlar"],
+      "accept": ["Maryda işleýärler."]
+    },
+    {
+      "id": "a1-u06-l01-e12",
+      "type": "translate",
+      "points": ["gp-present-yar"],
+      "from": "en",
+      "prompt": "I am reading a book.",
+      "accept": ["Men kitap okaýaryn.", "Kitap okaýaryn."],
+      "reject": [
+        {
+          "answer": "Men kitap okaýar.",
+          "why": "*okaýar* is **he** or **she reads**. For **I**, add *-yn*: *okaýaryn*."
+        }
+      ]
+    },
+    {
+      "id": "a1-u06-l01-e13",
+      "type": "mcq",
+      "points": ["gp-present-yar"],
+      "question": "*Okaýarys.* Who is reading?",
+      "options": ["We are.", "You are.", "They are."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**You** would be *okaýarsyň* or *okaýarsyňyz*.",
+        "2": "**They** would be *okaýarlar*."
+      },
+      "explain": "*-ys* is the ending for **we**."
+    }
+  ]
+}
