@@ -52,7 +52,8 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
    open Daily Turkish › Install. Check:
    - a lesson: a tap on a right answer, a double tap on a wrong one, a buzz at the end; in a typing exercise the
      answer box and the Turkish letters stay visible above the keyboard, with Check just above it;
-   - flashcards, and the Turkish voice;
+   - flashcards, and the Turkish voice (Settings › Speech names it; the app can only use the iPhone's built-in voices, not
+     ones downloaded in Settings, so with none it says listening exercises are skipped: note which you get);
    - the header's glass behind the clock and the Dynamic Island, nothing hidden under it while scrolling, the
      bottom of each page clear of the home bar; turning the phone doesn't rotate the app;
    - Settings › Export progress: the share sheet opens (try Save to Files), and the file also shows in
@@ -65,7 +66,7 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
 
 14. **App Information** (left sidebar, under General):
     - Subtitle (30 characters max) · Category: **Education**
-    - Content Rights: the deck's word order is adapted from FrequencyWords (CC BY-SA 4.0, credited in About):
+    - Content Rights: the deck's word order is adapted from FrequencyWords (CC BY-SA 4.0, no longer credited in About since 5 November: put the credit back first, see `app/store/listing.md`):
       answer that the app contains third-party content and you have the rights to use it
     - Age Rating › Edit › answer None/No throughout › result 4+ (true for the app's filtered course, see README
       "The course for a 4+ age rating"; the website's course would be 13+). Paste-ready answers: `app/store/listing.md`

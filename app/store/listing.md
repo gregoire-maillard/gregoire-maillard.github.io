@@ -37,8 +37,11 @@ Learn Turkish from A1 to C2
 "Does your app contain, show, or access third-party content?" **Yes.**
 "Do you have all necessary rights to that content or are you otherwise permitted to use it?" **Yes.**
 
-Why: the order of the words is adapted from FrequencyWords by Hermit Dave (CC BY-SA 4.0), credited in About; the Lora font
+Why: the order of the words is adapted from FrequencyWords by Hermit Dave (CC BY-SA 4.0); the Lora font
 is under the SIL Open Font License (`LORA-OFL.txt` is bundled). Meanings, examples, notes, lessons and guides are your own.
+**Before submitting:** the FrequencyWords credit left the About page in the 5 November rewrite (8f26cda) and is now only in
+`LICENSE.txt`, which the app doesn't ship. CC BY-SA asks for the credit where the deck is used: put a line back in About (or the
+flashcards page) so this answer stays true (APP-8).
 
 ### Age Rating (Edit, then answer)
 
@@ -134,12 +137,14 @@ The first version of Daily Turkish: 226 lessons from A1 to C2, a grammar guide a
 
 **Screenshots, 6.9-inch display** (1320 × 2868 px, portrait, in this order), from `app/store/screenshots/`:
 
-1. `01-path.png`: the course path, unit 6 in progress
-2. `02-lesson-exercise.png`: a dialogue exercise, answered correctly
-3. `03-lesson-complete.png`: the end-of-lesson screen, daily goal met
+1. `01-path.png`: the course path on a phone, unit 6 as a trail: two lessons done, the next one with its Start card and Tekir saying *Hadi!*
+2. `02-lesson-exercise.png`: a dialogue exercise answered correctly, 10 in a row, the companion cheering
+3. `03-lesson-complete.png`: the end-of-lesson screen with Tekir, daily goal met
 4. `04-flashcards.png`: a flashcard with its answer and grading buttons
 5. `05-grammar-guide.png`: the grammar guide of A1 unit 6
 6. `06-my-profile.png`: My Profile (level, XP, streak, XP chart)
+
+Re-rendered in APP-8 for the FX-1/FX-2 design (faces, companion, chunky buttons, level colours, the trail).
 
 They show a made-up learner (demo progress built with the course's own functions: 22 lessons, 21-day streak, about 200 words started),
 not real progress. 6.9-inch screenshots are scaled down for the smaller iPhones, so no other size is needed.

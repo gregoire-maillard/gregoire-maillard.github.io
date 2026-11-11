@@ -184,9 +184,9 @@ export const EDITS = [
 ];
 
 // The app's pages and turkish.js: the deck's size, once the cards above are gone ({N}).
+// (APP-8: the About's "the deck is the 1,000 most frequent words, in order" went in 0f13dba; its rule went with it.)
 export const PAGE_EDITS = [
   { file: "turkish.html", find: "and a deck of the 1,000 most useful words on spaced repetition", replace: "and a deck of {N} of the most useful words on spaced repetition" },
-  { file: "turkish.html", find: "the deck is the 1,000 most frequent words, in order", replace: "the deck is {N} of the 1,000 most frequent words, in order" },
   { file: "turkish.html", find: "culture notes and 1,000 flashcards", replace: "culture notes and {N} flashcards" },
   { file: "turkish.html", find: "a 1,000-word flashcard deck", replace: "a {N}-word flashcard deck" },
   { file: "turkish.html", find: "A deck of the 1,000 most useful words", replace: "A deck of {N} of the most useful words" },

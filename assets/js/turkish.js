@@ -1357,6 +1357,12 @@
   // The iPhone app's copies of the pages carry <html data-app="ios"> (app/scripts/build-www.mjs, APP-3): no online
   // profile there, and progress is "on this iPhone". null on the website, on dailyturkish.app and in Node.
   var APP = (root && root.document && root.document.documentElement && root.document.documentElement.getAttribute("data-app")) || null;
+  // In the app (APP-8): WebKit on iOS offers web content the system's built-in voices only, so a voice downloaded in
+  // Settings (Yelda Enhanced or Premium) never reaches the app's web view. No download advice there, and no "reload the page".
+  if (APP) {
+    tts.HELP = "No Turkish voice is available to the app on this iPhone, so listening exercises are skipped and words aren't read aloud. Everything else works as usual.";
+    tts.basic = function () { return false; };
+  }
 
   var TRK = {
     C: C, RE: RE, app: APP,
