@@ -1,0 +1,178 @@
+{
+  "id": "a1-u08-l01",
+  "unit": "a1-u08",
+  "order": 1,
+  "title": "Some tea or the tea",
+  "goal": "Mark a particular object with -y, -i, -ny or -ni, and leave a general one bare.",
+  "points": ["gp-accusative"],
+  "intro": {
+    "text": "A bare object means some or any: *Çaý içýärin* (I drink tea). A particular one takes `-(n)Y`: *Çaýy içýärin* (I'm drinking the tea). After a vowel it is *-ny* or *-ni*: *almany*. Names always take it: *Aýnany görýärin*.",
+    "see": "gp-accusative"
+  },
+  "vocab": [
+    { "tk": "almak", "en": "to take; to buy", "pos": "verb", "card": "fc-0026" },
+    { "tk": "görmek", "en": "to see", "pos": "verb", "card": "fc-0032" },
+    { "tk": "satmak", "en": "to sell", "pos": "verb" },
+    { "tk": "alma", "en": "apple", "pos": "noun" },
+    { "tk": "süýt", "en": "milk", "pos": "noun" },
+    { "tk": "ýumurtga", "en": "egg", "pos": "noun" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u08-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["almak", "to take, to buy"],
+        ["görmek", "to see"],
+        ["satmak", "to sell"],
+        ["alma", "apple"],
+        ["süýt", "milk"],
+        ["ýumurtga", "egg"]
+      ]
+    },
+    {
+      "id": "a1-u08-l01-e02",
+      "type": "mcq",
+      "points": ["gp-accusative"],
+      "question": "*Men alma alýaryn.* and *Men almany alýaryn.* What is the difference?",
+      "options": ["The first is any apples, the second a particular apple.", "The first is now, the second every day.", "The first is polite, the second familiar."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Both are in the same tense. The ending *-ny* makes the object particular: **the** apple.",
+        "2": "Neither is more polite. *almany* is **the** apple, *alma* is apples in general."
+      },
+      "explain": "A bare object is general: *alma alýaryn*, I'm buying apples. With *-ny* it is particular: *almany*, the apple."
+    },
+    {
+      "id": "a1-u08-l01-e03",
+      "type": "cloze",
+      "points": ["gp-accusative"],
+      "text": "Men çaý___ içýärin, sen süýt___ içýärsiň.",
+      "en": "I'm drinking the tea, you're drinking the milk.",
+      "blanks": [
+        {
+          "accept": ["y"],
+          "reject": [
+            { "answer": "ny", "why": "*ý* is a consonant, so *çaý* takes *-y*: *çaýy*." },
+            { "answer": "i", "why": "The vowel of *çaý* is *a*, a back vowel: *-y*." }
+          ]
+        },
+        {
+          "accept": ["i"],
+          "reject": [
+            { "answer": "ni", "why": "*süýt* ends in a consonant, so the ending has no *n*: *süýti*." },
+            { "answer": "y", "why": "The vowel of *süýt* is *ü*, a front vowel: *-i*." }
+          ]
+        }
+      ],
+      "explain": "Both words end in a consonant (*ý* is one): *çaý* + *-y* with a back vowel, *süýt* + *-i* with a front one."
+    },
+    {
+      "id": "a1-u08-l01-e04",
+      "type": "morph",
+      "points": ["gp-accusative"],
+      "base": "alma",
+      "gloss": "The apple (as an object)",
+      "parts": ["alma", "ny"],
+      "distractors": ["y", "ni", "a"],
+      "result": "almany",
+      "explain": "*alma* ends in a vowel, so the ending is *-ny*; its vowel is back like the *a* of *alma*."
+    },
+    {
+      "id": "a1-u08-l01-e05",
+      "type": "translate",
+      "points": ["gp-accusative", "gp-proper-nouns"],
+      "from": "en",
+      "prompt": "I see Aýna.",
+      "accept": ["Men Aýnany görýärin.", "Aýnany görýärin."],
+      "reject": [
+        { "answer": "Men Aýna görýärin.", "why": "A name as an object always takes the ending: *Aýnany*." },
+        { "answer": "Aýna görýärin.", "why": "A name as an object always takes the ending: *Aýnany*." },
+        { "answer": "Men Aýnay görýärin.", "why": "*Aýna* ends in a vowel, so the ending is *-ny*: *Aýnany*." }
+      ]
+    },
+    {
+      "id": "a1-u08-l01-e06",
+      "type": "translate",
+      "points": ["gp-accusative"],
+      "from": "tk",
+      "prompt": "Merdan süýt alýar.",
+      "accept": ["Merdan is buying milk.", "Merdan buys milk.", "Merdan is buying some milk.", "Merdan is getting (some) milk."]
+    },
+    {
+      "id": "a1-u08-l01-e07",
+      "type": "translate",
+      "points": ["gp-accusative"],
+      "from": "tk",
+      "prompt": "Biz nahary iýýäris.",
+      "accept": ["We are eating the meal.", "We are eating the food.", "We eat the [meal|food]."]
+    },
+    {
+      "id": "a1-u08-l01-e08",
+      "type": "mcq",
+      "points": ["gp-accusative"],
+      "question": "Which sentence means **I'm selling the phone**?",
+      "options": ["Men telefony satýaryn.", "Men telefon satýaryn.", "Men telefona satýaryn."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "Without the ending it is any phone, or phones in general: **I sell phones**.",
+        "2": "*telefona* is the dative, **to** the phone."
+      },
+      "explain": "**The** phone is a particular one: *telefon* + *-y* = *telefony*."
+    },
+    {
+      "id": "a1-u08-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-accusative", "gp-question-my"],
+      "from": "en",
+      "prompt": "Are you buying the eggs? (to a friend)",
+      "text": "Sen ýumurtgalary alýarsyňmy?",
+      "answer": ["Sen", "ýumurtgalary", "alýarsyňmy"],
+      "distractors": ["ýumurtga", "ýumurtgada", "alýarsyň"],
+      "accept": ["Ýumurtgalary alýarsyňmy?"]
+    },
+    {
+      "id": "a1-u08-l01-e10",
+      "type": "cloze",
+      "points": ["gp-accusative", "gp-demonstratives"],
+      "text": "Ol bu surat___ görýär.",
+      "en": "She sees this picture.",
+      "blanks": [
+        { "options": ["y", "i", "ny"], "answer": 0 }
+      ],
+      "explain": "With *bu* in front the object is particular, so it takes the ending: *surat* (back *a*, ends in a consonant) + *-y*."
+    },
+    {
+      "id": "a1-u08-l01-e11",
+      "type": "translate",
+      "points": ["gp-accusative"],
+      "from": "en",
+      "prompt": "We are drinking the water.",
+      "accept": ["Biz suwy içýäris.", "Suwy içýäris."],
+      "reject": [
+        { "answer": "Biz suw içýäris.", "why": "Without the ending it is water in general: **we drink water**. **The** water takes *-y*: *suwy*." },
+        { "answer": "Biz suwny içýäris.", "why": "*suw* ends in a consonant, *w*, so the ending is *-y*: *suwy*." }
+      ]
+    },
+    {
+      "id": "a1-u08-l01-e12",
+      "type": "mcq",
+      "points": ["gp-accusative", "gp-present-uses"],
+      "question": "What does Kerim say?",
+      "context": [
+        { "who": "Mähri", "tk": "Kerim, nahar taýýar!", "en": "Kerim, the food is ready!" },
+        { "who": "Kerim", "tk": "Sag bol! Nahary häzir iýýärin." }
+      ],
+      "options": ["He's eating the meal now.", "He doesn't want to eat.", "He's cooking."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*iýýärin* is positive: **I'm eating**.",
+        "2": "*iýmek* is **to eat**."
+      },
+      "explain": "*Nahary häzir iýýärin*: I'm eating the meal now. The meal Mähri made is a particular one: *nahary*."
+    }
+  ]
+}

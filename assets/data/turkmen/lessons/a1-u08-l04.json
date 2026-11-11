@@ -1,0 +1,171 @@
+{
+  "id": "a1-u08-l04",
+  "unit": "a1-u08",
+  "order": 4,
+  "title": "At the bazaar",
+  "goal": "Put objects in the natural order, buy things at the market and ask a price.",
+  "points": ["gp-object-word-order", "gp-accusative", "gp-voicing", "gp-pronoun-accusative"],
+  "intro": {
+    "text": "A bare object stands right before the verb: *Men her gün çörek alýaryn*. An object with the ending can move: *Çöregi men alýaryn*. Buying **at** a place is buying **from** it: *bazardan*. Ask *Bahasy näçe?*",
+    "see": "gp-object-word-order"
+  },
+  "vocab": [
+    { "tk": "gawun", "en": "melon", "pos": "noun" },
+    { "tk": "üzüm", "en": "grapes", "pos": "noun" },
+    { "tk": "satyjy", "en": "seller", "pos": "noun" },
+    { "tk": "bermek", "en": "to give", "pos": "verb", "card": "fc-0028" },
+    { "tk": "Bahasy näçe?", "en": "How much is it? (literally: its price is how much?)", "pos": "phrase" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u08-l04-e01",
+      "type": "match",
+      "pairs": [
+        ["gawun", "melon"],
+        ["üzüm", "grapes"],
+        ["satyjy", "seller"],
+        ["bermek", "to give"],
+        ["Bahasy näçe?", "How much is it?"]
+      ]
+    },
+    {
+      "id": "a1-u08-l04-e02",
+      "type": "mcq",
+      "points": ["gp-object-word-order"],
+      "question": "Which order is natural for **I buy bread every day**?",
+      "options": ["Men her gün çörek alýaryn.", "Men çörek her gün alýaryn.", "Çörek men her gün alýaryn."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "A bare object sits right before the verb: *çörek alýaryn*. The time words come before them.",
+        "2": "A bare object can't move to the front: it stays right before the verb."
+      },
+      "explain": "*her gün* first, then the bare object and the verb together: *çörek alýaryn*."
+    },
+    {
+      "id": "a1-u08-l04-e03",
+      "type": "translate",
+      "points": ["gp-object-word-order", "gp-ablative"],
+      "from": "en",
+      "prompt": "I buy grapes at the market.",
+      "accept": ["Men bazardan üzüm alýaryn.", "Bazardan üzüm alýaryn.", "(Men) bazarda üzüm alýaryn."],
+      "reject": [
+        { "answer": "Men üzüm bazardan alýaryn.", "why": "A bare object sits right before the verb: *bazardan üzüm alýaryn*." }
+      ],
+      "explain": "Turkmen usually buys **from** a place: *bazardan*. The bare object *üzüm* goes right before the verb."
+    },
+    {
+      "id": "a1-u08-l04-e04",
+      "type": "translate",
+      "points": ["gp-accusative", "gp-pronoun-cases-dat-abl"],
+      "from": "tk",
+      "prompt": "Satyjy gawuny maňa berýär.",
+      "accept": ["The seller gives me the melon.", "The seller gives the melon to me.", "The seller is giving me the melon.", "The seller is giving the melon to me."]
+    },
+    {
+      "id": "a1-u08-l04-e05",
+      "type": "mcq",
+      "points": ["gp-accusative", "gp-object-word-order"],
+      "question": "What does Jeren buy?",
+      "context": [
+        { "who": "Jeren", "tk": "Salam! Bu gawun näçe manat?", "en": "Hello! How much is this melon?" },
+        { "who": "Satyjy", "tk": "Salam! Bäş manat.", "en": "Hello! Five manat." },
+        { "who": "Jeren", "tk": "Gymmat! Ýöne gawun owadan. Bolýar, gawuny alýaryn. Üzümi almaýaryn." }
+      ],
+      "options": ["The melon, but not the grapes.", "The grapes, but not the melon.", "Nothing: it's too expensive."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*Üzümi almaýaryn*: she is **not** taking the grapes.",
+        "2": "She finds it expensive, *gymmat*, but says *gawuny alýaryn*: I'll take the melon."
+      },
+      "explain": "*gawuny alýaryn*: I'll take the melon; *üzümi almaýaryn*: I won't take the grapes."
+    },
+    {
+      "id": "a1-u08-l04-e06",
+      "type": "wordbank",
+      "points": ["gp-accusative", "gp-demonstratives"],
+      "from": "en",
+      "prompt": "I'll take this melon.",
+      "text": "Men bu gawuny alýaryn.",
+      "answer": ["Men", "bu", "gawuny", "alýaryn"],
+      "distractors": ["gawun", "muny", "gawuna"],
+      "accept": ["Bu gawuny alýaryn."]
+    },
+    {
+      "id": "a1-u08-l04-e07",
+      "type": "cloze",
+      "points": ["gp-accusative", "gp-demonstratives"],
+      "text": "Men bu sürüji___ tanaýaryn.",
+      "en": "I know this driver.",
+      "blanks": [
+        {
+          "accept": ["ni"],
+          "reject": [
+            { "answer": "i", "why": "*sürüji* ends in a vowel, so the ending needs its *n*: *sürüjini*." },
+            { "answer": "ny", "why": "The last vowel of *sürüji* is *i*, a front vowel: *-ni*." }
+          ]
+        }
+      ],
+      "explain": "With *bu* the driver is a particular one, so the object takes the ending: after the vowel *i*, *-ni*: *sürüjini*."
+    },
+    {
+      "id": "a1-u08-l04-e08",
+      "type": "translate",
+      "points": ["gp-object-word-order", "gp-question-words"],
+      "from": "en",
+      "prompt": "Who is buying the bread?",
+      "accept": ["Çöregi kim alýar?", "Kim çöregi alýar?"],
+      "reject": [
+        { "answer": "Çöregi kim alýarmy?", "why": "*kim* already asks, so the verb takes no *-my*: *Çöregi kim alýar?*" },
+        { "answer": "Kim çöreki alýar?", "why": "Before a vowel the *k* of *çörek* becomes *g*: *çöregi*." }
+      ]
+    },
+    {
+      "id": "a1-u08-l04-e09",
+      "type": "translate",
+      "points": ["gp-object-word-order", "gp-accusative"],
+      "from": "tk",
+      "prompt": "Almany Selbi satýar.",
+      "accept": ["Selbi is selling the apple.", "Selbi sells the apple.", "It is Selbi who is selling the apple.", "It is Selbi who sells the apple."],
+      "explain": "*almany* comes first as the topic; the word right before the verb, *Selbi*, is in focus: it's Selbi who sells it."
+    },
+    {
+      "id": "a1-u08-l04-e10",
+      "type": "morph",
+      "points": ["gp-accusative", "gp-harmony-rounding"],
+      "base": "üzüm",
+      "gloss": "The grapes (as an object)",
+      "parts": ["üzüm", "i"],
+      "distractors": ["ü", "ni", "y"],
+      "result": "üzümi",
+      "explain": "*üzüm* ends in a consonant and its last vowel is front: *-i*. A final vowel never rounds: *üzümi*."
+    },
+    {
+      "id": "a1-u08-l04-e11",
+      "type": "mcq",
+      "points": ["gp-question-words"],
+      "question": "At the market, *Bahasy näçe?* means:",
+      "options": ["How much is it?", "Where is it?", "What is it?"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**Where** would be *nirede*.",
+        "2": "**What is it?** would be *Bu näme?*"
+      },
+      "explain": "*baha* is **price**; *Bahasy näçe?* is literally **its price is how much?**"
+    },
+    {
+      "id": "a1-u08-l04-e12",
+      "type": "translate",
+      "points": ["gp-object-word-order", "gp-pronoun-cases-dat-abl"],
+      "from": "en",
+      "prompt": "The seller is giving me grapes.",
+      "accept": ["Satyjy maňa üzüm berýär."],
+      "reject": [
+        { "answer": "Satyjy üzüm maňa berýär.", "why": "A bare object sits right before the verb: *maňa üzüm berýär*." },
+        { "answer": "Satyjy meni üzüm berýär.", "why": "The person you give something to takes the dative: *maňa*." }
+      ]
+    }
+  ]
+}

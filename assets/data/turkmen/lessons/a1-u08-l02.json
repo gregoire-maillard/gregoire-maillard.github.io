@@ -1,0 +1,182 @@
+{
+  "id": "a1-u08-l02",
+  "unit": "a1-u08",
+  "order": 2,
+  "title": "Kitap, kitaby",
+  "goal": "Soften a final k, p or ç before a vowel ending, and keep it before a consonant.",
+  "points": ["gp-voicing", "gp-accusative"],
+  "intro": {
+    "text": "Before a vowel ending, the final *k*, *p* or *ç* of a longer word becomes *g*, *b* or *j*: *kitap* → *kitaby*, *çörek* → *çöregi*, *agaç* → *agajy*. Before a consonant it stays: *kitapda*.",
+    "see": "gp-voicing"
+  },
+  "vocab": [
+    { "tk": "çörek", "en": "bread", "pos": "noun", "card": "fc-0185" },
+    { "tk": "agaç", "en": "tree; wood", "pos": "noun" },
+    { "tk": "çäýnek", "en": "teapot", "pos": "noun" },
+    { "tk": "bilet", "en": "ticket", "pos": "noun" },
+    { "tk": "tapmak", "en": "to find", "pos": "verb", "card": "fc-0056" },
+    { "tk": "gözlemek", "en": "to look for", "pos": "verb", "card": "fc-0093" },
+    { "tk": "goýmak", "en": "to put", "pos": "verb", "card": "fc-0083" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u08-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["çörek", "bread"],
+        ["agaç", "tree"],
+        ["çäýnek", "teapot"],
+        ["tapmak", "to find"],
+        ["gözlemek", "to look for"],
+        ["goýmak", "to put"]
+      ]
+    },
+    {
+      "id": "a1-u08-l02-e02",
+      "type": "mcq",
+      "points": ["gp-voicing", "gp-accusative"],
+      "question": "How do you write *kitap* with the object ending?",
+      "options": ["kitaby", "kitapy", "kitabi", "kitapny"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "Before a vowel the *p* of *kitap* becomes *b*: *kitaby*, never *kitapy*.",
+        "2": "*kitap* has back vowels, so the ending is *-y*, not *-i*.",
+        "3": "*kitap* ends in a consonant, so the ending has no *n*; and the *p* becomes *b*."
+      },
+      "explain": "*kitap* + *-y*: the *p* softens to *b* before the vowel: *kitaby*."
+    },
+    {
+      "id": "a1-u08-l02-e03",
+      "type": "cloze",
+      "points": ["gp-voicing", "gp-accusative"],
+      "text": "Men ___ alýaryn.",
+      "en": "I'm buying the bread.",
+      "blanks": [
+        {
+          "accept": ["çöregi"],
+          "reject": [
+            { "answer": "çöreki", "why": "Before a vowel, the *k* of *çörek* becomes *g*: *çöregi*." },
+            { "answer": "çörek", "why": "**The** bread is a particular one and needs the object ending: *çöregi*." },
+            { "answer": "çöregy", "why": "The last vowel of *çörek* is *e*, a front vowel: *-i*." }
+          ]
+        }
+      ],
+      "explain": "*çörek* + *-i*: the *k* becomes *g* before the vowel: *çöregi*."
+    },
+    {
+      "id": "a1-u08-l02-e04",
+      "type": "morph",
+      "points": ["gp-voicing", "gp-accusative"],
+      "base": "agaç",
+      "gloss": "The tree (as an object)",
+      "parts": ["agaj", "y"],
+      "distractors": ["agaç", "i", "ny"],
+      "result": "agajy",
+      "explain": "Before a vowel the *ç* of *agaç* becomes *j*: *agaj* + *y* = *agajy*."
+    },
+    {
+      "id": "a1-u08-l02-e05",
+      "type": "translate",
+      "points": ["gp-voicing", "gp-accusative"],
+      "from": "en",
+      "prompt": "I'm looking for the book.",
+      "accept": ["Men kitaby gözleýärin.", "Kitaby gözleýärin."],
+      "reject": [
+        { "answer": "Men kitapy gözleýärin.", "why": "Before a vowel the *p* becomes *b*: *kitaby*." },
+        { "answer": "Kitapy gözleýärin.", "why": "Before a vowel the *p* becomes *b*: *kitaby*." },
+        { "answer": "Men kitap gözleýärin.", "why": "**The** book is a particular one and takes the ending: *kitaby*." }
+      ]
+    },
+    {
+      "id": "a1-u08-l02-e06",
+      "type": "translate",
+      "points": ["gp-accusative"],
+      "from": "tk",
+      "prompt": "Batyr bileti tapýar.",
+      "accept": ["Batyr finds the ticket.", "Batyr is finding the ticket."],
+      "explain": "*bilet* ends in *t*, and most words in *t* keep it: *bileti*."
+    },
+    {
+      "id": "a1-u08-l02-e07",
+      "type": "mcq",
+      "points": ["gp-voicing"],
+      "question": "*at* means both **name** and **horse**. Which is **the horse** as an object?",
+      "options": ["aty", "ady"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*ady* is the object form of *at*, **name**, which has a long vowel and so softens its *t*."
+      },
+      "explain": "One-syllable words usually keep their consonant: *at* (horse) → *aty*. *at* (name) has a long *a* and softens: *ady*."
+    },
+    {
+      "id": "a1-u08-l02-e08",
+      "type": "cloze",
+      "points": ["gp-voicing", "gp-dative", "gp-locative"],
+      "text": "Biz mekdeb___ barýarys. Aýna mekdep___.",
+      "en": "We're going to school. Aýna is at school.",
+      "blanks": [
+        { "options": ["e", "a", "de"], "answer": 0 },
+        { "options": ["de", "e", "da"], "answer": 0 }
+      ],
+      "explain": "Before the vowel of the dative, *p* becomes *b*: *mekdebe*. Before the consonant of the locative it stays: *mekdepde*."
+    },
+    {
+      "id": "a1-u08-l02-e09",
+      "type": "translate",
+      "points": ["gp-voicing", "gp-accusative"],
+      "from": "en",
+      "prompt": "I'm looking for the teapot.",
+      "accept": ["Men çäýnegi gözleýärin.", "Çäýnegi gözleýärin."],
+      "reject": [
+        { "answer": "Men çäýneki gözleýärin.", "why": "Before a vowel the *k* of *çäýnek* becomes *g*: *çäýnegi*." },
+        { "answer": "Çäýneki gözleýärin.", "why": "Before a vowel the *k* of *çäýnek* becomes *g*: *çäýnegi*." }
+      ]
+    },
+    {
+      "id": "a1-u08-l02-e10",
+      "type": "wordbank",
+      "points": ["gp-voicing", "gp-accusative", "gp-dative"],
+      "from": "tk",
+      "prompt": "Mähri çöregi stola goýýar.",
+      "text": "Mähri puts the bread on the table.",
+      "answer": ["Mähri", "puts", "the", "bread", "on", "the", "table"],
+      "distractors": ["takes", "in", "a"]
+    },
+    {
+      "id": "a1-u08-l02-e11",
+      "type": "translate",
+      "points": ["gp-voicing", "gp-bar-yok"],
+      "from": "tk",
+      "prompt": "Kitapda surat bar.",
+      "accept": ["There is a picture in the book.", "There are pictures in the book.", "The book has a picture (in it)."],
+      "explain": "*-da* starts with a consonant, so the *p* of *kitap* stays: *kitapda*."
+    },
+    {
+      "id": "a1-u08-l02-e12",
+      "type": "mcq",
+      "points": ["gp-voicing", "gp-accusative"],
+      "question": "Which is right? **I'm reading the new book.**",
+      "options": ["Men täze kitaby okaýaryn.", "Men täze kitapy okaýaryn.", "Men täze kitabda okaýaryn."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "Before a vowel the *p* becomes *b*: *kitaby*.",
+        "2": "Before the consonant of *-da* the *p* stays, and **reading the book** needs the object ending anyway: *kitaby*."
+      },
+      "explain": "*täze kitaby*: a particular book, with *p* → *b* before the vowel."
+    },
+    {
+      "id": "a1-u08-l02-e13",
+      "type": "translate",
+      "points": ["gp-voicing", "gp-accusative"],
+      "from": "en",
+      "prompt": "Aýna is buying the bread.",
+      "accept": ["Aýna çöregi alýar."],
+      "reject": [
+        { "answer": "Aýna çöreki alýar.", "why": "Before a vowel, the *k* of *çörek* becomes *g*: *çöregi*." }
+      ]
+    }
+  ]
+}

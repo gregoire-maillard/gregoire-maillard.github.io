@@ -1,0 +1,176 @@
+{
+  "id": "a1-u09-l01",
+  "unit": "a1-u09",
+  "order": 1,
+  "title": "My family",
+  "goal": "Say my, your, his and our with the possessive endings, and name your brothers and sisters.",
+  "points": ["gp-possessive-suffixes"],
+  "intro": {
+    "text": "Add `-(Y)m` for **my**: *kaka* → *kakam*, *dost* → *dostum*, *öý* → *öýüm*. **Your** is `-(Y)ň`, **his** or **her** `-(s)Y`: *kakaň*, *kakasy*. *meniň* in front is optional. A final *e* becomes *ä*: *ejäm*.",
+    "see": "gp-possessive-suffixes"
+  },
+  "vocab": [
+    { "tk": "maşgala", "en": "family", "pos": "noun", "card": "fc-0175" },
+    { "tk": "dogan", "en": "brother or sister, sibling; brother", "pos": "noun", "card": "fc-0199" },
+    { "tk": "uýa", "en": "older sister", "pos": "noun" },
+    { "tk": "jigi", "en": "younger brother or sister", "pos": "noun" },
+    { "tk": "meniň", "en": "my (optional before -(Y)m)", "pos": "pron" },
+    { "tk": "seniň", "en": "your (optional before -(Y)ň)", "pos": "pron" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u09-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["maşgala", "family"],
+        ["aga", "older brother"],
+        ["uýa", "older sister"],
+        ["jigi", "younger brother or sister"],
+        ["dogan", "brother or sister"],
+        ["kaka", "father"]
+      ]
+    },
+    {
+      "id": "a1-u09-l01-e02",
+      "type": "mcq",
+      "points": ["gp-possessive-suffixes"],
+      "question": "How do you say **my father**?",
+      "options": ["kakam", "kakaym", "kakasy", "kakaň"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "After a vowel, **my** is just *-m*: *kakam*.",
+        "2": "*kakasy* is **his** or **her** father.",
+        "3": "*kakaň* is **your** father."
+      },
+      "explain": "*kaka* ends in a vowel, so **my** is *-m*: *kakam*."
+    },
+    {
+      "id": "a1-u09-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-possessive-suffixes", "gp-harmony-rounding"],
+      "base": "dost",
+      "form": "possessive",
+      "label": "*dost* (friend): my friend, your friend…",
+      "cells": [
+        { "p": "men", "accept": ["dostum"] },
+        { "p": "sen", "accept": ["dostuň"] },
+        { "p": "ol", "accept": ["dosty"] },
+        { "p": "biz", "accept": ["dostumyz"] },
+        { "p": "siz", "accept": ["dostuňyz"] },
+        { "p": "olar", "accept": ["dosty", "dostlary"] }
+      ],
+      "explain": "After the *o* of *dost*, the second-syllable vowel rounds: *dostum, dostuň*. A final vowel doesn't: *dosty*. From the third syllable it's *y* again: *dostumyz*."
+    },
+    {
+      "id": "a1-u09-l01-e04",
+      "type": "cloze",
+      "points": ["gp-possessive-suffixes"],
+      "text": "Bu meniň uýa___.",
+      "en": "This is my older sister.",
+      "blanks": [
+        {
+          "accept": ["m"],
+          "reject": [
+            { "answer": "ym", "why": "After a vowel, **my** is just *-m*: *uýam*." },
+            { "answer": "sy", "why": "*uýasy* is **his** or **her** older sister. **My** is *-m*: *uýam*." }
+          ]
+        }
+      ],
+      "explain": "*uýa* ends in a vowel: *uýa* + *-m* = *uýam*."
+    },
+    {
+      "id": "a1-u09-l01-e05",
+      "type": "translate",
+      "points": ["gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "My brother is a doctor.",
+      "accept": ["Meniň doganym lukman.", "(Meniň) [agam|jigim] lukman.", "Doganym lukman.", "(Meniň) [doganym|agam|jigim] lukmandyr."],
+      "reject": [
+        { "answer": "Meniň dogan lukman.", "why": "**My** is an ending on the noun: *doganym*. *meniň* alone is not enough." },
+        { "answer": "Men dogan lukman.", "why": "**My** is an ending on the noun: *doganym*, with *meniň* in front if you like." }
+      ],
+      "explain": "*dogan* is any brother or sister; *aga* is an older brother, *jigi* a younger one."
+    },
+    {
+      "id": "a1-u09-l01-e06",
+      "type": "translate",
+      "points": ["gp-possessive-suffixes", "gp-locative"],
+      "from": "tk",
+      "prompt": "Ejäň nirede?",
+      "accept": ["Where is your mother?", "Where is your [mum|mom]?"]
+    },
+    {
+      "id": "a1-u09-l01-e07",
+      "type": "mcq",
+      "points": ["gp-possessive-suffixes"],
+      "question": "*Öýümiz uly.* What does it mean?",
+      "options": ["Our house is big.", "My house is big.", "Your house is big."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**My** house would be *öýüm*. *-ümiz* is **our**.",
+        "2": "**Your** house would be *öýüň* or *öýüňiz*."
+      },
+      "explain": "*öý* + *-ümiz*: our house."
+    },
+    {
+      "id": "a1-u09-l01-e08",
+      "type": "morph",
+      "points": ["gp-possessive-suffixes"],
+      "base": "eje",
+      "gloss": "Our mother",
+      "parts": ["ejä", "miz"],
+      "distractors": ["eje", "imiz", "myz"],
+      "result": "ejämiz",
+      "explain": "*eje* ends in a vowel: **our** is *-miz*. Before it, the final *e* becomes *ä*: *ejämiz*."
+    },
+    {
+      "id": "a1-u09-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-possessive-suffixes", "gp-question-my"],
+      "from": "en",
+      "prompt": "Is this your family? (to a friend)",
+      "text": "Bu seniň maşgalaňmy?",
+      "answer": ["Bu", "seniň", "maşgalaňmy"],
+      "distractors": ["maşgalam", "maşgalasy", "meniň"],
+      "accept": ["Bu maşgalaňmy?"]
+    },
+    {
+      "id": "a1-u09-l01-e10",
+      "type": "translate",
+      "points": ["gp-possessive-suffixes", "gp-nationality-words"],
+      "from": "en",
+      "prompt": "Our teacher is Turkmen.",
+      "accept": ["Mugallymymyz türkmen.", "Biziň mugallymymyz türkmen.", "(Biziň) mugallymymyz türkmendir."],
+      "reject": [
+        { "answer": "Biz mugallym türkmen.", "why": "**Our** is an ending on the noun: *mugallymymyz*." }
+      ]
+    },
+    {
+      "id": "a1-u09-l01-e11",
+      "type": "cloze",
+      "points": ["gp-possessive-suffixes", "gp-harmony-rounding"],
+      "text": "Dost___ Daşoguzly.",
+      "en": "My friend is from Dashoguz.",
+      "blanks": [
+        { "options": ["um", "ym", "im"], "answer": 0 }
+      ],
+      "explain": "*dost* has *o* in its first syllable, so the vowel of the second syllable rounds: *dostum*."
+    },
+    {
+      "id": "a1-u09-l01-e12",
+      "type": "mcq",
+      "points": ["gp-possessive-suffixes"],
+      "question": "*Bu Merdan. Kakasy mugallym.* Who is a teacher?",
+      "options": ["Merdan's father", "Merdan", "My father"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*Kakasy* is **his** father, Merdan's father.",
+        "2": "**My** father would be *kakam*."
+      },
+      "explain": "*kaka* + *-sy*: his father."
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+{
+  "id": "a1-u07-l04",
+  "unit": "a1-u07",
+  "order": 4,
+  "title": "Bus, train, taxi",
+  "goal": "Use the pronouns in the dative and ablative, talk about getting around, and follow a short ride in a taxi.",
+  "points": ["gp-pronoun-cases-dat-abl", "gp-dative", "gp-ablative"],
+  "intro": {
+    "text": "Three pronouns change in the dative: *maňa* (to me), *saňa* (to you), *oňa* (to him or her); then *bize, size, olara*. The ablative is regular: *menden, senden, ondan, bizden, sizden, olardan*.",
+    "see": "gp-pronoun-cases-dat-abl"
+  },
+  "vocab": [
+    { "tk": "awtobus", "en": "bus", "pos": "noun" },
+    { "tk": "otly", "en": "train", "pos": "noun" },
+    { "tk": "uçar", "en": "plane", "pos": "noun" },
+    { "tk": "taksi", "en": "taxi", "pos": "noun" },
+    { "tk": "maşyn", "en": "car", "pos": "noun", "card": "fc-0169" },
+    { "tk": "münmek", "en": "to get on (a bus, a train); to ride", "pos": "verb" },
+    { "tk": "sag", "en": "right (side)", "pos": "adj" },
+    { "tk": "çep", "en": "left (side)", "pos": "adj" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u07-l04-e01",
+      "type": "conjugate",
+      "points": ["gp-pronoun-cases-dat-abl"],
+      "base": "men",
+      "form": "pronoun-dative",
+      "label": "The pronouns in the dative: **to me, to you…**",
+      "cells": [
+        { "p": "men", "accept": ["maňa"] },
+        { "p": "sen", "accept": ["saňa"] },
+        { "p": "ol", "accept": ["oňa"] },
+        { "p": "biz", "accept": ["bize"] },
+        { "p": "siz", "accept": ["size"] },
+        { "p": "olar", "accept": ["olara"] }
+      ],
+      "explain": "*men, sen, ol* change: *maňa, saňa, oňa*. The others just add *-e* or *-a*: *bize, size, olara*."
+    },
+    {
+      "id": "a1-u07-l04-e02",
+      "type": "match",
+      "pairs": [
+        ["awtobus", "bus"],
+        ["otly", "train"],
+        ["uçar", "plane"],
+        ["maşyn", "car"],
+        ["sag", "right"],
+        ["çep", "left"]
+      ]
+    },
+    {
+      "id": "a1-u07-l04-e03",
+      "type": "mcq",
+      "points": ["gp-pronoun-cases-dat-abl"],
+      "question": "How do you say **to me**?",
+      "options": ["maňa", "mene", "mende"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*men* changes in the dative: *maňa*, like *saňa* and *oňa*.",
+        "2": "*mende* is **on me, with me**, the locative."
+      },
+      "explain": "*men* → *maňa*, to me."
+    },
+    {
+      "id": "a1-u07-l04-e04",
+      "type": "translate",
+      "points": ["gp-pronoun-cases-dat-abl", "gp-dative"],
+      "from": "en",
+      "prompt": "She is helping me.",
+      "accept": ["Ol maňa kömek edýär.", "Maňa kömek edýär."],
+      "reject": [
+        { "answer": "Ol mene kömek edýär.", "why": "*men* changes in the dative: *maňa*." },
+        { "answer": "Ol mende kömek edýär.", "why": "*kömek etmek* takes the dative: *maňa*. *mende* is **on me**." }
+      ]
+    },
+    {
+      "id": "a1-u07-l04-e05",
+      "type": "translate",
+      "points": ["gp-pronoun-cases-dat-abl", "gp-dative"],
+      "from": "tk",
+      "prompt": "Biz size garaşýarys.",
+      "accept": ["We are waiting for you.", "We wait for you."]
+    },
+    {
+      "id": "a1-u07-l04-e06",
+      "type": "cloze",
+      "points": ["gp-pronoun-cases-dat-abl"],
+      "text": "Bu hat ___.",
+      "en": "This letter is from me.",
+      "blanks": [
+        {
+          "accept": ["menden"],
+          "reject": [
+            { "answer": "maňa", "why": "*maňa* is **to** me. **From** me is *menden*." },
+            { "answer": "mende", "why": "*mende* is **with me, on me**. **From** me is *menden*." }
+          ]
+        }
+      ],
+      "explain": "The ablative of *men* is regular: *menden*, from me."
+    },
+    {
+      "id": "a1-u07-l04-e07",
+      "type": "translate",
+      "points": ["gp-dative"],
+      "from": "en",
+      "prompt": "I'm getting on the bus.",
+      "accept": ["Men awtobusa münýärin.", "Awtobusa münýärin."],
+      "reject": [
+        { "answer": "Men awtobusda münýärin.", "why": "You get **onto** the bus: *münmek* takes the dative, *awtobusa*." },
+        { "answer": "Men awtobusdan münýärin.", "why": "*-dan* is **from**: you get off a bus with *awtobusdan düşmek*. Getting on is *awtobusa münmek*." }
+      ]
+    },
+    {
+      "id": "a1-u07-l04-e08",
+      "type": "mcq",
+      "points": ["gp-dative", "gp-ablative"],
+      "question": "Is the market far?",
+      "context": [
+        { "who": "Sürüji", "tk": "Salam! Nirä barýarsyňyz?", "en": "Hello! Where are you going?" },
+        { "who": "Jon", "tk": "Bazara, haýyş edýärin.", "en": "To the market, please." },
+        { "who": "Sürüji", "tk": "Bolýar. Bazar bu ýerden uzak däl." }
+      ],
+      "options": ["No, it isn't far from here.", "Yes, it's very far.", "The driver doesn't know."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*uzak däl*: **not** far.",
+        "2": "He says where it is: *bu ýerden uzak däl*, not far from here."
+      },
+      "explain": "*bu ýerden*: from here; *uzak däl*: not far."
+    },
+    {
+      "id": "a1-u07-l04-e09",
+      "type": "translate",
+      "points": ["gp-locative"],
+      "from": "tk",
+      "prompt": "Dükan sagda, kafe çepde.",
+      "accept": ["The shop is on the right, the café is on the left.", "The shop is on the right, the cafe is on the left.","The shop is on the right and the [cafe|café] is on the left.", "The store is on the right, the [cafe|café] is on the left."]
+    },
+    {
+      "id": "a1-u07-l04-e10",
+      "type": "wordbank",
+      "points": ["gp-pronoun-cases-dat-abl", "gp-dative"],
+      "from": "en",
+      "prompt": "Who are you waiting for?",
+      "text": "Sen kime garaşýarsyň?",
+      "answer": ["Sen", "kime", "garaşýarsyň"],
+      "distractors": ["kimde", "kimden", "nirä"],
+      "accept": ["Kime garaşýarsyň?"]
+    },
+    {
+      "id": "a1-u07-l04-e11",
+      "type": "cloze",
+      "points": ["gp-pronoun-cases-dat-abl"],
+      "text": "Olar ertir ___ gelýärler.",
+      "en": "They're coming to see us tomorrow.",
+      "blanks": [
+        { "options": ["bize", "bizden", "bizde"], "answer": 0 }
+      ],
+      "explain": "Coming **to** us takes the dative: *bize*. *bizden* would be **from** us, *bizde* **at our place**."
+    },
+    {
+      "id": "a1-u07-l04-e12",
+      "type": "translate",
+      "points": ["gp-dative", "gp-demonstratives"],
+      "from": "en",
+      "prompt": "This train is going to Mary.",
+      "accept": ["Bu otly Mara gidýär.", "Bu otly Mara barýar."],
+      "reject": [
+        { "answer": "Bu otly Marya gidýär.", "why": "After a vowel nothing is added: the final *y* becomes *a*: *Mara*." },
+        { "answer": "Bu otly Marye gidýär.", "why": "After a vowel nothing is added: the final *y* becomes *a*: *Mara*." },
+        { "answer": "Bu otly Maryda gidýär.", "why": "*Maryda* is **in** Mary. **To** Mary is *Mara*." }
+      ]
+    },
+    {
+      "id": "a1-u07-l04-e13",
+      "type": "mcq",
+      "points": ["gp-ablative"],
+      "question": "Döwran says *Men uçardan gorkýaryn.* What does he mean?",
+      "options": ["He is afraid of planes.", "He is getting off the plane.", "He is going to the plane."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Getting off would be *uçardan düşýärin*.",
+        "2": "Going to the plane would take the dative: *uçara*."
+      },
+      "explain": "*gorkmak* takes the ablative: *uçardan gorkýaryn*, I'm afraid of planes."
+    },
+    {
+      "id": "a1-u07-l04-e14",
+      "type": "translate",
+      "points": ["gp-bar-yok", "gp-question-my"],
+      "from": "en",
+      "prompt": "Is there a taxi here?",
+      "accept": ["Bu ýerde taksi barmy?", "Taksi barmy?"]
+    }
+  ]
+}

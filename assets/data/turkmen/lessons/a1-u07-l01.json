@@ -1,0 +1,197 @@
+{
+  "id": "a1-u07-l01",
+  "unit": "a1-u07",
+  "order": 1,
+  "title": "Going places",
+  "goal": "Say where people are going with the dative -a and -e, and ask with nirä.",
+  "points": ["gp-dative"],
+  "intro": {
+    "text": "Add `-A` to say **where to**: *-a* after a back vowel, *-e* after a front one. *öýe* (home), *işe* (to work), *bazara* (to the market). Ask with *nirä*: *Nirä barýarsyň?* Where are you going?",
+    "see": "gp-dative"
+  },
+  "vocab": [
+    { "tk": "barmak", "en": "to go (to a place), to get to", "pos": "verb" },
+    { "tk": "nirä", "en": "where to", "pos": "adv", "card": "fc-0065" },
+    { "tk": "iş", "en": "work; job", "pos": "noun", "card": "fc-0038" },
+    { "tk": "uniwersitet", "en": "university", "pos": "noun" },
+    { "tk": "seýilgäh", "en": "park", "pos": "noun" },
+    { "tk": "bu ýere", "en": "here, to this place", "pos": "adv" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u07-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["barmak", "to go (to a place)"],
+        ["nirä", "where to"],
+        ["nirede", "where"],
+        ["iş", "work"],
+        ["uniwersitet", "university"],
+        ["seýilgäh", "park"]
+      ]
+    },
+    {
+      "id": "a1-u07-l01-e02",
+      "type": "mcq",
+      "points": ["gp-dative"],
+      "question": "How do you say **to the market**?",
+      "options": ["bazara", "bazarda", "bazare"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*bazarda* is **at** the market. Going **to** it takes *-a*: *bazara*.",
+        "2": "The last vowel of *bazar* is *a*, a back vowel, so the ending is *-a*."
+      },
+      "explain": "Back vowel *a*: *bazar* + *-a* = *bazara*."
+    },
+    {
+      "id": "a1-u07-l01-e03",
+      "type": "cloze",
+      "points": ["gp-dative"],
+      "text": "Men bazar___ barýaryn, Aýna öý___ gidýär.",
+      "en": "I'm going to the market, Aýna is going home.",
+      "blanks": [
+        {
+          "accept": ["a"],
+          "reject": [
+            { "answer": "e", "why": "The last vowel of *bazar* is *a*, a back vowel: *bazara*." },
+            { "answer": "da", "why": "*bazarda* is **at** the market. **To** the market is *bazara*." }
+          ]
+        },
+        { "options": ["e", "a", "de"], "answer": 0 }
+      ],
+      "explain": "*bazar* has the back vowel *a*: *-a*; *öý* has the front vowel *ö*: *-e*."
+    },
+    {
+      "id": "a1-u07-l01-e04",
+      "type": "translate",
+      "points": ["gp-dative", "gp-question-words"],
+      "from": "en",
+      "prompt": "Where are you going? (to a friend)",
+      "accept": ["Nirä barýarsyň?", "Sen nirä barýarsyň?", "(Sen) nirä gidýärsiň?"],
+      "reject": [
+        { "answer": "Nirede barýarsyň?", "why": "*nirede* asks where something **is**. For **where to**, use *nirä*." },
+        { "answer": "Sen nirede barýarsyň?", "why": "*nirede* asks where something **is**. For **where to**, use *nirä*." }
+      ],
+      "explain": "*nirä*, where to, with *barmak*: *Nirä barýarsyň?*"
+    },
+    {
+      "id": "a1-u07-l01-e05",
+      "type": "translate",
+      "points": ["gp-dative"],
+      "from": "tk",
+      "prompt": "Aýna uniwersitete gidýär.",
+      "accept": ["Aýna is going to university.", "Aýna is going to the university.", "Aýna goes to (the) university."]
+    },
+    {
+      "id": "a1-u07-l01-e06",
+      "type": "morph",
+      "points": ["gp-dative"],
+      "base": "seýilgäh",
+      "gloss": "To the park",
+      "parts": ["seýilgäh", "e"],
+      "distractors": ["a", "de", "ä"],
+      "result": "seýilgähe",
+      "explain": "The last vowel of *seýilgäh* is *ä*, a front vowel: *-e*. After a consonant the ending is simply added: *seýilgähe*."
+    },
+    {
+      "id": "a1-u07-l01-e07",
+      "type": "mcq",
+      "points": ["gp-dative"],
+      "question": "Where is Batyr going?",
+      "context": [
+        { "who": "Merjen", "tk": "Salam, Batyr! Nirä barýarsyň?", "en": "Hi, Batyr! Where are you going?" },
+        { "who": "Batyr", "tk": "Salam! Men seýilgähe barýaryn. Sen hem gelýärsiňmi?" }
+      ],
+      "options": ["To the park.", "To work.", "Home."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "To work would be *işe*.",
+        "2": "Home would be *öýe*."
+      },
+      "explain": "*seýilgähe*: *seýilgäh* + *-e*, to the park. Then he asks whether Merjen is coming too."
+    },
+    {
+      "id": "a1-u07-l01-e08",
+      "type": "translate",
+      "points": ["gp-dative"],
+      "from": "en",
+      "prompt": "We are going to the market.",
+      "accept": ["Biz bazara barýarys.", "Bazara barýarys.", "(Biz) bazara gidýäris."],
+      "reject": [
+        { "answer": "Biz bazarda barýarys.", "why": "*bazarda* is **at** the market. Going **to** it takes *-a*: *bazara*." },
+        { "answer": "Bazarda barýarys.", "why": "*bazarda* is **at** the market. Going **to** it takes *-a*: *bazara*." }
+      ]
+    },
+    {
+      "id": "a1-u07-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-dative"],
+      "from": "tk",
+      "prompt": "Mugallym synpa gelýär.",
+      "text": "The teacher is coming to the classroom.",
+      "answer": ["The", "teacher", "is", "coming", "to", "the", "classroom"],
+      "distractors": ["in", "going", "from"]
+    },
+    {
+      "id": "a1-u07-l01-e10",
+      "type": "cloze",
+      "points": ["gp-dative", "gp-proper-nouns"],
+      "text": "Döwran ertir Daşoguz___ gidýär.",
+      "en": "Döwran is going to Dashoguz tomorrow.",
+      "blanks": [
+        {
+          "accept": ["a"],
+          "reject": [
+            { "answer": "da", "why": "*Daşoguzda* is **in** Dashoguz. **To** Dashoguz is *Daşoguza*." },
+            { "answer": "e", "why": "The last vowel of *Daşoguz* is *u*, a back vowel: *-a*." }
+          ]
+        }
+      ],
+      "explain": "Names take the ending like any word, with no apostrophe: *Daşoguz* + *-a* = *Daşoguza*."
+    },
+    {
+      "id": "a1-u07-l01-e11",
+      "type": "mcq",
+      "points": ["gp-dative", "gp-locative"],
+      "question": "*Men öýde.* and *Men öýe barýaryn.* What is the difference?",
+      "options": ["The first says where I am, the second where I'm going.", "The first is polite, the second familiar.", "There is no difference."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Neither is more polite: the endings differ. *-de* is **at**, *-e* is **to**.",
+        "2": "*öýde* is **at** home, *öýe* is **to** home."
+      },
+      "explain": "*öýde*: I'm at home. *öýe barýaryn*: I'm going home."
+    },
+    {
+      "id": "a1-u07-l01-e12",
+      "type": "translate",
+      "points": ["gp-dative", "gp-question-words"],
+      "from": "tk",
+      "prompt": "Nirä barýarsyňyz? — Işe.",
+      "accept": ["Where are you going? — To work.", "Where are you going? — I am going to work."]
+    },
+    {
+      "id": "a1-u07-l01-e13",
+      "type": "wordbank",
+      "points": ["gp-dative"],
+      "from": "en",
+      "prompt": "I'm going to the shop.",
+      "text": "Men dükana barýaryn.",
+      "answer": ["Men", "dükana", "barýaryn"],
+      "distractors": ["dükanda", "dükane", "nirä"],
+      "accept": ["Dükana barýaryn."]
+    },
+    {
+      "id": "a1-u07-l01-e14",
+      "type": "translate",
+      "points": ["gp-dative"],
+      "from": "tk",
+      "prompt": "Myhmanlar bu ýere gelýärler.",
+      "accept": ["The guests are coming here.", "The guests come here.", "Guests are coming here."],
+      "explain": "*bu ýere*: to this place, here. Compare *bu ýerde*: here, in this place."
+    }
+  ]
+}

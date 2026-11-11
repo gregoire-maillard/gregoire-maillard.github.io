@@ -1,0 +1,197 @@
+{
+  "id": "a1-u08-l03",
+  "unit": "a1-u08",
+  "order": 3,
+  "title": "Do you know me?",
+  "goal": "Use the pronouns as objects (meni, seni, ony) and muny for this one.",
+  "points": ["gp-pronoun-accusative", "gp-accusative"],
+  "intro": {
+    "text": "Pronouns as objects always take the ending: *meni, seni, ony, bizi, sizi, olary*. *bu* and *şu* standing alone become *muny* and *şuny*: *Muny alýaryn* (I'll take this one).",
+    "see": "gp-pronoun-accusative"
+  },
+  "vocab": [
+    { "tk": "tanamak", "en": "to know (a person), to recognize", "pos": "verb", "card": "fc-0177" },
+    { "tk": "gowy görmek", "en": "to like", "pos": "verb", "card": "fc-0088" },
+    { "tk": "çagyrmak", "en": "to invite; to call (someone over)", "pos": "verb" },
+    { "tk": "aýdym", "en": "song", "pos": "noun" },
+    { "tk": "muny", "en": "this one (as an object)", "pos": "pron" },
+    { "tk": "şuny", "en": "this one here (as an object)", "pos": "pron" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u08-l03-e01",
+      "type": "conjugate",
+      "points": ["gp-pronoun-accusative"],
+      "base": "men",
+      "form": "pronoun-accusative",
+      "label": "The pronouns as objects: **me, you, him…**",
+      "cells": [
+        { "p": "men", "accept": ["meni"] },
+        { "p": "sen", "accept": ["seni"] },
+        { "p": "ol", "accept": ["ony"] },
+        { "p": "biz", "accept": ["bizi"] },
+        { "p": "siz", "accept": ["sizi"] },
+        { "p": "olar", "accept": ["olary"] }
+      ],
+      "explain": "Each pronoun adds *-i* or *-y*; *ol* takes its extra *n*: *ony*."
+    },
+    {
+      "id": "a1-u08-l03-e02",
+      "type": "match",
+      "pairs": [
+        ["tanamak", "to know (a person)"],
+        ["gowy görmek", "to like"],
+        ["çagyrmak", "to invite"],
+        ["aýdym", "song"],
+        ["muny", "this one"]
+      ]
+    },
+    {
+      "id": "a1-u08-l03-e03",
+      "type": "mcq",
+      "points": ["gp-pronoun-accusative"],
+      "question": "How do you say **him** in **I know him**?",
+      "options": ["ony", "oly", "ol", "oňa"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*ol* takes an *n* before the ending, as in *onda* and *ondan*: *ony*.",
+        "2": "As an object the pronoun needs the ending: *ony*.",
+        "3": "*oňa* is **to** him, the dative."
+      },
+      "explain": "*Men ony tanaýaryn*: I know him."
+    },
+    {
+      "id": "a1-u08-l03-e04",
+      "type": "translate",
+      "points": ["gp-pronoun-accusative", "gp-question-my"],
+      "from": "en",
+      "prompt": "Do you know me? (to a friend)",
+      "accept": ["Sen meni tanaýarsyňmy?", "Meni tanaýarsyňmy?", "(Sen) meni tanaýarmyň?"],
+      "reject": [
+        { "answer": "Sen men tanaýarsyňmy?", "why": "A pronoun as an object takes the ending: *meni*." },
+        { "answer": "Sen maňa tanaýarsyňmy?", "why": "*tanamak* takes the object ending, not the dative: *meni*." }
+      ]
+    },
+    {
+      "id": "a1-u08-l03-e05",
+      "type": "translate",
+      "points": ["gp-pronoun-accusative"],
+      "from": "tk",
+      "prompt": "Biz sizi çagyrýarys.",
+      "accept": ["We are inviting you.", "We invite you."]
+    },
+    {
+      "id": "a1-u08-l03-e06",
+      "type": "cloze",
+      "points": ["gp-pronoun-accusative"],
+      "text": "Men ___ gowy görýärin.",
+      "en": "I like her.",
+      "blanks": [
+        {
+          "accept": ["ony"],
+          "reject": [
+            { "answer": "oňa", "why": "*oňa* is **to** her. *gowy görmek* takes the object ending: *ony*." },
+            { "answer": "ol", "why": "As an object the pronoun takes the ending: *ony*." },
+            { "answer": "oly", "why": "*ol* takes an *n* before the ending: *ony*." }
+          ]
+        }
+      ],
+      "explain": "*gowy görmek*, to like, takes the object ending: *ony*."
+    },
+    {
+      "id": "a1-u08-l03-e07",
+      "type": "mcq",
+      "points": ["gp-pronoun-accusative"],
+      "question": "At the market you point at a melon and say:",
+      "options": ["Muny alýaryn.", "Bu alýaryn.", "Buny alýaryn."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "**This one** is the object here, so it takes the ending: *muny*.",
+        "2": "Before the ending, *bu* changes to *mu-*: *muny*."
+      },
+      "explain": "*bu* standing alone as an object becomes *muny*: I'll take this one."
+    },
+    {
+      "id": "a1-u08-l03-e08",
+      "type": "translate",
+      "points": ["gp-accusative", "gp-demonstratives"],
+      "from": "en",
+      "prompt": "I like this song.",
+      "accept": ["Men bu aýdymy gowy görýärin.", "Bu aýdymy gowy görýärin."],
+      "reject": [
+        { "answer": "Men bu aýdym gowy görýärin.", "why": "With *bu* in front the object is particular, so it takes the ending: *aýdymy*." },
+        { "answer": "Men bu aýdyma gowy görýärin.", "why": "*gowy görmek* takes the object ending, not the dative: *aýdymy*." }
+      ]
+    },
+    {
+      "id": "a1-u08-l03-e09",
+      "type": "wordbank",
+      "points": ["gp-pronoun-accusative"],
+      "from": "en",
+      "prompt": "They know us.",
+      "text": "Olar bizi tanaýarlar.",
+      "answer": ["Olar", "bizi", "tanaýarlar"],
+      "distractors": ["biz", "bize", "bizden"]
+    },
+    {
+      "id": "a1-u08-l03-e10",
+      "type": "translate",
+      "points": ["gp-pronoun-accusative"],
+      "from": "tk",
+      "prompt": "Aýna olary çagyrýar.",
+      "accept": ["Aýna is inviting them.", "Aýna invites them."]
+    },
+    {
+      "id": "a1-u08-l03-e11",
+      "type": "mcq",
+      "points": ["gp-pronoun-accusative"],
+      "question": "Which is right? **The teacher is listening to us.**",
+      "options": ["Mugallym bizi diňleýär.", "Mugallym bize diňleýär.", "Mugallym biz diňleýär."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "English says **listen to**, but *diňlemek* takes the object ending: *bizi*.",
+        "2": "As an object the pronoun takes the ending: *bizi*."
+      },
+      "explain": "*diňlemek* takes a direct object: *bizi diňleýär*."
+    },
+    {
+      "id": "a1-u08-l03-e12",
+      "type": "cloze",
+      "points": ["gp-pronoun-accusative", "gp-present-negative"],
+      "text": "___ bilmeýärin.",
+      "en": "I don't know this.",
+      "blanks": [
+        { "options": ["Muny", "Bu", "Munda"], "answer": 0 }
+      ],
+      "explain": "**This** is the object of *bilmek*, so *bu* becomes *muny*. *Munda* would mean **in this**."
+    },
+    {
+      "id": "a1-u08-l03-e13",
+      "type": "translate",
+      "points": ["gp-pronoun-accusative"],
+      "from": "en",
+      "prompt": "Merjen, I love you.",
+      "accept": ["Merjen, men seni söýýärin.", "Merjen, seni söýýärin."],
+      "reject": [
+        { "answer": "Merjen, men sen söýýärin.", "why": "A pronoun as an object takes the ending: *seni*." }
+      ]
+    },
+    {
+      "id": "a1-u08-l03-e14",
+      "type": "mcq",
+      "points": ["gp-pronoun-accusative"],
+      "question": "*Şuny gowy görýärin.* What does it mean?",
+      "options": ["I like this one here.", "I like him.", "I like it here."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**Him** would be *ony*.",
+        "2": "**Here** would be a place word, *şu ýerde*. *şuny* is an object: this one."
+      },
+      "explain": "*şu* standing alone as an object becomes *şuny*: this one, right here."
+    }
+  ]
+}

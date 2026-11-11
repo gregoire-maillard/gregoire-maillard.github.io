@@ -1,0 +1,184 @@
+{
+  "id": "a1-u09-l03",
+  "unit": "a1-u09",
+  "order": 3,
+  "title": "Son, nose and mouth",
+  "goal": "Drop the vowel of ogul, burun and agyz before a vowel ending, and soften k and p before the possessives.",
+  "points": ["gp-vowel-loss", "gp-possessive-voicing", "gp-possessive-suffixes"],
+  "intro": {
+    "text": "A few words drop a vowel before an ending that starts with a vowel: *ogul* → *oglum* (my son), *burun* → *burnum*, *agyz* → *agzym*. And *k*, *p*, *ç* soften as before: *aýak* → *aýagym*, *kitap* → *kitabym*.",
+    "see": "gp-vowel-loss"
+  },
+  "vocab": [
+    { "tk": "ogul", "en": "son", "pos": "noun" },
+    { "tk": "baş", "en": "head", "pos": "noun", "card": "fc-0121" },
+    { "tk": "göz", "en": "eye", "pos": "noun", "card": "fc-0156" },
+    { "tk": "el", "en": "hand", "pos": "noun", "card": "fc-0092" },
+    { "tk": "aýak", "en": "foot; leg", "pos": "noun" },
+    { "tk": "gulak", "en": "ear", "pos": "noun" },
+    { "tk": "burun", "en": "nose", "pos": "noun" },
+    { "tk": "agyz", "en": "mouth", "pos": "noun" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u09-l03-e01",
+      "type": "match",
+      "pairs": [
+        ["baş", "head"],
+        ["göz", "eye"],
+        ["el", "hand"],
+        ["aýak", "foot, leg"],
+        ["burun", "nose"],
+        ["agyz", "mouth"]
+      ]
+    },
+    {
+      "id": "a1-u09-l03-e02",
+      "type": "mcq",
+      "points": ["gp-vowel-loss"],
+      "question": "How do you say **my son**?",
+      "options": ["oglum", "ogulum", "ogulym", "oglym"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*ogul* drops its second *u* before a vowel: *ogl-*, then *-um*: *oglum*.",
+        "2": "*ogul* drops its second *u* before a vowel, and the ending rounds after the *o*: *oglum*.",
+        "3": "After the *o* of the first syllable, the vowel of the second rounds: *oglum*."
+      },
+      "explain": "*ogul* + *-um*: the *u* of *-gul* drops, *ogl* + *um* = *oglum*."
+    },
+    {
+      "id": "a1-u09-l03-e03",
+      "type": "morph",
+      "points": ["gp-vowel-loss", "gp-possessive-suffixes"],
+      "base": "burun",
+      "gloss": "My nose",
+      "parts": ["burn", "um"],
+      "distractors": ["burun", "ym", "im"],
+      "result": "burnum",
+      "explain": "*burun* drops its second *u* before a vowel ending: *burn* + *um*. The ending rounds after the *u* of the first syllable."
+    },
+    {
+      "id": "a1-u09-l03-e04",
+      "type": "morph",
+      "points": ["gp-possessive-voicing", "gp-possessive-suffixes"],
+      "base": "aýak",
+      "gloss": "My foot",
+      "parts": ["aýag", "ym"],
+      "distractors": ["aýak", "um", "im"],
+      "result": "aýagym",
+      "explain": "Before a vowel the *k* of *aýak* becomes *g*: *aýag* + *ym* = *aýagym*."
+    },
+    {
+      "id": "a1-u09-l03-e05",
+      "type": "cloze",
+      "points": ["gp-vowel-loss", "gp-possessive-have"],
+      "text": "Meniň iki ___ bar.",
+      "en": "I have two sons.",
+      "blanks": [
+        {
+          "accept": ["oglum"],
+          "reject": [
+            { "answer": "ogulum", "why": "*ogul* drops its second *u* before a vowel: *oglum*." },
+            { "answer": "ogullarym", "why": "After a number the noun stays singular: *iki oglum*." },
+            { "answer": "ogul", "why": "**Have** needs **my** on the noun: *oglum bar*." }
+          ]
+        }
+      ],
+      "explain": "*iki oglum bar*: singular after the number, *ogul* without its second *u*, and *-um* for **my**."
+    },
+    {
+      "id": "a1-u09-l03-e06",
+      "type": "translate",
+      "points": ["gp-vowel-loss", "gp-locative"],
+      "from": "en",
+      "prompt": "My son is at school.",
+      "accept": ["Oglum mekdepde.", "Meniň oglum mekdepde."],
+      "reject": [
+        { "answer": "Ogulum mekdepde.", "why": "*ogul* drops its second *u* before a vowel: *oglum*." },
+        { "answer": "Meniň ogulum mekdepde.", "why": "*ogul* drops its second *u* before a vowel: *oglum*." },
+        { "answer": "Oglum mekdepe.", "why": "**At** school is the locative: *mekdepde*." }
+      ]
+    },
+    {
+      "id": "a1-u09-l03-e07",
+      "type": "translate",
+      "points": ["gp-vowel-loss", "gp-locative"],
+      "from": "tk",
+      "prompt": "Agzyňda näme bar?",
+      "accept": ["What is in your mouth?", "What do you have in your mouth?", "What have you got in your mouth?"],
+      "explain": "*agyz* drops its *y*: *agz* + *-yň* (your) + *-da* (in)."
+    },
+    {
+      "id": "a1-u09-l03-e08",
+      "type": "mcq",
+      "points": ["gp-vowel-loss"],
+      "question": "Which word keeps all its letters before **my**?",
+      "options": ["göz → gözüm", "burun → burnum", "ogul → oglum"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*burun* is one of the few words that drop a vowel.",
+        "2": "*ogul* is one of the few words that drop a vowel."
+      },
+      "explain": "Most words keep every letter: *gözüm*, *elim*. Only a few drop a vowel: *oglum*, *burnum*, *agzym*."
+    },
+    {
+      "id": "a1-u09-l03-e09",
+      "type": "translate",
+      "points": ["gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "My hands are cold.",
+      "accept": ["Ellerim sowuk.", "Meniň ellerim sowuk.", "(Meniň) elim sowuk."],
+      "explain": "The plural comes before the possessive: *el* + *-ler* + *-im* = *ellerim*."
+    },
+    {
+      "id": "a1-u09-l03-e10",
+      "type": "wordbank",
+      "points": ["gp-possessive-suffixes", "gp-harmony-rounding"],
+      "from": "tk",
+      "prompt": "Seniň gözüň owadan.",
+      "text": "Your eyes are beautiful.",
+      "answer": ["Your", "eyes", "are", "beautiful"],
+      "distractors": ["My", "hands", "big"]
+    },
+    {
+      "id": "a1-u09-l03-e11",
+      "type": "mcq",
+      "points": ["gp-possessive-voicing"],
+      "question": "*kitap* → *kitabym*. Which word follows the same rule?",
+      "options": ["gulak → gulagym", "göz → gözüm", "baş → başym"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*z* never changes: only *k*, *p*, *ç* (and *t* in a few words) soften.",
+        "2": "*ş* never changes: only *k*, *p*, *ç* (and *t* in a few words) soften."
+      },
+      "explain": "*gulak* ends in *k*, which becomes *g* before a vowel: *gulagym*."
+    },
+    {
+      "id": "a1-u09-l03-e12",
+      "type": "translate",
+      "points": ["gp-possessive-voicing"],
+      "from": "en",
+      "prompt": "Where is my book?",
+      "accept": ["Kitabym nirede?", "Meniň kitabym nirede?"],
+      "reject": [
+        { "answer": "Kitapym nirede?", "why": "Before a vowel the *p* becomes *b*: *kitabym*." },
+        { "answer": "Meniň kitapym nirede?", "why": "Before a vowel the *p* becomes *b*: *kitabym*." },
+        { "answer": "Meniň kitap nirede?", "why": "**My** is an ending on the noun: *kitabym*." }
+      ]
+    },
+    {
+      "id": "a1-u09-l03-e13",
+      "type": "cloze",
+      "points": ["gp-possessive-voicing"],
+      "text": "Meniň aýa___ uly däl.",
+      "en": "My foot isn't big.",
+      "blanks": [
+        { "options": ["gym", "kym", "gum"], "answer": 0 }
+      ],
+      "explain": "*aýak* + *-ym* (my): the *k* becomes *g* before the vowel, and the ending keeps *y* after the *a*: *aýagym*."
+    }
+  ]
+}

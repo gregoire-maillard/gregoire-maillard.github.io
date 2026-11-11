@@ -1,0 +1,198 @@
+{
+  "id": "a1-u09-l04",
+  "unit": "a1-u09",
+  "order": 4,
+  "title": "Aunts and uncles",
+  "goal": "Name the wider family with the possessives, tell adym from atym, and follow a talk about a family photo.",
+  "points": ["gp-possessive-suffixes", "gp-possessive-have", "gp-possessive-voicing"],
+  "intro": {
+    "text": "Turkmen has a word for each aunt and uncle: *daýy* and *daýza* are your mother's brother and sister, *bibi* your father's sister. *ata* and *ene* are grandfather and grandmother. And remember: *adym* (my name), but *atym* (my horse).",
+    "see": "gp-possessive-suffixes"
+  },
+  "vocab": [
+    { "tk": "daýy", "en": "uncle (your mother's brother)", "pos": "noun" },
+    { "tk": "bibi", "en": "aunt (your father's sister)", "pos": "noun" },
+    { "tk": "ata", "en": "grandfather", "pos": "noun" },
+    { "tk": "ene", "en": "grandmother", "pos": "noun" },
+    { "tk": "är", "en": "husband", "pos": "noun" },
+    { "tk": "aýal", "en": "wife; woman", "pos": "noun", "card": "fc-0136" },
+    { "tk": "saç", "en": "hair", "pos": "noun" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u09-l04-e01",
+      "type": "match",
+      "pairs": [
+        ["daýy", "mother's brother"],
+        ["daýza", "mother's sister"],
+        ["bibi", "father's sister"],
+        ["ata", "grandfather"],
+        ["ene", "grandmother"],
+        ["är", "husband"]
+      ]
+    },
+    {
+      "id": "a1-u09-l04-e02",
+      "type": "mcq",
+      "points": ["gp-possessive-suffixes"],
+      "question": "Your mother's brother is your…",
+      "options": ["daýy", "bibi", "aga"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*bibi* is your father's sister.",
+        "2": "*aga* is an older brother, and also an older man on your father's side."
+      },
+      "explain": "*daýy* and *daýza*: the brother and sister of your mother."
+    },
+    {
+      "id": "a1-u09-l04-e03",
+      "type": "mcq",
+      "points": ["gp-possessive-voicing"],
+      "question": "Which means **my horse**?",
+      "options": ["atym", "adym"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*adym* is **my name**: *at* (name) has a long vowel and softens its *t*. *at* (horse) doesn't."
+      },
+      "explain": "*at* (horse), a short one-syllable word, keeps its *t*: *atym*."
+    },
+    {
+      "id": "a1-u09-l04-e04",
+      "type": "translate",
+      "points": ["gp-possessive-suffixes", "gp-present-yar"],
+      "from": "en",
+      "prompt": "My grandmother lives in the village.",
+      "accept": ["Enäm obada ýaşaýar.", "Meniň enäm obada ýaşaýar.", "(Meniň) enem obada ýaşaýar."],
+      "reject": [
+        { "answer": "Enäm oba ýaşaýar.", "why": "Where someone lives is **in** a place: the locative *obada*." }
+      ],
+      "explain": "*ene* + *-m*: the final *e* becomes *ä*, *enäm* (*enem* is also written)."
+    },
+    {
+      "id": "a1-u09-l04-e05",
+      "type": "translate",
+      "points": ["gp-possessive-suffixes"],
+      "from": "tk",
+      "prompt": "Bibimiz Aşgabatda ýaşaýar.",
+      "accept": ["Our aunt lives in Ashgabat.", "Our aunt is living in Ashgabat."]
+    },
+    {
+      "id": "a1-u09-l04-e06",
+      "type": "mcq",
+      "points": ["gp-possessive-suffixes", "gp-question-my"],
+      "question": "Who is the doctor?",
+      "context": [
+        { "who": "Maral", "tk": "Bu seniň maşgalaňmy?", "en": "Is this your family?" },
+        { "who": "Döwran", "tk": "Hawa. Bu meniň atam we enäm. Bu daýym.", "en": "Yes. This is my grandfather and my grandmother. This is my uncle." },
+        { "who": "Maral", "tk": "Daýyň mugallymmy?", "en": "Is your uncle a teacher?" },
+        { "who": "Döwran", "tk": "Ýok, ol lukman." }
+      ],
+      "options": ["Döwran's uncle, his mother's brother", "Döwran's grandfather", "Döwran"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Maral asks about *daýyň*, your uncle, and the answer is about him: *ol lukman*.",
+        "2": "Nobody says Döwran is a doctor."
+      },
+      "explain": "*daýym*: my uncle on my mother's side. *Ýok, ol lukman*: no, he's a doctor."
+    },
+    {
+      "id": "a1-u09-l04-e07",
+      "type": "conjugate",
+      "points": ["gp-possessive-voicing", "gp-possessive-suffixes"],
+      "base": "at",
+      "form": "possessive",
+      "label": "*at* (name): my name, your name…",
+      "cells": [
+        { "p": "men", "accept": ["adym"] },
+        { "p": "sen", "accept": ["adyň"] },
+        { "p": "ol", "accept": ["ady"] },
+        { "p": "biz", "accept": ["adymyz"] },
+        { "p": "siz", "accept": ["adyňyz"] },
+        { "p": "olar", "accept": ["ady", "atlary"] }
+      ],
+      "explain": "*at* (name) has a long vowel, so its *t* becomes *d* before every possessive vowel: *adym*. Before *-lar* it stays: *atlary*."
+    },
+    {
+      "id": "a1-u09-l04-e08",
+      "type": "translate",
+      "points": ["gp-possessive-have", "gp-question-my"],
+      "from": "en",
+      "prompt": "Do you have an older sister? (polite)",
+      "accept": ["Uýaňyz barmy?", "Siziň uýaňyz barmy?"],
+      "reject": [
+        { "answer": "Uýaňyz ýokmy?", "why": "*ýokmy?* asks **don't you have**. To ask whether someone has one, use *barmy?*" }
+      ]
+    },
+    {
+      "id": "a1-u09-l04-e09",
+      "type": "cloze",
+      "points": ["gp-possessive-suffixes", "gp-harmony-rounding"],
+      "text": "Meniň saç___ gara, göz___ gök.",
+      "en": "My hair is black, my eyes are blue.",
+      "blanks": [
+        {
+          "accept": ["ym"],
+          "reject": [
+            { "answer": "im", "why": "*saç* has the back vowel *a*: *-ym*." },
+            { "answer": "um", "why": "Only a rounded first syllable rounds the ending. *saç* has *a*: *saçym*." }
+          ]
+        },
+        {
+          "accept": ["üm"],
+          "reject": [
+            { "answer": "im", "why": "After *ö* in the first syllable, the vowel of the second rounds: *gözüm*." },
+            { "answer": "ym", "why": "*göz* has a front vowel, and it is rounded: *gözüm*." }
+          ]
+        }
+      ],
+      "explain": "*saç* + *-ym*; *göz* + *-üm*, rounded after *ö*."
+    },
+    {
+      "id": "a1-u09-l04-e10",
+      "type": "wordbank",
+      "points": ["gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "My husband is a driver.",
+      "text": "Meniň ärim sürüji.",
+      "answer": ["Meniň", "ärim", "sürüji"],
+      "distractors": ["aýalym", "är", "sürüjim"],
+      "accept": ["Ärim sürüji."]
+    },
+    {
+      "id": "a1-u09-l04-e11",
+      "type": "translate",
+      "points": ["gp-possessive-suffixes", "gp-question-my"],
+      "from": "tk",
+      "prompt": "Aýalyňyz türkmenmi?",
+      "accept": ["Is your wife Turkmen?"]
+    },
+    {
+      "id": "a1-u09-l04-e12",
+      "type": "mcq",
+      "points": ["gp-possessive-suffixes"],
+      "question": "*bibim* is…",
+      "options": ["my father's sister", "my mother's sister", "my grandmother"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Your mother's sister is *daýza*: *daýzam*.",
+        "2": "Your grandmother is *ene*: *enäm*."
+      },
+      "explain": "*bibi* + *-m*: my aunt on my father's side."
+    },
+    {
+      "id": "a1-u09-l04-e13",
+      "type": "translate",
+      "points": ["gp-possessive-have"],
+      "from": "en",
+      "prompt": "I don't have an uncle on my mother's side.",
+      "accept": ["Meniň daýym ýok.", "Daýym ýok."],
+      "reject": [
+        { "answer": "Meniň daýym däl.", "why": "Not having is *ýok*; *däl* says what something **is not**." }
+      ]
+    }
+  ]
+}

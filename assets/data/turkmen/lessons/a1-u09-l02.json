@@ -1,0 +1,183 @@
+{
+  "id": "a1-u09-l02",
+  "unit": "a1-u09",
+  "order": 2,
+  "title": "I have two sisters",
+  "goal": "Say what you have and don't have with a possessive and bar or ýok, and ask with barmy.",
+  "points": ["gp-possessive-have", "gp-possessive-suffixes"],
+  "intro": {
+    "text": "To say **I have**, put the possessive on the thing and add *bar*: *Meniň doganym bar*. **I don't have**: *ýok*. Ask with *barmy?*: *Jigiň barmy?* After a number the noun stays singular: *iki doganym*.",
+    "see": "gp-possessive-have"
+  },
+  "vocab": [
+    { "tk": "iki", "en": "two", "pos": "num", "card": "fc-0074" },
+    { "tk": "üç", "en": "three", "pos": "num" },
+    { "tk": "çaga", "en": "child", "pos": "noun", "card": "fc-0072" },
+    { "tk": "gyz", "en": "girl; daughter", "pos": "noun", "card": "fc-0081" },
+    { "tk": "oglan", "en": "boy", "pos": "noun", "card": "fc-0082" },
+    { "tk": "wagt", "en": "time", "pos": "noun", "card": "fc-0033" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u09-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["iki", "two"],
+        ["üç", "three"],
+        ["çaga", "child"],
+        ["gyz", "girl, daughter"],
+        ["oglan", "boy"],
+        ["wagt", "time"]
+      ]
+    },
+    {
+      "id": "a1-u09-l02-e02",
+      "type": "conjugate",
+      "points": ["gp-possessive-have"],
+      "base": "dogan",
+      "form": "possessive-bar",
+      "label": "*dogan* + *bar*: I have a brother or sister, you have…",
+      "cells": [
+        { "p": "men", "accept": ["doganym bar"] },
+        { "p": "sen", "accept": ["doganyň bar"] },
+        { "p": "ol", "accept": ["dogany bar"] },
+        { "p": "biz", "accept": ["doganymyz bar"] },
+        { "p": "siz", "accept": ["doganyňyz bar"] },
+        { "p": "olar", "accept": ["dogany bar", "doganlary bar"] }
+      ],
+      "explain": "The possessive ending changes with the person; *bar* stays the same."
+    },
+    {
+      "id": "a1-u09-l02-e03",
+      "type": "translate",
+      "points": ["gp-possessive-have"],
+      "from": "en",
+      "prompt": "I have two daughters.",
+      "accept": ["Meniň iki gyzym bar.", "Iki gyzym bar."],
+      "reject": [
+        { "answer": "Meniň iki gyzlarym bar.", "why": "After a number the noun stays singular: *iki gyzym*." },
+        { "answer": "Men iki gyz bar.", "why": "Turkmen has no verb **to have**: put **my** on the noun and add *bar*: *iki gyzym bar*." },
+        { "answer": "Meniň iki gyz bar.", "why": "**My** is an ending on the noun: *gyzym*." }
+      ]
+    },
+    {
+      "id": "a1-u09-l02-e04",
+      "type": "translate",
+      "points": ["gp-possessive-have"],
+      "from": "tk",
+      "prompt": "Seniň maşynyň barmy?",
+      "accept": ["Do you have a car?", "Have you got a car?"]
+    },
+    {
+      "id": "a1-u09-l02-e05",
+      "type": "mcq",
+      "points": ["gp-possessive-have"],
+      "question": "How do you say **I don't have time**?",
+      "options": ["Meniň wagtym ýok.", "Men wagt ýok.", "Meniň wagtym däl."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "**Have** is the possessive on the noun with *bar* or *ýok*: *wagtym ýok*.",
+        "2": "*däl* says what something **is not**. Not having is *ýok*."
+      },
+      "explain": "*wagt* + *-ym* (my time) + *ýok* (doesn't exist): I have no time."
+    },
+    {
+      "id": "a1-u09-l02-e06",
+      "type": "cloze",
+      "points": ["gp-possessive-have"],
+      "text": "Jigi___ barmy? — Hawa, bir jigim bar.",
+      "en": "Do you have a younger brother or sister? — Yes, I have one.",
+      "blanks": [
+        {
+          "accept": ["ň"],
+          "reject": [
+            { "answer": "iň", "why": "After a vowel, **your** is just *-ň*: *jigiň*." },
+            { "answer": "m", "why": "*jigim* is **my** younger sibling. The question asks about **yours**: *jigiň*." }
+          ]
+        }
+      ],
+      "explain": "*jigi* ends in a vowel: **your** is *-ň*: *jigiň barmy?*"
+    },
+    {
+      "id": "a1-u09-l02-e07",
+      "type": "wordbank",
+      "points": ["gp-possessive-have"],
+      "from": "en",
+      "prompt": "I don't have children.",
+      "text": "Meniň çagam ýok.",
+      "answer": ["Meniň", "çagam", "ýok"],
+      "distractors": ["çaga", "bar", "däl"],
+      "accept": ["Çagam ýok."]
+    },
+    {
+      "id": "a1-u09-l02-e08",
+      "type": "mcq",
+      "points": ["gp-possessive-have"],
+      "question": "How many older sisters does Arslan have?",
+      "context": [
+        { "who": "Gülşat", "tk": "Arslan, seniň doganyň barmy?", "en": "Arslan, do you have brothers or sisters?" },
+        { "who": "Arslan", "tk": "Hawa, meniň bir agam we iki uýam bar. Jigim ýok." }
+      ],
+      "options": ["Two.", "One.", "None."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "He has **one** older brother, *bir agam*, and **two** older sisters, *iki uýam*.",
+        "2": "*Jigim ýok*: it's a younger brother or sister he doesn't have."
+      },
+      "explain": "*iki uýam bar*: I have two older sisters."
+    },
+    {
+      "id": "a1-u09-l02-e09",
+      "type": "translate",
+      "points": ["gp-possessive-have", "gp-place-words"],
+      "from": "en",
+      "prompt": "Do you have a pen? (to a friend)",
+      "accept": ["Sende ruçka barmy?", "(Seniň) ruçkaň barmy?"],
+      "explain": "Both work: *Sende ruçka barmy?* asks whether there's one on you now, *Ruçkaň barmy?* whether you own one."
+    },
+    {
+      "id": "a1-u09-l02-e10",
+      "type": "translate",
+      "points": ["gp-possessive-have"],
+      "from": "tk",
+      "prompt": "Meniň pulum ýok.",
+      "accept": ["I have no money.", "I do not have (any) money.", "I have not got (any) money."]
+    },
+    {
+      "id": "a1-u09-l02-e11",
+      "type": "mcq",
+      "points": ["gp-possessive-have", "gp-answers"],
+      "question": "Someone asks *Wagtyň barmy?* You do. What do you answer?",
+      "options": ["Hawa, bar.", "Hawa, wagtym.", "Hawa, men bar."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "That says **yes, my time**. The short answer repeats *bar*.",
+        "2": "*Men bar* would say **I exist**. Repeat just *bar*."
+      },
+      "explain": "The short answer repeats the word of the question: *bar* or *ýok*."
+    },
+    {
+      "id": "a1-u09-l02-e12",
+      "type": "cloze",
+      "points": ["gp-possessive-have"],
+      "text": "Meniň üç ___ bar.",
+      "en": "I have three children.",
+      "blanks": [
+        { "options": ["çagam", "çagalarym", "çaga"], "answer": 0 }
+      ],
+      "explain": "After a number the noun stays singular, with **my** on it: *üç çagam*."
+    },
+    {
+      "id": "a1-u09-l02-e13",
+      "type": "translate",
+      "points": ["gp-possessive-have"],
+      "from": "tk",
+      "prompt": "Iki jigim we bir uýam bar.",
+      "accept": ["I have two younger siblings and an older sister.", "I have two younger [brothers|sisters] and [an|one] older sister.", "I have two younger siblings and one older sister.", "I have two younger brothers or sisters and [an|one] older sister."],
+      "explain": "*jigi* is a younger brother or sister, *uýa* an older sister; *-m* is **my**, and *bar* says they exist."
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "id": "a1-u07-l03",
+  "unit": "a1-u07",
+  "order": 3,
+  "title": "From here to there",
+  "goal": "Say where people come from with -dan and -den, and say from … to with çenli.",
+  "points": ["gp-ablative", "gp-dative"],
+  "intro": {
+    "text": "Add `-dAn` to say **from** or **out of**: *öýden* (from home), *işden* (from work), *Marydan* (from Mary). The *d* never changes and nothing merges: *mekdepden*, *ejeden*.",
+    "see": "gp-ablative"
+  },
+  "vocab": [
+    { "tk": "nireden", "en": "where from", "pos": "adv" },
+    { "tk": "bu ýerden", "en": "from here", "pos": "adv" },
+    { "tk": "çykmak", "en": "to go out, to come out; to leave", "pos": "verb", "card": "fc-0058" },
+    { "tk": "düşmek", "en": "to get off; to come down", "pos": "verb" },
+    { "tk": "gorkmak", "en": "to be afraid (of)", "pos": "verb" },
+    { "tk": "çenli", "en": "up to, as far as; until", "pos": "postp", "card": "fc-0034" },
+    { "tk": "ýol", "en": "road, way", "pos": "noun", "card": "fc-0105" },
+    { "tk": "uzak", "en": "far; long (of a way)", "pos": "adj" },
+    { "tk": "ýakyn", "en": "near, close", "pos": "adj" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u07-l03-e01",
+      "type": "match",
+      "pairs": [
+        ["nireden", "where from"],
+        ["çykmak", "to go out"],
+        ["düşmek", "to get off"],
+        ["gorkmak", "to be afraid"],
+        ["uzak", "far"],
+        ["ýakyn", "near"]
+      ]
+    },
+    {
+      "id": "a1-u07-l03-e02",
+      "type": "mcq",
+      "points": ["gp-ablative"],
+      "question": "How do you say **from school**?",
+      "options": ["mekdepden", "mekdebden", "mekdepdan", "mekdebe"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "Only a vowel softens the *p*. *-den* starts with a consonant, so the *p* stays: *mekdepden*.",
+        "2": "The last vowel of *mekdep* is *e*, a front vowel: *-den*.",
+        "3": "*mekdebe* is **to** school."
+      },
+      "explain": "*mekdep* + *-den*: the *p* stays before a consonant, and the front *e* gives *-den*."
+    },
+    {
+      "id": "a1-u07-l03-e03",
+      "type": "cloze",
+      "points": ["gp-ablative"],
+      "text": "Men iş___ gelýärin.",
+      "en": "I'm coming from work.",
+      "blanks": [
+        {
+          "accept": ["den"],
+          "reject": [
+            { "answer": "dan", "why": "The vowel of *iş* is *i*, a front vowel: *-den*." },
+            { "answer": "e", "why": "*işe* is **to** work. Coming **from** work is *işden*." },
+            { "answer": "de", "why": "*işde* is **at** work. Coming **from** work is *işden*." }
+          ]
+        }
+      ],
+      "explain": "*iş* + *-den* = *işden*, from work."
+    },
+    {
+      "id": "a1-u07-l03-e04",
+      "type": "translate",
+      "points": ["gp-ablative", "gp-question-words"],
+      "from": "en",
+      "prompt": "Where are you from? (polite)",
+      "accept": ["Siz nireden?", "Siz nireli?"],
+      "reject": [
+        { "answer": "Siz nirä?", "why": "*nirä* asks **where to**. For **where from**, use *nireden*." },
+        { "answer": "Siz nirede?", "why": "*nirede* asks **where** someone is. For **where from**, use *nireden*." }
+      ]
+    },
+    {
+      "id": "a1-u07-l03-e05",
+      "type": "translate",
+      "points": ["gp-ablative", "gp-proper-nouns"],
+      "from": "tk",
+      "prompt": "Men Londondan.",
+      "accept": ["I am from London.", "I come from London."]
+    },
+    {
+      "id": "a1-u07-l03-e06",
+      "type": "morph",
+      "points": ["gp-ablative", "gp-proper-nouns"],
+      "base": "Mary",
+      "gloss": "From Mary",
+      "parts": ["Mary", "dan"],
+      "distractors": ["Mar", "a", "den"],
+      "result": "Marydan",
+      "explain": "The ablative starts with a consonant, so nothing merges: *Mary* + *-dan* = *Marydan*. Compare the dative *Mara*."
+    },
+    {
+      "id": "a1-u07-l03-e07",
+      "type": "cloze",
+      "points": ["gp-ablative", "gp-dative"],
+      "text": "Aşgabat___ ___ çenli ýol uzak.",
+      "en": "The road from Ashgabat to Mary is long.",
+      "blanks": [
+        { "options": ["dan", "da", "a"], "answer": 0 },
+        { "options": ["Mara", "Marya", "Marydan"], "answer": 0 }
+      ],
+      "explain": "**From** takes the ablative, **to** the dative before *çenli*: *Aşgabatdan Mara çenli*. After the final *y*, the dative replaces it: *Mary* → *Mara*."
+    },
+    {
+      "id": "a1-u07-l03-e08",
+      "type": "translate",
+      "points": ["gp-ablative", "gp-present-negative"],
+      "from": "en",
+      "prompt": "The pupils are not afraid of the teacher.",
+      "accept": ["Okuwçylar mugallymdan gorkmaýarlar.", "Okuwçylar mugallymdan gorkmaýar."],
+      "reject": [
+        { "answer": "Okuwçylar mugallyma gorkmaýarlar.", "why": "*gorkmak* takes the ablative: what you fear goes in *-dan*: *mugallymdan*." },
+        { "answer": "Okuwçylar mugallymy gorkmaýarlar.", "why": "*gorkmak* takes the ablative: what you fear goes in *-dan*: *mugallymdan*." }
+      ]
+    },
+    {
+      "id": "a1-u07-l03-e09",
+      "type": "mcq",
+      "points": ["gp-ablative"],
+      "question": "Where is Kerim coming from?",
+      "context": [
+        { "who": "Jeren", "tk": "Kerim, sen nireden gelýärsiň?", "en": "Kerim, where are you coming from?" },
+        { "who": "Kerim", "tk": "Bazardan. Häzir öýe barýaryn." }
+      ],
+      "options": ["From the market.", "From home.", "From work."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "He is going **home** now: *öýe*. He comes from the market.",
+        "2": "From work would be *işden*."
+      },
+      "explain": "*Bazardan*: *bazar* + *-dan*, from the market. *öýe barýaryn*: I'm going home."
+    },
+    {
+      "id": "a1-u07-l03-e10",
+      "type": "wordbank",
+      "points": ["gp-ablative", "gp-dal"],
+      "from": "en",
+      "prompt": "The school isn't far from home.",
+      "text": "Mekdep öýden uzak däl.",
+      "answer": ["Mekdep", "öýden", "uzak", "däl"],
+      "distractors": ["öýe", "ýakyn", "ýok"]
+    },
+    {
+      "id": "a1-u07-l03-e11",
+      "type": "translate",
+      "points": ["gp-ablative"],
+      "from": "tk",
+      "prompt": "Aýna öýden çykýar.",
+      "accept": ["Aýna is going out of the house.", "Aýna is leaving the house.", "Aýna is coming out of the house.", "Aýna is leaving home.", "Aýna leaves the house."]
+    },
+    {
+      "id": "a1-u07-l03-e12",
+      "type": "translate",
+      "points": ["gp-ablative", "gp-dative"],
+      "from": "en",
+      "prompt": "We're going from Mary to Ashgabat.",
+      "accept": ["Biz Marydan Aşgabada gidýäris.", "Marydan Aşgabada [gidýäris|barýarys].", "Biz Marydan Aşgabada barýarys."],
+      "reject": [
+        { "answer": "Biz Mara Aşgabada gidýäris.", "why": "**From** Mary takes the ablative: *Marydan*. *Mara* is **to** Mary." },
+        { "answer": "Biz Marydan Aşgabata gidýäris.", "why": "Before a vowel the *t* of *Aşgabat* becomes *d*: *Aşgabada*." }
+      ]
+    },
+    {
+      "id": "a1-u07-l03-e13",
+      "type": "mcq",
+      "points": ["gp-ablative"],
+      "question": "*Bazar bu ýerden ýakyn.* What does it mean?",
+      "options": ["The market is near here.", "The market is far from here.", "The market is here."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Far would be *uzak*. *ýakyn* is **near**.",
+        "2": "**Here** alone would be *bu ýerde*. *bu ýerden ýakyn* is **near (from) here**."
+      },
+      "explain": "*ýakyn* and *uzak* take the ablative: *bu ýerden ýakyn*, near here."
+    },
+    {
+      "id": "a1-u07-l03-e14",
+      "type": "translate",
+      "points": ["gp-place-words"],
+      "from": "tk",
+      "prompt": "Men şu ýerde düşýärin.",
+      "accept": ["I am getting off here.", "I get off here.", "I am getting off right here."],
+      "explain": "*düşmek*: to get off. Where you get off is a place (*şu ýerde*); what you get off takes *-dan*: *awtobusdan düşmek*."
+    }
+  ]
+}
