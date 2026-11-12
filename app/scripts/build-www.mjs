@@ -112,7 +112,9 @@ for (const page of HTML) {
   html = html.replace(HTML_TAG, '<html$1 data-app="ios">');
   // Edge to edge, with the app's stylesheet keeping clear of the notch and the home indicator (APP-4).
   if (!VIEWPORT.test(html)) fail(page + ": no viewport meta tag, update VIEWPORT in build-www.mjs");
-  html = html.replace(VIEWPORT, (m, a, c, z) => a + (/viewport-fit=/.test(c) ? c : c + ", viewport-fit=cover") + z);
+  // No zooming (APP-9c): iOS zooms in on a focused field with text under 16 px, and a zoomed page drifts
+  // sideways and up under the fixed tab bar.
+  html = html.replace(VIEWPORT, (m, a, c, z) => a + (/viewport-fit=/.test(c) ? c : c + ", viewport-fit=cover") + (/maximum-scale=/.test(c) ? "" : ", maximum-scale=1") + z);
   if (!HEAD_END.test(html)) fail(page + ": no </head>");
   html = html.replace(HEAD_END, '$1  <link rel="stylesheet" href="/' + APP_CSS[0] + '">$1</head>');
   // No tip jar in the app (APP-4).

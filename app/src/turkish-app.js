@@ -183,6 +183,69 @@
     root.addEventListener("popstate", function () { setTimeout(paintCurrent, 0); });
     paintCurrent();
 
+    // Settings tab: a two-way switch at the top, Settings | About (APP-9c). Each is its own view of the hub.
+    if (onHub) ["settings", "about"].forEach(function (sec) {
+      var el = doc.getElementById(sec);
+      if (!el || el.querySelector(".app-seg")) return;
+      var seg = doc.createElement("nav");
+      seg.className = "app-seg";
+      seg.setAttribute("aria-label", "Settings and About");
+      seg.innerHTML = '<a href="/turkish.html#settings" data-to="tab-settings"' + (sec === "settings" ? ' aria-current="page"' : "") + ">Settings</a>" +
+        '<a href="/turkish.html#about" data-to="tab-about"' + (sec === "about" ? ' aria-current="page"' : "") + ">About</a>";
+      el.insertBefore(seg, el.firstChild);
+      seg.addEventListener("click", function (e) {
+        var a = e.target.closest("a[data-to]"), twin = a && doc.getElementById(a.dataset.to);
+        if (!twin) return;
+        e.preventDefault();
+        twin.click();
+        setTimeout(paintCurrent, 0);
+      });
+    });
+
+    // Course tab: one level of the path at a time (APP-9c), the one picked in the level strip; at first the level of
+    // the next lesson. The hub redraws both lists on every change, so the choice is put back after each redraw.
+    var levels = onHub && doc.getElementById("levels"), strip = onHub && doc.getElementById("lvl-nav");
+    if (levels && strip && root.MutationObserver) {
+      var sel = null, busy = false, opened = {};   // levels opened here once: folding one again is respected
+      var pick = function () {
+        if (busy) return;
+        busy = true;
+        var all = levels.querySelectorAll("details.level");
+        if (all.length) {
+          var here = strip.querySelector(".lvl-chip.here");
+          if (!sel || !doc.getElementById(sel)) sel = here ? here.dataset.lvl : all[0].id;
+          Array.prototype.forEach.call(all, function (d) {
+            var on = d.id === sel;
+            d.classList.toggle("app-sel", on);
+            if (on && !d.open && !opened[d.id]) { opened[d.id] = true; d.open = true; }
+          });
+          Array.prototype.forEach.call(strip.querySelectorAll(".lvl-chip"), function (c) {
+            c.classList.toggle("app-sel", c.dataset.lvl === sel);
+            if (c.dataset.lvl === sel) c.setAttribute("aria-current", "true"); else c.removeAttribute("aria-current");
+          });
+        }
+        busy = false;
+      };
+      var mo = new root.MutationObserver(function () { mo.disconnect(); pick(); watch(); });
+      var watch = function () { mo.observe(levels, { childList: true }); mo.observe(strip, { childList: true }); };
+      strip.addEventListener("click", function (e) {
+        var c = e.target.closest(".lvl-chip");
+        if (!c) return;
+        e.preventDefault();   // no jump: the level shows in place
+        sel = c.dataset.lvl;
+        delete opened[sel];
+        mo.disconnect(); pick(); watch();
+      });
+      // A link to a unit (#a1-u05) shows its level.
+      root.addEventListener("hashchange", function () {
+        var m = /^#([a-c][12])(-u\d\d)?$/.exec(root.location.hash);
+        if (!m) return;
+        sel = m[1];
+        mo.disconnect(); pick(); watch();
+      });
+      pick(); watch();
+    }
+
     // Profile: the chosen character, Tekir until another is picked (turkish-account.js).
     function paintAvatar() {
       var A = T.account, ic = nav.querySelector('[data-tab="profile"] .app-ic');

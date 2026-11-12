@@ -60,7 +60,7 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
      Files › On My iPhone › Daily Turkish; Import progress… picks it back from Files;
    - Settings › Haptics off: no more taps;
    - the reminder (Settings › Daily reminder, time 2 minutes ahead, leave the app): a word of the day or a nudge;
-   - the tab bar (Course, Flashcards with its red count, Profile with your character, Settings with About under it),
+   - the tab bar (Course, Flashcards with its red count, Profile with your character, Settings with a Settings | About switch at the top),
      and on Profile: sign in with email and password, progress synced, Delete my profile.
 13. **Fix and repeat.** For any problem: fix (or ask Claude), commit, push, run the workflow again.
 

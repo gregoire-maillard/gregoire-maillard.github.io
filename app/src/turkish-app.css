@@ -94,18 +94,41 @@ html.app-tabbed body { padding-bottom: calc(64px + var(--app-bottom, env(safe-ar
 html.app-tabbed body.studying { padding-bottom: var(--app-bottom, 0px) !important; }
 html.app-tabbed body.studying .app-tabs { display: none; }
 html.app-tabbed .ach-toast { bottom: calc(80px + var(--app-bottom, 0px)); }
-/* Settings shows About under it: About is the Settings tab's second half. */
-html[data-app] #settings:not([hidden]) ~ #about[hidden] { display: block !important; margin-top: 48px; }
+/* The Settings tab: a switch at the top between Settings and About (APP-9c); the views' kicker goes. */
+.app-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 4px 0 18px; border: 1px solid #e6e6e2; border-radius: 10px; background: #f6f6f3; }
+.app-seg a { display: flex; align-items: center; justify-content: center; min-height: 36px; border-radius: 7px; color: #4a4a48; font-weight: 600; font-size: 14px; text-decoration: none; }
+.app-seg a[aria-current="page"] { background: #fff; color: #1d1d1b; box-shadow: 0 0 0 1px #e6e6e2, 0 1px 2px rgb(0 0 0 / 5%); }
+html[data-app] #settings .hero .kicker, html[data-app] #about .hero .kicker { display: none; }
+
+/* The page never moves sideways, and doesn't stretch past its ends: the tab bar stays put (APP-9c). */
+html[data-app], html[data-app] body { overflow-x: clip; overscroll-behavior: none; }
+
+/* My Profile in the app (APP-9c): signed in, the account card (name, sync, Sign out, Delete profile) goes to the
+   bottom, after the progress; signed out, the sign-in form stays first. The characters stay near the top. */
+@media (max-width: 899px) {
+  html[data-app] .pf-grid { display: flex; flex-direction: column; }
+  html[data-app] .pf-grid > * { min-width: 0; }
+  html[data-app] .pf-side { display: contents; }
+  html[data-app] .pf-nav { order: 0; }
+  html[data-app] #pf-acct { order: 1; }
+  html[data-app] #pf-chars { order: 2; }
+  html[data-app] .pf-main { order: 3; }
+  html[data-app] #pf-acct:has(.pf-who) { order: 4; }
+}
 
 /* ── The course page in the app (APP-9) ──
-   One column, in this order: XP and streak, the level strip, the next lesson, (mistakes), the path, the tile wall,
-   then Conversations and the TYS practice. No title or intro; Flashcards has its own tab. The hub's Today column
+   One column, in this order: XP and streak, the level strip, the next lesson, the level picked in the strip
+   (APP-9c), then your mistakes, Conversations and the TYS practice. No title, intro, streak tip or tile wall;
+   Flashcards has its own tab. The hub's Today column
    and path section become parts of one flex column (display: contents), so the hub's own rendering is unchanged. */
 html[data-app] #v-course .layout { display: flex; flex-direction: column; align-items: stretch; gap: 14px; }
 html[data-app] #v-course .layout > *, html[data-app] #v-course .today > *, html[data-app] #v-course .path > * { min-width: 0; }
 html[data-app] #v-course .layout > .hero,
 html[data-app] #v-course .path-head,
 html[data-app] #v-course .fc-mini,
+html[data-app] #v-course .wall-card,
+html[data-app] #v-course .stats .note,
+html[data-app] #levels > details.level:not(.app-sel),
 html[data-app] #v-course .hello { display: none; }
 html[data-app] #v-course .today, html[data-app] #v-course .path { display: contents; }
 /* Signing in is on the Profile tab only: no welcome card on the course page. */
@@ -113,10 +136,16 @@ html[data-app] #v-course .hello.invite { display: none; }
 html[data-app] #v-course .today > .stats { order: 1; }
 html[data-app] #v-course #lvl-nav { order: 2; margin: 0 -2px; }
 html[data-app] #v-course .today > .next { order: 3; }
-html[data-app] #v-course .today > .mis-mini { order: 4; }
-html[data-app] #v-course #levels { order: 5; }
-html[data-app] #v-course .today > .wall-card { order: 6; margin-top: 18px; }
-html[data-app] #v-course .today > .dlg-mini { order: 7; }
-html[data-app] #v-course .today > .tys-mini { order: 8; }
-html[data-app] #v-course .today > .totals { order: 9; }
+html[data-app] #v-course #levels { order: 4; }
+html[data-app] #v-course .today > .mis-mini { order: 5; margin-top: 18px; }
+html[data-app] #v-course .today > .dlg-mini { order: 6; }
+html[data-app] #v-course .today > .dlg-mini { margin-top: 18px; }
+html[data-app] #v-course .today:has(> .mis-mini) > .dlg-mini { margin-top: 0; }
+html[data-app] #v-course .today > .tys-mini { order: 7; }
+html[data-app] #v-course .today > .totals { order: 8; }
+/* the level picked in the strip (turkish-app.js), drawn like the hub's "here" chip */
+html[data-app] .lvl-chip.app-sel { background: var(--lv); border-color: var(--lv); color: var(--lv-on); box-shadow: 0 3px 0 var(--lv-dark); }
+html[data-app] .lvl-chip.app-sel small { color: var(--lv-on); opacity: .85; }
+html[data-app] .lvl-chip.here:not(.app-sel) { background: var(--lv-tint); color: var(--ink); box-shadow: 0 3px 0 var(--line); }
+html[data-app] .lvl-chip.here:not(.app-sel) small { color: var(--muted); opacity: 1; }
 html[data-app] main.wrap { padding-top: 12px; }
