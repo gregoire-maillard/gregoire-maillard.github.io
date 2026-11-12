@@ -1461,7 +1461,7 @@
       function drawAccount() {
         if (NOACCT) { $("pf-acct").innerHTML = ""; return; }
         var el = $("pf-acct"), h = "", msg = pf.msg ? '<p class="pf-msg' + (pf.err ? " err" : "") + '" role="alert">' + esc(pf.msg) + "</p>" : "";
-        if (!A) { el.innerHTML = '<p class="eyebrow">Online profile</p><p class="sub">Online profiles couldn\'t be loaded. Reload the page to try again; your progress is still saved ' + HERE + '.</p>'; return; }
+        if (!A) { el.innerHTML = '<p class="eyebrow">Online profile</p><p class="sub">Online profiles couldn\'t be loaded. ' + (APP ? "Close and reopen the app to try again" : "Reload the page to try again") + '; your progress is still saved ' + HERE + '.</p>'; return; }
         if (A.status === "off" || A.status === "loading") { el.innerHTML = '<p class="eyebrow">Checking whether you\'re signed in…</p>'; return; }
         if (A.status === "unavailable") {
           el.innerHTML = '<p class="eyebrow">Online profile</p><h3>Not reachable right now</h3><p class="sub">' + esc(A.error || "") + '</p><button type="button" class="btn block" data-act="retry">Try again</button>';
@@ -1529,11 +1529,11 @@
         if (A.error) h += '<p class="pf-msg err" role="alert">' + esc(A.error) + ' <button type="button" class="linkbtn" data-act="sync">Retry</button></p>';
         h += msg;
         if (pf.confirmDel) {
-          h += '<div class="confirm err" role="alert"><b>Delete your profile?</b><br>Your sign-in, your name and your progress saved online are deleted for good, and this browser starts again from zero.' +
+          h += '<div class="confirm err" role="alert"><b>Delete your profile?</b><br>Your sign-in, your name and your progress saved online are deleted for good, and ' + (APP ? "this iPhone" : "this browser") + ' starts again from zero.' +
             '<div class="btns"><button type="button" class="btn danger solid" data-act="delete-yes"' + (pf.busy ? " disabled" : "") + '>Delete my profile</button><button type="button" class="btn" data-act="delete-no">Cancel</button></div></div>';
         } else {
           h += '<div class="btns"><button type="button" class="btn" data-act="signout"' + (pf.busy ? " disabled" : "") + '>Sign out</button><button type="button" class="btn danger" data-act="delete">Delete profile…</button></div>' +
-            '<p class="help">Signing out clears this browser; your progress stays in your profile.</p>';
+            '<p class="help">Signing out clears ' + (APP ? "this iPhone" : "this browser") + '; your progress stays in your profile.</p>';
         }
         el.innerHTML = h;
       }

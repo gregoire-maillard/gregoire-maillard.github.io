@@ -938,8 +938,8 @@
       function speechNotice(n) {
         if (!n) return "";
         var what = plural(n, "listening exercise");
-        if (!T.tts.supported()) return '<p class="notice">This browser can\'t read text aloud, so ' + what + " " + (n === 1 ? "is" : "are") + " skipped.</p>";
-        if (!S.voice) return '<p class="notice">' + esc(T.tts.HELP) + "</p>";
+        if (!T.tts.supported()) return '<p class="notice voice-note">This browser can\'t read text aloud, so ' + what + " " + (n === 1 ? "is" : "are") + " skipped.</p>";
+        if (!S.voice) return '<p class="notice voice-note">' + esc(T.tts.HELP) + "</p>";
         return '<p class="notice">Speech is off in your settings, so ' + what + " " + (n === 1 ? "is" : "are") + ' skipped. Turn on “Read Turkish aloud” in <a href="' + P.hub + '#settings" data-keep="1">Settings</a> to hear them.</p>';
       }
       // Take one exercise at a time from each lesson in turn, so a review or test covers all of its lessons.
@@ -1890,7 +1890,7 @@
       function xNoVoice() {
         var what = "so the listening section is skipped and no overall level can be given.";
         if (!T.tts.supported()) return "This browser can't read text aloud, " + what;
-        if (!S.voice) return "No Turkish voice was found on this device, " + what + " To add one, install Turkish in your system's text-to-speech settings, then reload the page.";
+        if (!S.voice) return T.app ? "No Turkish voice is available to the app on this iPhone, " + what : "No Turkish voice was found on this device, " + what + " To add one, install Turkish in your system's text-to-speech settings, then reload the page.";
         return "Speech is off in your settings, " + what + ' Turn on “Read Turkish aloud” in <a href="' + P.hub + '#settings" data-keep="1">Settings</a> to take it.';
       }
       function xOpts(part, it) { return it.type === "tf" ? ["Doğru", "Yanlış"] : it.type === "match" ? part.choices : it.options; }
@@ -1909,7 +1909,7 @@
           return '<li><span class="x-sn" aria-hidden="true">' + (i + 1) + '</span><span class="x-st"><b>' + SKILL[sc.skill] + "</b><small>" + esc(xFacts(sc)) + '</small></span><span class="x-sp">' + sc.points + " points</span></li>";
         }).join("");
         screen('<div class="start x-start"><p class="kicker">Practice for the TYS · Unofficial</p><h1>' + esc(E.title) + '</h1><p class="goal">' + rich(E.intro) + "</p>" +
-          '<ol class="x-secs" aria-label="The four sections">' + rows + "</ol>" + xDisclaimer() + (S.speech ? "" : '<p class="notice">' + xNoVoice() + "</p>") +
+          '<ol class="x-secs" aria-label="The four sections">' + rows + "</ol>" + xDisclaimer() + (S.speech ? "" : '<p class="notice voice-note">' + xNoVoice() + "</p>") +
           '<label class="x-untimed"><input type="checkbox" id="x-untimed"><span><b>No time limit</b><small>The sections won\'t end on their own; the countdowns still show.</small></span></label>' +
           '<div class="acts"><button type="button" class="btn primary big" id="x-go">Start the test</button><a class="btn ghost" href="' + P.hub + '">Back to the course</a></div>' +
           '<p class="meta">About ' + E.minutes + " minutes.</p></div>");
@@ -2398,6 +2398,7 @@
         document.title = "Conversations · Daily Turkish";
         var h = '<div class="start dl-list"><p class="kicker">Conversations</p><h1>Practise a conversation</h1>' +
           '<p class="goal">Everyday scenes from A1 to B2. Hear the other person, answer by choosing or typing a reply, and find out whether you gave the right person <i lang="tr">sen</i> or <i lang="tr">siz</i>. None of them is locked.</p>' +
+          '<p class="goal dl-sensiz"><b>Sen or siz?</b> Both mean “you”. <i lang="tr">Sen</i> is for friends, family and children; <i lang="tr">siz</i> is for strangers, older people and at work, and for more than one person.</p>' +
           (notice ? '<p class="notice">' + esc(notice) + "</p>" : "");
         (S.index.levels || []).forEach(function (l) {
           var ds = list.filter(function (d) { return d.level === l.id; });
@@ -2437,7 +2438,7 @@
           '<label class="dl-r"><input type="radio" name="dl-mode" value="type"><span><b>Typing them</b><small>Write what you would say; the choices are a tap away.</small></span></label></fieldset>' +
           '<label class="x-untimed"><input type="checkbox" id="dl-en"><span><b>Show translations</b><small>Otherwise each line has its own Translate button.</small></span></label>' +
           (S.speech ? '<label class="x-untimed"><input type="checkbox" id="dl-listen"><span><b>Listen first</b><small>Their words stay hidden until you tap Show, or until you answer.</small></span></label>'
-                    : '<p class="notice">' + dNoVoice() + "</p>") +
+                    : '<p class="notice voice-note">' + dNoVoice() + "</p>") +
           '<div class="acts"><button type="button" class="btn primary big" id="dl-go">Start the conversation</button><a class="btn ghost" href="' + dHref() + '">All conversations</a></div>' +
           '<p class="meta">About ' + D.minutes + " minutes. Nothing is saved or sent.</p></div>", true);
         $("dl-go").addEventListener("click", dBegin);
@@ -2445,7 +2446,7 @@
       }
       function dNoVoice() {
         if (!T.tts.supported()) return "This browser can't read text aloud, so their lines will be shown, not read.";
-        if (!S.voice) return "No Turkish voice was found on this device, so their lines will be shown, not read. To add one, install Turkish in your system's text-to-speech settings, then reload the page.";
+        if (!S.voice) return T.app ? "No Turkish voice is available to the app on this iPhone, so their lines will be shown, not read." : "No Turkish voice was found on this device, so their lines will be shown, not read. To add one, install Turkish in your system's text-to-speech settings, then reload the page.";
         return 'Speech is off in your settings, so their lines will be shown, not read. Turn on “Read Turkish aloud” in <a href="' + P.hub + '#settings" data-keep="1">Settings</a> to hear them.';
       }
       function dBegin() {

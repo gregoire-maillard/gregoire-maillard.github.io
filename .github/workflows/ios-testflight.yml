@@ -85,6 +85,22 @@ jobs:
             | tee "$RUNNER_TEMP/archive.log" | grep -E "error:|warning: .*signing|\*\* ARCHIVE" || true
           test -d "$RUNNER_TEMP/App.xcarchive" || { tail -80 "$RUNNER_TEMP/archive.log"; exit 1; }
 
+      # The archive is unsigned, and entitlements live in a signature, so it has none; the export keeps the
+      # entitlements of the signature it finds. So the widget and the app are signed ad hoc with theirs (the App Group
+      # group.app.dailyturkish they share, APP-9g) before the export signs them for the App Store.
+      - name: Add the entitlements (App Group for the widget)
+        working-directory: app/ios/App
+        run: |
+          APP="$RUNNER_TEMP/App.xcarchive/Products/Applications/App.app"
+          ls "$APP/PlugIns"
+          if [ -d "$APP/Frameworks" ]; then
+            for f in "$APP"/Frameworks/*; do codesign --force --sign - "$f"; done
+          fi
+          codesign --force --sign - --entitlements DailyTurkishWidget/DailyTurkishWidget.entitlements "$APP/PlugIns/DailyTurkishWidget.appex"
+          codesign --force --sign - --entitlements App/App.entitlements "$APP"
+          codesign -d --entitlements - "$APP"
+          codesign -d --entitlements - "$APP/PlugIns/DailyTurkishWidget.appex"
+
       - name: Sign and upload to App Store Connect
         run: |
           cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST

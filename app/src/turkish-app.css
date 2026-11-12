@@ -106,7 +106,7 @@ html[data-app], html[data-app] body { overflow-x: clip; overscroll-behavior: non
 /* My Profile in the app (APP-9c): signed in, the account card (name, sync, Sign out, Delete profile) goes to the
    bottom, after the progress; signed out, the sign-in form stays first. The characters stay near the top. */
 @media (max-width: 899px) {
-  html[data-app] .pf-grid { display: flex; flex-direction: column; }
+  html[data-app] .pf-grid { display: flex; flex-direction: column; align-items: stretch; }   /* stretch: the menu keeps the screen's width and scrolls */
   html[data-app] .pf-grid > * { min-width: 0; }
   html[data-app] .pf-side { display: contents; }
   html[data-app] .pf-nav { order: 0; }
@@ -142,10 +142,205 @@ html[data-app] #v-course .today > .dlg-mini { order: 6; }
 html[data-app] #v-course .today > .dlg-mini { margin-top: 18px; }
 html[data-app] #v-course .today:has(> .mis-mini) > .dlg-mini { margin-top: 0; }
 html[data-app] #v-course .today > .tys-mini { order: 7; }
-html[data-app] #v-course .today > .totals { order: 8; }
+html[data-app] #v-course .today > .totals { display: none; }
 /* the level picked in the strip (turkish-app.js), drawn like the hub's "here" chip */
 html[data-app] .lvl-chip.app-sel { background: var(--lv); border-color: var(--lv); color: var(--lv-on); box-shadow: 0 3px 0 var(--lv-dark); }
 html[data-app] .lvl-chip.app-sel small { color: var(--lv-on); opacity: .85; }
 html[data-app] .lvl-chip.here:not(.app-sel) { background: var(--lv-tint); color: var(--ink); box-shadow: 0 3px 0 var(--line); }
 html[data-app] .lvl-chip.here:not(.app-sel) small { color: var(--muted); opacity: 1; }
 html[data-app] main.wrap { padding-top: 12px; }
+
+/* ── APP-9d ── */
+/* The tab bar has five tabs. */
+.app-tabs { grid-template-columns: repeat(5, 1fr); }
+.app-tab .app-lbl { font-size: 11px; }
+.app-tab:not([aria-current="page"]) { color: #6b6b67; }
+
+/* Games: the course view with only your mistakes, Conversations and the TYS practice (turkish-app.js sets
+   html.app-games on #games); the course view itself leaves them out. */
+.app-games-h { display: none; }
+html.app-games .app-games-h { display: block; margin: 4px 0 18px; }
+html.app-games .app-games-h h1 { margin: 0 0 6px; font-size: 30px; line-height: 1.15; letter-spacing: -0.02em; color: var(--ink, #1d1d1b); }
+html.app-games .app-games-h p { margin: 0; color: var(--body, #4a4a48); font-size: 15px; }
+html[data-app]:not(.app-games) #v-course .today > .mis-mini,
+html[data-app]:not(.app-games) #v-course .today > .dlg-mini,
+html[data-app]:not(.app-games) #v-course .today > .tys-mini { display: none; }
+html.app-games #v-course .layout > :not(.today),
+html.app-games #v-course .path > *,
+html.app-games #v-course .today > :not(.mis-mini):not(.dlg-mini):not(.tys-mini):not(.speed-mini) { display: none !important; }
+html[data-app]:not(.app-games) #v-course .today > .speed-mini { display: none; }
+html.app-games #v-course .today > .mis-mini { order: 5; }
+html.app-games #v-course .today > .speed-mini { order: 6; }
+html.app-games #v-course .today > .dlg-mini { order: 7; }
+html.app-games #v-course .today > .tys-mini { order: 8; }
+html.app-games #v-course .today > .mis-mini, html.app-games #v-course .today > .dlg-mini { margin-top: 0; }
+
+/* Course: the top bar is XP · streak · your character with a word for the time of day. */
+html[data-app] #v-course .stats { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
+html[data-app] .stats .stat { padding: 12px 10px; gap: 8px; }
+html[data-app] .stats .stat .ring, html[data-app] .stats .stat .flame { width: 32px; height: 32px; }
+html[data-app] .stats .stat .big { font-size: 17px; white-space: nowrap; }
+html[data-app] .stats .stat .lbl { font-size: 11.5px; white-space: nowrap; }
+.app-hi { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 8px 10px !important; color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.app-hi-bub { position: relative; padding: 3px 8px; border-radius: 9px; background: #f3f6f9; border: 1px solid #dde5ec; line-height: 1.2; }
+.app-hi-bub::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 7px; height: 7px; margin-left: -4px; background: #f3f6f9; border: 1px solid #dde5ec; border-left: 0; border-top: 0; transform: rotate(45deg); }
+.app-hi-bub b { font-size: 12px; font-weight: 700; color: #1d1d1b; white-space: nowrap; }
+.app-hi-av { flex: none; display: block; width: 34px; height: 34px; border-radius: 50%; }
+.app-hi-av svg { display: block; width: 34px; height: 34px; }
+@media (prefers-reduced-motion: no-preference) { .app-hi-av { animation: app-hi-bob 3.2s ease-in-out 1s infinite; } }
+@keyframes app-hi-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+
+/* Settings: the "Your progress" box is a small Backup box in the app (APP-9g): Export and Import, no Reset. */
+html[data-app] #settings fieldset.set.wide #p-status, html[data-app] #settings #p-reset { display: none; }
+
+/* Flashcards: no Today box, and the overview stays still when it fits (html.app-still, turkish-app.js). */
+html[data-app] .ov-more > .card + .card { display: none; }
+html[data-app] .ov-more { grid-template-columns: minmax(0, 1fr) !important; }
+html.app-still, html.app-still body { overflow: hidden; height: 100%; }
+
+/* The first opening of the day: a red screen with the logo, about a second (the inline script build-www.mjs puts
+   in the hub's <head> sets html.app-splash before the first paint, then html.app-splash-out to fade it). */
+html.app-splash::after {
+  content: ""; position: fixed; inset: 0; z-index: 5000; pointer-events: auto;
+  background: #e34b4f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='14 14 152 152'%3E%3Ccircle cx='76' cy='55' r='17' fill='%23fff'/%3E%3Ccircle cx='83' cy='49' r='16' fill='%23e34b4f'/%3E%3Cpath d='m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z' fill='%23fff'/%3E%3Cpath d='M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z' fill='%23fff'/%3E%3Cpath d='M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z' fill='%23fff'/%3E%3Cpath d='M89 90v46' fill='none' stroke='%23f4b7ba' stroke-linecap='round' stroke-width='3'/%3E%3Cpath d='M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4' fill='none' stroke='%23f4b7ba' stroke-linecap='round' stroke-width='2.5'/%3E%3C/svg%3E") center / 150px no-repeat;
+  opacity: 1; transition: opacity .45s ease;
+}
+html.app-splash.app-splash-out::after { opacity: 0; }
+
+/* The reminder offer (turkish-app.js, native app only): a card above the tab bar. */
+.app-ask { position: fixed; z-index: 1002; left: 12px; right: 12px; bottom: calc(76px + var(--app-bottom, 0px)); display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px 14px 12px; border-radius: 16px; background: #fff; border: 1px solid #e6e6e2; box-shadow: 0 10px 30px rgb(15 23 42 / .16);
+  font: 14px/1.4 "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; color: #4a4a48; animation: app-ask-in .35s ease both; }
+@keyframes app-ask-in { from { transform: translateY(16px); opacity: 0; } }
+.app-ask .app-ask-av { flex: none; width: 44px; height: 44px; }
+.app-ask .app-ask-av svg { display: block; }
+.app-ask b { display: block; color: #1d1d1b; font-size: 15px; margin-bottom: 2px; }
+.app-ask .app-ask-btns { display: flex; gap: 8px; margin-top: 10px; }
+.app-ask button { font: inherit; font-weight: 650; min-height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid #e6e6e2; background: #fff; color: #1d1d1b; }
+.app-ask button.yes { background: #287a9e; border-color: #287a9e; color: #fff; box-shadow: 0 3px 0 #1d5b77; }
+
+/* ── APP-9g ── */
+/* Titles without the "Turkish · A1 → C2" line above them. */
+html[data-app] #profile .hero .kicker, html[data-app] body:has(#v-review) .head .kicker { display: none; }
+
+/* Course top bar: the flame once today counts, and the XP ring refilling after a lesson. */
+@keyframes app-pop { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
+@keyframes app-ring { from { stroke-dashoffset: 100.53; } }
+html[data-app] .stats.app-done .flame { background: #fde8d7; color: #e2681f; animation: app-pop .6s ease 1 .3s; }
+html[data-app] .stats.app-fresh .ring .fg { animation: app-ring 1.1s cubic-bezier(.3, 1.4, .5, 1) both .2s; }
+html[data-app] .stats.app-fresh .ring { animation: app-pop .5s ease 1 1.2s; }
+html[data-app] .stats.app-fresh .app-hi-av { animation: app-pop .5s ease 2 .4s; }
+
+/* "Jump here" only on the next locked unit, as a plain question. */
+html[data-app] .uacts a.app-jump-off { display: none; }
+html[data-app] .uacts a.app-jump { font-weight: 600; }
+
+/* Games: the empty mistakes card, and the Speed round card. */
+.app-nomis .counts { margin-bottom: 2px; }
+.speed-mini .btn { margin-top: 12px; width: 100%; }
+
+/* The Speed round. */
+html.app-speeding .app-tabs { display: none; }
+.app-speed { position: fixed; inset: 0; z-index: 3000; display: flex; flex-direction: column; background: #fff; padding: calc(var(--app-top, 0px) + 8px) 18px calc(var(--app-bottom, 0px) + 18px);
+  font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; color: #1d1d1b; }
+.app-speed .sp-top { display: flex; align-items: center; gap: 12px; height: 48px; }
+.app-speed .sp-x { width: 40px; height: 40px; border: 0; background: none; font-size: 20px; color: #6b6b67; }
+.app-speed .sp-time { flex: 1; height: 12px; border-radius: 6px; background: #eeeeea; overflow: hidden; }
+.app-speed .sp-time i { display: block; height: 100%; width: 100%; background: #287a9e; border-radius: 6px; transition: width .1s linear; }
+.app-speed.sp-hurry .sp-time i { background: #e34b4f; }
+.app-speed .sp-n { font-variant-numeric: tabular-nums; color: #6b6b67; font-weight: 600; min-width: 40px; text-align: right; }
+.app-speed .sp-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.app-speed .sp-k { margin: 0 0 6px; color: #6b6b67; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; text-align: center; }
+.app-speed .sp-w { margin: 0 0 28px; font-size: 38px; font-weight: 750; text-align: center; letter-spacing: -0.02em; }
+.app-speed .sp-opts { display: grid; gap: 10px; }
+.app-speed .sp-opts button { font: inherit; font-size: 17px; font-weight: 600; min-height: 56px; padding: 0 16px; border-radius: 14px; border: 1px solid #e6e6e2; background: #fff; color: #1d1d1b; box-shadow: 0 3px 0 #e6e6e2; text-align: left; }
+.app-speed .sp-opts button:active { transform: translateY(2px); box-shadow: 0 1px 0 #e6e6e2; }
+.app-speed .sp-opts button.ok { background: #e6f4ea; border-color: #3c9a5f; box-shadow: 0 3px 0 #3c9a5f; color: #1d5e35; }
+.app-speed .sp-opts button.bad { background: #fdecec; border-color: #d4524f; box-shadow: 0 3px 0 #d4524f; color: #8a2a28; }
+.app-speed .sp-load { text-align: center; color: #6b6b67; }
+.app-speed .sp-end { text-align: center; }
+.app-speed .sp-end svg { display: inline-block; }
+.app-speed .sp-score { font-size: 54px; font-weight: 800; margin: 8px 0 0; letter-spacing: -0.03em; }
+.app-speed .sp-end p { margin: 4px 0; color: #4a4a48; }
+.app-speed .sp-rec { color: #c47a00 !important; font-weight: 700; }
+.app-speed .sp-acts { display: grid; gap: 10px; margin-top: 24px; }
+.app-speed .sp-acts .btn { min-height: 52px; font-size: 16px; }
+
+/* The first launch: the character says hello and offers lesson 1. */
+.app-welcome { position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; padding: calc(var(--app-top, 0px) + 24px) 28px calc(var(--app-bottom, 0px) + 24px);
+  background: linear-gradient(180deg, #fff6f0 0%, #fff 55%); font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; transition: opacity .3s ease; }
+.app-welcome.out { opacity: 0; }
+.app-welcome-in { width: 100%; max-width: 400px; text-align: center; }
+.app-welcome-pic { position: relative; display: inline-block; margin-bottom: 18px; }
+.app-welcome-pic svg { display: block; border-radius: 50%; box-shadow: 0 10px 30px rgb(227 75 79 / .18); }
+.app-welcome-bub { position: absolute; top: -6px; right: -54px; padding: 7px 12px; border-radius: 14px; background: #fff; border: 1px solid #e6e6e2; font-weight: 750; font-size: 17px; color: #1d1d1b; box-shadow: 0 4px 12px rgb(15 23 42 / .08); }
+.app-welcome h1 { margin: 0 0 10px; font-size: 27px; line-height: 1.2; letter-spacing: -0.02em; color: #1d1d1b; }
+.app-welcome p { margin: 0 0 26px; color: #4a4a48; font-size: 16px; line-height: 1.5; }
+.app-welcome-go { display: flex; align-items: center; justify-content: center; min-height: 56px; border-radius: 14px; background: #e34b4f; color: #fff; font-weight: 700; font-size: 17px; text-decoration: none; box-shadow: 0 4px 0 #b7353a; }
+.app-welcome-skip { margin-top: 14px; border: 0; background: none; font: inherit; font-size: 15px; color: #6b6b67; padding: 10px; }
+
+/* Lesson start: three new words, the rest behind a button, no "Card" links, and Start always in reach. */
+html[data-app] .wlist .w-card { display: none; }
+html[data-app] .wlist.app-folded > li:nth-child(n+4):not(.app-more) { display: none; }
+html[data-app] .wlist .app-more { list-style: none; border: 0; }
+html[data-app] .wlist .app-more button { border: 0; background: none; font: inherit; font-weight: 600; color: #287a9e; padding: 10px 0; }
+html[data-app] .start .acts { position: sticky; bottom: 0; z-index: 6; margin-left: -16px; margin-right: -16px; padding: 14px 16px calc(12px + var(--app-bottom, 0px));
+  background: linear-gradient(rgb(255 255 255 / 0), #fff 16px); }
+html[data-app] .start .acts .btn.primary { flex: 1; }
+html.app-voice-told .voice-note { display: none; }
+
+/* Conversations list: the line on sen and siz, and whether a scene's unit is done. */
+html[data-app] .dl-sensiz { font-size: 14.5px; padding: 10px 12px; border-radius: 10px; background: #f6f6f3; }
+html[data-app] .dl-after.app-ready { color: #2e7d4f; }
+html[data-app] .dl-after.app-later::before { content: "🔒 "; font-size: 11px; }
+
+/* Guides: a way back, and the colour legend behind a button. */
+.app-back { display: inline-flex; align-items: center; gap: 2px; margin: 6px 0 4px -6px; padding: 6px 8px; border-radius: 8px; color: #287a9e; font-weight: 600; font-size: 15px; text-decoration: none; }
+html[data-app] .legend:not(.app-show)[data-app] { display: none; }
+.app-legend-btn { display: inline-flex; gap: 6px; align-items: center; margin: 4px 0 8px; padding: 6px 10px; border-radius: 999px; border: 1px solid #e6e6e2; background: #fff; font: inherit; font-size: 13px; color: #4a4a48; }
+
+/* Flashcards: no Settings view (it's in the Settings tab), a bigger start card, simpler statistics. */
+html[data-app] #views a[data-view="settings"] { display: none; }
+html[data-app] #views { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+html[data-app] #v-review .card.ov { border-radius: 20px; padding: 22px 20px; background: linear-gradient(165deg, #eaf4f9 0%, #fff 62%); border-color: #d6e8f1; }
+html[data-app] #v-review .card.ov h2 { font-size: 26px; }
+html[data-app] #v-review [data-act="study"] { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 60px; font-size: 18px; border-radius: 14px; }
+html[data-app] #v-review [data-act="study"] .app-min { font-size: 12.5px; font-weight: 500; opacity: .85; margin-top: 2px; }
+.app-says { margin: 0 0 14px; padding: 14px 16px; border-radius: 14px; background: #eaf4f9; color: #1d1d1b; font-size: 16px; }
+html[data-app] #s-body:not(.app-all) section[aria-labelledby="h-ret"], html[data-app] #s-body:not(.app-all) section[aria-labelledby="h-cc"] { display: none; }
+.app-details, .app-seeall { display: block; width: 100%; margin: 12px 0 4px; padding: 12px; border-radius: 12px; border: 1px solid #e6e6e2; background: #fff; font: inherit; font-weight: 600; color: #287a9e; }
+
+/* My Profile: the next three achievements, the rest on demand; folding cards. */
+html[data-app] #pf-s-ach .card:not(.app-ach-all) > .ach-grp, html[data-app] #pf-s-ach .card:not(.app-ach-all) > ul.ach { display: none; }
+html[data-app] #pf-s-ach .card.app-ach-all .app-next { display: none; }
+html[data-app] .card.app-folded > :not(.app-fold-h) { display: none !important; }
+html[data-app] .app-fold-h { cursor: pointer; position: relative; padding-right: 26px; }
+html[data-app] .app-fold-h::after { content: ""; position: absolute; right: 4px; top: 50%; width: 8px; height: 8px; margin-top: -6px; border: solid #8a8a86; border-width: 0 2px 2px 0; transform: rotate(45deg); transition: transform .2s; }
+html[data-app] .card:not(.app-folded) > .app-fold-h::after { transform: rotate(-135deg); margin-top: -2px; }
+
+/* ── APP-9h: the path, short (asked by Grégoire after the APP-9g preview) ──
+   Only the unit you're on keeps its trail, lessons, grammar links and buttons. Finished units are one row with a ✓,
+   the ones ahead one row with a lock; tapping a row opens it in full (li.app-open, turkish-app.js). The level's
+   description and "you can…" list are left out. */
+html[data-app] #levels .lvl-sum, html[data-app] #levels .cando { display: none; }
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .trail,
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .upoints,
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .uacts,
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .lessons,
+html[data-app] #levels li.unit:not(.is-here) > .ferry,
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) > .node { display: none !important; }
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) { margin: 0 0 8px !important; padding: 0 !important; }
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .ucard { position: relative; padding: 12px 14px 12px 56px !important; min-height: 0; border-radius: 14px;
+  box-shadow: none !important; background: #fff !important; background-image: none !important; border: 1px solid #e6e6e2 !important; color: #1d1d1b !important; cursor: pointer; }
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .ucard::before { content: ""; position: absolute; left: 12px; top: 50%; width: 32px; height: 32px; margin-top: -16px;
+  border-radius: 50%; background: #eeeeea center / 16px no-repeat; }
+html[data-app] #levels li.unit.st-done:not(.is-here):not(.app-open) .ucard::before { background-color: var(--lv);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+html[data-app] #levels li.unit.st-locked:not(.is-here):not(.app-open) .ucard::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='3.5' y='7' width='9' height='6.5' rx='1.5' fill='%23a3a39e'/%3E%3Cpath d='M5.5 7V5.5a2.5 2.5 0 0 1 5 0V7' fill='none' stroke='%23a3a39e' stroke-width='1.5'/%3E%3C/svg%3E"); }
+html[data-app] #levels li.unit.st-locked:not(.is-here):not(.app-open) .ucard { opacity: .78; }
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .uhead { margin: 0 !important; padding: 0 !important; background: none !important; }
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .ukick { font-size: 11px !important; color: #8a8a86 !important; margin: 0 !important; }
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) h3 { font-size: 15.5px !important; margin: 1px 0 0 !important; color: #1d1d1b !important; }
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .utr { font-size: 12.5px !important; margin: 0 !important; color: #6f6f6f !important; }
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .uprog { color: #8a8a86 !important; }
+html[data-app] #levels li.unit.app-open:not(.is-here) { margin-bottom: 14px; }

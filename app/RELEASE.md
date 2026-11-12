@@ -39,6 +39,23 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
 
    Secrets stay private even though the repo is public.
 
+## B2. The home-screen widget (once, before the first build that has it, APP-9g)
+
+The widget (streak and word of the day) is a second bundle, `app.dailyturkish.widget`, and it shares the app's data
+through an App Group. Register both in the browser before running the workflow, or the export stops on
+"requires a provisioning profile with the App Groups feature":
+
+- developer.apple.com/account/resources/identifiers › **+** › **App Groups** › Continue › Description `Daily Turkish`,
+  Identifier `group.app.dailyturkish` › Continue › Register.
+- Identifiers › **app.dailyturkish** › tick **App Groups** › Configure › tick `group.app.dailyturkish` › Continue ›
+  Save › Confirm.
+- Identifiers › **+** › App IDs › App › Continue › Description `Daily Turkish Widget`, Bundle ID **Explicit**
+  `app.dailyturkish.widget` › tick **App Groups** › Continue › Register. Open it again › App Groups › Configure ›
+  tick `group.app.dailyturkish` › Save.
+
+The workflow signs both with their profiles itself (step "Add the entitlements" adds the App Group to the unsigned
+archive first).
+
 ## C. Build, upload and test
 
 9. **Run the build.** GitHub › Actions › **iOS: build and upload to TestFlight** › Run workflow › Version `1.0` ›
@@ -56,10 +73,12 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
      ones downloaded in Settings, so with none it says listening exercises are skipped: note which you get);
    - the header's glass behind the clock and the Dynamic Island, nothing hidden under it while scrolling, the
      bottom of each page clear of the home bar; turning the phone doesn't rotate the app;
-   - Settings › Export progress: the share sheet opens (try Save to Files), and the file also shows in
-     Files › On My iPhone › Daily Turkish; Import progress… picks it back from Files;
+   - the first opening of the day: a red screen with the logo for about a second; the reminder offer on the
+     Course tab (Turn on reminders brings iOS's question); Games (mistakes, Conversations, TYS);
    - Settings › Haptics off: no more taps;
    - the reminder (Settings › Daily reminder, time 2 minutes ahead, leave the app): a word of the day or a nudge;
+   - the widget: long-press the home screen › **+** › Daily Turkish › small or medium: your streak and today's word;
+   - the first launch (on a fresh install): Tekir's welcome and Start lesson 1; Games › Speed round;
    - the tab bar (Course, Flashcards with its red count, Profile with your character, Settings with a Settings | About switch at the top),
      and on Profile: sign in with email and password, progress synced, Delete my profile.
 13. **Fix and repeat.** For any problem: fix (or ask Claude), commit, push, run the workflow again.
@@ -91,15 +110,13 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
       > A complete offline Turkish course (A1–C2): lessons with instant feedback, a grammar guide per unit and
       > spaced-repetition flashcards, all built into the app. No account needed. Native features:
       > daily study reminders as local notifications (Settings › Daily reminder); haptic feedback on right and
-      > wrong answers, finished lessons and the daily goal (Settings › Haptics); progress export through the
-      > iOS share sheet and the Files app, and import from Files (Settings › Export progress / Import progress).
-      > To try it: start the first lesson on the Course tab, answer a few exercises, then open
-      > Settings › Export progress.
+      > wrong answers, finished lessons and the daily goal (Settings › Haptics); an optional profile that syncs
+      > the progress (Profile tab). Paste-ready text: `app/store/listing.md`.
     - Version release: Manually (you press Release after approval) or Automatically
 19. **Submit.** Add for Review › Submit to App Review. Usually 24–48 hours; the result comes by email. If it's
     rejected under guideline 4.2 ("minimum functionality"), reply in the Resolution Center pointing to the
-    offline course, the reminders, the haptics and Export/Import through the share sheet and Files, and ask
-    Claude about a home-screen widget.
+    offline course, the home-screen widget, the reminders, the haptics, the backup through Files and the synced
+    profile.
 20. **Release** (if you chose Manually): App Store tab › Release This Version.
 
 ## Later updates

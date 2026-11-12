@@ -95,6 +95,12 @@ const VIEWPORT = /(<meta name="viewport" content=")([^"]*)(")/;
 const HEAD_END = /(\s*)<\/head>/;
 const COFFEE_FOOT = /\s*<footer class="dt-foot">[\s\S]*?buymeacoffee[\s\S]*?<\/footer>/;
 const COFFEE_ABOUT = /<h2>Support Daily Turkish<\/h2>[\s\S]*?buymeacoffee[\s\S]*?<\/p>\s*(?=<h2>)/;
+// The first opening of the day (APP-9d): a red screen with the logo for about a second, then it fades (the look is
+// in src/turkish-app.css). Inline in the hub's <head>, so it covers the page from the first paint; turkish-app.js
+// calls window.TRKSplash() again when the app comes back to the foreground on a new day.
+const SPLASH = "<script>window.TRKSplash=function(){try{var d=new Date(),k=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),h=document.documentElement;" +
+  "if(localStorage.getItem('trk:app:splash')===k)return;localStorage.setItem('trk:app:splash',k);h.classList.remove('app-splash-out');h.classList.add('app-splash');" +
+  "setTimeout(function(){h.classList.add('app-splash-out')},1000);setTimeout(function(){h.classList.remove('app-splash','app-splash-out')},1500)}catch(e){}};window.TRKSplash();</script>";
 const tags = APP_SCRIPTS.map(([to]) => '<script defer src="/' + to + '"></script>').join("\n    ");
 
 // Every page of the app, the privacy page included: no Google tag, and <html data-app="ios">, the flag
@@ -116,7 +122,7 @@ for (const page of HTML) {
   // sideways and up under the fixed tab bar.
   html = html.replace(VIEWPORT, (m, a, c, z) => a + (/viewport-fit=/.test(c) ? c : c + ", viewport-fit=cover") + (/maximum-scale=/.test(c) ? "" : ", maximum-scale=1") + z);
   if (!HEAD_END.test(html)) fail(page + ": no </head>");
-  html = html.replace(HEAD_END, '$1  <link rel="stylesheet" href="/' + APP_CSS[0] + '">$1</head>');
+  html = html.replace(HEAD_END, '$1  <link rel="stylesheet" href="/' + APP_CSS[0] + '">' + (page === "turkish.html" ? "$1  " + SPLASH : "") + '$1</head>');
   // No tip jar in the app (APP-4).
   html = html.replace(COFFEE_FOOT, "").replace(COFFEE_ABOUT, "");
   if (PAGES.includes(page)) {

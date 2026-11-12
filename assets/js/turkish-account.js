@@ -169,7 +169,7 @@
       });
       return client;
     }).catch(function (e) {
-      A.status = "unavailable"; A.error = "Online profiles can't be reached right now (" + e.message + "). Your progress is still saved in this browser.";
+      A.status = "unavailable"; A.error = "Online profiles can't be reached right now (" + e.message + "). Your progress is still saved " + (T.app ? "on this iPhone" : "in this browser") + ".";
       emit();
       throw e;
     });
@@ -280,7 +280,7 @@
     if (!A.user) return Promise.reject(new Error("You're not signed in."));
     return client.from(CFG.table).update({ display_name: name }).eq("user_id", A.user.id).select("display_name").then(function (r) {
       if (r.error) throw new Error(r.error.message);
-      if (!r.data || !r.data.length) throw new Error("Your profile wasn't found. Reload the page and try again.");
+      if (!r.data || !r.data.length) throw new Error("Your profile wasn't found. " + (T.app ? "Close and reopen the app, then try again." : "Reload the page and try again."));
       A.profile = A.profile || {}; A.profile.display_name = name; emit();
     });
   };
@@ -419,7 +419,7 @@
   }
   function fail(e) {
     A.sync = navigator.onLine === false || /fetch|network/i.test(String(e && e.message)) ? "offline" : "error";
-    A.error = A.sync === "error" ? "Your progress couldn't be saved online (" + (e && e.message || "unknown error") + "). It's safe in this browser; we'll try again." : null;
+    A.error = A.sync === "error" ? "Your progress couldn't be saved online (" + (e && e.message || "unknown error") + "). It's safe " + (T.app ? "on this iPhone" : "in this browser") + "; we'll try again." : null;
     emit();
   }
 

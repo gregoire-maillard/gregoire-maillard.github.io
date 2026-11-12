@@ -4,7 +4,7 @@ Ready to paste into App Store Connect (see `app/RELEASE.md`, section D). Every l
 (`len()` in Python, which counts the way App Store Connect does for these texts: ç, ğ, ı, İ, ö, ş, ü and • are one character each).
 Figures in the texts come from the app's own `app/www/assets/data/turkish/index.json`, after the 4+ content filter (60 units, 226 lessons,
 2,875 exercises, 1,000 cards (985 from the site's deck and 15 added for the app, APP-9); all six levels, A1 to C2, are ready; 12 conversations and 1 practice test; checked in APP-7)
-and from the pages themselves (32 achievements, the reminder, haptics, Export/Import, the optional profile).
+and from the pages themselves (32 achievements, the reminder, haptics, the optional profile).
 
 | Field | Characters | Limit |
 |---|---|---|
@@ -80,7 +80,7 @@ Price: Free (USD 0). Availability: all countries and regions.
 A Turkish course in short daily lessons, from A1 to C2, with a grammar guide for every unit and 1,000 high-frequency words to review. Works offline. Free, no ads.
 ```
 
-**Description** (2,491/4,000)
+**Description** (2,565/4,000)
 
 ```text
 Daily Turkish is a Turkish course for English speakers, built for a few minutes a day. Everything is inside the app: it works offline, needs no account and has no ads.
@@ -106,12 +106,13 @@ GRAMMAR, EXPLAINED
 
 KEEP GOING
 • A daily XP goal, a streak, a study calendar and 32 achievements.
-• A wall of tiles that fills up as you finish units.
 • An optional daily reminder at the time you choose, alternating a word of the day and a nudge to study. It skips the days you've already met your goal.
 • Haptic feedback on right and wrong answers, which you can turn off.
+• A home-screen widget with your streak and the word of the day.
+• Games: a 60-second speed round, conversations, and the exercises you missed.
 
 YOUR PROGRESS STAYS YOURS
-• Your progress is saved on your iPhone. Export it to Files or through the share sheet, and import it again on another iPhone.
+• Your progress is saved on your iPhone. Back it up to Files or through the share sheet, and import it again.
 • An optional free profile keeps it online too, so it follows you to dailyturkish.app and other devices. You can delete it at any time.
 • No ads, no tracking.
 
@@ -132,23 +133,23 @@ türkçe,turkce,language,lessons,grammar,vocabulary,flashcards,words,verbs,space
 - User Content › **Other User Content** (the progress: lessons, XP, flashcard schedules) and Identifiers › **User ID** (the profile's id): App Functionality · linked: Yes · tracking: No.
 - Nothing else (no analytics, no usage data, no diagnostics).
 
-**What's New in This Version** (223/4,000). App Store Connect doesn't ask for it on a first version (1.0); keep it for
+**What's New in This Version** (235/4,000). App Store Connect doesn't ask for it on a first version (1.0); keep it for
 the record, or reuse it for 1.1.
 
 ```text
-The first version of Daily Turkish: 226 lessons from A1 to C2, a grammar guide and a culture interlude for every unit, 1,000 flashcards with spaced repetition, a daily reminder, and progress export and import through Files.
+The first version of Daily Turkish: 226 lessons from A1 to C2, a grammar guide and a culture interlude for every unit, 1,000 flashcards with spaced repetition, conversations to practise, a daily reminder and an optional synced profile.
 ```
 
 **Screenshots, 6.9-inch display** (1320 × 2868 px, portrait, in this order), from `app/store/screenshots/`:
 
-1. `01-path.png`: the Course tab: XP and streak, the level strip, the Continue card (A1 unit 6, lesson 3) and A1 unfolded, with the tab bar and the Flashcards count
+1. `01-path.png`: the Course tab: XP, streak and Tekir saying *Günaydın!*, the level strip, the Continue card (A1 unit 6, lesson 3) and A1's finished units as short rows, with the five-tab bar and the Flashcards count
 2. `02-lesson-exercise.png`: a dialogue exercise answered correctly, 10 in a row, the companion cheering
 3. `03-lesson-complete.png`: the end-of-lesson screen with Tekir, daily goal met
 4. `04-flashcards.png`: a flashcard (*getirmek*) with its answer, forms and grading buttons
 5. `05-grammar-guide.png`: the grammar guide of A1 unit 6
 6. `06-my-profile.png`: My Profile (level, XP, streak, XP chart)
 
-Re-rendered in APP-9 for the tab bar (1, 4, 5, 6 taken again from a new demo progress; 2 and 3 are the APP-8 lesson
+Re-rendered in APP-9 for the tab bar, and 1, 5, 6 again in APP-9d for the five tabs (1, 4, 5, 6 taken again from a new demo progress; 2 and 3 are the APP-8 lesson
 screens with the header's tabs painted out, which is exactly what the lesson page now shows: the logo alone).
 
 They show a made-up learner (demo progress built with the course's own functions: 22 lessons, 21-day streak, about 130 words started),
@@ -158,17 +159,19 @@ not real progress. 6.9-inch screenshots are scaled down for the smaller iPhones,
 
 Sign-in required: **unticked**. Contact: your first and last name, phone and email (seen by Apple only).
 
-**Notes** (1,072/4,000)
+**Notes** (1,248/4,000)
 
 ```text
 Daily Turkish is a complete offline Turkish course (levels A1 to C2): 226 lessons with instant feedback, a grammar guide per unit and 1,000 spaced-repetition flashcards, all built into the app. No account or network needed; an optional profile (Profile tab) saves the progress online, with email and password, and can be deleted in the app (Profile tab > Account & character > Delete my profile).
 
 Native features:
-- Daily study reminder as a local notification, alternating a word of the day and a nudge to study (Settings tab > Daily reminder; off by default).
+- Daily study reminder as a local notification, alternating a word of the day and a nudge to study (Settings tab > Daily reminder; offered once on the Course tab, then iOS asks for permission).
 - Haptic feedback on right and wrong answers, finished lessons and the daily goal (Settings > Haptics; on by default).
-- Progress export through the iOS share sheet and the Files app, and import from Files (Settings > Export progress / Import progress). Exports also appear in Files > On My iPhone > Daily Turkish.
+- A home-screen widget (WidgetKit) with the streak and the word of the day.
+- Progress backup through the iOS share sheet and the Files app, and import from Files (Settings > Backup).
+- An optional profile (Profile tab, email and password) that syncs the progress with the website; Delete my profile is on the same tab.
 
-To try it: on the Course tab, tap Continue to start the first lesson and answer a few exercises. Then open the Flashcards tab and tap Start studying. Then open Settings and tap Export progress.
+To try it: on the Course tab, tap Continue to start the first lesson and answer a few exercises. Then open the Flashcards tab and tap Start studying. Then open the Games tab and start a conversation.
 ```
 
 Version release: Manually or Automatically, your choice.
