@@ -25,7 +25,8 @@
   var CFG = {
     url: "https://xmbwayxoqlvhqenmiyzr.supabase.co",
     key: "sb_publishable_Xz3OM6yw0acx58SKoVFFaQ_iuQXWIxm",
-    lib: "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js",
+    // The iPhone app ships its own copy (app/vendor, APP-9): no code downloaded at run time there.
+    lib: T.app ? "/assets/js/app/supabase.js" : "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js",
     table: "profiles",       // the person: name, character, time zone (no language in it)
     progress: "enrollments", // one row per person and language: the progress (supabase-v2-multilang.sql)
     lang: T.C.LANG || "tr",  // this course's language code, a row of public.languages
@@ -194,7 +195,7 @@
     email = String(email || "").trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return Promise.reject(new Error("That doesn't look like an email address."));
     return A.ensure().then(function (c) {
-      return c.auth.signInWithOtp({ email: email, options: { emailRedirectTo: location.origin + CFG.page + "?signin=1", shouldCreateUser: true } });
+      return c.auth.signInWithOtp({ email: email, options: { emailRedirectTo: redirectTo(), shouldCreateUser: true } });
     }).then(function (r) {
       if (r.error) throw new Error(/rate limit/i.test(r.error.message) ? "Too many sign-in emails were sent in the last hour. Please try again a bit later." : r.error.message);
       A.sentTo = email; A.sentKind = "link"; A.error = null; emit();
@@ -221,7 +222,9 @@
     if (/same.*password|different from the old/i.test(m)) return new Error("Choose a password different from your current one.");
     return new Error(m);
   }
-  function redirectTo() { return location.origin + CFG.page + "?signin=1"; }
+  // Where emailed links land. The app's pages live at capacitor://localhost, which no email can open: its links
+  // (confirm, reset, sign-in) go to the course on dailyturkish.app, and the learner then signs in in the app (APP-9).
+  function redirectTo() { return (T.app ? "https://dailyturkish.app" : location.origin) + CFG.page + "?signin=1"; }
 
   // Signs in straight away: no email, no link.
   A.signInPassword = function (email, pw) {
@@ -577,12 +580,9 @@
   });
   window.addEventListener("online", function () { if (A.user) A.syncNow(); });
 
-  // The iPhone app (TRK.app, APP-3): no online profile. The library is never downloaded and every sign-in call fails,
-  // so the status stays "off"; the pages read A.disabled (and the CSS <html data-app>) to show no way in.
-  if (T.app) {
-    A.disabled = true;
-    A.ensure = function () { return Promise.reject(new Error("Online profiles aren't available in the app.")); };
-  }
+  // The iPhone app (TRK.app): profiles work there too since APP-9 (APP-3 had them off), signing in with email and
+  // password. Emailed links open dailyturkish.app (redirectTo), so the pages offer no "email me a sign-in link" in the app.
+  A.linksOpenWebsite = !!T.app;
 
   T.account = A;
   // Only download the library when it's needed: someone is signed in, or arriving from a sign-in link.

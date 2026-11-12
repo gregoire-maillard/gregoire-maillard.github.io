@@ -46,3 +46,77 @@ html[data-app] body:not(:has(.at-hdr))::before {
   content: ""; position: fixed; z-index: 1000; top: 0; left: 0; right: 0; height: var(--app-top);
   background: rgb(255 255 255 / .8); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
 }
+
+/* ── The tab bar (APP-9) ──
+   turkish-app.js puts four tabs at the bottom of the hub, the flashcards page and the grammar guide, and marks
+   <html class="app-tabbed">. Those pages (every app page with the header but without the lesson's #dock) drop the
+   header from the first paint: a glass strip stays behind the clock, and sticky parts move up to it. In a lesson,
+   the header keeps the logo (back to the course) but not its tabs. */
+html[data-app] body:has(.at-hdr):not(:has(#dock)) { --hdr: var(--app-top); padding-top: var(--app-top); }
+html[data-app] body:not(:has(#dock)) > .at-hdr { display: none; }
+html[data-app] body:has(#dock) .at-tabs { display: none; }
+html[data-app] body:has(.at-hdr):not(:has(#dock))::before {
+  content: ""; position: fixed; z-index: 1000; top: 0; left: 0; right: 0; height: var(--app-top);
+  background: rgb(255 255 255 / .8); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+}
+html[data-app] body:has(.at-hdr):not(:has(#dock)) { scroll-padding-top: calc(var(--app-top) + 16px); }
+html[data-app].app-tabbed { scroll-padding-top: calc(var(--app-top) + 16px); }
+html[data-app] body:not(:has(#dock)) .pf-nav { top: var(--app-top) !important; }
+html[data-app] body:not(:has(#dock)) .pf-sec, html[data-app] body:not(:has(#dock)) .pf-side { scroll-margin-top: calc(64px + var(--app-top)) !important; }
+
+.app-tabs {
+  position: fixed; z-index: 1001; left: 0; right: 0; bottom: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  padding: 6px 4px calc(4px + var(--app-bottom, env(safe-area-inset-bottom, 0px)));
+  background: rgb(255 255 255 / .86); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgb(15 23 42 / .08);
+  font: 600 10.5px/1.2 "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.app-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; padding: 2px 0;
+  color: #8a8a86; text-decoration: none; -webkit-tap-highlight-color: transparent;
+}
+.app-tab[aria-current="page"] { color: #c43b3f; }
+.app-tab:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; border-radius: 10px; }
+.app-ic { position: relative; display: grid; place-items: center; width: 30px; height: 28px; }
+.app-av { display: block; width: 28px; height: 28px; border-radius: 50%; box-shadow: 0 0 0 1.5px rgb(15 23 42 / .1); }
+.app-av svg { display: block; }
+.app-tab:not([aria-current="page"]) .app-av { opacity: .85; }
+.app-tab[aria-current="page"] .app-av { box-shadow: 0 0 0 2px #c43b3f; }
+.app-badge {
+  position: absolute; top: -3px; left: 19px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+  background: #e34b4f; color: #fff; font: 700 11px/18px "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  text-align: center; font-variant-numeric: tabular-nums; box-shadow: 0 0 0 2px #fff;
+}
+.app-badge[hidden] { display: none; }
+/* room for the bar at the end of the page, and the bar out of the way while studying cards */
+html.app-tabbed body { padding-bottom: calc(64px + var(--app-bottom, env(safe-area-inset-bottom, 0px))) !important; }
+html.app-tabbed body.studying { padding-bottom: var(--app-bottom, 0px) !important; }
+html.app-tabbed body.studying .app-tabs { display: none; }
+html.app-tabbed .ach-toast { bottom: calc(80px + var(--app-bottom, 0px)); }
+/* Settings shows About under it: About is the Settings tab's second half. */
+html[data-app] #settings:not([hidden]) ~ #about[hidden] { display: block !important; margin-top: 48px; }
+
+/* ── The course page in the app (APP-9) ──
+   One column, in this order: XP and streak, the level strip, the next lesson, (mistakes), the path, the tile wall,
+   then Conversations and the TYS practice. No title or intro; Flashcards has its own tab. The hub's Today column
+   and path section become parts of one flex column (display: contents), so the hub's own rendering is unchanged. */
+html[data-app] #v-course .layout { display: flex; flex-direction: column; align-items: stretch; gap: 14px; }
+html[data-app] #v-course .layout > *, html[data-app] #v-course .today > *, html[data-app] #v-course .path > * { min-width: 0; }
+html[data-app] #v-course .layout > .hero,
+html[data-app] #v-course .path-head,
+html[data-app] #v-course .fc-mini,
+html[data-app] #v-course .hello { display: none; }
+html[data-app] #v-course .today, html[data-app] #v-course .path { display: contents; }
+/* Signing in is on the Profile tab only: no welcome card on the course page. */
+html[data-app] #v-course .hello.invite { display: none; }
+html[data-app] #v-course .today > .stats { order: 1; }
+html[data-app] #v-course #lvl-nav { order: 2; margin: 0 -2px; }
+html[data-app] #v-course .today > .next { order: 3; }
+html[data-app] #v-course .today > .mis-mini { order: 4; }
+html[data-app] #v-course #levels { order: 5; }
+html[data-app] #v-course .today > .wall-card { order: 6; margin-top: 18px; }
+html[data-app] #v-course .today > .dlg-mini { order: 7; }
+html[data-app] #v-course .today > .tys-mini { order: 8; }
+html[data-app] #v-course .today > .totals { order: 9; }
+html[data-app] main.wrap { padding-top: 12px; }

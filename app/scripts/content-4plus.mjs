@@ -36,6 +36,13 @@ export const DROP_CARDS = [
   "fc-0913", // şarap, wine
 ];
 
+// The app's own cards (APP-9): fifteen everyday words from the A1 and A2 lessons that the 1,000-word list lacks,
+// so the app's deck still holds 1,000 words without the cards above. Ranks 1001–1015 put them after the list.
+export const ADD_CARDS = {
+  source: new URL("../content/fc-1001-1015.json", import.meta.url),
+  file: "flashcards/fc-1001-1015.json",
+};
+
 // Exercises left out whole (translations about smoking; the lesson keeps its other exercises).
 export const DROP_EXERCISES = [
   "a2-u05-l02-e10", // Artık burada sigara içemezsiniz.

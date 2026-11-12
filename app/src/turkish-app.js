@@ -8,7 +8,8 @@
  * What it does:
  *   - adds a "Daily reminder" card to the hub's Settings (on/off and a time, default 19:00, off);
  *   - schedules one local notification a day for the next 14 days, and skips today once the
- *     daily XP goal is met. It re-plans whenever the progress changes and whenever the app comes
+ *     daily XP goal is met. The days alternate (APP-9): a word of the day from the deck (the next words
+ *     not studied yet, in deck order) and a reminder to study; the streak messages come first when it's at stake. It re-plans whenever the progress changes and whenever the app comes
  *     back to the foreground, so the skip and the streak in the text stay current. If the app
  *     isn't opened for 14 days, the reminders stop on their own.
  *   - no online profile: the pages read the build's <html data-app="ios"> flag (see below);
@@ -52,15 +53,25 @@
     return MESSAGES[n % MESSAGES.length];
   }
 
+  // Word-of-the-day days: every other learning day, by the day's date, so the alternation doesn't shift when
+  // the app re-plans. "2026-11-12" → a whole number of days.
+  function isWordDay(day) { var p = day.split("-"); return Math.round(Date.UTC(+p[0], +p[1] - 1, +p[2]) / 864e5) % 2 === 0; }
+  // words: the deck's cards to show, in order (each { tr, en: [..], ex: { tr, en } }), or empty for reminders only.
+  function wordMsg(w) {
+    var en = (w.en && w.en[0]) || "";
+    return { title: "Word of the day: " + w.tr, body: en + (w.ex && w.ex.tr ? " · " + w.ex.tr + (w.ex.en ? " (" + w.ex.en + ")" : "") : "") };
+  }
+
   // The notifications to schedule, as LocalNotifications.schedule() takes them. Pure, for tests.
-  // progress is TRK.progress (goal and streak views).
-  function plan(now, rem, course, settings, progress) {
+  // progress is TRK.progress (goal and streak views); words as for wordMsg (optional).
+  function plan(now, rem, course, settings, progress, words) {
     var t = rem && rem.on ? parseTime(rem.time) : null;
     if (!t) return [];
     var hour = typeof settings.dayStartHour === "number" ? settings.dayStartHour : 4;
     var today = dayOf(now, hour);
     var goal = progress.goal(course, settings, now), streak = progress.streak(course, settings, now);
-    var base = new Date(now), out = [], seenLater = false;
+    var base = new Date(now), out = [], seenLater = false, wi = 0;
+    words = words || [];
     for (var i = 0; i <= DAYS && out.length < DAYS; i++) {
       var at = new Date(base.getFullYear(), base.getMonth(), base.getDate() + i, t.h, t.m, 0, 0);
       if (at.getTime() <= now + 60000) continue;
@@ -79,6 +90,7 @@
           msg = { title: "Keep your " + streak.current + "-day streak", body: "One lesson or ten flashcards today keeps it going." };
         }
       }
+      if (!msg && isWordDay(day) && wi < words.length) msg = wordMsg(words[wi++]);
       msg = msg || pick(day);
       out.push({ id: FIRST_ID + out.length, title: msg.title, body: msg.body,
                  schedule: { at: at, allowWhileIdle: true }, extra: { trk: "reminder", day: day } });
@@ -97,7 +109,115 @@
     try { root.localStorage.setItem(KEY, JSON.stringify({ on: !!v.on, time: v.time })); } catch (e) { /* kept for this session */ }
   }
 
-  root.TRKApp = { plan: plan, KEY: KEY, FIRST_ID: FIRST_ID, DAYS: DAYS };
+  // The words for the word of the day: the deck's content words (no particles or pronouns) not studied yet, in deck
+  // order (then any of them).
+  var WORD_POS = { noun: 1, verb: 1, adj: 1, adv: 1, phrase: 1, interj: 1 };
+  function wordsFor(deck, cards) {
+    var seen = {};
+    Object.keys((cards && cards.cards) || {}).forEach(function (k) { seen[k.slice(0, 7)] = true; });
+    deck = deck.filter(function (c) { return WORD_POS[c.pos] && c.ex && c.ex.tr; });
+    var fresh = deck.filter(function (c) { return !seen[c.id]; });
+    return (fresh.length >= DAYS ? fresh : deck).slice(0, DAYS);
+  }
+
+  root.TRKApp = { plan: plan, wordsFor: wordsFor, KEY: KEY, FIRST_ID: FIRST_ID, DAYS: DAYS };
+
+  // ── The tab bar (APP-9) ──
+  // Four tabs at the bottom instead of the header's: Course, Flashcards (a red badge with what's left to study
+  // today), Profile (the learner's character) and Settings (with About under it). On the hub, the course page and
+  // the grammar guide; not in a lesson, nor while studying cards. Runs wherever <html data-app> is set, so app/www
+  // shows it in a plain browser too; turkish-app.css hides the header on those pages and makes room.
+  (function tabBar() {
+    var T = root.TRK, doc = root.document;
+    if (!T || !doc || !doc.documentElement.hasAttribute("data-app") || doc.getElementById("dock") || doc.querySelector(".app-tabs")) return;
+    var path = root.location.pathname, onHub = /\/(turkish\.html|index\.html)?$/.test(path), onCards = /\/turkishcards\.html$/.test(path);
+    var svg = function (body) { return '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">' + body + "</svg>"; };
+    var ST = 'fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"';
+    var ICONS = {
+      course: svg('<path d="M2.5 9 12 4.5 21.5 9 12 13.5 2.5 9Z" ' + ST + '/><path d="M6.5 11v4.6c0 1.3 2.5 3 5.5 3s5.5-1.7 5.5-3V11" ' + ST + '/><path d="M21.5 9v5.5" ' + ST + '/>'),
+      cards: svg('<rect x="3.5" y="7" width="12" height="14" rx="2.2" ' + ST + '/><path d="M8.5 3.5h9.8a2.2 2.2 0 0 1 2.2 2.2V17" ' + ST + '/>'),
+      settings: svg('<circle cx="12" cy="12" r="3" ' + ST + '/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" ' + ST + '/>')
+    };
+    var TABS = [
+      { id: "course", label: "Course", href: "/turkish.html", hub: "tab-course" },
+      { id: "cards", label: "Flashcards", href: "/turkishcards.html" },
+      { id: "profile", label: "Profile", href: "/turkish.html#profile", hub: "tab-profile" },
+      { id: "settings", label: "Settings", href: "/turkish.html#settings", hub: "tab-settings" }
+    ];
+    var nav = doc.createElement("nav");
+    nav.className = "app-tabs";
+    nav.setAttribute("aria-label", "Daily Turkish");
+    nav.innerHTML = TABS.map(function (t) {
+      return '<a class="app-tab" data-tab="' + t.id + '" href="' + t.href + '"><span class="app-ic">' + (ICONS[t.id] || "") +
+        (t.id === "cards" ? '<span class="app-badge" hidden></span>' : "") + '</span><span class="app-lbl">' + t.label + "</span></a>";
+    }).join("");
+    doc.body.appendChild(nav);
+    doc.documentElement.classList.add("app-tabbed");
+
+    function current() {
+      if (onCards) return "cards";
+      if (!onHub) return null;
+      var h = root.location.hash;
+      if (h === "#settings" || h === "#about") return "settings";
+      if (h === "#profile" || /[?&]signin=1/.test(root.location.search)) return "profile";
+      return "course";
+    }
+    function paintCurrent() {
+      var c = current();
+      Array.prototype.forEach.call(nav.querySelectorAll(".app-tab"), function (a) {
+        if (a.dataset.tab === c) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+      });
+    }
+    // On the hub, a tab is the hidden header tab: same view switching, history and scrolling as on the website.
+    nav.addEventListener("click", function (e) {
+      var a = e.target.closest(".app-tab");
+      if (!a) return;
+      var t = TABS.filter(function (x) { return x.id === a.dataset.tab; })[0], twin = onHub && t.hub && doc.getElementById(t.hub);
+      if (onCards && t.id === "cards") { e.preventDefault(); root.scrollTo(0, 0); return; }
+      if (!twin) return;
+      e.preventDefault();
+      twin.click();
+      setTimeout(paintCurrent, 0);
+    });
+    root.addEventListener("hashchange", paintCurrent);
+    root.addEventListener("popstate", function () { setTimeout(paintCurrent, 0); });
+    paintCurrent();
+
+    // Profile: the chosen character, Tekir until another is picked (turkish-account.js).
+    function paintAvatar() {
+      var A = T.account, ic = nav.querySelector('[data-tab="profile"] .app-ic');
+      if (!ic) return;
+      var id = A && A.avatarSvg ? (A.avatar && A.avatar()) || A.START : null;
+      var sig = id || "none";
+      if (ic.dataset.sig === sig) return;
+      ic.dataset.sig = sig;
+      ic.innerHTML = id ? '<span class="app-av">' + A.avatarSvg(id, 28) + "</span>"
+        : svg('<circle cx="12" cy="8.5" r="3.8" ' + ST + '/><path d="M4.5 20.5c.8-3.8 3.8-6 7.5-6s6.7 2.2 7.5 6" ' + ST + '/>');
+    }
+    paintAvatar();
+    if (T.account && T.account.onChange) T.account.onChange(paintAvatar);
+
+    // Flashcards: today's cards still to study (learning, reviews and new), as on the hub's card.
+    var badge = nav.querySelector(".app-badge"), deck = null, index = null, btimer = null;
+    function paintBadge() {
+      if (!deck || !index) return;
+      var n = 0;
+      try {
+        var store = T.store;
+        n = T.srs.queue({ deck: deck, cards: store.cards(), settings: store.settings(), course: store.course(), index: index }, Date.now()).counts.total;
+      } catch (e) { n = 0; }
+      badge.hidden = !n;
+      badge.textContent = n > 99 ? "99+" : String(n);
+      nav.querySelector('[data-tab="cards"]').setAttribute("aria-label", "Flashcards" + (n ? ", " + n + " to study today" : ""));
+    }
+    function badgeSoon() { clearTimeout(btimer); btimer = setTimeout(paintBadge, 300); }
+    if (T.data && T.srs) {
+      Promise.all([T.data.index(), T.data.deck()]).then(function (r) { index = r[0]; deck = r[1]; paintBadge(); }).catch(function () {});
+      if (T.store && T.store.onChange) T.store.onChange(badgeSoon);
+      doc.addEventListener("visibilitychange", function () { if (doc.visibilityState === "visible") paintBadge(); });
+      setInterval(paintBadge, 60000);   // learning cards fall due during the day
+    }
+  })();
 
   var Cap = root.Capacitor;
   if (!Cap || typeof Cap.isNativePlatform !== "function" || !Cap.isNativePlatform()) return;
@@ -298,9 +418,11 @@
         denied = p.display !== "granted";
         if (denied) return;
         var store = TRK.store;
-        var list = plan(Date.now(), state, store.course(), store.settings(), TRK.progress);
-        next = list.length ? list[0].schedule.at : null;
-        return list.length ? LN.schedule({ notifications: list }) : null;
+        return TRK.data.deck().catch(function () { return []; }).then(function (deck) {
+          var list = plan(Date.now(), state, store.course(), store.settings(), TRK.progress, wordsFor(deck, store.cards()));
+          next = list.length ? list[0].schedule.at : null;
+          return list.length ? LN.schedule({ notifications: list }) : null;
+        });
       });
     });
   }
@@ -335,7 +457,7 @@
     fs.id = "s-reminder";
     fs.innerHTML = '<legend>Daily reminder</legend>' +
       '<label class="check"><input type="checkbox" id="s-rem-on"><span>Remind me to study' +
-      '<small>One notification a day, skipped once today\'s goal is met</small></span></label>' +
+      '<small>A word of the day and a nudge to study, on alternate days; skipped once today\'s goal is met</small></span></label>' +
       '<label class="field" for="s-rem-time">Time<span class="ctl"><input type="time" id="s-rem-time" step="300"></span></label>' +
       '<p class="help" id="s-rem-help" aria-live="polite"></p>';
     grid.insertBefore(fs, grid.querySelector("fieldset.set.wide"));

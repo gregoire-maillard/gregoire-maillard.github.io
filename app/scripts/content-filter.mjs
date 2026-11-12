@@ -7,7 +7,7 @@
 import { readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { createHash } from "node:crypto";
-import { DROP_CARDS, DROP_EXERCISES, EDITS, PAGE_EDITS, GUARD, GUARD_OK } from "./content-4plus.mjs";
+import { DROP_CARDS, DROP_EXERCISES, EDITS, PAGE_EDITS, GUARD, GUARD_OK, ADD_CARDS } from "./content-4plus.mjs";
 
 function walkFiles(dir) {
   const out = [];
@@ -84,6 +84,18 @@ export function filterCourse(OUT, fail) {
     cardsLeft += doc.cards.length;
   }
   for (const id of dropCards) if (!seenCards.has(id)) errors.push("card " + id + " to drop not found");
+  // 2b. The app's own cards (APP-9), so the deck still holds 1,000 words: a file of their own, listed in index.json.
+  //     Their ids and words must be new to the deck.
+  {
+    const add = JSON.parse(readFileSync(ADD_CARDS.source, "utf8")), known = new Set(), words = new Set();
+    for (const p of walkFiles(join(DATA, "flashcards"))) for (const c of load(relative(DATA, p)).cards) { known.add(c.id); words.add(c.tr); }
+    for (const c of add.cards) {
+      if (!/^fc-\d{4}$/.test(c.id) || known.has(c.id)) errors.push(ADD_CARDS.file + ": card id " + c.id + " is malformed or already in the deck");
+      if (words.has(c.tr)) errors.push(ADD_CARDS.file + ": " + c.tr + " is already in the deck");
+    }
+    files[ADD_CARDS.file] = add;
+    cardsLeft += add.cards.length;
+  }
   for (const p of walkFiles(join(DATA, "lessons"))) {
     const f = relative(DATA, p), doc = load(f);
     doc.exercises = doc.exercises.filter((e) => { if (dropEx.has(e.id)) { seenEx.add(e.id); return false; } return true; });
@@ -101,6 +113,7 @@ export function filterCourse(OUT, fail) {
   }
   index.counts.lessons = lessons; index.counts.exercises = exercises; index.counts.cards = cardsLeft;
   index.flashcards.count = cardsLeft;
+  if (!index.flashcards.files.includes(ADD_CARDS.file)) index.flashcards.files.push(ADD_CARDS.file);
   // Grammar point labels must still match the guides' section titles.
   for (const lv of index.levels) for (const u of lv.units) {
     if (u.status !== "ready") continue;
@@ -130,8 +143,8 @@ export function filterCourse(OUT, fail) {
   for (const p of walkFiles(DATA)) { const f = relative(DATA, p); scan(JSON.parse(readFileSync(p, "utf8")), f, ""); }
   if (found.length) fail("content guard: " + found.length + " match(es) the app must not ship (content-4plus.mjs GUARD):\n  " + found.join("\n  "));
 
-  // 5. The pages: the deck's size.
-  for (const r of PAGE_EDITS) {
+  // 5. The pages: the deck's size. At 1,000 (APP-9) they already say so, in the site's own words.
+  for (const r of cardsLeft === 1000 ? [] : PAGE_EDITS) {
     const p = join(OUT, r.file);
     let s = readFileSync(p, "utf8");
     const n = count(s, r.find);

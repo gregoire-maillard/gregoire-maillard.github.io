@@ -59,7 +59,9 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
    - Settings › Export progress: the share sheet opens (try Save to Files), and the file also shows in
      Files › On My iPhone › Daily Turkish; Import progress… picks it back from Files;
    - Settings › Haptics off: no more taps;
-   - the reminder (Settings › Daily reminder, time 2 minutes ahead, leave the app).
+   - the reminder (Settings › Daily reminder, time 2 minutes ahead, leave the app): a word of the day or a nudge;
+   - the tab bar (Course, Flashcards with its red count, Profile with your character, Settings with About under it),
+     and on Profile: sign in with email and password, progress synced, Delete my profile.
 13. **Fix and repeat.** For any problem: fix (or ask Claude), commit, push, run the workflow again.
 
 ## D. Store listing and submission (App Store Connect, in the browser)
@@ -72,7 +74,9 @@ Free: macOS runner minutes cost nothing on a public repo. Only the Apple Develop
       "The course for a 4+ age rating"; the website's course would be 13+). Paste-ready answers: `app/store/listing.md`
 15. **Pricing and Availability:** Price Free · Availability: all countries.
 16. **App Privacy:** Privacy Policy URL `https://dailyturkish.app/turkishprivacy.html` › Get Started ›
-    "Do you or your third-party partners collect data from this app?" **No** › Save › Publish.
+    "Do you or your third-party partners collect data from this app?" **Yes** (the optional profile, APP-9) ›
+    tick Email Address, Other User Content and User ID, each for App Functionality, linked to the user, not used for
+    tracking (details in `app/store/listing.md`) › Save › Publish.
 17. **EU (Digital Services Act):** App Store Connect asks for your trader status before the app can be offered
     in the EU. For a free hobby app you'd normally declare that you are **not a trader**. Declaring "trader"
     publishes your address and phone number on the store page.

@@ -89,16 +89,18 @@ so the app ships a filtered copy: `build-www.mjs` copies the course into `www/`,
 applies `content-4plus.mjs` to that copy only. Nothing in the repo's own content changes.
 
 - **Left out:** 15 flashcards (*öldürmek, silah, lanet, cinayet, katil, içki, seks, ceset, uyuşturucu, bomba, bira,
-  bar, sigara, sarhoş, şarap*), so the app's deck has 985 words, and 4 translation exercises about smoking.
+  bar, sigara, sarhoş, şarap*), and 4 translation exercises about smoking.
+- **Added (APP-9):** 15 everyday words from the A1 and A2 lessons that the 1,000-word list lacks (*ekmek, süt, elma,
+  peynir, meyve, kalem, sandalye, mutfak, istasyon, köprü, şemsiye, çorba, bisiklet, kahvaltı, yağmur*), in
+  `app/content/fc-1001-1015.json` (`ADD_CARDS`), so the app's deck still holds 1,000 words.
 - **Reworded:** the smoking examples in lessons and grammar guides (*Burada fotoğraf çekilmez*, *park etmek yasak*,
   *Süt içmem*…; lesson a2-u04-l03 is "I never eat fish"), the double causative with *pişirtmek* instead of
   *öldürtmek* (and its grammar point label), card notes and senses, the *okul bokul* distractor, and the history
   interludes: no executions (Piri Reis, Pir Sultan Abdal, the Bursa legend), no killing (Sabahattin Ali, Constantine XI),
   no political violence or 1980 coup (Yeşilçam), no 1915–1916 passage (Ottoman Empire), no alcohol or tobacco in
   the kolonya interlude, no weapons in the Grand Bazaar.
-- **Then:** `index.json` is recounted (lesson titles and exercise counts, cards, a version of its own), the pages say
-  "985" where they said "1,000" (the rank on a card, "#913 of 1,000", stays: it is the rank in the frequency list),
-  and the build **fails** if a rule no longer finds its text or if `GUARD` finds a word of these kinds anywhere in the
+- **Then:** `index.json` is recounted (lesson titles and exercise counts, cards, a version of its own), the pages keep
+  "1,000" while the deck holds 1,000 (otherwise `PAGE_EDITS` puts the real number), and the build **fails** if a rule no longer finds its text or if `GUARD` finds a word of these kinds anywhere in the
   app's data. After the website's content changes, `npm run build` says what to look at; add a rule, or a reviewed
   exception to `GUARD_OK`.
 - Progress moves freely between the website and the app: cards and exercises the app doesn't have are simply

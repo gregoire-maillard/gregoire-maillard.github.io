@@ -6,8 +6,9 @@
 // while Grégoire keeps the page on pause, PROJECT.md APP-7), then, in the copies only:
 //   - makes turkish.html the start page (index.html), as the mirror does;
 //   - removes the Google tag snippet from every page, the privacy page too (no analytics in the app, and it works offline);
-//   - flags every page with <html data-app="ios">: turkish.js reads it as TRK.app, so the pages show no online profile
-//     and say "on this iPhone" (PROJECT.md APP-3);
+//   - flags every page with <html data-app="ios">: turkish.js reads it as TRK.app, so the pages say "on this iPhone",
+//     sign in with email and password only (APP-9) and get the app's bottom tab bar (src/turkish-app.js);
+//   - copies the sign-in library (app/vendor, APP-9), which turkish-account.js loads only when someone signs in;
 //   - adds the app-only scripts after turkish-account.js: Capacitor's runtime, the Local
 //     Notifications plugin and src/turkish-app.js (reminder, Export/Import, haptics, keyboard; the other
 //     plugins are reached through Capacitor's runtime, so they need no script of their own);
@@ -50,6 +51,9 @@ const APP_SCRIPTS = [
   ["assets/js/app/local-notifications.js", "node_modules/@capacitor/local-notifications/dist/plugin.js"],
   ["assets/js/app/turkish-app.js", "src/turkish-app.js"],
 ];
+// Loaded on demand, not linked from the pages: the sign-in library turkish-account.js asks for in the app (APP-9),
+// the same version as the website's CDN copy, kept in app/vendor so the app downloads no code. [file in www, source]
+const APP_LIBS = [["assets/js/app/supabase.js", "vendor/supabase-2.117.3.umd.js"]];
 // App-only stylesheet, linked from every page's <head>: [file in www, source]
 const APP_CSS = ["assets/css/app/turkish-app.css", "src/turkish-app.css"];
 
@@ -75,7 +79,7 @@ for (const p of FILES) {
   cp(from, join(OUT, p));
 }
 for (const p of PAUSED_DATA) rmSync(join(OUT, p), { force: true });
-for (const [to, from] of [...APP_SCRIPTS, APP_CSS]) {
+for (const [to, from] of [...APP_SCRIPTS, ...APP_LIBS, APP_CSS]) {
   const src = join(APP, from);
   if (!existsSync(src)) fail(from + " not found (run npm install in app/)");
   cp(src, join(OUT, to));
@@ -94,7 +98,7 @@ const COFFEE_ABOUT = /<h2>Support Daily Turkish<\/h2>[\s\S]*?buymeacoffee[\s\S]*
 const tags = APP_SCRIPTS.map(([to]) => '<script defer src="/' + to + '"></script>').join("\n    ");
 
 // Every page of the app, the privacy page included: no Google tag, and <html data-app="ios">, the flag
-// turkish.js reads as TRK.app (no online profile, "on this iPhone"; PROJECT.md APP-3). The course pages
+// turkish.js reads as TRK.app ("on this iPhone"; PROJECT.md APP-3, APP-9). The course pages
 // also get the app-only scripts.
 const HTML = readdirSync(OUT).filter((f) => f.endsWith(".html"));
 for (const page of HTML) {
