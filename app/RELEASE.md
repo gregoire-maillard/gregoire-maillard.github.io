@@ -87,7 +87,10 @@ archive first).
 
 14. **App Information** (left sidebar, under General):
     - Subtitle (30 characters max) · Category: **Education**
-    - Content Rights: the deck's word order is adapted from FrequencyWords (CC BY-SA 4.0, no longer credited in About since 5 November: put the credit back first, see `app/store/listing.md`):
+    - Other languages (language menu at the top right of this page › add): Spanish (Mexico), English (U.K.), German and French,
+      each with its own subtitle and keywords, ready in `app/store/listing.md` › Other languages. They only add search words;
+      the app stays in English.
+    - Content Rights: the deck's word order is adapted from FrequencyWords (CC BY-SA 4.0, credited again in About since APP-9j):
       answer that the app contains third-party content and you have the rights to use it
     - Age Rating › Edit › answer None/No throughout › result 4+ (true for the app's filtered course, see README
       "The course for a 4+ age rating"; the website's course would be 13+). Paste-ready answers: `app/store/listing.md`
@@ -100,7 +103,7 @@ archive first).
     in the EU. For a free hobby app you'd normally declare that you are **not a trader**. Declaring "trader"
     publishes your address and phone number on the store page.
 18. **Version 1.0 page** (App Store tab › iOS App 1.0):
-    - Screenshots for the **6.9″ display**: 1320×2868 px, 3 to 10 of them
+    - Screenshots for the **6.9″ display**: 1320×2868 px, 3 to 10 of them: the six in `app/store/screenshots/captioned/`, in order
     - Description, Keywords (100 characters, comma-separated), Support URL `https://dailyturkish.app/`,
       Copyright `2026 Grégoire Maillard`
     - **Build:** + › pick the build tested in TestFlight

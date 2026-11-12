@@ -429,6 +429,9 @@
       } catch (e) { /* no haptics */ }
     }
 
+    // The first day the app was used (APP-9j: the rating prompt waits a few days).
+    if (!ls("trk:app:since")) ls("trk:app:since", Date.now());
+
     // 3. New cards come from finished units by default in the app, once (the learner can turn it off in Settings).
     if (!ls("trk:app:taught")) { ls("trk:app:taught", 1); try { store.setSettings({ onlyTaughtWords: true }); } catch (e) { /* kept as is */ } }
 
@@ -438,7 +441,7 @@
       // and the XP ring filling up again (turkish-app.js's top bar, turkish-app.css).
       try {
         var fr = JSON.parse(root.sessionStorage.getItem("trk:v1:fresh") || "null");
-        if (fr && Date.now() - fr.t < 30 * 60 * 1000) { root.TRKFresh = true; setTimeout(function () { root.TRKFresh = false; }, 6000); }
+        if (fr && Date.now() - fr.t < 30 * 60 * 1000) { root.TRKFresh = true; root.TRKFreshInfo = fr; setTimeout(function () { root.TRKFresh = false; }, 6000); }
       } catch (e) { /* no greeting change */ }
 
       // Settings: the flashcards' note from their old Settings view, and a small Backup box (Export, Import; no Reset).
@@ -922,6 +925,27 @@
     tstore.onChange(function () { clearTimeout(wTimer); wTimer = setTimeout(widgetUpdate, 800); });
     document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") widgetUpdate(); });
   }
+
+  // ── Apple's rating prompt (APP-9j), at a happy moment: back on the course right after finishing a unit, or after a
+  //    lesson on a streak of 5 days or more; only once the app has been used for 3 days and 6 lessons, at most 3
+  //    times, 4 months apart (iOS itself shows it at most 3 times a year). localStorage "trk:app:rate" { n, t }. ──
+  (function askRating() {
+    var fr = root.TRKFreshInfo;
+    if (!WidgetBridge || !fr) return;
+    try {
+      var rate = JSON.parse(root.localStorage.getItem("trk:app:rate")) || { n: 0, t: 0 };
+      var since = +JSON.parse(root.localStorage.getItem("trk:app:since") || "0") || Date.now();
+      var course = tstore.course(), lessons = Object.keys(course.lessons || {}).length;
+      var streak = TRK.progress.streak(course, tstore.settings(), Date.now()).current;
+      var unitDone = fr.units && Object.keys(fr.units).length > 0;
+      if (rate.n >= 3 || Date.now() - rate.t < 120 * 864e5 || Date.now() - since < 3 * 864e5 || lessons < 6) return;
+      if (!unitDone && streak < 5) return;
+      setTimeout(function () {
+        quietly(WidgetBridge.requestReview());
+        try { root.localStorage.setItem("trk:app:rate", JSON.stringify({ n: rate.n + 1, t: Date.now() })); } catch (e) { /* asked again later */ }
+      }, 2200);   // after the top bar's "Harika!"
+    } catch (e) { /* no prompt */ }
+  })();
 
   var LN = root.capacitorLocalNotifications && root.capacitorLocalNotifications.LocalNotifications;
   if (!LN) return;

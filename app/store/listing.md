@@ -9,12 +9,12 @@ and from the pages themselves (32 achievements, the reminder, haptics, the optio
 | Field | Characters | Limit |
 |---|---|---|
 | App name | 13 | 30 |
-| Subtitle | 27 | 30 |
-| Promotional text | 160 | 170 |
-| Keywords | 99 | 100 |
-| Description | 2,329 | 4,000 |
-| What's New | 221 | 4,000 |
-| App Review notes | 878 | 4,000 |
+| Subtitle | 30 | 30 |
+| Promotional text | 162 | 170 |
+| Keywords | 94 | 100 |
+| Description | 2,565 | 4,000 |
+| What's New | 235 | 4,000 |
+| App Review notes | 1,248 | 4,000 |
 
 ## App Information (General › App Information)
 
@@ -24,10 +24,10 @@ and from the pages themselves (32 achievements, the reminder, haptics, the optio
 Daily Turkish
 ```
 
-**Subtitle** (27/30)
+**Subtitle** (30/30). Indexed for search, like the name: it covers "learn turkish", "turkish lessons" and "turkish words" (APP-9j; was *Learn Turkish from A1 to C2*).
 
 ```text
-Learn Turkish from A1 to C2
+Learn Turkish: lessons & words
 ```
 
 **Category:** Education (primary). Secondary: none, or Reference.
@@ -39,9 +39,8 @@ Learn Turkish from A1 to C2
 
 Why: the order of the words is adapted from FrequencyWords by Hermit Dave (CC BY-SA 4.0); the Lora font
 is under the SIL Open Font License (`LORA-OFL.txt` is bundled). Meanings, examples, notes, lessons and guides are your own.
-**Before submitting:** the FrequencyWords credit left the About page in the 5 November rewrite (8f26cda) and is now only in
-`LICENSE.txt`, which the app doesn't ship. CC BY-SA asks for the credit where the deck is used: put a line back in About (or the
-flashcards page) so this answer stays true (APP-8).
+The FrequencyWords credit is back in About › The course since APP-9j (it had left in the 5 November rewrite, 8f26cda), with
+links to the list and to CC BY-SA 4.0, so this answer is true. The 15 words the app adds (APP-9) are not from the list.
 
 ### Age Rating (Edit, then answer)
 
@@ -119,11 +118,12 @@ YOUR PROGRESS STAYS YOURS
 The app and its explanations are in English.
 ```
 
-**Keywords** (99/100). Comma-separated, no spaces after commas. Words already in the name and subtitle ("daily", "turkish",
-"learn", "from", "a1", "to", "c2") are left out, since Apple already indexes them; no other app's name is used.
+**Keywords** (94/100). Comma-separated, no spaces after commas. Apple combines them with the words of the name and
+subtitle ("daily", "turkish", "learn", "lessons", "words"), so those aren't repeated; Apple also matches plurals. No other app's
+name is used. "tys" (the Turkish proficiency exam the Games practice test prepares for) is a niche no one else targets.
 
 ```text
-türkçe,turkce,language,lessons,grammar,vocabulary,flashcards,words,verbs,spaced repetition,beginner
+speak,language,grammar,vocabulary,flashcards,verbs,phrases,beginner,istanbul,turkey,türkçe,tys
 ```
 
 **Support URL:** `https://dailyturkish.app/` · **Marketing URL:** leave empty · **Copyright:** `2026 Grégoire Maillard`
@@ -140,20 +140,141 @@ the record, or reuse it for 1.1.
 The first version of Daily Turkish: 226 lessons from A1 to C2, a grammar guide and a culture interlude for every unit, 1,000 flashcards with spaced repetition, conversations to practise, a daily reminder and an optional synced profile.
 ```
 
-**Screenshots, 6.9-inch display** (1320 × 2868 px, portrait, in this order), from `app/store/screenshots/`:
+**Screenshots, 6.9-inch display** (1320 × 2868 px, portrait, in this order). Upload the **captioned** ones, from
+`app/store/screenshots/captioned/` (APP-9j): a headline over each screen sells it better, and ASO firms report that Apple reads
+screenshot captions for search since June 2025 (Apple hasn't confirmed it), so they repeat the search words: learn Turkish, speak,
+Turkish words, grammar. The bare screens stay in `app/store/screenshots/`.
 
-1. `01-path.png`: the Course tab: XP, streak and Tekir saying *Günaydın!*, the level strip, the Continue card (A1 unit 6, lesson 3) and A1's finished units as short rows, with the five-tab bar and the Flashcards count
-2. `02-lesson-exercise.png`: a dialogue exercise answered correctly, 10 in a row, the companion cheering
-3. `03-lesson-complete.png`: the end-of-lesson screen with Tekir, daily goal met
-4. `04-flashcards.png`: a flashcard (*getirmek*) with its answer, forms and grading buttons
-5. `05-grammar-guide.png`: the grammar guide of A1 unit 6
-6. `06-my-profile.png`: My Profile (level, XP, streak, XP chart)
+1. `01-path.png`: **Learn Turkish in 5 minutes a day** · *From A1 to C2, one short lesson at a time*: the Course tab (XP, streak, Tekir, the level strip, the Continue card, A1's units as short rows, the five tabs)
+2. `02-lesson-exercise.png`: **Speak Turkish with confidence** · *Instant feedback on every answer*: a dialogue exercise answered right, 10 in a row
+3. `03-lesson-complete.png`: **Keep your streak going** · *Daily goals, XP and 32 achievements*: the end of a lesson, goal met
+4. `04-flashcards.png`: **1,000 essential Turkish words** · *Flashcards with spaced repetition*: *getirmek* with its answer and grades
+5. `05-grammar-guide.png`: **Turkish grammar, made clear** · *A guide and a culture story in every unit*: the A1 unit 6 guide
+6. `06-my-profile.png`: **Watch your Turkish grow** · *Your level, streak and progress, day by day*: My Profile
 
-Re-rendered in APP-9 for the tab bar, and 1, 5, 6 again in APP-9d for the five tabs (1, 4, 5, 6 taken again from a new demo progress; 2 and 3 are the APP-8 lesson
-screens with the header's tabs painted out, which is exactly what the lesson page now shows: the logo alone).
+Layout: the logo and name at the top, the headline (the search word in the brand red) and a line under it, then the screen in a
+dark phone frame, on a light tint that changes per screen. They show a made-up learner (demo progress built with the course's own
+functions: 22 lessons, 21-day streak, about 130 words started), not real progress. 6.9-inch screenshots are scaled down for the
+smaller iPhones, so no other size is needed.
 
-They show a made-up learner (demo progress built with the course's own functions: 22 lessons, 21-day streak, about 130 words started),
-not real progress. 6.9-inch screenshots are scaled down for the smaller iPhones, so no other size is needed.
+## Other languages (App Information › Localizable Information, then the language menu at the top right › add)
+
+Each language added in App Store Connect has its own name, subtitle, keywords, promotional text and description. Apple searches
+several of them in some countries, so each one adds keywords (APP-9j). Words don't combine across languages: "turkish" in English (US)
+and "travel" in Spanish (Mexico) don't make "turkish travel", so each set repeats what it needs. Screenshots: leave "use the same
+screenshots" for every language. The app itself stays in English; the German and French descriptions say so in their first line.
+
+### Spanish (Mexico): a second English keyword set for the US
+
+The US App Store also searches the Spanish (Mexico) page. Since the course isn't for Spanish speakers, this page is written in
+English: Mexico and the rest of Latin America then see the English page, which matches the app. Copy the promotional text and the
+description from English (US).
+
+- Name: `Daily Turkish` · Subtitle (28/30): `Turkish course for beginners`
+- Keywords (92/100):
+
+```text
+travel,conjugation,alphabet,practice,study,quiz,conversation,offline,exam,culture,phrasebook
+```
+
+### English (U.K.): the UK, and the many countries that use it
+
+Copy the promotional text and the description from English (US). Same name and subtitle. Keywords (98/100), with "holiday"
+for British searches:
+
+```text
+speak,language,grammar,vocabulary,flashcards,verbs,phrases,beginner,holiday,turkey,istanbul,türkçe
+```
+
+### German: Germany, Austria and Switzerland (the German store also searches English (U.K.))
+
+- Name: `Daily Turkish` · Subtitle (28/30): `Türkisch lernen in Lektionen`
+- Keywords (97/100):
+
+```text
+sprache,sprachkurs,vokabeln,vokabeltrainer,grammatik,karteikarten,anfänger,sprechen,wörter,türkei
+```
+
+- Promotional text (164/170):
+
+```text
+Türkisch lernen in kurzen täglichen Lektionen, von A1 bis C2: Grammatik zu jeder Einheit, 1.000 wichtige Wörter, offline. Kostenlos, ohne Werbung. App auf Englisch.
+```
+
+- Description (1,284/4,000):
+
+```text
+Daily Turkish ist ein Türkischkurs für ein paar Minuten am Tag. Hinweis: Die App und ihre Erklärungen sind auf Englisch.
+
+DER KURS
+• 226 kurze Lektionen in 60 Einheiten, vom ersten „merhaba“ (A1) bis C2.
+• Fast 2.900 Übungen: Multiple Choice, Lückentexte, Übersetzungen, Wortbausteine, Konjugation, Lesen und Hören.
+• Sofortiges Feedback nach jeder Antwort, mit Erklärungen zu typischen Fehlern.
+• 12 Alltagsgespräche von A1 bis B2: im Café, im Taxi, in der Apotheke und mehr.
+
+GRAMMATIK, VERSTÄNDLICH
+• Zu jeder Einheit ein Grammatikkapitel mit Tabellen und Beispielen: Vokalharmonie, Fälle, Zeiten, Konditional, Passiv und mehr.
+• Zu jeder Einheit ein Kapitel über Kultur oder Geschichte.
+
+1.000 WÖRTER MIT KARTEIKARTEN
+• Die 1.000 wichtigsten Wörter, jedes mit einem Beispielsatz und seiner Übersetzung.
+• Wiederholung im richtigen Moment, nach dem SM-2-Algorithmus (wie Anki).
+
+DRANBLEIBEN
+• Tagesziel, Serie, 32 Erfolge und ein Widget für den Home-Bildschirm.
+• Eine tägliche Erinnerung, abwechselnd mit einem Wort des Tages.
+• Ein Wortspiel gegen die Uhr: 60 Sekunden, 10 Wörter.
+
+DEINE DATEN
+• Dein Fortschritt bleibt auf deinem iPhone; Sicherung über die Dateien-App.
+• Ein optionales kostenloses Profil synchronisiert ihn mit dailyturkish.app.
+• Keine Werbung, kein Tracking.
+```
+
+### French: France, Belgium, Switzerland (French (Canada) is a separate language: paste this one there too)
+
+- Name: `Daily Turkish` · Subtitle (27/30): `Apprendre le turc pas à pas`
+- Keywords (100/100):
+
+```text
+cours,langue,leçons,vocabulaire,grammaire,verbes,mots,débutant,parler,turquie,istanbul,voyage,türkçe
+```
+
+- Promotional text (166/170):
+
+```text
+Apprenez le turc en courtes leçons quotidiennes, de A1 à C2 : un guide de grammaire par unité, 1 000 mots essentiels, hors ligne. Gratuit, sans pub. Appli en anglais.
+```
+
+- Description (1,305/4,000):
+
+```text
+Daily Turkish est un cours de turc pour quelques minutes par jour. À noter : l'application et ses explications sont en anglais.
+
+LE COURS
+• 226 leçons courtes en 60 unités, du premier « merhaba » (A1) jusqu'au C2.
+• Près de 2 900 exercices : QCM, textes à trous, traductions, mots à assembler, conjugaison, lecture et écoute.
+• Une correction immédiate après chaque réponse, avec l'explication des erreurs courantes.
+• 12 conversations du quotidien, de A1 à B2 : au café, en taxi, à la pharmacie et plus encore.
+
+LA GRAMMAIRE, CLAIREMENT
+• Un guide de grammaire par unité, avec tableaux et exemples : harmonie vocalique, cas, temps, conditionnel, passif et bien plus.
+• Un intermède culturel ou historique dans chaque unité.
+
+1 000 MOTS EN FLASHCARDS
+• Les 1 000 mots les plus utiles, chacun avec une phrase d'exemple et sa traduction.
+• Des révisions au bon moment, selon l'algorithme SM-2 (comme Anki).
+
+GARDER LE RYTHME
+• Objectif quotidien, série de jours, 32 succès et un widget pour l'écran d'accueil.
+• Un rappel quotidien, en alternance avec un mot du jour.
+• Un jeu de vitesse : 10 mots en 60 secondes.
+
+VOS DONNÉES
+• Votre progression reste sur votre iPhone ; sauvegarde dans l'app Fichiers.
+• Un profil gratuit et facultatif la synchronise avec dailyturkish.app.
+• Sans publicité, sans pistage.
+```
 
 ## App Review Information
 
