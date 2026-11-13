@@ -771,7 +771,7 @@
       MODES.practice = function () {
         var due = T.progress.mistakesDue(store.course()).filter(function (id) { return S.flat.lesson[id.slice(0, 10)]; });
         S.retries = true;
-        if (!due.length) return message({ kicker: "Practice", title: "No mistakes to practise", text: "Exercises you get wrong in lessons and reviews come back here until you get them right." });
+        if (!due.length) return message({ kicker: "Practice", title: "No mistakes to practice", text: "Exercises you get wrong in lessons and reviews come back here until you get them right." });
         var chosen = [];
         function batch(from) {   // load the lessons behind the next mistakes until 15 usable exercises are found
           var ids = due.slice(from, from + 45), lessonIds = [];
@@ -784,12 +784,12 @@
           });
         }
         return batch(0).then(function () {
-          if (!chosen.length) return message({ kicker: "Practice", title: "Nothing to practise here", text: "The exercises behind your mistakes aren't in the course any more." });
+          if (!chosen.length) return message({ kicker: "Practice", title: "Nothing to practice here", text: "The exercises behind your mistakes aren't in the course any more." });
           S.items = chosen.map(function (c) { return item(c.ex, c.meta); });
-          document.title = "Practise your mistakes · Daily Turkmen";
-          start('<p class="kicker">Practice</p><h1>Practise your mistakes</h1><p class="goal">' + plural(S.items.length, "exercise") + " you got wrong before, oldest first" +
+          document.title = "Practice your mistakes · Daily Turkmen";
+          start('<p class="kicker">Practice</p><h1>Practice your mistakes</h1><p class="goal">' + plural(S.items.length, "exercise") + " you got wrong before, oldest first" +
             (due.length > S.items.length ? " (" + due.length + " in all)" : "") + ". Each one you get right on the first try counts toward clearing it.</p>",
-            "Practice earns 1 XP per exercise right on the first try.", "Start practising");
+            "Practice earns 1 XP per exercise right on the first try.", "Start practicing");
         });
       };
       function locked(meta, u, course) {
@@ -822,7 +822,7 @@
         S.queue = S.items.slice();
         S.phase = "answer"; S.started = true;
         $("quit-go").href = hubHref(S.unit && S.unit.id);
-        $("quit-t").textContent = { lesson: "Quit this lesson?", review: "Quit the review?", test: "Quit the test?", practice: "Stop practising?" }[S.mode];
+        $("quit-t").textContent = { lesson: "Quit this lesson?", review: "Quit the review?", test: "Quit the test?", practice: "Stop practicing?" }[S.mode];
         $("quit-p").textContent = S.mode === "test" ? "The test won't count." : "Your score in it won't be saved. Mistakes you've made so far stay in your list.";
         showBar(true); progress(); topXp(); next();
       }
@@ -1424,9 +1424,9 @@
         } else {
           res = store.finishPractice({ correct: S.correct });
           var left = T.progress.mistakesDue(store.course()).length;
-          endScreen({ ok: true, kicker: "Practice", title: "Practice done", sub: left ? plural(left, "mistake") + " still to practise." : "No mistakes left to practise.",
+          endScreen({ ok: true, kicker: "Practice", title: "Practice done", sub: left ? plural(left, "mistake") + " still to practice." : "No mistakes left to practice.",
                       res: res, xpNote: plural(S.correct, "right on the first try", "right on the first try"),
-                      acts: (left ? '<a class="btn primary big" href="' + P.lesson + '?practice=mistakes">Practise more</a>' : "") + '<a class="btn' + (left ? "" : " primary big") + '" href="' + P.hub + '">Back to the course</a>' });
+                      acts: (left ? '<a class="btn primary big" href="' + P.lesson + '?practice=mistakes">Practice more</a>' : "") + '<a class="btn' + (left ? "" : " primary big") + '" href="' + P.hub + '">Back to the course</a>' });
         }
       }
       // UI-5: tell the course page what was just finished, so the way back fills it in (sessionStorage, this tab only).

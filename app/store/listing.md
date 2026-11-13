@@ -89,7 +89,7 @@ THE COURSE
 • Nearly 2,900 exercises: multiple choice, fill in the blanks, translation both ways, word tiles, building a word from its suffixes, conjugation tables, matching pairs, listening and reading.
 • Feedback right after each answer, with explanations for the usual mistakes.
 • A letter bar under the text field for ç, ğ, ı, İ, ö, ş and ü.
-• The exercises you miss are kept, and a Practise session brings them back until you get them right.
+• The exercises you miss are kept, and a Practice session brings them back until you get them right.
 • A review at the end of each unit, and a test to skip ahead if you already know the basics.
 • 12 conversations from A1 to B2, in a café, a taxi, a pharmacy, a job interview and more: choose or type your reply, and the conversation follows what you say.
 
@@ -137,7 +137,7 @@ speak,language,grammar,vocabulary,flashcards,verbs,phrases,beginner,istanbul,tur
 the record, or reuse it for 1.1.
 
 ```text
-The first version of Daily Turkish: 226 lessons from A1 to C2, a grammar guide and a culture interlude for every unit, 1,000 flashcards with spaced repetition, conversations to practise, a daily reminder and an optional synced profile.
+The first version of Daily Turkish: 226 lessons from A1 to C2, a grammar guide and a culture interlude for every unit, 1,000 flashcards with spaced repetition, conversations to practice, a daily reminder and an optional synced profile.
 ```
 
 **Screenshots, 6.9-inch display** (1320 × 2868 px, portrait, in this order). Upload the **captioned** ones, from

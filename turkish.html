@@ -1030,7 +1030,7 @@
           var lastUnit = f.units.filter(function (x) { return x.status === "ready"; }).pop();
           html += '<div class="card next"><p class="eyebrow">All caught up</p><h3>You\'ve done every lesson written so far</h3>' +
             '<p class="sub">' + (np ? "Next up: " + esc(unitLabel(np)) + ", " + esc(np.title) + ", is being written." : "That was the whole course.") + "</p>" +
-            (mistakes ? '<a class="btn primary block" href="' + P.lesson + '?practice=mistakes">Practise your mistakes</a>'
+            (mistakes ? '<a class="btn primary block" href="' + P.lesson + '?practice=mistakes">Practice your mistakes</a>'
               : lastUnit ? '<a class="btn primary block" href="' + P.lesson + "?review=" + esc(lastUnit.id) + '">Review ' + esc(unitLabel(lastUnit)) + "</a>" : "") + "</div>";
         }
         html = helloHtml() + html;
@@ -1048,7 +1048,7 @@
         // TYS-1: the practice test for the Türkçe Yeterlik Sınavı (PROJECT.md 6.8), played by the lesson page
         html += '<div class="card mini tys-mini"><div class="row"><h3>TYS practice</h3><span class="lmeta">30 min</span></div><p class="counts">A timed practice for the <i lang="tr">Türkçe Yeterlik Sınavı</i>, with all four skills and an indicative level. Unofficial; best from B2.</p><a class="btn" href="' + P.lesson + '?exam=tys-1">Try the practice test</a></div>';
         var m = T.progress.mistakesDue(course).length;
-        if (m) html += '<div class="card mini mis-mini"><div class="row"><h3>Your mistakes</h3></div><p class="counts"><b>' + m + "</b> " + (m === 1 ? "exercise" : "exercises") + ' to try again</p><a class="btn" href="' + P.lesson + '?practice=mistakes">Practise</a></div>';
+        if (m) html += '<div class="card mini mis-mini"><div class="row"><h3>Your mistakes</h3></div><p class="counts"><b>' + m + "</b> " + (m === 1 ? "exercise" : "exercises") + ' to try again</p><a class="btn" href="' + P.lesson + '?practice=mistakes">Practice</a></div>';
         var mastered = f.units.filter(function (x) { return course.units[x.id] && course.units[x.id].reviewed; }).length;
         html += '<p class="totals"><b>' + course.xp.total + "</b> XP · <b>" + done + "</b> " + (done === 1 ? "lesson" : "lessons") + " completed" + (mastered ? " · <b>" + mastered + "</b> " + (mastered === 1 ? "unit" : "units") + " mastered" : "") + "</p>";
         $("today").innerHTML = html;

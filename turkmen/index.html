@@ -725,7 +725,7 @@
           <p>The course is new. Its Turkmen is checked against dictionaries, and a native speaker reviews each level; the beta label comes off once they have. Until then, expect the odd mistake.</p>
           <h2>The method</h2>
           <p><b>Anki and spaced repetition.</b> Anki is the free flashcard app that made spaced repetition popular. After each card you grade how well you remembered it (Again, Hard, Good or Easy), and it comes back just before you would forget it: tomorrow, then in a few days, then weeks and months later. A few minutes a day are enough to keep thousands of words. The flashcards here use Anki's own algorithm (SM-2) with its default settings, the same four grades with the next interval shown on each button, and Anki's statistics (a card is “mature” after 21 days).</p>
-          <p><b>Fluent Forever.</b> In his book <cite>Fluent Forever</cite> (2014), Gabriel Wyner argues for learning pronunciation first, the most useful words before the rare ones, words in real sentences rather than lists, recalling actively instead of just recognising, and letting spaced repetition do the remembering. Daily Turkmen follows this as far as it can without audio: the course opens with the letters and their sounds; the deck is 1,000 useful words, the most useful first; every card has an example sentence; and words are practised in both directions, English → Turkmen once you recognise the Turkmen.</p>
+          <p><b>Fluent Forever.</b> In his book <cite>Fluent Forever</cite> (2014), Gabriel Wyner argues for learning pronunciation first, the most useful words before the rare ones, words in real sentences rather than lists, recalling actively instead of just recognising, and letting spaced repetition do the remembering. Daily Turkmen follows this as far as it can without audio: the course opens with the letters and their sounds; the deck is 1,000 useful words, the most useful first; every card has an example sentence; and words are practiced in both directions, English → Turkmen once you recognise the Turkmen.</p>
           <h2>Your progress</h2>
           <p>Your progress lives in this browser's storage only, and clearing your browsing data erases it. Use Export progress in <a href="#settings">Settings</a> to keep a copy or to carry on from another device. There are no accounts in this version. What the site stores and counts is in the <a href="/turkishprivacy.html">privacy policy</a>, shared with Daily Turkish.</p>
           <h2>Support Daily Turkmen</h2>
@@ -821,7 +821,7 @@
           var lastUnit = f.units.filter(function (x) { return x.status === "ready"; }).pop();
           html += '<div class="card next"><p class="eyebrow">All caught up</p><h3>You\'ve done every lesson written so far</h3>' +
             '<p class="sub">' + (np ? "Next up: " + esc(unitLabel(np)) + ", " + esc(np.title) + ", is being written." : "That was the whole course.") + "</p>" +
-            (mistakes ? '<a class="btn primary block" href="' + P.lesson + '?practice=mistakes">Practise your mistakes</a>'
+            (mistakes ? '<a class="btn primary block" href="' + P.lesson + '?practice=mistakes">Practice your mistakes</a>'
               : lastUnit ? '<a class="btn primary block" href="' + P.lesson + "?review=" + esc(lastUnit.id) + '">Review ' + esc(unitLabel(lastUnit)) + "</a>" : "") + "</div>";
         }
         html = helloHtml() + html;
@@ -834,7 +834,7 @@
         html += wallHtml(ix, course, set);
         html += cardsPanel(ix, course, set, now);
         var m = T.progress.mistakesDue(course).length;
-        if (m) html += '<div class="card mini"><div class="row"><h3>Your mistakes</h3></div><p class="counts"><b>' + m + "</b> " + (m === 1 ? "exercise" : "exercises") + ' to try again</p><a class="btn" href="' + P.lesson + '?practice=mistakes">Practise</a></div>';
+        if (m) html += '<div class="card mini"><div class="row"><h3>Your mistakes</h3></div><p class="counts"><b>' + m + "</b> " + (m === 1 ? "exercise" : "exercises") + ' to try again</p><a class="btn" href="' + P.lesson + '?practice=mistakes">Practice</a></div>';
         var mastered = f.units.filter(function (x) { return course.units[x.id] && course.units[x.id].reviewed; }).length;
         html += '<p class="totals"><b>' + course.xp.total + "</b> XP · <b>" + done + "</b> " + (done === 1 ? "lesson" : "lessons") + " completed" + (mastered ? " · <b>" + mastered + "</b> " + (mastered === 1 ? "unit" : "units") + " mastered" : "") + "</p>";
         $("today").innerHTML = html;

@@ -656,7 +656,7 @@
         var name = function (x) { return g ? x.title : x.interlude; };
         var cards = [
           g ? nextCard("Interlude", u.interlude, docHref(u, "culture"), true) : nextCard("Grammar guide", u.title, docHref(u, "grammar"), true),
-          nextCard("Practise", unitLabel(u) + ": " + u.lessons.length + " lessons", P.hub + "#" + u.id, true)
+          nextCard("Practice", unitLabel(u) + ": " + u.lessons.length + " lessons", P.hub + "#" + u.id, true)
         ];
         if (prev) cards.push(nextCard("Previous " + (g ? "guide" : "interlude") + " · " + unitLabel(prev), name(prev), docHref(prev, kind), prev.status === "ready"));
         if (next) cards.push(nextCard("Next " + (g ? "guide" : "interlude") + " · " + unitLabel(next), name(next), docHref(next, kind), next.status === "ready"));

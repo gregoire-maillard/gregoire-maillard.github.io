@@ -233,7 +233,7 @@
     var vc = onHub && doc.getElementById("v-course");
     if (vc && !doc.getElementById("app-games-h")) {
       vc.insertAdjacentHTML("afterbegin", '<header class="app-games-h" id="app-games-h"><h1>Practice</h1>' +
-        '<p>Practise your mistakes, hold a conversation in Turkish, or try the TYS practice test.</p></header>');
+        '<p>Practice your mistakes, hold a conversation in Turkish, or try the TYS practice test.</p></header>');
     }
 
     // Course tab: the XP and streak bar gets a third cell, your character with a word for the time of day (APP-9d).
@@ -502,7 +502,7 @@
       watch(today, function () {
         if (!today.querySelector(".stats")) return;   // not drawn yet
         if (!today.querySelector(".mis-mini")) {
-          today.insertAdjacentHTML("beforeend", '<div class="card mini mis-mini app-nomis"><div class="row"><h3>Your mistakes</h3></div><p class="counts">No mistakes to practise. 🎉 Exercises you miss come back here.</p></div>');
+          today.insertAdjacentHTML("beforeend", '<div class="card mini mis-mini app-nomis"><div class="row"><h3>Your mistakes</h3></div><p class="counts">No mistakes to practice. 🎉 Exercises you miss come back here.</p></div>');
         }
         if (!today.querySelector(".speed-mini")) {
           var best = ls("trk:app:speed");
@@ -652,7 +652,7 @@
         });
       }
       watch(stage, function () {
-        // After a conversation, the TYS or practising mistakes, the way back is to Games.
+        // After a conversation, the TYS or practicing mistakes, the way back is to Games.
         if (toGames) Array.prototype.forEach.call(stage.querySelectorAll('a[href="/turkish.html"]'), function (a) {
           if (/Back to the course/.test(a.textContent)) { a.href = "/turkish.html#games"; a.textContent = "Back to Practice"; }
         });
@@ -726,17 +726,6 @@
         var a = e.target.closest && e.target.closest('a[data-view="settings"]');
         if (a) { e.preventDefault(); e.stopImmediatePropagation(); root.location.href = "/turkish.html#settings"; }
       }, true);
-      // The start card: how long today's cards take.
-      var rv = doc.getElementById("v-review");
-      watch(rv, function () {
-        var b = rv.querySelector('[data-act="study"]');
-        if (!b || b.disabled || b.querySelector(".app-min")) return;
-        var n = 0;
-        Array.prototype.forEach.call(rv.querySelectorAll(".due3 .num"), function (x) { n += +x.textContent || 0; });
-        if (!n) return;
-        var min = Math.max(1, Math.round(n * 12 / 60));
-        b.insertAdjacentHTML("beforeend", '<small class="app-min">' + n + " card" + (n === 1 ? "" : "s") + " · about " + min + " min</small>");
-      });
       // Statistics: one sentence and the two charts; the rest behind "Details".
       var sb = doc.getElementById("s-body"), details = false;
       watch(sb, function () {

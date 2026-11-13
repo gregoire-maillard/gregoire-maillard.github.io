@@ -143,7 +143,7 @@ export function writeVerbPages(ctx) {
       <div class="vb-facts">${facts.map(([k, x]) => `<div><span>${k}</span><b lang="tr">${text(x)}</b></div>`).join("")}</div>
       <div class="ex vb-ex"><p class="tr" lang="tr">${text(c.ex.tr)}</p><p class="en">${text(c.ex.en)}</p></div>
       <ul class="vb-notes">${notesFor(c).map((n) => `<li>${n}</li>`).join("")}${note ? `<li>${note}</li>` : ""}</ul>
-      <p class="wl-cta">Practise ${tr(v)} with the <a href="/turkishcards.html">flashcards</a>, or see every suffix on one page in the <a href="/grammar-cheat-sheet.html">grammar cheat sheet</a>.</p>
+      <p class="wl-cta">Practice ${tr(v)} with the <a href="/turkishcards.html">flashcards</a>, or see every suffix on one page in the <a href="/grammar-cheat-sheet.html">grammar cheat sheet</a>.</p>
       <nav class="wl-pager" aria-label="Tenses on this page">${TENSES.map(([s, name]) => `<a href="#${s}">${text(name)}</a>`).join("")}</nav>
       <div class="vb-grid">
 ${sections}

@@ -728,7 +728,7 @@
     }
     return course.mistakes[exerciseId] || null;
   }
-  // Exercises still to practise (n > ok), oldest first.
+  // Exercises still to practice (n > ok), oldest first.
   function mistakesDue(course) {
     return Object.keys(course.mistakes).filter(function (k) { var m = course.mistakes[k]; return m.n > m.ok; })
       .sort(function (a, b) { var x = course.mistakes[a].last, y = course.mistakes[b].last; return x < y ? -1 : x > y ? 1 : a < b ? -1 : 1; });
