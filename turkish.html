@@ -1685,8 +1685,17 @@
         setTimeout(done, 5200);
       }
       // ── the section menu on the left: one click scrolls to a section; the one in view is highlighted ──
-      function goSection(id) {
+      // The account column can have no box of its own: the iPhone app lays its two cards out apart (display: contents,
+      // APP-9q). It is then found by its cards, in their order on the page; the menu takes you to the first.
+      function secBoxes(id) {
         var el = $(id);
+        if (!el) return [];
+        if (getComputedStyle(el).display !== "contents") return [el];
+        var kids = Array.prototype.filter.call(el.children, function (c) { return c.getClientRects().length; });
+        return kids.sort(function (a, b) { return a.getBoundingClientRect().top - b.getBoundingClientRect().top; });
+      }
+      function goSection(id) {
+        var el = secBoxes(id)[0];
         if (!el) return;
         var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
@@ -1704,10 +1713,21 @@
       }
       function spyNav() {
         if ($("profile").hidden || (ach.lock && Date.now() < ach.lock)) return;
-        var ids = ["pf-s-progress", "pf-s-calendar", "pf-s-ach", "pf-s-yours", "pf-s-levels", "pf-side"], cur = ids[0], line = window.innerWidth < 900 ? 140 : 120;
-        var stacked = window.innerWidth < 1180;   // pf-side only counts when it sits under the dashboard
-        ids.forEach(function (id) { var el = $(id); if (!el || (id === "pf-side" && (!stacked || NOACCT))) return; if (el.getBoundingClientRect().top <= line) cur = id; });
-        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = stacked && !NOACCT ? "pf-side" : "pf-s-levels";
+        var ids = ["pf-s-progress", "pf-s-calendar", "pf-s-ach", "pf-s-yours", "pf-s-levels", "pf-side"], line = window.innerWidth < 900 ? 140 : 120;
+        var stacked = window.innerWidth < 1180;   // pf-side only counts when it sits in the page's column
+        // By where each section is, not by its place in the list (on phones the account column comes before the
+        // dashboard, and in the app its cards sit apart): the last one to start above the line; before any has, the
+        // first on the page; at the very end, the last on the page.
+        var tops = [];
+        ids.forEach(function (id) {
+          if (id === "pf-side" && (!stacked || NOACCT)) return;
+          secBoxes(id).forEach(function (el) { tops.push({ id: id, top: el.getBoundingClientRect().top }); });
+        });
+        if (!tops.length) return;
+        tops.sort(function (a, b) { return a.top - b.top; });
+        var cur = tops[0].id;
+        tops.forEach(function (t) { if (t.top <= line) cur = t.id; });
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = tops[tops.length - 1].id;
         var b = $("pf-nav").querySelector('[aria-current="true"]');
         if (!b || b.getAttribute("data-go") !== cur) markNav(cur);
       }

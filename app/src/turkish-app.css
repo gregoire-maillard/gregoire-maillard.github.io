@@ -104,16 +104,18 @@ html[data-app] #settings .hero .kicker, html[data-app] #about .hero .kicker { di
 html[data-app], html[data-app] body { overflow-x: clip; overscroll-behavior: none; }
 
 /* My Profile in the app (APP-9c): signed in, the account card (name, sync, Sign out, Delete profile) goes to the
-   bottom, after the progress; signed out, the sign-in form stays first. The characters stay near the top. */
+   bottom, after the progress; signed out, the sign-in form stays first. Your character comes right after Levels,
+   so signed in it sits between Levels and the account card (APP-9q; it was near the top). */
 @media (max-width: 899px) {
   html[data-app] .pf-grid { display: flex; flex-direction: column; align-items: stretch; }   /* stretch: the menu keeps the screen's width and scrolls */
   html[data-app] .pf-grid > * { min-width: 0; }
   html[data-app] .pf-side { display: contents; }
   html[data-app] .pf-nav { order: 0; }
   html[data-app] #pf-acct { order: 1; }
-  html[data-app] #pf-chars { order: 2; }
   html[data-app] .pf-main { order: 3; }
-  html[data-app] #pf-acct:has(.pf-who) { order: 4; }
+  html[data-app] #pf-chars { order: 4; }   /* APP-9q: your character after Levels, before the account card */
+  html[data-app] #pf-acct:has(.pf-who) { order: 5; }
+  html[data-app] #pf-acct, html[data-app] #pf-chars { scroll-margin-top: calc(64px + var(--app-top)); }   /* the menu's "Account & character" lands on them */
 }
 
 /* ── The course page in the app (APP-9) ──
