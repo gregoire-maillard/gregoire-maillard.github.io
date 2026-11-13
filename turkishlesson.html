@@ -376,7 +376,13 @@
       .cin.right { border-color: var(--ok); background: var(--ok-wash); }
       .cin.almost { border-color: var(--amber); background: var(--amber-wash); }
       .cin.wrong { border-color: var(--bad); background: var(--bad-wash); }
-      .cfix { grid-column: 2; margin-top: -4px; font-size: 14px; color: var(--ok); }
+      .cfix { grid-column: 2; display: block; margin-top: -4px; font-size: 14px; color: var(--ok); }   /* inside its row (APP-9s: it was a child of .conj, which then grew a second column) */
+      /* APP-9s: on a second try, the parts already right stay filled in and locked */
+      .cin:disabled, .blank:disabled, .ans:disabled { color: var(--ink); -webkit-text-fill-color: var(--ink); opacity: 1; }   /* iOS greys a disabled field's text: answers stay readable after Check */
+      .m.done.kept { animation: none; opacity: .4; }
+      .rq.kept legend { opacity: .75; }
+      .dock .left .btn.ico { padding-left: 12px; padding-right: 12px; }   /* Hint as its bulb only, beside "Can't listen now" */
+      .notice .linkbtn { border: 0; background: none; padding: 0; font: inherit; color: var(--blue-dark); text-decoration: underline; cursor: pointer; }
 
       /* reading and open */
       .rtitle { font-size: 20px; font-weight: 650; margin-bottom: 10px; }
@@ -454,7 +460,7 @@
         .dock.has-left .dock-in { grid-template-columns: auto minmax(0, 1fr); }
         .dock.has-left .fb { grid-column: 1 / -1; }
         .dock.has-left .left { grid-column: 1; }
-        .dock.has-left .go { grid-column: 2; }
+        .dock.has-left .go { grid-column: 2; min-width: 0; }   /* APP-9s: Check takes the room left by Hint and "Can't listen now" */
       }
 
       /* quit dialog */
@@ -933,11 +939,19 @@
 
       // ───────────── 3. building a session ─────────────
       // Listening exercises need a Turkish voice and speech switched on (6.2); without them they are skipped and not counted.
-      function usable(ex) { if (ex.type === "listen" && !S.speech) { S.skipped += 1; return false; } return true; }
+      // APP-9s: also for an hour after "Can't listen now" (localStorage "trk:v1:nolisten", the time it ends).
+      var NOLISTEN = "trk:v1:nolisten", LISTEN_OFF = 60 * 60 * 1000;
+      function listenOffUntil() { try { var t = +localStorage.getItem(NOLISTEN) || 0; return t > Date.now() ? t : 0; } catch (e) { return 0; } }
+      function usable(ex) { if (ex.type === "listen" && (!S.speech || S.noListen)) { S.skipped += 1; return false; } return true; }
       function item(ex, meta) { return { ex: ex, meta: meta, weight: ex.type === "reading" ? ex.questions.length : 1, attempts: 0, done: false, retry: false }; }
       function speechNotice(n) {
         if (!n) return "";
         var what = plural(n, "listening exercise");
+        if (S.speech && S.noListen) {
+          var mins = Math.max(1, Math.ceil((listenOffUntil() - Date.now()) / 60000));
+          return '<p class="notice">You chose “Can\'t listen now”, so ' + what + " " + (n === 1 ? "is" : "are") + " skipped for " + plural(mins, "more minute") +
+            '. <button type="button" class="linkbtn" id="listen-on">Turn listening back on</button></p>';
+        }
         if (!T.tts.supported()) return '<p class="notice voice-note">This browser can\'t read text aloud, so ' + what + " " + (n === 1 ? "is" : "are") + " skipped.</p>";
         if (!S.voice) return '<p class="notice voice-note">' + esc(T.tts.HELP) + "</p>";
         return '<p class="notice">Speech is off in your settings, so ' + what + " " + (n === 1 ? "is" : "are") + ' skipped. Turn on “Read Turkish aloud” in <a href="' + P.hub + '#settings" data-keep="1">Settings</a> to hear them.</p>';
@@ -1058,7 +1072,7 @@
           });
         }
         return batch(0).then(function () {
-          if (!chosen.length) return message({ kicker: "Practice", title: "Nothing to practice here", text: "Your mistakes are all listening exercises, and this device can't play them.", notice: speechNotice(S.skipped) });
+          if (!chosen.length) return message({ kicker: "Practice", title: "Nothing to practice here", text: "Your mistakes are all listening exercises, and " + (S.noListen ? "listening is off for now." : "this device can't play them."), notice: speechNotice(S.skipped) });
           S.items = chosen.map(function (c) { return item(c.ex, c.meta); });
           document.title = "Practice your mistakes · Daily Turkish";
           start('<p class="kicker">Practice</p><h1>Practice your mistakes</h1><p class="goal">' + plural(S.items.length, "exercise") + " you got wrong before, oldest first" +
@@ -1082,11 +1096,15 @@
         S.counted = S.items.reduce(function (n, it) { return n + it.weight; }, 0);
         S.phase = "start"; showBar(false);
         if (!S.total) {
-          message({ title: "Nothing to play here", text: "Every exercise in this session is a listening exercise, and this device can't play them.", notice: speechNotice(S.skipped),
+          message({ title: "Nothing to play here", text: "Every exercise in this session is a listening exercise, and " + (S.noListen ? "listening is off for now." : "this device can't play them."), notice: speechNotice(S.skipped),
                     acts: '<a class="btn primary" href="' + hubHref(S.unit && S.unit.id) + '">Back to the course</a>' });
           return;
         }
-        screen('<div class="start">' + bodyHtml + speechNotice(S.skipped) +
+        // APP-9s: "listening is off for now" goes under the lesson's goal, where it's seen (in the app, the Start bar stuck to the
+        // bottom of the screen covered it at the end); the other speech notices stay at the end
+        var sn = speechNotice(S.skipped), up = S.speech && S.noListen && /<p class="goal">[\s\S]*?<\/p>/.test(bodyHtml);
+        if (up) { bodyHtml = bodyHtml.replace(/(<p class="goal">[\s\S]*?<\/p>)/, function (m) { return m + sn; }); sn = ""; }
+        screen('<div class="start">' + bodyHtml + sn +
           '<div class="acts"><button type="button" class="btn primary big" id="begin">' + esc(label) + '</button><a class="btn ghost" href="' + hubHref(S.unit && S.unit.id) + '">Back to the course</a></div>' +
           (metaText ? '<p class="meta">' + esc(metaText) + "</p>" : "") + "</div>");
         $("begin").addEventListener("click", begin);
@@ -1146,14 +1164,17 @@
         stage.innerHTML = '<div class="ex" data-ex="' + esc(ex.id) + '" data-type="' + esc(ex.type) + '"><div class="ex-head"><p class="instr" tabindex="-1" id="instr"></p>' +
           (it.retry ? '<span class="tag retry">Previous mistake</span>' : "") + lessonNote + '</div><div class="hint" id="hint" role="status" hidden></div><div class="ex-body" id="ex-body"></div></div>';
         var box = $("ex-body");
-        S.view = R(ex, box, api);
+        S.view = R(ex, box, api, it.keep || null);
         $("instr").textContent = S.view.instr;
         prep(box);
         // dock: Check, plus a hint button when the exercise has one
         dock.className = "dock"; fb.innerHTML = "";
-        dockLeft.innerHTML = ex.hint ? '<button type="button" class="btn ghost" id="hint-btn">' + ICON.bulb + "Hint</button>" : "";
-        dock.classList.toggle("has-left", !!ex.hint);
+        var noL = ex.type === "listen";   // APP-9s: a way out when you can't listen right now
+        dockLeft.innerHTML = (ex.hint ? '<button type="button" class="btn ghost' + (noL ? ' ico" aria-label="Hint" title="Hint' : "") + '" id="hint-btn">' + ICON.bulb + (noL ? "" : "Hint") + "</button>" : "") +
+          (noL ? '<button type="button" class="btn ghost" id="nolisten-btn">Can\'t listen now</button>' : "");
+        dock.classList.toggle("has-left", !!ex.hint || noL);
         if (ex.hint) $("hint-btn").addEventListener("click", showHint);
+        if (noL) $("nolisten-btn").addEventListener("click", skipListening);
         go.textContent = S.view.checkLabel || "Check"; go.hidden = !!S.view.noCheck; go.disabled = true;
         dock.hidden = go.hidden && !ex.hint;   // match has no Check button: no empty dock either
         window.scrollTo(0, 0);
@@ -1165,9 +1186,35 @@
         var h = $("hint");
         h.innerHTML = '<b class="ht">Hint:</b>' + rich(S.cur.ex.hint);
         outLinks(h); h.hidden = false;
-        dockLeft.innerHTML = ""; dock.classList.remove("has-left");
-        if (go.hidden) dock.hidden = true;
+        var hb = $("hint-btn"); if (hb) hb.remove();
+        if (!dockLeft.children.length) dock.classList.remove("has-left");
+        if (go.hidden && !dockLeft.children.length) dock.hidden = true;
       }
+      // APP-9s: "Can't listen now": this listening exercise and the rest of the session's are left out, and listening stays off
+      // for an hour (later sessions say so on their start screen, with a way to turn it back on). One not answered yet leaves
+      // the count; one already answered once (a retry) keeps the score of its first try.
+      function skipListening() {
+        if (S.phase !== "answer" || !S.cur) return;
+        try { localStorage.setItem(NOLISTEN, String(Date.now() + LISTEN_OFF)); } catch (e) { /* this session only */ }
+        S.noListen = true;
+        if (T.tts.cancel) T.tts.cancel();
+        var gone = [];
+        var drop = function (it) {
+          if (it.attempts) { it.done = true; return; }
+          if (gone.indexOf(it) < 0) { gone.push(it); S.counted -= it.weight; S.skipped += 1; }
+        };
+        drop(S.cur);
+        S.queue = S.queue.filter(function (it) { if (it.ex.type !== "listen") return true; drop(it); return false; });
+        S.items = S.items.filter(function (it) { return gone.indexOf(it) < 0; });
+        S.total = S.items.length;
+        progress();
+        next();
+      }
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest || !e.target.closest("#listen-on")) return;
+        try { localStorage.removeItem(NOLISTEN); } catch (er) { /* nothing kept */ }
+        location.reload();
+      });
       function changed() { if (S.phase === "answer" && S.view) go.disabled = !S.view.ready(); }
       var api = {
         changed: changed,
@@ -1203,6 +1250,8 @@
         S.streak = ok ? S.streak + 1 : 0; drawStreak(ok);
         var again = !ok && S.retries && it.ex.type !== "open" && it.attempts <= C.RETRIES;
         if (again) { it.retry = true; S.queue.push(it); } else it.done = true;
+        // APP-9s: what was already right in a many-part exercise (forms, blanks, pairs, questions) stays done next time
+        it.keep = again && r.keep && Object.keys(r.keep).length ? r.keep : null;
         if (S.mode === "test" && misses() < 0) S.stop = true;
         progress();
         feedback(r, ok, again);
@@ -1217,7 +1266,7 @@
         if (r.extra) h += r.extra;
         if (r.meaning) h += '<p><span class="lbl">Meaning</span>' + esc(r.meaning) + "</p>";
         if (r.explain) h += "<p>" + rich(r.explain) + "</p>";
-        if (again) h += '<p class="muted-s">This one comes back at the end.</p>';
+        if (again) h += '<p class="muted-s">This one comes back at the end' + (S.cur.keep ? ", with what you got right already done" : "") + ".</p>";
         if (S.stop) h += "<p><b>" + pct(C.PASS) + " is out of reach now, so the test ends here.</b></p>";
         dock.className = "dock " + kind; dock.hidden = false;
         var body = $("ex-body");
@@ -1337,19 +1386,21 @@
       }
 
       // cloze: a Turkish sentence with typed blanks and chosen blanks
-      RENDER.cloze = function (ex, box) {
+      RENDER.cloze = function (ex, box, _api, keep) {
+        keep = keep || {};   // APP-9s: on a second try, the blanks already right stay filled in and locked
         var h = '<p class="cloze" lang="tr">', names = [], ords = [], anyTyped = false, nb = 0;
         var blankHtml = function (i) {
-          var b = ex.blanks[i];
+          var b = ex.blanks[i], k = keep[i] != null;
           if (!b) return "";
           if (b.accept) {
-            anyTyped = true;
-            return '<input type="text" class="blank" data-b="' + i + '" lang="tr" aria-label="Blank ' + (i + 1) + '" style="width:' + (Math.max(3, longest(b.accept)) + 2) + 'ch">';
+            anyTyped = anyTyped || !k;
+            return '<input type="text" class="blank' + (k ? " kept right" : "") + '" data-b="' + i + '" lang="tr" aria-label="Blank ' + (i + 1) + '" style="width:' + (Math.max(3, longest(b.accept)) + 2) + 'ch"' +
+              (k ? ' value="' + esc(keep[i]) + '" disabled' : "") + ">";
           }
           var name = nid("b"), ord = shuffle(range(b.options.length));
           names[i] = name; ords[i] = ord;
-          return '<span class="bopts" role="radiogroup" aria-label="Blank ' + (i + 1) + '" data-b="' + i + '">' + ord.map(function (k) {
-            return '<label class="bopt"><input type="radio" name="' + name + '" value="' + k + '"><span>' + esc(b.options[k]) + "</span></label>";
+          return '<span class="bopts' + (k ? " off right kept" : "") + '" role="radiogroup" aria-label="Blank ' + (i + 1) + '" data-b="' + i + '">' + ord.map(function (o) {
+            return '<label class="bopt"><input type="radio" name="' + name + '" value="' + o + '"' + (k ? (o === keep[i] ? " checked" : "") + " disabled" : "") + "><span>" + esc(b.options[o]) + "</span></label>";
           }).join("") + "</span>";
         };
         // a blank stays on one line with the letters and punctuation touching it: "yat___." never leaves the full stop alone on the next line
@@ -1358,7 +1409,7 @@
           h += '<span class="cz-w">' + w.split("\u0001").map(function (p, k) { return (k ? blankHtml(nb++) : "") + esc(p); }).join("") + "</span>";
         });
         box.innerHTML = h + '</p><p class="en">' + esc(ex.en) + "</p>" + (anyTyped ? kbar() : "");
-        var inputs = [].slice.call(box.querySelectorAll("input.blank"));
+        var inputs = [].slice.call(box.querySelectorAll("input.blank:not(:disabled)"));
         inputs.forEach(function (el, k) {
           el.addEventListener("input", api.changed);
           el.addEventListener("keydown", function (e) {
@@ -1377,18 +1428,20 @@
             return ex.blanks.every(function (b, i) { return b.accept ? !!box.querySelector('input.blank[data-b="' + i + '"]').value.trim() : chosen(i) != null; });
           },
           check: function () {
-            var verdict = "correct", why = [], notes = [], filled = [];
+            var verdict = "correct", why = [], notes = [], filled = [], right = {};
             ex.blanks.forEach(function (b, i) {
+              if (keep[i] != null) { right[i] = keep[i]; filled.push(b.accept ? b.accept[0] : b.options[b.answer]); return; }
               if (b.accept) {
                 var el = box.querySelector('input.blank[data-b="' + i + '"]'), c = T.checkExercise(ex, el.value, i);
                 el.classList.add(c.verdict === "correct" ? "right" : c.verdict);
                 if (c.verdict === "wrong") { verdict = "wrong"; if (c.why) why.push(c.why); }
+                else right[i] = c.verdict === "correct" ? el.value.trim() : b.accept[0];
                 if (c.verdict === "almost") { if (verdict === "correct") verdict = "almost"; notes.push(c); }
                 filled.push(b.accept[0]);
               } else {
                 var s = chosen(i), g = box.querySelector('.bopts[data-b="' + i + '"]');
                 g.classList.add("off", s === b.answer ? "right" : "wrong");
-                if (s !== b.answer) verdict = "wrong";
+                if (s !== b.answer) verdict = "wrong"; else right[i] = s;
                 filled.push(b.options[b.answer]);
               }
             });
@@ -1396,6 +1449,7 @@
             k = 0;
             var marked = esc(ex.text).replace(/___/g, function () { return "<u>" + esc(filled[k++]) + "</u>"; });
             var r = { verdict: verdict, why: why, explain: ex.explain };
+            if (verdict === "wrong" && ex.blanks.length > 1) r.keep = right;
             if (verdict === "almost") { r.note = notes[0].note; r.noteHtml = notes.map(function (c) { return '<b lang="tr">' + esc(c.matched) + "</b>"; }).join(", ") + "."; }
             r.answer = { text: full, html: marked, lang: "tr", label: verdict === "wrong" ? "Correct answer" : "The sentence" };
             return r;
@@ -1535,7 +1589,8 @@
       };
 
       // match: tap a Turkish word, then its English meaning; finishes by itself when every pair is found
-      RENDER.match = function (ex, box) {
+      RENDER.match = function (ex, box, _api, keep) {
+        keep = keep || {};   // APP-9s: on a second try, the pairs never mixed up stay matched
         var n = ex.pairs.length, L = scramble(n), Rr = scramble(n), sel = { tr: null, en: null }, found = 0, misses = [];
         var col = function (side, ord, lab) {
           return '<div class="mcol" role="group" aria-label="' + lab + '">' + ord.map(function (k) {
@@ -1544,6 +1599,10 @@
         };
         box.innerHTML = '<div class="match">' + col("tr", L, "Turkish") + col("en", Rr, "English") + "</div>";
         var btn = function (side, k) { return box.querySelector('.m[data-side="' + side + '"][data-k="' + k + '"]'); };
+        Object.keys(keep).forEach(function (k) {
+          ["tr", "en"].forEach(function (side) { var x = btn(side, k); x.classList.add("done", "kept"); x.setAttribute("aria-disabled", "true"); x.tabIndex = -1; });
+          found += 1;
+        });
         box.addEventListener("mousedown", function (e) { if (e.target.closest(".m")) e.preventDefault(); });
         box.addEventListener("click", function (e) {
           var b = e.target.closest(".m");
@@ -1569,13 +1628,15 @@
         });
         function result() {
           if (!misses.length) return { verdict: "correct" };
-          var seen = {}, why = [];
+          var seen = {}, why = [], mixed = {}, right = {};
+          misses.forEach(function (m) { mixed[m[0]] = mixed[m[1]] = true; });
+          for (var k = 0; k < n; k++) if (!mixed[k]) right[k] = true;
           misses.forEach(function (m) {
             var key = m.join(":");
             if (seen[key]) return; seen[key] = 1;
             why.push("*" + ex.pairs[m[0]][0] + "* means **" + ex.pairs[m[0]][1] + "**, and **" + ex.pairs[m[1]][1] + "** is *" + ex.pairs[m[1]][0] + "*.");
           });
-          return { verdict: "wrong", title: misses.length === 1 ? "One pair mixed up" : plural(misses.length, "wrong try", "wrong tries"), why: why.slice(0, 3) };
+          return { verdict: "wrong", title: misses.length === 1 ? "One pair mixed up" : plural(misses.length, "wrong try", "wrong tries"), why: why.slice(0, 3), keep: right };
         }
         return {
           instr: "Match the pairs", noCheck: true,
@@ -1585,11 +1646,14 @@
       };
 
       // conjugate: fill the persons of a paradigm (strict about letters: ı/i is a harmony error, not a typo)
-      RENDER.conjugate = function (ex, box) {
+      RENDER.conjugate = function (ex, box, _api, keep) {
+        keep = keep || {};   // APP-9s: on a second try, the forms already right stay filled in and locked
         box.innerHTML = '<h2 class="q">' + rich(ex.label) + '</h2><div class="conj">' + ex.cells.map(function (c, i) {
-          return '<label class="crow"><span class="cp" lang="tr">' + esc(c.p) + '</span><input type="text" class="cin" data-c="' + i + '" lang="tr"></label>';
+          var k = keep[i] != null;
+          return '<label class="crow"><span class="cp" lang="tr">' + esc(c.p) + '</span><input type="text" class="cin' + (k ? " kept right" : "") + '" data-c="' + i + '" lang="tr"' +
+            (k ? ' value="' + esc(keep[i]) + '" disabled' : "") + "></label>";
         }).join("") + "</div>" + kbar();
-        var inputs = [].slice.call(box.querySelectorAll(".cin"));
+        var inputs = [].slice.call(box.querySelectorAll(".cin")), open = inputs.filter(function (el) { return !el.disabled; });
         inputs.forEach(function (el, k) {
           el.addEventListener("input", api.changed);
           el.addEventListener("keydown", function (e) {
@@ -1601,17 +1665,20 @@
         });
         return {
           instr: "Fill in the forms",
-          focus: function () { inputs[0].focus(); },
+          focus: function () { (open[0] || inputs[0]).focus(); },
           ready: function () { return inputs.every(function (el) { return !!el.value.trim(); }); },
           check: function () {
-            var verdict = "correct", why = [], notes = [], wrong = [];
+            var verdict = "correct", why = [], notes = [], wrong = [], right = {};
             ex.cells.forEach(function (cell, i) {
+              if (keep[i] != null) { right[i] = keep[i]; return; }
               var el = inputs[i], c = T.checkExercise(ex, el.value, i);
               el.classList.add(c.verdict === "correct" ? "right" : c.verdict);
-              if (c.verdict === "wrong") { verdict = "wrong"; wrong.push(cell); el.closest(".crow").insertAdjacentHTML("afterend", '<p class="cfix" lang="tr">' + esc(cell.accept[0]) + "</p>"); }
+              if (c.verdict === "wrong") { verdict = "wrong"; wrong.push(cell); el.closest(".crow").insertAdjacentHTML("beforeend", '<span class="cfix" lang="tr">' + esc(cell.accept[0]) + "</span>"); }
+              else right[i] = c.verdict === "correct" ? el.value.trim() : cell.accept[0];
               if (c.verdict === "almost") { if (verdict === "correct") verdict = "almost"; notes.push(c); }
             });
             var r = { verdict: verdict, explain: ex.explain };
+            if (verdict === "wrong") r.keep = right;
             if (verdict === "almost") { r.note = notes[0].note; r.noteHtml = notes.map(function (c) { return '<b lang="tr">' + esc(c.matched) + "</b>"; }).join(", ") + "."; }
             if (wrong.length) r.answer = { text: wrong.map(function (c) { return c.p + " " + c.accept[0]; }).join(", "), html: wrong.map(function (c) { return esc(c.p) + " <b>" + esc(c.accept[0]) + "</b>"; }).join(" · "), lang: "tr", label: wrong.length === 1 ? "Correct form" : "Correct forms" };
             return r;
@@ -1620,7 +1687,8 @@
       };
 
       // reading: a passage and its questions; each question counts (6.2)
-      RENDER.reading = function (ex, box) {
+      RENDER.reading = function (ex, box, _api, keep) {
+        keep = keep || {};   // APP-9s: on a second try, the questions already right stay answered and locked
         var names = [], ords = [];
         var h = (ex.title ? '<h2 class="rtitle" lang="tr">' + esc(ex.title) + "</h2>" : "") +
           '<div class="say-row">' + sayHtml(T.plain(ex.passage)) + sayHtml(T.plain(ex.passage), true) + "</div>" +
@@ -1634,14 +1702,23 @@
         if (ex.translation) h += '<details class="more-d" id="trans" hidden><summary>Translation</summary><div class="in"><p>' + esc(ex.translation) + "</p></div></details>";
         box.innerHTML = h;
         var sels = names.map(function (n) { return wireOptions(box, n); });
+        Object.keys(keep).forEach(function (i) {
+          var q = ex.questions[i], r = box.querySelector('input[name="' + names[i] + '"][value="' + q.answer + '"]');
+          if (r) r.checked = true;
+          box.querySelectorAll('input[name="' + names[i] + '"]').forEach(function (x) { x.disabled = true; });
+          markOptions(box, names[i], q.answer, q.answer);
+          box.querySelectorAll(".rq")[i].classList.add("kept");
+        });
         return {
           instr: "Read, then answer",
           key: ex.questions.length === 1 ? function (d) { return pick(box, names[0], ords[0], d); } : null,
           ready: function () { return sels.every(function (s) { return s() != null; }); },
           check: function () {
-            var got = 0;
+            var got = 0, right = {};
             ex.questions.forEach(function (q, i) {
+              if (keep[i] != null) { got += 1; right[i] = true; return; }
               var s = sels[i](), ok = s === q.answer, fs = box.querySelectorAll(".rq")[i], p = fs.querySelector(".rq-ex");
+              if (ok) right[i] = true;
               markOptions(box, names[i], q.answer, s);
               if (ok) got += 1;
               if (q.explain || !ok) { p.innerHTML = (ok ? "" : "<b>Answer:</b> <span" + langAttr(q.optionsLang) + ">" + optHtml(q.options[q.answer], q.optionsLang) + "</span>. ") + (q.explain ? rich(q.explain) : ""); p.hidden = false; outLinks(p); }
@@ -1649,7 +1726,7 @@
             var tr = box.querySelector("#trans");
             if (tr) tr.hidden = false;
             var n = ex.questions.length;
-            return { verdict: got === n ? "correct" : "wrong", got: got, title: got === n ? (n === 1 ? "Correct" : "All " + n + " right") : got + " of " + n + " right" };
+            return { verdict: got === n ? "correct" : "wrong", got: got, title: got === n ? (n === 1 ? "Correct" : "All " + n + " right") : got + " of " + n + " right", keep: n > 1 && got < n ? right : null };
           }
         };
       };
@@ -2751,6 +2828,7 @@
         Promise.all([T.data.index(), T.tts.ready()]).then(function (r) {
           S.index = r[0]; S.voice = r[1]; S.flat = T.path.flatten(S.index);
           S.speech = !!S.voice && store.settings().tts;
+          S.noListen = S.speech && !!listenOffUntil();
           if (!S.mode) {
             var nx = T.path.nextLesson(S.index, store.course());
             return message({ title: "Pick a lesson", text: "Lessons, unit reviews and tests start from the course page.",
