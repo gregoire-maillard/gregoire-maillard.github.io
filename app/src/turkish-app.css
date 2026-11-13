@@ -191,7 +191,7 @@ html[data-app] .stats .stat .lbl { font-size: 11.5px; white-space: nowrap; }
 @keyframes app-hi-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
 
 /* Settings: the "Your progress" box is a small Backup box in the app (APP-9g): Export and Import, no Reset. */
-html[data-app] #settings fieldset.set.wide #p-status, html[data-app] #settings #p-reset { display: none; }
+html[data-app] #settings fieldset.set.wide #p-status:not(.app-said), html[data-app] #settings #p-reset { display: none; }
 
 /* Flashcards: no Today box, and the overview stays still when it fits (html.app-still, turkish-app.js). */
 html[data-app] .ov-more > .card + .card { display: none; }
@@ -353,10 +353,6 @@ html[data-app] #v-course .stats .stat + .stat { border-left: 0; }
 html[data-app] #v-course #lvl-nav { position: sticky; top: calc(var(--app-top, 0px) + var(--app-stats-h, 64px)); z-index: 29; background: #fff;
   margin: -14px -16px 0; padding: 8px 18px 10px; border-bottom: 1px solid #ecece8; }
 html[data-app] #v-course .layout { gap: 14px; }
-/* Finished units: hidden until "Show N finished units". */
-html[data-app] #levels details.level:not(.app-done-shown) li.unit.st-done:not(.is-here) { display: none; }
-html[data-app] #levels .app-showdone { list-style: none; margin: 0 0 10px; }
-html[data-app] #levels .app-showdone button { width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px dashed #d6d6d0; background: #fafaf7; font: inherit; font-size: 14px; font-weight: 600; color: #4a4a48; }
 /* Profile: the section menu in the page's order (signed out, the account card comes first), and no "Out of what's written so far". */
 html[data-app] .pf-nav ol { display: flex; }
 html[data-app] .pf-nav .pf-nav-sep { display: none; }
@@ -365,10 +361,53 @@ html[data-app] #pf-s-yours .pf-card-h > span { display: none; }
 
 /* ── APP-9m: no web-page behaviour on a long press ──
    No link preview or "Open / Copy link" box (-webkit-touch-callout; the native side also turns off WKWebView's link
-   previews), and no text selection, as in a native app; typing fields keep both. */
-html[data-app], html[data-app] * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+   previews), and no text selection, as in a native app; typing fields keep both. APP-9q: no dragging a link or a
+   picture off the page either (-webkit-user-drag; AppViewController also turns off the web view's drag). */
+html[data-app], html[data-app] * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; }
 html[data-app] input, html[data-app] textarea, html[data-app] [contenteditable], html[data-app] [contenteditable] * { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }
 
 /* APP-9n: the lesson header's back arrow (in place of the logo). */
 html[data-app] .at-hdr .at-home.app-backarrow { min-width: 44px; min-height: 44px; justify-content: center; color: #1d1d1b; margin-left: -10px; }
 html[data-app] .at-hdr .at-home.app-backarrow svg { display: block; }
+
+/* ── APP-9q: the course page, straight to the unit in progress ──
+   The header is one line on one centre: the streak (its "Streak" label kept for VoiceOver only), the Daily Turkish
+   wordmark with "Daily" in red as in the logo, and the character saying the word for the time of day. */
+/* Centred on the screen like an iPhone title: both sides get the same width when they fit, and only when one side is
+   wider than the room left does the wordmark move over (each side at least as wide as its content). */
+html[data-app] #v-course .stats { display: grid; grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr); align-items: center;
+  column-gap: 8px; padding: 4px 8px; }
+/* white behind the status bar too, now that the page opens scrolled down to the unit in progress */
+html[data-app] #v-course .stats::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: var(--app-top, 0px); background: #fff; }
+html[data-app] #v-course .stats > .stat:not(.app-hi) { justify-self: start; }
+html[data-app] #v-course .stats .stat { padding: 8px 6px; gap: 7px; }
+html[data-app] #v-course .stats .stat .lbl { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+html[data-app] #v-course .stats .stat .flame { width: 34px; height: 34px; }
+html[data-app] #v-course .stats .stat .big { font-size: 16px; line-height: 1.2; }
+.app-brand { display: flex; align-items: center; justify-content: center; padding: 6px 0; line-height: 1.1; }
+.app-brand-w { font-size: 18.5px; font-weight: 750; letter-spacing: -0.03em; color: #242424; white-space: nowrap; }
+.app-brand-d { font-weight: 600; color: #e34b4f; }
+/* The character's bubble on its left, the tail at its mouth (a little below the middle of the face); on a narrow phone
+   a two-word greeting goes on two lines rather than crowd the wordmark (turkish-app.js, .app-hi-wrap). */
+html[data-app] #v-course .stats .app-hi { justify-self: end; flex-direction: row; align-items: center; gap: 8px; padding: 4px 6px !important; }
+html[data-app] #v-course .stats .app-hi-av, html[data-app] #v-course .stats .app-hi-av svg { width: 36px; height: 36px; }
+html[data-app] #v-course .stats .app-hi-bub { position: relative; top: 3px; padding: 4px 8px; border-radius: 10px; background: #f3f6f9; border: 1px solid #dde5ec;
+  font-size: 12px; font-weight: 700; line-height: 1.2; color: #1d1d1b; white-space: nowrap; text-align: center; }
+html[data-app] #v-course .stats .app-hi-bub::after { content: ""; position: absolute; right: -5px; left: auto; top: 50%; bottom: auto; width: 8px; height: 8px;
+  margin: -4px 0 0; background: #f3f6f9; border: 1px solid #dde5ec; border-left: 0; border-bottom: 0; transform: rotate(45deg); }
+html[data-app] #v-course .stats .app-hi-bub.app-hi-wrap { white-space: normal; width: min-content; padding: 3px 8px; font-size: 11.5px; }
+html[data-app] .stats.app-fresh .app-hi-bub { animation: app-pop .5s ease 1 .4s; }
+@media (max-width: 379px) { .app-brand-w { font-size: 17px; } html[data-app] #v-course .stats .stat .big { font-size: 15px; } }
+
+/* Under the level strip, the path itself: no Continue card (the unit's own Start does it; "All caught up" stays),
+   no level heading ("A1 · First steps", the strip names the level), so no line or fold above the units. */
+html[data-app] #v-course .today > .next[data-lvl], html[data-app] #v-course .today > .next:not(:has(h3)) { display: none; }
+html[data-app] #levels details.level > summary { display: none; }
+html[data-app] #levels details.level[open] { border-top: 0; }
+html[data-app] #levels details.level > .lvl-body { padding-top: 14px; }
+html[data-app] #v-course #levels { margin-top: -14px; }   /* the level's tint starts right under the strip */
+
+/* The ferry sails between the unit in progress and the units ahead (turkish-app.js puts a copy there). */
+html[data-app] #levels li.unit > .ferry { display: none !important; }
+html[data-app] #levels li.app-ferry { list-style: none; margin: 0; padding: 0; }
+html[data-app] #levels li.app-ferry > .ferry { display: block; margin: 6px -16px 12px; }

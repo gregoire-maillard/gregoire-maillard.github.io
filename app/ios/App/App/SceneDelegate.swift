@@ -1,4 +1,5 @@
 import UIKit
+import WebKit
 import Capacitor
 import WidgetKit
 import StoreKit
@@ -12,6 +13,30 @@ class AppViewController: CAPBridgeViewController {
         bridge?.registerPluginInstance(WidgetBridgePlugin())
         // APP-9m: a long press on a link shows no preview card with the page's address.
         webView?.allowsLinkPreview = false
+    }
+
+    // APP-9q: no drag and drop either. A long press then a slight move lifted a link off the page, with its
+    // capacitor:// address on it ("the button flies away"). turkish-app.css also sets -webkit-user-drag: none.
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let webView = webView { turnOffDrag(in: webView) }
+    }
+
+    private func turnOffDrag(in view: UIView) {
+        for case let drag as UIDragInteraction in view.interactions { drag.isEnabled = false }
+        for sub in view.subviews { turnOffDrag(in: sub) }
+    }
+}
+
+// APP-9q: no context menu on a long press, whatever the element (the box with the page's capacitor:// address and
+// Open / Copy / Share). Capacitor's delegate doesn't answer this question, so iOS showed its own menu; answering
+// nil means no menu. Added to Capacitor's class, which stays the web view's UI delegate (alerts, confirms).
+extension WebViewDelegationHandler {
+    @MainActor
+    @objc(webView:contextMenuConfigurationForElement:completionHandler:)
+    public func webView(_ webView: WKWebView, contextMenuConfigurationForElement elementInfo: WKContextMenuElementInfo,
+                        completionHandler: @escaping @MainActor @Sendable (UIContextMenuConfiguration?) -> Void) {
+        completionHandler(nil)
     }
 }
 

@@ -186,6 +186,7 @@
       { id: "profile", label: "Profile", href: "/turkish.html#profile", hub: "tab-profile" },
       { id: "settings", label: "Settings", href: "/turkish.html#settings", hub: "tab-settings" }
     ];
+    var aimCourse = null;   // set by the course path below (APP-9q)
     var nav = doc.createElement("nav");
     nav.className = "app-tabs";
     nav.setAttribute("aria-label", "Daily Turkish");
@@ -223,7 +224,8 @@
       if (!twin) return;
       e.preventDefault();
       twin.click();
-      setTimeout(paintCurrent, 0);
+      // APP-9q: the Course tab goes back to the unit in progress (the hub itself scrolls to the top).
+      setTimeout(function () { paintCurrent(); if (t.id === "course" && aimCourse) aimCourse(); }, 0);
     });
     root.addEventListener("hashchange", paintCurrent);
     root.addEventListener("popstate", function () { setTimeout(paintCurrent, 0); });
@@ -239,6 +241,7 @@
     // Course tab: the XP and streak bar gets a third cell, your character with a word for the time of day (APP-9d).
     var today = onHub && doc.getElementById("today");
     if (today && root.MutationObserver) {
+      var statsRO = null;
       var greet = function () {
         var stats = today.querySelector(".stats");
         if (!stats || stats.querySelector(".app-hi")) return;
@@ -253,22 +256,66 @@
         var ring = stats.querySelector(".ring");
         if (ring && ring.closest(".stat")) ring.closest(".stat").classList.add("app-xp");
         Array.prototype.forEach.call(stats.querySelectorAll(".stat .lbl"), function (l) { l.textContent = l.textContent.replace(/\s*·\s*best\s+\d+/, ""); });
-        setTimeout(function () { doc.documentElement.style.setProperty("--app-stats-h", stats.offsetHeight + "px"); }, 0);
+        // The level strip sticks under the bar's height. APP-9q: measured only while the bar shows (a redraw while
+        // Profile or Settings was open measured 0, and the strip then slid under the bar), and again when it resizes,
+        // which is also when the character's bubble is checked against the wordmark.
+        var measure = function () {
+          var s = today.querySelector(".stats"), hh = s ? s.offsetHeight : 0;
+          if (hh) doc.documentElement.style.setProperty("--app-stats-h", hh + "px");
+          fitBubble();
+        };
+        setTimeout(measure, 0);
+        if (root.ResizeObserver) { statsRO = statsRO || new root.ResizeObserver(measure); statsRO.disconnect(); statsRO.observe(stats); }
         var say = root.TRKFresh ? ["Harika!", "Great job"] : met ? ["Aferin!", "Well done"] : h >= 5 && h < 11 ? ["Günaydın!", "Good morning"] : h >= 11 && h < 17 ? ["İyi günler!", "Have a nice day"]
           : h >= 17 && h < 22 ? ["İyi akşamlar!", "Good evening"] : ["İyi geceler!", "Good night"];
+        // APP-9q: one line, on one centre: the streak, the Daily Turkish wordmark ("Daily" in red, as in the logo) in the
+        // middle of the screen, and the character saying the word for the time of day, its bubble beside its mouth.
+        var brand = doc.createElement("div");
+        brand.className = "app-brand";
+        brand.innerHTML = '<span class="app-brand-w"><span class="app-brand-d">Daily</span> Turkish</span>';
+        stats.appendChild(brand);
         var cell = doc.createElement("a");
         cell.className = "stat app-hi";
         cell.href = "/turkish.html#profile";
         cell.setAttribute("aria-label", say[0] + " (" + say[1] + "). My profile");
-        cell.title = say[1];
-        cell.innerHTML = '<span class="app-hi-bub"><b lang="tr">' + say[0] + "</b></span>" +
-          (id ? '<span class="app-hi-av">' + A.avatarSvg(id, 34) + "</span>" : "");
+        cell.innerHTML = id ? '<span class="app-hi-bub" lang="tr" aria-hidden="true">' + say[0] + '</span><span class="app-hi-av">' + A.avatarSvg(id, 36) + "</span>" : "";
         cell.addEventListener("click", function (e) { var tw = doc.getElementById("tab-profile"); if (tw) { e.preventDefault(); tw.click(); setTimeout(paintCurrent, 0); } });
         stats.appendChild(cell);
+        // Measured on the next frame, not now: this runs in the middle of the hub's redraw, before the path is put back,
+        // and reading the layout then made a scrolled page jump to the top.
+        (root.requestAnimationFrame || setTimeout)(fitBubble);
+      };
+      // When the bubble comes within 12 px of the wordmark or pushes the character past the edge (a long greeting on a
+      // narrow phone, "İyi akşamlar!" at 390 px), a two-word greeting goes on two lines.
+      var fitBubble = function () {
+        var s = today.querySelector(".stats"), bub = s && s.querySelector(".app-hi-bub"), w = s && s.querySelector(".app-brand-w");
+        if (!bub || !w || !bub.getClientRects().length) return;
+        bub.classList.remove("app-hi-wrap");
+        var tight = bub.getBoundingClientRect().left - w.getBoundingClientRect().right < 12 ||
+          bub.parentNode.getBoundingClientRect().right > s.getBoundingClientRect().right - 4;
+        if (tight && /\s/.test(bub.textContent)) bub.classList.add("app-hi-wrap");
       };
       new root.MutationObserver(greet).observe(today, { childList: true });
       greet();
-      if (T.account && T.account.onChange) T.account.onChange(function () { var c = today.querySelector(".app-hi"); if (c) c.remove(); greet(); });
+      // APP-9q: back from a lesson through the page cache (the lesson's back arrow), the course page isn't loaded again,
+      // so the "just finished" sign (sessionStorage, which the hub has already read) is a lesson count that grew.
+      var doneCount = function () { try { return Object.keys(T.store.course().lessons || {}).length; } catch (e) { return 0; } };
+      var countWas = doneCount();
+      root.addEventListener("pagehide", function () { countWas = doneCount(); });
+      root.addEventListener("pageshow", function (e) {
+        if (!e.persisted) return;
+        var grew = doneCount() > countWas;
+        countWas = doneCount();
+        if (!grew) return;
+        root.TRKFresh = true;
+        setTimeout(function () { root.TRKFresh = false; }, 6000);
+        Array.prototype.forEach.call(today.querySelectorAll(".app-hi, .app-brand"), function (c) { c.remove(); });
+        greet();
+      });
+      if (T.account && T.account.onChange) T.account.onChange(function () {
+        Array.prototype.forEach.call(today.querySelectorAll(".app-hi, .app-brand"), function (c) { c.remove(); });
+        greet();
+      });
     }
 
     // Flashcards (APP-9d): the overview doesn't scroll when it fits on the screen.
@@ -313,7 +360,7 @@
     // the next lesson. The hub redraws both lists on every change, so the choice is put back after each redraw.
     var levels = onHub && doc.getElementById("levels"), strip = onHub && doc.getElementById("lvl-nav");
     if (levels && strip && root.MutationObserver) {
-      var sel = null, busy = false, opened = {};   // levels opened here once: folding one again is respected
+      var sel = null, busy = false;
       var pick = function () {
         if (busy) return;
         busy = true;
@@ -324,28 +371,23 @@
           Array.prototype.forEach.call(all, function (d) {
             var on = d.id === sel;
             d.classList.toggle("app-sel", on);
-            if (on && !d.open && !opened[d.id]) { opened[d.id] = true; d.open = true; }
+            if (on && !d.open) d.open = true;   // APP-9q: the level's heading is gone, so nothing folds it
           });
           Array.prototype.forEach.call(strip.querySelectorAll(".lvl-chip"), function (c) {
             c.classList.toggle("app-sel", c.dataset.lvl === sel);
             if (c.dataset.lvl === sel) c.setAttribute("aria-current", "true"); else c.removeAttribute("aria-current");
           });
           Array.prototype.forEach.call(levels.querySelectorAll("li.unit"), function (li) { if (unitOpen[li.id]) li.classList.add("app-open"); });
-          // APP-9l: finished units are hidden at first, behind one line at the top of the level's list.
-          Array.prototype.forEach.call(levels.querySelectorAll("details.level"), function (d) {
-            var ol = d.querySelector("ol.units"), done = d.querySelectorAll("li.unit.st-done:not(.is-here)").length;
-            if (!ol || !done || ol.querySelector(".app-showdone")) return;
-            var li = doc.createElement("li");
-            li.className = "app-showdone";
-            li.innerHTML = '<button type="button"></button>';
-            ol.insertBefore(li, ol.firstChild);
-            var paint = function () {
-              d.classList.toggle("app-done-shown", !!showDone[d.id]);
-              li.firstChild.textContent = showDone[d.id] ? "Hide finished units" : "Show " + done + " finished unit" + (done === 1 ? "" : "s");
-            };
-            li.firstChild.addEventListener("click", function () { showDone[d.id] = !showDone[d.id]; paint(); });
-            paint();
-          });
+          // APP-9q: the ferry ("Next stop") sails between the unit in progress and the units ahead. The hub draws one at
+          // the top of every unit but the first (turkish-app.css hides those); a copy goes after the unit in progress.
+          var cur = levels.querySelector("li.unit.is-here"), boat = levels.querySelector("li.unit > .ferry");
+          if (cur && boat && !(cur.nextElementSibling && cur.nextElementSibling.classList.contains("app-ferry"))) {
+            var fl = doc.createElement("li");
+            fl.className = "app-ferry";
+            fl.setAttribute("aria-hidden", "true");
+            fl.appendChild(boat.cloneNode(true));
+            cur.parentNode.insertBefore(fl, cur.nextSibling);
+          }
           // "Jump here" (APP-9g): only on the next locked unit, said plainly
           Array.prototype.forEach.call(levels.querySelectorAll('.uacts a[href*="?test="]'), function (a, k) {
             if (k === 0) { a.classList.add("app-jump"); a.textContent = "Already know this? Take the test"; }
@@ -353,11 +395,41 @@
           });
         }
         busy = false;
+        aimHere();
       };
       var mo = new root.MutationObserver(function () { mo.disconnect(); pick(); watch(); });
       var watch = function () { mo.observe(levels, { childList: true }); mo.observe(strip, { childList: true }); };
+
+      // APP-9q: the course opens on the unit in progress, its top just under the level strip; the finished units are
+      // above it, out of sight until you scroll up. Aimed again while the page settles (fonts, the hub's redraws) for a
+      // few seconds or until the learner touches the screen, and again when the Course tab or the current level's chip
+      // is tapped. Near the end of a level the list gets room at the bottom, so the unit can still reach the top.
+      var aimUntil = 0, hands = false;
+      var aimHere = function () {
+        if (hands || Date.now() > aimUntil) return;
+        if (/^#[a-c][12](-u\d\d)?$/.test(root.location.hash)) return;   // a link to a level or a unit shows that instead
+        var li = levels.querySelector("details.level.app-sel li.unit.is-here > .ucard");
+        if (!li || !li.getClientRects().length) return;   // another level picked, Practice, or another view
+        var html = doc.documentElement, stuck = (parseFloat(root.getComputedStyle(strip).top) || 0) + strip.offsetHeight;
+        levels.style.paddingBottom = "";
+        // the unit's card 12 px under the strip; the finished unit before it (14 px higher) stays just out of sight
+        var y = Math.max(0, Math.round(li.getBoundingClientRect().top + root.scrollY - stuck - 12));
+        var room = html.scrollHeight - root.innerHeight;
+        if (y > room) levels.style.paddingBottom = (y - room) + "px";
+        if (Math.abs(root.scrollY - y) < 2) return;
+        html.style.scrollBehavior = "auto";   // no smooth scroll (styles.css): the page simply opens there
+        root.scrollTo(0, y);
+        html.style.scrollBehavior = "";
+      };
+      var aimSoon = function (ms) { aimUntil = Date.now() + (ms || 2500); hands = false; aimHere(); };
+      ["touchstart", "wheel"].forEach(function (ev) { root.addEventListener(ev, function () { hands = true; }, { passive: true }); });
+      root.addEventListener("load", aimHere);
+      root.addEventListener("pageshow", function (e) { if (e.persisted) aimSoon(); });   // back from a lesson, from the page cache
+      aimCourse = function () { sel = null; mo.disconnect(); pick(); watch(); aimSoon(); };
+      aimUntil = Date.now() + 4000;
+
       // APP-9h: a unit shown as one row opens in full when tapped (its links still work as links); again to fold it.
-      var unitOpen = {}, showDone = {};
+      var unitOpen = {};
       levels.addEventListener("click", function (e) {
         var li = e.target.closest("li.unit"), card = li && e.target.closest(".ucard");
         if (!card || li.classList.contains("is-here") || e.target.closest("a, button")) return;
@@ -367,10 +439,13 @@
       strip.addEventListener("click", function (e) {
         var c = e.target.closest(".lvl-chip");
         if (!c) return;
-        e.preventDefault();   // no jump: the level shows in place
+        e.preventDefault();   // no jump to an anchor: the level shows in place
         sel = c.dataset.lvl;
-        delete opened[sel];
         mo.disconnect(); pick(); watch();
+        // APP-9q: the level of the unit in progress opens on that unit, any other level at its first unit.
+        levels.style.paddingBottom = "";
+        if (c.classList.contains("here")) aimSoon();
+        else { doc.documentElement.style.scrollBehavior = "auto"; root.scrollTo(0, 0); doc.documentElement.style.scrollBehavior = ""; }
       });
       // A link to a unit (#a1-u05) shows its level.
       root.addEventListener("hashchange", function () {
@@ -477,6 +552,15 @@
           if (st) st.insertAdjacentHTML("afterend", '<p class="help app-backup" style="margin-top:0">Keep a copy of your progress in Files, or bring one back. With a profile, it\'s also saved online.</p>');
         }
       });
+
+      // The Backup box hides the long "where your progress is saved" line (APP-9g), but Export and Import report there
+      // ("Exported 12 lessons done…", "Progress imported: …", or why it failed): that line shows once it says so.
+      var pst = doc.getElementById("p-status");
+      if (pst && root.MutationObserver) {
+        var said = function () { pst.classList.toggle("app-said", /^(Exported|Progress imported|Import failed|Your progress was reset|The file couldn)/.test(pst.textContent)); };
+        new root.MutationObserver(said).observe(pst, { childList: true, characterData: true, subtree: true });
+        said();
+      }
 
       // First launch: a welcome from the character, straight into lesson 1.
       var welcomed = ls("trk:app:welcomed");
@@ -591,6 +675,7 @@
           if (!left) finish();
         }, 100);
         function show() {
+          if (done) return;   // the time ran out during the pause after the last answer: the results stay
           if (k >= qs.length) return finish();
           var q = qs[k];
           nEl.textContent = k + "/" + qs.length;
@@ -973,7 +1058,7 @@
   var LN = root.capacitorLocalNotifications && root.capacitorLocalNotifications.LocalNotifications;
   if (!LN) return;
 
-  var state = load(), denied = false, notAsked = false, next = null, ui = null;
+  var state = load(), denied = false, notAsked = false, next = null, ui = null, goalMet = false;
   var chain = Promise.resolve();
 
   function allIds() {
@@ -998,6 +1083,7 @@
           } catch (e) { due = {}; }
           var list = plan(Date.now(), state, store.course(), store.settings(), TRK.progress, dayWords(deck, store.cards(), store.settings(), Date.now(), DAYS + 1), due);
           next = list.length ? list[0].schedule.at : null;
+          try { goalMet = TRK.progress.goal(store.course(), store.settings(), Date.now()).met; } catch (e) { goalMet = false; }
           return list.length ? LN.schedule({ notifications: list }) : null;
         });
       });
@@ -1066,7 +1152,8 @@
     if (!state.on || notAsked) msg = "Off. Turn it on to get a word of the day or a nudge at the time you choose.";
     else if (denied) msg = "Notifications are turned off for Daily Turkish. Turn them on in the iPhone's Settings, under Notifications › Daily Turkish.";
     else if (next) msg = "Next reminder " + when(next) + ". After 3 days without studying, you get one last nudge, then nothing until you're back.";
-    else msg = "On. Today's goal is met, so the next reminder is tomorrow.";
+    else if (goalMet) msg = "On. Today's goal is met, so the next reminder is tomorrow.";
+    else msg = "On, resting: after 3 days away you got one last nudge. Finish a lesson or some cards and the reminders start again.";
     ui.help.textContent = msg;
   }
 
