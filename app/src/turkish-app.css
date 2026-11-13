@@ -176,7 +176,7 @@ html.app-games #v-course .today > .tys-mini { order: 8; }
 html.app-games #v-course .today > .mis-mini, html.app-games #v-course .today > .dlg-mini { margin-top: 0; }
 
 /* Course: the top bar is XP · streak · your character with a word for the time of day. */
-html[data-app] #v-course .stats { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
+html[data-app] #v-course .stats { grid-template-columns: minmax(0, 1fr) auto; }
 html[data-app] .stats .stat { padding: 12px 10px; gap: 8px; }
 html[data-app] .stats .stat .ring, html[data-app] .stats .stat .flame { width: 32px; height: 32px; }
 html[data-app] .stats .stat .big { font-size: 17px; white-space: nowrap; }
@@ -344,3 +344,32 @@ html[data-app] #levels li.unit:not(.is-here):not(.app-open) h3 { font-size: 15.5
 html[data-app] #levels li.unit:not(.is-here):not(.app-open) .utr { font-size: 12.5px !important; margin: 0 !important; color: #6f6f6f !important; }
 html[data-app] #levels li.unit:not(.is-here):not(.app-open) .uprog { color: #8a8a86 !important; }
 html[data-app] #levels li.unit.app-open:not(.is-here) { margin-bottom: 14px; }
+
+/* ── APP-9l ── */
+/* Course header: the streak and the character, no XP, no borders; it and the level strip stay at the top. */
+html[data-app] #v-course .stats .app-xp { display: none; }
+html[data-app] #v-course .stats { border: 0; box-shadow: none; border-radius: 0; background: #fff; position: sticky; top: var(--app-top, 0px); z-index: 30;
+  margin: 0 -16px; padding: 0 6px; }
+html[data-app] #v-course .stats .stat + .stat { border-left: 0; }
+html[data-app] #v-course #lvl-nav { position: sticky; top: calc(var(--app-top, 0px) + var(--app-stats-h, 64px)); z-index: 29; background: #fff;
+  margin: -14px -16px 0; padding: 8px 18px 10px; border-bottom: 1px solid #ecece8; }
+html[data-app] #v-course .layout { gap: 14px; }
+/* Finished units: hidden until "Show N finished units". */
+html[data-app] #levels details.level:not(.app-done-shown) li.unit.st-done:not(.is-here) { display: none; }
+html[data-app] #levels .app-showdone { list-style: none; margin: 0 0 10px; }
+html[data-app] #levels .app-showdone button { width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px dashed #d6d6d0; background: #fafaf7; font: inherit; font-size: 14px; font-weight: 600; color: #4a4a48; }
+/* Profile: the section menu in the page's order (signed out, the account card comes first), and no "Out of what's written so far". */
+html[data-app] .pf-nav ol { display: flex; }
+html[data-app] .pf-nav .pf-nav-sep { display: none; }
+html[data-app] .pf-grid:not(:has(.pf-who)) .pf-nav li.pf-acct-nav { order: -1; }
+html[data-app] #pf-s-yours .pf-card-h > span { display: none; }
+
+/* ── APP-9m: no web-page behaviour on a long press ──
+   No link preview or "Open / Copy link" box (-webkit-touch-callout; the native side also turns off WKWebView's link
+   previews), and no text selection, as in a native app; typing fields keep both. */
+html[data-app], html[data-app] * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+html[data-app] input, html[data-app] textarea, html[data-app] [contenteditable], html[data-app] [contenteditable] * { -webkit-touch-callout: default; -webkit-user-select: text; user-select: text; }
+
+/* APP-9n: the lesson header's back arrow (in place of the logo). */
+html[data-app] .at-hdr .at-home.app-backarrow { min-width: 44px; min-height: 44px; justify-content: center; color: #1d1d1b; margin-left: -10px; }
+html[data-app] .at-hdr .at-home.app-backarrow svg { display: block; }

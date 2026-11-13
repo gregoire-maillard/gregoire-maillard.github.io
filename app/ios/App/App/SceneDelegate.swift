@@ -10,6 +10,8 @@ import StoreKit
 class AppViewController: CAPBridgeViewController {
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(WidgetBridgePlugin())
+        // APP-9m: a long press on a link shows no preview card with the page's address.
+        webView?.allowsLinkPreview = false
     }
 }
 

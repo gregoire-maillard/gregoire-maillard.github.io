@@ -176,13 +176,13 @@
     var ICONS = {
       course: svg('<path d="M2.5 9 12 4.5 21.5 9 12 13.5 2.5 9Z" ' + ST + '/><path d="M6.5 11v4.6c0 1.3 2.5 3 5.5 3s5.5-1.7 5.5-3V11" ' + ST + '/><path d="M21.5 9v5.5" ' + ST + '/>'),
       cards: svg('<rect x="3.5" y="7" width="12" height="14" rx="2.2" ' + ST + '/><path d="M8.5 3.5h9.8a2.2 2.2 0 0 1 2.2 2.2V17" ' + ST + '/>'),
-      games: svg('<path d="M7.5 8.5h9a4.5 4.5 0 0 1 4.4 3.6l.8 4.2a2.4 2.4 0 0 1-4.2 2l-2-2.3h-7l-2 2.3a2.4 2.4 0 0 1-4.2-2l.8-4.2a4.5 4.5 0 0 1 4.4-3.6Z" ' + ST + '/><path d="M8 11v3.4M6.3 12.7h3.4" ' + ST + '/><circle cx="15.6" cy="11.7" r=".9" fill="currentColor"/><circle cx="17.6" cy="13.7" r=".9" fill="currentColor"/>'),
+      games: svg('<circle cx="12" cy="12" r="8.5" ' + ST + '/><circle cx="12" cy="12" r="5" ' + ST + '/><circle cx="12" cy="12" r="1.6" fill="currentColor"/>'),
       settings: svg('<circle cx="12" cy="12" r="3" ' + ST + '/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" ' + ST + '/>')
     };
     var TABS = [
       { id: "course", label: "Course", href: "/turkish.html", hub: "tab-course" },
       { id: "cards", label: "Flashcards", href: "/turkishcards.html" },
-      { id: "games", label: "Games", href: "/turkish.html#games" },
+      { id: "games", label: "Practice", href: "/turkish.html#games" },
       { id: "profile", label: "Profile", href: "/turkish.html#profile", hub: "tab-profile" },
       { id: "settings", label: "Settings", href: "/turkish.html#settings", hub: "tab-settings" }
     ];
@@ -232,7 +232,7 @@
     // The Games view's title, shown only there (turkish-app.css).
     var vc = onHub && doc.getElementById("v-course");
     if (vc && !doc.getElementById("app-games-h")) {
-      vc.insertAdjacentHTML("afterbegin", '<header class="app-games-h" id="app-games-h"><h1>Games</h1>' +
+      vc.insertAdjacentHTML("afterbegin", '<header class="app-games-h" id="app-games-h"><h1>Practice</h1>' +
         '<p>Practise your mistakes, hold a conversation in Turkish, or try the TYS practice test.</p></header>');
     }
 
@@ -249,6 +249,11 @@
           stats.classList.toggle("app-done", !!(sv.done && sv.current > 0));
         } catch (e) { /* no flame change */ }
         if (root.TRKFresh) stats.classList.add("app-fresh");
+        // APP-9l: the bar shows the streak (no "best") and the character; the XP cell is hidden by the CSS.
+        var ring = stats.querySelector(".ring");
+        if (ring && ring.closest(".stat")) ring.closest(".stat").classList.add("app-xp");
+        Array.prototype.forEach.call(stats.querySelectorAll(".stat .lbl"), function (l) { l.textContent = l.textContent.replace(/\s*·\s*best\s+\d+/, ""); });
+        setTimeout(function () { doc.documentElement.style.setProperty("--app-stats-h", stats.offsetHeight + "px"); }, 0);
         var say = root.TRKFresh ? ["Harika!", "Great job"] : met ? ["Aferin!", "Well done"] : h >= 5 && h < 11 ? ["Günaydın!", "Good morning"] : h >= 11 && h < 17 ? ["İyi günler!", "Have a nice day"]
           : h >= 17 && h < 22 ? ["İyi akşamlar!", "Good evening"] : ["İyi geceler!", "Good night"];
         var cell = doc.createElement("a");
@@ -326,6 +331,21 @@
             if (c.dataset.lvl === sel) c.setAttribute("aria-current", "true"); else c.removeAttribute("aria-current");
           });
           Array.prototype.forEach.call(levels.querySelectorAll("li.unit"), function (li) { if (unitOpen[li.id]) li.classList.add("app-open"); });
+          // APP-9l: finished units are hidden at first, behind one line at the top of the level's list.
+          Array.prototype.forEach.call(levels.querySelectorAll("details.level"), function (d) {
+            var ol = d.querySelector("ol.units"), done = d.querySelectorAll("li.unit.st-done:not(.is-here)").length;
+            if (!ol || !done || ol.querySelector(".app-showdone")) return;
+            var li = doc.createElement("li");
+            li.className = "app-showdone";
+            li.innerHTML = '<button type="button"></button>';
+            ol.insertBefore(li, ol.firstChild);
+            var paint = function () {
+              d.classList.toggle("app-done-shown", !!showDone[d.id]);
+              li.firstChild.textContent = showDone[d.id] ? "Hide finished units" : "Show " + done + " finished unit" + (done === 1 ? "" : "s");
+            };
+            li.firstChild.addEventListener("click", function () { showDone[d.id] = !showDone[d.id]; paint(); });
+            paint();
+          });
           // "Jump here" (APP-9g): only on the next locked unit, said plainly
           Array.prototype.forEach.call(levels.querySelectorAll('.uacts a[href*="?test="]'), function (a, k) {
             if (k === 0) { a.classList.add("app-jump"); a.textContent = "Already know this? Take the test"; }
@@ -337,7 +357,7 @@
       var mo = new root.MutationObserver(function () { mo.disconnect(); pick(); watch(); });
       var watch = function () { mo.observe(levels, { childList: true }); mo.observe(strip, { childList: true }); };
       // APP-9h: a unit shown as one row opens in full when tapped (its links still work as links); again to fold it.
-      var unitOpen = {};
+      var unitOpen = {}, showDone = {};
       levels.addEventListener("click", function (e) {
         var li = e.target.closest("li.unit"), card = li && e.target.closest(".ucard");
         if (!card || li.classList.contains("is-here") || e.target.closest("a, button")) return;
@@ -617,10 +637,24 @@
     if (onLesson) {
       var q = root.location.search, toGames = /[?&](dialogue|exam|practice)\b/.test(q);
       var stage = doc.getElementById("stage") || doc.body;
+      // APP-9n: the header's logo becomes a back arrow: to the page before (the course, Practice, a guide…), or, if the
+      // lesson was opened some other way, to the course (Practice for conversations, the TYS and mistakes).
+      var home = doc.querySelector(".at-hdr .at-home");
+      if (home && !home.dataset.app) {
+        home.dataset.app = "1";
+        home.classList.add("app-backarrow");
+        home.setAttribute("aria-label", "Back");
+        home.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        if (toGames) home.href = "/turkish.html#games";
+        home.addEventListener("click", function (e) {
+          var ref = doc.referrer || "";
+          if (root.history.length > 1 && ref.indexOf(root.location.host) >= 0) { e.preventDefault(); root.history.back(); }
+        });
+      }
       watch(stage, function () {
         // After a conversation, the TYS or practising mistakes, the way back is to Games.
         if (toGames) Array.prototype.forEach.call(stage.querySelectorAll('a[href="/turkish.html"]'), function (a) {
-          if (/Back to the course/.test(a.textContent)) { a.href = "/turkish.html#games"; a.textContent = "Back to Games"; }
+          if (/Back to the course/.test(a.textContent)) { a.href = "/turkish.html#games"; a.textContent = "Back to Practice"; }
         });
         // The start screen: three new words, the rest one tap away; no "Card" links.
         var wl = stage.querySelector(".start .wlist");

@@ -74,11 +74,11 @@ archive first).
    - the header's glass behind the clock and the Dynamic Island, nothing hidden under it while scrolling, the
      bottom of each page clear of the home bar; turning the phone doesn't rotate the app;
    - the first opening of the day: a red screen with the logo for about a second; the reminder offer on the
-     Course tab (Turn on reminders brings iOS's question); Games (mistakes, Conversations, TYS);
+     Course tab (Turn on reminders brings iOS's question); Practice (mistakes, Speed round, Conversations, TYS);
    - Settings › Haptics off: no more taps;
    - the reminder (Settings › Daily reminder, time 2 minutes ahead, leave the app): a word of the day or a nudge;
    - the widget: long-press the home screen › **+** › Daily Turkish › small or medium: your streak and today's word;
-   - the first launch (on a fresh install): Tekir's welcome and Start lesson 1; Games › Speed round;
+   - the first launch (on a fresh install): Tekir's welcome and Start lesson 1; Practice › Speed round;
    - the tab bar (Course, Flashcards with its red count, Profile with your character, Settings with a Settings | About switch at the top),
      and on Profile: sign in with email and password, progress synced, Delete my profile.
 13. **Fix and repeat.** For any problem: fix (or ask Claude), commit, push, run the workflow again.

@@ -12,9 +12,9 @@ and from the pages themselves (32 achievements, the reminder, haptics, the optio
 | Subtitle | 30 | 30 |
 | Promotional text | 162 | 170 |
 | Keywords | 94 | 100 |
-| Description | 2,565 | 4,000 |
+| Description | 2,568 | 4,000 |
 | What's New | 235 | 4,000 |
-| App Review notes | 1,248 | 4,000 |
+| App Review notes | 1,235 | 4,000 |
 
 ## App Information (General › App Information)
 
@@ -79,7 +79,7 @@ Price: Free (USD 0). Availability: all countries and regions.
 A Turkish course in short daily lessons, from A1 to C2, with a grammar guide for every unit and 1,000 high-frequency words to review. Works offline. Free, no ads.
 ```
 
-**Description** (2,565/4,000)
+**Description** (2,568/4,000)
 
 ```text
 Daily Turkish is a Turkish course for English speakers, built for a few minutes a day. Everything is inside the app: it works offline, needs no account and has no ads.
@@ -108,7 +108,7 @@ KEEP GOING
 • An optional daily reminder at the time you choose, alternating a word of the day and a nudge to study. It skips the days you've already met your goal.
 • Haptic feedback on right and wrong answers, which you can turn off.
 • A home-screen widget with your streak and the word of the day.
-• Games: a 60-second speed round, conversations, and the exercises you missed.
+• Practice: a 60-second speed round, conversations, and the exercises you missed.
 
 YOUR PROGRESS STAYS YOURS
 • Your progress is saved on your iPhone. Back it up to Files or through the share sheet, and import it again.
@@ -120,7 +120,7 @@ The app and its explanations are in English.
 
 **Keywords** (94/100). Comma-separated, no spaces after commas. Apple combines them with the words of the name and
 subtitle ("daily", "turkish", "learn", "lessons", "words"), so those aren't repeated; Apple also matches plurals. No other app's
-name is used. "tys" (the Turkish proficiency exam the Games practice test prepares for) is a niche no one else targets.
+name is used. "tys" (the Turkish proficiency exam the practice test in the Practice tab prepares for) is a niche no one else targets.
 
 ```text
 speak,language,grammar,vocabulary,flashcards,verbs,phrases,beginner,istanbul,turkey,türkçe,tys
@@ -280,7 +280,7 @@ VOS DONNÉES
 
 Sign-in required: **unticked**. Contact: your first and last name, phone and email (seen by Apple only).
 
-**Notes** (1,248/4,000)
+**Notes** (1,235/4,000)
 
 ```text
 Daily Turkish is a complete offline Turkish course (levels A1 to C2): 226 lessons with instant feedback, a grammar guide per unit and 1,000 spaced-repetition flashcards, all built into the app. No account or network needed; an optional profile (Profile tab) saves the progress online, with email and password, and can be deleted in the app (Profile tab > Account & character > Delete my profile).
@@ -292,7 +292,7 @@ Native features:
 - Progress backup through the iOS share sheet and the Files app, and import from Files (Settings > Backup).
 - An optional profile (Profile tab, email and password) that syncs the progress with the website; Delete my profile is on the same tab.
 
-To try it: on the Course tab, tap Continue to start the first lesson and answer a few exercises. Then open the Flashcards tab and tap Start studying. Then open the Games tab and start a conversation.
+To try it: on the welcome screen, tap Start lesson 1 and answer a few exercises. Then open the Flashcards tab and tap Start studying. Then open the Practice tab and start a conversation.
 ```
 
 Version release: Manually or Automatically, your choice.
