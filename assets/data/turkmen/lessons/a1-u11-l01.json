@@ -1,0 +1,173 @@
+{
+  "id": "a1-u11-l01",
+  "unit": "a1-u11",
+  "order": 1,
+  "title": "One to a hundred",
+  "goal": "Count to a hundred and build numbers like 25 and 48 as separate words.",
+  "points": ["gp-numbers", "gp-numbers-singular"],
+  "intro": {
+    "text": "Learn the numbers 4 to 10 and the tens. Bigger numbers go from the largest part down, each part a separate word: *on bir* (11), *ýigrimi bäş* (25), *kyrk sekiz* (48). After a number the noun stays singular: *on kitap*.",
+    "see": "gp-numbers"
+  },
+  "vocab": [
+    { "tk": "dört", "en": "four", "pos": "num" },
+    { "tk": "bäş", "en": "five", "pos": "num" },
+    { "tk": "alty", "en": "six", "pos": "num" },
+    { "tk": "ýedi", "en": "seven", "pos": "num" },
+    { "tk": "sekiz", "en": "eight", "pos": "num" },
+    { "tk": "dokuz", "en": "nine", "pos": "num" },
+    { "tk": "on", "en": "ten", "pos": "num" },
+    { "tk": "ýigrimi", "en": "twenty", "pos": "num" },
+    { "tk": "otuz", "en": "thirty", "pos": "num" },
+    { "tk": "kyrk", "en": "forty", "pos": "num" },
+    { "tk": "elli", "en": "fifty", "pos": "num" },
+    { "tk": "ýüz", "en": "a hundred", "pos": "num" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u11-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["dört", "four"],
+        ["bäş", "five"],
+        ["alty", "six"],
+        ["ýedi", "seven"],
+        ["sekiz", "eight"],
+        ["dokuz", "nine"]
+      ]
+    },
+    {
+      "id": "a1-u11-l01-e02",
+      "type": "match",
+      "pairs": [
+        ["on", "ten"],
+        ["ýigrimi", "twenty"],
+        ["otuz", "thirty"],
+        ["kyrk", "forty"],
+        ["elli", "fifty"],
+        ["ýüz", "a hundred"]
+      ]
+    },
+    {
+      "id": "a1-u11-l01-e03",
+      "type": "mcq",
+      "points": ["gp-numbers"],
+      "question": "How do you write **25** in words?",
+      "options": ["ýigrimi bäş", "bäş ýigrimi", "ýigrimibäş"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The tens come first, as in English: *ýigrimi bäş*.",
+        "2": "Each part of a number is a separate word: *ýigrimi bäş*."
+      },
+      "explain": "*ýigrimi* (20) + *bäş* (5), two words."
+    },
+    {
+      "id": "a1-u11-l01-e04",
+      "type": "translate",
+      "points": ["gp-numbers"],
+      "from": "tk",
+      "prompt": "Otuz alty.",
+      "accept": ["Thirty-six.", "36."]
+    },
+    {
+      "id": "a1-u11-l01-e05",
+      "type": "translate",
+      "points": ["gp-numbers", "gp-numbers-singular", "gp-age-price"],
+      "from": "en",
+      "prompt": "This book is forty manats.",
+      "accept": ["Bu kitap kyrk manat.", "Bu kitap 40 manat."],
+      "reject": [
+        { "answer": "Bu kitap kyrk manatlar.", "why": "After a number the noun stays singular: *kyrk manat*." }
+      ]
+    },
+    {
+      "id": "a1-u11-l01-e06",
+      "type": "cloze",
+      "points": ["gp-numbers", "gp-numbers-singular"],
+      "text": "Synpda ýigrimi ___ okuwçy bar.",
+      "en": "There are twenty-seven pupils in the class.",
+      "blanks": [
+        { "options": ["ýedi", "ýetmiş", "sekiz"], "answer": 0 }
+      ],
+      "explain": "27 is *ýigrimi ýedi*. *ýetmiş* is 70, *sekiz* is 8."
+    },
+    {
+      "id": "a1-u11-l01-e07",
+      "type": "mcq",
+      "points": ["gp-numbers"],
+      "question": "Which number is *kyrk*?",
+      "options": ["40", "14", "4", "400"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "14 is *on dört*.",
+        "2": "4 is *dört*.",
+        "3": "400 is *dört ýüz*."
+      },
+      "explain": "*kyrk* is forty."
+    },
+    {
+      "id": "a1-u11-l01-e08",
+      "type": "translate",
+      "points": ["gp-numbers", "gp-numbers-singular", "gp-bar-yok"],
+      "from": "tk",
+      "prompt": "Bu otagda on iki oturgyç bar.",
+      "accept": ["There are twelve chairs in this room.", "There are 12 chairs in this room.", "This room has [twelve|12] chairs."]
+    },
+    {
+      "id": "a1-u11-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-numbers", "gp-numbers-singular"],
+      "from": "en",
+      "prompt": "There are thirty houses in the village.",
+      "text": "Obada otuz öý bar.",
+      "answer": ["Obada", "otuz", "öý", "bar"],
+      "distractors": ["öýler", "on", "üç"]
+    },
+    {
+      "id": "a1-u11-l01-e10",
+      "type": "mcq",
+      "points": ["gp-numbers"],
+      "question": "Which is **seven**?",
+      "options": ["ýedi", "ýigrimi", "ýüz"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*ýigrimi* is twenty.",
+        "2": "*ýüz* is a hundred."
+      },
+      "explain": "*ýedi* is seven."
+    },
+    {
+      "id": "a1-u11-l01-e11",
+      "type": "translate",
+      "points": ["gp-numbers"],
+      "from": "en",
+      "prompt": "fifty-five",
+      "accept": ["elli bäş"],
+      "reject": [
+        { "answer": "ellibäş", "why": "Each part of a number is a separate word: *elli bäş*." }
+      ]
+    },
+    {
+      "id": "a1-u11-l01-e12",
+      "type": "cloze",
+      "points": ["gp-numbers"],
+      "text": "Bir, iki, üç, ___, bäş.",
+      "en": "One, two, three, four, five.",
+      "blanks": [
+        { "accept": ["dört"] }
+      ],
+      "explain": "*dört* is four. Its *ö* is long."
+    },
+    {
+      "id": "a1-u11-l01-e13",
+      "type": "translate",
+      "points": ["gp-numbers", "gp-dal"],
+      "from": "tk",
+      "prompt": "Ýüz manat köp däl.",
+      "accept": ["A hundred manats is not a lot.", "[A|One] hundred manats is not much.", "One hundred manats is not a lot.", "100 manats is not [much|a lot]."]
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "id": "a1-u10-l02",
+  "unit": "a1-u10",
+  "order": 2,
+  "title": "The door of the house",
+  "goal": "Build Aýna's house and the door of the house with an ending on each word, and drop the pronoun when the ending says enough.",
+  "points": ["gp-genitive-possessive", "gp-genitive"],
+  "intro": {
+    "text": "**Aýna's house** takes two endings: the owner the genitive, the house the ending of **her**: *Aýnanyň öýi*. The same for things: *öýüň gapysy*, the door of the house. With a pronoun, match the person: *meniň öýüm*, or just *öýüm*.",
+    "see": "gp-genitive-possessive"
+  },
+  "vocab": [
+    { "tk": "köçe", "en": "street", "pos": "noun" },
+    { "tk": "bag", "en": "garden; orchard", "pos": "noun" },
+    { "tk": "haly", "en": "carpet, rug", "pos": "noun" },
+    { "tk": "diwar", "en": "wall", "pos": "noun" },
+    { "tk": "kompýuter", "en": "computer", "pos": "noun" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u10-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["köçe", "street"],
+        ["bag", "garden"],
+        ["haly", "carpet"],
+        ["diwar", "wall"],
+        ["kompýuter", "computer"],
+        ["gapy", "door"]
+      ]
+    },
+    {
+      "id": "a1-u10-l02-e02",
+      "type": "mcq",
+      "points": ["gp-genitive-possessive"],
+      "question": "How do you say **Aýna's house**?",
+      "options": ["Aýnanyň öýi", "Aýna öýi", "Aýnanyň öý", "Aýnanyň öýüm"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The owner needs the genitive: *Aýnanyň*.",
+        "2": "The house needs the ending of **her**: *öýi*.",
+        "3": "*öýüm* is **my** house. After *Aýnanyň* comes **her** house: *öýi*."
+      },
+      "explain": "Owner in the genitive, house with **her**: *Aýnanyň öýi*."
+    },
+    {
+      "id": "a1-u10-l02-e03",
+      "type": "cloze",
+      "points": ["gp-genitive-possessive"],
+      "text": "Öýüň gapy___ gök.",
+      "en": "The door of the house is blue.",
+      "blanks": [
+        {
+          "accept": ["sy"],
+          "reject": [
+            { "answer": "y", "why": "*gapy* ends in a vowel, so **its** is *-sy*: *gapysy*." },
+            { "answer": "ň", "why": "*gapyň* is **your door**. The door **of the house** takes **its**: *gapysy*." }
+          ]
+        }
+      ],
+      "explain": "*öýüň* (of the house) + *gapysy* (its door)."
+    },
+    {
+      "id": "a1-u10-l02-e04",
+      "type": "conjugate",
+      "points": ["gp-genitive-possessive", "gp-possessive-suffixes"],
+      "base": "haly",
+      "form": "possessive",
+      "label": "*haly* (carpet) after the pronouns: *meniň halym*, *seniň halyň*…",
+      "cells": [
+        { "p": "men", "accept": ["halym"] },
+        { "p": "sen", "accept": ["halyň"] },
+        { "p": "ol", "accept": ["halysy"] },
+        { "p": "biz", "accept": ["halymyz"] },
+        { "p": "siz", "accept": ["halyňyz"] },
+        { "p": "olar", "accept": ["halysy", "halylary"] }
+      ],
+      "explain": "The thing owned matches the pronoun: *meniň halym*, *onuň halysy*, *biziň halymyz*."
+    },
+    {
+      "id": "a1-u10-l02-e05",
+      "type": "translate",
+      "points": ["gp-genitive-possessive"],
+      "from": "en",
+      "prompt": "Merdan's father is a teacher.",
+      "accept": ["Merdanyň kakasy mugallym.", "Merdanyň kakasy mugallymdyr."],
+      "reject": [
+        { "answer": "Merdan kakasy mugallym.", "why": "The owner takes the genitive: *Merdanyň kakasy*." },
+        { "answer": "Merdanyň kaka mugallym.", "why": "The father is Merdan's, so *kaka* takes the ending of **his**: *kakasy*." }
+      ]
+    },
+    {
+      "id": "a1-u10-l02-e06",
+      "type": "translate",
+      "points": ["gp-genitive-possessive"],
+      "from": "tk",
+      "prompt": "Mekdebiň bagy owadan.",
+      "accept": ["The school's garden is beautiful.", "The school garden is [beautiful|pretty].", "The school's garden is pretty.", "The garden of the school is [beautiful|pretty]."]
+    },
+    {
+      "id": "a1-u10-l02-e07",
+      "type": "wordbank",
+      "points": ["gp-genitive-possessive"],
+      "from": "en",
+      "prompt": "Aýna's carpet is new.",
+      "text": "Aýnanyň halysy täze.",
+      "answer": ["Aýnanyň", "halysy", "täze"],
+      "distractors": ["Aýna", "haly", "halym"]
+    },
+    {
+      "id": "a1-u10-l02-e08",
+      "type": "mcq",
+      "points": ["gp-genitive-possessive", "gp-possessive-suffixes"],
+      "question": "*Kakamyň maşyny* means…",
+      "options": ["my father's car", "my father and the car", "your father's car", "his father's car"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*-yň* on *kakam* says **of my father**; nothing here says **and**.",
+        "2": "**Your** father is *kakaň*, so **your father's** is *kakaňyň*.",
+        "3": "**His** father is *kakasy*, so **his father's** is *kakasynyň*."
+      },
+      "explain": "*kaka* + *-m* (my) + *-yň* (of) = *kakamyň*; *maşyn* + *-y* (its) = *maşyny*."
+    },
+    {
+      "id": "a1-u10-l02-e09",
+      "type": "translate",
+      "points": ["gp-genitive-possessive", "gp-question-my"],
+      "from": "en",
+      "prompt": "Is this your computer? (polite)",
+      "accept": ["Bu siziň kompýuteriňizmi?", "Bu kompýuteriňizmi?"],
+      "reject": [
+        { "answer": "Bu siziň kompýuterimi?", "why": "After *siziň*, the computer takes **your** (polite): *kompýuteriňiz*." }
+      ]
+    },
+    {
+      "id": "a1-u10-l02-e10",
+      "type": "cloze",
+      "points": ["gp-genitive-possessive"],
+      "text": "Bu ___ kitaby.",
+      "en": "This is his book.",
+      "blanks": [
+        { "options": ["onuň", "meniň", "seniň"], "answer": 0 }
+      ],
+      "explain": "*kitaby* has the ending of **his** or **her**, so the pronoun before it is *onuň*."
+    },
+    {
+      "id": "a1-u10-l02-e11",
+      "type": "translate",
+      "points": ["gp-genitive-possessive", "gp-plural"],
+      "from": "tk",
+      "prompt": "Şäheriň köçeleri uzyn.",
+      "accept": ["The streets of the town are long.", "The [town's|city's] streets are long.", "The streets of the city are long."]
+    },
+    {
+      "id": "a1-u10-l02-e12",
+      "type": "translate",
+      "points": ["gp-genitive-possessive"],
+      "from": "en",
+      "prompt": "The wall of the room is white.",
+      "accept": ["Otagyň diwary ak."],
+      "reject": [
+        { "answer": "Otag diwary ak.", "why": "The room is the owner: *otagyň diwary*." },
+        { "answer": "Otagyň diwar ak.", "why": "The wall belongs to the room, so *diwar* takes **its**: *diwary*." }
+      ]
+    },
+    {
+      "id": "a1-u10-l02-e13",
+      "type": "morph",
+      "points": ["gp-genitive-possessive"],
+      "base": "kaka",
+      "gloss": "his father (as in Merdan's father)",
+      "parts": ["kaka", "sy"],
+      "distractors": ["y", "ň", "nyň"],
+      "result": "kakasy",
+      "explain": "In *Merdanyň kakasy*, the father takes **his**: after a vowel, *-sy*."
+    }
+  ]
+}

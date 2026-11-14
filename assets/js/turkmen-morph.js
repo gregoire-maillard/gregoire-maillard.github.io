@@ -66,7 +66,8 @@
     homographs: { at: [["name", "ad"], ["horse", null]], ot: [["fire", "od"], ["grass", null]] },
     // words of two or more syllables in -t voice only from this list (Aşgabady, umydy); most keep it (döwleti,
     // jemgyýeti, suraty). Words of two or more syllables in -k, -p, -ç voice (kitaby, çöregi, agajy) unless in keep.
-    tVoice: ["aşgabat", "umyt", "ýigit"],
+    // sagat: "sagat - sagady" in the explanatory dictionary's spelling note (enedilim.com), sagadyň, sagada (A1-4)
+    tVoice: ["aşgabat", "umyt", "ýigit", "sagat"],
     keep: ["tarap"],
     // vowel loss before a vowel: ogly, burnum, agzy, göwnüm
     drop: {

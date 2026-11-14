@@ -76,6 +76,7 @@ for (const [w, acc, dat, loc, abl, gen, sense] of [
   ["çörek", "çöregi", "çörege", "çörekde", "çörekden", "çöregiň"], ["agaç", "agajy", "agaja", "agaçda", "agaçdan", "agajyň"],
   ["talyp", "talyby", "talyba", "talypda", "talypdan", "talybyň"], ["kömek", "kömegi", "kömege", "kömekde", "kömekden", "kömegiň"],
   ["mowzuk", "mowzugy", "mowzuga", "mowzukda", "mowzukdan", "mowzugyň"], ["Aşgabat", "Aşgabady", "Aşgabada", "Aşgabatda", "Aşgabatdan", "Aşgabadyň"],
+  ["sagat", "sagady", "sagada", "sagatda", "sagatdan", "sagadyň"],
   ["döwlet", "döwleti", "döwlete", "döwletde", "döwletden", "döwletiň"], ["tarap", "tarapy", "tarapa", "tarapda", "tarapdan", "tarapyň"],
   ["at", "ady", "ada", "atda", "atdan", "adyň", 1], ["at", "aty", "ata", "atda", "atdan", "atyň", 2],
   ["ot", "ody", "oda", "otda", "otdan", "oduň", 1], ["ot", "oty", "ota", "otda", "otdan", "otuň", 2],

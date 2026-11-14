@@ -158,7 +158,7 @@ Read turkmen/TM-PROJECT.md in full, the A1 part and "Notes for writers" of turkm
 
 For each unit write the grammar guide, the four lessons, the interlude and the unit file (TM-PROJECT.md section 9).
 
-Specific to this batch: settle open question 7 (telling the time and age) before writing a1-u11, with the sources you can reach, and record it in TM-CURRICULUM.md; dates use ordinals with a hyphen (*27-nji*) and lowercase month names; prices in manat and teňňe. The imperative of a1-u12 includes the polite -(Y)ň and negative -mAň with e → ä (*gelmäň*). Interludes: The ak öý; Nowruz; Palow, dograma and gutap.
+Specific to this batch: settle open question 7 (telling the time and age) before writing a1-u11, with the sources you can reach, and record it in TM-CURRICULUM.md; dates use ordinals with a hyphen (*27-nji*) and lowercase month names; prices in manat and teňňe. The imperative of a1-u12 includes the polite -(Y)ň and negative -mAň with e → ä (*gelmäň*). Interludes: The ak öý; Nowruz; Palaw, dograma and gutap.
 
 Set `unit` and `level` on the cards these lessons teach first, and `card` on the vocab entries. Run --batch A1-4 until clean, then --index, test.mjs and morph-test.mjs. Re-read every file. List uncertain forms in the log row. Work in the repo on main; don't create a branch, commit or push: Grégoire reviews and pushes.
 ```

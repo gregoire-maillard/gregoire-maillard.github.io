@@ -1,0 +1,202 @@
+{
+  "id": "a1-u11-l04",
+  "unit": "a1-u11",
+  "order": 4,
+  "title": "Days and dates",
+  "goal": "Name the days of the week, make ordinals, and say a date: on 21 March, on Monday.",
+  "points": ["gp-ordinals", "gp-dates", "gp-telling-time"],
+  "intro": {
+    "text": "Ordinals add `-(Y)njY`: *birinji, ikinji, üçünji*; with digits *5-nji*, *6-njy*. A date is the ordinal and the month, in lowercase: *21-nji mart*; **on** that date, *21-nji martda*. **On Monday** is *duşenbe güni*.",
+    "see": "gp-dates"
+  },
+  "vocab": [
+    { "tk": "birinji", "en": "first", "pos": "num" },
+    { "tk": "ikinji", "en": "second", "pos": "num" },
+    { "tk": "duşenbe", "en": "Monday", "pos": "noun" },
+    { "tk": "sişenbe", "en": "Tuesday", "pos": "noun" },
+    { "tk": "çarşenbe", "en": "Wednesday", "pos": "noun" },
+    { "tk": "penşenbe", "en": "Thursday", "pos": "noun" },
+    { "tk": "anna", "en": "Friday", "pos": "noun" },
+    { "tk": "şenbe", "en": "Saturday", "pos": "noun" },
+    { "tk": "ýekşenbe", "en": "Sunday", "pos": "noun" },
+    { "tk": "mart", "en": "March", "pos": "noun" },
+    { "tk": "oktýabr", "en": "October", "pos": "noun" },
+    { "tk": "doglan gün", "en": "birthday", "pos": "phrase" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u11-l04-e01",
+      "type": "match",
+      "pairs": [
+        ["duşenbe", "Monday"],
+        ["sişenbe", "Tuesday"],
+        ["çarşenbe", "Wednesday"],
+        ["penşenbe", "Thursday"],
+        ["anna", "Friday"],
+        ["şenbe", "Saturday"]
+      ]
+    },
+    {
+      "id": "a1-u11-l04-e02",
+      "type": "mcq",
+      "points": ["gp-dates"],
+      "question": "Which day is **Sunday**?",
+      "options": ["ýekşenbe", "şenbe", "anna"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*şenbe* is Saturday.",
+        "2": "*anna* is Friday."
+      },
+      "explain": "*ýekşenbe* is Sunday, the last day of the Turkmen week."
+    },
+    {
+      "id": "a1-u11-l04-e03",
+      "type": "mcq",
+      "points": ["gp-ordinals"],
+      "question": "How do you say **the second day**?",
+      "options": ["ikinji gün", "iki gün", "ikiden gün"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*iki gün* is **two days**.",
+        "2": "*ikiden* means **from two**."
+      },
+      "explain": "*iki* + *-nji* = *ikinji*, second."
+    },
+    {
+      "id": "a1-u11-l04-e04",
+      "type": "morph",
+      "points": ["gp-ordinals", "gp-harmony-rounding"],
+      "base": "dört",
+      "gloss": "fourth",
+      "parts": ["dörd", "ünji"],
+      "distractors": ["dört", "inji", "unjy"],
+      "result": "dördünji",
+      "explain": "*dört* has a long vowel, so its *t* softens before a vowel; after *ö*, the ending rounds: *dördünji*."
+    },
+    {
+      "id": "a1-u11-l04-e05",
+      "type": "cloze",
+      "points": ["gp-ordinals", "gp-harmony-rounding"],
+      "text": "Bu meniň üç___ sapagym.",
+      "en": "This is my third lesson.",
+      "blanks": [
+        {
+          "accept": ["ünji"],
+          "reject": [
+            { "answer": "inji", "why": "After *ü* in the first syllable, the vowel of the ending rounds: *üçünji*." },
+            { "answer": "nji", "why": "*üç* ends in a consonant, so the ordinal needs its vowel: *üçünji*." }
+          ]
+        }
+      ],
+      "explain": "*üç* + *-ünji* = *üçünji*, third."
+    },
+    {
+      "id": "a1-u11-l04-e06",
+      "type": "translate",
+      "points": ["gp-dates"],
+      "from": "en",
+      "prompt": "Today is Friday.",
+      "accept": ["Şu gün anna."]
+    },
+    {
+      "id": "a1-u11-l04-e07",
+      "type": "translate",
+      "points": ["gp-dates", "gp-locative"],
+      "from": "tk",
+      "prompt": "Nowruz 21-nji martda.",
+      "accept": ["Nowruz is on 21 March.", "Nowruz is on March 21.", "Nowruz is on the 21st of March.", "Nowruz is on March 21st.", "Nowruz is on the twenty-first of March."]
+    },
+    {
+      "id": "a1-u11-l04-e08",
+      "type": "translate",
+      "points": ["gp-dates", "gp-ordinals", "gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "My birthday is on 12 October.",
+      "accept": ["Meniň doglan günüm 12-nji oktýabrda.", "Doglan günüm 12-nji oktýabrda.", "(Meniň) doglan günüm 12-nji oktýabr."],
+      "reject": [
+        { "answer": "Meniň doglan günüm 12 oktýabrda.", "why": "A date takes the ordinal: *12-nji oktýabr*." },
+        { "answer": "Meniň doglan günüm 12nji oktýabrda.", "why": "Write a hyphen between the digits and the ending: *12-nji*." }
+      ]
+    },
+    {
+      "id": "a1-u11-l04-e09",
+      "type": "mcq",
+      "points": ["gp-ordinals"],
+      "question": "How is **6th** written with digits?",
+      "options": ["6-njy", "6-nji", "6njy"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*6* is said *altynjy*, with back vowels, so the ending is *-njy*.",
+        "2": "A hyphen always comes between the digits and the ending: *6-njy*."
+      },
+      "explain": "*alty* → *altynjy*, so *6-njy*."
+    },
+    {
+      "id": "a1-u11-l04-e10",
+      "type": "cloze",
+      "points": ["gp-ordinals", "gp-dates"],
+      "text": "Şu ýyl 2026-___ ýyl.",
+      "en": "This year is 2026.",
+      "blanks": [
+        {
+          "accept": ["njy"],
+          "reject": [
+            { "answer": "nji", "why": "2026 ends in *alty*, with back vowels: *altynjy*, so *2026-njy*." }
+          ]
+        }
+      ],
+      "explain": "*iki müň ýigrimi altynjy*: the last word decides, so *2026-njy*."
+    },
+    {
+      "id": "a1-u11-l04-e11",
+      "type": "translate",
+      "points": ["gp-dates", "gp-present-negative"],
+      "from": "en",
+      "prompt": "I don't work on Sunday.",
+      "accept": ["Men ýekşenbe güni işlemeýärin.", "Ýekşenbe güni işlemeýärin."],
+      "reject": [
+        { "answer": "Men ýekşenbe güni işlemeýär.", "why": "With **I**, the verb takes *-in*: *işlemeýärin*." }
+      ]
+    },
+    {
+      "id": "a1-u11-l04-e12",
+      "type": "translate",
+      "points": ["gp-numbers-singular", "gp-locative"],
+      "from": "tk",
+      "prompt": "Bir hepdede ýedi gün bar.",
+      "accept": ["There are seven days in a week.", "There are 7 days in a week.", "A week has [seven|7] days."]
+    },
+    {
+      "id": "a1-u11-l04-e13",
+      "type": "mcq",
+      "points": ["gp-dates"],
+      "question": "What day is it today?",
+      "context": [
+        { "who": "Jeren", "tk": "Şu gün haýsy gün?", "en": "What day is it today?" },
+        { "who": "Batyr", "tk": "Şu gün şenbe.", "en": "Today is Saturday." },
+        { "who": "Jeren", "tk": "Ertir ýekşenbe, sapak ýok!" }
+      ],
+      "options": ["Saturday", "Sunday", "Friday"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Sunday, *ýekşenbe*, is tomorrow: *ertir*.",
+        "2": "Friday would be *anna*."
+      },
+      "explain": "*Şu gün şenbe*: today is Saturday. *Ertir ýekşenbe, sapak ýok!*: tomorrow is Sunday, no lessons!"
+    },
+    {
+      "id": "a1-u11-l04-e14",
+      "type": "wordbank",
+      "points": ["gp-ordinals", "gp-genitive-possessive", "gp-dates"],
+      "from": "en",
+      "prompt": "Monday is the first day of the week.",
+      "text": "Duşenbe hepdäniň birinji güni.",
+      "answer": ["Duşenbe", "hepdäniň", "birinji", "güni"],
+      "distractors": ["bir", "gün", "hepde"]
+    }
+  ]
+}

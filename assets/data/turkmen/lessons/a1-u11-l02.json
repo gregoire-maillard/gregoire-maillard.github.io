@@ -1,0 +1,189 @@
+{
+  "id": "a1-u11-l02",
+  "unit": "a1-u11",
+  "order": 2,
+  "title": "How old? How much?",
+  "goal": "Count past a hundred, keep the noun singular after numbers, and give your age and a price.",
+  "points": ["gp-numbers", "gp-numbers-singular", "gp-age-price"],
+  "intro": {
+    "text": "After a number the noun stays singular: *üç (sany) alma*, *bäş kişi*. Age is *ýaş* with **my** and the locative: *Men ýigrimi ýaşymda*; ask *Sen näçe ýaşyňda?* Prices: *iki manat elli teňňe*.",
+    "see": "gp-age-price"
+  },
+  "vocab": [
+    { "tk": "altmyş", "en": "sixty", "pos": "num" },
+    { "tk": "ýetmiş", "en": "seventy", "pos": "num" },
+    { "tk": "segsen", "en": "eighty", "pos": "num" },
+    { "tk": "togsan", "en": "ninety", "pos": "num" },
+    { "tk": "müň", "en": "a thousand", "pos": "num" },
+    { "tk": "sany", "en": "piece (counts things after a number)", "pos": "noun" },
+    { "tk": "kişi", "en": "person; people (after a number)", "pos": "noun", "card": "fc-0182" },
+    { "tk": "az", "en": "few, little; not many", "pos": "adj", "card": "fc-0181" },
+    { "tk": "birnäçe", "en": "several, a few", "pos": "det" },
+    { "tk": "teňňe", "en": "tenge (a hundredth of a manat); coin", "pos": "noun" },
+    { "tk": "ýaş", "en": "age; year of age", "pos": "noun" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u11-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["altmyş", "sixty"],
+        ["ýetmiş", "seventy"],
+        ["segsen", "eighty"],
+        ["togsan", "ninety"],
+        ["müň", "a thousand"],
+        ["teňňe", "tenge (coin)"]
+      ]
+    },
+    {
+      "id": "a1-u11-l02-e02",
+      "type": "mcq",
+      "points": ["gp-numbers-singular"],
+      "question": "How do you say **three apples**?",
+      "options": ["üç alma", "üç almalar", "üçünji alma"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "After a number the noun stays singular: *üç alma*.",
+        "2": "*üçünji alma* is **the third apple**."
+      },
+      "explain": "*üç alma*, or *üç sany alma*: the number already says how many."
+    },
+    {
+      "id": "a1-u11-l02-e03",
+      "type": "translate",
+      "points": ["gp-age-price"],
+      "from": "en",
+      "prompt": "I am twenty years old.",
+      "accept": ["Men ýigrimi ýaşymda.", "Ýigrimi ýaşymda.", "(Men) 20 ýaşymda."],
+      "reject": [
+        { "answer": "Men ýigrimi ýaş.", "why": "Age takes **my** and the locative: *ýigrimi ýaşymda*." }
+      ],
+      "explain": "*ýaş* + *-ym* (my) + *-da*: literally **I am at my twenty years**."
+    },
+    {
+      "id": "a1-u11-l02-e04",
+      "type": "conjugate",
+      "points": ["gp-age-price", "gp-pronominal-n"],
+      "base": "ýaş",
+      "form": "possessive-locative",
+      "label": "*ýigrimi ýaş…*: I am twenty, you are twenty…",
+      "cells": [
+        { "p": "men", "accept": ["ýaşymda"] },
+        { "p": "sen", "accept": ["ýaşyňda"] },
+        { "p": "ol", "accept": ["ýaşynda"] },
+        { "p": "biz", "accept": ["ýaşymyzda"] },
+        { "p": "siz", "accept": ["ýaşyňyzda"] },
+        { "p": "olar", "accept": ["ýaşynda"] }
+      ],
+      "explain": "The possessive of each person, then *-da*. **His, her, their** bring the *n*: *ýaşynda*."
+    },
+    {
+      "id": "a1-u11-l02-e05",
+      "type": "translate",
+      "points": ["gp-age-price", "gp-question-words"],
+      "from": "tk",
+      "prompt": "Sen näçe ýaşyňda?",
+      "accept": ["How old are you?"]
+    },
+    {
+      "id": "a1-u11-l02-e06",
+      "type": "cloze",
+      "points": ["gp-numbers-singular"],
+      "text": "Stolda üç ___ alma bar.",
+      "en": "There are three apples on the table.",
+      "blanks": [
+        { "options": ["sany", "kişi", "ýaş"], "answer": 0 }
+      ],
+      "explain": "*sany* counts things: *üç sany alma*. *kişi* counts people."
+    },
+    {
+      "id": "a1-u11-l02-e07",
+      "type": "translate",
+      "points": ["gp-numbers-singular", "gp-bar-yok"],
+      "from": "en",
+      "prompt": "There are five people in the room.",
+      "accept": ["Otagda bäş kişi bar.", "Otagda bäş adam bar."],
+      "reject": [
+        { "answer": "Otagda bäş adamlar bar.", "why": "After a number the noun stays singular: *bäş adam*, or *bäş kişi*." }
+      ]
+    },
+    {
+      "id": "a1-u11-l02-e08",
+      "type": "mcq",
+      "points": ["gp-numbers-singular"],
+      "question": "*Bu ýerde adam az.* What does it mean?",
+      "options": ["There are few people here.", "There are many people here.", "There is nobody here."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**Many** people would be *köp*: *Bu ýerde adam köp*.",
+        "2": "**Nobody** would be *Bu ýerde hiç kim ýok*."
+      },
+      "explain": "*az* is few: *adam az*, few people."
+    },
+    {
+      "id": "a1-u11-l02-e09",
+      "type": "translate",
+      "points": ["gp-age-price", "gp-numbers"],
+      "from": "en",
+      "prompt": "This bread is 2 manats 50 tenge.",
+      "accept": ["Bu çörek iki manat elli teňňe.", "Bu çörek 2 manat 50 teňňe."],
+      "reject": [
+        { "answer": "Bu çörek iki manatlar elli teňňeler.", "why": "After a number the noun stays singular: *iki manat elli teňňe*." }
+      ]
+    },
+    {
+      "id": "a1-u11-l02-e10",
+      "type": "translate",
+      "points": ["gp-age-price", "gp-pronominal-n"],
+      "from": "tk",
+      "prompt": "Kakam altmyş bäş ýaşynda.",
+      "accept": ["My father is sixty-five.", "My father is sixty-five years old.", "My [father|dad] is 65 (years old).", "My dad is sixty-five (years old)."]
+    },
+    {
+      "id": "a1-u11-l02-e11",
+      "type": "wordbank",
+      "points": ["gp-numbers-singular"],
+      "from": "en",
+      "prompt": "There are several shops in the village.",
+      "text": "Obada birnäçe dükan bar.",
+      "answer": ["Obada", "birnäçe", "dükan", "bar"],
+      "distractors": ["dükanlar", "kişi", "ýok"]
+    },
+    {
+      "id": "a1-u11-l02-e12",
+      "type": "mcq",
+      "points": ["gp-age-price"],
+      "question": "*Bir manatda näçe teňňe bar?*",
+      "options": ["ýüz", "on", "müň"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "Not ten: a manat has a hundred tenge.",
+        "2": "Not a thousand: a manat has a hundred tenge."
+      },
+      "explain": "*Bir manatda ýüz teňňe bar*: a manat has a hundred tenge."
+    },
+    {
+      "id": "a1-u11-l02-e13",
+      "type": "translate",
+      "points": ["gp-age-price", "gp-possessive-suffixes", "gp-pronominal-n"],
+      "from": "en",
+      "prompt": "How old is your mother?",
+      "accept": ["Ejäň näçe ýaşynda?", "Seniň [ejäň|ejeň] näçe ýaşynda?", "Ejeň näçe ýaşynda?", "(Siziň) [ejäňiz|ejeňiz] näçe ýaşynda?"],
+      "reject": [
+        { "answer": "Ejäň näçe ýaşyňda?", "why": "The age is your mother's: **her** age, *ýaşynda*. *ýaşyňda* is **your** age." }
+      ],
+      "diacritics": "strict"
+    },
+    {
+      "id": "a1-u11-l02-e14",
+      "type": "translate",
+      "points": ["gp-numbers", "gp-age-price"],
+      "from": "tk",
+      "prompt": "Bu haly müň manat.",
+      "accept": ["This carpet is a thousand manats.", "This carpet is one thousand manats.", "This carpet is 1000 manats.", "This carpet costs [a|one] thousand manats."]
+    }
+  ]
+}

@@ -1,0 +1,181 @@
+{
+  "id": "a1-u10-l04",
+  "unit": "a1-u10",
+  "order": 4,
+  "title": "Whose is this?",
+  "goal": "Ask whose something is with kimiň and who has it with kimde, and follow a short talk about lost things.",
+  "points": ["gp-whose", "gp-genitive-possessive", "gp-pronominal-n"],
+  "intro": {
+    "text": "**Whose?** is *kimiň?*, and the thing takes **his** or **her**: *Bu kimiň sagady?* (Whose watch is this?) **Who has it?** is *kimde?*: *Açar kimde? — Mende.* To hand something over, say *Ine*.",
+    "see": "gp-whose"
+  },
+  "vocab": [
+    { "tk": "kimiň", "en": "whose", "pos": "pron" },
+    { "tk": "kimde", "en": "who has it? (literally on whom)", "pos": "pron" },
+    { "tk": "ine", "en": "here (it is); look", "pos": "interj", "card": "fc-0101" },
+    { "tk": "ýer", "en": "place; seat", "pos": "noun", "card": "fc-0057" },
+    { "tk": "başga", "en": "other, another; different", "pos": "adj", "card": "fc-0086" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u10-l04-e01",
+      "type": "mcq",
+      "points": ["gp-whose"],
+      "question": "How do you ask **whose**?",
+      "options": ["kimiň", "kimde", "kime", "kimi"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*kimde* asks **who has it**.",
+        "2": "*kime* is **to whom**.",
+        "3": "*kimi* is **whom**, as an object."
+      },
+      "explain": "*kim* + the genitive *-iň* = *kimiň*, whose."
+    },
+    {
+      "id": "a1-u10-l04-e02",
+      "type": "translate",
+      "points": ["gp-whose"],
+      "from": "en",
+      "prompt": "Whose watch is this?",
+      "accept": ["Bu kimiň sagady?"],
+      "reject": [
+        { "answer": "Bu kimiň sagat?", "why": "After *kimiň*, the watch takes the ending of **his** or **her**, softened: *sagady*." },
+        { "answer": "Bu kimiň sagaty?", "why": "*sagat* softens its *t* before a vowel: *sagady*." }
+      ]
+    },
+    {
+      "id": "a1-u10-l04-e03",
+      "type": "translate",
+      "points": ["gp-whose"],
+      "from": "tk",
+      "prompt": "Açar kimde?",
+      "accept": ["Who has the key?", "Who has got the key?"]
+    },
+    {
+      "id": "a1-u10-l04-e04",
+      "type": "mcq",
+      "points": ["gp-whose", "gp-genitive-possessive"],
+      "question": "Whose phone is it, most likely?",
+      "context": [
+        { "who": "Maral", "tk": "Bu kimiň telefony?", "en": "Whose phone is this?" },
+        { "who": "Kerim", "tk": "Bu Merdanyň telefony dälmi?", "en": "Isn't this Merdan's phone?" },
+        { "who": "Maral", "tk": "Ýok, Merdanyň telefony gara. Bu telefon ak.", "en": "No, Merdan's phone is black. This phone is white." },
+        { "who": "Kerim", "tk": "Aýnanyň telefony ak." }
+      ],
+      "options": ["Aýna's", "Merdan's", "Kerim's"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Merdan's phone is black (*gara*), and this one is white.",
+        "2": "Nobody says anything about Kerim's phone."
+      },
+      "explain": "*Aýnanyň telefony ak*: Aýna's phone is white, like this one."
+    },
+    {
+      "id": "a1-u10-l04-e05",
+      "type": "cloze",
+      "points": ["gp-whose"],
+      "text": "Bu kim___ öýi?",
+      "en": "Whose house is this?",
+      "blanks": [
+        {
+          "accept": ["iň"],
+          "reject": [
+            { "answer": "yň", "why": "*kim* has the front vowel *i*: *kimiň*." },
+            { "answer": "de", "why": "*kimde* asks **who has it**. **Whose** is *kimiň*." }
+          ]
+        }
+      ],
+      "explain": "*kim* + *-iň* = *kimiň*; the house takes **its**: *öýi*."
+    },
+    {
+      "id": "a1-u10-l04-e06",
+      "type": "translate",
+      "points": ["gp-genitive-possessive"],
+      "from": "en",
+      "prompt": "This is my seat.",
+      "accept": ["Bu meniň ýerim.", "Bu ýerim."],
+      "reject": [
+        { "answer": "Bu meniň ýer.", "why": "**My** is also an ending on the noun: *ýerim*." }
+      ]
+    },
+    {
+      "id": "a1-u10-l04-e07",
+      "type": "translate",
+      "points": ["gp-possessive-suffixes"],
+      "from": "tk",
+      "prompt": "Ine, kitabyň!",
+      "accept": ["Here is your book!", "Look, here is your book!"]
+    },
+    {
+      "id": "a1-u10-l04-e08",
+      "type": "wordbank",
+      "points": ["gp-whose"],
+      "from": "en",
+      "prompt": "Whose bag is this?",
+      "text": "Bu kimiň sumkasy?",
+      "answer": ["Bu", "kimiň", "sumkasy"],
+      "distractors": ["kimde", "sumka", "kim"]
+    },
+    {
+      "id": "a1-u10-l04-e09",
+      "type": "mcq",
+      "points": ["gp-whose", "gp-possessive-suffixes"],
+      "question": "*Pul kimde? — Kakamda.* Who has the money?",
+      "options": ["my father", "his father", "nobody"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*kakamda* is *kaka* + *-m* (my) + *-da*. **His** father would be *kakasynda*, with the *n*.",
+        "2": "**Nobody** has it would be *Hiç kimde ýok*."
+      },
+      "explain": "*kakam* (my father) + *-da*: my father has it. With **my**, no *n*."
+    },
+    {
+      "id": "a1-u10-l04-e10",
+      "type": "translate",
+      "points": ["gp-question-my"],
+      "from": "en",
+      "prompt": "Is this seat free?",
+      "accept": ["Bu ýer boşmy?"]
+    },
+    {
+      "id": "a1-u10-l04-e11",
+      "type": "translate",
+      "points": ["gp-genitive-possessive"],
+      "from": "en",
+      "prompt": "This is another person's phone.",
+      "accept": ["Bu başga adamyň telefony."],
+      "reject": [
+        { "answer": "Bu başga adam telefony.", "why": "The owner takes the genitive: *adamyň*." },
+        { "answer": "Bu başga adamyň telefon.", "why": "The phone belongs to the person: *telefony*." }
+      ]
+    },
+    {
+      "id": "a1-u10-l04-e12",
+      "type": "translate",
+      "points": ["gp-whose", "gp-pronominal-n", "gp-dative"],
+      "from": "tk",
+      "prompt": "Biz kimiň öýüne barýarys?",
+      "accept": ["Whose house are we going to?", "To whose house are we going?"]
+    },
+    {
+      "id": "a1-u10-l04-e13",
+      "type": "conjugate",
+      "points": ["gp-pronominal-n", "gp-accusative", "gp-possessive-suffixes"],
+      "base": "açar",
+      "form": "possessive-accusative",
+      "label": "*açar* (key) as an object: *… gözleýärin*, I'm looking for my key, your key…",
+      "cells": [
+        { "p": "men", "accept": ["açarymy"] },
+        { "p": "sen", "accept": ["açaryňy"] },
+        { "p": "ol", "accept": ["açaryny"] },
+        { "p": "biz", "accept": ["açarymyzy"] },
+        { "p": "siz", "accept": ["açaryňyzy"] },
+        { "p": "olar", "accept": ["açaryny", "açarlaryny"] }
+      ],
+      "explain": "The object ending follows the possessive: *açarymy*. Only after **his, her, their** does an *n* come in: *açaryny*."
+    }
+  ]
+}

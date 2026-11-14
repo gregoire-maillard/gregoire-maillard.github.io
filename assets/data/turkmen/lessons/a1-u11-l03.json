@@ -1,0 +1,187 @@
+{
+  "id": "a1-u11-l03",
+  "unit": "a1-u11",
+  "order": 3,
+  "title": "What time is it?",
+  "goal": "Ask and tell the time, say at what time something happens, and use half hours and minutes to the hour.",
+  "points": ["gp-telling-time", "gp-numbers"],
+  "intro": {
+    "text": "*Sagat näçe? — Sagat bäş.* **At** a time takes the locative: *sagat bäşde*. Turkmen counts toward the coming hour: *bäşiň ýary* is 4:30, *Bäşe on minut bar* is 4:50. The part of the day goes first: *agşam sagat sekizde*.",
+    "see": "gp-telling-time"
+  },
+  "vocab": [
+    { "tk": "minut", "en": "minute", "pos": "noun", "card": "fc-0193" },
+    { "tk": "ýarym", "en": "half", "pos": "noun" },
+    { "tk": "irden", "en": "in the morning", "pos": "adv" },
+    { "tk": "günortan", "en": "noon; at noon", "pos": "noun" },
+    { "tk": "öýlän", "en": "afternoon; in the afternoon", "pos": "noun" },
+    { "tk": "agşam", "en": "evening; in the evening", "pos": "noun" },
+    { "tk": "gije", "en": "night; at night", "pos": "noun", "card": "fc-0113" },
+    { "tk": "turmak", "en": "to get up; to stand up", "pos": "verb" },
+    { "tk": "başlanmak", "en": "to begin, to start (of an event)", "pos": "verb" },
+    { "tk": "hepde", "en": "week", "pos": "noun" },
+    { "tk": "aý", "en": "month; moon", "pos": "noun" },
+    { "tk": "ýyl", "en": "year", "pos": "noun", "card": "fc-0131" }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u11-l03-e01",
+      "type": "match",
+      "pairs": [
+        ["irden", "in the morning"],
+        ["günortan", "at noon"],
+        ["öýlän", "in the afternoon"],
+        ["agşam", "in the evening"],
+        ["gije", "at night"],
+        ["minut", "minute"]
+      ]
+    },
+    {
+      "id": "a1-u11-l03-e02",
+      "type": "mcq",
+      "points": ["gp-telling-time"],
+      "question": "How do you ask **what time is it?**",
+      "options": ["Sagat näçe?", "Sagat näçede?", "Näçe sagat?"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*Sagat näçede?* asks **at what time?**",
+        "2": "*Näçe sagat?* asks **how many hours?**"
+      },
+      "explain": "*Sagat näçe?*, literally **the clock is how much?**"
+    },
+    {
+      "id": "a1-u11-l03-e03",
+      "type": "translate",
+      "points": ["gp-telling-time"],
+      "from": "tk",
+      "prompt": "Sagat dokuz.",
+      "accept": ["It is nine o'clock.", "It is 9 o'clock.", "It is nine.", "Nine o'clock."]
+    },
+    {
+      "id": "a1-u11-l03-e04",
+      "type": "translate",
+      "points": ["gp-telling-time", "gp-locative"],
+      "from": "en",
+      "prompt": "The lesson starts at nine.",
+      "accept": ["Sapak sagat dokuzda başlanýar.", "Sapak dokuzda başlanýar."],
+      "reject": [
+        { "answer": "Sapak sagat dokuz başlanýar.", "why": "**At** a time takes the locative: *sagat dokuzda*." }
+      ]
+    },
+    {
+      "id": "a1-u11-l03-e05",
+      "type": "cloze",
+      "points": ["gp-telling-time", "gp-locative"],
+      "text": "Men irden sagat ýedi___ turýaryn.",
+      "en": "I get up at seven in the morning.",
+      "blanks": [
+        {
+          "accept": ["de"],
+          "reject": [
+            { "answer": "da", "why": "*ýedi* has front vowels: *ýedide*." },
+            { "answer": "ä", "why": "*ýedä* means **to seven**. **At** seven is *ýedide*." }
+          ]
+        }
+      ],
+      "explain": "**At** seven: *sagat ýedide*. The part of the day, *irden*, comes first."
+    },
+    {
+      "id": "a1-u11-l03-e06",
+      "type": "mcq",
+      "points": ["gp-telling-time"],
+      "question": "*Sagat bäşiň ýary.* What time is it?",
+      "options": ["4:30", "5:30", "5:15"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Turkmen counts toward the coming hour: *bäşiň ýary* is half of the way to five, 4:30.",
+        "2": "*ýary* is half: half an hour, not a quarter."
+      },
+      "explain": "*bäşiň ýary*: the half of five, 4:30."
+    },
+    {
+      "id": "a1-u11-l03-e07",
+      "type": "translate",
+      "points": ["gp-telling-time", "gp-genitive"],
+      "from": "en",
+      "prompt": "It's half past two.",
+      "accept": ["Sagat üçüň ýary.", "Üçüň ýary."],
+      "reject": [
+        { "answer": "Sagat ikiniň ýary.", "why": "Turkmen counts toward the coming hour: 2:30 is *üçüň ýary*, half of three. *ikiniň ýary* is 1:30." },
+        { "answer": "Sagat iki ýarym.", "why": "The half hour is said with the coming hour: *üçüň ýary*." }
+      ]
+    },
+    {
+      "id": "a1-u11-l03-e08",
+      "type": "cloze",
+      "points": ["gp-telling-time", "gp-pronominal-n"],
+      "text": "Sapak sagat dokuzyň ___ başlanýar.",
+      "en": "The lesson starts at half past eight.",
+      "blanks": [
+        { "options": ["ýarynda", "ýary", "ýaryna"], "answer": 0 }
+      ],
+      "explain": "**At** half past eight: *dokuzyň ýarynda*, with the *n* and *-da*. *ýaryna* is the dative, as in *dokuzyň ýaryna çenli*, until half past eight."
+    },
+    {
+      "id": "a1-u11-l03-e09",
+      "type": "translate",
+      "points": ["gp-telling-time", "gp-dative"],
+      "from": "tk",
+      "prompt": "Bäşe on minut bar.",
+      "accept": ["It is ten to five.", "It is ten minutes to five.", "It is 4:50."]
+    },
+    {
+      "id": "a1-u11-l03-e10",
+      "type": "mcq",
+      "points": ["gp-telling-time"],
+      "question": "*Alta on bäş minut bar.* What time is it?",
+      "options": ["5:45", "6:15", "6:45"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*alta* is **to six**: the fifteen minutes are still to come before six.",
+        "2": "**To six** means before six: 5:45."
+      },
+      "explain": "Fifteen minutes to six: a quarter to six, 5:45."
+    },
+    {
+      "id": "a1-u11-l03-e11",
+      "type": "wordbank",
+      "points": ["gp-telling-time", "gp-present-yar"],
+      "from": "en",
+      "prompt": "I work in the afternoon.",
+      "text": "Men öýlän işleýärin.",
+      "answer": ["Men", "öýlän", "işleýärin"],
+      "distractors": ["öýlände", "irden", "işleýär"],
+      "accept": ["Öýlän işleýärin."]
+    },
+    {
+      "id": "a1-u11-l03-e12",
+      "type": "translate",
+      "points": ["gp-telling-time", "gp-present-yar"],
+      "from": "en",
+      "prompt": "What time do you get up? (to a friend)",
+      "accept": ["Sen sagat näçede turýarsyň?", "Sagat näçede turýarsyň?", "(Sen) näçede turýarsyň?"],
+      "reject": [
+        { "answer": "Sen sagat näçe turýarsyň?", "why": "**At** what time takes the locative: *näçede*." }
+      ]
+    },
+    {
+      "id": "a1-u11-l03-e13",
+      "type": "translate",
+      "points": ["gp-numbers", "gp-locative", "gp-numbers-singular"],
+      "from": "tk",
+      "prompt": "Bir ýylda on iki aý bar.",
+      "accept": ["There are twelve months in a year.", "There are 12 months in a year.", "A year has [twelve|12] months."]
+    },
+    {
+      "id": "a1-u11-l03-e14",
+      "type": "translate",
+      "points": ["gp-telling-time", "gp-present-yar"],
+      "from": "tk",
+      "prompt": "Agşam sagat ýedide nahar iýýäris.",
+      "accept": ["We eat at seven in the evening.", "We eat at 7 in the evening.", "We eat at [seven|7] pm.", "We have dinner at [seven|7] (in the evening|pm)."]
+    }
+  ]
+}
