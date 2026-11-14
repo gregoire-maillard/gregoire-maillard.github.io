@@ -66,4 +66,23 @@ node scripts/turkmen/static.mjs <mirror folder>   # exit 1 if a page doesn't ren
 
 It renders each guide and interlude in headless Chromium where it will be published (`turkmen/guides/<id>.html`, with `TKM_BASE = "../"`), and copies the result into the page: the 72 pages of the 36 units, `noindex` for units not written yet. It fills the guide index (`turkmen/guide.html`) and the hub's path (`turkmen/index.html`), sets `TKM_STATIC_GUIDES` on every Turkmen page so links lead to the static guides, adds a breadcrumb (schema.org JSON-LD) to the guides and the index, makes links to `/turkish.html` `/` (Daily Turkish's hub on dailyturkish.app), and appends the Turkmen hub, index, flashcards and written guides to the mirror's `sitemap.xml`. It loads nothing from the Turkish course.
 
+## Review export for the native speaker (TK-REVIEW)
+
+`review-export.mjs` puts the Turkmen of one level into a sheet a native speaker can check without knowing the site (TM-PROJECT.md 9). It reads the content, `turkmen/TM-PROJECT.md` and `turkmen/TM-CURRICULUM.md` and changes none of them; no dependencies (it writes the .xlsx itself).
+
+```
+node scripts/turkmen/review-export.mjs a1            # write turkmen/review/a1-review.xlsx and a1-review-note.md
+node scripts/turkmen/review-export.mjs a1 --csv      # also a1-review.csv (same columns)
+node scripts/turkmen/review-export.mjs a1 --list     # print the "Check first" rows
+node scripts/turkmen/review-export.mjs a1 --out dir  # write elsewhere
+```
+
+The sheet has two tabs. **Read me** is the note for the reviewer, English beside Turkmen, with a place for their initials and the date (the same text as `<level>-review-note.md`; edit it in the script). **Review** has one row per distinct string (the same Turkmen with the same English and the same verdict is one row, listing all its places) with the columns No., Part, Flag, Kind, Turkmen, English, What to check, then the reviewer's OK? (a list: Yes, No, Not sure), Correction and Comment, then Location: file, JSON path, exercise or card ID, and which expansion of an accept entry it is, for the conversation that applies the corrections. In order:
+
+- **Check first** (yellow): the forms the progress log lists for the native review (the passages "for the native review", "not sure of", "Kept out", "Engine points", "to check first"), from the rows of the level's batches and, from other rows, those whose Turkmen occurs in the level; then the open questions of TM-CURRICULUM.md (question 9 one row per point); then the single words of the writers' lists of uncertain words. Each says in which rows its Turkmen is used, and a content row that uses an uncertain form or phrase found in eight rows or fewer is flagged "See row N".
+- **Unit 1 …**: per written unit, its Turkmen tagline, the guide (examples, paradigms, table rows, dialogues), the lessons (new words; prompts and sentences; every expansion of every accepted answer, the first shown as **Answer**, the others **Also accepted**; **Marked wrong** answers, in pink, with the feedback learners get; right choices with the wrong ones beside them; match pairs; built words; verb tables, a row per cell), the interlude (mini-reads, dialogues, tables, quotes, word list, questions).
+- **Flashcards**: the cards whose `level` is the level: word, example, forms, the Turkmen of the note.
+- **Pages**, A1 only: achievement names and streak ranks (`TKM.progress.achievements`), the greeting lines and the other Turkmen of the pages, the level summaries.
+- **Explanations**, optional: Turkmen inside English text (hints, feedback, guide and interlude prose, rule lines, summaries), one row per text, leaving out texts whose Turkmen is all in the rows above.
+
 A content conversation is done when `--batch <id>` reports its units complete with no errors and `--index` has been run. See `turkmen/TM-PROJECT.md`, section 9.

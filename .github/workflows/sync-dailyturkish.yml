@@ -55,8 +55,9 @@ jobs:
         run: |
           set -euo pipefail
           mkdir out
-          for p in turkish.html turkishcards.html turkishguide.html turkishlesson.html turkishprivacy.html turkishculture.html \
-                   assets/js/turkish.js assets/js/turkish-account.js assets/js/turkish-cast.js \
+          for p in turkish.html turkishcards.html turkishguide.html turkishlesson.html turkishprivacy.html turkishculture.html turkishget.html \
+                   assets/js/turkish.js assets/js/turkish-account.js assets/js/turkish-cast.js assets/js/turkish-getapp.js \
+                   assets/img/daily-turkish-app-lesson.webp assets/img/daily-turkish-app-done.webp \
                    assets/data/turkish assets/fonts \
                    assets/img/favicon.png assets/img/ataturk.png assets/img/ataturk.webp \
                    assets/img/daily-turkish-favicon.svg assets/img/daily-turkish-favicon.png \
@@ -70,6 +71,7 @@ jobs:
             if [ -e "$p" ]; then mkdir -p "out/$(dirname "$p")"; cp -R "$p" "out/$p"; fi
           done
           cp turkish.html out/index.html          # dailyturkish.app/ opens the course hub
+          mkdir -p out/get && cp turkishget.html out/get/index.html   # dailyturkish.app/get/: the QR code's address (GETAPP-1)
           echo "dailyturkish.app" > out/CNAME
           touch out/.nojekyll                     # serve files exactly as they are
 

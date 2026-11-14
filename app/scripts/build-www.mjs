@@ -16,6 +16,8 @@
 //     linked at the end of the <head> (APP-4);
 //   - leaves out "Buy me a Turkish coffee" (the footer line and the About section): App Review wants tips
 //     through in-app purchase (APP-4);
+//   - leaves out the invitations to get the app (GETAPP-1): the script assets/js/turkish-getapp.js (not in FILES)
+//     and the About section's slot for it;
 //   - leaves out of the course, or rewords, what would keep the App Store age rating above 4+: alcohol, tobacco,
 //     drugs, swearing, weapons and violence, and the darker passages of the history interludes. The rules, each
 //     with the exact text it expects, are in content-4plus.mjs; content-filter.mjs applies them, recounts
@@ -95,6 +97,8 @@ const VIEWPORT = /(<meta name="viewport" content=")([^"]*)(")/;
 const HEAD_END = /(\s*)<\/head>/;
 const COFFEE_FOOT = /\s*<footer class="dt-foot">[\s\S]*?buymeacoffee[\s\S]*?<\/footer>/;
 const COFFEE_ABOUT = /<h2>Support Daily Turkish<\/h2>[\s\S]*?buymeacoffee[\s\S]*?<\/p>\s*(?=<h2>)/;
+const GETAPP = /\s*<script defer src="\/assets\/js\/turkish-getapp\.js"><\/script>/;
+const GETAPP_ABOUT = /\s*<div id="getapp-about"><\/div>(?:<!--[\s\S]*?-->)?/;
 // The first opening of the day (APP-9d): a red screen with the logo for about a second, then it fades (the look is
 // in src/turkish-app.css). Inline in the hub's <head>, so it covers the page from the first paint; turkish-app.js
 // calls window.TRKSplash() again when the app comes back to the foreground on a new day.
@@ -125,6 +129,8 @@ for (const page of HTML) {
   html = html.replace(HEAD_END, '$1  <link rel="stylesheet" href="/' + APP_CSS[0] + '">' + (page === "turkish.html" ? "$1  " + SPLASH : "") + '$1</head>');
   // No tip jar in the app (APP-4).
   html = html.replace(COFFEE_FOOT, "").replace(COFFEE_ABOUT, "");
+  // No invitation to get the app inside the app (GETAPP-1).
+  html = html.replace(GETAPP, "").replace(GETAPP_ABOUT, "");
   if (PAGES.includes(page)) {
     if (!ACCOUNT.test(html)) fail(page + ": turkish-account.js script tag not found, update ACCOUNT in build-www.mjs");
     html = html.replace(ACCOUNT, "$1\n    " + tags);
@@ -140,6 +146,7 @@ for (const page of readdirSync(OUT).filter((f) => f.endsWith(".html"))) {
   const html = readFileSync(join(OUT, page), "utf8");
   if (/googletagmanager\.com|gtag\('config'/.test(html)) fail(page + ": the Google tag is still there");
   if (/href="[^"]*buymeacoffee/.test(html)) fail(page + ": a Buy me a coffee link is still there, update COFFEE_FOOT / COFFEE_ABOUT in build-www.mjs");
+  if (/src="[^"]*turkish-getapp|id="getapp-about"|apps\.apple\.com\/app/.test(html)) fail(page + ": an invitation to get the app is still there, update GETAPP / GETAPP_ABOUT in build-www.mjs");
   if (!/viewport-fit=cover/.test(html) || !html.includes(APP_CSS[0])) fail(page + ": viewport-fit=cover or the app stylesheet is missing");
   if (!/<html[^>]*data-app="ios"/.test(html)) fail(page + ": <html data-app> missing");
   const refs = [...html.matchAll(/(?:src|href)="(\/[^"]*)"/g), ...html.matchAll(/url\(\s*["']?(\/[^)"']+)/g)].map((m) => m[1]);

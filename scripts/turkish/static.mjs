@@ -152,7 +152,8 @@ function one(src, re, what) {
   if (m.length !== 1) throw new Error(`template: expected one ${what}, found ${m.length}`);
   return m[0];
 }
-// The frame of a generated page (Google tag, icons, styles, header bar, footer), taken from turkishcards.html.
+// The frame of a generated page (Google tag, icons, styles, header bar, footer), taken from turkishcards.html,
+// plus the app invitation script (GETAPP-1: the iPhone banner; nothing until the app is live).
 // m: { title, description, canonical (none: noindex, as for the 404 page), kicker, h1, body, noTab (no tab marked current) }
 function pageFrame(cardsSrc) {
   const headSrc = cardsSrc.slice(0, cardsSrc.indexOf("</head>"));
@@ -184,6 +185,7 @@ ${gtag}
     <meta property="og:url" content="${attr(m.canonical)}">` : '<meta name="robots" content="noindex">'}
     ${styles.join("\n    ")}
     <style>${WORDS_CSS}</style>${m.css ? "\n    <style>" + m.css + "</style>" : ""}${m.ld ? "\n    " + m.ld : ""}
+    <script defer src="/assets/js/turkish-getapp.js"></script>
   </head>
   <body>${m.noTab ? header.replace(/ aria-current="page"/, "") : header}<main class="wrap">
       <div class="head"><div><p class="kicker">${m.kicker}</p><h1>${text(m.h1)}</h1></div></div>

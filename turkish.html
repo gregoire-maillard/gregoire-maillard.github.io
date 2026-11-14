@@ -773,6 +773,7 @@
     </style>
     <script defer src="/assets/js/turkish.js?v=20261106"></script>
     <script defer src="/assets/js/turkish-account.js"></script>
+    <script defer src="/assets/js/turkish-getapp.js"></script>
     <style>
       /* Footer: one line asking for a Turkish coffee (buymeacoffee.com/dailyturkish) */
       .dt-foot { margin: 48px auto 0; padding: 0 16px 28px; text-align: center;
@@ -926,6 +927,7 @@
           <p><b>Fluent Forever.</b> The course follows Gabriel Wyner's book (2014): sounds first, the most frequent words first, every word in a real sentence, and active recall in both directions. One difference: Wyner says to make your own cards with pictures; here they come ready-made with English meanings, to save you the time.</p>
           <h2>Your progress</h2>
           <p id="about-where">Without a profile, your progress lives in this browser's storage only, and clearing your browsing data erases it. With a <a href="#profile">profile</a>, it's also saved online.</p>
+          <div id="getapp-about"></div><!-- GETAPP-1: "Daily Turkish on your iPhone", filled by turkish-getapp.js once the app is live -->
           <h2>Support Daily Turkish</h2>
           <p>Daily Turkish is free to use and has no ads. If it helps you learn, you can buy me a Turkish coffee: it pays for the domain and the time spent writing new units.</p>
           <p style="margin-top:14px"><a class="btn coffee" href="https://buymeacoffee.com/dailyturkish" target="_blank" rel="noopener">☕ Buy me a Turkish coffee</a></p>
@@ -1040,6 +1042,9 @@
           '<div class="stat">' + ring(g.ratio, g.met) + '<div><div class="big">' + g.xp + ' <small>XP</small></div><div class="lbl">' + (g.met ? "Goal met" : "of " + g.goal + " today") + "</div></div></div>" +
           '<div class="stat"><span class="flame' + (s.current ? " on" : "") + '">' + ICON.flame + '</span><div><div class="big">' + plural(s.current, "day") + '</div><div class="lbl">Streak' + (s.best > s.current ? " · best " + s.best : "") + "</div></div></div>" +
           (note ? '<p class="note">' + note + "</p>" : "") + "</div>";
+        // GETAPP-1: the iPhone app, right under XP and streak (assets/js/turkish-getapp.js; nothing until the app is live,
+        // nothing on an iPhone, which gets the banner, and nothing in the app, which doesn't load the script)
+        if (window.TRKGetApp) html += window.TRKGetApp.card({ streak: s.current });
         html += wallHtml(ix, course, set);
         html += cardsPanel(ix, course, set, now);
         // DLG-1: the dialogue simulator's conversations (PROJECT.md 6.9), played by the lesson page
