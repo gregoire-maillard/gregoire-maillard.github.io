@@ -77,6 +77,8 @@ for (const [w, acc, dat, loc, abl, gen, sense] of [
   ["talyp", "talyby", "talyba", "talypda", "talypdan", "talybyň"], ["kömek", "kömegi", "kömege", "kömekde", "kömekden", "kömegiň"],
   ["mowzuk", "mowzugy", "mowzuga", "mowzukda", "mowzukdan", "mowzugyň"], ["Aşgabat", "Aşgabady", "Aşgabada", "Aşgabatda", "Aşgabatdan", "Aşgabadyň"],
   ["sagat", "sagady", "sagada", "sagatda", "sagatdan", "sagadyň"],
+  ["güýç", "güýji", "güýje", "güýçde", "güýçden", "güýjüň"], ["uruş", "urşy", "urşa", "uruşda", "uruşdan", "urşuň"],
+  ["oýun", "oýny", "oýna", "oýunda", "oýundan", "oýnuň"],
   ["döwlet", "döwleti", "döwlete", "döwletde", "döwletden", "döwletiň"], ["tarap", "tarapy", "tarapa", "tarapda", "tarapdan", "tarapyň"],
   ["at", "ady", "ada", "atda", "atdan", "adyň", 1], ["at", "aty", "ata", "atda", "atdan", "atyň", 2],
   ["ot", "ody", "oda", "otda", "otdan", "oduň", 1], ["ot", "oty", "ota", "otda", "otdan", "otuň", 2],
@@ -96,6 +98,7 @@ for (const [w, acc, dat, loc, abl, gen, sense] of [
   const o = sense ? { sense } : {}, label = sense ? `${w} (sense ${sense})` : w;
   check(`cases of ${label}`, () => ["acc", "dat", "loc", "abl", "gen"].map(c => dec(w, { ...o, case: c })), [acc, dat, loc, abl, gen]);
 }
+check("urşunda (in the war), with vowel loss and the pronominal n (FC-2)", () => dec("uruş", { poss: "ol", case: "loc" }), "urşunda");
 check("nirä, nirede, nireden", () => ["dat", "loc", "abl"].map(c => dec("nire", { case: c })), ["nirä", "nirede", "nireden"]);
 check("homographs by gloss: at name, at horse", () => [dec("at", { sense: "name", poss: "men" }), dec("at", { sense: "horse", poss: "men" })], ["adym", "atym"]);
 check("readings of at", () => M.readings("at").map(r => r.gloss), ["name", "horse"], "check");

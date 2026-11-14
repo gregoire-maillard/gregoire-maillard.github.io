@@ -61,7 +61,8 @@
   var LEX = {
     // one-syllable words whose final k, p, ç or t voices before a vowel because their vowel is long (adym, ýadyma,
     // ýurdumyz, dördünji, gögümtik); other one-syllable words keep it (atym "my horse", saçym, topy)
-    voice: { "ýat": "ýad", "ýurt": "ýurd", "dört": "dörd", "gök": "gög" },
+    // güýç: güýji in print ("romanlaryň özüne çekiji güýji", science.gov.tm, FC-2)
+    voice: { "ýat": "ýad", "ýurt": "ýurd", "dört": "dörd", "gök": "gög", "güýç": "güýj" },
     // the same spelling for a long-vowel word and a short one: sense 1, 2 as in scripts/turkmen/tm-wordlist.tsv
     homographs: { at: [["name", "ad"], ["horse", null]], ot: [["fire", "od"], ["grass", null]] },
     // words of two or more syllables in -t voice only from this list (Aşgabady, umydy); most keep it (döwleti,
@@ -72,7 +73,9 @@
     // vowel loss before a vowel: ogly, burnum, agzy, göwnüm
     drop: {
       ogul: "ogl", burun: "burn", agyz: "agz", "boýun": "boýn", garyn: "garn", "göwün": "göwn", "köňül": "köňl",
-      "ömür": "ömr", "döwür": "döwr", ylym: "ylm", nesil: "nesl", sabyr: "sabr", bagyr: "bagr"
+      "ömür": "ömr", "döwür": "döwr", ylym: "ylm", nesil: "nesl", sabyr: "sabr", bagyr: "bagr",
+      // FC-2: uruş, "Beýik Watançylyk urşy", "urşunda" (Wikipedia, a medal's name); oýun, "oýnuň maksady" (a game page)
+      "uruş": "urş", "oýun": "oýn"
     },
     // the closed list of verbs whose final t becomes d before a vowel and before -ýAr (gidýär, gidip, gider, but
     // gitdi, gitjek); every other verb keeps its consonant (satýar, tutup, çykar). Compounds follow their last word.
