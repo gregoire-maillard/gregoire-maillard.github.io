@@ -22,7 +22,8 @@ import { createInterface } from "node:readline/promises";
 // General Information → Apple ID (a number), then: https://apps.apple.com/app/id<that number>
 const APP_STORE_URL = "https://apps.apple.com/app/id6833673702";
 const FROM = "Daily Turkish <hello@dailyturkish.app>";
-const REPLY_TO = "gregoire.maillard@yahoo.fr";      // replies reach you; hello@ isn't an inbox
+// No reply-to: a free-mail reply-to (yahoo, gmail…) on a dailyturkish.app email is a strong spam
+// signal (mail-tester FREEMAIL_FORGED_REPLYTO, −2.5). The email gives the contact address instead.
 const SUBJECT = "Daily Turkish is now on iPhone";
 const SEGMENT_NAME = "Daily Turkish learners";
 const BROADCAST_NAME = "iPhone app launch";
@@ -102,7 +103,7 @@ async function cmdTest(to, name) {
   const body = html(false)
     .replace(/\{\{\{contact\.first_name\|([^}]*)\}\}\}/g, (_, fb) => name || fb)
     .replaceAll("{{{RESEND_UNSUBSCRIBE_URL}}}", "https://dailyturkish.app/");
-  const r = await api("POST", "/emails", { from: FROM, to: [to], reply_to: REPLY_TO, subject: "[Test] " + SUBJECT, html: body });
+  const r = await api("POST", "/emails", { from: FROM, to: [to], subject: "[Test] " + SUBJECT, html: body });
   console.log(`✓ Test sent to ${to} (Resend id ${r.id}). In the test, "Unsubscribe" just opens dailyturkish.app.`);
 }
 
@@ -145,14 +146,14 @@ async function cmdSend() {
   const seg = await findSegment();
   if (!seg) die(`There's no segment "${SEGMENT_NAME}" in Resend yet: run the upload command first.`);
   console.log(`\nAbout to email everyone in the Resend segment "${SEGMENT_NAME}"`);
-  console.log(`  From:     ${FROM}\n  Reply-to: ${REPLY_TO}\n  Subject:  ${SUBJECT}\n  Button:   ${APP_STORE_URL}`);
+  console.log(`  From:     ${FROM}\n  Subject:  ${SUBJECT}\n  Button:   ${APP_STORE_URL}`);
   console.log("Learners who unsubscribed are skipped by Resend. This can't be undone.");
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   const answer = (await rl.question('Type "send" to send it now: ')).trim().toLowerCase();
   rl.close();
   if (answer !== "send") { console.log("Nothing sent."); return; }
   const r = await api("POST", "/broadcasts", {
-    segment_id: seg.id, from: FROM, reply_to: REPLY_TO, subject: SUBJECT, name: BROADCAST_NAME, html: body, send: true,
+    segment_id: seg.id, from: FROM, subject: SUBJECT, name: BROADCAST_NAME, html: body, send: true,
   });
   console.log(`✓ Sent (broadcast ${r.id}). Follow deliveries, opens and clicks in Resend → Broadcasts.`);
 }
