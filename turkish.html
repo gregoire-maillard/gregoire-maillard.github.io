@@ -1035,16 +1035,19 @@
             (mistakes ? '<a class="btn primary block" href="' + P.lesson + '?practice=mistakes">Practice your mistakes</a>'
               : lastUnit ? '<a class="btn primary block" href="' + P.lesson + "?review=" + esc(lastUnit.id) + '">Review ' + esc(unitLabel(lastUnit)) + "</a>" : "") + "</div>";
         }
-        html = helloHtml() + html;
         var g = T.progress.goal(course, set, now), s = T.progress.streak(course, set, now);
+        // GETAPP-1: the iPhone app's card (assets/js/turkish-getapp.js; nothing until the app is live, nothing on an iPhone,
+        // which gets the banner, and nothing in the app, which doesn't load the script). Signed out, it comes right under
+        // the welcome card (Create an account / Sign in); otherwise right under XP and streak.
+        var hello = helloHtml(), gaCard = window.TRKGetApp ? window.TRKGetApp.card({ streak: s.current }) : "";
+        var gaFirst = hello.indexOf('class="hello invite"') !== -1;
+        html = hello + (gaFirst ? gaCard : "") + html;
         var note = s.done ? "" : s.current ? "Finish a lesson or study 10 cards today to keep your streak." : "Finish a lesson today to start a streak.";
         html += '<div class="card stats" aria-label="Today\'s progress">' +
           '<div class="stat">' + ring(g.ratio, g.met) + '<div><div class="big">' + g.xp + ' <small>XP</small></div><div class="lbl">' + (g.met ? "Goal met" : "of " + g.goal + " today") + "</div></div></div>" +
           '<div class="stat"><span class="flame' + (s.current ? " on" : "") + '">' + ICON.flame + '</span><div><div class="big">' + plural(s.current, "day") + '</div><div class="lbl">Streak' + (s.best > s.current ? " · best " + s.best : "") + "</div></div></div>" +
           (note ? '<p class="note">' + note + "</p>" : "") + "</div>";
-        // GETAPP-1: the iPhone app, right under XP and streak (assets/js/turkish-getapp.js; nothing until the app is live,
-        // nothing on an iPhone, which gets the banner, and nothing in the app, which doesn't load the script)
-        if (window.TRKGetApp) html += window.TRKGetApp.card({ streak: s.current });
+        if (!gaFirst) html += gaCard;
         html += wallHtml(ix, course, set);
         html += cardsPanel(ix, course, set, now);
         // DLG-1: the dialogue simulator's conversations (PROJECT.md 6.9), played by the lesson page
@@ -1108,7 +1111,14 @@
         return h + '<span class="hello-pic">' + pic + '</span><span class="hello-bub"><span class="hello-say"><span lang="tr">Merhaba</span>' + (name ? ", " + esc(name) + "!" : "!") + "</span>" +
           (sub ? '<span class="hello-sub">' + esc(sub) + "</span>" : "") + "</span></a>";
       }
-      function renderHello() { var el = $("hello"); if (el && st.index) el.outerHTML = helloHtml(); }
+      function renderHello() {
+        var el = $("hello");
+        if (!el || !st.index) return;
+        var h = helloHtml();
+        // signed in or out: the app card (GETAPP-1) moves between the welcome card and XP/streak, so redraw the column
+        if ($("today").querySelector(".ga-card") && (h.indexOf('class="hello invite"') !== -1) !== el.classList.contains("invite")) { renderToday(); return; }
+        el.outerHTML = h;
+      }
       // The tile wall (UI-5): a tile per unit, laid in the level's colour once the unit is done, glazed gold once it's mastered.
       function wallHtml(ix, course, set) {
         var f = T.path.flatten(ix), laid = 0, gold = 0, fr = st.fresh;

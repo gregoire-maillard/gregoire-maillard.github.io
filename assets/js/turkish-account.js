@@ -195,7 +195,7 @@
     email = String(email || "").trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return Promise.reject(new Error("That doesn't look like an email address."));
     return A.ensure().then(function (c) {
-      return c.auth.signInWithOtp({ email: email, options: { emailRedirectTo: redirectTo(), shouldCreateUser: true } });
+      return c.auth.signInWithOtp({ email: email, options: { emailRedirectTo: redirectTo(), shouldCreateUser: true, data: { signup_platform: platform() } } });
     }).then(function (r) {
       if (r.error) throw new Error(/rate limit/i.test(r.error.message) ? "Too many sign-in emails were sent in the last hour. Please try again a bit later." : r.error.message);
       A.sentTo = email; A.sentKind = "link"; A.error = null; emit();
@@ -225,6 +225,14 @@
   // Where emailed links land. The app's pages live at capacitor://localhost, which no email can open: its links
   // (confirm, reset, sign-in) go to the course on dailyturkish.app, and the learner then signs in in the app (APP-9).
   function redirectTo() { return (T.app ? "https://dailyturkish.app" : location.origin) + CFG.page + "?signin=1"; }
+  // Where this device is (MAIL-2): the iPhone app, or the website on a phone or tablet, or on a computer. Saved with a
+  // new account (auth.users.raw_user_meta_data.signup_platform; Supabase keeps it only when the account is created).
+  function platform() {
+    if (T.app) return "ios-app";
+    var ua = navigator.userAgent || "";
+    var ipad = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;   // iPadOS presents itself as a Mac
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(ua) || ipad ? "web-mobile" : "web-desktop";
+  }
 
   // Signs in straight away: no email, no link.
   A.signInPassword = function (email, pw) {
@@ -237,7 +245,7 @@
   A.signUp = function (email, pw) {
     try { email = checkEmail(email); pw = checkPw(pw); } catch (e) { return Promise.reject(e); }
     return A.ensure().then(function (c) {
-      return c.auth.signUp({ email: email, password: pw, options: { emailRedirectTo: redirectTo() } });
+      return c.auth.signUp({ email: email, password: pw, options: { emailRedirectTo: redirectTo(), data: { signup_platform: platform() } } });
     }).then(function (r) {
       if (r.error) {
         if (/already registered|already exists/i.test(r.error.message)) throw new Error("There's already a profile with this email. Sign in instead, or use \u201cForgot password?\u201d.");
@@ -492,6 +500,18 @@
     var m = /^([a-z]{2})(?:-([a-z]{2}))?/i.exec(navigator.language || "");
     if (!prof.ui_locale && m) upd.ui_locale = m[1].toLowerCase() + (m[2] ? "-" + m[2].toUpperCase() : "");
     if (Object.keys(upd).length) client.from(CFG.table).update(upd).eq("user_id", prof.user_id).then(function () {}, function () {});
+    markSeen(prof.user_id);
+  }
+  // When the profile was last used in the app and on the website (profiles.last_app_at / last_web_at, MAIL-2):
+  // one small write at most every 6 hours per device. Ignored if the columns don't exist yet.
+  function markSeen(uid) {
+    var col = T.app ? "last_app_at" : "last_web_at", key = "trk:account:seen:" + uid, now = Date.now(), last = 0;
+    try { last = +localStorage.getItem(key) || 0; } catch (e) {}
+    if (now - last < 6 * 3600 * 1000) return;
+    var upd = {}; upd[col] = new Date(now).toISOString();
+    client.from(CFG.table).update(upd).eq("user_id", uid).then(function (w) {
+      if (!w.error) try { localStorage.setItem(key, String(now)); } catch (e) {}
+    }, function () {});
   }
 
   // ── activity, exercise statistics, reports ──

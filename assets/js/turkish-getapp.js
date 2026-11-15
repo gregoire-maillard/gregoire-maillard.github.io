@@ -163,50 +163,45 @@
     ".ga-scan{position:absolute;left:8px;right:8px;top:12%;height:2px;border-radius:2px;background:#e34b4f;box-shadow:0 0 10px 2px rgb(227 75 79/.55);opacity:0;pointer-events:none;animation:ga-scan 1.7s ease-in-out .7s 2 alternate}",
     ".ga-qr:hover .ga-scan{animation:ga-scan 1.5s ease-in-out infinite alternate}",
     // About section
-    ".ga-about{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);margin-top:12px;border:1px solid #f0dcd7;border-radius:16px;" +
+    ".ga-about{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 290px;max-width:760px;margin-top:12px;border:1px solid #f0dcd7;border-radius:14px;" +
       "background:linear-gradient(140deg,#fff7f5 0%,#fdf1ee 40%,#eef5f9 100%)}",
     ".ga-about::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:" + IZNIK + " 0 0/64px 64px;opacity:.07;" +
       "-webkit-mask-image:radial-gradient(90% 120% at 100% 100%,#000 10%,transparent 65%);mask-image:radial-gradient(90% 120% at 100% 100%,#000 10%,transparent 65%)}",
-    ".ga-a-txt{padding:26px 28px 28px}",
-    ".about-body .ga-a-lede,.ga-a-lede{margin:0;font-size:17px;line-height:1.4;font-weight:550;color:#242424;letter-spacing:-.01em}",
-    ".ga-feat{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:11px}",
-    ".ga-feat li{display:flex;align-items:flex-start;gap:12px;font-size:14.5px;line-height:1.45;color:#555}",
+    ".ga-a-txt{padding:20px 22px 22px}",
+    ".about-body .ga-a-lede,.ga-a-lede{margin:0;font-size:15px;line-height:1.4;font-weight:550;color:#242424;letter-spacing:-.01em}",
+    ".ga-feat{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,max-content);gap:10px 20px}",
+    ".ga-feat li{display:flex;align-items:center;gap:9px;font-size:14px;line-height:1.3;color:#555}",
     ".ga-feat b{color:#242424;font-weight:620}",
-    ".ga-fi{flex:none;display:grid;place-items:center;width:32px;height:32px;margin-top:-4px;border-radius:10px;background:#fff;color:#c93d41;box-shadow:0 0 0 1px rgb(227 75 79/.14),0 2px 6px -2px rgb(15 23 42/.15)}",
-    ".ga-a-cta{display:flex;align-items:center;gap:22px;margin-top:24px}",
-    ".ga-a-cta .ga-qr{width:124px;height:124px;padding:10px}",
+    ".ga-fi{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#fff;color:#c93d41;box-shadow:0 0 0 1px rgb(227 75 79/.14),0 2px 6px -2px rgb(15 23 42/.15)}",
+    ".ga-a-cta{display:flex;align-items:center;gap:16px;margin-top:18px}",
+    ".ga-a-cta .ga-qr{width:96px;height:96px;padding:8px}",
     ".about-body .ga-a-cta p,.ga-a-cta p{margin:0}",
-    ".ga-a-cta .ga-big{font-size:15px;font-weight:650;color:#242424}",
+    ".ga-a-cta .ga-big{font-size:14px;font-weight:600;color:#242424}",
     ".ga-a-cta .ga-muted{margin-top:3px!important;font-size:13.5px;color:#6f6f6f}",
     ".ga-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;margin-top:12px;padding:0 18px;border:1px solid #287a9e;border-radius:8px;" +
       "background:#287a9e;color:#fff!important;font-size:15px;font-weight:600;text-decoration:none!important;box-shadow:0 3px 0 #12506c;transition:transform .08s,box-shadow .08s,background-color .15s}",
     ".ga-btn:hover{background:#155b7c;border-color:#155b7c}",
     ".ga-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #12506c}",
-    ".ga-btn.ga-wide{width:100%;margin-top:22px;min-height:50px;font-size:16px}",
-    ".ga-a-phones{position:relative;min-height:380px;overflow:hidden}",
-    ".ga-phone{position:absolute;top:34px;width:196px;padding:6px;border-radius:34px;background:#151A23;box-shadow:inset 0 0 0 1.5px #434957,0 34px 50px -24px rgb(21 26 35/.55),0 8px 16px -8px rgb(21 26 35/.3)}",
-    ".ga-phone::before{content:'';position:absolute;top:15px;left:50%;width:54px;height:16px;margin-left:-27px;border-radius:10px;background:#0b0d12;z-index:1}",
-    ".ga-phone img{display:block;width:100%;height:auto;border-radius:28px;background:#fff}",
-    ".ga-back{left:max(4px,calc(50% - 200px));top:64px;transform:rotate(-7deg);animation:ga-float-b 7s ease-in-out infinite}",
-    ".ga-front{left:max(124px,calc(50% - 30px));transform:rotate(5deg);animation:ga-float-f 6s ease-in-out infinite}",
-    ".ga-note{position:absolute;z-index:3;left:max(0px,calc(50% - 236px));top:18px;display:flex;align-items:center;gap:9px;width:248px;padding:9px 12px 9px 9px;border-radius:16px;" +
+    ".ga-a-cta .ga-btn{min-height:40px;margin-top:10px;font-size:14px;padding:0 14px}",
+    ".ga-btn.ga-wide{width:100%;margin-top:18px;min-height:46px;font-size:15px}",
+    ".ga-a-phones{position:relative;min-height:250px;overflow:hidden}",
+    ".ga-phone{position:absolute;top:44px;width:132px;padding:4px;border-radius:24px;background:#151A23;box-shadow:inset 0 0 0 1.5px #434957,0 34px 50px -24px rgb(21 26 35/.55),0 8px 16px -8px rgb(21 26 35/.3)}",
+    ".ga-phone::before{content:'';position:absolute;top:10px;left:50%;width:36px;height:11px;margin-left:-18px;border-radius:7px;background:#0b0d12;z-index:1}",
+    ".ga-phone img{display:block;width:100%;height:auto;border-radius:20px;background:#fff}",
+    ".ga-back{left:calc(50% - 128px);top:64px;transform:rotate(-7deg);animation:ga-float-b 7s ease-in-out infinite}",
+    ".ga-front{left:calc(50% - 12px);transform:rotate(5deg);animation:ga-float-f 6s ease-in-out infinite}",
+    ".ga-note{position:absolute;z-index:3;left:calc(50% - 125px);top:14px;display:flex;align-items:center;gap:8px;width:250px;padding:7px 10px 7px 7px;border-radius:13px;" +
       "background:rgb(255 255 255/.86);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);" +
-      "box-shadow:0 0 0 .5px rgb(0 0 0/.08),0 12px 28px -12px rgb(21 26 35/.45);font-size:12.5px;line-height:1.3;color:#151A23;animation:ga-note .7s cubic-bezier(.2,1.3,.4,1) .9s both}",
-    ".ga-note .ga-nico{flex:none;width:30px;height:30px;border-radius:7px}",
+      "box-shadow:0 0 0 .5px rgb(0 0 0/.08),0 12px 28px -12px rgb(21 26 35/.45);font-size:11.5px;line-height:1.3;color:#151A23;animation:ga-note .7s cubic-bezier(.2,1.3,.4,1) .9s both}",
+    ".ga-note .ga-nico{flex:none;width:24px;height:24px;border-radius:6px}",
     ".ga-note span{min-width:0}",
-    ".ga-note small{display:flex;justify-content:space-between;gap:8px;font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;color:#7a808b}",
+    ".ga-note small{display:flex;justify-content:space-between;gap:8px;font-size:9.5px;letter-spacing:.03em;text-transform:uppercase;color:#7a808b}",
     ".ga-note b{display:block;font-weight:620}",
     "@media (max-width:759px){",
     "  .ga-about{grid-template-columns:minmax(0,1fr)}",
-    "  .ga-a-txt{padding:22px 20px 6px}",
-    "  .ga-a-phones{min-height:290px}",
-    "  .ga-phone{width:156px;padding:5px;border-radius:28px}",
-    "  .ga-phone img{border-radius:23px}",
-    "  .ga-phone::before{top:12px;width:44px;height:13px;margin-left:-22px}",
-    "  .ga-back{left:calc(50% - 150px);top:84px}",
-    "  .ga-front{left:calc(50% - 10px);top:48px}",
-    "  .ga-note{left:50%;margin-left:-124px;top:14px}",
-    "  .ga-a-cta .ga-qr{width:112px;height:112px}",
+    "  .ga-a-txt{padding:18px 18px 4px}",
+    "  .ga-a-phones{min-height:230px}",
+    "  .ga-feat{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 12px}",
     "}",
     // motion
     "@keyframes ga-open{from{max-height:0;padding-top:0;padding-bottom:0;opacity:0}to{max-height:96px;opacity:1}}",
@@ -270,16 +265,16 @@
     var cta = IPHONE
       ? '<a class="ga-btn ga-wide" href="' + url("web-about") + '" data-ga-go>' + I.phone + "Get the app · Free</a>"
       : '<div class="ga-a-cta">' + qrLink("web-about") +
-        '<div><p class="ga-big">Point your iPhone’s camera at the code</p><p class="ga-muted">It opens Daily Turkish on the App Store.</p>' +
+        '<div><p class="ga-big">Scan with your iPhone’s camera</p>' +
         '<a class="ga-btn" href="' + url("web-about") + '" target="_blank" rel="noopener" data-ga-go>View on the App Store</a></div></div>';
     return '<h2 id="h-getapp">Daily Turkish on your iPhone</h2>' +
       '<div class="ga-about"><div class="ga-a-txt">' +
-      '<p class="ga-a-lede">The same course, in an app made for your phone. Free, with no ads.</p>' +
+      '<p class="ga-a-lede">The same course, made for your phone. Free, no ads.</p>' +
       '<ul class="ga-feat">' +
-      '<li><span class="ga-fi">' + I.bell + "</span><span><b>A daily reminder</b> that knows when your streak is at stake, and a word of the day.</span></li>" +
-      '<li><span class="ga-fi">' + I.widget + "</span><span><b>A home-screen widget</b> with your streak and today’s word.</span></li>" +
-      '<li><span class="ga-fi">' + I.plane + "</span><span><b>Works offline</b>, on the metro or on a plane, with a 60-second speed round for spare minutes.</span></li>" +
-      '<li><span class="ga-fi">' + I.sync + "</span><span><b>One profile for both</b>: sign in here and in the app, and your progress follows you.</span></li>" +
+      '<li><span class="ga-fi">' + I.bell + "</span><b>A daily reminder</b></li>" +
+      '<li><span class="ga-fi">' + I.widget + "</span><b>A home-screen widget</b></li>" +
+      '<li><span class="ga-fi">' + I.plane + "</span><b>Works offline</b></li>" +
+      '<li><span class="ga-fi">' + I.sync + "</span><b>One profile for both</b></li>" +
       "</ul>" + cta + "</div>" +
       '<div class="ga-a-phones" aria-hidden="true">' +
       '<span class="ga-note">' + appIcon("ga-nico") + "<span><small><span>Daily Turkish</span><span>now</span></small><b>Your " + days + "-day streak ends tonight</b></span></span>" +
