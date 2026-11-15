@@ -23,7 +23,7 @@
   // (a number such as 6712345678). While it is empty nothing shows on the site: the app isn't on the App Store yet.
   // To preview before that, open any course page with ?getapp (stays on for the tab; ?getapp=off ends it);
   // ?getapp=banner also shows the iPhone banner on a computer.
-  var APP_ID = "";
+  var APP_ID = "6833673702";
   // Optional: App Store Connect › Analytics › Acquisition › Campaigns › Generate a campaign link gives "pt=…".
   // With it here, App Analytics shows which invitation brought each download (ct=web-banner, web-home, web-about, qr).
   var PROVIDER_TOKEN = "";
