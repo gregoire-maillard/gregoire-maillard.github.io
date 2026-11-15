@@ -44,6 +44,7 @@
     preview = sessionStorage.getItem(PREVIEW_KEY) || "";
   } catch (e) { preview = ""; }
   var ON = READY || !!preview;
+  if (preview) try { localStorage.removeItem(HIDE_KEY); } catch (e) { /* nothing to undo */ }   // undo a hide set while previewing
   var closed = false;   // closed on this page view (also in preview, where the 30 days don't apply)
 
   function url(ct) {
@@ -57,6 +58,7 @@
   }
   function putAway() {
     closed = true;
+    if (preview) return;   // trying things out in preview doesn't hide the real invitations later
     try { localStorage.setItem(HIDE_KEY, String(Date.now() + HIDE_DAYS * 864e5)); } catch (e) { /* storage blocked: this page view only */ }
   }
   function streak() {
