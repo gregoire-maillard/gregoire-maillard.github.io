@@ -1,0 +1,184 @@
+{
+  "id": "a2-u01-l01",
+  "unit": "a2-u01",
+  "order": 1,
+  "title": "What did you do yesterday?",
+  "goal": "Say what you and others did with the past in -dY and its endings.",
+  "points": ["gp-past-dy"],
+  "intro": {
+    "text": "For the past, add `-dY` to the stem, then *-m, -ň, —, -k, -ňYz, -lAr*: *geldim* (I came), *okadyk* (we read), *gitdi* (she went). The *d* never changes, and *git-* keeps its *t*: *gitdi*.",
+    "see": "gp-past-dy"
+  },
+  "vocab": [
+    { "tk": "düýn", "en": "yesterday", "pos": "adv", "card": "fc-0348" },
+    { "tk": "dynç almak", "en": "to rest, to have a rest", "pos": "verb" },
+    { "tk": "gezmek", "en": "to walk around, to stroll; to travel around", "pos": "verb" },
+    { "tk": "oýnamak", "en": "to play", "pos": "verb", "card": "fc-0265" },
+    { "tk": "film", "en": "film, movie", "pos": "noun", "card": "fc-0343" },
+    { "tk": "uklamak", "en": "to sleep; to fall asleep", "pos": "verb", "card": "fc-0352" },
+    { "tk": "bişirmek", "en": "to cook", "pos": "verb" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u01-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["düýn", "yesterday"],
+        ["dynç almak", "to rest"],
+        ["gezmek", "to stroll"],
+        ["oýnamak", "to play"],
+        ["uklamak", "to sleep"],
+        ["bişirmek", "to cook"]
+      ]
+    },
+    {
+      "id": "a2-u01-l01-e02",
+      "type": "mcq",
+      "points": ["gp-past-dy"],
+      "question": "How do you say **I came**?",
+      "options": ["geldim", "geldiň", "gelýärin", "geldi"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*geldiň* is **you came**. **I** takes *-m* in the past.",
+        "2": "*gelýärin* is the present: **I come**, **I'm coming**.",
+        "3": "*geldi* has no ending: **he** or **she came**."
+      },
+      "explain": "*gel-* + *-di* (past) + *-m* (I): *geldim*."
+    },
+    {
+      "id": "a2-u01-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-past-dy"],
+      "base": "okamak",
+      "form": "past",
+      "label": "*okamak* in the past: I read, you read…",
+      "cells": [
+        { "p": "men", "accept": ["okadym"] },
+        { "p": "sen", "accept": ["okadyň"] },
+        { "p": "ol", "accept": ["okady"] },
+        { "p": "biz", "accept": ["okadyk"] },
+        { "p": "siz", "accept": ["okadyňyz"] },
+        { "p": "olar", "accept": ["okadylar", "okady"] }
+      ],
+      "explain": "The stem *oka-* has back vowels, so *-dy*, then *-m, -ň, —, -k, -ňyz, -lar*."
+    },
+    {
+      "id": "a2-u01-l01-e04",
+      "type": "cloze",
+      "points": ["gp-past-dy", "gp-harmony-rounding"],
+      "text": "Men düýn film gör___.",
+      "en": "I watched a film yesterday.",
+      "blanks": [
+        {
+          "accept": ["düm"],
+          "reject": [
+            { "answer": "dim", "why": "After the rounded *ö* of *gör-*, the second syllable rounds when something follows it: *gördüm*." },
+            { "answer": "düň", "why": "*gördüň* is **you** watched. **I** takes *-m*: *gördüm*." }
+          ]
+        }
+      ],
+      "explain": "*gör-* + *-dü* (rounded after *ö*) + *-m*: *gördüm*."
+    },
+    {
+      "id": "a2-u01-l01-e05",
+      "type": "translate",
+      "points": ["gp-past-dy", "gp-locative"],
+      "from": "en",
+      "prompt": "We rested at home yesterday.",
+      "accept": ["Biz düýn öýde dynç aldyk.", "Düýn (biz) öýde dynç aldyk."],
+      "reject": [
+        { "answer": "Biz düýn öýde dynç alýarys.", "why": "*alýarys* is the present. For the past, *-dy* + *-k*: *aldyk*." },
+        { "answer": "Biz düýn öýde dynç aldys.", "why": "**We** in the past is *-k*, not *-ys*: *aldyk*." }
+      ]
+    },
+    {
+      "id": "a2-u01-l01-e06",
+      "type": "translate",
+      "points": ["gp-past-dy"],
+      "from": "tk",
+      "prompt": "Aýna düýn palaw bişirdi.",
+      "accept": ["Aýna cooked pilaf yesterday.", "Yesterday Aýna cooked pilaf.", "Aýna made pilaf yesterday.", "Yesterday Aýna made pilaf.", "Aýna cooked (the) palaw yesterday."]
+    },
+    {
+      "id": "a2-u01-l01-e07",
+      "type": "mcq",
+      "points": ["gp-past-dy", "gp-present-yar"],
+      "question": "*Merjen gezdi.* What does it say about Merjen?",
+      "options": ["She went for a walk.", "She is going for a walk.", "She often goes for walks."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "That would be the present, *gezýär*. *-di* is the past.",
+        "2": "That would be the present with a word like *her gün*. *-di* is a single finished action."
+      },
+      "explain": "*gez-* + *-di*: she walked around, went for a walk."
+    },
+    {
+      "id": "a2-u01-l01-e08",
+      "type": "wordbank",
+      "points": ["gp-past-dy", "gp-locative"],
+      "from": "en",
+      "prompt": "I slept at home yesterday.",
+      "text": "Men düýn öýde ukladym.",
+      "answer": ["Men", "düýn", "öýde", "ukladym"],
+      "distractors": ["uklaýaryn", "ukladyň", "öý"],
+      "accept": ["Düýn men öýde ukladym."]
+    },
+    {
+      "id": "a2-u01-l01-e09",
+      "type": "morph",
+      "points": ["gp-past-dy"],
+      "base": "oýnamak",
+      "gloss": "we played",
+      "parts": ["oýna", "dy", "k"],
+      "distractors": ["di", "ýar", "ys"],
+      "result": "oýnadyk",
+      "explain": "*oýna-* has back vowels: *-dy*; **we** in the past is *-k*: *oýnadyk*."
+    },
+    {
+      "id": "a2-u01-l01-e10",
+      "type": "translate",
+      "points": ["gp-past-dy", "gp-locative"],
+      "from": "tk",
+      "prompt": "Olar Aşgabatda gezdiler.",
+      "accept": ["They walked around Ashgabat.", "They strolled around Ashgabat.", "They went for a walk in Ashgabat.", "They travelled around Ashgabat.", "They traveled around Ashgabat."]
+    },
+    {
+      "id": "a2-u01-l01-e11",
+      "type": "cloze",
+      "points": ["gp-past-dy", "gp-question-words"],
+      "text": "Sen düýn näme et___?",
+      "en": "What did you do yesterday?",
+      "blanks": [
+        { "options": ["diň", "dim", "ýärsiň"], "answer": 0 }
+      ],
+      "explain": "**You** in the past: *et-* + *-di* + *-ň* = *etdiň*. The *t* stays before *d*."
+    },
+    {
+      "id": "a2-u01-l01-e12",
+      "type": "translate",
+      "points": ["gp-past-dy", "gp-harmony-rounding"],
+      "from": "en",
+      "prompt": "Merdan watched a film.",
+      "accept": ["Merdan film gördi.", "Merdan bir film gördi."],
+      "reject": [
+        { "answer": "Merdan film gördü.", "why": "A vowel that ends the word doesn't round: *gördi*. It rounds only when an ending follows: *gördüm*." }
+      ]
+    },
+    {
+      "id": "a2-u01-l01-e13",
+      "type": "mcq",
+      "points": ["gp-past-dy", "gp-dative"],
+      "question": "How do you say **I went to Mary**?",
+      "options": ["Men Mara gitdim.", "Men Mara gidim.", "Men Mara gitdym."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The past starts with *d*, a consonant, so *git-* keeps its *t*: *gitdim*.",
+        "2": "*git-* has the front vowel *i*, so the ending is *-di*: *gitdim*."
+      },
+      "explain": "*git-* + *-di* + *-m*: *gitdim*. Compare the present *gidýärin*."
+    }
+  ]
+}

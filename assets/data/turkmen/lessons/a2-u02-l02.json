@@ -1,0 +1,176 @@
+{
+  "id": "a2-u02-l02",
+  "unit": "a2-u02",
+  "order": 2,
+  "title": "There was snow",
+  "goal": "Talk about past weather and what there was, and ask about the past with talypmydyň?",
+  "points": ["gp-past-copula", "gp-past-dy"],
+  "intro": {
+    "text": "*bardy* is **there was**, *ýokdy* **there wasn't**: *Gar bardy.* For questions, `-mY` comes **before** `-dY` on a noun or adjective: *Ýadawmydyň?* (Were you tired?), *Barmydy?* (Was there any?).",
+    "see": "gp-past-copula"
+  },
+  "vocab": [
+    { "tk": "ýagyş", "en": "rain", "pos": "noun", "card": "fc-0353" },
+    { "tk": "gar", "en": "snow", "pos": "noun" },
+    { "tk": "ýel", "en": "wind", "pos": "noun", "card": "fc-0359" },
+    { "tk": "yssy", "en": "hot (of the weather); heat", "pos": "adj", "card": "fc-0298" },
+    { "tk": "ýagmak", "en": "to fall (of rain or snow); to rain, to snow", "pos": "verb", "card": "fc-0399" },
+    { "tk": "güýçli", "en": "strong", "pos": "adj" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u02-l02-e01",
+      "type": "mcq",
+      "points": ["gp-past-copula", "gp-bar-yok"],
+      "question": "How do you say **there was** (some)?",
+      "options": ["bardy", "bar", "barmy", "ýokdy"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*bar* is the present: **there is**.",
+        "2": "*barmy?* asks **is there?**",
+        "3": "*ýokdy* is **there wasn't**."
+      },
+      "explain": "*bar* + *-dy*: *bardy*, there was."
+    },
+    {
+      "id": "a2-u02-l02-e02",
+      "type": "translate",
+      "points": ["gp-past-copula", "gp-time-past"],
+      "from": "en",
+      "prompt": "It was very hot yesterday.",
+      "accept": ["Düýn örän yssydy.", "Düýn howa örän yssydy.", "Howa düýn örän yssydy."],
+      "reject": [
+        { "answer": "Düýn örän yssy.", "why": "Without *-dy* it is the present: **it is hot**. **Was**: *yssydy*." },
+        { "answer": "Düýn örän gyzgyndy.", "why": "*gyzgyn* is for hot things, like tea. Hot weather is *yssy*: *yssydy*." }
+      ]
+    },
+    {
+      "id": "a2-u02-l02-e03",
+      "type": "cloze",
+      "points": ["gp-past-dy"],
+      "text": "Düýn uly ýagyş ýag___.",
+      "en": "There was heavy rain yesterday.",
+      "blanks": [
+        {
+          "accept": ["dy"],
+          "reject": [{ "answer": "ýar", "why": "*ýagýar* is the present: **it's raining**. Yesterday needs the past: *ýagdy*." }]
+        }
+      ],
+      "explain": "*ýagyş ýagmak*, literally **rain falls**: in the past, *ýagyş ýagdy*."
+    },
+    {
+      "id": "a2-u02-l02-e04",
+      "type": "conjugate",
+      "points": ["gp-past-copula", "gp-locative"],
+      "base": "öýde",
+      "form": "past-copula-question",
+      "label": "*öýde* in the past, questions: was I at home? were you at home?…",
+      "cells": [
+        { "p": "men", "accept": ["öýdemidim"] },
+        { "p": "sen", "accept": ["öýdemidiň"] },
+        { "p": "ol", "accept": ["öýdemidi"] },
+        { "p": "biz", "accept": ["öýdemidik"] },
+        { "p": "siz", "accept": ["öýdemidiňiz"] },
+        { "p": "olar", "accept": ["öýdemidiler", "öýdelermidi", "öýdemidi"] }
+      ],
+      "explain": "The particle *-mi* comes straight after *öýde*, then *-di* and the ending: *öýde-mi-di-ň?*"
+    },
+    {
+      "id": "a2-u02-l02-e05",
+      "type": "translate",
+      "points": ["gp-past-copula", "gp-bar-yok", "gp-locative"],
+      "from": "tk",
+      "prompt": "Aşgabatda gar ýokdy.",
+      "accept": ["There was no snow in Ashgabat.", "There wasn't any snow in Ashgabat.", "In Ashgabat there was no snow.", "There wasn't snow in Ashgabat."]
+    },
+    {
+      "id": "a2-u02-l02-e06",
+      "type": "mcq",
+      "points": ["gp-past-copula", "gp-possessive-have"],
+      "question": "*Sende pul barmydy?* What is the question?",
+      "options": ["Did you have money on you?", "Do you have money on you?", "Did you give money?"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "That would be *Sende pul barmy?* The *-dy* makes it past.",
+        "2": "*sende … bar* is about having something on you, not giving it."
+      },
+      "explain": "*bar* + *-my* (question) + *-dy* (past): *barmydy?*, was there?"
+    },
+    {
+      "id": "a2-u02-l02-e07",
+      "type": "translate",
+      "points": ["gp-past-copula", "gp-question-my"],
+      "from": "en",
+      "prompt": "Were you tired?",
+      "accept": ["Sen ýadawmydyň?", "Siz ýadawmydyňyz?", "Ýadawmydyň?", "Ýadawmydyňyz?"],
+      "reject": [
+        { "answer": "Sen ýadawdyňmy?", "why": "With a noun or adjective the particle comes before *-dy*: *ýadawmydyň?*" },
+        { "answer": "Sen ýadawmy?", "why": "*ýadawmy?* is the present: **are you tired?** For the past, add *-dy* and the ending: *ýadawmydyň?*" }
+      ]
+    },
+    {
+      "id": "a2-u02-l02-e08",
+      "type": "wordbank",
+      "points": ["gp-past-copula", "gp-dal"],
+      "from": "en",
+      "prompt": "Wasn't the weather cold?",
+      "text": "Howa sowuk dälmidi?",
+      "answer": ["Howa", "sowuk", "dälmidi"],
+      "distractors": ["däldi", "sowukdy", "dälmi"]
+    },
+    {
+      "id": "a2-u02-l02-e09",
+      "type": "translate",
+      "points": ["gp-past-copula", "gp-bar-yok"],
+      "from": "tk",
+      "prompt": "Toýda köp adam bardy.",
+      "accept": ["There were a lot of people at the wedding.", "There were many people at the wedding.", "Many people were at the wedding.", "A lot of people were at the wedding."]
+    },
+    {
+      "id": "a2-u02-l02-e10",
+      "type": "cloze",
+      "points": ["gp-past-copula", "gp-possessive-have"],
+      "text": "Mende pul ýok___.",
+      "en": "I had no money on me.",
+      "blanks": [
+        {
+          "accept": ["dy"],
+          "reject": [{ "answer": "dum", "why": "The thing you didn't have, *pul*, is the subject, so there is no ending for **I**: *ýokdy*." }]
+        }
+      ],
+      "explain": "*Mende pul ýok* (I have no money on me), in the past: *ýokdy*."
+    },
+    {
+      "id": "a2-u02-l02-e11",
+      "type": "translate",
+      "points": ["gp-past-copula", "gp-bar-yok", "gp-place-words"],
+      "from": "en",
+      "prompt": "Was there a café here?",
+      "accept": ["Bu ýerde kafe barmydy?", "Şu ýerde kafe barmydy?"],
+      "reject": [
+        { "answer": "Bu ýerde kafe bardymy?", "why": "After *bar* the particle comes before *-dy*: *barmydy?*" }
+      ]
+    },
+    {
+      "id": "a2-u02-l02-e12",
+      "type": "cloze",
+      "points": ["gp-past-copula", "gp-answers"],
+      "text": "Howa yssymydy? — Ýok, ___.",
+      "en": "Was the weather hot? — No, it was cold.",
+      "blanks": [
+        { "options": ["sowukdy", "sowuk", "yssydy"], "answer": 0 }
+      ],
+      "explain": "**It was cold**: *sowuk* + *-dy*. Plain *sowuk* would be the present."
+    },
+    {
+      "id": "a2-u02-l02-e13",
+      "type": "translate",
+      "points": ["gp-past-copula", "gp-time-past", "gp-dal"],
+      "from": "tk",
+      "prompt": "Düýn güýçli ýel bardy, ýöne sowuk däldi.",
+      "accept": ["Yesterday there was a strong wind, but it wasn't cold.", "There was a strong wind yesterday, but it wasn't cold.", "Yesterday it was windy, but it wasn't cold.", "It was windy yesterday, but it wasn't cold."]
+    }
+  ]
+}

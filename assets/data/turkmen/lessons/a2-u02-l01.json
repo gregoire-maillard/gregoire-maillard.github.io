@@ -1,0 +1,177 @@
+{
+  "id": "a2-u02-l01",
+  "unit": "a2-u02",
+  "order": 1,
+  "title": "When I was a child",
+  "goal": "Say what you and others were, and weren't, with -dY on nouns and adjectives.",
+  "points": ["gp-past-copula"],
+  "intro": {
+    "text": "For **was** and **were**, add `-dY` and the past endings to the noun or adjective: *talypdym* (I was a student), *ýadawdy* (she was tired), *öýdedik* (we were at home). **Wasn't**: *däldim*. In the past the ending is never left out.",
+    "see": "gp-past-copula"
+  },
+  "vocab": [
+    { "tk": "çagalyk", "en": "childhood", "pos": "noun" },
+    { "tk": "garry", "en": "old (of people), elderly", "pos": "adj" },
+    { "tk": "ýaşuly", "en": "elder, older man", "pos": "noun", "card": "fc-0229" },
+    { "tk": "ýaş", "en": "young", "pos": "adj", "card": "fc-0277" },
+    { "tk": "şonda", "en": "then, at that time", "pos": "adv" },
+    { "tk": "ene-ata", "en": "parents", "pos": "noun" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u02-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["çagalyk", "childhood"],
+        ["garry", "old (of people)"],
+        ["ýaşuly", "elder"],
+        ["ýaş", "young"],
+        ["şonda", "then"],
+        ["ene-ata", "parents"]
+      ]
+    },
+    {
+      "id": "a2-u02-l01-e02",
+      "type": "mcq",
+      "points": ["gp-past-copula"],
+      "question": "How do you say **I was a student**?",
+      "options": ["Men talypdym.", "Men talyp.", "Men talypdy.", "Men talyp däldim."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*Men talyp* is the present: **I am a student**.",
+        "2": "In the past the ending is needed: *talypdy* is **he** or **she was**. **I was** is *talypdym*.",
+        "3": "*talyp däldim* is **I wasn't a student**."
+      },
+      "explain": "*talyp* + *-dy* (was) + *-m* (I): *talypdym*."
+    },
+    {
+      "id": "a2-u02-l01-e03",
+      "type": "conjugate",
+      "points": ["gp-past-copula"],
+      "base": "ýadaw",
+      "form": "past-copula",
+      "label": "*ýadaw* in the past: I was tired, you were tired…",
+      "cells": [
+        { "p": "men", "accept": ["ýadawdym"] },
+        { "p": "sen", "accept": ["ýadawdyň"] },
+        { "p": "ol", "accept": ["ýadawdy"] },
+        { "p": "biz", "accept": ["ýadawdyk"] },
+        { "p": "siz", "accept": ["ýadawdyňyz"] },
+        { "p": "olar", "accept": ["ýadawdylar", "ýadawlardy", "ýadawdy"] }
+      ],
+      "explain": "*ýadaw* has back vowels: *-dy*, then the past endings *-m, -ň, —, -k, -ňyz, -lar*."
+    },
+    {
+      "id": "a2-u02-l01-e04",
+      "type": "cloze",
+      "points": ["gp-past-copula"],
+      "text": "Çagalygymda men örän bagtly___.",
+      "en": "In my childhood I was very happy.",
+      "blanks": [
+        {
+          "accept": ["dym"],
+          "reject": [
+            { "answer": "dy", "why": "*bagtlydy* is **he** or **she was**. For **I**, add *-m*: *bagtlydym*." },
+            { "answer": "dim", "why": "*bagtly* ends in the back vowel *y*, so the ending is *-dy*: *bagtlydym*." }
+          ]
+        }
+      ],
+      "explain": "*bagtly* + *-dy* + *-m*: *bagtlydym*, I was happy."
+    },
+    {
+      "id": "a2-u02-l01-e05",
+      "type": "translate",
+      "points": ["gp-past-copula", "gp-time-past", "gp-locative"],
+      "from": "en",
+      "prompt": "I wasn't at home yesterday.",
+      "accept": ["Men düýn öýde däldim.", "Düýn (men) öýde däldim."],
+      "reject": [
+        { "answer": "Men düýn öýde däl.", "why": "*däl* alone is the present. In the past it takes *-di* and the ending: *däldim*." },
+        { "answer": "Men düýn öýde däldi.", "why": "*däldi* is **he** or **she wasn't**. For **I**: *däldim*." }
+      ]
+    },
+    {
+      "id": "a2-u02-l01-e06",
+      "type": "translate",
+      "points": ["gp-past-copula"],
+      "from": "tk",
+      "prompt": "Şonda men ýaşdym.",
+      "accept": ["I was young then.", "Then I was young.", "At that time I was young.", "I was young at that time."]
+    },
+    {
+      "id": "a2-u02-l01-e07",
+      "type": "mcq",
+      "points": ["gp-past-copula", "gp-possessive-suffixes"],
+      "question": "*Atam garrydy.* What does it mean?",
+      "options": ["My grandfather was old.", "My grandfather is old.", "My grandfather was young."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**Is old** would be *Atam garry*. The *-dy* makes it past.",
+        "2": "*garry* is **old** (of people); **young** is *ýaş*."
+      },
+      "explain": "*garry* + *-dy*: he was old."
+    },
+    {
+      "id": "a2-u02-l01-e08",
+      "type": "wordbank",
+      "points": ["gp-past-copula"],
+      "from": "en",
+      "prompt": "We were children then.",
+      "text": "Şonda biz çagadyk.",
+      "answer": ["Şonda", "biz", "çagadyk"],
+      "distractors": ["çagadym", "çaga", "çagadyň"],
+      "accept": ["Biz şonda çagadyk."]
+    },
+    {
+      "id": "a2-u02-l01-e09",
+      "type": "morph",
+      "points": ["gp-past-copula"],
+      "base": "çaga",
+      "gloss": "I was a child",
+      "parts": ["çaga", "dy", "m"],
+      "distractors": ["di", "yn", "ň"],
+      "result": "çagadym",
+      "explain": "After a vowel *-dy* joins directly: *çaga* + *-dy* + *-m* = *çagadym*."
+    },
+    {
+      "id": "a2-u02-l01-e10",
+      "type": "translate",
+      "points": ["gp-past-copula", "gp-locative"],
+      "from": "tk",
+      "prompt": "Ol öýde däldi.",
+      "accept": ["She wasn't at home.", "He wasn't at home.", "[He|She] wasn't home."]
+    },
+    {
+      "id": "a2-u02-l01-e11",
+      "type": "cloze",
+      "points": ["gp-past-copula", "gp-dal"],
+      "text": "Men şonda talyp ___.",
+      "en": "I wasn't a student then.",
+      "blanks": [
+        { "options": ["däldim", "däl", "dälmi"], "answer": 0 }
+      ],
+      "explain": "**Wasn't** is *däl* + *-di* + the ending: *däldim*."
+    },
+    {
+      "id": "a2-u02-l01-e12",
+      "type": "translate",
+      "points": ["gp-past-copula", "gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "My grandfather was a doctor.",
+      "accept": ["Meniň atam lukmandy.", "Atam lukmandy."],
+      "reject": [
+        { "answer": "Meniň atam lukman.", "why": "Without *-dy* it is the present: **is** a doctor. **Was**: *lukmandy*." }
+      ]
+    },
+    {
+      "id": "a2-u02-l01-e13",
+      "type": "translate",
+      "points": ["gp-past-copula"],
+      "from": "tk",
+      "prompt": "Ýaşuly örän akyllydy.",
+      "accept": ["The elder was very clever.", "The old man was very clever.", "The elder was very wise.", "The old man was very wise."]
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "id": "a2-u01-l03",
+  "unit": "a2-u01",
+  "order": 3,
+  "title": "Two sets of endings",
+  "goal": "Tell the present and past endings apart: gelýärin, geldim; gelýäris, geldik.",
+  "points": ["gp-person-endings-types", "gp-past-dy", "gp-present-yar"],
+  "intro": {
+    "text": "The present takes *-Yn, -sYň, —, -Ys, -sYňYz, -lAr* (*gelýärin*); the past takes *-m, -ň, —, -k, -ňYz, -lAr* (*geldim*). New: *bolmak*, to be, become or happen: *Näme boldy?* (What happened?)",
+    "see": "gp-person-endings-types"
+  },
+  "vocab": [
+    { "tk": "bolmak", "en": "to be; to become; to happen", "pos": "verb", "card": "fc-0002" },
+    { "tk": "dolanmak", "en": "to come back, to return", "pos": "verb", "card": "fc-0098" },
+    { "tk": "eşitmek", "en": "to hear", "pos": "verb", "card": "fc-0104" },
+    { "tk": "habar", "en": "news; message", "pos": "noun", "card": "fc-0204" },
+    { "tk": "gutarmak", "en": "to finish; to end", "pos": "verb", "card": "fc-0192" },
+    { "tk": "ýöremek", "en": "to walk", "pos": "verb", "card": "fc-0317" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u01-l03-e01",
+      "type": "mcq",
+      "points": ["gp-person-endings-types"],
+      "question": "Which one is **I worked**?",
+      "options": ["işledim", "işleýärin", "işledik", "işledin"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*işleýärin* is the present: **I work**, **I'm working**.",
+        "2": "*işledik* is **we worked**: *-k* is **we** in the past.",
+        "3": "*-in* is the present's ending for **I**. The past takes *-m*: *işledim*."
+      },
+      "explain": "Past *-di* + the second set's **I**, *-m*: *işledim*."
+    },
+    {
+      "id": "a2-u01-l03-e02",
+      "type": "cloze",
+      "points": ["gp-person-endings-types", "gp-present-yar", "gp-past-dy"],
+      "text": "Men şu gün işleýär___, düýn hem işledi___.",
+      "en": "I'm working today, and I worked yesterday too.",
+      "blanks": [
+        {
+          "accept": ["in"],
+          "reject": [{ "answer": "im", "why": "*-m* is the past's ending. After *-ýär*, **I** is *-in*: *işleýärin*." }]
+        },
+        {
+          "accept": ["m"],
+          "reject": [{ "answer": "n", "why": "After the past *-di*, **I** is *-m*: *işledim*." }]
+        }
+      ],
+      "explain": "Present: *işleýär* + *-in*. Past: *işledi* + *-m*."
+    },
+    {
+      "id": "a2-u01-l03-e03",
+      "type": "translate",
+      "points": ["gp-person-endings-types", "gp-past-dy"],
+      "from": "en",
+      "prompt": "Yesterday we walked a lot.",
+      "accept": ["Biz düýn köp ýöredik.", "Düýn (biz) köp ýöredik."],
+      "reject": [
+        { "answer": "Biz düýn köp ýöreýäris.", "why": "*ýöreýäris* is the present. For the past: *ýöre-* + *-di* + *-k*: *ýöredik*." },
+        { "answer": "Biz düýn köp ýöredis.", "why": "*-is* is **we** in the present. In the past, **we** is *-k*: *ýöredik*." }
+      ]
+    },
+    {
+      "id": "a2-u01-l03-e04",
+      "type": "translate",
+      "points": ["gp-past-dy", "gp-question-words"],
+      "from": "tk",
+      "prompt": "Näme boldy?",
+      "accept": ["What happened?", "What has happened?"]
+    },
+    {
+      "id": "a2-u01-l03-e05",
+      "type": "conjugate",
+      "points": ["gp-past-dy", "gp-person-endings-types"],
+      "base": "dolanmak",
+      "form": "past",
+      "label": "*dolanmak* in the past: I came back, you came back…",
+      "cells": [
+        { "p": "men", "accept": ["dolandym"] },
+        { "p": "sen", "accept": ["dolandyň"] },
+        { "p": "ol", "accept": ["dolandy"] },
+        { "p": "biz", "accept": ["dolandyk"] },
+        { "p": "siz", "accept": ["dolandyňyz"] },
+        { "p": "olar", "accept": ["dolandylar", "dolandy"] }
+      ],
+      "explain": "*dolan-* + *-dy*, then *-m, -ň, —, -k, -ňyz, -lar*. The past ending is the third syllable, so it doesn't round."
+    },
+    {
+      "id": "a2-u01-l03-e06",
+      "type": "mcq",
+      "points": ["gp-person-endings-types"],
+      "question": "*Biz geldik* and *Biz gelýäris*: what is the difference?",
+      "options": ["*geldik* is the past, *gelýäris* the present", "*geldik* is a question", "None: they mean the same"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "A question would have *-mi*: *geldikmi?*",
+        "2": "*-di* + *-k* is the past (**we came**); *-ýär* + *-is* is the present (**we're coming**)."
+      },
+      "explain": "**We** is *-k* in the past and *-is* in the present: *geldik*, *gelýäris*."
+    },
+    {
+      "id": "a2-u01-l03-e07",
+      "type": "translate",
+      "points": ["gp-past-dy-negative-question", "gp-accusative"],
+      "from": "en",
+      "prompt": "Did you hear the news?",
+      "accept": ["Sen habary eşitdiňmi?", "Siz habary eşitdiňizmi?", "Habary eşitdiňmi?", "Habary eşitdiňizmi?"],
+      "reject": [
+        { "answer": "Sen habary eşiddiňmi?", "why": "Before the *d* of the past, *eşit-* keeps its *t*: *eşitdiňmi*." },
+        { "answer": "Sen habary eşidýärsiňmi?", "why": "*eşidýärsiň* is the present. For **did you hear**: *eşitdiňmi?*" }
+      ]
+    },
+    {
+      "id": "a2-u01-l03-e08",
+      "type": "wordbank",
+      "points": ["gp-past-dy", "gp-telling-time"],
+      "from": "tk",
+      "prompt": "Sapak sagat dokuzda gutardy.",
+      "text": "The lesson finished at nine.",
+      "answer": ["The", "lesson", "finished", "at", "nine"],
+      "distractors": ["starts", "ten", "is"]
+    },
+    {
+      "id": "a2-u01-l03-e09",
+      "type": "translate",
+      "points": ["gp-past-dy", "gp-ablative"],
+      "from": "tk",
+      "prompt": "Merjen Londondan dolandy.",
+      "accept": ["Merjen came back from London.", "Merjen returned from London.", "Merjen has come back from London.", "Merjen has returned from London."]
+    },
+    {
+      "id": "a2-u01-l03-e10",
+      "type": "morph",
+      "points": ["gp-past-dy", "gp-person-endings-types"],
+      "base": "eşitmek",
+      "gloss": "we heard",
+      "parts": ["eşit", "di", "k"],
+      "distractors": ["eşid", "ýär", "is"],
+      "result": "eşitdik",
+      "explain": "*eşit-* keeps its *t* before *d*; **we** in the past is *-k*: *eşitdik*."
+    },
+    {
+      "id": "a2-u01-l03-e11",
+      "type": "cloze",
+      "points": ["gp-past-dy", "gp-harmony-rounding"],
+      "text": "Toý düýn bol___.",
+      "en": "The wedding was yesterday.",
+      "blanks": [
+        {
+          "accept": ["dy"],
+          "reject": [{ "answer": "du", "why": "A vowel that ends the word doesn't round: *boldy*. It rounds when an ending follows: *boldum*." }]
+        }
+      ],
+      "explain": "*bol-* + *-dy*: *boldy*, it took place."
+    },
+    {
+      "id": "a2-u01-l03-e12",
+      "type": "translate",
+      "points": ["gp-past-dy", "gp-possessive-suffixes", "gp-accusative"],
+      "from": "en",
+      "prompt": "I finished my work.",
+      "accept": ["Men işimi gutardym.", "Işimi gutardym."],
+      "reject": [
+        { "answer": "Men işimi gutarýaryn.", "why": "*gutarýaryn* is the present. For the past: *gutardym*." },
+        { "answer": "Men işimi gutardum.", "why": "Only the second syllable rounds. In *gutardym* the past ending is the third, so it stays *y*." }
+      ]
+    },
+    {
+      "id": "a2-u01-l03-e13",
+      "type": "translate",
+      "points": ["gp-person-endings-types", "gp-present-uses"],
+      "from": "tk",
+      "prompt": "Men düýn köp işledim, şu gün dynç alýaryn.",
+      "accept": [
+        "I worked a lot yesterday; today I am resting.",
+        "I worked a lot yesterday [and|but] today I am [resting|having a rest|taking a rest].",
+        "I worked a lot yesterday; today I am [having|taking] a rest.",
+        "Yesterday I worked a lot (and|but) today I am [resting|having a rest|taking a rest].",
+        "[I worked a lot yesterday|Yesterday I worked a lot] (and|but) I am [resting|having a rest|taking a rest] today."
+      ]
+    }
+  ]
+}

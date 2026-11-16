@@ -1,0 +1,178 @@
+{
+  "id": "a2-u01-l02",
+  "unit": "a2-u01",
+  "order": 2,
+  "title": "I didn't — did you?",
+  "goal": "Say what didn't happen and ask about the past with -mA and -mY.",
+  "points": ["gp-past-dy-negative-question", "gp-past-dy"],
+  "intro": {
+    "text": "Put `-mA` before `-dY` for **didn't**: *gelmedim* (I didn't come). Add `-mY` after the ending for a question: *Geldiňmi?* (Did you come?), *Gelmediňmi?* (Didn't you come?). Answer with the verb: *Hawa, geldim.*",
+    "see": "gp-past-dy-negative-question"
+  },
+  "vocab": [
+    { "tk": "öňňin", "en": "the day before yesterday", "pos": "adv" },
+    { "tk": "ýuwmak", "en": "to wash", "pos": "verb" },
+    { "tk": "arassalamak", "en": "to clean", "pos": "verb" },
+    { "tk": "görüşmek", "en": "to meet, to see each other", "pos": "verb", "card": "fc-0191" },
+    { "tk": "soramak", "en": "to ask", "pos": "verb", "card": "fc-0151" },
+    { "tk": "jogap", "en": "answer, reply", "pos": "noun", "card": "fc-0351" },
+    { "tk": "jaň etmek", "en": "to call, to phone", "pos": "verb" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u01-l02-e01",
+      "type": "mcq",
+      "points": ["gp-past-dy-negative-question"],
+      "question": "How do you say **I didn't come**?",
+      "options": ["gelmedim", "gelmeýärin", "geldim däl", "gelmediň"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*gelmeýärin* is the present: **I'm not coming**.",
+        "2": "With verbs, **not** is the ending *-mA*, not *däl*: *gelmedim*.",
+        "3": "*gelmediň* is **you didn't come**."
+      },
+      "explain": "*gel-* + *-me* (not) + *-di* (past) + *-m* (I): *gelmedim*."
+    },
+    {
+      "id": "a2-u01-l02-e02",
+      "type": "conjugate",
+      "points": ["gp-past-dy-negative-question"],
+      "base": "işlemek",
+      "form": "past-negative",
+      "label": "*işlemek* in the past, negative: I didn't work, you didn't work…",
+      "cells": [
+        { "p": "men", "accept": ["işlemedim"] },
+        { "p": "sen", "accept": ["işlemediň"] },
+        { "p": "ol", "accept": ["işlemedi"] },
+        { "p": "biz", "accept": ["işlemedik"] },
+        { "p": "siz", "accept": ["işlemediňiz"] },
+        { "p": "olar", "accept": ["işlemediler", "işlemedi"] }
+      ],
+      "explain": "*işle-* + *-me* + *-di*, then the past endings. The *e* of the stem stays *e*."
+    },
+    {
+      "id": "a2-u01-l02-e03",
+      "type": "cloze",
+      "points": ["gp-past-dy-negative-question", "gp-accusative"],
+      "text": "Sen kitaby okady___?",
+      "en": "Did you read the book?",
+      "blanks": [
+        {
+          "accept": ["ňmy"],
+          "reject": [
+            { "answer": "ňmi", "why": "*okadyň* has back vowels, so the particle is *-my*: *okadyňmy*." },
+            { "answer": "my", "why": "*okadymy* asks about **him** or **her**. For **you**, keep *-ň* before the particle: *okadyňmy*." }
+          ]
+        }
+      ],
+      "explain": "*okady* + *-ň* (you) + *-my*: *okadyňmy?*"
+    },
+    {
+      "id": "a2-u01-l02-e04",
+      "type": "translate",
+      "points": ["gp-past-dy-negative-question", "gp-possessive-suffixes", "gp-dative"],
+      "from": "en",
+      "prompt": "I didn't call my father.",
+      "accept": ["Men kakama jaň etmedim.", "Kakama jaň etmedim."],
+      "reject": [
+        { "answer": "Men kakama jaň etmeýärin.", "why": "*etmeýärin* is the present. For the past, *-me* + *-di* + *-m*: *etmedim*." },
+        { "answer": "Men kakamy jaň etmedim.", "why": "The one you call takes the dative: *kakama jaň etmek*." }
+      ]
+    },
+    {
+      "id": "a2-u01-l02-e05",
+      "type": "translate",
+      "points": ["gp-past-dy-negative-question", "gp-bilen"],
+      "from": "tk",
+      "prompt": "Sen öňňin Merjen bilen görüşdiňmi?",
+      "accept": ["Did you meet Merjen the day before yesterday?", "Did you [meet with|see] Merjen the day before yesterday?", "The day before yesterday, did you [meet|meet with|see] Merjen?"]
+    },
+    {
+      "id": "a2-u01-l02-e06",
+      "type": "mcq",
+      "points": ["gp-past-dy-negative-question", "gp-accusative"],
+      "question": "*Siz otagy arassaladyňyzmy?* How do you answer **Yes, we did**?",
+      "options": ["Hawa, arassaladyk.", "Hawa, arassalaýarys.", "Ýok, arassalamadyk."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*arassalaýarys* is the present: **we're cleaning it**.",
+        "2": "*arassalamadyk* is **we didn't**: that's the answer for **no**."
+      },
+      "explain": "Answer with the verb in the past: *arassala-* + *-dy* + *-k*: *arassaladyk*."
+    },
+    {
+      "id": "a2-u01-l02-e07",
+      "type": "translate",
+      "points": ["gp-past-dy-negative-question", "gp-ablative"],
+      "from": "en",
+      "prompt": "Did he ask the teacher?",
+      "accept": ["Ol mugallymdan soradymy?", "Mugallymdan soradymy?"],
+      "reject": [
+        { "answer": "Ol mugallyma soradymy?", "why": "The person you ask takes *-dan*: *mugallymdan sora-*." },
+        { "answer": "Ol mugallymdan soradyňmy?", "why": "*soradyňmy* asks **you**. For **he**, no ending: *soradymy?*" }
+      ]
+    },
+    {
+      "id": "a2-u01-l02-e08",
+      "type": "wordbank",
+      "points": ["gp-past-dy-negative-question", "gp-accusative"],
+      "from": "en",
+      "prompt": "We didn't wash the car.",
+      "text": "Biz maşyny ýuwmadyk.",
+      "answer": ["Biz", "maşyny", "ýuwmadyk"],
+      "distractors": ["ýuwmadym", "maşyn", "ýuwýarys"]
+    },
+    {
+      "id": "a2-u01-l02-e09",
+      "type": "morph",
+      "points": ["gp-past-dy-negative-question"],
+      "base": "soramak",
+      "gloss": "Did you ask? (to one friend)",
+      "parts": ["sora", "dy", "ň", "my"],
+      "distractors": ["di", "mi", "m"],
+      "result": "soradyňmy",
+      "explain": "*sora-* + *-dy* (past) + *-ň* (you) + *-my* (question): *soradyňmy?*"
+    },
+    {
+      "id": "a2-u01-l02-e10",
+      "type": "translate",
+      "points": ["gp-past-dy-negative-question"],
+      "from": "tk",
+      "prompt": "Mugallym jogap bermedi.",
+      "accept": ["The teacher didn't answer.", "The teacher did not reply.", "The teacher gave no answer.", "The teacher didn't give an answer."]
+    },
+    {
+      "id": "a2-u01-l02-e11",
+      "type": "cloze",
+      "points": ["gp-past-dy-negative-question", "gp-answers"],
+      "text": "Merdan geldimi? — Ýok, ___.",
+      "en": "Did Merdan come? — No, he didn't.",
+      "blanks": [
+        { "options": ["gelmedi", "gelmedim", "gelmeýär"], "answer": 0 }
+      ],
+      "explain": "Answer with the verb: **he didn't come** is *gelmedi*, with no ending."
+    },
+    {
+      "id": "a2-u01-l02-e12",
+      "type": "translate",
+      "points": ["gp-past-dy-negative-question"],
+      "from": "en",
+      "prompt": "Didn't you call? (polite)",
+      "accept": ["Siz jaň etmediňizmi?", "Jaň etmediňizmi?"],
+      "reject": [
+        { "answer": "Siz jaň etdiňizmi?", "why": "That asks **did you call?** For **didn't**, add *-me*: *etmediňizmi?*" },
+        { "answer": "Sen jaň etmediňmi?", "why": "*sen* is familiar. The prompt says polite: *Siz jaň etmediňizmi?*" }
+      ]
+    },
+    {
+      "id": "a2-u01-l02-e13",
+      "type": "translate",
+      "points": ["gp-past-dy", "gp-accusative"],
+      "from": "tk",
+      "prompt": "Öňňin olar öýi arassaladylar.",
+      "accept": ["The day before yesterday they cleaned the house.", "They cleaned the house the day before yesterday.", "The day before yesterday they cleaned the home.", "They cleaned the home the day before yesterday."]
+    }
+  ]
+}
