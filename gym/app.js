@@ -155,7 +155,7 @@
   function wakeOff() { const w = wl; wl = null; wlState = 'off'; try { w && w.release(); } catch (e) { /* ignore */ } }
   function updWake() {
     const el = $('#wake'); if (!el) return;
-    const map = { on: ['☀︎ Awake', 'on'], unsupported: ['⚠︎ May sleep', 'warn'], error: ['⚠︎ Tap: keep awake', 'warn'], released: ['⚠︎ Tap: keep awake', 'warn'], off: ['☀︎ …', ''] };
+    const map = { on: ['☀︎', 'on'], unsupported: ['⚠︎ May sleep', 'warn'], error: ['⚠︎ Tap', 'warn'], released: ['⚠︎ Tap', 'warn'], off: ['☀︎', ''] };
     const [t, c] = map[wlState] || map.off;
     el.textContent = t; el.className = 'pill ' + c;
   }
@@ -225,38 +225,29 @@
     if (!ui.pick) ui.pick = defaultPick();
     const cur = nowAbs(), P = ui.pick, B = buildSession(P.key, P.abs);
     const days = DAYS(), todayKey = days[new Date().getDay()];
-    const restDay = !todayKey;
     const keys = Object.keys(PLAN.sessions).sort((a, b) => {
       const da = [1, 2, 3, 4, 5, 6, 0].findIndex(d => days[d] === a), db = [1, 2, 3, 4, 5, 6, 0].findIndex(d => days[d] === b);
       return (da < 0 ? 9 : da) - (db < 0 ? 9 : db);
     });
-    const W = B.W, t = B.time;
-    const isNow = P.abs === cur;
-    const done = doneThisWeek(P.key, P.abs);
-    let h = `<div class="top"><div><h1>Gym</h1><div class="date">${fmtDay(today())}</div></div><div class="muted" style="text-align:right;font-size:.85rem">Today is<br><b style="color:var(--text)">Week ${WK(cur).wib + 1} · Block ${WK(cur).block + 1}</b></div></div>`;
-    if (restDay && isNow) {
-      h += `<div class="note"><b>Rest day.</b> Next up: ${esc(PLAN.sessions[P.key].name)}${dayOf(P.key) ? ' (' + dayOf(P.key) + ')' : ''}. You can still start any session below.</div>`;
-    }
+    const W = B.W, isNow = P.abs === cur, done = doneThisWeek(P.key, P.abs);
+    let h = `<div class="top"><div><h1>Gym</h1><div class="date">${fmtDay(today())}${todayKey ? '' : ' · rest day'}</div></div></div>`;
     h += `<div class="weekbar"><button class="icon-btn" data-act="wk" data-v="-1" aria-label="Previous week" ${P.abs <= 0 ? 'disabled' : ''}>‹</button>
-      <div class="mid"><b>Week ${W.wib + 1} · ${esc(W.cfg.name)} ${isNow ? '<span class="now-tag">· now</span>' : ''}</b><span>Block ${W.block + 1} · ${esc(W.cfg.cue)}</span></div>
+      <div class="mid"><b>Week ${W.wib + 1} · ${esc(W.cfg.name)}</b><span>Block ${W.block + 1} · RPE ${W.cfg.rpe}${isNow ? ' · <i class="now-tag">now</i>' : ''}</span></div>
       <button class="icon-btn" data-act="wk" data-v="1" aria-label="Next week">›</button></div>`;
     h += `<div class="chips">${keys.map(k => `<button class="chip ${k === P.key ? 'on' : ''}" data-act="pick" data-v="${k}"><b>${esc(PLAN.sessions[k].name)}${doneThisWeek(k, P.abs) ? ' <span class="ok">✓</span>' : ''}</b><small>${dayOf(k) || 'any day'}</small></button>`).join('')}</div>`;
-    h += `<div class="card"><div class="card-h"><h2>${esc(B.sess.name)}${done ? ' <span class="tag up">done ✓</span>' : ''}</h2><span class="est tnum">≈ ${mmss(t.total)} total</span></div>
-      <div class="timeline" title="warm-up / lifting / cool-down"><i class="w" style="width:${t.warm / t.total * 100}%"></i><i class="k" style="width:${t.work / t.total * 100}%"></i><i class="c" style="width:${t.cool / t.total * 100}%"></i></div>
-      <div class="wu">Warm-up ${mmss(t.warm)} · Lifting ≈ ${mmss(t.work)} · Cool-down ${mmss(t.cool)}</div>`;
+    h += `<div class="card"><div class="card-h"><h2>${esc(B.sess.name)}${done ? ' <span class="ok">✓</span>' : ''}</h2><span class="est tnum">${Math.round(B.time.total / 60)} min</span></div>`;
     B.blocks.forEach(blk => {
-      h += `<div class="blk"><div class="blk-h">${blk.main ? 'Main lift' : 'Superset ' + blk.prefix} · ≈ ${fmtMin(blk.sec)} min</div>`;
+      h += `<div class="blk">`;
       blk.rows.forEach(r => {
-        const tagCls = { up: 'up', down: 'down', calibrate: 'cal', estimate: 'cal', deload: 'down' }[r.tg.status];
-        const tagTxt = { up: '↑', down: '↓', calibrate: 'calibrate', estimate: 'est.', deload: 'deload' }[r.tg.status];
-        h += `<button class="exrow" data-act="exinfo" data-v="${r.slot}"><span class="badge">${r.label}</span>
-          <span class="grow"><span class="nm">${esc(r.ex.name)}</span><span class="meta tnum">${r.sets} × ${r.item.reps[0]}–${r.item.reps[1]}${r.ex.side ? '/side' : ''} · rest ${mmss(r.item.rest)} · ≈ ${fmtMin(r.sec)} min${r.swapped ? '<span class="tag swap">swapped</span>' : ''}</span></span>
-          <span class="kg"><b class="tnum">${C.fmtKg(r.ex, r.tg.weight)}</b><small>${unit(r.ex)}${tagTxt ? `<span class="tag ${tagCls}">${tagTxt}</span>` : ''}</small></span></button>`;
+        const mark = { up: '<i class="up">↑</i>', down: '<i class="down">↓</i>', deload: '<i class="down">−10%</i>' }[r.tg.status] || '';
+        h += `<button class="exrow" data-act="exinfo" data-v="${r.slot}"><span class="thumb">${M.frame(r.ex.anim, r.ex.prop, 0.55, { cable: isCable(r.ex) })}</span>
+          <span class="grow"><span class="nm">${r.swapped ? '⇄ ' : ''}${esc(r.ex.name)}</span><span class="meta tnum">${blk.main ? '' : r.label + ' · '}${r.sets} × ${r.item.reps[0]}–${r.item.reps[1]}${r.ex.side ? '/side' : ''} · ${Math.max(1, Math.round(r.sec / 60))} min</span></span>
+          <span class="kg"><b class="tnum">${C.fmtKg(r.ex, r.tg.weight)}${mark}</b><small>${r.ex.load === 'dumbbell' ? 'kg / hand' : r.ex.load === 'bw' ? '' : 'kg'}</small></span></button>`;
       });
       h += `</div>`;
     });
-    h += `</div><p class="muted" style="font-size:.82rem;margin:12px 4px">Tap an exercise for the demo, cues, history and swaps.</p>`;
-    const startLabel = isNow ? `Start ${esc(B.sess.name)}` : `Start ${esc(B.sess.name)} · logs as Week ${W.wib + 1}, Block ${W.block + 1}`;
+    h += `</div>`;
+    const startLabel = isNow ? `Start ${esc(B.sess.name)}` : `Start · logs as Week ${W.wib + 1}`;
     h += `<div class="startbar"><div><button class="btn btn-primary big" data-act="start">${startLabel}</button></div></div>`;
     app().innerHTML = h + navHTML();
   }
@@ -295,15 +286,14 @@
     const planned = item.rotation[W.block % item.rotation.length];
     const keepOn = S.swaps[W.block] && S.swaps[W.block][ctx.slot];
     const el = openSheet(`<h2>${esc(ex.name)}</h2>
-      <div class="muted tnum">${C.setsFor(item, W.cfg)} × ${item.reps[0]}–${item.reps[1]}${ex.side ? ' per side' : ''} @ <b style="color:var(--text)">${C.fmtKg(ex, tg.weight)}</b> ${unit(ex)} · rest ${mmss(item.rest)} · tempo ${esc(item.tempo)}</div>
-      <div class="muted" style="font-size:.85rem;margin-top:2px">${esc(tg.reason)}</div>
+      <div class="muted tnum">${C.setsFor(item, W.cfg)} × ${item.reps[0]}–${item.reps[1]}${ex.side ? '/side' : ''} · ${C.fmtKg(ex, tg.weight)} ${ex.load === 'bw' ? '' : unit(ex)} · rest ${mmss(item.rest)} · tempo ${esc(item.tempo)}</div>
       <div class="anim" id="sheetAnim"></div>
       <ul class="cues">${ex.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ul>
-      <div class="sec-h">History</div>${historyHTML(curId)}
-      <div class="sec-h">Swap for${ctx.inWorkout ? ' the rest of this session' : ' this session'}</div>
-      <label class="switch"><span>Keep the swap for the rest of Block ${W.block + 1}</span><input type="checkbox" id="keepSwap" ${keepOn ? 'checked' : ''}></label>
-      ${curId !== planned ? `<button class="opt" data-pick="${planned}"><span class="grow"><b>↺ Back to plan: ${esc(EX(planned).name)}</b></span></button>` : ''}
-      ${cands.map(id => { const e = EX(id), t = C.target(PLAN, st, S.logs, id, item, W.cfg); return `<button class="opt" data-pick="${id}"><span class="thumb">${M.frame(e.anim, e.prop, 0.55, { cable: isCable(e) })}</span><span class="grow"><b>${esc(e.name)}</b><small class="tnum">${C.fmtKg(e, t.weight)} ${unit(e)} · ${t.status === 'calibrate' ? 'starting guess' : esc(t.status)}</small></span><span>⇄</span></button>`; }).join('')}`);
+      <div class="sec-h">Swap</div>
+      ${curId !== planned ? `<button class="opt" data-pick="${planned}"><span class="grow"><b>↺ Back to ${esc(EX(planned).name)}</b></span></button>` : ''}
+      ${cands.map(id => { const e = EX(id), t = C.target(PLAN, st, S.logs, id, item, W.cfg); return `<button class="opt" data-pick="${id}"><span class="thumb">${M.frame(e.anim, e.prop, 0.55, { cable: isCable(e) })}</span><span class="grow"><b>${esc(e.name)}</b><small class="tnum">${C.fmtKg(e, t.weight)} ${e.load === 'bw' ? '' : unit(e)}</small></span></button>`; }).join('')}
+      <label class="switch"><span>Keep for the rest of Block ${W.block + 1}</span><input type="checkbox" id="keepSwap" ${keepOn ? 'checked' : ''}></label>
+      <div class="sec-h">History</div>${historyHTML(curId)}`);
     sheetAnim = M.mount($('#sheetAnim', el), ex.anim, ex.prop, { cable: isCable(ex) });
     el.addEventListener('click', e => {
       const b = e.target.closest('[data-pick]'); if (!b) return;
@@ -398,23 +388,22 @@
 
   let animNode = null, animKey = '', animCtl = null;
   function killAnim() { if (animCtl) animCtl.stop(); animCtl = null; animNode = null; animKey = ''; }
-  function placeAnim(exId) {
+  function placeAnim(key, anim, prop, cable) {
     const slot = $('#animSlot'); if (!slot) return;
-    if (animKey !== exId || !animNode) {
+    if (animKey !== key || !animNode) {
       if (animCtl) animCtl.stop();
-      const ex = EX(exId);
       animNode = document.createElement('div'); animNode.className = 'anim';
-      animCtl = M.mount(animNode, ex.anim, ex.prop, { cable: isCable(ex) });
-      animKey = exId;
+      animCtl = M.mount(animNode, anim, prop, { cable });
+      animKey = key;
     }
     slot.replaceWith(animNode);
   }
 
   function clockHTML() {
     return `<header class="wo-top"><button class="icon-btn" data-act="wo-end" aria-label="End workout">✕</button>
-      <div class="wo-clock"><div class="t tnum"><span id="clk">0:00</span> <small>/ ${mmss(PLAN.timing.budget)}</small></div>
+      <div class="wo-clock"><div class="t tnum" id="clk">0:00</div>
       <div class="phasebar"><span class="pw"></span><span class="pk"></span><span class="pc"></span><i id="clkbar"></i></div></div>
-      <button class="pill" id="wake" data-act="wake">☀︎ …</button></header>`;
+      <button class="pill" id="wake" data-act="wake" aria-label="Screen wake lock">☀︎</button></header>`;
   }
   function renderWorkout() {
     const a = A(); if (!a) return render();
@@ -426,21 +415,24 @@
     // keep the animation node alive across re-renders
     if (animNode && animNode.parentNode) animNode.remove();
     app().innerHTML = `<div class="wo${a.rest && a.phase === 'work' ? ' resting' : ''}">${a.phase !== 'done' ? clockHTML() : ''}${h}</div>`;
-    if (a.phase === 'work') placeAnim(a.steps[a.idx].exId); else killAnim();
+    if (a.phase === 'work') { const ex = EX(a.steps[a.idx].exId); placeAnim(a.steps[a.idx].exId, ex.anim, ex.prop, isCable(ex)); }
+    else if (a.phase === 'warm' || a.phase === 'cool') { const it = phaseList(a)[a.pIdx]; if (it && it.anim) placeAnim('ph:' + a.phase + ':' + a.pIdx, it.anim, null, false); else killAnim(); }
+    else killAnim();
     updWake(); tick();
   }
+  const phaseList = a => a.phase === 'warm' ? PLAN.sessions[a.key].warmup : PLAN.sessions[a.key].cooldown;
   function phaseHTML(a) {
-    const sess = PLAN.sessions[a.key], list = a.phase === 'warm' ? sess.warmup : sess.cooldown;
-    const last = a.pIdx >= list.length - 1;
-    const total = list.reduce((s, x) => s + x.sec, 0);
-    return `<main class="phase"><div class="wo-label">${a.phase === 'warm' ? 'Step 1 of 3' : 'Step 3 of 3'}</div>
-      <h1>${a.phase === 'warm' ? 'Warm-up' : 'Cool-down'} <small class="muted tnum">${mmss(total)}</small></h1>
-      <p class="muted" style="margin:0">${a.phase === 'warm' ? 'Easy pace. Ramp-up sets for the first lift come later, inside the lifting block.' : 'Breathe slowly. Hold each stretch, no bouncing.'}</p>
-      <ol class="plist">${list.map((x, i) => `<li class="${i === a.pIdx ? 'cur' : i < a.pIdx ? 'done' : ''}"><span>${esc(x.name)}${x.note ? `<small>${esc(x.note)}</small>` : ''}</span><b class="tnum" ${i === a.pIdx ? 'id="pT"' : ''}>${mmss(x.sec)}</b></li>`).join('')}</ol></main>
+    const list = phaseList(a), it = list[a.pIdx], next = list[a.pIdx + 1];
+    const last = !next;
+    return `<main class="phase"><div class="wo-label">${a.phase === 'warm' ? 'Warm-up' : 'Cool-down'} · ${a.pIdx + 1}/${list.length}</div>
+      <h1 class="wo-name">${esc(it.name)}</h1>${it.note ? `<div class="muted">${esc(it.note)}</div>` : ''}
+      <div id="animSlot"></div>
+      <div class="ptime tnum" id="pT">${mmss(it.sec)}</div>
+      <div class="nextup">${next ? 'Next: ' + esc(next.name) : a.phase === 'warm' ? 'Then: lifting' : 'Last one'}</div></main>
       <footer class="wo-foot"><div class="wo-nav" style="grid-template-columns:1fr 1fr">
         <button class="btn" data-act="ph-prev" ${a.pIdx === 0 ? 'disabled' : ''}>‹ Back</button>
         <button class="btn" data-act="ph-skip">${a.phase === 'warm' ? 'Skip warm-up' : 'Finish now'}</button></div>
-        <button class="btn btn-primary big" data-act="ph-next">${last ? (a.phase === 'warm' ? 'Start lifting →' : 'Finish workout ✓') : 'Next →'}</button></footer>`;
+        <button class="btn btn-primary big" data-act="ph-next">${last ? (a.phase === 'warm' ? 'Start lifting →' : 'Finish ✓') : 'Next →'}</button></footer>`;
   }
   function rampHTML(st, ex) {
     if (!st.main || st.set !== 1 || ex.load === 'bw') return '';
@@ -448,32 +440,31 @@
     const pts = [];
     if (L.plate && L.base > 0) pts.push([L.base, 8]);
     [[0.5, 5], [0.75, 3]].forEach(([f, r]) => { const x = C.roundLoad(ex, s, w * f, 'down'); if (x < w && (!pts.length || x > pts[pts.length - 1][0])) pts.push([x, r]); });
-    return pts.length ? `<div class="wo-hint ramp">Ramp-up first: ${pts.map(p => p[0] + '×' + p[1]).join(' · ')}</div>` : '';
+    return pts.length ? `<div class="wo-hint ramp">Warm-up sets first: ${pts.map(p => p[0] + '×' + p[1]).join(' · ')}</div>` : '';
   }
   function stepHTML(a) {
     const st = a.steps[a.idx], ex = EX(st.exId), d = draft(), W = WK(a.abs);
     const last = C.historyFor(S.logs, st.exId)[0];
     const sameEx = a.steps.map((s, j) => ({ s, j })).filter(o => o.s.slot === st.slot);
     const sub = ex.load === 'dumbbell' ? 'kg / hand' : ex.load === 'bw' ? 'kg added' : ex.load === 'sled' ? 'kg plates' : 'kg';
-    const restHTML = a.rest ? `<section class="rest" id="rest" aria-live="polite"><div class="rt"><b id="restT" class="tnum">${mmss(a.rest.total)}</b><span>${a.steps[a.rest.from] && a.steps[a.rest.from].blockEnd ? 'Set up the next station' : 'Rest'}</span></div>
+    const restHTML = a.rest ? `<section class="rest" id="rest" aria-live="polite"><div class="rt"><b id="restT" class="tnum">${mmss(a.rest.total)}</b>
+        <span>${a.steps[a.rest.from] && a.steps[a.rest.from].blockEnd ? 'Next station' : 'Rest'}<button class="link" data-act="undo">Undo set</button></span></div>
         <div class="rest-bar"><i id="restBar"></i></div>
-        <div class="rest-acts"><button class="btn" data-act="rest-sub">−15</button><button class="btn" data-act="rest-add">+15</button><button class="btn" data-act="undo">Undo</button><button class="btn" data-act="rest-skip">Skip rest</button></div></section>` : '';
-    const doneCount = Object.keys(a.log).length;
+        <div class="rest-acts"><button class="btn" data-act="rest-add">+15 s</button><button class="btn" data-act="rest-skip">Skip rest</button></div></section>` : '';
+    const chip = W.cfg.deload ? 'Deload' : st.status === 'calibrate' ? 'First try' : 'RPE ' + W.cfg.rpe;
     return `${restHTML}<main class="wo-main">
-      <div class="wo-label"><span class="badge">${st.label}</span><span>${st.partner ? 'Superset with ' + esc(st.partner) : st.main ? 'Main lift' : ''}</span><span style="margin-left:auto" class="tnum">${doneCount}/${a.steps.length} sets</span></div>
-      <h1 class="wo-name">${esc(ex.name)}</h1>
+      <div class="wo-head"><span class="badge">${st.label}</span><h1 class="wo-name">${esc(ex.name)}</h1></div>
       <div id="animSlot"></div>
-      <ul class="cues">${ex.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ul>
-      <div class="wo-set"><div class="s tnum">Set ${st.set}<small>/${st.sets}</small></div>
-        <div class="dots">${sameEx.map(o => { const l = a.log[o.j]; return `<button class="${l ? 'done' : ''} ${o.j === a.idx ? 'cur' : ''}" data-act="goto" data-v="${o.j}" aria-label="Set ${o.s.set}">${l ? C.fmtKg(ex, l.w) + '×' + l.r : o.s.set}</button>`; }).join('')}</div></div>
-      <div class="wo-target tnum"><b>${st.reps[0]}–${st.reps[1]}</b> reps${ex.side ? ' per side' : ''} · <b>${C.fmtKg(ex, st.w)}</b> ${unit(ex)} · ${esc(W.cfg.cue.split(' — ')[0])} · ${esc(st.tempo)}</div>
-      <div class="wo-hint">${last ? 'Last: ' + last.sets.map(s => C.fmtKg(ex, s.w) + '×' + s.r).join(', ') + ' · ' : ''}${esc(st.reason || '')}</div>
+      <p class="cue1">${esc(ex.cues[0])}</p>
+      <div class="wo-set"><div class="s tnum">Set ${st.set}<small>/${st.sets}</small> <span class="reps"><b>${st.reps[0]}–${st.reps[1]}</b> reps${ex.side ? '/side' : ''}</span></div><span class="chip-s">${chip}</span></div>
+      ${last ? `<div class="wo-hint tnum">Last time: ${last.sets.map(s => C.fmtKg(ex, s.w) + '×' + s.r).join(' · ')}</div>` : ''}
       ${rampHTML(st, ex)}
       <div class="steppers">
         <div class="stepper"><button data-act="w-" aria-label="Less weight">−</button><div><b id="wv">${C.fmtKg(ex, d.w)}</b><small>${esc(sub)}</small></div><button data-act="w+" aria-label="More weight">+</button></div>
-        <div class="stepper"><button data-act="r-" aria-label="Fewer reps">−</button><div><b id="rv">${d.r}</b><small>reps done</small></div><button data-act="r+" aria-label="More reps">+</button></div>
-      </div><div class="plates tnum" id="plates">${platesText(ex, d.w)}</div></main>
-      <footer class="wo-foot"><div class="wo-nav"><button class="btn" data-act="prev" ${a.idx === 0 ? 'disabled' : ''}>‹ Prev</button><button class="btn" data-act="swap">⇄ Swap</button><button class="btn" data-act="next">Next ›</button></div>
+        <div class="stepper"><button data-act="r-" aria-label="Fewer reps">−</button><div><b id="rv">${d.r}</b><small>reps</small></div><button data-act="r+" aria-label="More reps">+</button></div>
+      </div><div class="plates tnum" id="plates">${platesText(ex, d.w)}</div>
+      <div class="dots">${sameEx.map(o => { const l = a.log[o.j]; return `<button class="${l ? 'done' : ''} ${o.j === a.idx ? 'cur' : ''}" data-act="goto" data-v="${o.j}" aria-label="Set ${o.s.set}">${l ? C.fmtKg(ex, l.w) + '×' + l.r : 'Set ' + o.s.set}</button>`; }).join('')}</div></main>
+      <footer class="wo-foot"><div class="wo-nav"><button class="btn" data-act="prev" ${a.idx === 0 ? 'disabled' : ''} aria-label="Previous">‹</button><button class="btn" data-act="swap">Swap · tips</button><button class="btn" data-act="next" aria-label="Next">›</button></div>
       <button class="btn btn-primary big" data-act="done">${a.log[a.idx] ? 'Update set' : 'Done set'}</button></footer>`;
   }
   function platesText(ex, w) {
@@ -509,10 +500,10 @@
     const a = A(); if (!a || a.phase === 'done') return;
     const now = Date.now();
     const el = (now - a.startedAt) / 1000;
-    const clk = $('#clk'); if (clk) { clk.textContent = mmss(el); clk.parentNode.classList.toggle('over', el > PLAN.timing.budget); }
+    const clk = $('#clk'); if (clk) { clk.textContent = mmss(el); clk.classList.toggle('over', el > PLAN.timing.budget); }
     const bar = $('#clkbar'); if (bar) bar.style.width = Math.min(100, el / PLAN.timing.budget * 100) + '%';
     if (a.phase === 'warm' || a.phase === 'cool') {
-      const list = a.phase === 'warm' ? PLAN.sessions[a.key].warmup : PLAN.sessions[a.key].cooldown;
+      const list = phaseList(a);
       const it = list[a.pIdx]; if (!it) return;
       const left = it.sec - (now - a.pStart) / 1000;
       const pT = $('#pT'); if (pT) pT.textContent = mmss(left);
@@ -574,7 +565,7 @@
         <div class="field"><label>Test the alert</label><button class="btn small" data-act="test-alert">▶ Test</button></div>
       </div>
       <div class="sec-h">Display</div><div class="list"><div class="field"><label for="pTheme">Theme</label><select id="pTheme">${opt('dark', S.prefs.theme, 'Dark')}${opt('light', S.prefs.theme, 'Light')}</select></div></div>
-      <div class="sec-h">Equipment (leave blank for defaults)</div><div class="list">
+      <details class="more"><summary>Equipment</summary><p class="muted" style="font-size:.8rem;margin:4px 4px 8px">Leave blank for the defaults in plan.js.</p><div class="list">
         ${num('dbMin', 'Lightest dumbbell', b.dumbbells[0], 'kg')}
         ${num('dbMax', 'Heaviest dumbbell', b.dumbbells[b.dumbbells.length - 1], 'kg')}
         ${num('dbStep', 'Dumbbell step', b.dumbbells[1] - b.dumbbells[0], 'kg between pairs')}
@@ -584,8 +575,8 @@
         ${num('ezbar', 'EZ bar', b.ezbar, 'kg')}
         ${num('trapbar', 'Trap bar', b.trapbar, 'kg')}
         ${num('smithBar', 'Smith bar counts as', b.smithBar, 'kg — 0 if counterweighted')}
-      </div>
-      <div class="sec-h">Swaps kept for a block</div><div class="list">${Object.keys(S.swaps).flatMap(bk => Object.keys(S.swaps[bk]).map(slot => `<div class="field"><label>Block ${+bk + 1}: ${esc(EX(S.swaps[bk][slot]).name)}</label><button class="btn small" data-act="unswap" data-v="${bk}|${slot}">Reset</button></div>`)).join('') || '<div class="field muted">None</div>'}</div>
+      </div></details>
+      <details class="more"><summary>Swaps kept for a block</summary><div class="list">${Object.keys(S.swaps).flatMap(bk => Object.keys(S.swaps[bk]).map(slot => `<div class="field"><label>Block ${+bk + 1}: ${esc(EX(S.swaps[bk][slot]).name)}</label><button class="btn small" data-act="unswap" data-v="${bk}|${slot}">Reset</button></div>`)).join('') || '<div class="field muted">None</div>'}</div></details>
       <div class="sec-h">Data</div><div class="row"><button class="btn grow" data-act="export">⇩ Export</button><button class="btn grow" data-act="import">⇧ Import</button></div>
       <div style="margin-top:10px"><button class="btn btn-danger big" data-act="wipe">Delete all data on this device</button></div>
       <p class="muted" style="font-size:.8rem;margin:14px 4px">Everything is stored on this device only (browser storage). Export a backup now and then. The program itself lives in <code>/gym/plan.js</code>.</p>`;

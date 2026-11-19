@@ -54,17 +54,17 @@ window.GYM_PLAN = {
     upper: {
       name: 'Upper',
       warmup: [
-        { name: 'Rower or bike, easy', sec: 120 },
-        { name: 'Arm circles + band pull-aparts', sec: 60 },
-        { name: 'Scap push-ups ×10 + cat-cow ×5', sec: 60 },
-        { name: 'Push-ups ×8, slow', sec: 60 }
+        { name: 'Rower or bike, easy', sec: 120, anim: ['rower', 'bike'] },
+        { name: 'Arm circles + band pull-aparts', sec: 60, anim: ['armcircles', 'pullapart'] },
+        { name: 'Scap push-ups ×10 + cat-cow ×5', sec: 60, anim: ['scap_pushup', 'catcow'] },
+        { name: 'Push-ups ×8, slow', sec: 60, anim: 'pushup' }
       ],
       cooldown: [
-        { name: 'Doorway chest stretch', sec: 60, note: '30 s per side' },
-        { name: 'Lat stretch on a rack', sec: 60, note: '30 s per side' },
-        { name: 'Cross-body shoulder stretch', sec: 60, note: '30 s per side' },
-        { name: 'Child\'s pose', sec: 60 },
-        { name: 'Slow breathing, 4 s in / 6 s out', sec: 60 }
+        { name: 'Doorway chest stretch', sec: 60, note: '30 s per side', anim: 'doorway' },
+        { name: 'Lat stretch on a rack', sec: 60, note: '30 s per side', anim: 'latstretch' },
+        { name: 'Cross-body shoulder stretch', sec: 60, note: '30 s per side', anim: 'crossbody' },
+        { name: 'Child\'s pose', sec: 60, anim: 'childpose' },
+        { name: 'Slow breathing, 4 s in / 6 s out', sec: 60, anim: 'breathing' }
       ],
       blocks: [
         { id: 'U1', main: true, items: [
@@ -88,17 +88,17 @@ window.GYM_PLAN = {
     lower: {
       name: 'Lower',
       warmup: [
-        { name: 'Bike, easy', sec: 120 },
-        { name: 'Leg swings, front + side', sec: 60, note: '10 each way per leg' },
-        { name: 'Bodyweight squats ×10 + glute bridges ×10', sec: 60 },
-        { name: 'World\'s greatest stretch', sec: 60, note: '3 per side' }
+        { name: 'Bike, easy', sec: 120, anim: 'bike' },
+        { name: 'Leg swings, front + side', sec: 60, note: '10 each way per leg', anim: ['legswing', 'legswing_side'] },
+        { name: 'Bodyweight squats ×10 + glute bridges ×10', sec: 60, anim: ['bw_squat', 'glute_bridge'] },
+        { name: 'World\'s greatest stretch', sec: 60, note: '3 per side', anim: 'wgs' }
       ],
       cooldown: [
-        { name: 'Hip flexor (couch) stretch', sec: 90, note: '45 s per side' },
-        { name: 'Hamstring stretch', sec: 60, note: '30 s per side' },
-        { name: 'Figure-4 glute stretch', sec: 60, note: '30 s per side' },
-        { name: 'Calf stretch on a step', sec: 60, note: '30 s per side' },
-        { name: 'Slow breathing', sec: 30 }
+        { name: 'Hip flexor (couch) stretch', sec: 90, note: '45 s per side', anim: 'couch' },
+        { name: 'Hamstring stretch', sec: 60, note: '30 s per side', anim: 'hamstring' },
+        { name: 'Figure-4 glute stretch', sec: 60, note: '30 s per side', anim: 'figure4' },
+        { name: 'Calf stretch on a step', sec: 60, note: '30 s per side', anim: 'calfstretch' },
+        { name: 'Slow breathing, 4 s in / 6 s out', sec: 30, anim: 'breathing' }
       ],
       blocks: [
         { id: 'L1', main: true, items: [
@@ -118,17 +118,17 @@ window.GYM_PLAN = {
     full: {
       name: 'Full body',
       warmup: [
-        { name: 'Rower, easy', sec: 120 },
-        { name: 'World\'s greatest stretch', sec: 60, note: '3 per side' },
-        { name: 'Inchworms ×5', sec: 60 },
-        { name: 'Bodyweight squat to overhead reach ×10', sec: 60 }
+        { name: 'Rower, easy', sec: 120, anim: 'rower' },
+        { name: 'World\'s greatest stretch', sec: 60, note: '3 per side', anim: 'wgs' },
+        { name: 'Inchworms ×5', sec: 60, anim: 'inchworm' },
+        { name: 'Bodyweight squat to overhead reach ×10', sec: 60, anim: 'squat_reach' }
       ],
       cooldown: [
-        { name: 'Figure-4 glute stretch', sec: 60, note: '30 s per side' },
-        { name: 'Hip flexor stretch', sec: 60, note: '30 s per side' },
-        { name: 'Doorway chest stretch', sec: 60, note: '30 s per side' },
-        { name: 'Child\'s pose', sec: 60 },
-        { name: 'Slow breathing', sec: 60 }
+        { name: 'Figure-4 glute stretch', sec: 60, note: '30 s per side', anim: 'figure4' },
+        { name: 'Hip flexor (couch) stretch', sec: 60, note: '30 s per side', anim: 'couch' },
+        { name: 'Doorway chest stretch', sec: 60, note: '30 s per side', anim: 'doorway' },
+        { name: 'Child\'s pose', sec: 60, anim: 'childpose' },
+        { name: 'Slow breathing, 4 s in / 6 s out', sec: 60, anim: 'breathing' }
       ],
       blocks: [
         { id: 'F1', main: true, items: [
