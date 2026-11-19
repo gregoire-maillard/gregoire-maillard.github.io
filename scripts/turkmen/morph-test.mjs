@@ -572,7 +572,146 @@ check("forms() lists every slug with its negative and question", () =>
     M.formInfo(s) && M.formInfo(s + "-negative") && M.formInfo(s + "-question")), true, "check");
 check("aliases: present-yar is present, maly is necessitative", () => [M.formInfo("present-yar").same, M.formInfo("maly").same], ["present", "necessitative"], "check");
 check("no question of the 2nd-person imperative, no negative of the progressive", () => [M.formInfo("imperative-question"), M.formInfo("progressive-otyr-negative")], [null, null], "check");
-check("persons a slug doesn't have give null", () => [M.form("imperative", "gelmek", "men"), M.form("optative", "gelmek", "ol"), M.form("perfect-ypdyr", "gelmek", "men")], [null, null, null], "check");
+check("persons a slug doesn't have give null", () => [M.form("imperative", "gelmek", "men"), M.form("optative", "gelmek", "ol"), M.form("assumption-an", "gelmek", "men")], [null, null, null], "check");
+
+// ─────────────────────────── 9. B1 forms (QA-TK-1) ───────────────────────────
+// Sources: the SIL grammar page on webonary.work (alypdyryn … alypsyň, almandyrsyň, alypmysyň, alýardy(m), alardy(m),
+// aljakdy(m), almalydy(m), alsam … alsalar, almasa(m)); D. Gray, "A Short Descriptive Grammar of Turkmen" (SIL, 2011:
+// participles alýan, almaýan, alan, almadyk, aljak, almajak; almaga, almagy, almagyň, okamagym … okamaklary;
+// alandygyny, gitjekdigini, gitjekdigimi, işleýändigini, kyndygyny; gelýänçäm … gelýänçe; okatmak, okatdyrmak, turuzmak,
+// gorkuzmak, ýatyrmak; alyşmak, öwrenişmek, ýetişmek; aýdylmak, okalmak; "almaly eken(im)"); Wiktionary's gelmek
+// (gelipdim … gelipdiler, gelipdirin, gelipsiň, gelipsiňiz, gelipdirler, gelerdim, geljekdim, gelmelidim, gelsem …
+// gelseler, gelýän, gelen, geljek); Wikipedia's Turkmen grammar (gelmändi); the forms of gelmek listed by the explanatory
+// dictionary (enedilim.com: gelýärdim, gelýärdiň, gelýärdi, gelýärdik, gelýärdiler, gelýänçä); the Turkmen Bible (2002,
+// 2017: bilýärmidiň, bermelidiň, alardym, bermeli ekeniň, edendir, işletmäge, ýygmagymyzy, orýandygymy, biljekdigimi);
+// Turkmen print found by search (kabul edildi, berilýär, öwrenilýär, gelindi, alnyp baryldy, okamakdan, okaýyş);
+// TM-CURRICULUM.md's own examples for b1-u01 to b1-u12. Forms marked "by rule" were seen in no source.
+// The perfect -(Y)pdYr in every person (open question 6): no -dYr in the second persons
+para("perfect-ypdyr", "almak", "alypdyryn|alypsyň|alypdyr|alypdyrys|alypsyňyz|alypdyrlar");
+para("perfect-ypdyr", "gelmek", "gelipdirin|gelipsiň|gelipdir|gelipdiris|gelipsiňiz|gelipdirler");
+para("perfect-ypdyr", "almak", "-|-|-|-|-|alypdyr", true);
+para("perfect-ypdyr-negative", "almak", "almandyryn|almandyrsyň|almandyr|almandyrys|almandyrsyňyz|almandyrlar");
+para("perfect-ypdyr-negative", "gelmek", "gelmändirin|gelmändirsiň|gelmändir|gelmändiris|gelmändirsiňiz|gelmändirler");
+para("perfect-ypdyr-question", "almak", "alypdyrynmy|alypmysyň|alypdyrmy|alypdyrysmy|alypmysyňyz|alypdyrlarmy");
+para("perfect-ypdyr-negative-question", "almak", "almandyrynmy|almanmysyň|almandyrmy|almandyrysmy|almanmysyňyz|almandyrlarmy");
+para("perfect-ypdyr", "işlemek", "işläpdirin|işläpsiň|işläpdir|işläpdiris|işläpsiňiz|işläpdirler");      // by rule (e → ä)
+para("perfect-ypdyr", "görmek", "görüpdirin|görüpsiň|görüpdir|görüpdiris|görüpsiňiz|görüpdirler");      // by rule (rounding)
+// compound tenses: -ýArdY, -(Y)pdY, -ArdY, -jAkdY, -mAlYdY; the particle before -dY
+para("past-continuous", "gelmek", "gelýärdim|gelýärdiň|gelýärdi|gelýärdik|gelýärdiňiz|gelýärdiler");
+para("past-continuous", "almak", "alýardym|alýardyň|alýardy|alýardyk|alýardyňyz|alýardylar");
+para("past-continuous-negative", "gelmek", "gelmeýärdim|gelmeýärdiň|gelmeýärdi|gelmeýärdik|gelmeýärdiňiz|gelmeýärdiler");   // by rule
+para("past-continuous-question", "bilmek", "-|bilýärmidiň|bilýärmidi|-|-|-");
+para("pluperfect", "gelmek", "gelipdim|gelipdiň|gelipdi|gelipdik|gelipdiňiz|gelipdiler");
+para("pluperfect", "bolmak", "bolupdym|bolupdyň|bolupdy|bolupdyk|bolupdyňyz|bolupdylar");
+para("pluperfect-negative", "almak", "almandym|-|almandy|-|-|-");
+para("pluperfect-negative", "gelmek", "gelmändim|gelmändiň|gelmändi|gelmändik|gelmändiňiz|gelmändiler");
+para("pluperfect-question", "gelmek", "-|gelipmidiň|gelipmidi|-|-|-");                                        // by rule
+para("past-habitual", "gelmek", "gelerdim|gelerdiň|gelerdi|gelerdik|gelerdiňiz|gelerdiler");
+para("past-habitual", "almak", "alardym|alardyň|alardy|alardyk|alardyňyz|alardylar");
+para("past-habitual", "işlemek", "işlärdim|-|işlärdi|-|-|-");                                                  // e → ä, as in işlär
+para("past-habitual-negative", "gelmek", "gelmezdim|gelmezdiň|gelmezdi|gelmezdik|gelmezdiňiz|gelmezdiler");   // by rule
+para("ability-past-habitual", "gelmek", "gelip bilerdim|-|gelip bilerdi|-|-|-");
+para("ability-past-habitual-negative", "gelmek", "gelip bilmezdim|-|gelip bilmezdi|-|-|-");                     // the plan's bilmezdi
+para("future-past", "gelmek", "geljekdim|geljekdiň|geljekdi|geljekdik|geljekdiňiz|geljekdiler");
+para("future-past", "almak", "aljakdym|-|aljakdy|-|-|-");
+para("future-past", "etmek", "etjekdim|-|etjekdi|-|-|-");                                                      // the plan's etjekdim
+para("future-past-negative", "gelmek", "geljek däldim|-|geljek däldi|-|-|-");
+para("future-past-negative", "gelmek", "gelmejekdim|-|gelmejekdi|-|-|-", true);
+para("necessitative-past", "gelmek", "gelmelidim|gelmelidiň|gelmelidi|gelmelidik|gelmelidiňiz|gelmelidiler");
+para("necessitative-past", "bermek", "-|bermelidiň|-|-|-|-");
+para("necessitative-past", "almak", "almalydym|-|almalydy|-|-|-");
+para("necessitative-past-negative", "gelmek", "gelmeli däldim|-|-|-|-|-");
+para("necessitative-past-negative", "gelmek", "gelmemelidim|-|-|-|-|-", true);
+para("necessitative-past-question", "gelmek", "-|gelmelimidiň|-|-|-|-");                                   // by rule
+para("progressive-past-otyr", "okamak", "okap otyrdym|okap otyrdyň|okap otyrdy|okap otyrdyk|okap otyrdyňyz|okap otyrdylar");
+para("progressive-past-dur", "garaşmak", "garaşyp durdum|-|garaşyp durdy|-|-|-");
+// conditionals
+para("conditional", "gelmek", "gelsem|gelseň|gelse|gelsek|gelseňiz|gelseler");
+para("conditional", "almak", "alsam|alsaň|alsa|alsak|alsaňyz|alsalar");
+para("conditional", "gitmek", "-|gitseň|-|-|-|-");
+para("conditional-negative", "almak", "almasam|almasaň|almasa|almasak|almasaňyz|almasalar");
+para("conditional-yan", "gelmek", "gelýän bolsam|gelýän bolsaň|gelýän bolsa|gelýän bolsak|gelýän bolsaňyz|gelýän bolsalar");
+para("conditional-an", "gelmek", "gelen bolsam|-|gelen bolsa|-|-|-");
+para("conditional-jak", "gelmek", "geljek bolsam|-|geljek bolsa|-|-|-");
+para("copula-conditional", "öýde", "öýde bolsam|öýde bolsaň|öýde bolsa|öýde bolsak|öýde bolsaňyz|öýde bolsalar");
+check("unreal: wagtym bolsa, gelerdim; gelen bolsam, görerdim", () => [M.form("copula-conditional", "wagtym", "ol").text, M.form("past-habitual", "gelmek", "men").text,
+  M.form("conditional-an", "gelmek", "men").text, M.form("past-habitual", "görmek", "men").text], ["wagtym bolsa", "gelerdim", "gelen bolsam", "görerdim"]);
+// eken after participles, with the past endings for I and you (Gray: almaly eken(im); the Bible: bermeli ekeniň)
+para("eken-maly", "almak", "almaly ekenim|-|almaly eken|-|-|-");
+para("eken-maly", "bermek", "-|bermeli ekeniň|-|-|-|-");
+para("eken-yan", "gelmek", "-|-|gelýän eken|-|-|gelýän eken", true);
+para("eken-an", "gelmek", "-|-|gelen eken|-|-|-");
+para("eken-jak", "gelmek", "-|-|geljek eken|-|-|-");
+para("eken-yan", "almak", "-|-|alýan eken|-|-|-");
+// -dYr for a confident guess
+para("assumption-an", "etmek", "-|-|edendir|-|-|edendirler");
+para("assumption-an", "gelmek", "-|-|gelendir|-|-|-");
+para("assumption-yan", "gelmek", "-|-|gelýändir|-|-|-");
+para("assumption-jak", "gelmek", "-|-|geljekdir|-|-|-");
+// participles
+check("participles: alýan, almaýan, alan, almadyk, aljak, almajak; gelýän, gelen, geljek; işleýän, işlän, giden, eden", () =>
+  [["almak", "yan"], ["almak", "yan", 1], ["almak", "an"], ["almak", "an", 1], ["almak", "jak"], ["almak", "jak", 1], ["gelmek", "yan"], ["gelmek", "an"],
+   ["gelmek", "jak"], ["işlemek", "yan"], ["işlemek", "an"], ["gitmek", "an"], ["etmek", "an"]].map(a => M.participle(a[0], a[1], a[2]).text),
+  ["alýan", "almaýan", "alan", "almadyk", "aljak", "almajak", "gelýän", "gelen", "geljek", "işleýän", "işlän", "giden", "eden"]);
+check("-mAdYk on its own: okamadyk, gelmedik, ekmedik", () => [build("okamak", ["NEG", "DYK"]), build("gelmek", ["NEG", "DYK"]), build("ekmek", ["NEG", "DYK"])], ["okamadyk", "gelmedik", "ekmedik"]);
+// verbal nouns: -mAk with cases and possessives, the dative -mAgA (okamaga, gelmäge, işletmäge)
+check("-mAk with cases: almagy, almagyň, almaga, gelmegi, gelmäge, işletmäge, okamakdan, gitmekden", () =>
+  [["almak", "acc"], ["almak", "gen"], ["almak", "dat"], ["gelmek", "acc"], ["gelmek", "dat"], ["işletmek", "dat"], ["okamak", "abl"], ["gitmek", "abl"]].map(a => M.verbalNoun(a[0], { case: a[1] }).text),
+  ["almagy", "almagyň", "almaga", "gelmegi", "gelmäge", "işletmäge", "okamakdan", "gitmekden"]);
+para("verbal-noun-possessive", "okamak", "okamagym|okamagyň|okamagy|okamagymyz|okamagyňyz|okamagy");
+para("verbal-noun-possessive", "okamak", "-|-|-|-|-|okamaklary", true);
+para("verbal-noun-possessive-accusative", "gelmek", "gelmegimi|gelmegiňi|gelmegini|gelmegimizi|gelmegiňizi|gelmegini");
+para("verbal-noun-possessive-accusative", "ýygmak", "-|-|-|ýygmagymyzy|-|-");
+check("purpose: okamaga geldim, işlemäge, Onuň gelmegini isleýärin", () => [M.verbalNoun("okamak", { case: "dat" }).text, M.verbalNoun("işlemek", { case: "dat" }).text,
+  M.verbalNoun("gelmek", { poss: "ol", case: "acc" }).text], ["okamaga", "işlemäge", "gelmegini"]);
+check("-(Y)ş: geliş, okaýyş, ýöreýiş, görüş", () => [build("gelmek", ["YS"]), build("okamak", ["YS"]), build("ýöremek", ["YS"]), build("görmek", ["YS"])], ["geliş", "okaýyş", "ýöreýiş", "görüş"]);
+// fact clauses: -dYgY
+para("dygy-an-accusative", "almak", "alandygymy|alandygyňy|alandygyny|alandygymyzy|alandygyňyzy|alandygyny");
+para("dygy-jak-accusative", "gitmek", "gitjekdigimi|-|gitjekdigini|-|-|-");
+para("dygy-jak-accusative", "bilmek", "biljekdigimi|-|-|-|-|-");
+para("dygy-yan-accusative", "işlemek", "-|-|işleýändigini|-|-|-");
+para("dygy-yan-accusative", "ormak", "orýandygymy|-|-|-|-|-");
+para("dygy-an", "gelmek", "gelendigim|gelendigiň|gelendigi|gelendigimiz|gelendigiňiz|gelendigi");
+check("-dYgY on a noun, and üçin: kyndygyny, ýokdugy üçin", () => [build("kyn", ["DYK", "POSS3", "ACC"]), build("ýok", ["DYK", "POSS3"])], ["kyndygyny", "ýokdugy"]);
+// converbs
+para("until-yanca", "gelmek", "gelýänçäm|gelýänçäň|gelýänçä|gelýänçäk|gelýänçäňiz|gelýänçä");
+para("until-yanca", "gelmek", "-|-|gelýänçe|-|-|gelýänçe", true);
+para("until-yanca", "ýazmak", "-|ýazýançaň|-|-|-|-");
+para("while-ka", "gelmek", "gelýärkäm|gelýärkäň|gelýärkä|-|-|-");
+check("-kA on nouns: çagakam, kiçijikkäň, öýdekä (a2-u11)", () => [build("çaga", ["KA", "E2-1"]), build("kiçijik", ["KA", "E2-2"]), build("öýde", ["KA"])], ["çagakam", "kiçijikkäň", "öýdekä"]);
+check("-Andan soň, -mAzdan öň, -mAn, -AlY bäri, -An badyna: gelenden, gutarandan, ýatmazdan, diýmän, geleli, gelen", () =>
+  [build("gelmek", ["AN", "ABL"]), build("gutarmak", ["AN", "ABL"]), build("ýatmak", ["MAZDAN"]), M.negativeConverb("diýmek").text, build("gelmek", ["OPT4"]), M.participle("gelmek", "an").text],
+  ["gelenden", "gutarandan", "ýatmazdan", "diýmän", "geleli", "gelen"]);
+check("-A for repeated converbs: gide, güle, dura; none after a vowel", () => [build("gitmek", ["CVB-A"]), build("gülmek", ["CVB-A"]), build("durmak", ["CVB-A"]),
+  (() => { try { return build("okamak", ["CVB-A"]); } catch (e) { return null; } })()], ["gide", "güle", "dura", null]);
+// voices
+const vo = (b, k) => M.voice(b, k).text;
+check("passive: ýazylmak, aýdylmak, okalmak, gurulmak, edilmek, berilmek, çekilmek, barylmak, gelinmek, öwrenilmek, dokalmak", () =>
+  [["ýazmak"], ["aýtmak"], ["okamak"], ["gurmak"], ["etmek"], ["bermek"], ["çekmek"], ["barmak"], ["gelmek"], ["öwrenmek"], ["dokamak"]].map(a => vo(a[0], "pass")),
+  ["ýazylmak", "aýdylmak", "okalmak", "gurulmak", "edilmek", "berilmek", "çekilmek", "barylmak", "gelinmek", "öwrenilmek", "dokalmak"]);
+check("passive in print: ýazyldy, guruldy, okaldy, edildi, berilýär, öwrenilýär, gelindi, baryldy, çekilmeýär, barylýar", () =>
+  [["ýazmak", ["PASS", "PAST"]], ["gurmak", ["PASS", "PAST"]], ["okamak", ["PASS", "PAST"]], ["etmek", ["PASS", "PAST"]], ["bermek", ["PASS", "PRES"]],
+   ["öwrenmek", ["PASS", "PRES"]], ["gelmek", ["PASS", "PAST"]], ["barmak", ["PASS", "PAST"]], ["çekmek", ["PASS", "NEG", "PRES"]], ["barmak", ["PASS", "PRES"]]].map(a => build(a[0], a[1])),
+  ["ýazyldy", "guruldy", "okaldy", "edildi", "berilýär", "öwrenilýär", "gelindi", "baryldy", "çekilmeýär", "barylýar"]);
+check("reflexive: ýuwunmak, geýinmek, taýýarlanmak", () => [vo("ýuwmak", "refl"), vo("geýmek", "refl"), vo("taýýarlamak", "refl")], ["ýuwunmak", "geýinmek", "taýýarlanmak"]);
+check("reciprocal: görüşmek, tanyşmak, gürleşmek, alyşmak, ýetişmek, öwrenişmek", () =>
+  [vo("görmek", "recip"), vo("tanamak", "recip"), vo("gürlemek", "recip"), vo("almak", "recip"), vo("ýetmek", "recip"), vo("öwrenmek", "recip")],
+  ["görüşmek", "tanyşmak", "gürleşmek", "alyşmak", "ýetişmek", "öwrenişmek"]);
+check("causative: okatmak, işletmek, ýatlatmak, ýazdyrmak, kesdirmek, güldürmek, okatdyrmak", () =>
+  [vo("okamak", "caus"), vo("işlemek", "caus"), vo("ýatlamak", "caus"), vo("ýazmak", "caus"), vo("kesmek", "caus"), vo("gülmek", "caus"), vo("okatmak", "caus")],
+  ["okatmak", "işletmek", "ýatlatmak", "ýazdyrmak", "kesdirmek", "güldürmek", "okatdyrmak"]);
+check("causatives from the lexicon: görkezmek, getirmek, geçirmek, çykarmak, turuzmak, gorkuzmak, ýatyrmak, öwretmek", () =>
+  ["görmek", "gelmek", "geçmek", "çykmak", "turmak", "gorkmak", "ýatmak", "öwrenmek"].map(b => vo(b, "caus")),
+  ["görkezmek", "getirmek", "geçirmek", "çykarmak", "turuzmak", "gorkuzmak", "ýatyrmak", "öwretmek"]);
+check("Saçymy kesdirdim; Çagany güldürdi", () => [build("kesmek", ["CAUS", "PAST", "E2-1"]), build("gülmek", ["CAUS", "PAST"])], ["kesdirdim", "güldürdi"]);
+check("verbs from nouns: arassala, gowulaş, öýlen, azal", () => [build("arassa", ["LA"]), build("gowy", ["LAS"]), build("öý", ["LAN"]), build("az", ["AL"])], ["arassala", "gowulaş", "öýlen", "azal"]);
+check("a voice conjugates like any verb: ýazylýar, guruldy, tanyşdyk, ýuwunýaryn", () =>
+  [M.form("present", "ýazylmak", "ol").text, M.form("past", "gurulmak", "ol").text, M.form("past", "tanyşmak", "biz").text, M.form("present", "ýuwunmak", "men").text],
+  ["ýazylýar", "guruldy", "tanyşdyk", "ýuwunýaryn"]);
+// analysis of B1 tiles
+check("tiles: gel|ýär|di|m, gel|ip|di, gel|en|dig|i|n|i, oka|mag|a, ýaz|yl|dy, gel|ýän|çä|m", () =>
+  [["gelmek", ["gel", "ýär", "di", "m"]], ["gelmek", ["gel", "ip", "di"]], ["gelmek", ["gel", "en", "dig", "i", "n", "i"]], ["okamak", ["oka", "mag", "a"]],
+   ["ýazmak", ["ýaz", "yl", "dy"]], ["gelmek", ["gel", "ýän", "çä", "m"]]].map(a => an(a[0], a[1]).ok), [true, true, true, false, true, true], "check");
 
 // ─────────────────────────── report ───────────────────────────
 for (const f of failures) console.log(`FAIL ${f}`);

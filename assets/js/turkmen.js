@@ -403,7 +403,17 @@
   function checkExercise(ex, answer, index) {
     var s = answerSpec(ex, index);
     if (!s) throw new Error(ex.type + " exercises are not checked as text");
-    return check(answer, s.accept, s.reject, s.lang, s.mode);
+    var r = check(answer, s.accept, s.reject, s.lang, s.mode);
+    // conjugate: the cell's own pronoun typed in front of the form (men gelýärin in the men row) is the same answer
+    // (QA-TK-1, TM-PROJECT.md 6.4)
+    if (ex.type === "conjugate" && r.verdict === "wrong" && r.note !== "empty") {
+      var p = ex.cells[index || 0].p, a = norm(answer, "tk");
+      if (a.indexOf(p + " ") === 0) {
+        var r2 = check(a.slice(p.length + 1), s.accept, s.reject, s.lang, s.mode);
+        if (r2.verdict !== "wrong") return r2;
+      }
+    }
+    return r;
   }
 
   // ───────────────────────────── 5. data loading (PROJECT.md 3, 5.10) ─────────────────────────────

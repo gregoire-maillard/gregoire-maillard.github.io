@@ -736,7 +736,13 @@ function checkLesson(rec, cx) {
     const u = C.units.get(unitId);
     if (!u) err(file, `unit file units/${unitId}.json is missing or does not list this lesson`);
     else if (u.ok && !u.v.lessons.includes(v.id)) err(file, `units/${unitId}.json does not list this lesson`);
-    v.vocab.forEach((w, i) => { if (w.card) deferred.push(() => { if (!C.cards.has(w.card)) err(`${file} › vocab[${i}].card`, `unknown flashcard ${w.card}`); }); });
+    // a vocab link points at a card the lessons have taught by this unit (TM-PROJECT.md 7.8; QA-TK-1)
+    v.vocab.forEach((w, i) => { if (w.card) deferred.push(() => {
+      const k = C.cards.get(w.card), at = `${file} › vocab[${i}].card`;
+      if (!k) { err(at, `unknown flashcard ${w.card}`); return; }
+      if (!k.c.unit) warn(at, `${w.card} (${k.c.tk}) has no unit; a card linked from a lesson gets the first unit that teaches it (7.8)`);
+      else if (unitIndex(k.c.unit) > unitIndex(unitId)) warn(at, `${w.card} (${k.c.tk}) has unit ${k.c.unit}, later than this lesson's ${unitId}; its unit is the first that teaches it (7.8)`);
+    }); });
   }
   let last = 0;
   const ids = new Set();

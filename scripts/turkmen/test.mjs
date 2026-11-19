@@ -272,6 +272,19 @@ test("answerSpec: default diacritics modes by type, overrides, and no listen", (
   assert.equal(TKM.answerSpec({ type: "listen", mode: "type", tk: "Hawa.", en: "Yes." }), null);
   assert.equal(TKM.answerSpec({ type: "mcq" }), null);
 });
+test("checkExercise: a conjugate cell takes its own pronoun typed in front of the form (QA-TK-1), not another one", () => {
+  const ex = { type: "conjugate", cells: [{ p: "men", accept: ["gelýärin"] }, { p: "ol", accept: ["gelýär"] }, { p: "olar", accept: ["gelýärler", "gelýär"] }] };
+  assert.equal(TKM.checkExercise(ex, "Men gelýärin", 0).verdict, "correct");
+  assert.equal(TKM.checkExercise(ex, "men gelyarin", 0).verdict, "wrong");          // conjugate is strict: no letter fold
+  assert.equal(TKM.checkExercise(ex, "sen gelýärin", 0).verdict, "wrong");
+  assert.equal(TKM.checkExercise(ex, "ol gelýär", 1).verdict, "correct");
+  assert.equal(TKM.checkExercise(ex, "ol gelýär", 2).verdict, "wrong");            // "ol" is not the olar row's pronoun
+  assert.equal(TKM.checkExercise(ex, "olar gelýärler", 2).verdict, "correct");
+  assert.equal(TKM.checkExercise(ex, "men", 0).verdict, "wrong");
+  // every cell of the real content, with its pronoun in front
+  for (const l of LESSONS) for (const e of l.exercises) if (e.type === "conjugate")
+    e.cells.forEach((c, i) => assert.equal(TKM.checkExercise(e, c.p + " " + c.accept[0], i).verdict, "correct", `${e.id} ${c.p}`));
+});
 test("parity with validate.mjs: expand() on every accept entry in the content", () => {
   const V = validatorText();
   for (const [, , , s] of typedSpecs()) for (const a of s.accept) assert.equal(JSON.stringify(TKM.expand(a)), JSON.stringify(V.expand(a)), a);

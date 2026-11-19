@@ -4,7 +4,7 @@
 
 ## Daily Turkmen · A1 review
 
-Thank you for checking the Turkmen of Daily Turkmen, a free course for English speakers who start Turkmen from zero. The sheet **Review** holds every piece of Turkmen in level A1 (12 units): 3,884 rows. The Turkmen was written with the help of AI and checked against dictionaries where we could. Only a native speaker can tell us whether it is right.
+Thank you for checking the Turkmen of Daily Turkmen, a free course for English speakers who start Turkmen from zero. The sheet **Review** holds every piece of Turkmen in level A1 (12 units): 3,926 rows. The Turkmen was written with the help of AI and checked against dictionaries where we could. Only a native speaker can tell us whether it is right.
 
 **How to fill it in**
 
@@ -16,7 +16,7 @@ Each row is one piece of Turkmen with its English. Fill in the three columns on 
 
 Ignore the Location column: it only tells us where the text is in the course. A text used in several places has one row.
 
-Start with the yellow rows, **Check first** (No. 1 to 347): forms we were not sure of, and open questions about the grammar. They matter most. Then go through the units in order (from No. 348). The flashcards and the texts of the website come after them; the last part, Turkmen inside the English explanations (from No. 3,350), is optional.
+Start with the yellow rows, **Check first** (No. 1 to 411): forms we were not sure of, and open questions about the grammar. They matter most. Then go through the units in order (from No. 412). The flashcards and the texts of the website come after them; the last part, Turkmen inside the English explanations (from No. 3,392), is optional.
 
 **What to check**
 
@@ -42,7 +42,7 @@ When you are done, put your initials at the bottom of the **Read me** tab and se
 
 ## Daily Turkmen · A1 derejesiniň barlagy
 
-Daily Turkmen kursunyň türkmen dilindäki tekstlerini barlaýandygyňyz üçin sag boluň. Bu kurs türkmen dilini noldan öwrenýän iňlis dilli adamlar üçin mugt. **Review** jedwelinde A1 derejesiniň (12 bölüm) ähli türkmen tekstleri bar: 3 884 setir. Türkmen tekstleri emeli aňyň kömegi bilen ýazyldy we mümkin bolan ýerlerinde sözlüklerden barlandy. Olaryň dogrudygyny diňe ene dili türkmen dili bolan adam aýdyp biler.
+Daily Turkmen kursunyň türkmen dilindäki tekstlerini barlaýandygyňyz üçin sag boluň. Bu kurs türkmen dilini noldan öwrenýän iňlis dilli adamlar üçin mugt. **Review** jedwelinde A1 derejesiniň (12 bölüm) ähli türkmen tekstleri bar: 3 926 setir. Türkmen tekstleri emeli aňyň kömegi bilen ýazyldy we mümkin bolan ýerlerinde sözlüklerden barlandy. Olaryň dogrudygyny diňe ene dili türkmen dili bolan adam aýdyp biler.
 
 **Nädip doldurmaly**
 
@@ -54,7 +54,7 @@ Her setirde türkmençe bir tekst we onuň iňlisçesi bar. Sag tarapdaky üç s
 
 Location sütünine üns bermäň: ol diňe tekstiň kursda nirededigini görkezýär. Birnäçe ýerde ulanylýan tekstiň bir setiri bar.
 
-Sary setirlerden, **Check first** (No. 1–347), başlaň: anyk bilmedik görnüşlerimiz we grammatika baradaky açyk soraglar. Olar iň möhümi. Soňra bölümleri tertibi boýunça barlaň (348-nji setirden). Olardan soň kartoçkalar we web sahypanyň tekstleri gelýär; iň soňky bölüm, iňlisçe düşündirişleriň içindäki türkmen sözleri (3350-nji setirden), hökmany däl.
+Sary setirlerden, **Check first** (No. 1–411), başlaň: anyk bilmedik görnüşlerimiz we grammatika baradaky açyk soraglar. Olar iň möhümi. Soňra bölümleri tertibi boýunça barlaň (412-nji setirden). Olardan soň kartoçkalar we web sahypanyň tekstleri gelýär; iň soňky bölüm, iňlisçe düşündirişleriň içindäki türkmen sözleri (3392-nji setirden), hökmany däl.
 
 **Nämäni barlamaly**
 

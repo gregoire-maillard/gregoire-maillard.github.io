@@ -6,7 +6,7 @@
   "goal": "Say your nationality and your home town, and ask someone where they are from.",
   "points": ["gp-nationality-words", "gp-harmony-rounding", "gp-copula-present"],
   "intro": {
-    "text": "Nationality words are lowercase nouns: *Men türkmen* (I'm Turkmen), *Ol iňlis* (she's English). To ask where someone is from, say *Siz nireli?* Answer with your town and `-lY`: *-ly* after a back vowel, *-li* after a front one: *Men Aşgabatly*, *Ol Tejenli*.",
+    "text": "Nationality words are lowercase nouns: *Men türkmen* (I'm Turkmen), *Ol iňlis* (she's English). To ask where someone is from, say *Siz nireli?* Answer with your town and `-lY`: *-ly* after a back vowel, *-li* after a front one: *Men aşgabatly*, *Ol tejenli*, with a small letter, since the word is no longer a name.",
     "see": "gp-nationality-words"
   },
   "vocab": [
@@ -52,7 +52,7 @@
       "pos": "phrase"
     },
     {
-      "tk": "Aşgabatly",
+      "tk": "aşgabatly",
       "en": "from Ashgabat",
       "pos": "adj"
     }
@@ -75,7 +75,13 @@
       "points": ["gp-nationality-words", "gp-copula-present"],
       "from": "en",
       "prompt": "I am Turkmen.",
-      "accept": ["Men türkmen.", "(Men) türkmendirin."]
+      "accept": ["Men türkmen.", "(Men) türkmendirin."],
+      "reject": [
+        {
+          "answer": "Türkmen.",
+          "why": "*Türkmen* alone just means **Turkmen**. With the short form of **to be**, keep the subject: *Men türkmen*."
+        }
+      ]
     },
     {
       "id": "a1-u03-l03-e03",
@@ -102,7 +108,7 @@
       "id": "a1-u03-l03-e05",
       "type": "cloze",
       "points": ["gp-nationality-words", "gp-harmony-rounding"],
-      "text": "Men Aşgabat___.",
+      "text": "Men aşgabat___.",
       "en": "I'm from Ashgabat.",
       "blanks": [
         {
@@ -110,12 +116,12 @@
           "reject": [
             {
               "answer": "li",
-              "why": "The last vowel of *Aşgabat* is *a*, a back vowel: *Aşgabatly*."
+              "why": "The last vowel of *Aşgabat* is *a*, a back vowel: *aşgabatly*."
             }
           ]
         }
       ],
-      "explain": "`-lY` after the back vowel *a*: *Aşgabatly*. The ending is written straight onto the name, with no apostrophe or hyphen."
+      "explain": "`-lY` after the back vowel *a*: *aşgabatly*. The ending is written straight on, with no apostrophe or hyphen, and the word takes a small letter."
     },
     {
       "id": "a1-u03-l03-e06",
@@ -148,8 +154,8 @@
       "points": ["gp-nationality-words"],
       "from": "en",
       "prompt": "We are from Mary.",
-      "accept": ["Biz Maryly."],
-      "explain": "*Mary* ends in the back vowel *y*: *Maryly*."
+      "accept": ["Biz maryly."],
+      "explain": "*Mary* ends in the back vowel *y*: *maryly*."
     },
     {
       "id": "a1-u03-l03-e09",
@@ -157,10 +163,10 @@
       "points": ["gp-nationality-words"],
       "from": "en",
       "prompt": "Where are you from? – I'm from Dashoguz.",
-      "text": "Siz nireli? Men Daşoguzly.",
-      "answer": ["Siz", "nireli", "Men", "Daşoguzly"],
+      "text": "Siz nireli? Men daşoguzly.",
+      "answer": ["Siz", "nireli", "Men", "daşoguzly"],
       "distractors": ["Daşoguz", "näme", "sen"],
-      "accept": ["Sen nireli? Men Daşoguzly."]
+      "accept": ["Sen nireli? Men daşoguzly."]
     },
     {
       "id": "a1-u03-l03-e10",
@@ -189,7 +195,13 @@
       "points": ["gp-nationality-words", "gp-copula-present"],
       "from": "en",
       "prompt": "She is German.",
-      "accept": ["Ol nemes.", "Ol nemesdir."]
+      "accept": ["Ol nemes.", "Ol nemesdir."],
+      "reject": [
+        {
+          "answer": "Nemes.",
+          "why": "*Nemes* alone just means **German**. With the short form of **to be**, keep the subject: *Ol nemes*."
+        }
+      ]
     },
     {
       "id": "a1-u03-l03-e13",
@@ -201,7 +213,7 @@
       "answer": 0,
       "why": {
         "1": "That is `-lA`: **A** is the low vowel a or e.",
-        "2": "**Y** changes with harmony: *Aşgabatly*, but *Tejenli*."
+        "2": "**Y** changes with harmony: *aşgabatly*, but *tejenli*."
       },
       "explain": "**Y** is the high vowel: *y* or *i*, and *u* or *ü* where rounding applies."
     }
