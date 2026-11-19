@@ -1,0 +1,174 @@
+{
+  "id": "a2-u05-l04",
+  "unit": "a2-u05",
+  "order": 4,
+  "title": "Nobody came",
+  "goal": "Say nobody, nothing, nowhere and never with a negative verb, and someone, something, everyone.",
+  "points": ["gp-negative-polarity", "gp-yp-bilmek", "gp-yp-bilmek-negative", "gp-ability-uses"],
+  "intro": {
+    "text": "*hiç kim* (nobody), *hiç zat* (nothing), *hiç ýerde* (nowhere) and *hiç haçan* (never) need a negative verb: *Hiç kim gelmedi*, nobody came. The positive words: *biri* (someone), *bir zat* (something), *hemme* (everyone, everything), *her kim* (anyone).",
+    "see": "gp-negative-polarity"
+  },
+  "vocab": [
+    { "tk": "hiç", "en": "not at all; no (before a noun)", "pos": "adv", "card": "fc-0063" },
+    { "tk": "hiç ýerde", "en": "nowhere (with a negative verb)", "pos": "adv" },
+    { "tk": "biri", "en": "someone, somebody", "pos": "pron", "card": "fc-0041" },
+    { "tk": "bir zat", "en": "something", "pos": "pron" },
+    { "tk": "hemme", "en": "all; everyone, everything", "pos": "pron", "card": "fc-0143" },
+    { "tk": "her kim", "en": "everyone, anyone", "pos": "pron" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u05-l04-e01",
+      "type": "mcq",
+      "points": ["gp-negative-polarity", "gp-past-copula"],
+      "question": "Why didn't Döwran buy anything?",
+      "context": [
+        { "who": "Maral", "tk": "Sen bazardan bir zat aldyňmy?", "en": "Did you buy something at the market?" },
+        { "who": "Döwran", "tk": "Ýok, hiç zat almadym. Bazarda hiç kim ýokdy.", "en": "No, I didn't buy anything. There was nobody at the market." },
+        { "who": "Maral", "tk": "Hiç kim ýokdy? Näme üçin?", "en": "Nobody? Why?" },
+        { "who": "Döwran", "tk": "Bilmeýärin. Belki hemmeler toýa gitdi!", "en": "I don't know. Maybe everyone went to a wedding!" }
+      ],
+      "options": ["There was nobody at the market.", "He had no money.", "He bought everything."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "Döwran says nothing about money.",
+        "2": "*hiç zat almadym*: he didn't buy anything."
+      },
+      "explain": "*Bazarda hiç kim ýokdy*: there was nobody at the market."
+    },
+    {
+      "id": "a2-u05-l04-e02",
+      "type": "mcq",
+      "points": ["gp-negative-polarity"],
+      "question": "How do you say **Nobody came**?",
+      "options": ["Hiç kim gelmedi.", "Hiç kim geldi.", "Biri gelmedi."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "With *hiç kim*, the verb is negative too: *gelmedi*.",
+        "2": "*Biri gelmedi* is **someone didn't come**."
+      },
+      "explain": "*hiç kim* + a negative verb: *Hiç kim gelmedi*."
+    },
+    {
+      "id": "a2-u05-l04-e03",
+      "type": "cloze",
+      "points": ["gp-negative-polarity", "gp-past-dy-negative-question"],
+      "text": "Men hiç zat gör___.",
+      "en": "I didn't see anything.",
+      "blanks": [
+        {
+          "accept": ["medim"],
+          "reject": [
+            { "answer": "düm", "why": "With *hiç zat*, the verb is negative: *görmedim*." },
+            { "answer": "medik", "why": "*-medik* is **we**. For **I**: *görmedim*." }
+          ]
+        }
+      ],
+      "explain": "*hiç zat* + a negative verb: *görmedim*."
+    },
+    {
+      "id": "a2-u05-l04-e04",
+      "type": "translate",
+      "points": ["gp-negative-polarity", "gp-present-negative"],
+      "from": "en",
+      "prompt": "He doesn't work anywhere.",
+      "accept": ["Ol hiç ýerde işlemeýär.", "Hiç ýerde işlemeýär."],
+      "reject": [
+        { "answer": "Ol hiç ýerde işleýär.", "why": "*hiç ýerde* needs a negative verb: *işlemeýär*." }
+      ],
+      "explain": "*hiç ýerde* (nowhere) + the negative *işlemeýär*."
+    },
+    {
+      "id": "a2-u05-l04-e05",
+      "type": "translate",
+      "points": ["gp-negative-polarity", "gp-bar-yok"],
+      "from": "tk",
+      "prompt": "Gapyda biri bar.",
+      "accept": ["There's someone at the door.", "Someone is at the door.", "There is somebody at the door.", "Somebody is at the door."]
+    },
+    {
+      "id": "a2-u05-l04-e06",
+      "type": "translate",
+      "points": ["gp-negative-polarity", "gp-past-dy"],
+      "from": "en",
+      "prompt": "Everyone came.",
+      "accept": ["Hemmeler geldi.", "Hemme geldi.", "Hemmeler geldiler."],
+      "explain": "*hemmeler*, everyone (the people), + *geldi*."
+    },
+    {
+      "id": "a2-u05-l04-e07",
+      "type": "wordbank",
+      "points": ["gp-negative-polarity", "gp-dative"],
+      "from": "en",
+      "prompt": "We didn't go anywhere.",
+      "text": "Biz hiç ýere gitmedik.",
+      "answer": ["Biz", "hiç", "ýere", "gitmedik"],
+      "distractors": ["gitdik", "ýerde", "zat"]
+    },
+    {
+      "id": "a2-u05-l04-e08",
+      "type": "cloze",
+      "points": ["gp-negative-polarity", "gp-possessive-have"],
+      "text": "Mende ___ pul ýok.",
+      "en": "I have no money at all.",
+      "blanks": [
+        { "options": ["hiç", "bir", "hemme"], "answer": 0 }
+      ],
+      "explain": "*hiç* before a noun, with *ýok*: no money at all."
+    },
+    {
+      "id": "a2-u05-l04-e09",
+      "type": "translate",
+      "points": ["gp-negative-polarity", "gp-yp-bilmek"],
+      "from": "tk",
+      "prompt": "Her kim gelip biler.",
+      "accept": ["Anyone can come.", "Everyone can come.", "Anybody can come.", "Everybody can come."]
+    },
+    {
+      "id": "a2-u05-l04-e10",
+      "type": "translate",
+      "points": ["gp-negative-polarity", "gp-present-yar"],
+      "from": "en",
+      "prompt": "Would you like something? (polite)",
+      "accept": ["Bir zat isleýärsiňizmi?", "Siz bir zat isleýärsiňizmi?", "(Siz) bir zat isleýärmisiňiz?"],
+      "explain": "*bir zat* (something) + *isleýärsiňizmi?*"
+    },
+    {
+      "id": "a2-u05-l04-e11",
+      "type": "translate",
+      "points": ["gp-negative-polarity"],
+      "from": "en",
+      "prompt": "Everything is fine.",
+      "accept": ["Hemme zat gowy."],
+      "explain": "*hemme zat*, everything, + *gowy*: **to be** isn't written."
+    },
+    {
+      "id": "a2-u05-l04-e12",
+      "type": "conjugate",
+      "points": ["gp-yp-bilmek-negative"],
+      "base": "tapmak",
+      "form": "ability-past-negative",
+      "label": "*tapmak*: I couldn't find, you couldn't find…",
+      "cells": [
+        { "p": "men", "accept": ["tapyp bilmedim"] },
+        { "p": "sen", "accept": ["tapyp bilmediň"] },
+        { "p": "ol", "accept": ["tapyp bilmedi"] },
+        { "p": "biz", "accept": ["tapyp bilmedik"] },
+        { "p": "siz", "accept": ["tapyp bilmediňiz"] },
+        { "p": "olar", "accept": ["tapyp bilmediler", "tapyp bilmedi"] }
+      ],
+      "explain": "*tapyp* never changes; *bilmedi-* takes the endings of the past: *-m, -ň, —, -k, -ňiz, -ler*."
+    },
+    {
+      "id": "a2-u05-l04-e13",
+      "type": "translate",
+      "points": ["gp-negative-polarity", "gp-question-words"],
+      "from": "tk",
+      "prompt": "Kim geldi? — Hiç kim.",
+      "accept": ["Who came? — Nobody.", "Who came? — No one."]
+    }
+  ]
+}

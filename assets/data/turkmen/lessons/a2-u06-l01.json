@@ -1,0 +1,184 @@
+{
+  "id": "a2-u06-l01",
+  "unit": "a2-u06",
+  "order": 1,
+  "title": "I must see a doctor",
+  "goal": "Say what you and others must or should do with -mAlY, always saying who, and say what hurts.",
+  "points": ["gp-maly"],
+  "intro": {
+    "text": "For **must** or **should**, add `-mAlY` to the stem: *gitmeli*, *okamaly*. Like `-jAk`, it has **no personal ending**, so say who: *Men lukmana gitmeli*, I must go to the doctor. What hurts takes a possessive: *Başym agyrýar*, I have a headache.",
+    "see": "gp-maly"
+  },
+  "vocab": [
+    { "tk": "derman", "en": "medicine", "pos": "noun" },
+    { "tk": "dermanhana", "en": "pharmacy, chemist's", "pos": "noun" },
+    { "tk": "agyrmak", "en": "to hurt, to ache", "pos": "verb" },
+    { "tk": "diş", "en": "tooth", "pos": "noun" },
+    { "tk": "garyn", "en": "stomach, belly", "pos": "noun" },
+    { "tk": "bogaz", "en": "throat", "pos": "noun" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u06-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["derman", "medicine"],
+        ["dermanhana", "pharmacy"],
+        ["agyrmak", "to hurt, to ache"],
+        ["diş", "tooth"],
+        ["garyn", "stomach"],
+        ["bogaz", "throat"]
+      ]
+    },
+    {
+      "id": "a2-u06-l01-e02",
+      "type": "mcq",
+      "points": ["gp-maly", "gp-dative"],
+      "question": "How do you say **I must go to the doctor**?",
+      "options": ["Men lukmana gitmeli.", "Men lukmana gitmelin.", "Lukmana gitmeli.", "Men lukmana gitmeliýärin."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "`-mAlY` takes no personal ending: *gitmeli*.",
+        "2": "Nothing here says who; on its own it sounds like **one must go to the doctor**. Say the subject: *Men lukmana gitmeli*.",
+        "3": "No tense goes after `-mAlY`: *gitmeli*."
+      },
+      "explain": "*git-* + *-meli*, with *men* to say who: *Men lukmana gitmeli*."
+    },
+    {
+      "id": "a2-u06-l01-e03",
+      "type": "cloze",
+      "points": ["gp-maly", "gp-accusative"],
+      "text": "Sen bu dermany iç___.",
+      "en": "You must take this medicine.",
+      "blanks": [
+        {
+          "accept": ["meli"],
+          "reject": [
+            { "answer": "maly", "why": "*iç-* has a front vowel, so *-meli*: *içmeli*." },
+            { "answer": "melisiň", "why": "`-mAlY` takes no personal ending: *Sen … içmeli*." }
+          ]
+        }
+      ],
+      "explain": "*iç-* + *-meli*: *içmeli*. *Sen* says who. Medicine is **drunk** in Turkmen: *derman içmek*."
+    },
+    {
+      "id": "a2-u06-l01-e04",
+      "type": "conjugate",
+      "points": ["gp-maly"],
+      "base": "turmak",
+      "form": "necessitative",
+      "label": "*turmak* with `-mAlY`: I must get up, you must get up… (one form for all)",
+      "cells": [
+        { "p": "men", "accept": ["turmaly"] },
+        { "p": "sen", "accept": ["turmaly"] },
+        { "p": "ol", "accept": ["turmaly"] },
+        { "p": "biz", "accept": ["turmaly"] },
+        { "p": "siz", "accept": ["turmaly"] },
+        { "p": "olar", "accept": ["turmaly"] }
+      ],
+      "explain": "*tur-* + *-maly*, the same for every person. That is why the subject must be said."
+    },
+    {
+      "id": "a2-u06-l01-e05",
+      "type": "translate",
+      "points": ["gp-maly"],
+      "from": "en",
+      "prompt": "You should rest. (singular)",
+      "accept": ["Sen dynç almaly."],
+      "reject": [
+        { "answer": "Dynç almaly.", "why": "*almaly* has no ending, so say who: *Sen dynç almaly*. On its own it sounds like **one should rest**." },
+        { "answer": "Sen dynç almalysyň.", "why": "`-mAlY` takes no personal ending: *Sen dynç almaly*." }
+      ],
+      "explain": "*dynç al-* + *-maly*, with *Sen* to say who."
+    },
+    {
+      "id": "a2-u06-l01-e06",
+      "type": "translate",
+      "points": ["gp-possessive-suffixes", "gp-present-yar"],
+      "from": "tk",
+      "prompt": "Başym agyrýar.",
+      "accept": ["I have a headache.", "My head hurts.", "My head aches.", "I've got a headache."]
+    },
+    {
+      "id": "a2-u06-l01-e07",
+      "type": "mcq",
+      "points": ["gp-possessive-suffixes", "gp-vowel-loss"],
+      "question": "*Garnym agyrýar.* What's wrong?",
+      "options": ["a stomach ache", "a toothache", "a sore throat"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "A toothache would be *Dişim agyrýar*.",
+        "2": "A sore throat would be *Bogazym agyrýar*."
+      },
+      "explain": "*garyn* (stomach) loses its second vowel before *-ym*: *garnym*, my stomach."
+    },
+    {
+      "id": "a2-u06-l01-e08",
+      "type": "translate",
+      "points": ["gp-maly", "gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "I have toothache. I must go to the doctor.",
+      "accept": ["Dişim agyrýar. Men lukmana gitmeli.", "Meniň dişim agyrýar. Men lukmana gitmeli."],
+      "reject": [
+        { "answer": "Dişim agyrýar. Lukmana gitmeli.", "why": "*gitmeli* has no ending, so say who: *Men lukmana gitmeli*." }
+      ],
+      "explain": "*Dişim agyrýar* (my tooth hurts) and *Men lukmana gitmeli*."
+    },
+    {
+      "id": "a2-u06-l01-e09",
+      "type": "wordbank",
+      "points": ["gp-maly", "gp-dative"],
+      "from": "tk",
+      "prompt": "Men dermanhana gitmeli.",
+      "text": "I must go to the pharmacy.",
+      "answer": ["I", "must", "go", "to", "the", "pharmacy"],
+      "distractors": ["went", "doctor", "can"]
+    },
+    {
+      "id": "a2-u06-l01-e10",
+      "type": "morph",
+      "points": ["gp-maly"],
+      "base": "okamak",
+      "gloss": "must read",
+      "parts": ["oka", "maly"],
+      "distractors": ["meli", "ýar", "r"],
+      "result": "okamaly",
+      "explain": "*oka-* has back vowels, so *-maly*: *okamaly*."
+    },
+    {
+      "id": "a2-u06-l01-e11",
+      "type": "translate",
+      "points": ["gp-maly", "gp-question-words"],
+      "from": "en",
+      "prompt": "What should I do?",
+      "accept": ["Men näme etmeli?", "Näme etmeli?"],
+      "explain": "*et-* + *-meli*; with a question word, no particle: *Men näme etmeli?*"
+    },
+    {
+      "id": "a2-u06-l01-e12",
+      "type": "cloze",
+      "points": ["gp-maly"],
+      "text": "Bogazym agyrýar. Men lukmana git___.",
+      "en": "My throat hurts. I have to go to the doctor.",
+      "blanks": [
+        { "options": ["meli", "jek", "dim"], "answer": 0 }
+      ],
+      "explain": "**Have to**: *gitmeli*. *gitjek* is **I'll go**; *gitdim* is **I went**."
+    },
+    {
+      "id": "a2-u06-l01-e13",
+      "type": "translate",
+      "points": ["gp-maly", "gp-accusative"],
+      "from": "tk",
+      "prompt": "Siz bu dermany her gün içmeli.",
+      "accept": [
+        "You must take this medicine every day.",
+        "You [have to|should|need to] [take|drink] this medicine every day.",
+        "You must drink this medicine every day.",
+        "Every day you [must|have to|should|need to] take this medicine."
+      ]
+    }
+  ]
+}

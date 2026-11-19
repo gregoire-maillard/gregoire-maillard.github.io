@@ -1,0 +1,186 @@
+{
+  "id": "a2-u06-l04",
+  "unit": "a2-u06",
+  "order": 4,
+  "title": "Rules and signs",
+  "goal": "Understand rules and signs, talk to a doctor, and use -mAlY, gerek and bolmak together.",
+  "points": ["gp-maly", "gp-gerek", "gp-maly-bolmak"],
+  "intro": {
+    "text": "Without a subject, `-mAlY` states a rule for everyone: *Bu ýerde aýakgaby çykarmaly*, shoes come off here. Signs often use *gadagan* (forbidden) with an infinitive: *Çilim çekmek gadagan!* And *-mAlY däl* is **mustn't**: *Öýe aýakgap bilen girmeli däl*.",
+    "see": "gp-maly"
+  },
+  "vocab": [
+    { "tk": "gadagan", "en": "forbidden, not allowed", "pos": "adj" },
+    { "tk": "aýakgap", "en": "shoe; shoes", "pos": "noun" },
+    { "tk": "çykarmak", "en": "to take off (clothes); to take out", "pos": "verb", "card": "fc-0216" },
+    { "tk": "ýuwaş", "en": "quiet, calm; slow", "pos": "adj" },
+    { "tk": "düzgün", "en": "rule", "pos": "noun" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u06-l04-e01",
+      "type": "mcq",
+      "points": ["gp-maly", "gp-ypdyr-intro"],
+      "question": "What does the doctor tell Merjen to do?",
+      "context": [
+        { "who": "Lukman", "tk": "Salam! Näme boldy?", "en": "Hello! What's wrong?" },
+        { "who": "Merjen", "tk": "Başym we bogazym agyrýar. Mende gyzzyrma hem bar.", "en": "My head and my throat hurt. I have a fever too." },
+        { "who": "Lukman", "tk": "Size sowuk degipdir. Siz üç gün öýde dynç almaly.", "en": "You've caught a cold. You must rest at home for three days." },
+        { "who": "Merjen", "tk": "Işe gitmeli dälmi?", "en": "Shouldn't I go to work?" },
+        { "who": "Lukman", "tk": "Ýok, gitmeli däl. Bu dermany hem içmeli.", "en": "No, you mustn't. You must take this medicine too." }
+      ],
+      "options": ["rest at home for three days", "go to work", "go to the pharmacy every day"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*Ýok, gitmeli däl*: she mustn't go to work.",
+        "2": "The doctor says nothing about the pharmacy."
+      },
+      "explain": "*Siz üç gün öýde dynç almaly*: you must rest at home for three days."
+    },
+    {
+      "id": "a2-u06-l04-e02",
+      "type": "translate",
+      "points": ["gp-maly", "gp-imperative"],
+      "from": "en",
+      "prompt": "No smoking! (on a sign)",
+      "accept": ["Çilim çekmek gadagan!", "Çilim çekmeli däl!", "Çilim çekmäň!"],
+      "explain": "Signs often say *… gadagan*, forbidden, after an infinitive: *Çilim çekmek gadagan!*"
+    },
+    {
+      "id": "a2-u06-l04-e03",
+      "type": "translate",
+      "points": ["gp-maly", "gp-accusative"],
+      "from": "tk",
+      "prompt": "Bu ýerde aýakgaby çykarmaly.",
+      "accept": [
+        "You have to take off your shoes here.",
+        "[You must|One must|You should] take off [your|the] shoes here.",
+        "[You have to|You must|One must|You should] take [your|the] shoes off here.",
+        "You have to take off the shoes here.",
+        "Shoes [must|have to] [be taken off|come off] here."
+      ]
+    },
+    {
+      "id": "a2-u06-l04-e04",
+      "type": "cloze",
+      "points": ["gp-maly"],
+      "text": "Hassahanada ýuwaş bol___.",
+      "en": "You must be quiet in the hospital.",
+      "blanks": [
+        {
+          "accept": ["maly"],
+          "reject": [
+            { "answer": "meli", "why": "*bol-* has a back vowel, so *-maly*: *bolmaly*." },
+            { "answer": "uň", "why": "*boluň* is a polite command, **be quiet!** The sentence states a rule: *bolmaly*." }
+          ]
+        }
+      ],
+      "explain": "A rule for everyone: `-mAlY` with no subject, *ýuwaş bolmaly*."
+    },
+    {
+      "id": "a2-u06-l04-e05",
+      "type": "mcq",
+      "points": ["gp-maly", "gp-possessive-suffixes"],
+      "question": "Which sentence is a rule for everyone, not about one person?",
+      "options": ["Bu ýerde aýakgaby çykarmaly.", "Men aýakgabymy çykarmaly.", "Sen aýakgabyňy çykarmaly."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*Men … aýakgabymy* is about **me**: I must take off my shoes.",
+        "2": "*Sen … aýakgabyňy* is about **you**."
+      },
+      "explain": "With no subject, `-mAlY` states a general rule: shoes come off here."
+    },
+    {
+      "id": "a2-u06-l04-e06",
+      "type": "translate",
+      "points": ["gp-maly", "gp-dative"],
+      "from": "en",
+      "prompt": "Shouldn't I go to work?",
+      "accept": ["Men işe gitmeli dälmi?", "Işe gitmeli dälmi?"],
+      "explain": "*gitmeli däl* + the particle on *däl*: *gitmeli dälmi?*"
+    },
+    {
+      "id": "a2-u06-l04-e07",
+      "type": "conjugate",
+      "points": ["gp-maly"],
+      "base": "gitmek",
+      "form": "necessitative-question",
+      "label": "*gitmek*, questions: must I go?, must you go?… (one form for all)",
+      "cells": [
+        { "p": "men", "accept": ["gitmelimi"] },
+        { "p": "sen", "accept": ["gitmelimi"] },
+        { "p": "ol", "accept": ["gitmelimi"] },
+        { "p": "biz", "accept": ["gitmelimi"] },
+        { "p": "siz", "accept": ["gitmelimi"] },
+        { "p": "olar", "accept": ["gitmelimi"] }
+      ],
+      "explain": "*gitmeli* + *-mi*, written on, the same for every person."
+    },
+    {
+      "id": "a2-u06-l04-e08",
+      "type": "translate",
+      "points": ["gp-maly", "gp-bilen", "gp-dative"],
+      "from": "tk",
+      "prompt": "Öýe aýakgap bilen girmeli däl.",
+      "accept": [
+        "You mustn't come into the house with your shoes on.",
+        "You mustn't go into the house with (your) shoes on.",
+        "You mustn't come into the house with shoes on.",
+        "[You shouldn't|One mustn't|One shouldn't|Don't] [come|go] into the house with (your) shoes on.",
+        "[You mustn't|You shouldn't|One mustn't|Don't] [come|go] into the house in (your) shoes."
+      ]
+    },
+    {
+      "id": "a2-u06-l04-e09",
+      "type": "wordbank",
+      "points": ["gp-maly", "gp-locative"],
+      "from": "en",
+      "prompt": "You have to be quiet here. (a rule)",
+      "text": "Bu ýerde ýuwaş bolmaly.",
+      "answer": ["Bu", "ýerde", "ýuwaş", "bolmaly"],
+      "distractors": ["bolmalysyň", "ýerden", "gaty"]
+    },
+    {
+      "id": "a2-u06-l04-e10",
+      "type": "translate",
+      "points": ["gp-maly", "gp-locative"],
+      "from": "en",
+      "prompt": "Smoking is forbidden here.",
+      "accept": ["Bu ýerde çilim çekmek gadagan.", "Çilim çekmek bu ýerde gadagan.", "Bu ýerde çilim çekmek gadagandyr."],
+      "explain": "The infinitive *çilim çekmek* + *gadagan*, forbidden."
+    },
+    {
+      "id": "a2-u06-l04-e11",
+      "type": "translate",
+      "points": ["gp-maly-bolmak", "gp-possessive-suffixes", "gp-accusative"],
+      "from": "en",
+      "prompt": "I had to take off my shoes.",
+      "accept": ["Men aýakgabymy çykarmaly boldum.", "Aýakgabymy çykarmaly boldum."],
+      "explain": "*çykarmaly* + *boldum*; **my shoes** as an object: *aýakgabymy* (*p* becomes *b* before a vowel)."
+    },
+    {
+      "id": "a2-u06-l04-e12",
+      "type": "mcq",
+      "points": ["gp-gerek", "gp-past-copula"],
+      "question": "Which sentence means **I needed a new key**?",
+      "options": ["Maňa täze açar gerekdi.", "Men täze açar gerek boldum.", "Maňa täze açar gerek däl."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "The person who needs takes the dative: *maňa*. And *gerek* takes the past like an adjective: *gerekdi*.",
+        "2": "*gerek däl* is **I don't need**."
+      },
+      "explain": "*Maňa* + *täze açar* + *gerekdi*, with the past of **to be** from [A2 unit 2](a2-u02)."
+    },
+    {
+      "id": "a2-u06-l04-e13",
+      "type": "translate",
+      "points": ["gp-maly", "gp-dative"],
+      "from": "tk",
+      "prompt": "Sen işe gitmeli dälmi?",
+      "accept": ["Shouldn't you go to work?", "Don't you have to go to work?", "Don't you need to go to work?", "Mustn't you go to work?"]
+    }
+  ]
+}

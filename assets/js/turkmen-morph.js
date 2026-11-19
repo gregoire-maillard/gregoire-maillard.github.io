@@ -80,11 +80,19 @@
     // the closed list of verbs whose final t becomes d before a vowel and before -ýAr (gidýär, gidip, gider, but
     // gitdi, gitjek); every other verb keeps its consonant (satýar, tutup, çykar). Compounds follow their last word.
     verbSoft: { git: "gid", et: "ed", "aýt": "aýd", "gaýt": "gaýd", seret: "sered", "eşit": "eşid", "äkit": "äkid", "öýt": "öýd",
-      "öwret": "öwred" },   // öwredýär "teaches" (in print, science.gov.tm), öwretmeli (A1-2)
+      "öwret": "öwred",     // öwredýär "teaches" (in print, science.gov.tm), öwretmeli (A1-2)
+      // FC-3: ugratmak "to send, to see off": "ugradyp biljekdigini" (TRT Türkmen), "ugradyp bilmeýäris" and
+      // "bellik ugradyň" (infotrade.gov.tm), "ugradýarlar", "ugradypdyr" (folk tales); "ugratdy" before a consonant
+      "ugrat": "ugrad" },
     // one-syllable loanwords: the rounding rule gives stoluň, the spelling stolyň is also accepted (open question 1)
     loanRound: ["stol", "sport", "klub", "tort", "kod", "gol", "port", "post", "front", "kort", "forum"],
     // the posture verbs that make the progressive after -(Y)p, in the form they take endings (otyryn, durun)
-    posture: { otyr: "otyr", dur: "dur", "ýatyr": "ýatyr", "ýör": "ýör" }
+    posture: { otyr: "otyr", dur: "dur", "ýatyr": "ýatyr", "ýör": "ýör" },
+    // the same four verbs have a present of their own, the "concrete present" (A2-4): otyryn, durun, ýatyrsyň, ýörüs.
+    // Wikipedia's Turkmen grammar tabulates it in every person (otyryn … otyrlar, durun, ýatyryn, ýörün); the
+    // grammar pages of the explanatory dictionary (enedilim.com, "Işlikler") give "Awtobus duralgada du:r", "Jigim
+    // sallançakda ýaty:r", "durun, dursuňyz". Keyed by verb stem: oturmak, durmak, ýatmak, ýöremek (or ýörmek).
+    postureVerb: { otur: "otyr", dur: "dur", "ýat": "ýatyr", "ýöre": "ýör", "ýör": "ýör" }
   };
   // Pronouns and demonstratives: their case forms are written out (maňa, oňa, muny), cut where the endings start.
   var PRON = {
@@ -288,11 +296,13 @@
   var E2 = ["m", "ň", "", "k", "ňYz", "lAr"];
   function person(w, set, p) { return set[p] ? attach(w, set[p], { id: set[p] === "lAr" ? "PL" : "P" + (p + 1), cat: "f" }) : w; }
   function Q(w) { return attach(w, "mY", { id: "Q", k: "q" }); }   // the question particle, written attached
-  // E1 with the question particle: gelýärinmi, gelýärsiňmi (or gelýärmiň), gelýärmi, gelýärsiňizmi (or gelýärmisiňiz)
+  // E1 with the question particle: gelýärinmi, gelýärsiňmi (or gelermisiň, gelýärmiň), gelýärmi, gelýärsiňizmi (or
+  // gelýärmisiňiz). For sen the particle before the full ending is in print for -Ar (bilermisiň in Tyson and Clark's
+  // Peace Corps manual, 1993; A2-2, open question 3), as for siz and the copula (talypmysyň); then the short -mYň.
   function e1(w, p, q) {
     if (!q) return [[person(w, E1, p)]];
     var out = [[Q(person(w, E1, p))]];
-    if (p === 1) out.push([attach(Q(w), "ň", { id: "P2" })]);
+    if (p === 1) out.push([attach(Q(w), "sYň", { id: "P2" })], [attach(Q(w), "ň", { id: "P2" })]);
     if (p === 4) out.push([attach(Q(w), "sYňYz", { id: "P5" })]);
     return out;
   }
@@ -374,7 +384,8 @@
   // Finite forms. spec: { tense, neg, q, p, ability, aux }
   //   tense: present (-ýAr), past (-dY), future (-jAk, no ending), aorist (-Ar; negative -mAr, -mAz), necess (-mAlY,
   //          no ending), imp (sen, siz), opt (men, biz), imp3 (ol, olar), prog (-(Y)p + aux otyr, dur, ýatyr, ýör),
-  //          ypdyr (-(Y)pdYr, ol and olar: the first look of a2-u02)
+  //          ypdyr (-(Y)pdYr, ol and olar: the first look of a2-u02), posture (otyr, dur, ýatyr, ýör on their own:
+  //          the present of oturmak, durmak, ýatmak, ýöremek, a2-u11; no negative, which is -mAýAr: oturmaýar)
   //   ability: -(Y)p bilmek, conjugated in tense present, aorist or past
   // Returns variants (arrays of words), the usual one first, or null where the form doesn't exist.
   function conj(base, spec) {
@@ -425,6 +436,11 @@
         if (!a) throw new Error("unknown helper verb " + spec.aux);
         var c = converb(w0), aw = mk(a, { cat: "f", lemma: a });
         return e1(aw, p, q).map(function (v) { return [c].concat(v); });
+      case "posture":                                                     // otyryn, dursuň, ýatyr, ýörüs (A2-4)
+        if (neg) return null;
+        var pv = LEX.postureVerb[lower(w0.lemma)];
+        if (!pv || w0.pre) return null;
+        return e1(mk(pv, { cat: "f", lemma: pv }), p, q);
       case "ypdyr":                                                       // gelipdir, gelipdirler
         if (neg || (p !== 2 && p !== 5)) return null;
         x = attach(converb(w0), "dYr", { id: "DYR", cat: "f" });
@@ -458,7 +474,8 @@
     ["progressive-otyr", "Progressive with posture verbs", "gp-yp-progressive", "verb", { tense: "prog", aux: "otyr" }, "pq"],
     ["progressive-dur", "Progressive with posture verbs", "gp-yp-progressive", "verb", { tense: "prog", aux: "dur" }, "pq"],
     ["progressive-yatyr", "Progressive with posture verbs", "gp-yp-progressive", "verb", { tense: "prog", aux: "ýatyr" }, "pq"],
-    ["progressive-yor", "Progressive with posture verbs", "gp-yp-progressive", "verb", { tense: "prog", aux: "ýör" }, "pq"]
+    ["progressive-yor", "Progressive with posture verbs", "gp-yp-progressive", "verb", { tense: "prog", aux: "ýör" }, "pq"],
+    ["posture-present", "Present of the posture verbs (otyr, dur, ýatyr, ýör)", "gp-yp-progressive", "verb", { tense: "posture" }, "pq"]
   ];
   var ALIAS = {
     "copula": "copula-present", "copula-negative": "copula-present-negative", "copula-question": "copula-present-question",
@@ -469,7 +486,8 @@
     "future-jak-negative": "future-negative", "future-jak-question": "future-question", "general-present": "aorist",
     "general-present-negative": "aorist-negative", "general-present-question": "aorist-question", "maly": "necessitative",
     "maly-negative": "necessitative-negative", "maly-question": "necessitative-question", "yp-bilmek": "ability",
-    "yp-bilmek-negative": "ability-negative", "yp-bilmek-question": "ability-question", "ypdyr": "perfect-ypdyr"
+    "yp-bilmek-negative": "ability-negative", "yp-bilmek-question": "ability-question", "ypdyr": "perfect-ypdyr",
+    "posture": "posture-present", "posture-question": "posture-present-question"
   };
   var FORMS = {};
   TABLE.forEach(function (r) {
@@ -593,10 +611,22 @@
   tstep("PCOP", "nkq", "dY", "g");
   step("Q", "nkfgx", function (w) { var x = Q(w); x.cat = "q"; return x; });
   tstep("Q-P2", "q", "ň", "x");          // gelýärmiň
+  tstep("Q-P2S", "q", "sYň", "x");       // gelermisiň
   tstep("Q-P5", "q", "sYňYz", "x");      // gelýärmisiňiz
   // word building (a2-u08, a2-u12) and ordinals (a1-u11)
-  [["LY", "lY"], ["SYZ", "sYz"], ["CY", "çY"], ["CA", "çA"], ["RAK", "rÄk"], ["NJY", "(Y)njY"]].forEach(function (d) { tstep(d[0], "n", d[1], "n"); });
+  [["LY", "lY"], ["SYZ", "sYz"], ["CY", "çY"], ["CA", "çA"], ["NJY", "(Y)njY"]].forEach(function (d) { tstep(d[0], "n", d[1], "n"); });
   tstep("LYK", "n", "lYk", "n", { soft: true });
+  // -rAk voices a final k, t, p, ç of the stem: ak → agrak, gök → gögräk, oňat → oňadrak (the explanatory dictionary's
+  // grammar pages, enedilim.com, "Sypatlar", spelling rule 3 of kemlik derejesi; A2-4)
+  step("RAK", "n", function (w) {
+    var x = clone(w), p = lastPart(x);
+    if (p.k === "stem" && x.parts.length === 1) { var r = voiced(p.t); if (r) { p.t = r; p.m = dots(r); } }
+    return attach(x, "rÄk", { id: "RAK", cat: "n" });
+  });
+  // diminutives (a2-u12): -jYk (oglanjyk, kiçijik, towşanjyk) and -jAgAz (gyzjagaz): "dereje ýasaýjy goşulmalar"
+  // in the explanatory dictionary's grammar pages (enedilim.com); towşanjyk in the SIL grammar page (webonary.work)
+  tstep("JYK", "n", "jYk", "n", { soft: true });
+  tstep("JAGAZ", "n", "jAgAz", "n");
   // verbs
   step("NEG", "v", negate);
   tstep("PRES", "v", "ýÄr", "f");

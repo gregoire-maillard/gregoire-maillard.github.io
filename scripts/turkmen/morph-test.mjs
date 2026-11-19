@@ -274,6 +274,12 @@ check("öwretmek: öwredýär, öwredip, öwreder, öwrediň; öwretdi, öwretje
    third("past", "öwretmek"), third("future", "öwretmek"), third("necessitative", "öwretmek"), third("present-negative", "öwretmek")],
   ["öwredýär", "öwredip", "öwreder", "öwrediň", "öwretdi", "öwretjek", "öwretmeli", "öwretmeýär"]);
 para("present-question", "öwretmek", "-|öwredýärsiňmi|-|-|öwredýärsiňizmi|-");
+// ugratmak "to send, to see off" joins the list in FC-3: ugradyp, ugradyň, ugradýar in print (TRT Türkmen,
+// infotrade.gov.tm, folk tales), ugratdy before a consonant (a Görogly text on turkmenkultur.com)
+check("ugratmak: ugradýar, ugradyp, ugradar, ugradyň; ugratdy, ugratjak, ugratmaly, ugratmaýar (FC-3)", () =>
+  [third("present", "ugratmak"), M.converb("ugratmak").text, third("aorist", "ugratmak"), M.form("imperative", "ugratmak", "siz").text,
+   third("past", "ugratmak"), third("future", "ugratmak"), third("necessitative", "ugratmak"), third("present-negative", "ugratmak")],
+  ["ugradýar", "ugradyp", "ugradar", "ugradyň", "ugratdy", "ugratjak", "ugratmaly", "ugratmaýar"]);
 check("the negative keeps t: gitmeýär, etmeýärin", () => [third("present-negative", "gitmek"), M.form("present-negative", "etmek", "men").text], ["gitmeýär", "etmeýärin"]);
 // past -dY
 para("past", "gelmek", "geldim|geldiň|geldi|geldik|geldiňiz|geldiler");
@@ -375,6 +381,143 @@ check("the converb -(Y)p", () => ["gelmek", "okamak", "işlemek", "görmek", "bo
   "öýtmek", "satmak", "tutmak", "ýatmak", "oturmak", "diýmek", "iýmek", "goýmak", "durmak", "söýmek", "duýmak", "öwrenmek", "görünmek", "gürlemek"].map(v => M.converb(v).text),
   ["gelip", "okap", "işläp", "görüp", "bolup", "gidip", "edip", "aýdyp", "gaýdyp", "seredip", "eşidip", "äkidip", "öýdüp", "satyp", "tutup", "ýatyp", "oturyp",
    "diýip", "iýip", "goýup", "durup", "söýüp", "duýup", "öwrenip", "görünip", "gürläp"]);
+
+// A2-2 (open question 3, settled): the negative of -Ar is -mAr in the first and second persons and -mAz in the third,
+// as in Wikipedia's suffix table (-merin, -mersiň, -mez, -meris, -mersiňiz, -mezler), the SIL grammar on webonary
+// (almaryn, almarsyň, almaz, almarys, almarsyňyz; etmerin, etmersiň, sürmerin, bolmaryn; ol gitmez) and Başdaş,
+// TÜBAR 2015 (almarın … almazlar); for sen the particle also goes before the full ending (bilermisiň, Tyson and Clark)
+para("aorist-negative", "almak", "almaryn|almarsyň|almaz|almarys|almarsyňyz|almazlar");
+// (the SIL grammar's olar almaz is the ol form, which the validator accepts for olar as for every tense)
+para("aorist-negative", "etmek", "etmerin|etmersiň|etmez|-|-|-");
+check("SIL and Tyson and Clark: sürmerin, bolmaryn, gitmez, getirmez, bolmaz, çykmaz, aglamaz, dişlemez", () =>
+  [M.form("aorist-negative", "sürmek", "men").text, M.form("aorist-negative", "bolmak", "men").text, third("aorist-negative", "gitmek"),
+   third("aorist-negative", "getirmek"), third("aorist-negative", "bolmak"), third("aorist-negative", "çykmak"), third("aorist-negative", "aglamak"),
+   third("aorist-negative", "dişlemek")], ["sürmerin", "bolmaryn", "gitmez", "getirmez", "bolmaz", "çykmaz", "aglamaz", "dişlemez"]);
+check("-Ar in print: geler, çeker, aýdar, bolar, ugrar; alaryn, ýuwaryn, galarys, duşuşarys, çagyrarys", () =>
+  [third("aorist", "gelmek"), third("aorist", "çekmek"), third("aorist", "aýtmak"), third("aorist", "bolmak"), third("aorist", "ugramak"),
+   M.form("aorist", "almak", "men").text, M.form("aorist", "ýuwmak", "men").text, M.form("aorist", "galmak", "biz").text,
+   M.form("aorist", "duşuşmak", "biz").text, M.form("aorist", "çagyrmak", "biz").text],
+  ["geler", "çeker", "aýdar", "bolar", "ugrar", "alaryn", "ýuwaryn", "galarys", "duşuşarys", "çagyrarys"]);
+check("aorist question, sen: gelersiňmi, gelermisiň, gelermiň", () => vars("aorist-question", "gelmek", "sen"), ["gelersiňmi", "gelermisiň", "gelermiň"]);
+check("aorist question, siz: içersiňizmi, içermisiňiz", () => vars("aorist-question", "içmek", "siz"), ["içersiňizmi", "içermisiňiz"]);
+para("aorist-question", "bilmek", "-|bilermisiň|-|-|-|-", true);
+para("ability-aorist-question", "geçirmek", "-|geçirip bilermisiň|-|-|-|-", true);
+para("aorist-question", "açmak", "-|-|açarmy|-|-|-");
+para("aorist", "ýagmak", "-|-|ýagar|-|-|-");
+check("the general present of the A2-2 verbs: turar, ýuwunar, geýiner, ylgar, ýüzer, bişirer, gaýnar, duşuşar, ýarar, kömek eder, jaň eder, söz berer", () =>
+  ["turmak", "ýuwunmak", "geýinmek", "ylgamak", "ýüzmek", "bişirmek", "gaýnamak", "duşuşmak", "ýaramak", "kömek etmek", "jaň etmek", "söz bermek"].map(v => third("aorist", v)),
+  ["turar", "ýuwunar", "geýiner", "ylgar", "ýüzer", "bişirer", "gaýnar", "duşuşar", "ýarar", "kömek eder", "jaň eder", "söz berer"]);
+check("present question, sen: gelýärsiňmi, gelýärmisiň, gelýärmiň", () => vars("present-question", "gelmek", "sen"), ["gelýärsiňmi", "gelýärmisiň", "gelýärmiň"]);
+// -(Y)p bilmek in print: alyp bilýärin, geýinip bilýär (SIL grammar), dokap, bişirip, edip bilýärin, emip bilýär (SIL dictionary),
+// iberip bilersiňiz (Tyson and Clark), deňleşip bilmez (SIL dictionary)
+check("-(Y)p bilmek in print", () => [M.form("ability", "almak", "men").text, third("ability", "geýinmek"), M.form("ability", "dokamak", "men").text,
+  M.form("ability", "bişirmek", "men").text, M.form("ability", "etmek", "men").text, M.form("ability-aorist", "ibermek", "siz").text,
+  third("ability-aorist-negative", "deňleşmek")],
+  ["alyp bilýärin", "geýinip bilýär", "dokap bilýärin", "bişirip bilýärin", "edip bilýärin", "iberip bilersiňiz", "deňleşip bilmez"]);
+check("the converbs of A2-2: ýüzüp, ylgap, çalyp, gürläp, sürüp, oýnap, dokap, ýöräp, geýinip, ýuwunyp, utup, tutup", () =>
+  ["ýüzmek", "ylgamak", "çalmak", "gürlemek", "sürmek", "oýnamak", "dokamak", "ýöremek", "geýinmek", "ýuwunmak", "utmak", "tutmak"].map(v => M.converb(v).text),
+  ["ýüzüp", "ylgap", "çalyp", "gürläp", "sürüp", "oýnap", "dokap", "ýöräp", "geýinip", "ýuwunyp", "utup", "tutup"]);
+para("ability-question", "ýüzmek", "-|ýüzüp bilýärmisiň|-|-|-|-", true);
+para("ability-past-negative", "gelmek", "gelip bilmedim|-|-|-|-|-");
+para("ability-past-question", "gelmek", "-|gelip bildiňmi|-|-|-|-");
+// -mAlY in print: gitmeli, galmaly (Tyson and Clark), bejermeli, çydamaly, goramaly, ekmeli (SIL); okamaly däl (Wikipedia),
+// çykmaly däl (SIL); with bolmak: gitmeli boldum, iýmeli boldular, el üzmeli bolarys (SIL dictionary)
+check("-mAlY in print", () => [third("necessitative", "gitmek"), third("necessitative", "galmak"), third("necessitative", "bejermek"),
+  third("necessitative", "çydamak"), third("necessitative", "goramak"), third("necessitative", "ekmek"), third("necessitative-negative", "okamak"),
+  third("necessitative-negative", "çykmak")],
+  ["gitmeli", "galmaly", "bejermeli", "çydamaly", "goramaly", "ekmeli", "okamaly däl", "çykmaly däl"]);
+check("-mAlY bolmak: gitmeli boldum, iýmeli boldular, gitmeli bolar, gitmeli bolarys, gitmeli bolýar, gitmeli boljak", () =>
+  [M.form("past", "bolmak", "men").text, M.form("past", "bolmak", "olar").text, third("aorist", "bolmak"), M.form("aorist", "bolmak", "biz").text,
+   third("present", "bolmak"), third("future", "bolmak")].map((b, i) => (i === 1 ? "iýmeli " : "gitmeli ") + b),
+  ["gitmeli boldum", "iýmeli boldular", "gitmeli bolar", "gitmeli bolarys", "gitmeli bolýar", "gitmeli boljak"]);
+
+// A2-3: forms in print for the optative, -sYn, the wishes and the place nouns (no engine change). The optative:
+// garaşaýyn, garaşaly(ň), Gidelimi?, Biz gaýdalyň! (SIL grammar on webonary), kömek edeýin, edeýinmi, etmäýin, edeli,
+// etmäli (PAÜ ÇTLE's Turkmen dictionary), soraýynmy (M. Erdem, ÇÜTAD 2019, as sorayınmı), deňeşdireliň, ýykyşalyň,
+// tabşyralyň (Türkmen halk ertekileri); -sYn: garaşsyn, garaşsynlar, Ol çaý içsin (SIL grammar), kömek etsin, etmesin,
+// etsinmi (PAÜ ÇTLE); the wishes: Toýuňyz gutly bolsun (medeniyet.gov.tm), Ýoluňyz ak bolsun (Five Colleges glossary),
+// Işiňiz rowaç bolsun (ylymly.com), Işdäňiz açyk bolsun (recipes on atavatan-turkmenistan.com), Gijäňiz rahat bolsun,
+// Ertiriňiz haýyrly bolsun, Doglan günüň gutly bolsun, Täze ýylyňyz gutly bolsun (Omniglot), Ömrüňiz uzak (ylymly.com);
+// place nouns: stoluň üstünde (enedilim.com, under gap-gaç), üstünde, öňünde, yzynda, gapdalynda, ýanynda, içinde,
+// ortasynda, ýanyna, ýanyma (SIL grammar), tarapyna (enedilim.com, under tarap), arasy, üstünden (Magtymguly, "Türkmeniň");
+// -rAk: ulurak (Ankara University's Türkmen Türkçesi course), gowurak (Baýramow's dictionary of paronyms, 2021), tizräk
+check("optative in print", () => [M.form("optative", "garaşmak", "men").text, ...vars("optative", "garaşmak", "biz"), vars("optative-question", "gitmek", "biz")[0],
+  vars("optative", "gaýtmak", "biz")[1], M.form("optative", "kömek etmek", "men").text, M.form("optative-question", "kömek etmek", "men").text,
+  M.form("optative-negative", "kömek etmek", "men").text, vars("optative", "kömek etmek", "biz")[0], vars("optative-negative", "kömek etmek", "biz")[0],
+  M.form("optative-question", "soramak", "men").text, vars("optative", "deňeşdirmek", "biz")[1], vars("optative", "ýykyşmak", "biz")[1],
+  vars("optative", "tabşyrmak", "biz")[1]],
+  ["garaşaýyn", "garaşaly", "garaşalyň", "gidelimi", "gaýdalyň", "kömek edeýin", "kömek edeýinmi", "kömek etmäýin", "kömek edeli", "kömek etmäli",
+   "soraýynmy", "deňeşdireliň", "ýykyşalyň", "tabşyralyň"]);
+check("-sYn in print: garaşsyn, garaşsynlar, kömek etsin, kömek etmesin, kömek etsinmi, içsin, bolsun", () =>
+  [third("imperative-3rd", "garaşmak"), M.form("imperative-3rd", "garaşmak", "olar").text, third("imperative-3rd", "kömek etmek"),
+   third("imperative-3rd-negative", "kömek etmek"), third("imperative-3rd-question", "kömek etmek"), third("imperative-3rd", "içmek"), third("imperative-3rd", "bolmak")],
+  ["garaşsyn", "garaşsynlar", "kömek etsin", "kömek etmesin", "kömek etsinmi", "içsin", "bolsun"]);
+check("the possessives of the wishes: toýuňyz, ýoluňyz, ýoluň, işiňiz, işdäňiz, gijäňiz, ertiriňiz, agşamyňyz, günüň, ýylyňyz, ömrüňiz", () =>
+  [dec("toý", { poss: "siz" }), dec("ýol", { poss: "siz" }), dec("ýol", { poss: "sen" }), dec("iş", { poss: "siz" }), dec("işdä", { poss: "siz" }),
+   dec("gije", { poss: "siz" }), dec("ertir", { poss: "siz" }), dec("agşam", { poss: "siz" }), dec("gün", { poss: "sen" }), dec("ýyl", { poss: "siz" }),
+   dec("ömür", { poss: "siz" })],
+  ["toýuňyz", "ýoluňyz", "ýoluň", "işiňiz", "işdäňiz", "gijäňiz", "ertiriňiz", "agşamyňyz", "günüň", "ýylyňyz", "ömrüňiz"]);
+check("place nouns in print: stoluň üstünde, öňünde, yzynda, gapdalynda, ýanynda, içinde, ortasynda, ýanyna, ýanyma, tarapyna, arasy, üstünden", () =>
+  [dec("stol", { case: "gen" }) + " " + dec("üst", { poss: "ol", case: "loc" }), dec("öň", { poss: "ol", case: "loc" }), dec("yz", { poss: "ol", case: "loc" }),
+   dec("gapdal", { poss: "ol", case: "loc" }), dec("ýan", { poss: "ol", case: "loc" }), dec("iç", { poss: "ol", case: "loc" }), dec("orta", { poss: "ol", case: "loc" }),
+   dec("ýan", { poss: "ol", case: "dat" }), dec("ýan", { poss: "men", case: "dat" }), dec("tarap", { poss: "ol", case: "dat" }), dec("ara", { poss: "ol" }),
+   dec("üst", { poss: "ol", case: "abl" })],
+  ["stoluň üstünde", "öňünde", "yzynda", "gapdalynda", "ýanynda", "içinde", "ortasynda", "ýanyna", "ýanyma", "tarapyna", "arasy", "üstünden"]);
+check("place nouns with every person: öňümde, öňüňde, öňünde, öňümizde, öňüňizde; aşagymda, aşagynda; içimde", () =>
+  [...["men", "sen", "ol", "biz", "siz"].map(p => dec("öň", { poss: p, case: "loc" })), dec("aşak", { poss: "men", case: "loc" }),
+   dec("aşak", { poss: "ol", case: "loc" }), dec("iç", { poss: "men", case: "loc" })],
+  ["öňümde", "öňüňde", "öňünde", "öňümizde", "öňüňizde", "aşagymda", "aşagynda", "içimde"]);
+check("-rAk in print: ulurak, gowurak, tizräk", () => [build("uly", ["RAK"]), build("gowy", ["RAK"]), build("tiz", ["RAK"])], ["ulurak", "gowurak", "tizräk"]);
+
+// A2-4. The posture verbs' own present ("concrete present"): Wikipedia's Turkmen grammar tabulates otyryn … otyrlar,
+// durun, ýatyryn, ýörün in every person; the explanatory dictionary's grammar pages (enedilim.com, "Işlikler") have
+// "Awtobus duralgada du:r", "Jigim sallançakda ýaty:r", "durun, dursuňyz". The progressive in the SIL grammar page
+// (webonary.work): gezip ýörler, uklap ýatyr, dynç alyp ýatyr, ýagyp dur, garaşyp otyrys, okap ýör.
+for (const [v, forms6] of [
+  ["oturmak", ["otyryn", "otyrsyň", "otyr", "otyrys", "otyrsyňyz", "otyrlar"]],
+  ["durmak", ["durun", "dursuň", "dur", "durus", "dursuňyz", "durlar"]],
+  ["ýatmak", ["ýatyryn", "ýatyrsyň", "ýatyr", "ýatyrys", "ýatyrsyňyz", "ýatyrlar"]],
+  ["ýöremek", ["ýörün", "ýörsüň", "ýör", "ýörüs", "ýörsüňiz", "ýörler"]]]) {
+  check(`posture present: ${v}`, () => M.PERSONS.map(p => M.form("posture-present", v, p).text), forms6);
+}
+check("posture present questions: otyrmy, otyrsyňmy (otyrmysyň, otyrmyň), durmy, ýatyrmy, ýörmi", () =>
+  [third("posture-present-question", "oturmak"), ...vars("posture-present-question", "oturmak", "sen"), third("posture-present-question", "durmak"),
+   third("posture-present-question", "ýatmak"), third("posture-present-question", "ýöremek")],
+  ["otyrmy", "otyrsyňmy", "otyrmysyň", "otyrmyň", "durmy", "ýatyrmy", "ýörmi"]);
+check("posture present: none for other verbs, none in the negative, ýörmek as ýöremek", () =>
+  [M.form("posture-present", "okamak", "ol"), M.formInfo("posture-present-negative"), M.form("posture-present", "ýörmek", "men").text, M.formInfo("posture").same],
+  [null, null, "ýörün", "posture-present"], "check");
+check("the progressive in print: gezip ýörler, uklap ýatyr, dynç alyp ýatyr, ýagyp dur, garaşyp otyrys, okap ýör, işläp ýörün", () =>
+  [M.form("progressive-yor", "gezmek", "olar").text, third("progressive-yatyr", "uklamak"), third("progressive-yatyr", "dynç almak"),
+   third("progressive-dur", "ýagmak"), M.form("progressive-otyr", "garaşmak", "biz").text, third("progressive-yor", "okamak"),
+   M.form("progressive-yor", "işlemek", "men").text],
+  ["gezip ýörler", "uklap ýatyr", "dynç alyp ýatyr", "ýagyp dur", "garaşyp otyrys", "okap ýör", "işläp ýörün"]);
+check("-rAk voices a final k, t: agrak, gögräk, agsagrak, oňadrak (enedilim.com, Sypatlar); not uzynrak, ýakynrak", () =>
+  [build("ak", ["RAK"]), build("gök", ["RAK"]), build("agsak", ["RAK"]), build("oňat", ["RAK"]), build("uzyn", ["RAK"]), build("ýakyn", ["RAK"])],
+  ["agrak", "gögräk", "agsagrak", "oňadrak", "uzynrak", "ýakynrak"]);
+check("-kY in print: gyşky, şäherdäki, Aşgabatdaky (enedilim.com); düýnki, ertirki, öýdäki, mekdepdäki, meniňki, Aýnanyňky", () =>
+  [build("gyş", ["KY"]), build("şäher", ["LOC", "KY"]), build("Aşgabat", ["LOC", "KY"]), build("düýn", ["KY"]), build("ertir", ["KY"]),
+   build("öý", ["LOC", "KY"]), build("mekdep", ["LOC", "KY"]), build("men", ["GEN", "KY"]), build("Aýna", ["GEN", "KY"])],
+  ["gyşky", "şäherdäki", "Aşgabatdaky", "düýnki", "ertirki", "öýdäki", "mekdepdäki", "meniňki", "Aýnanyňky"]);
+check("word building in print: ylymly, bilimli, malsyz, gülsüz, suwçy, okuwçy, balykçy, işçi, otluk, aklyk (enedilim.com; a school textbook)", () =>
+  [build("ylym", ["LY"]), build("bilim", ["LY"]), build("mal", ["SYZ"]), build("gül", ["SYZ"]), build("suw", ["CY"]), build("okuw", ["CY"]),
+   build("balyk", ["CY"]), build("iş", ["CY"]), build("ot", ["LYK"]), build("ak", ["LYK"])],
+  ["ylymly", "bilimli", "malsyz", "gülsüz", "suwçy", "okuwçy", "balykçy", "işçi", "otluk", "aklyk"]);
+check("word building of a2-u12: şekerli, şekersiz, bulutly, suwsuz, işsiz, halyçy, dostluk, garaşsyzlyk, türkmençe, rusça", () =>
+  [build("şeker", ["LY"]), build("şeker", ["SYZ"]), build("bulut", ["LY"]), build("suw", ["SYZ"]), build("iş", ["SYZ"]), build("haly", ["CY"]),
+   build("dost", ["LYK"]), build("garaşsyz", ["LYK"]), build("türkmen", ["CA"]), build("rus", ["CA"])],
+  ["şekerli", "şekersiz", "bulutly", "suwsuz", "işsiz", "halyçy", "dostluk", "garaşsyzlyk", "türkmençe", "rusça"]);
+check("diminutives: gyzjagaz, oglanjyk (enedilim.com), towşanjyk (SIL), kiçijik, çagajyk, oglanjagaz", () =>
+  [build("gyz", ["JAGAZ"]), build("oglan", ["JYK"]), build("towşan", ["JYK"]), build("kiçi", ["JYK"]), build("çaga", ["JYK"]), build("oglan", ["JAGAZ"])],
+  ["gyzjagaz", "oglanjyk", "towşanjyk", "kiçijik", "çagajyk", "oglanjagaz"]);
+check("-AndA: gelende, okanda, baranda, işlände, gelmände; gelenimde (SIL), okanyňda", () =>
+  [build("gelmek", ["AN", "LOC"]), build("okamak", ["AN", "LOC"]), build("barmak", ["AN", "LOC"]), build("işlemek", ["AN", "LOC"]),
+   build("gelmek", ["NEG", "AN", "LOC"]), build("gelmek", ["AN", "POSS1", "LOC"]), build("okamak", ["AN", "POSS2", "LOC"])],
+  ["gelende", "okanda", "baranda", "işlände", "gelmände", "gelenimde", "okanyňda"]);
+check("compounds: halysy, halysyny, duralgasynda, sumkam, köçesi", () =>
+  [dec("haly", { poss: "ol" }), dec("haly", { poss: "ol", case: "acc" }), dec("duralga", { poss: "ol", case: "loc" }), dec("sumka", { poss: "men" }),
+   dec("köçe", { poss: "ol" })],
+  ["halysy", "halysyny", "duralgasynda", "sumkam", "köçesi"]);
 
 // ─────────────────────────── 7. the forms on the FC-1 flashcards, typed again ───────────────────────────
 // verb: third person -ýAr, -dY, -Ar and the converb -(Y)p

@@ -1,0 +1,173 @@
+{
+  "id": "a2-u05-l03",
+  "unit": "a2-u05",
+  "order": 3,
+  "title": "May I come in?",
+  "goal": "Ask for permission, say what is allowed or possible, and say what may happen.",
+  "points": ["gp-ability-uses", "gp-yp-bilmek", "gp-yp-bilmek-negative"],
+  "intro": {
+    "text": "*Girsem bolýarmy?* asks **may I come in?** For what is allowed, use the converb + *bolýar*: *Bu ýerde oturyp bolýar* (you can sit here), *Çilim çekip bolmaýar* (no smoking). *mümkin* is **possible**, and *gelip biler* is **he may come**.",
+    "see": "gp-ability-uses"
+  },
+  "vocab": [
+    { "tk": "Girsem bolýarmy?", "en": "May I come in?", "pos": "phrase" },
+    { "tk": "Sorasam bolýarmy?", "en": "May I ask?", "pos": "phrase" },
+    { "tk": "mümkin", "en": "possible", "pos": "adj" },
+    { "tk": "rugsat", "en": "permission", "pos": "noun", "card": "fc-0170" },
+    { "tk": "içeri", "en": "inside, in", "pos": "adv", "card": "fc-0220" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u05-l03-e01",
+      "type": "mcq",
+      "points": ["gp-ability-uses"],
+      "question": "You're at someone's door. How do you ask **May I come in?**",
+      "options": ["Girsem bolýarmy?", "Girip bilýärinmi?", "Girýärinmi?"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*Girip bilýärinmi?* asks whether you are **able** to go in, not whether you may.",
+        "2": "*Girýärinmi?* asks **am I going in?**"
+      },
+      "explain": "*Girsem bolýarmy?* is the set phrase for asking permission to come in."
+    },
+    {
+      "id": "a2-u05-l03-e02",
+      "type": "translate",
+      "points": ["gp-ability-uses", "gp-locative"],
+      "from": "tk",
+      "prompt": "Bu ýerde oturyp bolýar.",
+      "accept": ["You can sit here.", "One can sit here.", "It's all right to sit here.", "It's OK to sit here.", "You may sit here."]
+    },
+    {
+      "id": "a2-u05-l03-e03",
+      "type": "translate",
+      "points": ["gp-ability-uses", "gp-locative"],
+      "from": "en",
+      "prompt": "You can't smoke here.",
+      "accept": ["Bu ýerde çilim çekip bolmaýar.", "Şu ýerde çilim çekip bolmaýar."],
+      "reject": [
+        { "answer": "Bu ýerde çilim çekip bilmeýärsiň.", "why": "*çekip bilmeýärsiň* says you aren't **able** to smoke. For a rule: *çekip bolmaýar*." }
+      ],
+      "explain": "What isn't allowed: the converb + *bolmaýar*, with no person."
+    },
+    {
+      "id": "a2-u05-l03-e04",
+      "type": "cloze",
+      "points": ["gp-ability-uses"],
+      "text": "Içeri girip bol___?",
+      "en": "May we go in? (Is it all right to go in?)",
+      "blanks": [
+        {
+          "accept": ["ýarmy"],
+          "reject": [
+            { "answer": "ýar", "why": "It's a question: add *-my*: *bolýarmy?*" },
+            { "answer": "ýarys", "why": "*bolýar* takes no person here: it means **it is all right**. *Girip bolýarmy?*" }
+          ]
+        }
+      ],
+      "explain": "*girip bolýarmy?*: is it all right to go in? The question particle goes on *bolýar*."
+    },
+    {
+      "id": "a2-u05-l03-e05",
+      "type": "mcq",
+      "points": ["gp-ability-uses", "gp-dal"],
+      "question": "*Bu mümkin däl!* What does it mean?",
+      "options": ["That's impossible!", "That's possible.", "Is that possible?"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*däl* makes it negative: **not possible**.",
+        "2": "A question would be *Bu mümkinmi?*"
+      },
+      "explain": "*mümkin* is **possible**; *mümkin däl* is **impossible**."
+    },
+    {
+      "id": "a2-u05-l03-e06",
+      "type": "translate",
+      "points": ["gp-ability-uses", "gp-aorist-uses"],
+      "from": "en",
+      "prompt": "It may rain tomorrow.",
+      "accept": ["Ertir ýagyş ýagyp biler.", "Belki ertir ýagyş ýagar."],
+      "explain": "What may happen: the converb + *biler*, *ýagyp biler*."
+    },
+    {
+      "id": "a2-u05-l03-e07",
+      "type": "conjugate",
+      "points": ["gp-yp-bilmek", "gp-ability-uses"],
+      "base": "gelmek",
+      "form": "ability-aorist",
+      "label": "*gelmek* with *biler*: I'll be able to come; he may come…",
+      "cells": [
+        { "p": "men", "accept": ["gelip bilerin"] },
+        { "p": "sen", "accept": ["gelip bilersiň"] },
+        { "p": "ol", "accept": ["gelip biler"] },
+        { "p": "biz", "accept": ["gelip bileris"] },
+        { "p": "siz", "accept": ["gelip bilersiňiz"] },
+        { "p": "olar", "accept": ["gelip bilerler", "gelip biler"] }
+      ],
+      "explain": "*bilmek* in the general present: *bilerin, bilersiň, biler…* With **he** or **she** it often means **may**: *Ol gelip biler*."
+    },
+    {
+      "id": "a2-u05-l03-e08",
+      "type": "translate",
+      "points": ["gp-ability-uses", "gp-ablative"],
+      "from": "tk",
+      "prompt": "Kakamdan rugsat soradym.",
+      "accept": ["I asked my father for permission.", "I asked my dad for permission.", "I asked [my father|my dad] permission."]
+    },
+    {
+      "id": "a2-u05-l03-e09",
+      "type": "wordbank",
+      "points": ["gp-ability-uses", "gp-pronoun-cases-dat-abl"],
+      "from": "en",
+      "prompt": "My father gave me permission.",
+      "text": "Kakam maňa rugsat berdi.",
+      "answer": ["Kakam", "maňa", "rugsat", "berdi"],
+      "distractors": ["meni", "soradym", "bermedi"]
+    },
+    {
+      "id": "a2-u05-l03-e10",
+      "type": "mcq",
+      "points": ["gp-ability-uses", "gp-yp-bilmek"],
+      "question": "Which question is about **ability**, not permission?",
+      "options": ["Ýüzüp bilýärsiňmi?", "Girsem bolýarmy?", "Bu ýerde oturyp bolýarmy?"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "That asks for permission: **may I come in?**",
+        "2": "That asks whether it's allowed: **can one sit here?**"
+      },
+      "explain": "*Ýüzüp bilýärsiňmi?*: can you swim? Are you able to?"
+    },
+    {
+      "id": "a2-u05-l03-e11",
+      "type": "translate",
+      "points": ["gp-ability-uses", "gp-question-my"],
+      "from": "en",
+      "prompt": "Is that possible?",
+      "accept": ["Bu mümkinmi?", "Mümkinmi?", "Şu mümkinmi?"],
+      "explain": "*mümkin* + the question particle, written on: *mümkinmi?*"
+    },
+    {
+      "id": "a2-u05-l03-e12",
+      "type": "translate",
+      "points": ["gp-ability-uses", "gp-aorist-uses"],
+      "from": "en",
+      "prompt": "He may come tomorrow.",
+      "accept": ["Ol ertir gelip biler.", "Ertir (ol) gelip biler.", "Belki (ol) ertir geler.", "Ol ertir belki geler.", "Belki ertir ol geler."],
+      "explain": "Possibility: the converb + *biler*, or *belki* with the general present."
+    },
+    {
+      "id": "a2-u05-l03-e13",
+      "type": "cloze",
+      "points": ["gp-ability-uses"],
+      "text": "Bu ýerde çilim çekip bol___.",
+      "en": "You can't smoke here.",
+      "blanks": [
+        { "options": ["maýar", "ýar", "mady"], "answer": 0 }
+      ],
+      "explain": "Not allowed: *bolmaýar*. *bolýar* would say it **is** allowed; *bolmady* is the past."
+    }
+  ]
+}

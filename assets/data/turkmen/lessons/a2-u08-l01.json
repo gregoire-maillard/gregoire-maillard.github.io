@@ -1,0 +1,182 @@
+{
+  "id": "a2-u08-l01",
+  "unit": "a2-u08",
+  "order": 1,
+  "title": "Taller than Batyr",
+  "goal": "Compare two people or things with -dan, has and -rAk.",
+  "points": ["gp-comparative"],
+  "intro": {
+    "text": "To compare, put the second thing in `-dAn` and keep the adjective as it is: *Merdan Batyrdan uzyn*, Merdan is taller than Batyr. *has* adds **more**: *has uly*. The suffix `-rAk` means **-er, a bit more**: *ulurak*, *kiçiräk*.",
+    "see": "gp-comparative"
+  },
+  "vocab": [
+    { "tk": "has", "en": "more (has uly: bigger)", "pos": "adv", "card": "fc-0030" },
+    { "tk": "beýik", "en": "high, tall (of mountains, buildings)", "pos": "adj" },
+    { "tk": "pes", "en": "low", "pos": "adj" },
+    { "tk": "giň", "en": "wide, spacious", "pos": "adj" },
+    { "tk": "dar", "en": "narrow", "pos": "adj" },
+    { "tk": "çalt", "en": "fast, quick; quickly", "pos": "adj", "card": "fc-0407" },
+    { "tk": "agyr", "en": "heavy", "pos": "adj" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u08-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["has", "more"],
+        ["beýik", "high, tall"],
+        ["pes", "low"],
+        ["giň", "wide"],
+        ["dar", "narrow"],
+        ["çalt", "fast"]
+      ]
+    },
+    {
+      "id": "a2-u08-l01-e02",
+      "type": "mcq",
+      "points": ["gp-comparative", "gp-ablative"],
+      "question": "How do you say **Merdan is taller than Batyr**?",
+      "options": ["Merdan Batyrdan uzyn.", "Merdan Batyra uzyn.", "Merdandan Batyr uzyn.", "Merdan Batyrda uzyn."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*Batyra* is the dative, **to Batyr**. What you compare with takes *-dan*.",
+        "2": "That says **Batyr is taller than Merdan**: *-dan* marks the one you compare with.",
+        "3": "*Batyrda* is the locative: **at Batyr's, Batyr has it**."
+      },
+      "explain": "*Batyr* + *-dan*, **than Batyr**, and the adjective as it is: *Merdan Batyrdan uzyn*."
+    },
+    {
+      "id": "a2-u08-l01-e03",
+      "type": "cloze",
+      "points": ["gp-comparative", "gp-ablative"],
+      "text": "Aşgabat Mary___ uly.",
+      "en": "Ashgabat is bigger than Mary.",
+      "blanks": [
+        {
+          "accept": ["dan"],
+          "reject": [
+            { "answer": "den", "why": "*Mary* has back vowels: *Marydan*." },
+            { "answer": "da", "why": "*Maryda* is **in Mary**. For **than Mary**, the ablative: *Marydan*." }
+          ]
+        }
+      ],
+      "explain": "*Mary* + *-dan*: *Marydan uly*, bigger than Mary."
+    },
+    {
+      "id": "a2-u08-l01-e04",
+      "type": "translate",
+      "points": ["gp-comparative", "gp-ablative"],
+      "from": "en",
+      "prompt": "Tea is cheaper than coffee.",
+      "accept": ["Çaý kofeden arzan.", "Çaý kofeden arzanrak.", "Çaý kofeden has arzan."],
+      "reject": [
+        { "answer": "Kofe çaýdan arzan.", "why": "That says **coffee is cheaper than tea**. The cheaper one is the subject: *Çaý kofeden arzan*." }
+      ],
+      "explain": "*kofe* + *-den*, **than coffee**: *Çaý kofeden arzan*."
+    },
+    {
+      "id": "a2-u08-l01-e05",
+      "type": "translate",
+      "points": ["gp-comparative"],
+      "from": "tk",
+      "prompt": "Bu otag ulurak.",
+      "accept": ["This room is bigger.", "This room is a bit bigger.", "This room is larger.", "This room is a bit larger.", "This room is rather big."]
+    },
+    {
+      "id": "a2-u08-l01-e06",
+      "type": "morph",
+      "points": ["gp-comparative"],
+      "base": "kiçi",
+      "gloss": "smaller",
+      "parts": ["kiçi", "räk"],
+      "distractors": ["rak", "dan", "räg"],
+      "result": "kiçiräk",
+      "explain": "*kiçi* has front vowels, so *-räk*, with *ä*: *kiçiräk*."
+    },
+    {
+      "id": "a2-u08-l01-e07",
+      "type": "mcq",
+      "points": ["gp-comparative", "gp-ablative"],
+      "question": "Which sentence means **This road is wider than that road**?",
+      "options": ["Bu ýol ol ýoldan giň.", "Bu ýoldan ol ýol giň.", "Bu ýol ol ýola giň.", "Bu ýol ol ýolda giň."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "This one says **that road is wider than this road**: the ablative marks the one you compare with.",
+        "2": "*ýola* is **to the road**. Compare with *-dan*: *ýoldan*.",
+        "3": "*ýolda* is **on the road**. Compare with *-dan*: *ýoldan*."
+      },
+      "explain": "*ol ýol* + *-dan*: *Bu ýol ol ýoldan giň*."
+    },
+    {
+      "id": "a2-u08-l01-e08",
+      "type": "cloze",
+      "points": ["gp-comparative"],
+      "text": "Bu jaý beýik___.",
+      "en": "This building is taller.",
+      "blanks": [
+        {
+          "accept": ["räk"],
+          "reject": [
+            { "answer": "rak", "why": "*beýik* has front vowels, so *-räk*: *beýikräk*." },
+            { "answer": "rek", "why": "The front form of `-rAk` has *ä*, not *e*: *beýikräk*." }
+          ]
+        }
+      ],
+      "explain": "*beýik* + *-räk*: *beýikräk*, taller, higher."
+    },
+    {
+      "id": "a2-u08-l01-e09",
+      "type": "translate",
+      "points": ["gp-comparative", "gp-ablative"],
+      "from": "en",
+      "prompt": "This street is narrower than that street.",
+      "accept": ["Bu köçe ol köçeden dar.", "Bu köçe ol köçeden darrak.", "Bu köçe ol köçeden has dar."],
+      "explain": "*ol köçe* + *-den*, **than that street**, and *dar*, narrow."
+    },
+    {
+      "id": "a2-u08-l01-e10",
+      "type": "wordbank",
+      "points": ["gp-comparative", "gp-pronoun-cases-dat-abl"],
+      "from": "tk",
+      "prompt": "Sen menden uzyn.",
+      "text": "You are taller than me.",
+      "answer": ["You", "are", "taller", "than", "me"],
+      "distractors": ["shorter", "I", "tall"]
+    },
+    {
+      "id": "a2-u08-l01-e11",
+      "type": "translate",
+      "points": ["gp-comparative", "gp-ablative"],
+      "from": "tk",
+      "prompt": "Otly awtobusdan çalt.",
+      "accept": [
+        "The train is faster than the bus.",
+        "The train is quicker than the bus.",
+        "A train is [faster|quicker] than a bus.",
+        "Trains are [faster|quicker] than buses."
+      ]
+    },
+    {
+      "id": "a2-u08-l01-e12",
+      "type": "translate",
+      "points": ["gp-comparative"],
+      "from": "en",
+      "prompt": "This bag is heavier.",
+      "accept": ["Bu sumka agyrrak.", "Bu sumka has agyr."],
+      "explain": "*agyr* + *-rak*: *agyrrak*, with both *r*s; or *has agyr*."
+    },
+    {
+      "id": "a2-u08-l01-e13",
+      "type": "morph",
+      "points": ["gp-comparative", "gp-harmony-rounding"],
+      "base": "gowy",
+      "gloss": "better",
+      "parts": ["gowu", "rak"],
+      "distractors": ["gowy", "räk", "dan"],
+      "result": "gowurak",
+      "explain": "Before `-rAk`, the final *y* of *gowy* rounds after the *o*, by the rule you know from *ulurak*: *gowurak*."
+    }
+  ]
+}

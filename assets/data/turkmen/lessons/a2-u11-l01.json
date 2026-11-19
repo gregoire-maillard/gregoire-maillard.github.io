@@ -1,0 +1,187 @@
+{
+  "id": "a2-u11-l01",
+  "unit": "a2-u11",
+  "order": 1,
+  "title": "When I get home",
+  "goal": "Say when something happens or happened with -AndA: öýe gelende, Aşgabada baranda.",
+  "points": ["gp-anda"],
+  "intro": {
+    "text": "Add `-An` and `-dA` to a verb stem to say **when**: *gelende*, when (someone) comes; *baranda*, when (someone) gets there. The main verb at the end gives the tense: *Öýe gelende, çaý içýärin*, when I come home, I drink tea; *Öýe gelende, çaý içdim*, when I came home, I drank tea.",
+    "see": "gp-anda"
+  },
+  "vocab": [
+    { "tk": "gezek", "en": "time (as in once, every time); turn", "pos": "noun", "card": "fc-0323" },
+    { "tk": "her gezek", "en": "every time", "pos": "phrase" },
+    { "tk": "ýatdan çykarmak", "en": "to forget", "pos": "verb", "card": "fc-0200" },
+    { "tk": "ýatlamak", "en": "to remember, to recall", "pos": "verb", "card": "fc-0183" },
+    { "tk": "satyn almak", "en": "to buy", "pos": "verb" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u11-l01-e01",
+      "type": "match",
+      "pairs": [
+        ["gezek", "time (as in once)"],
+        ["her gezek", "every time"],
+        ["ýatdan çykarmak", "to forget"],
+        ["ýatlamak", "to remember"],
+        ["satyn almak", "to buy"],
+        ["gelende", "when (someone) comes"]
+      ]
+    },
+    {
+      "id": "a2-u11-l01-e02",
+      "type": "mcq",
+      "points": ["gp-anda", "gp-dative"],
+      "question": "How do you say **when I come home**?",
+      "options": ["öýe gelende", "öýe geldende", "öýde gelende", "öýe gelýände"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "`-AndA` comes straight after the stem, with no past: *gel-* + *-ende*.",
+        "2": "Coming **to** a place takes the dative: *öýe*.",
+        "3": "No present either: `-AndA` goes on the bare stem, *gelende*."
+      },
+      "explain": "*öýe*, to home, + *gel-* + *-en* + *-de*: when (I) come home."
+    },
+    {
+      "id": "a2-u11-l01-e03",
+      "type": "morph",
+      "points": ["gp-anda"],
+      "base": "gelmek",
+      "gloss": "when (someone) comes",
+      "parts": ["gel", "en", "de"],
+      "distractors": ["an", "da", "ýär"],
+      "result": "gelende",
+      "explain": "*gel-* + *-en* + *-de*: front vowels throughout."
+    },
+    {
+      "id": "a2-u11-l01-e04",
+      "type": "cloze",
+      "points": ["gp-anda", "gp-imperative"],
+      "text": "Mekdebe bar___, kitabyňy al.",
+      "en": "When you go to school, take your book.",
+      "blanks": [
+        {
+          "accept": ["anda"],
+          "reject": [
+            { "answer": "ende", "why": "*bar-* has a back vowel: *baranda*." },
+            { "answer": "da", "why": "Add *-an* before the locative: *baranda*." }
+          ]
+        }
+      ],
+      "explain": "*bar-* + *-an* + *-da*; the imperative *al* gives the person."
+    },
+    {
+      "id": "a2-u11-l01-e05",
+      "type": "translate",
+      "points": ["gp-anda", "gp-imperative"],
+      "from": "en",
+      "prompt": "Call me when you get home.",
+      "accept": [
+        "Öýe baranda, maňa jaň et.",
+        "Öýe baranda, maňa jaň ediň.",
+        "Öýe [baranyňda|gelende|geleniňde], maňa jaň [et|ediň].",
+        "Öýe [baranyňyzda|geleniňizde], maňa jaň ediň."
+      ],
+      "explain": "*baranda*, when (you) get there; the imperative *jaň et* says who."
+    },
+    {
+      "id": "a2-u11-l01-e06",
+      "type": "translate",
+      "points": ["gp-anda", "gp-past-copula"],
+      "from": "tk",
+      "prompt": "Men Türkmenistana gelenimde, gyşdy.",
+      "accept": [
+        "When I came to Turkmenistan, it was winter.",
+        "It was winter when I came to Turkmenistan.",
+        "When I [arrived in|got to] Turkmenistan, it was winter.",
+        "It was winter when I [arrived in|got to] Turkmenistan."
+      ]
+    },
+    {
+      "id": "a2-u11-l01-e07",
+      "type": "mcq",
+      "points": ["gp-anda", "gp-past-copula"],
+      "question": "*Ol gelende, men öýde däldim.* What does it mean?",
+      "options": ["When he came, I wasn't at home.", "When I came, he wasn't at home.", "He didn't come home."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "*Ol gelende*: **he** came; *men … däldim*: **I** wasn't there.",
+        "2": "*gelende* is **when (he) came**; the negative is on *däldim*."
+      },
+      "explain": "*Ol gelende*, when he came; *men öýde däldim*, I wasn't at home."
+    },
+    {
+      "id": "a2-u11-l01-e08",
+      "type": "translate",
+      "points": ["gp-anda", "gp-aorist-uses"],
+      "from": "en",
+      "prompt": "Every time I come home, I help my father.",
+      "accept": [
+        "Her gezek öýe gelende, kakama kömek edýärin.",
+        "Her gezek öýe gelende, kakama kömek ederin.",
+        "Her gezek öýe gelenimde, kakama kömek [edýärin|ederin].",
+        "Men her gezek öýe [gelende|gelenimde], kakama kömek [edýärin|ederin].",
+        "Her gezek öýe [gelende|gelenimde], men kakama kömek [edýärin|ederin]."
+      ],
+      "explain": "*her gezek*, every time; *gelende*, when (I) come; *kömek etmek* takes the dative, *kakama*."
+    },
+    {
+      "id": "a2-u11-l01-e09",
+      "type": "cloze",
+      "points": ["gp-anda"],
+      "text": "Ol ___, men dynç alýaryn.",
+      "en": "When he works, I rest.",
+      "blanks": [
+        { "options": ["işlände", "işlende", "işleýände"], "answer": 0 }
+      ],
+      "explain": "*işle-* ends in *e*, which becomes *ä* before *-n*: *işlände*."
+    },
+    {
+      "id": "a2-u11-l01-e10",
+      "type": "translate",
+      "points": ["gp-anda", "gp-past-dy"],
+      "from": "tk",
+      "prompt": "Sen gelmände, men saňa jaň etdim.",
+      "accept": [
+        "When you did not come, I called you.",
+        "I called you when you did not come.",
+        "When you did not show up, I [called|phoned|rang] you.",
+        "When you did not come, I [phoned|rang] you."
+      ]
+    },
+    {
+      "id": "a2-u11-l01-e11",
+      "type": "wordbank",
+      "points": ["gp-anda", "gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "When I went to the market, I forgot my money.",
+      "text": "Bazara baranda, pulumy ýatdan çykardym.",
+      "answer": ["Bazara", "baranda", "pulumy", "ýatdan", "çykardym"],
+      "distractors": ["bazarda", "pulum", "gelende"]
+    },
+    {
+      "id": "a2-u11-l01-e12",
+      "type": "translate",
+      "points": ["gp-anda", "gp-optative"],
+      "from": "en",
+      "prompt": "When the guests come, let's drink tea.",
+      "accept": ["Myhmanlar gelende, çaý içeli.", "Myhmanlar gelende, çaý içeliň."],
+      "explain": "*Myhmanlar gelende*, when the guests come; *içeli*, let's drink."
+    },
+    {
+      "id": "a2-u11-l01-e13",
+      "type": "translate",
+      "points": ["gp-anda", "gp-daky"],
+      "from": "tk",
+      "prompt": "Aşgabada baranda, Magtymguly köçesindäki muzeýi gördüm.",
+      "accept": [
+        "When I went to Ashgabat, I saw the museum on Magtymguly Street.",
+        "When I [got to|came to|was in|visited] Ashgabat, I saw the museum on Magtymguly Street.",
+        "I saw the museum on Magtymguly Street when I [went to|got to|came to|was in|visited] Ashgabat."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "id": "a2-u10-l04",
+  "unit": "a2-u10",
+  "order": 4,
+  "title": "Whose telpek is this?",
+  "goal": "Say mine, yours, Aýna's with -ky, ask kimiňki?, and sort out lost things.",
+  "points": ["gp-ky-pronoun", "gp-daky", "gp-compound-indefinite"],
+  "intro": {
+    "text": "Add `-ky` to a genitive to say **the one belonging to**: *meniňki*, mine; *seniňki*, yours; *Aýnanyňky*, Aýna's. Ask with *kimiňki?*: *Bu telpek kimiňki?* — *Kakamyňky*, my father's.",
+    "see": "gp-ky-pronoun"
+  },
+  "vocab": [
+    { "tk": "telpek", "en": "telpek, the Turkmen sheepskin hat", "pos": "noun" },
+    { "tk": "don", "en": "long robe (traditional)", "pos": "noun" },
+    { "tk": "tahýa", "en": "skullcap (embroidered)", "pos": "noun" },
+    { "tk": "hojaýyn", "en": "owner; host; boss", "pos": "noun", "card": "fc-0397" },
+    { "tk": "kimiňki", "en": "whose (one)", "pos": "pron" },
+    { "tk": "meniňki", "en": "mine", "pos": "pron" }
+  ],
+  "exercises": [
+    {
+      "id": "a2-u10-l04-e01",
+      "type": "conjugate",
+      "points": ["gp-ky-pronoun"],
+      "base": "men",
+      "form": "pronoun-genitive-ky",
+      "label": "*-ky* after the genitive pronouns: mine, yours, his…",
+      "cells": [
+        { "p": "men", "accept": ["meniňki"] },
+        { "p": "sen", "accept": ["seniňki"] },
+        { "p": "ol", "accept": ["onuňky"] },
+        { "p": "biz", "accept": ["biziňki"] },
+        { "p": "siz", "accept": ["siziňki"] },
+        { "p": "olar", "accept": ["olaryňky"] }
+      ],
+      "explain": "The genitive pronoun + *-ki*, or *-ky* after a back vowel: *onuňky*, *olaryňky*."
+    },
+    {
+      "id": "a2-u10-l04-e02",
+      "type": "mcq",
+      "points": ["gp-ky-pronoun"],
+      "question": "How do you say **This book is mine**?",
+      "options": ["Bu kitap meniňki.", "Bu kitap meniň.", "Bu kitap menki.", "Bu kitap meniňkim."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "On its own, **mine** needs *-ki*: *meniňki*.",
+        "2": "*-ki* goes after the genitive *meniň*: *meniňki*.",
+        "3": "*meniňki* already means **mine**; nothing follows it."
+      },
+      "explain": "*meniň* + *-ki*: mine."
+    },
+    {
+      "id": "a2-u10-l04-e03",
+      "type": "translate",
+      "points": ["gp-ky-pronoun", "gp-whose"],
+      "from": "en",
+      "prompt": "Whose is this? — It's Aýna's.",
+      "accept": ["Bu kimiňki? — Aýnanyňky.", "Bu kimiňki? Ol Aýnanyňky.", "Şu kimiňki? (Ol) Aýnanyňky."],
+      "reject": [
+        { "answer": "Bu kimiňki? — Aýnanyň.", "why": "On its own, **Aýna's** needs *-ky*: *Aýnanyňky*." }
+      ],
+      "explain": "*kim* + *-iň* + *-ki*: whose (one); *Aýna* + *-nyň* + *-ky*: Aýna's."
+    },
+    {
+      "id": "a2-u10-l04-e04",
+      "type": "translate",
+      "points": ["gp-ky-pronoun", "gp-question-my"],
+      "from": "tk",
+      "prompt": "Bu sumka seniňkimi?",
+      "accept": ["Is this bag yours?", "Is this your bag?", "Is that bag yours?"]
+    },
+    {
+      "id": "a2-u10-l04-e05",
+      "type": "cloze",
+      "points": ["gp-ky-pronoun", "gp-possessive-suffixes"],
+      "text": "Biziň öýümiz uly, olar___ kiçi.",
+      "en": "Our house is big, theirs is small.",
+      "blanks": [
+        {
+          "accept": ["yňky"],
+          "reject": [
+            { "answer": "yň", "why": "On its own, **theirs** needs *-ky*: *olaryňky*." },
+            { "answer": "yňki", "why": "*olar* has back vowels: *olaryňky*." }
+          ]
+        }
+      ],
+      "explain": "*olaryň* + *-ky*: theirs, in place of *olaryň öýi*."
+    },
+    {
+      "id": "a2-u10-l04-e06",
+      "type": "morph",
+      "points": ["gp-ky-pronoun", "gp-genitive"],
+      "base": "Merdan",
+      "gloss": "Merdan's (one)",
+      "parts": ["Merdan", "yň", "ky"],
+      "distractors": ["iň", "ki", "y"],
+      "result": "Merdanyňky",
+      "explain": "*Merdan* + *-yň* (of) + *-ky* (the one)."
+    },
+    {
+      "id": "a2-u10-l04-e07",
+      "type": "match",
+      "pairs": [
+        ["telpek", "sheepskin hat"],
+        ["don", "long robe"],
+        ["tahýa", "skullcap"],
+        ["hojaýyn", "owner"],
+        ["kimiňki", "whose (one)"],
+        ["meniňki", "mine"]
+      ]
+    },
+    {
+      "id": "a2-u10-l04-e08",
+      "type": "translate",
+      "points": ["gp-ky-pronoun", "gp-possessive-suffixes"],
+      "from": "en",
+      "prompt": "This telpek is my father's.",
+      "accept": ["Bu telpek kakamyňky.", "Bu telpek meniň kakamyňky.", "Şu telpek (meniň) kakamyňky."],
+      "reject": [
+        { "answer": "Bu telpek kakamyň.", "why": "On its own, **my father's** needs *-ky*: *kakamyňky*." }
+      ],
+      "explain": "*kaka* + *-m* (my) + *-yň* (of) + *-ky*: my father's."
+    },
+    {
+      "id": "a2-u10-l04-e09",
+      "type": "mcq",
+      "points": ["gp-ky-pronoun", "gp-compound-indefinite"],
+      "question": "Where is Batyr's own telpek?",
+      "context": [
+        { "who": "Döwran", "tk": "Awtobus duralgasynda bir telpek bar. Bu seniňkimi?", "en": "There's a telpek at the bus stop. Is it yours?" },
+        { "who": "Batyr", "tk": "Ýok, meniňki däl. Meniňki öýde.", "en": "No, it's not mine. Mine is at home." },
+        { "who": "Döwran", "tk": "Onda kimiňki?", "en": "Then whose is it?" },
+        { "who": "Batyr", "tk": "Belki, Kerimiňki. Onuň telpegi ak.", "en": "Maybe Kerim's. His telpek is white." }
+      ],
+      "options": ["at home", "at the bus stop", "with Kerim"],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "The telpek at the stop isn't Batyr's: *meniňki däl*.",
+        "2": "Batyr only guesses that the telpek at the stop is Kerim's."
+      },
+      "explain": "*Meniňki öýde*: mine is at home."
+    },
+    {
+      "id": "a2-u10-l04-e10",
+      "type": "translate",
+      "points": ["gp-ky-pronoun", "gp-daky", "gp-dal"],
+      "from": "tk",
+      "prompt": "Stoluň üstündäki telefon meniňki däl.",
+      "accept": ["The phone on the table is not mine.", "The telephone on the table is not mine.", "The phone on the table does not belong to me."]
+    },
+    {
+      "id": "a2-u10-l04-e11",
+      "type": "wordbank",
+      "points": ["gp-ky-pronoun"],
+      "from": "en",
+      "prompt": "The white telpek is Kerim's.",
+      "text": "Ak telpek Kerimiňki.",
+      "answer": ["Ak", "telpek", "Kerimiňki"],
+      "distractors": ["Kerimiň", "kimiňki", "gara"]
+    },
+    {
+      "id": "a2-u10-l04-e12",
+      "type": "translate",
+      "points": ["gp-ky-pronoun", "gp-locative"],
+      "from": "en",
+      "prompt": "Mine is at home, yours is in the car.",
+      "accept": ["Meniňki öýde, seniňki maşynda.", "Meniňki öýde, siziňki maşynda."],
+      "explain": "*meniňki*, mine, and *seniňki*, yours, each with the locative of where it is."
+    },
+    {
+      "id": "a2-u10-l04-e13",
+      "type": "translate",
+      "points": ["gp-ky-pronoun", "gp-hem"],
+      "from": "tk",
+      "prompt": "Bu don atamyňky, ak telpek hem onuňky.",
+      "accept": [
+        "This robe is my grandfather's, and the white telpek is his too.",
+        "This robe is my grandfather's, the white telpek is his too.",
+        "This robe is my grandfather's, and the white telpek is his as well.",
+        "This robe is my grandfather's, and the white hat is his [too|as well].",
+        "This coat is my grandfather's, and the white [telpek|hat] is his [too|as well].",
+        "This [robe|coat] is my grandfather's, and the white [telpek|hat] is also his."
+      ]
+    }
+  ]
+}
