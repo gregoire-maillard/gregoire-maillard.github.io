@@ -788,7 +788,7 @@
 
   /** Static SVG markup for a frame (t ∈ [0,1)). anim may be a list (first is used).
       opts: { cable, muscles: [...], character: 'gregoire' | 'jacqueline' } */
-  function frame(anim, prop, t, opts) {
+  function frameSVG(anim, prop, t, opts) {
     const a = Array.isArray(anim) ? anim[0] : anim, key = keyOf(a, prop), pat = P[key];
     const u = 'f' + (UID++) + '-';
     const fb = frameBody(pat, key, prop, t || 0, opts, u);
@@ -796,7 +796,7 @@
   }
 
   /** Mount a looping animation into el. anim may be a list: each plays `cycles` loops in turn. */
-  function mount(el, anim, prop, opts) {
+  function mountSVG(el, anim, prop, opts) {
     const list = Array.isArray(anim) ? anim : [anim];
     const cycles = (opts && opts.cycles) || 2;
     const u = 'm' + (UID++) + '-';
@@ -825,8 +825,52 @@
       if (!reduce) raf = requestAnimationFrame(draw);
     };
     raf = requestAnimationFrame(draw);
-    return { stop() { stopped = true; cancelAnimationFrame(raf); } };
+    return { stop() { stopped = true; cancelAnimationFrame(raf); }, resume() {} };
   }
 
-  root.GymMoves = { SEG, P, CHARS, frame, mount, solve, resolve, keys: () => Object.keys(P) };
+
+  /* ---------- rendered 3D videos (Blender + MPFB, see videos.js) ----------
+     Each (character, move, highlighted muscles) has v/<character>/<slug>.mp4 and a .jpg poster.
+     Anything without a rendered video falls back to the SVG drawing above. */
+  const VIDS = (root.GYM_VIDEOS && root.GYM_VIDEOS.files) || {};
+  const slugOf = (anim, prop, muscles) => keyOf(anim, prop).replace(':', '-') + '__' + Array.from(new Set(muscles || [])).sort().join('-');
+  function videoFor(anim, prop, opts) {
+    const ch = (opts && opts.character) || 'gregoire', s = slugOf(anim, prop, opts && opts.muscles);
+    return VIDS[ch] && VIDS[ch].indexOf(s) >= 0 ? 'v/' + ch + '/' + s : null;
+  }
+  /** Static picture of a move: the video's poster, or an SVG frame. */
+  function frame(anim, prop, t, opts) {
+    const a = Array.isArray(anim) ? anim[0] : anim, v = videoFor(a, prop, opts);
+    return v ? `<img class="fig fig-photo" src="${v}.jpg" alt="Movement demo" loading="lazy" decoding="async">` : frameSVG(anim, prop, t, opts);
+  }
+  /** Mount a looping demo into el. anim may be a list: each plays `cycles` loops in turn. */
+  function mount(el, anim, prop, opts) {
+    const list = (Array.isArray(anim) ? anim : [anim]).map(a => videoFor(a, prop, opts));
+    if (list.some(v => !v)) return mountSVG(el, anim, prop, opts);
+    const reduce = root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cycles = (opts && opts.cycles) || 2;
+    el.innerHTML = `<video class="fig fig-video" muted playsinline preload="auto" aria-label="Movement demo"></video>`;
+    const vid = el.querySelector('video');
+    let idx = 0, loops = 0, stopped = false, failed = false;
+    vid.muted = true; vid.defaultMuted = true; vid.setAttribute('muted', '');
+    const load = i => { idx = i % list.length; loops = 0; vid.poster = list[idx] + '.jpg'; vid.src = list[idx] + '.mp4'; vid.loop = list.length === 1; if (!reduce) play(); };
+    const play = () => { if (stopped || reduce) return; const p = vid.play(); if (p && p.catch) p.catch(() => {}); };
+    vid.addEventListener('ended', () => { if (++loops >= cycles) load(idx + 1); else { vid.currentTime = 0; play(); } });
+    vid.addEventListener('error', () => { if (failed || stopped) return; failed = true; ctl.inner = mountSVG(el, anim, prop, opts); });
+    load(0);
+    const ctl = { inner: null,
+      stop() { stopped = true; try { vid.pause(); } catch (e) { /* ignore */ } if (ctl.inner) ctl.inner.stop(); },
+      resume() { if (!stopped && vid.paused && el.isConnected) play(); } };
+    return ctl;
+  }
+  /** Warm the offline cache for a set of moves (fire and forget). */
+  function prefetch(items, character) {
+    const seen = {};
+    items.forEach(it => (Array.isArray(it.anim) ? it.anim : [it.anim]).forEach(a => {
+      const v = videoFor(a, it.prop, { muscles: it.muscles, character });
+      if (v && !seen[v]) { seen[v] = 1; ['.jpg', '.mp4'].forEach(x => fetch(v + x).catch(() => {})); }
+    }));
+  }
+
+  root.GymMoves = { SEG, P, CHARS, frame, mount, frameSVG, mountSVG, prefetch, videoFor, slugOf, solve, resolve, keys: () => Object.keys(P) };
 })(typeof window !== 'undefined' ? window : globalThis);

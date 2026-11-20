@@ -210,7 +210,13 @@
     h += `<div class="legend">${['L', 'M', 'H'].map(l => `<span><i class="dot ${l}"></i>${PLAN.levels[l].name}</span>`).join('')}</div></div>`;
     h += `<div class="startbar"><div><button class="btn btn-primary big" data-act="start">${isNow ? 'Start' : 'Start · logs as Week ' + (W.wib + 1)}</button></div></div>`;
     app().innerHTML = h + navHTML();
+    const pk = P.key + ':' + P.abs + ':' + CHAR();
+    if (!prefetched[pk] && navigator.onLine !== false) {
+      prefetched[pk] = 1;
+      setTimeout(() => prefetchSession({ key: P.key, character: CHAR(), exs: B.rows.map(r => ({ exId: r.exId })) }), 1500);
+    }
   }
+  const prefetched = {};
 
   /* ================= sheets: exercise info + swap, character picker ================= */
   function candidatesFor(slot, curId) {
@@ -273,7 +279,15 @@
     S.active = { key: P.key, abs: P.abs, character: CHAR(), startedAt: Date.now(), phase: 'warm', pIdx: 0, pStart: Date.now(),
       exs: B.rows.map(r => ({ slot: r.slot.slot, exId: r.exId, sets: r.sets, rest: r.slot.rest })), ex: 0, done: {}, rest: null };
     S.daySwaps = null;
+    prefetchSession(S.active);
     save(); wakeOn(); render();
+  }
+  /** Ask the service worker to keep this session's videos offline. */
+  function prefetchSession(a) {
+    if (!a || !M.prefetch) return;
+    const sess = PLAN.sessions[a.key];
+    M.prefetch([...sess.warmup, ...sess.cooldown].map(w => ({ anim: w.anim, muscles: w.muscles }))
+      .concat(a.exs.map(e => { const ex = EX(e.exId); return { anim: ex.anim, prop: ex.prop, muscles: ex.muscles }; })), a.character);
   }
   const A = () => S.active;
   const doneOf = i => A().done[i] || 0;
@@ -324,6 +338,7 @@
       animKey = key;
     }
     slot.replaceWith(animNode);
+    if (animCtl && animCtl.resume) animCtl.resume();
   }
   const phaseList = a => a.phase === 'warm' ? PLAN.sessions[a.key].warmup : PLAN.sessions[a.key].cooldown;
   function clockHTML() {
