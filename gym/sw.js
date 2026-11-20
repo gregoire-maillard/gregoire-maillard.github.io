@@ -1,6 +1,6 @@
 /* /gym — offline support. Network first (so edits to plan.js show up right away),
    cached copy if the network is slow (> 2.5 s) or missing. Bump CACHE to force a clean refresh. */
-const CACHE = 'gym-v1';
+const CACHE = 'gym-v2';
 const FILES = ['./', 'index.html', 'app.css', 'app.js', 'core.js', 'moves.js', 'plan.js', 'manifest.webmanifest', 'icon.svg', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {

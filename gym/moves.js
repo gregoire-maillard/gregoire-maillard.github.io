@@ -1,4 +1,4 @@
-/* /gym — original movement animations: shaded "mannequin" bodies in SVG (no images, no libraries).
+/* /gym — original movement animations: two shaded characters (Grégoire, Jacqueline) in SVG, with the working muscles highlighted. No images, no libraries.
 
    How it works
    - One shared skeleton (segment lengths in SEG, metres-ish, y points up).
@@ -276,6 +276,21 @@
       { hip: [-0.05, 1.00], torso: 4, footF: [-0.04, 0.132], toeF: 25, handF: [0.46, 1.20] }] }
   };
 
+
+  /* Lying face-up patterns are authored like the face-down ones and mirrored here:
+     mirroring x and negating the torso angle turns the figure's chest to face up. */
+  function mirrorPat(pat, over) {
+    const mx = v => [-v[0], v[1]];
+    const kf = k => { const o = {}; for (const key in k) { const v = k[key];
+      if (key === 'torso' || key === 'head') o[key] = -v;
+      else if (/^(hip|foot[FB]|hand[FB](Rel)?)$/.test(key)) o[key] = mx(v);
+      else if (/^toe/.test(key)) o[key] = 180 - v;
+      else o[key] = v; } return Object.assign(o, over || {}); };
+    const eq = (pat.eq || []).map(s => s.t === 'line' ? Object.assign({}, s, { a: mx(s.a), b: mx(s.b) }) : s.t === 'circle' ? Object.assign({}, s, { c: mx(s.c) }) : s.t === 'rect' ? Object.assign({}, s, { x: -(s.x + s.w) }) : s);
+    return Object.assign({}, pat, { knee: -(pat.knee || 1), elbow: -(pat.elbow || -1), eq, anchor: pat.anchor && mx(pat.anchor), k: pat.k.map(kf) });
+  }
+  ['bench', 'incline', 'skull'].forEach(k => { P[k] = mirrorPat(P[k], { toeF: 0 }); });
+
   /* ---------- maths ---------- */
   function ik(rootP, target, a, b, s) {
     const dx = target[0] - rootP[0], dy = target[1] - rootP[1];
@@ -386,53 +401,61 @@
   }
   function solve(pat, t) { const p = poseAt(pat, t); return pat.view === 'front' ? solveFront(p, pat) : solveSide(p, pat); }
 
-  /* ---------- rendering ---------- */
-  // Materials: [css var, fallback] for highlight / base / shadow. Themes override the vars in app.css.
-  const MAT = {
-    skin: ['--sk-hi', '#f2f5f7', '--sk', '#bcc6cd', '--sk-lo', '#6c7984'],
-    far: ['--skf-hi', '#9aa5ad', '--skf', '#6f7b84', '--skf-lo', '#3f4a52'],
-    shirt: ['--sh-hi', '#a5dcf2', '--sh', '#3a9cc6', '--sh-lo', '#164d68'],
-    shoe: ['--so-hi', '#77838c', '--so', '#424b52', '--so-lo', '#1f262b'],
-    load: ['--ld-hi', '#f7d283', '--ld', '#d9952e', '--ld-lo', '#77500f'],
-    steel: ['--st-hi', '#eef2f4', '--st', '#9ea9b1', '--st-lo', '#4a545b'],
-    eq: ['--eq-hi', '#66727b', '--eq-m', '#3d464d', '--eq-lo', '#20272c']
+  /* ---------- characters ---------- */
+  // Two original characters. Colours are plain hex; far-side limbs are darkened automatically.
+  const CHARS = {
+    gregoire: {
+      name: 'Grégoire', hair: 'short',
+      col: { skin: '#d9a07c', top: '#2f80c0', bottom: '#2b3137', hair: '#2a1b13', shoe: '#e6eaed', sole: '#39424a' },
+      build: { sh: 0.205, hip: 0.098, arm: 1, leg: 1,
+        torsoF: [[0, 0.085], [0.42, 0.078], [0.74, 0.126], [1, 0.08]], torsoB: [[0, 0.105], [0.35, 0.082], [0.7, 0.1], [1, 0.08]] },
+      sleeve: 0.42, shorts: 0.55, legging: false, topFrom: 0.16
+    },
+    jacqueline: {
+      name: 'Jacqueline', hair: 'long',
+      col: { skin: '#e3b291', top: '#c8456b', bottom: '#2e2a3b', hair: '#1a110d', shoe: '#e6eaed', sole: '#39424a' },
+      build: { sh: 0.178, hip: 0.112, arm: 0.86, leg: 0.95,
+        torsoF: [[0, 0.08], [0.42, 0.066], [0.64, 0.098], [0.75, 0.13], [0.86, 0.1], [1, 0.07]], torsoB: [[0, 0.118], [0.3, 0.078], [0.7, 0.088], [1, 0.07]] },
+      sleeve: 0, shorts: 1, legging: true, topFrom: 0.2
+    }
   };
-  const col = (m, i) => `var(${MAT[m][i * 2]},${MAT[m][i * 2 + 1]})`;
-  const stop = (o, c, op) => `<stop offset="${o}" style="stop-color:${c}${op != null ? ';stop-opacity:' + op : ''}"/>`;
-  const cylStops = m => stop(0, col(m, 1)) + stop(0.28, col(m, 0)) + stop(0.62, col(m, 1)) + stop(1, col(m, 2));
-  const LX = -0.55, LY = -0.83; // light from the upper left (screen coordinates)
-  let UID = 0;
+  const HL = '#ff4a2a'; // working-muscle highlight
+  const EQC = { eq: '#3e474e', load: '#d9952e', steel: '#a3adb4' };
 
-  let BX = { x0: -1.15, y1: 2.15 };
+  /* ---------- colour + vector helpers ---------- */
+  const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const hex = c => '#' + c.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
+  const shade = (h, k) => { const c = rgb(h), t = k >= 0 ? 255 : 0, a = Math.abs(k); return hex(c.map(v => v + (t - v) * a)); };
+  const mat = (base, far) => { const b = far ? shade(base, -0.4) : base; return [shade(b, 0.42), b, shade(b, -0.45)]; };
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1]];
+  const len = v => Math.hypot(v[0], v[1]);
+  const nrm = v => { const l = len(v) || 1; return [v[0] / l, v[1] / l]; };
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+  const mul = (v, k) => [v[0] * k, v[1] * k];
+
+  let UID = 0;
+  let BX = { x0: -1.15, x1: 1.15, y1: 2.15 };
   const X = x => (x - BX.x0) * 100;
   const Y = y => (BX.y1 - y) * 100;
   const f1 = v => (Math.round(v * 10) / 10).toString();
   const S = p => [X(p[0]), Y(p[1])];
+  const LX = -0.55, LY = -0.83; // light from the upper left (screen coordinates)
 
-  function staticDefs(u) {
-    let s = '';
-    for (const m in MAT) s += `<radialGradient id="${u}S-${m}" cx=".36" cy=".3" r=".78">${stop(0, col(m, 0))}${stop(0.5, col(m, 1))}${stop(1, col(m, 2))}</radialGradient>`;
-    s += `<linearGradient id="${u}V-eq" x1="0" y1="0" x2="0" y2="1">${stop(0, col('eq', 0))}${stop(0.25, col('eq', 1))}${stop(1, col('eq', 2))}</linearGradient>`;
-    s += `<linearGradient id="${u}V-load" x1="0" y1="0" x2="1" y2="0">${cylStops('load')}</linearGradient>`;
-    s += `<linearGradient id="${u}TF" x1="0" y1="0" x2="1" y2="0">${cylStops('shirt')}</linearGradient>`;
-    s += `<radialGradient id="${u}sh">${stop(0, 'var(--fig-shadow,#000)', 0.5)}${stop(1, 'var(--fig-shadow,#000)', 0)}</radialGradient>`;
-    return s;
+  function ctx(u) { return { u, n: 0, defs: [], out: [], sph: {} }; }
+  const stopsOf = m => `<stop offset="0" stop-color="${m[1]}"/><stop offset=".28" stop-color="${m[0]}"/><stop offset=".62" stop-color="${m[1]}"/><stop offset="1" stop-color="${m[2]}"/>`;
+  function sphereFill(R, m) {
+    const k = m.join('');
+    if (!R.sph[k]) { R.sph[k] = R.u + 's' + (R.n++); R.defs.push(`<radialGradient id="${R.sph[k]}" cx=".36" cy=".3" r=".78"><stop offset="0" stop-color="${m[0]}"/><stop offset=".5" stop-color="${m[1]}"/><stop offset="1" stop-color="${m[2]}"/></radialGradient>`); }
+    return `url(#${R.sph[k]})`;
   }
-  function ctx(u) { return { u, n: 0, defs: [], out: [] }; }
-  function sphere(R, c, r, m, extra) { const P = S(c); R.out.push(`<circle cx="${f1(P[0])}" cy="${f1(P[1])}" r="${f1(r * 100)}" fill="url(#${R.u}S-${m})"${extra || ''}/>`); }
-  /** Tapered, shaded capsule from a (radius ra) to b (radius rb). */
-  function capsule(R, a, ra, b, rb, m) {
-    const A = S(a), B = S(b), RA = ra * 100, RB = rb * 100;
-    let dx = B[0] - A[0], dy = B[1] - A[1]; const L = Math.hypot(dx, dy);
-    if (L < 0.5) { sphere(R, a, Math.max(ra, rb), m); return; }
-    dx /= L; dy /= L;
-    let nx = -dy, ny = dx;
+  /** Linear gradient across a shape (lit side first), in screen space. a/b model points along the shape's axis. */
+  function crossFill(R, a, b, m, halfW) {
+    const A = S(a), B = S(b);
+    let nx = -(B[1] - A[1]), ny = B[0] - A[0]; const nl = Math.hypot(nx, ny) || 1; nx /= nl; ny /= nl;
     if (nx * LX + ny * LY < 0) { nx = -nx; ny = -ny; }
-    const sw = (nx * dy - ny * dx) > 0 ? 1 : 0;
-    const d = `M${f1(A[0] + nx * RA)} ${f1(A[1] + ny * RA)}L${f1(B[0] + nx * RB)} ${f1(B[1] + ny * RB)}A${f1(RB)} ${f1(RB)} 0 0 ${sw} ${f1(B[0] - nx * RB)} ${f1(B[1] - ny * RB)}L${f1(A[0] - nx * RA)} ${f1(A[1] - ny * RA)}A${f1(RA)} ${f1(RA)} 0 0 ${sw} ${f1(A[0] + nx * RA)} ${f1(A[1] + ny * RA)}Z`;
-    const id = R.u + 'g' + (R.n++), R2 = Math.max(RA, RB), mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2;
-    R.defs.push(`<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${f1(mx + nx * R2)}" y1="${f1(my + ny * R2)}" x2="${f1(mx - nx * R2)}" y2="${f1(my - ny * R2)}">${cylStops(m)}</linearGradient>`);
-    R.out.push(`<path d="${d}" fill="url(#${id})"/>`);
+    const mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2, w = halfW * 100, id = R.u + 'g' + (R.n++);
+    R.defs.push(`<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${f1(mx + nx * w)}" y1="${f1(my + ny * w)}" x2="${f1(mx - nx * w)}" y2="${f1(my - ny * w)}">${stopsOf(m)}</linearGradient>`);
+    return `url(#${id})`;
   }
   function smoothPath(pts) {
     const n = pts.length, q = v => f1(v[0]) + ' ' + f1(v[1]);
@@ -443,106 +466,220 @@
     }
     return d + 'Z';
   }
-  function torsoSide(R, J) {
-    const H = J.hip, Sh = J.sh, bend = J.bend || 0, chest = J.chest || 0;
-    const ch = [Sh[0] - H[0], Sh[1] - H[1]], L = Math.hypot(ch[0], ch[1]) || 1, t0 = [ch[0] / L, ch[1] / L], fw0 = [t0[1], -t0[0]];
-    const C = [(H[0] + Sh[0]) / 2 - fw0[0] * bend * 2, (H[1] + Sh[1]) / 2 - fw0[1] * bend * 2];
-    const RF = [[0, 0.085], [0.42, 0.075], [0.74, 0.12 + 0.03 * chest], [1, 0.075]], RB = [[0, 0.105], [0.35, 0.08], [0.7, 0.095], [1, 0.075]];
-    const rAt = (tab, s) => { for (let i = 1; i < tab.length; i++) if (s <= tab[i][0]) { const [s0, r0] = tab[i - 1], [s1, r1] = tab[i]; return r0 + (r1 - r0) * (s - s0) / (s1 - s0); } return tab[tab.length - 1][1]; };
-    const front = [], back = []; let tTop, fTop, tBot, fBot;
-    const N = 8;
-    for (let k = 0; k <= N; k++) {
-      const s = k / N, a = (1 - s) * (1 - s), b = 2 * (1 - s) * s, c = s * s;
-      const P = [a * H[0] + b * C[0] + c * Sh[0], a * H[1] + b * C[1] + c * Sh[1]];
-      let T = [2 * (1 - s) * (C[0] - H[0]) + 2 * s * (Sh[0] - C[0]), 2 * (1 - s) * (C[1] - H[1]) + 2 * s * (Sh[1] - C[1])];
-      const tl = Math.hypot(T[0], T[1]) || 1; T = [T[0] / tl, T[1] / tl];
-      const F = [T[1], -T[0]], rf = rAt(RF, s), rb = rAt(RB, s);
-      front.push([P[0] + F[0] * rf, P[1] + F[1] * rf]); back.push([P[0] - F[0] * rb, P[1] - F[1] * rb]);
-      if (k === 0) { tBot = T; fBot = F; } if (k === N) { tTop = T; fTop = F; }
-    }
-    const cap = [], bot = [];
-    for (let i = 1; i < 4; i++) {
-      const th = Math.PI * i / 4;
-      cap.push([Sh[0] + (fTop[0] * Math.cos(th) + tTop[0] * Math.sin(th)) * 0.075, Sh[1] + (fTop[1] * Math.cos(th) + tTop[1] * Math.sin(th)) * 0.075]);
-      bot.push([H[0] + (-fBot[0] * Math.cos(th) - tBot[0] * Math.sin(th)) * 0.095, H[1] + (-fBot[1] * Math.cos(th) - tBot[1] * Math.sin(th)) * 0.095]);
-    }
-    const pts = front.concat(cap, back.reverse(), bot).map(S);
-    // gradient across the torso, lit side first
-    const A = S(H), B = S(Sh); let nx = -(B[1] - A[1]), ny = B[0] - A[0]; const nl = Math.hypot(nx, ny) || 1; nx /= nl; ny /= nl;
+  const path = (R, pts, fill, extra) => R.out.push(`<path d="${smoothPath(pts.map(S))}" fill="${fill}"${extra || ''}/>`);
+  function sphere(R, c, r, m, extra) { const P = S(c); R.out.push(`<circle cx="${f1(P[0])}" cy="${f1(P[1])}" r="${f1(r * 100)}" fill="${sphereFill(R, m)}"${extra || ''}/>`); }
+  function capsule(R, a, ra, b, rb, m) {
+    const A = S(a), B = S(b), RA = ra * 100, RB = rb * 100;
+    let dx = B[0] - A[0], dy = B[1] - A[1]; const L = Math.hypot(dx, dy);
+    if (L < 0.5) { sphere(R, a, Math.max(ra, rb), m); return; }
+    dx /= L; dy /= L;
+    let nx = -dy, ny = dx;
     if (nx * LX + ny * LY < 0) { nx = -nx; ny = -ny; }
-    const mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2, id = R.u + 'g' + (R.n++);
-    R.defs.push(`<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="${f1(mx + nx * 13)}" y1="${f1(my + ny * 13)}" x2="${f1(mx - nx * 13)}" y2="${f1(my - ny * 13)}">${cylStops('shirt')}</linearGradient>`);
-    R.out.push(`<path d="${smoothPath(pts)}" fill="url(#${id})"/>`);
+    const sw = (nx * dy - ny * dx) > 0 ? 1 : 0;
+    const d = `M${f1(A[0] + nx * RA)} ${f1(A[1] + ny * RA)}L${f1(B[0] + nx * RB)} ${f1(B[1] + ny * RB)}A${f1(RB)} ${f1(RB)} 0 0 ${sw} ${f1(B[0] - nx * RB)} ${f1(B[1] - ny * RB)}L${f1(A[0] - nx * RA)} ${f1(A[1] - ny * RA)}A${f1(RA)} ${f1(RA)} 0 0 ${sw} ${f1(A[0] + nx * RA)} ${f1(A[1] + ny * RA)}Z`;
+    R.out.push(`<path d="${d}" fill="${crossFill(R, a, b, m, Math.max(ra, rb))}"/>`);
   }
-  function torsoFront(R, J) {
-    const c = J.hip[0], ny = J.neck[1], hy = J.hip[1];
-    const right = [[0.06, ny + 0.01], [0.17, ny - 0.005], [0.235, ny - 0.06], [0.205, ny - 0.17], [0.17, ny - 0.27], [0.135, ny - 0.36], [0.155, hy + 0.03], [0.13, hy - 0.07]];
-    const pts = right.map(p => [c + p[0], p[1]]).concat([[c, hy - 0.1]], right.slice().reverse().map(p => [c - p[0], p[1]]));
-    R.out.push(`<path d="${smoothPath(pts.map(S))}" fill="url(#${R.u}TF)"/>`);
+
+  /* ---------- body geometry ----------
+     A body part is a "geo": at(s) gives the centre P, axis T, front normal N and the front/back radii
+     at fraction s along it. Outlines, clothing and muscle highlights are all cut from the same geo. */
+  const prof = (tab, s) => { if (s <= tab[0][0]) return tab[0][1]; for (let i = 1; i < tab.length; i++) if (s <= tab[i][0]) { const [s0, r0] = tab[i - 1], [s1, r1] = tab[i]; return r0 + (r1 - r0) * (s - s0) / (s1 - s0); } return tab[tab.length - 1][1]; };
+  function segGeo(a, b, antHint, pF, pB, k) {
+    const T = nrm(sub(b, a)); let N = [-T[1], T[0]];
+    if (dot(N, antHint) < 0) N = [-N[0], -N[1]];
+    return { a, b, at(s) { const P = [a[0] + (b[0] - a[0]) * s, a[1] + (b[1] - a[1]) * s], rf = prof(pF, s) * k, rb = prof(pB, s) * k; return { P, T, N, rf, rb, F: [P[0] + N[0] * rf, P[1] + N[1] * rf], B: [P[0] - N[0] * rb, P[1] - N[1] * rb] }; } };
   }
-  function head(R, J) {
-    if (J.view === 'front') {
-      capsule(R, [J.neck[0], J.neck[1] - 0.02], 0.045, [J.neck[0], J.neck[1] + 0.09], 0.042, 'skin');
-      sphere(R, J.head, SEG.headR, 'skin');
-      return;
+  function outline(g, s0, s1) {
+    s0 = s0 || 0; s1 = s1 == null ? 1 : s1;
+    const n = 7, front = [], back = [];
+    for (let i = 0; i <= n; i++) { const q = g.at(s0 + (s1 - s0) * i / n); front.push(q.F); back.push(q.B); }
+    const cap = (q, dir) => { const c = [(q.F[0] + q.B[0]) / 2, (q.F[1] + q.B[1]) / 2], r = len(sub(q.F, c)), ax = nrm(sub(q.F, c)), out = []; for (let i = 1; i < 4; i++) { const th = Math.PI * i / 4; out.push([c[0] + (ax[0] * Math.cos(th) + dir[0] * Math.sin(th)) * r, c[1] + (ax[1] * Math.cos(th) + dir[1] * Math.sin(th)) * r]); } return out; };
+    const qa = g.at(s0), qb = g.at(s1);
+    const capB = s1 >= 0.999 ? cap(qb, qb.T) : [];
+    // cap at the start runs from the back edge to the front edge around −T
+    const ca = [];
+    if (s0 <= 0.001) { const c = [(qa.F[0] + qa.B[0]) / 2, (qa.F[1] + qa.B[1]) / 2], r = len(sub(qa.B, c)), ax = nrm(sub(qa.B, c)); for (let i = 1; i < 4; i++) { const th = Math.PI * i / 4; ca.push([c[0] + (ax[0] * Math.cos(th) - qa.T[0] * Math.sin(th)) * r, c[1] + (ax[1] * Math.cos(th) - qa.T[1] * Math.sin(th)) * r]); } }
+    return front.concat(capB, back.reverse(), ca);
+  }
+  /** Lens-shaped muscle area on the front (+1) or back (−1) of a geo between s0 and s1. */
+  function region(g, side, s0, s1, depth) {
+    const n = 8, outer = [], inner = [];
+    for (let i = 0; i <= n; i++) {
+      const s = s0 + (s1 - s0) * i / n, q = g.at(s), r = side > 0 ? q.rf : q.rb, w = Math.pow(Math.sin(Math.PI * i / n), 0.6);
+      const dir = mul(q.N, side);
+      outer.push([q.P[0] + dir[0] * r * (0.12 + 0.82 * w), q.P[1] + dir[1] * r * (0.12 + 0.82 * w)]);
+      inner.push([q.P[0] + dir[0] * r * (depth == null ? 0.1 : depth) * w, q.P[1] + dir[1] * r * (depth == null ? 0.1 : depth) * w]);
     }
-    capsule(R, add(J.sh, [J.hd[0] * 0.02, J.hd[1] * 0.02]), 0.045, add(J.sh, [J.hd[0] * 0.12, J.hd[1] * 0.12]), 0.042, 'skin');
-    sphere(R, J.head, SEG.headR, 'skin');
-    sphere(R, add(J.head, [J.face[0] * 0.088 - J.hd[0] * 0.01, J.face[1] * 0.088 - J.hd[1] * 0.01]), 0.022, 'skin');
-    const e = S(add(J.head, [-J.face[0] * 0.012, -J.face[1] * 0.012]));
-    R.out.push(`<circle cx="${f1(e[0])}" cy="${f1(e[1])}" r="2.1" fill="${col('skin', 2)}" opacity=".55"/>`);
+    return outer.concat(inner.reverse());
   }
-  function footSide(ankle, deg) {
-    const a = rad(deg), Rr = v => [ankle[0] + v[0] * Math.cos(a) - v[1] * Math.sin(a), ankle[1] + v[0] * Math.sin(a) + v[1] * Math.cos(a)];
-    return [Rr([-0.04, -0.045]), Rr([0.16, -0.055])];
+  const LIMB = {
+    thighF: [[0, 0.074], [0.35, 0.078], [1, 0.052]], thighB: [[0, 0.084], [0.3, 0.074], [1, 0.05]],
+    shinF: [[0, 0.05], [0.5, 0.041], [1, 0.032]], shinB: [[0, 0.05], [0.25, 0.066], [0.62, 0.044], [1, 0.033]],
+    upF: [[0, 0.05], [0.5, 0.053], [1, 0.037]], upB: [[0, 0.053], [0.4, 0.054], [1, 0.039]],
+    foreF: [[0, 0.041], [0.3, 0.045], [1, 0.028]], foreB: [[0, 0.039], [0.3, 0.042], [1, 0.028]]
+  };
+  function torsoGeo(J, ch) {
+    const H = J.hip, Sh = J.sh, bend = J.bend || 0, chest = J.chest || 0;
+    const t0 = nrm(sub(Sh, H)), fw0 = [t0[1], -t0[0]];
+    const C = [(H[0] + Sh[0]) / 2 - fw0[0] * bend * 2, (H[1] + Sh[1]) / 2 - fw0[1] * bend * 2];
+    const pF = ch.build.torsoF, pB = ch.build.torsoB;
+    return { a: H, b: Sh, at(s) {
+      const a = (1 - s) * (1 - s), b = 2 * (1 - s) * s, c = s * s;
+      const P = [a * H[0] + b * C[0] + c * Sh[0], a * H[1] + b * C[1] + c * Sh[1]];
+      const T = nrm([2 * (1 - s) * (C[0] - H[0]) + 2 * s * (Sh[0] - C[0]), 2 * (1 - s) * (C[1] - H[1]) + 2 * s * (Sh[1] - C[1])]);
+      const N = [T[1], -T[0]], rf = prof(pF, s) * (s > 0.5 ? 1 + 0.12 * chest : 1), rb = prof(pB, s);
+      return { P, T, N, rf, rb, F: [P[0] + N[0] * rf, P[1] + N[1] * rf], B: [P[0] - N[0] * rb, P[1] - N[1] * rb] };
+    } };
   }
-  function leg(R, hip, knee, ankle, toe, m, shoe, front, outward) {
-    capsule(R, hip, 0.078, knee, 0.056, m);
-    capsule(R, knee, 0.056, ankle, 0.04, m);
-    if (front) capsule(R, [ankle[0], ankle[1] - 0.03], 0.035, [ankle[0] + outward * 0.07, ankle[1] - 0.05], 0.03, shoe);
-    else { const ft = footSide(ankle, toe); capsule(R, ft[0], 0.038, ft[1], 0.028, shoe); }
+  /** Which way the front of a limb faces: the knee points forward, the elbow points back. */
+  function legAnt(hip, knee, ankle, toeDir) {
+    const c = sub(ankle, hip), t = nrm(c), v = sub(knee, hip), off = sub(v, mul(t, dot(v, t)));
+    return len(off) > 0.015 ? nrm(off) : toeDir;
   }
-  function arm(R, sh, elb, hand, m) {
-    capsule(R, sh, 0.052, elb, 0.042, m);
-    capsule(R, elb, 0.042, hand, 0.032, m);
-    sphere(R, hand, 0.037, m);
+  function armAnt(sh, elb, hand, fallback) {
+    const c = sub(hand, sh), t = nrm(c), v = sub(elb, sh), off = sub(v, mul(t, dot(v, t)));
+    return len(off) > 0.015 ? mul(nrm(off), -1) : fallback;
   }
+
+  /* ---------- body parts ---------- */
+  function hl(R, pts, far) { R.out.push(`<path d="${smoothPath(pts.map(S))}" fill="${HL}" fill-opacity="${f1((far ? 0.5 : 1) * R.hlOp * 100) / 100}"/>`); }
+  function drawLeg(R, ch, hip, knee, ankle, toe, far, front, side) {
+    const k = ch.build.leg, m = (c) => mat(ch.col[c], far);
+    const toeDir = front ? [side, 0] : [Math.cos(rad(toe)), Math.sin(rad(toe))];
+    const ant = front ? [1, 0] : legAnt(hip, knee, ankle, toeDir);
+    const th = segGeo(hip, knee, ant, LIMB.thighF, LIMB.thighB, k), sh = segGeo(knee, ankle, ant, LIMB.shinF, LIMB.shinB, k);
+    const legC = ch.legging ? 'bottom' : 'skin';
+    // shin, then thigh on top (knee looks right)
+    path(R, outline(sh), crossFill(R, knee, ankle, m(legC), 0.06));
+    if (R.mus.calves && !front) hl(R, region(sh, -1, 0.08, 0.6), far);
+    path(R, outline(th), crossFill(R, hip, knee, m(legC), 0.08));
+    if (!ch.legging && ch.shorts > 0) path(R, outline(th, 0, Math.min(1, ch.shorts)), crossFill(R, hip, knee, m('bottom'), 0.085));
+    if (R.mus.quads) hl(R, front ? region(th, 1, 0.12, 0.9, -0.7) : region(th, 1, 0.1, 0.9), far);
+    if (R.mus.hipFlexors) hl(R, front ? region(th, 1, 0.0, 0.35, -0.7) : region(th, 1, 0.0, 0.38), far);
+    if (R.mus.hamstrings && !front) hl(R, region(th, -1, 0.12, 0.9), far);
+    // shoe
+    if (front) {
+      capsule(R, [ankle[0], ankle[1] - 0.025], 0.036, [ankle[0] + side * 0.06, ankle[1] - 0.05], 0.03, m('shoe'));
+    } else {
+      const a = rad(toe), Rr = v => [ankle[0] + v[0] * Math.cos(a) - v[1] * Math.sin(a), ankle[1] + v[0] * Math.sin(a) + v[1] * Math.cos(a)];
+      capsule(R, Rr([-0.035, -0.04]), 0.04, Rr([0.15, -0.05]), 0.03, m('shoe'));
+      capsule(R, Rr([-0.04, -0.072]), 0.012, Rr([0.165, -0.074]), 0.01, m('sole'));
+    }
+  }
+  function drawArm(R, ch, shp, elb, hand, far, fwd, front) {
+    const k = ch.build.arm, m = (c) => mat(ch.col[c], far);
+    const ant = front ? [0, 1] : armAnt(shp, elb, hand, fwd);
+    const up = segGeo(shp, elb, ant, LIMB.upF, LIMB.upB, k), fo = segGeo(elb, hand, ant, LIMB.foreF, LIMB.foreB, k);
+    path(R, outline(fo, 0, 0.86), crossFill(R, elb, hand, m('skin'), 0.045));
+    if (R.mus.forearms) hl(R, region(fo, 1, 0.08, 0.6), far);
+    path(R, outline(up), crossFill(R, shp, elb, m('skin'), 0.055));
+    if (ch.sleeve > 0) path(R, outline(up, 0, ch.sleeve), crossFill(R, shp, elb, m('top'), 0.06));
+    if (R.mus.biceps) hl(R, front ? region(up, 1, 0.15, 0.85, -0.6) : region(up, 1, 0.15, 0.88), far);
+    if (R.mus.triceps) hl(R, front ? region(up, -1, 0.1, 0.85, -0.6) : region(up, -1, 0.1, 0.88), far);
+    // hand (mitt along the forearm)
+    const d = nrm(sub(hand, elb));
+    capsule(R, sub(hand, mul(d, 0.04)), 0.032 * k + 0.004, [hand[0] + d[0] * 0.025, hand[1] + d[1] * 0.025], 0.027 * k + 0.003, m('skin'));
+    if (R.mus.shoulders) R.out.push(`<circle cx="${f1(X(shp[0]))}" cy="${f1(Y(shp[1]))}" r="${f1(6.2 * k)}" fill="${HL}" fill-opacity="${f1((far ? 0.5 : 1) * R.hlOp * 100) / 100}"/>`);
+  }
+  function headSide(R, J, ch) {
+    const f = J.face, u = J.hd, H = J.head, r = SEG.headR;
+    const P = (th, rr) => [H[0] + (f[0] * Math.cos(th) + u[0] * Math.sin(th)) * rr, H[1] + (f[1] * Math.cos(th) + u[1] * Math.sin(th)) * rr];
+    const hm = mat(ch.col.hair), sk = mat(ch.col.skin);
+    if (ch.hair === 'long') {
+      // hair falling behind the neck and down the upper back (drawn behind head and torso)
+      const g = (a, b) => [H[0] + f[0] * a + u[0] * b, H[1] + f[1] * a + u[1] * b];
+      path(R, [P(rad(120), 0.105), P(rad(170), 0.115), g(-0.13, -0.08), g(-0.135, -0.22), g(-0.105, -0.34), g(-0.06, -0.3), g(-0.045, -0.17), g(-0.02, -0.09)], crossFill(R, g(0, 0), g(0, -0.3), hm, 0.12));
+    }
+    capsule(R, [J.sh[0] + u[0] * 0.02, J.sh[1] + u[1] * 0.02], 0.042, [J.sh[0] + u[0] * 0.13, J.sh[1] + u[1] * 0.13], 0.04, sk);
+    sphere(R, H, r, sk);
+    sphere(R, P(rad(-8), 0.095), 0.02, sk); // nose
+    const e = P(rad(22), 0.06), ear = P(rad(185), 0.012);
+    R.out.push(`<circle cx="${f1(X(e[0]))}" cy="${f1(Y(e[1]))}" r="1.3" fill="#2a1d18"/>`);
+    sphere(R, ear, 0.02, mat(shade(ch.col.skin, -0.12)));
+    // hair cap
+    const cap = ch.hair === 'long'
+      ? [P(rad(28), 0.104), P(rad(70), 0.112), P(rad(120), 0.113), P(rad(170), 0.112), P(rad(215), 0.104), P(rad(220), 0.06), P(rad(160), 0.07), P(rad(90), 0.082), P(rad(40), 0.088)]
+      : [P(rad(38), 0.104), P(rad(80), 0.11), P(rad(130), 0.11), P(rad(180), 0.106), P(rad(222), 0.097), P(rad(222), 0.06), P(rad(165), 0.068), P(rad(100), 0.08), P(rad(50), 0.088)];
+    path(R, cap, crossFill(R, P(rad(90), 0.1), P(rad(270), 0.1), hm, 0.1));
+  }
+  function headFront(R, J, ch) {
+    const H = J.head, hm = mat(ch.col.hair), sk = mat(ch.col.skin);
+    const g = (a, b) => [H[0] + a, H[1] + b];
+    if (ch.hair === 'long') path(R, [g(-0.1, 0.07), g(0, 0.115), g(0.1, 0.07), g(0.13, -0.08), g(0.14, -0.24), g(0.08, -0.26), g(0.07, -0.08), g(-0.07, -0.08), g(-0.08, -0.26), g(-0.14, -0.24), g(-0.13, -0.08)], `url(#${R.u}TFh)`);
+    capsule(R, [J.neck[0], J.neck[1] - 0.02], 0.045, [J.neck[0], J.neck[1] + 0.09], 0.042, sk);
+    sphere(R, g(-0.093, -0.005), 0.02, mat(shade(ch.col.skin, -0.12))); sphere(R, g(0.093, -0.005), 0.02, mat(shade(ch.col.skin, -0.12)));
+    sphere(R, H, SEG.headR, sk);
+    [[-0.034, 0.008], [0.034, 0.008]].forEach(v => { const p = S(g(v[0], v[1])); R.out.push(`<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="1.3" fill="#2a1d18"/>`); });
+    const m1 = S(g(-0.022, -0.045)), m2 = S(g(0.022, -0.045));
+    R.out.push(`<line x1="${f1(m1[0])}" y1="${f1(m1[1])}" x2="${f1(m2[0])}" y2="${f1(m2[1])}" stroke="#8a4a3c" stroke-width="1.2" stroke-linecap="round"/>`);
+    const cap = ch.hair === 'long'
+      ? [g(-0.105, -0.01), g(-0.1, 0.06), g(-0.05, 0.1), g(0.02, 0.108), g(0.08, 0.085), g(0.105, 0.03), g(0.1, -0.02), g(0.06, 0.05), g(-0.02, 0.06), g(-0.08, 0.03)]
+      : [g(-0.1, 0.02), g(-0.085, 0.075), g(-0.03, 0.105), g(0.03, 0.105), g(0.085, 0.075), g(0.1, 0.02), g(0.07, 0.05), g(0, 0.062), g(-0.07, 0.05)];
+    path(R, cap, `url(#${R.u}TFh)`);
+  }
+  function torsoSideDraw(R, J, ch) {
+    const g = torsoGeo(J, ch);
+    path(R, outline(g), crossFill(R, J.hip, J.sh, mat(ch.col.top), 0.13));
+    path(R, outline(g, 0, ch.topFrom), crossFill(R, J.hip, J.sh, mat(ch.col.bottom), 0.13));
+    const M = R.mus;
+    if (M.chest) hl(R, region(g, 1, 0.56, 0.93));
+    if (M.abs) hl(R, region(g, 1, 0.12, 0.55));
+    if (M.back) hl(R, region(g, -1, 0.42, 0.94));
+    if (M.lowerBack) hl(R, region(g, -1, 0.1, 0.44));
+    if (M.glutes) hl(R, region(g, -1, -0.08, 0.2, 0.2));
+  }
+  function torsoFrontDraw(R, J, ch) {
+    const c = J.hip[0], ny = J.neck[1], hy = J.hip[1], w = ch.build.sh, hw = ch.build.hip;
+    const fem = ch.hair === 'long';
+    const right = [[0.06, ny + 0.01], [w - 0.035, ny - 0.005], [w + 0.025, ny - 0.06], [w - 0.005, ny - 0.17], [w - (fem ? 0.04 : 0.03), ny - 0.27], [hw + (fem ? 0.0 : 0.04), ny - 0.36], [hw + 0.06, hy + 0.03], [hw + 0.035, hy - 0.07]];
+    const pts = right.map(p => [c + p[0], p[1]]).concat([[c, hy - 0.1]], right.slice().reverse().map(p => [c - p[0], p[1]]));
+    path(R, pts, `url(#${R.u}TFt)`);
+    // shorts / leggings top
+    const low = [[hw + 0.03, hy + 0.06], [hw + 0.06, hy + 0.03], [hw + 0.035, hy - 0.07], [0, hy - 0.1], [-hw - 0.035, hy - 0.07], [-hw - 0.06, hy + 0.03], [-hw - 0.03, hy + 0.06]].map(p => [c + p[0], p[1]]);
+    path(R, low, `url(#${R.u}TFb)`);
+    const M = R.mus, op = f1(R.hlOp * 100) / 100, el = (x, y, rx, ry) => { const p = S([x, y]); R.out.push(`<ellipse cx="${f1(p[0])}" cy="${f1(p[1])}" rx="${f1(rx * 100)}" ry="${f1(ry * 100)}" fill="${HL}" fill-opacity="${op}"/>`); };
+    if (M.chest) { el(c - 0.075, ny - 0.13, 0.07, 0.05); el(c + 0.075, ny - 0.13, 0.07, 0.05); }
+    if (M.abs) { const p = S([c - 0.05, ny - 0.2]); R.out.push(`<rect x="${f1(p[0])}" y="${f1(p[1])}" width="10" height="${f1((ny - 0.2 - hy - 0.04) * 100)}" rx="4" fill="${HL}" fill-opacity="${op}"/>`); }
+    if (M.back) { el(c - w + 0.03, ny - 0.22, 0.035, 0.09); el(c + w - 0.03, ny - 0.22, 0.035, 0.09); }
+    if (M.glutes) { el(c - hw - 0.035, hy - 0.01, 0.035, 0.06); el(c + hw + 0.035, hy - 0.01, 0.035, 0.06); }
+  }
+
+  /* ---------- equipment & props ---------- */
   function eqShape(R, s) {
-    if (s.t === 'line') capsule(R, s.a, s.w / 2, s.b, s.w / 2, 'eq');
-    else if (s.t === 'circle') { if (s.fill) sphere(R, s.c, s.r, 'eq'); else { const P = S(s.c); R.out.push(`<circle cx="${f1(P[0])}" cy="${f1(P[1])}" r="${f1(s.r * 100)}" fill="none" stroke="${col('steel', 2)}" stroke-width="2"/>`); } }
-    else if (s.t === 'rect') R.out.push(`<rect x="${f1(X(s.x))}" y="${f1(Y(s.y + s.h))}" width="${f1(s.w * 100)}" height="${f1(s.h * 100)}" rx="4" fill="url(#${R.u}V-eq)"/>`);
+    if (s.t === 'line') capsule(R, s.a, s.w / 2, s.b, s.w / 2, mat(EQC.eq));
+    else if (s.t === 'circle') { if (s.fill) sphere(R, s.c, s.r, mat(EQC.eq)); }
+    else if (s.t === 'rect') R.out.push(`<rect x="${f1(X(s.x))}" y="${f1(Y(s.y + s.h))}" width="${f1(s.w * 100)}" height="${f1(s.h * 100)}" rx="4" fill="url(#${R.u}Veq)"/>`);
     else if (s.t === 'ring') { const P = S(s.c); R.out.push(`<circle class="fig-ring" cx="${f1(P[0])}" cy="${f1(P[1])}" r="${f1(s.r * 100)}"/>`); }
   }
   function disc(R, c, r) {
-    sphere(R, c, r, 'load');
+    sphere(R, c, r, mat(EQC.load));
     const P = S(c);
-    if (r > 0.1) R.out.push(`<circle cx="${f1(P[0])}" cy="${f1(P[1])}" r="${f1(r * 66)}" fill="none" stroke="${col('load', 2)}" stroke-opacity=".45" stroke-width="2"/>`);
-    sphere(R, c, Math.max(0.018, r * 0.24), 'steel');
+    if (r > 0.1) R.out.push(`<circle cx="${f1(P[0])}" cy="${f1(P[1])}" r="${f1(r * 66)}" fill="none" stroke="${shade(EQC.load, -0.45)}" stroke-opacity=".45" stroke-width="2"/>`);
+    sphere(R, c, Math.max(0.018, r * 0.24), mat(EQC.steel));
   }
   function propAt(R, prop, h, far) {
     switch (prop) {
       case 'barbell': case 'barbell_back': case 'barbell_front': case 'trapbar': if (!far) disc(R, h, 0.17); break;
       case 'dumbbell': disc(R, h, 0.066); break;
       case 'plate_small': if (!far) disc(R, h, 0.1); break;
-      case 'goblet': case 'db1': if (!far) { const P = S(h); R.out.push(`<rect x="${f1(P[0] - 5)}" y="${f1(P[1] - 11)}" width="10" height="22" rx="4" fill="url(#${R.u}V-load)"/>`); } break;
+      case 'goblet': case 'db1': if (!far) { const P = S(h); R.out.push(`<rect x="${f1(P[0] - 5)}" y="${f1(P[1] - 11)}" width="10" height="22" rx="4" fill="url(#${R.u}Vld)"/>`); } break;
       case 'band': break;
-      default: if (prop) sphere(R, h, 0.03, 'steel');
+      default: if (prop) sphere(R, h, 0.03, mat(EQC.steel));
     }
   }
   function cableTo(R, a, h) {
     const A = S(a), H = S(h);
     R.out.push(`<line class="fig-cable" x1="${f1(A[0])}" y1="${f1(A[1])}" x2="${f1(H[0])}" y2="${f1(H[1])}"/>`);
-    sphere(R, a, 0.05, 'steel');
+    sphere(R, a, 0.05, mat(EQC.steel));
   }
   function shadowFor(R, pts) {
     const low = pts.filter(p => p[1] < 0.75);
     if (!low.length) return;
-    const xs = low.map(p => p[0]), x0 = Math.min(...xs), x1 = Math.max(...xs);
-    const P = S([(x0 + x1) / 2, 0]);
+    const xs = low.map(p => p[0]), x0 = Math.min(...xs), x1 = Math.max(...xs), P = S([(x0 + x1) / 2, 0]);
     R.out.push(`<ellipse cx="${f1(P[0])}" cy="${f1(P[1])}" rx="${f1(((x1 - x0) / 2 + 0.16) * 100)}" ry="6" fill="url(#${R.u}sh)"/>`);
   }
 
-  function drawFigure(R, J, pat, prop, cable) {
+  function drawFigure(R, J, pat, prop, cable, ch) {
     prop = prop || pat.prop;
     cable = (cable || pat.cable) && pat.anchor;
     const dyn = pat.dyn ? pat.dyn(J) : [];
@@ -552,39 +689,50 @@
       if (!pat.noFloor) shadowFor(R, [J.ankleR, J.ankleL, J.hip]);
       (pat.eq || []).forEach(s => eqShape(R, s));
       if (cable) { cableTo(R, pat.anchor, J.handR); cableTo(R, [-pat.anchor[0], pat.anchor[1]], J.handL); }
-      leg(R, J.hipL, J.kneeL, J.ankleL, 0, 'skin', 'shoe', true, -1);
-      leg(R, J.hipR, J.kneeR, J.ankleR, 0, 'skin', 'shoe', true, 1);
-      torsoFront(R, J);
-      head(R, J);
+      const hipR = [J.hip[0] + ch.build.hip * 0.62, J.hip[1]], hipL = [J.hip[0] - ch.build.hip * 0.62, J.hip[1]];
+      drawLeg(R, ch, hipL, J.kneeL, J.ankleL, 0, false, true, -1);
+      drawLeg(R, ch, hipR, J.kneeR, J.ankleR, 0, false, true, 1);
+      torsoFrontDraw(R, J, ch);
+      headFront(R, J, ch);
       if (/barbell/.test(prop || '')) {
         const y = (J.handL[1] + J.handR[1]) / 2;
-        capsule(R, [J.handL[0] - 0.33, y], 0.016, [J.handR[0] + 0.33, y], 0.016, 'steel');
-        [[J.handL[0] - 0.27, y], [J.handR[0] + 0.27, y]].forEach(p => { const P = S(p); R.out.push(`<rect x="${f1(P[0] - 3.5)}" y="${f1(P[1] - 18)}" width="7" height="36" rx="3" fill="url(#${R.u}V-load)"/>`); });
+        capsule(R, [J.handL[0] - 0.33, y], 0.016, [J.handR[0] + 0.33, y], 0.016, mat(EQC.steel));
+        [[J.handL[0] - 0.27, y], [J.handR[0] + 0.27, y]].forEach(p => { const P = S(p); R.out.push(`<rect x="${f1(P[0] - 3.5)}" y="${f1(P[1] - 18)}" width="7" height="36" rx="3" fill="url(#${R.u}Vld)"/>`); });
       } else if (prop === 'band') {
         const A = S(J.handL), B = S(J.handR);
         R.out.push(`<line class="fig-band" x1="${f1(A[0])}" y1="${f1(A[1])}" x2="${f1(B[0])}" y2="${f1(B[1])}"/>`);
       } else { propAt(R, prop, J.handR); propAt(R, prop, J.handL); }
-      arm(R, J.shL, J.elbL, J.handL, 'skin');
-      arm(R, J.shR, J.elbR, J.handR, 'skin');
+      const shR = [J.hip[0] + ch.build.sh - 0.02, J.shR[1]], shL = [J.hip[0] - ch.build.sh + 0.02, J.shL[1]];
+      drawArm(R, ch, shL, J.elbL, J.handL, false, null, true);
+      drawArm(R, ch, shR, J.elbR, J.handR, false, null, true);
       dyn.filter(s => s.t !== 'ring').forEach(s => eqShape(R, s));
       return;
     }
+    const fwd = J.face;
     if (!pat.noFloor) shadowFor(R, [J.ankleF, J.ankleB, J.kneeF, J.kneeB, J.hip, J.sh, J.head, J.handF, J.handB]);
     (pat.eq || []).forEach(s => eqShape(R, s));
     // far side
-    leg(R, J.hip, J.kneeB, J.ankleB, J.toeB, 'far', 'shoe', false);
+    drawLeg(R, ch, J.hip, J.kneeB, J.ankleB, J.toeB, true, false);
     propAt(R, prop, J.handB, true);
-    arm(R, J.sh, J.elbB, J.handB, 'far');
+    drawArm(R, ch, J.sh, J.elbB, J.handB, true, fwd, false);
     // body
-    torsoSide(R, J);
-    head(R, J);
+    if (ch.hair === 'long') { /* back hair is drawn inside headSide before the neck */ }
+    torsoSideDraw(R, J, ch);
+    headSide(R, J, ch);
     if (/barbell|trapbar/.test(prop || '')) propAt(R, prop, J.handF);
     if (cable) cableTo(R, pat.anchor, J.handF);
     // near side
-    leg(R, J.hip, J.kneeF, J.ankleF, J.toeF, 'skin', 'shoe', false);
+    drawLeg(R, ch, J.hip, J.kneeF, J.ankleF, J.toeF, false, false);
     dyn.filter(s => s.t !== 'ring').forEach(s => eqShape(R, s));
     if (!/barbell|trapbar/.test(prop || '')) propAt(R, prop, J.handF);
-    arm(R, J.sh, J.elbF, J.handF, 'skin');
+    drawArm(R, ch, J.sh, J.elbF, J.handF, false, fwd, false);
+  }
+
+  function staticDefs(u, ch) {
+    const lin = (id, m) => `<linearGradient id="${u}${id}" x1="0" y1="0" x2="1" y2="0">${stopsOf(m)}</linearGradient>`;
+    return lin('TFt', mat(ch.col.top)) + lin('TFb', mat(ch.col.bottom)) + lin('TFh', mat(ch.col.hair)) + lin('Vld', mat(EQC.load)) +
+      `<linearGradient id="${u}Veq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(EQC.eq, 0.4)}"/><stop offset=".25" stop-color="${EQC.eq}"/><stop offset="1" stop-color="${shade(EQC.eq, -0.45)}"/></linearGradient>` +
+      `<radialGradient id="${u}sh"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>`;
   }
 
   // Each pattern gets a viewBox fitted to everything it draws over a full loop (cached).
@@ -598,16 +746,16 @@
     const plateR = /barbell|trapbar/.test(pr) ? 0.19 : 0.08;
     for (let t = 0; t < 1; t += 0.025) {
       const J = solve(pat, t);
-      for (const k in J) if (Array.isArray(J[k]) && J[k].length === 2 && typeof J[k][0] === 'number' && k !== 'hd' && k !== 'face') addP(J[k], 0.07);
-      addP(J.head, SEG.headR + 0.04);
+      for (const k in J) if (Array.isArray(J[k]) && J[k].length === 2 && typeof J[k][0] === 'number' && k !== 'hd' && k !== 'face') addP(J[k], 0.08);
+      addP(J.head, SEG.headR + 0.06);
       if (J.view === 'front') {
-        addP(J.hip, 0.18); addP(J.neck, 0.25);
+        addP(J.hip, 0.2); addP(J.neck, 0.27); addP([J.head[0], J.head[1] - 0.26], 0.15);
         addP(J.handR, plateR); addP(J.handL, plateR);
         if (/barbell/.test(pr)) { addP([J.handR[0] + 0.36, J.handR[1]], 0.18); addP([J.handL[0] - 0.36, J.handL[1]], 0.18); }
       } else {
-        addP(J.hip, 0.13); addP(J.sh, 0.13);
+        addP(J.hip, 0.14); addP(J.sh, 0.14);
+        addP([J.head[0] - J.face[0] * 0.14 - J.hd[0] * 0.3, J.head[1] - J.face[1] * 0.14 - J.hd[1] * 0.3], 0.05);
         addP(J.handF, plateR);
-        addP(footSide(J.ankleF, J.toeF)[1], 0.04); addP(footSide(J.ankleB, J.toeB)[1], 0.04);
       }
       if (pat.dyn) pat.dyn(J).forEach(s => { if (s.t === 'line') { addP(s.a, 0.03); addP(s.b, 0.03); } else if (s.t === 'circle' || s.t === 'ring') addP(s.c, s.r + 0.02); else if (s.t === 'rect') { addP([s.x, s.y]); addP([s.x + s.w, s.y + s.h]); } });
     }
@@ -617,7 +765,7 @@
     });
     if (pat.anchor && (pat.cable || /cable|handle|bar/.test(pr))) { addP(pat.anchor, 0.06); if (pat.view === 'front') addP([-pat.anchor[0], pat.anchor[1]], 0.06); }
     if (!pat.noFloor) y0 = Math.min(y0, -0.05);
-    const pad = 0.05;
+    const pad = 0.04;
     x0 -= pad; x1 += pad; y0 -= pad * 0.4; y1 += pad;
     const w = x1 - x0, h = y1 - y0;
     if (w < h * 0.75) { const d = (h * 0.75 - w) / 2; x0 -= d; x1 += d; }
@@ -627,20 +775,24 @@
 
   function keyOf(anim, prop) { return P[anim + ':' + prop] ? anim + ':' + prop : P[anim] ? anim : 'squat'; }
   function resolve(anim, prop) { return P[keyOf(anim, prop)]; }
-  function frameBody(pat, key, prop, t, cable, u) {
+  const charOf = opts => CHARS[(opts && opts.character) || 'gregoire'] || CHARS.gregoire;
+  function frameBody(pat, key, prop, t, opts, u) {
     const box = fitBox(pat, key, prop || pat.prop);
     BX = box;
     const R = ctx(u);
-    drawFigure(R, solve(pat, t), pat, prop, cable);
+    R.mus = {}; ((opts && opts.muscles) || []).forEach(m => { R.mus[m] = true; });
+    R.hlOp = 0.62 + 0.2 * Math.sin(2 * Math.PI * t);
+    drawFigure(R, solve(pat, t), pat, prop, opts && opts.cable, charOf(opts));
     return { box, html: `<defs>${R.defs.join('')}</defs>${R.out.join('')}` };
   }
 
-  /** Static SVG markup for a frame (t ∈ [0,1)). anim may be a list (first is used). */
+  /** Static SVG markup for a frame (t ∈ [0,1)). anim may be a list (first is used).
+      opts: { cable, muscles: [...], character: 'gregoire' | 'jacqueline' } */
   function frame(anim, prop, t, opts) {
     const a = Array.isArray(anim) ? anim[0] : anim, key = keyOf(a, prop), pat = P[key];
     const u = 'f' + (UID++) + '-';
-    const fb = frameBody(pat, key, prop, t || 0, opts && opts.cable, u);
-    return `<svg class="fig" viewBox="0 0 ${fb.box.w} ${fb.box.h}" role="img" aria-label="Movement demo"><defs>${staticDefs(u)}</defs>${fb.html}</svg>`;
+    const fb = frameBody(pat, key, prop, t || 0, opts, u);
+    return `<svg class="fig" viewBox="0 0 ${fb.box.w} ${fb.box.h}" role="img" aria-label="Movement demo"><defs>${staticDefs(u, charOf(opts))}</defs>${fb.html}</svg>`;
   }
 
   /** Mount a looping animation into el. anim may be a list: each plays `cycles` loops in turn. */
@@ -648,7 +800,7 @@
     const list = Array.isArray(anim) ? anim : [anim];
     const cycles = (opts && opts.cycles) || 2;
     const u = 'm' + (UID++) + '-';
-    el.innerHTML = `<svg class="fig" role="img" aria-label="Movement demo"><defs>${staticDefs(u)}</defs><g></g></svg>`;
+    el.innerHTML = `<svg class="fig" role="img" aria-label="Movement demo"><defs>${staticDefs(u, charOf(opts))}</defs><g></g></svg>`;
     const svg = el.querySelector('svg'), g = el.querySelector('g');
     const reduce = root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let raf = 0, stopped = false, last = 0, idx = -1, start = performance.now(), cur = null, away = 0;
@@ -666,10 +818,9 @@
       away = 0;
       if (now - last >= 33 || reduce) {
         last = now;
-        const el2 = Math.max(0, now - start);
-        if (list.length > 1 && el2 >= cur.dur * cycles) { start = now; pick(idx + 1); }
+        if (list.length > 1 && now - start >= cur.dur * cycles) { start = now; pick(idx + 1); }
         const t = reduce ? 0.55 : (Math.max(0, now - start) % cur.dur) / cur.dur;
-        g.innerHTML = frameBody(cur.pat, cur.key, prop, t, opts && opts.cable, u).html;
+        g.innerHTML = frameBody(cur.pat, cur.key, prop, t, opts, u).html;
       }
       if (!reduce) raf = requestAnimationFrame(draw);
     };
@@ -677,5 +828,5 @@
     return { stop() { stopped = true; cancelAnimationFrame(raf); } };
   }
 
-  root.GymMoves = { SEG, P, frame, mount, solve, resolve, keys: () => Object.keys(P) };
+  root.GymMoves = { SEG, P, CHARS, frame, mount, solve, resolve, keys: () => Object.keys(P) };
 })(typeof window !== 'undefined' ? window : globalThis);
