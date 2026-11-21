@@ -68,15 +68,22 @@
     // words of two or more syllables in -t voice only from this list (Aşgabady, umydy); most keep it (döwleti,
     // jemgyýeti, suraty). Words of two or more syllables in -k, -p, -ç voice (kitaby, çöregi, agajy) unless in keep.
     // sagat: "sagat - sagady" in the explanatory dictionary's spelling note (enedilim.com), sagadyň, sagada (A1-4)
-    tVoice: ["aşgabat", "umyt", "ýigit", "sagat"],
+    // FC-4: maksat (maksadym in b1-u04's vocab; "oýnuň maksady", FC-2's source) and sowgat (sowgady, sowgadyny in
+    // a1-u12 to b1-u12's lessons and guides)
+    tVoice: ["aşgabat", "umyt", "ýigit", "sagat", "maksat", "sowgat"],
     keep: ["tarap"],
     // vowel loss before a vowel: ogly, burnum, agzy, göwnüm
     drop: {
       ogul: "ogl", burun: "burn", agyz: "agz", "boýun": "boýn", garyn: "garn", "göwün": "göwn", "köňül": "köňl",
       "ömür": "ömr", "döwür": "döwr", ylym: "ylm", nesil: "nesl", sabyr: "sabr", bagyr: "bagr",
       // FC-2: uruş, "Beýik Watançylyk urşy", "urşunda" (Wikipedia, a medal's name); oýun, "oýnuň maksady" (a game page)
-      "uruş": "urş", "oýun": "oýn"
+      "uruş": "urş", "oýun": "oýn",
+      // FC-4: deňiz, "Hazar deňzi" (TM-PROJECT.md 7.5), deňzine, deňziniň in the lessons and interludes
+      "deňiz": "deňz"
     },
+    // FC-4: verb stems that lose their second vowel before a vowel only (not before -ýAr, not before a consonant):
+    // dogul- "to be born": doglan in a1-u11 and b1-u05 (doglan gün, doglan ýer), so doglar, doglup; dogulýar, doguldy
+    verbDrop: { dogul: "dogl" },
     // the closed list of verbs whose final t becomes d before a vowel and before -ýAr (gidýär, gidip, gider, but
     // gitdi, gitjek); every other verb keeps its consonant (satýar, tutup, çykar). Compounds follow their last word.
     verbSoft: { git: "gid", et: "ed", "aýt": "aýd", "gaýt": "gaýd", seret: "sered", "eşit": "eşid", "äkit": "äkid", "öýt": "öýd",
@@ -141,6 +148,7 @@
   function verbLex(stem) {
     var k = lower(stem), lex = {};
     if (LEX.verbSoft[k]) lex.alt = LEX.verbSoft[k];
+    else if (LEX.verbDrop[k]) { lex.alt = LEX.verbDrop[k]; lex.vowelOnly = true; }
     else if (syllables(k) > 1 && /t$/.test(k)) lex.alt = stem.slice(0, -1) + "d";
     return lex;
   }
@@ -203,7 +211,7 @@
   function alternate(w, vfirst) {
     var p = lastPart(w);
     if (p.k === "stem") {
-      if (!w.lex.alt || p.t !== w.lemma || (w.cat !== "v" && !vfirst)) return;
+      if (!w.lex.alt || p.t !== w.lemma || ((w.cat !== "v" || w.lex.vowelOnly) && !vfirst)) return;
       p.t = w.lex.alt; p.m = dots(p.t);
     } else if (p.soft && (vfirst || (p.softY && w.cat === "v"))) {      // softY: the causative -t, also before -ýAr
       var r = voiced(p.t);

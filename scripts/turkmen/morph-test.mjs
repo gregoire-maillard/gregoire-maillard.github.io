@@ -79,6 +79,9 @@ for (const [w, acc, dat, loc, abl, gen, sense] of [
   ["sagat", "sagady", "sagada", "sagatda", "sagatdan", "sagadyň"],
   ["güýç", "güýji", "güýje", "güýçde", "güýçden", "güýjüň"], ["uruş", "urşy", "urşa", "uruşda", "uruşdan", "urşuň"],
   ["oýun", "oýny", "oýna", "oýunda", "oýundan", "oýnuň"],
+  // FC-4: deňiz loses its vowel (Hazar deňzi); maksat and sowgat voice their t (maksadym, sowgady in the lessons)
+  ["deňiz", "deňzi", "deňze", "deňizde", "deňizden", "deňziň"], ["maksat", "maksady", "maksada", "maksatda", "maksatdan", "maksadyň"],
+  ["sowgat", "sowgady", "sowgada", "sowgatda", "sowgatdan", "sowgadyň"],
   ["döwlet", "döwleti", "döwlete", "döwletde", "döwletden", "döwletiň"], ["tarap", "tarapy", "tarapa", "tarapda", "tarapdan", "tarapyň"],
   ["at", "ady", "ada", "atda", "atdan", "adyň", 1], ["at", "aty", "ata", "atda", "atdan", "atyň", 2],
   ["ot", "ody", "oda", "otda", "otdan", "oduň", 1], ["ot", "oty", "ota", "otda", "otdan", "otuň", 2],
@@ -280,6 +283,15 @@ check("ugratmak: ugradýar, ugradyp, ugradar, ugradyň; ugratdy, ugratjak, ugrat
   [third("present", "ugratmak"), M.converb("ugratmak").text, third("aorist", "ugratmak"), M.form("imperative", "ugratmak", "siz").text,
    third("past", "ugratmak"), third("future", "ugratmak"), third("necessitative", "ugratmak"), third("present-negative", "ugratmak")],
   ["ugradýar", "ugradyp", "ugradar", "ugradyň", "ugratdy", "ugratjak", "ugratmaly", "ugratmaýar"]);
+check("Hazar deňziniň, deňzine, maksadym, sowgadyny (FC-4)", () => [dec("Hazar deňiz", { poss: "ol", case: "gen" }),
+  dec("deňiz", { poss: "ol", case: "dat" }), M.form("possessive", "maksat", "men").text, dec("sowgat", { poss: "ol", case: "acc" })],
+  ["Hazar deňziniň", "deňzine", "maksadym", "sowgadyny"]);
+// dogulmak "to be born" loses its second vowel before a vowel only, like the participle the course teaches (doglan
+// gün, doglan ýer): doglar, doglup, doglan; but dogulýar, doguldy, doguljak, dogulmaýar (FC-4)
+check("dogulmak: doglar, doglup, doglan; dogulýar, doguldy, doguljak, dogulmaýar (FC-4)", () =>
+  [third("aorist", "dogulmak"), M.converb("dogulmak").text, M.participle("dogulmak", "an").text, third("present", "dogulmak"),
+   third("past", "dogulmak"), third("future", "dogulmak"), third("present-negative", "dogulmak")],
+  ["doglar", "doglup", "doglan", "dogulýar", "doguldy", "doguljak", "dogulmaýar"]);
 check("the negative keeps t: gitmeýär, etmeýärin", () => [third("present-negative", "gitmek"), M.form("present-negative", "etmek", "men").text], ["gitmeýär", "etmeýärin"]);
 // past -dY
 para("past", "gelmek", "geldim|geldiň|geldi|geldik|geldiňiz|geldiler");

@@ -2,6 +2,14 @@
 <!-- © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt -->
 <html lang="en">
   <head>
+    <!-- SEO-9: on gregoiremaillard.com, a visitor with no progress saved there (search engines included) goes to the same page on dailyturkish.app, the course's home; learners with progress there stay (PROJECT.md 3). Removed from dailyturkish.app by static.mjs. -->
+    <script id="dt-move">(function (l) {
+      if (!/(^|\.)gregoiremaillard\.com$/.test(l.hostname)) return;
+      try { var s = window.localStorage; if (s.getItem("trk:v1:course") || s.getItem("trk:v1:cards") || s.getItem("trk:v1:settings")) return; } catch (e) { return; }
+      var p = l.pathname, q = l.search, m = /^\?id=([a-c][12]-u\d\d-(?:grammar|culture))$/.exec(q);
+      if (p === "/turkish.html") p = "/"; else if (p === "/turkishguide.html" && m) { p = "/guides/" + m[1] + ".html"; q = ""; }
+      l.replace("https://dailyturkish.app" + p + q + l.hash);
+    })(location);</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
 <script>

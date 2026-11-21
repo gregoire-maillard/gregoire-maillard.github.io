@@ -11,8 +11,10 @@
 //   turkmen/guide.html                                   the index, filled in
 //   turkmen/index.html                                   the hub, with the path filled in ("Today" stays personal)
 //   + schema.org JSON-LD: a BreadcrumbList on the guides and the index
-//   sitemap.xml                                          the Turkmen hub, index, flashcards and every written guide, added
-//                                                        to the sitemap.xml the Turkish step wrote
+//   turkmen/sitemap.xml                                  the Turkmen hub, index, flashcards and every written guide, in a
+//                                                        sitemap of their own: since SEO-9 the site's sitemap.xml lists
+//                                                        the Turkish course only (submit this one in Search Console to
+//                                                        have the beta crawled; robots.txt names only the Turkish one)
 // Every Turkmen page of the mirror gets window.TKM_STATIC_GUIDES = true before turkmen.js, so its links lead to the static
 // guides also when it renders again in a browser (progress, quiz), and its links to /turkish.html become "/", the
 // Daily Turkish hub's one address on dailyturkish.app. Canonical and og: URLs are on dailyturkish.app/turkmen/ in the pages
@@ -29,7 +31,7 @@ const SITE = "https://dailyturkish.app";
 const HOME = SITE + "/turkmen/";
 const OUT = resolve(process.argv[2] || "");
 const TM = join(OUT, "turkmen");
-if (!process.argv[2] || !existsSync(join(TM, "guide.html")) || !existsSync(join(OUT, "sitemap.xml"))) {
+if (!process.argv[2] || !existsSync(join(TM, "guide.html")) || !existsSync(join(OUT, "sitemap.xml"))) {   // sitemap.xml: the Turkish step has run
   console.error("usage: node scripts/turkmen/static.mjs <mirror folder containing turkmen/guide.html and sitemap.xml>\n" +
     "       (run it after scripts/turkish/static.mjs, which writes sitemap.xml)");
   process.exit(2);
@@ -205,16 +207,15 @@ let relinked = 0;
   }
 })(TM);
 
-// ── sitemap.xml: the Turkmen pages after the Turkish ones ──
+// ── turkmen/sitemap.xml: the Turkmen pages, apart from the Turkish course's sitemap.xml (SEO-9) ──
 const head = [
   { loc: HOME, lastmod: lastmod(["turkmen/index.html", "assets/data/turkmen/index.json"]) },
   { loc: HOME + "guide.html", lastmod: lastmod(["turkmen/guide.html", "assets/data/turkmen/index.json"]) },
   { loc: HOME + "cards.html", lastmod: lastmod(["turkmen/cards.html"]) }
 ];
 const urls = head.concat(sitemap);
-const sm = readFileSync(join(OUT, "sitemap.xml"), "utf8");
-if (sm.includes(HOME)) { console.error("turkmen-static: sitemap.xml already lists Turkmen pages (run on a fresh mirror folder)"); process.exit(1); }
-writeFileSync(join(OUT, "sitemap.xml"), swap(sm, /<\/urlset>\n?$/,
-  urls.map((x) => `  <url><loc>${text(x.loc)}</loc><lastmod>${x.lastmod}</lastmod></url>`).join("\n") + "\n</urlset>\n", "</urlset> at the end of sitemap.xml"));
+if (readFileSync(join(OUT, "sitemap.xml"), "utf8").includes(HOME)) { console.error("turkmen-static: sitemap.xml lists Turkmen pages (run on a fresh mirror folder)"); process.exit(1); }
+writeFileSync(join(TM, "sitemap.xml"), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+  urls.map((x) => `  <url><loc>${text(x.loc)}</loc><lastmod>${x.lastmod}</lastmod></url>`).join("\n") + "\n</urlset>\n");
 
-console.log(`turkmen-static: ${written} guide pages, ${soon} coming-soon pages (noindex), index and hub filled in, links to /turkish.html made "/" in ${relinked} pages, ${urls.length} URLs added to sitemap.xml`);
+console.log(`turkmen-static: ${written} guide pages, ${soon} coming-soon pages (noindex), index and hub filled in, links to /turkish.html made "/" in ${relinked} pages, ${urls.length} URLs in turkmen/sitemap.xml`);

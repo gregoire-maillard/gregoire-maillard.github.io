@@ -2,6 +2,14 @@
 <!-- © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt -->
 <html lang="en">
   <head>
+    <!-- SEO-9: on gregoiremaillard.com, a visitor with no progress saved there (search engines included) goes to the same page on dailyturkish.app, the course's home; learners with progress there stay (PROJECT.md 3). Removed from dailyturkish.app by static.mjs. -->
+    <script id="dt-move">(function (l) {
+      if (!/(^|\.)gregoiremaillard\.com$/.test(l.hostname)) return;
+      try { var s = window.localStorage; if (s.getItem("trk:v1:course") || s.getItem("trk:v1:cards") || s.getItem("trk:v1:settings")) return; } catch (e) { return; }
+      var p = l.pathname, q = l.search, m = /^\?id=([a-c][12]-u\d\d-(?:grammar|culture))$/.exec(q);
+      if (p === "/turkish.html") p = "/"; else if (p === "/turkishguide.html" && m) { p = "/guides/" + m[1] + ".html"; q = ""; }
+      l.replace("https://dailyturkish.app" + p + q + l.hash);
+    })(location);</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
 <script>
@@ -42,7 +50,7 @@
     <main>
       <a class="brand" href="/turkish.html"><img src="/assets/img/daily-turkish-favicon.svg" alt="" width="32" height="32">Daily Turkish</a>
       <h1>Privacy policy</h1>
-      <p class="date">Last updated 15 November 2026</p>
+      <p class="date">Last updated 21 November 2026</p>
 
       <div class="summary">
         <p><b>In short:</b> without a profile, the Daily Turkish iPhone app collects nothing: your progress stays on your phone. A profile is optional; if you create one, your email address and your progress are stored online so they follow you to other devices, and you can delete it at any time. No analytics, no ads and no tracking.</p>
@@ -64,7 +72,7 @@
       <ul>
         <li><b>Progress</b> is saved in your browser's local storage, the same way as in the app.</li>
         <li><b>Analytics.</b> The website uses Google Analytics to count visits (pages viewed, approximate location, device and browser type). It also records when a lesson is finished, with its score, and how many flashcards were reviewed in a session. Your typed answers are never sent. See <a href="https://policies.google.com/privacy" rel="noopener">Google's privacy policy</a>.</li>
-        <li><b>Optional online profile.</b> If you create one, your email address, the display name and character you choose, and your progress are stored with our database provider, Supabase, so that your progress follows you to other devices. The profile also notes whether it was created in the app or on the website (on a phone or a computer), and when it was last used in the app and on the website. You sign in with your email address and a password (Supabase keeps only a secure hash of it, never the password itself), or with a one-time link sent by email. You can delete the profile at any time from My Profile, which erases the sign-in, the profile and the online progress.</li>
+        <li><b>Optional online profile.</b> If you create one, your email address, the display name and character you choose, and your progress are stored with our database provider, Supabase, so that your progress follows you to other devices. The profile also notes whether it was created in the app or on the website (on a phone or a computer), and when it was last used in the app and on the website. You sign in with your email address and a password (Supabase keeps only a secure hash of it, never the password itself), or with a one-time link sent by email. Where the sign-in offers it, you can also continue with your Google or Apple account: Google or Apple then confirms who you are and shares your email address (Apple lets you hide it behind a relay address) and, from Google, your name and profile picture, which Supabase keeps with your sign-in; your Google or Apple password is never shared. You can delete the profile at any time from My Profile, which erases the sign-in, the profile and the online progress.</li>
       </ul>
 
       <h2>Children</h2>

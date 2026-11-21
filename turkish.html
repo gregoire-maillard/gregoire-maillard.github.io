@@ -2,6 +2,14 @@
 <!-- © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt -->
 <html lang="en">
   <head>
+    <!-- SEO-9: on gregoiremaillard.com, a visitor with no progress saved there (search engines included) goes to the same page on dailyturkish.app, the course's home; learners with progress there stay (PROJECT.md 3). Removed from dailyturkish.app by static.mjs. -->
+    <script id="dt-move">(function (l) {
+      if (!/(^|\.)gregoiremaillard\.com$/.test(l.hostname)) return;
+      try { var s = window.localStorage; if (s.getItem("trk:v1:course") || s.getItem("trk:v1:cards") || s.getItem("trk:v1:settings")) return; } catch (e) { return; }
+      var p = l.pathname, q = l.search, m = /^\?id=([a-c][12]-u\d\d-(?:grammar|culture))$/.exec(q);
+      if (p === "/turkish.html") p = "/"; else if (p === "/turkishguide.html" && m) { p = "/guides/" + m[1] + ".html"; q = ""; }
+      l.replace("https://dailyturkish.app" + p + q + l.hash);
+    })(location);</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
 <script>
@@ -507,6 +515,15 @@
       .au-p { margin-top: 6px; font-size: 14.5px; color: var(--body); overflow-wrap: anywhere; }
       .au-p b { color: var(--ink); }
       .au-small { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+      /* SEO-9: Continue with Google / Apple, above the email form (dialog and My Profile), when switched on */
+      .prov { display: grid; gap: 8px; margin: 0 0 4px; }
+      .prov .btn { width: 100%; gap: 10px; font-weight: 600; }
+      .prov .btn.prov-google { background: #fff; color: #1f1f1f; }
+      .prov .btn.prov-apple { background: #000; border-color: #000; color: #fff; --edge: #3a3a3a; }
+      .prov .btn.prov-apple:hover { background: #222; border-color: #222; color: #fff; }
+      .prov .btn[aria-disabled="true"] { opacity: .6; pointer-events: none; }
+      .prov-or { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; font-size: 12.5px; color: var(--muted); }
+      .prov-or::before, .prov-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
       .au-form { display: grid; gap: 6px; }
       .au-form label { margin-top: 4px; font-size: 13px; font-weight: 600; color: var(--ink); }
       .au-form label:first-child { margin-top: 0; }
@@ -1041,7 +1058,9 @@
         // the welcome card (Create an account / Sign in); otherwise right under XP and streak.
         var hello = helloHtml(), gaCard = window.TRKGetApp ? window.TRKGetApp.card({ streak: s.current }) : "";
         var gaFirst = hello.indexOf('class="hello invite"') !== -1;
-        html = hello + (gaFirst ? gaCard : "") + html;
+        // SEO-9: signed out, the lesson comes first and the welcome card (Create an account / Sign in) under it, so a
+        // new visitor meets the course before the sign-up; signed in, the greeting stays on top.
+        html = gaFirst ? html + hello + gaCard : hello + html;
         var note = s.done ? "" : s.current ? "Finish a lesson or study 10 cards today to keep your streak." : "Finish a lesson today to start a streak.";
         html += '<div class="card stats" aria-label="Today\'s progress">' +
           '<div class="stat">' + ring(g.ratio, g.met) + '<div><div class="big">' + g.xp + ' <small>XP</small></div><div class="lbl">' + (g.met ? "Goal met" : "of " + g.goal + " today") + "</div></div></div>" +
@@ -1097,9 +1116,10 @@
         if (!A || !A.avatarSvg || (NOACCT && !A.user)) return "";   // the app: no welcome card, no way into sign-in
         var known = knownUser();
         if (!known) {
+          var xp = store.course().xp.total;   // SEO-9: once there's something to keep, say what
           return '<section class="hello invite" id="hello" aria-label="Your account"><div class="w-top"><span class="hello-pic">' + critter(64) + "</span>" +
             '<p class="hello-bub"><span class="hello-say"><span lang="tr">Merhaba!</span></span>' +
-            '<span class="hello-sub">Save your progress online, use it on any device, and unlock characters like me.</span></p></div>' +
+            '<span class="hello-sub">' + (xp > 0 ? "Keep your " + xp + " XP safe online, use it on any device, and unlock characters like me." : "Save your progress online, use it on any device, and unlock characters like me.") + "</span></p></div>" +
             '<div class="w-acts"><button type="button" class="btn primary" data-auth="signup">Create an account</button><button type="button" class="btn" data-auth="signin">Sign in</button></div>' +
             '<p class="w-fine">Free, no ads. What you\'ve already done here comes with you.</p></section>';
         }
@@ -1175,7 +1195,10 @@
       }
       function renderLevel(lv, course, set, f, next) {
         var s = levelStats(lv, course), L = st.levels[lv.id];
-        var open = st.open[lv.id] != null ? st.open[lv.id] : false;   // folded by default; a link to a unit (#a1-u05) or a level chip opens it
+        // folded by default; a link to a unit (#a1-u05) or a level chip opens it. SEO-9: from 900 px wide, the level of the
+        // next lesson (A1 for a new visitor) starts open, so the path fills the space beside the Today column.
+        var wide = !!(window.matchMedia && matchMedia("(min-width: 900px)").matches);
+        var open = st.open[lv.id] != null ? st.open[lv.id] : !!(wide && next && next.level === lv.id);
         var meta = s.ready ? s.doneUnits + " of " + s.total + " units completed" : "Coming soon";
         var body = "";
         if (L) {
@@ -1511,11 +1534,11 @@
               '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Sending…" : "Email me a reset link") + "</button></form>" + msg +
               '<p class="help"><button type="button" class="linkbtn" data-act="mode-signin">Back to sign in</button></p>';
           } else if (m === "signup") {
-            h += '<form class="pf-form" id="pf-signin" novalidate>' + emailField + pwField("new-password") +
+            h += provHtml("pf") + '<form class="pf-form" id="pf-signin" novalidate>' + emailField + pwField("new-password") +
               '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Creating…" : "Create my profile") + "</button></form>" + msg +
               '<p class="help">Already have a profile? <button type="button" class="linkbtn" data-act="mode-signin">Sign in</button>. The progress ' + HERE + ' is added to your profile.</p>';
           } else {
-            h += '<form class="pf-form" id="pf-signin" novalidate>' + emailField + pwField("current-password") +
+            h += provHtml("pf") + '<form class="pf-form" id="pf-signin" novalidate>' + emailField + pwField("current-password") +
               '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Signing in…" : "Sign in") + "</button></form>" + msg +
               '<p class="pf-alts"><button type="button" class="linkbtn" data-act="mode-forgot">Forgot password?</button><button type="button" class="linkbtn" data-act="mode-link">Email me a sign-in link instead</button></p>' +
               '<p class="help">New here? <button type="button" class="linkbtn" data-act="mode-signup">Create a profile</button>. The progress ' + HERE + ' is added to your profile.</p>';
@@ -1846,6 +1869,10 @@
         var act = b.dataset.act;
         pf.msg = null;
         if (act === "retry") { A.ensure().catch(function () {}); }
+        if (/^oauth-/.test(act) && !pf.busy) {   // SEO-9: off to Google or Apple
+          pf.busy = true; pf.err = false; renderAccount();
+          A.signInWith(act.slice(6)).catch(function (er) { pf.busy = false; pf.msg = er.message; pf.err = true; renderAccount(); });
+        }
         if (act === "again") { A.sentTo = null; A.sentKind = null; pf.mode = "signin"; renderAccount(); $("pf-email").focus(); }
         if (/^mode-/.test(act)) { pf.mode = act.slice(5); A.error = null; renderAccount(); if ($("pf-email")) $("pf-email").focus(); }
         if (act === "showpw") { pf.showPw = b.checked; renderAccount(); if ($("pf-pass")) $("pf-pass").focus(); }
@@ -1898,6 +1925,20 @@
           au.wantFocus = !el;   // "Signing you in…" has nothing to focus: the next view takes it
         }, 0);
       }
+      // SEO-9: "Continue with Google" and "Continue with Apple", for the providers switched on in turkish-account.js
+      // (A.providers; none by default, never in the app), above the email form of the dialog (au) and My Profile (pf).
+      var PROV = {
+        google: ["Google", '<svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92a8.78 8.78 0 0 0 2.68-6.62z" fill="#4285F4"/><path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.83.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z" fill="#34A853"/><path d="M3.97 10.72A5.41 5.41 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05z" fill="#FBBC05"/><path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A8.65 8.65 0 0 0 9 0 9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z" fill="#EA4335"/></svg>'],
+        apple: ["Apple", '<svg viewBox="0 0 17 20" width="16" height="19" aria-hidden="true"><path d="M14.1 10.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.8 1.3 10.3.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.2zM11.6 3c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z" fill="currentColor"/></svg>']
+      };
+      function provHtml(ns) {
+        var list = A && A.providers ? A.providers : [];
+        if (!list.length) return "";
+        var busy = ns === "au" ? au.busy : pf.busy;
+        return '<div class="prov">' + list.map(function (p) {
+          return '<button type="button" class="btn prov-' + p + '" ' + (ns === "au" ? "data-au" : "data-act") + '="oauth-' + p + '"' + (busy ? ' aria-disabled="true"' : "") + ">" + PROV[p][1] + "Continue with " + PROV[p][0] + "</button>";
+        }).join("") + '<p class="prov-or"><span>or with your email</span></p></div>';
+      }
       function authHtml() {
         if (A.user && au.mode !== "done") { au.fresh = au.fresh || au.mode === "signup"; au.mode = "done"; }
         if (au.mode === "sent" && !A.sentTo) au.mode = "signin";
@@ -1938,7 +1979,7 @@
         }
         var up = m === "signup";
         h += '<div class="au-seg" role="group" aria-label="Account"><button type="button" data-au="mode-signup" aria-pressed="' + up + '">Create an account</button><button type="button" data-au="mode-signin" aria-pressed="' + !up + '">Sign in</button></div>' +
-          '<h2 class="sr" id="auth-h">' + (up ? "Create an account" : "Sign in") + "</h2>" +
+          '<h2 class="sr" id="auth-h">' + (up ? "Create an account" : "Sign in") + "</h2>" + provHtml("au") +
           '<form class="au-form" id="au-form" novalidate>' + email +
           '<label for="au-pass">Password</label><div class="au-pw"><input class="input" type="' + (au.showPw ? "text" : "password") + '" id="au-pass" name="password" autocomplete="' + (up ? "new-password" : "current-password") + '" minlength="8" required' + (up ? ' aria-describedby="au-hint"' : "") + ">" +
           '<button type="button" class="au-eye" data-au="eye" aria-pressed="' + au.showPw + '" aria-label="' + (au.showPw ? "Hide password" : "Show password") + '">' + (au.showPw ? EYE_OFF : EYE) + "</button></div>" +
@@ -2026,6 +2067,12 @@
           if (!b) return;
           var act = b.dataset.au;
           if (act === "close") { dlg.close(); return; }
+          if (/^oauth-/.test(act)) {   // SEO-9: off to Google or Apple; the page comes back signed in
+            if (au.busy) return;
+            au.busy = true; au.msg = null; au.oops = false; drawAuth();
+            A.signInWith(act.slice(6)).catch(function (er) { au.busy = false; au.msg = er.message; if (dlg.open) { drawAuth(); oops(); } });
+            return;
+          }
           if (/^mode-/.test(act)) { au.mode = act.slice(5); au.msg = null; au.oops = false; A.error = null; drawAuth(); focusFirst(); }
           if (act === "again") {   // back to the form, the address selected so typing replaces it
             A.sentTo = null; A.sentKind = null; au.mode = "signin"; drawAuth();
@@ -2114,6 +2161,12 @@
       window.addEventListener("hashchange", openFromHash);
       document.addEventListener("visibilitychange", function () { if (!document.hidden && st.index) { store.forget(); render(); } });   // a new day, or progress made in another tab
       window.addEventListener("pageshow", function (e) { if (e.persisted && st.index) { st.fresh = takeFresh(); store.forget(); render(); } });   // back from a lesson, from the back-forward cache
+      window.addEventListener("pageshow", function (e) {   // SEO-9: back from Google or Apple's page without signing in
+        if (!e.persisted || !(au.busy || pf.busy)) return;
+        au.busy = false; pf.busy = false;
+        if (dlg && dlg.open) drawAuth();
+        renderAccount();
+      });
       showView();
       renderLede();
       renderSettings();

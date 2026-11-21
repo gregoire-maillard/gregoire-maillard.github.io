@@ -604,6 +604,66 @@
   // password. Emailed links open dailyturkish.app (redirectTo), so the pages offer no "email me a sign-in link" in the app.
   A.linksOpenWebsite = !!T.app;
 
+  // ── Google and Apple (SEO-9) ──
+  // THE SWITCH: list "google" and/or "apple" once that provider is set up in Supabase (Authentication › Sign In /
+  // Providers; steps in PROJECT.md 3, Online profiles). Empty: no button anywhere. The website only: in the app, a
+  // Google button would also require Sign in with Apple (App Store guideline 4.8) and a way back into the app.
+  var OAUTH = [];
+  A.providers = T.app ? [] : OAUTH.filter(function (p) { return p === "google" || p === "apple"; });
+  // Leaves for Google or Apple, which send the learner back to the course page signed in (redirectTo: the same
+  // address as the emailed links, so it is already among Supabase's redirect URLs). A new account made this way has
+  // no signup_platform (Supabase takes user data only from signUp and signInWithOtp).
+  A.signInWith = function (provider) {
+    if (A.providers.indexOf(provider) < 0) return Promise.reject(new Error("This way of signing in isn't available."));
+    return A.ensure().then(function (c) { return c.auth.signInWithOAuth({ provider: provider, options: { redirectTo: redirectTo() } }); })
+      .then(function (r) { if (r && r.error) throw authError(r.error); });
+  };
+
+  // ── "Keep what you've learned" (SEO-9): after a finished lesson or flashcard session, signed out ──
+  // A.nudge(el, { xp, streak, cards }) fills el with a small card inviting the learner to create a free account
+  // (it links to the course page's sign-in dialog, #signup), and keeps it hidden while someone is signed in or being
+  // signed in, in the app, and for 14 days after "Not now" (localStorage "trk:nudge:hide", outside the progress).
+  var NUDGE_KEY = "trk:nudge:hide", NUDGE_DAYS = 14;
+  A.nudge = function (el, o) {
+    if (!el || T.app || A.disabled) return;
+    o = o || {};
+    var hidden = function () { var t = +ls(function (s) { return s.getItem(NUDGE_KEY); }); return t > 0 && Date.now() - t < NUDGE_DAYS * 864e5; };
+    if (hidden()) return;
+    if (!document.getElementById("trk-nudge-css")) {
+      var st = document.createElement("style");
+      st.id = "trk-nudge-css";
+      st.textContent = ".trk-nudge{margin:18px auto 4px;max-width:30rem;padding:14px 16px 10px;border:1px solid rgb(40 122 158 / 35%);border-radius:12px;background:var(--blue-tint,#eef5f8);text-align:left}" +
+        ".trk-nudge-t{margin:0 0 4px;font-size:15.5px;font-weight:650;line-height:1.35;color:var(--ink,#242424)}" +
+        ".trk-nudge-p{margin:0 0 8px;font-size:14px;line-height:1.5;color:var(--body,#4a4a48)}" +
+        ".trk-nudge-b{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px}" +
+        ".trk-nudge-x{min-height:44px;padding:0 4px;border:0;background:none;font:inherit;font-size:13.5px;color:var(--muted,#6f6f6f);text-decoration:underline;cursor:pointer}" +
+        ".trk-nudge-x:hover{color:var(--ink,#242424)}";
+      document.head.appendChild(st);
+    }
+    var bits = [];
+    if (o.xp > 0) bits.push("<b>" + o.xp + " XP</b>");
+    if (o.streak > 1) bits.push("your <b>" + o.streak + "-day streak</b>");
+    if (o.cards > 0 && !bits.length) bits.push("your flashcard schedule");
+    var what = bits.length ? bits.join(" and ") : "your progress";
+    el.className = "trk-nudge";
+    el.setAttribute("role", "region");
+    el.setAttribute("aria-label", "Save your progress");
+    el.innerHTML = '<p class="trk-nudge-t">Keep what you\'ve learned</p>' +
+      '<p class="trk-nudge-p">' + what.charAt(0).toUpperCase() + what.slice(1) + " " + (bits.length > 1 ? "are" : "is") + " saved in this browser only. " +
+      "A free account keeps " + (bits.length > 1 ? "them" : "it") + " online, so you can carry on from any device. No ads.</p>" +
+      '<div class="trk-nudge-b"><a class="btn primary" href="' + T.C.PAGES.hub + '#signup">Create a free account</a>' +
+      '<button type="button" class="trk-nudge-x">Not now</button></div>';
+    var paint = function () { el.hidden = !!A.user || !(A.status === "off" || A.status === "signed-out") || hidden(); };
+    el.querySelector(".trk-nudge-x").addEventListener("click", function () {
+      ls(function (s) { s.setItem(NUDGE_KEY, String(Date.now())); });
+      el.hidden = true;
+    });
+    paint();
+    if (nudgeOff) nudgeOff();   // a page redraws its end screen: follow the new card only
+    nudgeOff = A.onChange(paint);
+  };
+  var nudgeOff = null;
+
   T.account = A;
   // Only download the library when it's needed: someone is signed in, or arriving from a sign-in link.
   if (!A.disabled && (hasToken() || urlHasAuth())) A.ensure().catch(function () {});

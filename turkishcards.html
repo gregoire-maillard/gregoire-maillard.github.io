@@ -2,6 +2,14 @@
 <!-- © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt -->
 <html lang="en">
   <head>
+    <!-- SEO-9: on gregoiremaillard.com, a visitor with no progress saved there (search engines included) goes to the same page on dailyturkish.app, the course's home; learners with progress there stay (PROJECT.md 3). Removed from dailyturkish.app by static.mjs. -->
+    <script id="dt-move">(function (l) {
+      if (!/(^|\.)gregoiremaillard\.com$/.test(l.hostname)) return;
+      try { var s = window.localStorage; if (s.getItem("trk:v1:course") || s.getItem("trk:v1:cards") || s.getItem("trk:v1:settings")) return; } catch (e) { return; }
+      var p = l.pathname, q = l.search, m = /^\?id=([a-c][12]-u\d\d-(?:grammar|culture))$/.exec(q);
+      if (p === "/turkish.html") p = "/"; else if (p === "/turkishguide.html" && m) { p = "/guides/" + m[1] + ".html"; q = ""; }
+      l.replace("https://dailyturkish.app" + p + q + l.hash);
+    })(location);</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
 <script>
@@ -980,8 +988,10 @@
         var s = T.progress.streak(course, set, now);
         if (s.done) h += '<p class="sub">Today counts toward your ' + (s.current > 1 ? s.current + "-day " : "") + "streak.</p>";
         h += '<div class="row">' + (S.sess && S.sess.canUndo() ? '<button type="button" class="btn" data-act="undo">' + ICON.undo + "Undo the last answer</button>" : "") +
-          '<a class="btn primary" href="' + P.hub + '">Back to the course</a><a class="btn" href="?view=stats" data-view="stats">Statistics</a></div></div>';
+          '<a class="btn primary" href="' + P.hub + '">Back to the course</a><a class="btn" href="?view=stats" data-view="stats">Statistics</a></div><div id="nudge" hidden></div></div>';
         $("v-review").innerHTML = h;
+        // SEO-9: signed out, after a session, an invitation to keep the schedule with a free account (turkish-account.js)
+        if (r.answered && T.account && T.account.nudge) T.account.nudge($("nudge"), { xp: course.xp.total, streak: s.current, cards: r.answered });
       }
 
       // keyboard (PROJECT.md 3): Space or Enter shows the answer, then 1–4 answer and Space or Enter is Good; Z undoes, R replays, Esc ends

@@ -2,6 +2,14 @@
 <!-- © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt -->
 <html lang="en">
   <head>
+    <!-- SEO-9: on gregoiremaillard.com, a visitor with no progress saved there (search engines included) goes to the same page on dailyturkish.app, the course's home; learners with progress there stay (PROJECT.md 3). Removed from dailyturkish.app by static.mjs. -->
+    <script id="dt-move">(function (l) {
+      if (!/(^|\.)gregoiremaillard\.com$/.test(l.hostname)) return;
+      try { var s = window.localStorage; if (s.getItem("trk:v1:course") || s.getItem("trk:v1:cards") || s.getItem("trk:v1:settings")) return; } catch (e) { return; }
+      var p = l.pathname, q = l.search, m = /^\?id=([a-c][12]-u\d\d-(?:grammar|culture))$/.exec(q);
+      if (p === "/turkish.html") p = "/"; else if (p === "/turkishguide.html" && m) { p = "/guides/" + m[1] + ".html"; q = ""; }
+      l.replace("https://dailyturkish.app" + p + q + l.hash);
+    })(location);</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HT8J8ZFYTB"></script>
 <script>
@@ -1915,9 +1923,11 @@
         }
         if (o.tile && S.unit) h += '<p class="new-tile' + (o.tile === "gold" ? " gold" : "") + '" data-lvl="' + esc(S.unit.level) + '"><span class="tw-t ' + (o.tile === "gold" ? "gold" : "laid") + '" data-lvl="' + esc(S.unit.level) + '" aria-hidden="true"></span>' +
           (o.tile === "gold" ? "Your " + esc(unitLabel(S.unit)) + " tile is glazed gold" : "A new tile for your wall: " + esc(unitLabel(S.unit))) + "</p>";
-        h += (o.after || "") + '<div class="acts">' + o.acts + "</div></div>";
+        h += (o.after || "") + '<div class="acts">' + o.acts + '</div><div id="nudge" hidden></div></div>';
         screen(h, true);
         notices();
+        // SEO-9: signed out, after earning XP, an invitation to keep it with a free account (turkish-account.js, A.nudge)
+        if (T.account && T.account.nudge && o.ok && !o.noXp && res && res.xp > 0) T.account.nudge($("nudge"), { xp: store.course().xp.total, streak: res.streak && res.streak.current });
         // UI-5: the XP counts up, the goal ring fills from where today stood before, confetti for a success
         countUp($("xp-n"), res && res.xp);
         var fg = stage.querySelector(".ring-stat .ring .fg");

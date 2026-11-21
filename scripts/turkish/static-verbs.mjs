@@ -143,12 +143,13 @@ export function writeVerbPages(ctx) {
       <div class="vb-facts">${facts.map(([k, x]) => `<div><span>${k}</span><b lang="tr">${text(x)}</b></div>`).join("")}</div>
       <div class="ex vb-ex"><p class="tr" lang="tr">${text(c.ex.tr)}</p><p class="en">${text(c.ex.en)}</p></div>
       <ul class="vb-notes">${notesFor(c).map((n) => `<li>${n}</li>`).join("")}${note ? `<li>${note}</li>` : ""}</ul>
-      <p class="wl-cta">Practice ${tr(v)} with the <a href="/turkishcards.html">flashcards</a>, or see every suffix on one page in the <a href="/grammar-cheat-sheet.html">grammar cheat sheet</a>.</p>
+      <p class="wl-cta">Practice ${tr(v)} with the <a href="/turkishcards.html?view=browse&amp;q=${encodeURIComponent(v)}">flashcards</a>, or see every suffix on one page in the <a href="/grammar-cheat-sheet.html">grammar cheat sheet</a>.</p>
       <nav class="wl-pager" aria-label="Tenses on this page">${TENSES.map(([s, name]) => `<a href="#${s}">${text(name)}</a>`).join("")}</nav>
       <div class="vb-grid">
 ${sections}
       </div>
       <nav class="wl-next" aria-label="Previous and next verb">${prev ? `<a href="${links.get(prev.tr)}" rel="prev">← ${tr(prev.tr)}</a>` : `<a href="/verbs/">← All 100 verbs</a>`}${next ? `<a href="${links.get(next.tr)}" rel="next">${tr(next.tr)} →</a>` : `<a href="/verbs/">All 100 verbs →</a>`}</nav>
+${ctx.cta ? ctx.cta(c) : ""}
       <section class="wl-about" aria-labelledby="about-h">
         <h2 id="about-h">About these tables</h2>
         <p>Suffixes are written as in the course: A stands for a or e, I for ı, i, u or ü, D for d or t, and letters in brackets are used only after a vowel (y) or a consonant (I). The forms are built by Daily Turkish's own conjugation engine, which is tested against more than 1,100 forms typed by hand from the written standard. The question particle mi is written separately and follows vowel harmony.</p>
@@ -157,7 +158,9 @@ ${sections}
       title, h1: `${v}: conjugation`, kicker: `<a href="/verbs/">Turkish verbs</a>`,
       description: `Conjugation of ${v} (${en}) in Turkish: present ${key.present}, past ${key.past}, future ${key.future}, aorist ${key.aorist}, and must, can, if, let's and the imperative, positive, negative and question.`,
       canonical: `${SITE}/verbs/${slug}.html`, css: VERBS_CSS,
-      ld: crumbs([HOME_CRUMB, ["Turkish verbs", SITE + "/verbs/"], [v, `${SITE}/verbs/${slug}.html`]]), body
+      ld: crumbs([HOME_CRUMB, ["Turkish verbs", SITE + "/verbs/"], [v, `${SITE}/verbs/${slug}.html`]]) +
+        (ctx.resourceLd ? "\n    " + ctx.resourceLd({ name: `${v}: conjugation`, url: `${SITE}/verbs/${slug}.html`, learningResourceType: "Conjugation table",
+          educationalLevel: `CEFR ${String(c.level).toUpperCase()}`, teaches: `Conjugation of the Turkish verb ${v} (${en})` }) : ""), body
     };
     writeFileSync(join(OUT, "verbs", slug + ".html"), frame(m));
     pages.push({ loc: m.canonical, lastmod: ctx.lastmod([ctx.fileOfRank(c.rank), "assets/js/turkish-morph.js", "scripts/turkish/static-verbs.mjs"]) });

@@ -15,13 +15,20 @@
 //                                                            shows them only through JavaScript); footers link to it
 //   verbs/index.html, verbs/<verb>.html                       the 100 most common verbs, conjugated (static-verbs.mjs)
 //   grammar-cheat-sheet.html                                  grammar on one page (static-cheatsheet.mjs)
+//   tys-practice-test.html, conversations.html, about.html    what the course offers, readable without JavaScript, and
+//   llms.txt                                                  an index of the site for AI assistants (static-pages.mjs, SEO-9)
 //   404.html                                                  the page for addresses that don't exist (noindex)
 //   assets/img/og/<page>.jpg                                  share images (1200×630): one per written guide and word-list
 //                                                            page, daily-turkish.jpg for the rest; og:image on every page
-//   + schema.org JSON-LD: WebSite and Organization on the hub, BreadcrumbList on the guides, the index and the word list
+//   + schema.org JSON-LD: WebSite, Organization, Course and MobileApplication on the hub, BreadcrumbList and LearningResource
+//     on the guides and the generated pages, FAQPage on about.html
 //   sitemap.xml                                               the hub, the index, cards, culture, privacy, every written guide,
-//                                                            the word list
+//                                                            the word list, the verbs, the cheat sheet, the three pages above
 // and changes every href="/turkish.html…" in the mirror to "/…" (index.html is the hub, so it keeps one address).
+// SEO-9, on the hub of the mirror: no gregoiremaillard.com notice; a line of what's inside under the title; Today's
+// first cards (the first lesson, Conversations, TYS practice) in the HTML, where "Loading the course…" was; the path's
+// repeated icons drawn once (<symbol> + <use>); levels folded in the HTML. On every page: no comments in the <style>
+// blocks and no redirect script for gregoiremaillard.com (dt-move).
 // The pages keep their scripts: in a browser they render again as usual (progress, speaker buttons, quiz).
 // Exits 1 if any page fails to render, so the workflow publishes nothing rather than a broken mirror.
 
@@ -33,6 +40,7 @@ import { chromium } from "playwright";
 import { createRequire } from "node:module";
 import { writeVerbPages } from "./static-verbs.mjs";
 import { cheatSheetBody, CHEAT_CSS } from "./static-cheatsheet.mjs";
+import { writeFeaturePages, llmsTxt, courseCta, PAGES_CSS, APP_URL } from "./static-pages.mjs";
 const M = createRequire(import.meta.url)("../../assets/js/turkish-morph.js");   // the morphology engine, for the verb pages and the cheat sheet
 
 const SITE = "https://dailyturkish.app";
@@ -75,6 +83,22 @@ function setHead(src, m) {
   src = swap(src, /<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${attr(m.canonical)}">`, "og:url");
   return src;
 }
+// SEO-9: an <svg> that comes back 3 times or more (the path's locks, stars, waves, ferry) is written once as a <symbol>
+// in a hidden sprite at the start of the HTML, and each copy becomes <svg …><use href="#id"></use></svg> with its own
+// attributes (class, size, viewBox). The symbols keep the copies' coordinates and may draw outside their box, as the
+// inline icons did. Icons with ids, clip paths or other references are left as they are.
+function spriteSvgs(html, prefix) {
+  const re = /<svg\b([^>]*)>([\s\S]*?)<\/svg>/g, seen = new Map(), ids = new Map();
+  for (const m of html.matchAll(re)) seen.set(m[0], (seen.get(m[0]) || 0) + 1);
+  let n = 0, symbols = "";
+  const out = html.replace(re, (all, attrs, inner) => {
+    if (seen.get(all) < 3 || inner.length < 60 || /\bid=|<svg|url\(#|href=/.test(inner)) return all;
+    let id = ids.get(all);
+    if (!id) { id = prefix + (++n); ids.set(all, id); symbols += `<symbol id="${id}" overflow="visible">${inner}</symbol>`; }
+    return `<svg${attrs}><use href="#${id}"></use></svg>`;
+  });
+  return n ? `<svg class="dt-sprite" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">${symbols}</svg>${out}` : html;
+}
 const today = new Date().toISOString().slice(0, 10);
 function lastmod(files) {
   let best = "";
@@ -85,7 +109,8 @@ function lastmod(files) {
 }
 // The footer of the mirror's pages gets a line linking to the word list (dailyturkish.app only: gregoiremaillard.com and
 // the iPhone app have no words/ pages).
-const WORDS_LINK = '<p style="margin-bottom:6px"><a href="/words/">1,000 common words</a> · <a href="/verbs/">100 verbs conjugated</a> · <a href="/grammar-cheat-sheet.html">Grammar cheat sheet</a></p>';
+const WORDS_LINK = '<p style="margin-bottom:6px"><a href="/words/">1,000 common words</a> · <a href="/verbs/">100 verbs conjugated</a> · <a href="/grammar-cheat-sheet.html">Grammar cheat sheet</a> · ' +
+  '<a href="/conversations.html">Conversations</a> · <a href="/tys-practice-test.html">TYS practice test</a> · <a href="/about.html">About</a></p>';
 const addWordsLink = (src, what) => swap(src, /<footer class="dt-foot">/, `<footer class="dt-foot">${WORDS_LINK}`, `footer of ${what}`);
 
 // ── structured data (schema.org JSON-LD), for the mirror only ──
@@ -93,13 +118,25 @@ const addWordsLink = (src, what) => swap(src, /<footer class="dt-foot">/, `<foot
 // guides and word-list pages carry a breadcrumb trail (Daily Turkish › Grammar guides › A1 · Unit 5: …).
 const ld = (o) => `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", ...o }).replace(/</g, "\\u003c")}</script>`;
 const crumbs = (trail) => ld({ "@type": "BreadcrumbList", itemListElement: trail.map(([name, item], i) => ({ "@type": "ListItem", position: i + 1, name, item })) });
+// SEO-9: a page that teaches something (guides, word list, verbs, cheat sheet), part of the course described on the hub
+const resourceLd = (o) => ld({ "@type": "LearningResource", inLanguage: "en", isAccessibleForFree: true, isPartOf: { "@id": SITE + "/#course" },
+  publisher: { "@id": SITE + "/#org" }, ...o });
 const HOME_LD = ld({ "@graph": [
   { "@type": "WebSite", "@id": SITE + "/#website", name: "Daily Turkish", alternateName: "dailyturkish.app", url: SITE + "/", inLanguage: "en",
     description: "A free Turkish course from A1 to C2: short lessons, grammar guides, culture notes and 1,000 flashcards.", publisher: { "@id": SITE + "/#org" } },
   { "@type": "Organization", "@id": SITE + "/#org", name: "Daily Turkish", url: SITE + "/",
     logo: { "@type": "ImageObject", url: SITE + "/assets/img/daily-turkish-apple-touch-icon.png", width: 180, height: 180 },
     founder: { "@type": "Person", name: "Grégoire Maillard", url: "https://gregoiremaillard.com/" },
-    sameAs: ["https://buymeacoffee.com/dailyturkish"] }
+    email: "gregoire.maillard@yahoo.fr", sameAs: [APP_URL, "https://buymeacoffee.com/dailyturkish"] },
+  // SEO-9: what the course is, and the iPhone app, as facts a machine can read (Google no longer shows Course results;
+  // AI assistants and other search engines still read them)
+  { "@type": "Course", "@id": SITE + "/#course", name: "Daily Turkish: Turkish from A1 to C2", url: SITE + "/", inLanguage: "en",
+    description: "A free Turkish course for English speakers, from CEFR A1 to C2: short interactive lessons, a grammar guide and a culture note in every unit, 1,000 flashcards with spaced repetition, everyday conversations and a TYS practice test.",
+    teaches: "Turkish language", educationalLevel: "CEFR A1 to C2", isAccessibleForFree: true, provider: { "@id": SITE + "/#org" },
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD", category: "Free" } },
+  { "@type": "MobileApplication", "@id": SITE + "/#app", name: "Daily Turkish", operatingSystem: "iOS", applicationCategory: "EducationalApplication",
+    url: APP_URL, installUrl: APP_URL, isAccessibleForFree: true, inLanguage: "en", publisher: { "@id": SITE + "/#org" },
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } }
 ] });
 const addLd = (src, block, what) => swap(src, /\n\s*<\/head>/, `\n    ${block}\n  </head>`, `</head> of ${what}`);
 const HOME_CRUMB = ["Daily Turkish", SITE + "/"];
@@ -184,7 +221,7 @@ ${gtag}
     <meta property="og:description" content="${attr(m.description)}">
     <meta property="og:url" content="${attr(m.canonical)}">` : '<meta name="robots" content="noindex">'}
     ${styles.join("\n    ")}
-    <style>${WORDS_CSS}</style>${m.css ? "\n    <style>" + m.css + "</style>" : ""}${m.ld ? "\n    " + m.ld : ""}
+    <style>${WORDS_CSS}${PAGES_CSS}</style>${m.css ? "\n    <style>" + m.css + "</style>" : ""}${m.ld ? "\n    " + m.ld : ""}
     <script defer src="/assets/js/turkish-getapp.js"></script>
   </head>
   <body>${m.noTab ? header.replace(/ aria-current="page"/, "") : header}<main class="wrap">
@@ -197,7 +234,7 @@ ${m.body}
 `;
 }
 // Writes the eleven pages into OUT/words; returns their sitemap entries.
-function writeWordList(frame, deck, notes, unitInfo, fileOfRank, verbLinks) {
+function writeWordList(frame, deck, notes, unitInfo, fileOfRank, verbLinks, ctaBox) {
   const ranges = [];
   for (let from = 1; from <= deck.length; from += 100) ranges.push({ from, to: Math.min(from + 99, deck.length), file: `${from}-${Math.min(from + 99, deck.length)}.html` });
   const tr = (s) => `<span lang="tr">${text(s)}</span>`;
@@ -245,8 +282,10 @@ function writeWordList(frame, deck, notes, unitInfo, fileOfRank, verbLinks) {
 ${words.map((c) => item(c, notes[c.rank - 1])).join("\n")}
       </ol>
       <nav class="wl-next" aria-label="Previous and next">${prev ? `<a href="/words/${prev.file}" rel="prev">← Words ${prev.from}–${prev.to}</a>` : `<a href="/words/">← Overview</a>`}${next ? `<a href="/words/${next.file}" rel="next">Words ${next.from}–${next.to} →</a>` : ""}</nav>
+${ctaBox}
       ${about}`
     };
+    m.ld += "\n    " + resourceLd({ name: m.h1, url: m.canonical, learningResourceType: "Vocabulary list", teaches: "Turkish vocabulary" });
     writeFileSync(join(OUT, "words", r.file), frame(m));
     out.push({ loc: m.canonical, lastmod: lastmod([fileOfRank(r.from), fileOfRank(r.to)]) });
   });
@@ -262,8 +301,10 @@ ${words.map((c) => item(c, notes[c.rank - 1])).join("\n")}
       <ol class="wl-grid">
 ${ranges.map((r) => `        <li><a href="/words/${r.file}"><b>Words ${r.from}–${r.to}</b><span lang="tr">${list(deck.slice(r.from - 1, r.to))(8).map(text).join(", ")}…</span></a></li>`).join("\n")}
       </ol>
+${ctaBox}
       ${about}`
   };
+  hub.ld += "\n    " + resourceLd({ name: hub.h1, url: hub.canonical, learningResourceType: "Vocabulary list", teaches: "Turkish vocabulary" });
   writeFileSync(join(OUT, "words", "index.html"), frame(hub));
   out.unshift({ loc: hub.canonical, lastmod: lastmod([...new Set(deck.map((c) => fileOfRank(c.rank)))]) });
   return out;
@@ -365,6 +406,12 @@ function guidePage(r, id, noindex) {
     trail.push([`${u.label}: ${m[2] === "grammar" ? u.title : "Interlude, " + u.interlude}`, `${SITE}/guides/${id}.html`]);
   }
   if (!noindex) s = addLd(s, crumbs(trail), id || "turkishguide.html");
+  if (id && !noindex) {
+    const m = /^(.+)-(grammar|culture)$/.exec(id), u = unitMeta.get(m[1]), g = m[2] === "grammar";
+    s = addLd(s, resourceLd({ name: g ? `${u.label}: ${u.title}` : `${u.label}, interlude: ${u.interlude}`, url: `${SITE}/guides/${id}.html`,
+      learningResourceType: g ? "Grammar guide" : "Culture note", educationalLevel: `CEFR ${u.cefr}`,
+      teaches: g ? u.points.map((p) => index.points[p] && index.points[p].label).filter(Boolean).join("; ") : "Turkish culture and history" }), id);
+  }
   return s;
 }
 
@@ -372,7 +419,7 @@ const index = JSON.parse(readFileSync(join(OUT, "assets/data/turkish/index.json"
 const units = index.levels.flatMap((lv) => lv.units);
 const unitMeta = new Map();
 index.levels.forEach((lv) => lv.units.forEach((u, i) => unitMeta.set(u.id, { label: `${lv.cefr} · Unit ${i + 1}`, cefr: lv.cefr, num: i + 1, level: lv.id,
-  title: u.title, titleTr: u.titleTr, interlude: u.interlude, ready: u.status === "ready" })));
+  title: u.title, titleTr: u.titleTr, interlude: u.interlude, points: u.points || [], ready: u.status === "ready" })));
 // a grammar point's section in its guide, if the unit is written: { href, label (the point), unit ("A1 · Unit 6") }
 const guideLink = (gp) => {
   const pt = index.points[gp], u = pt && unitMeta.get(pt.unit);
@@ -382,7 +429,7 @@ const guideLink = (gp) => {
 const shareCards = [];   // { file (page in OUT), name (image), kicker, title, sub, subTr, level, alt }, drawn once the pages are written
 mkdirSync(join(OUT, "guides"), { recursive: true });
 const sitemap = [];
-let written = 0, soon = 0, wordPages = [], verbPages = [], cheatPage = null;
+let written = 0, soon = 0, wordPages = [], verbPages = [], cheatPage = null, featurePages = [];
 try {
   for (const u of units) {
     for (const kind of ["grammar", "culture"]) {
@@ -406,12 +453,48 @@ try {
   const ix = await render("/turkishguide.html", guideDone);
   writeFileSync(join(OUT, "turkishguide.html"), guidePage(ix, null, false));
 
-  // ── the hub: the path (levels, units, lessons, links to every guide). "Today" stays personal. ──
-  const hub = await render("/turkish.html", () => !!document.querySelector("#levels details.level"));
+  // ── the hub: the path (levels, units, lessons, links to every guide). "Today" stays personal, but for a new visitor
+  // its first cards (the first lesson, Conversations, TYS practice) are the same for everyone: they go in the HTML
+  // (SEO-9) in place of "Loading the course…", and the page script redraws the column as usual. ──
+  // (it also waits for every level's summary, which arrives after the first draw: TK-PUBLISH saw one missing)
+  const hub = await render("/turkish.html", () => !!document.querySelector("#levels details.level") && !!document.querySelector("#today .card.next h3") &&
+    Array.prototype.every.call(document.querySelectorAll("#levels details.level.has-content"), (d) => !!d.querySelector(".lvl-sum")));
+  const todayCards = await page.evaluate(() => ["#today .card.next", "#today .dlg-mini", "#today .tys-mini"].map((q) => {
+    const el = document.querySelector(q);
+    if (!el) throw new Error("no " + q + " in Today");
+    return el.outerHTML;
+  }).join("\n          "));
+  // Levels: folded in the HTML (from 900 px the page opens the learner's level itself), and the icons repeated
+  // hundreds of times (locks, stars, waves, the ferry) written once as <symbol>s, which the page script redraws anyway.
+  const levelsHtml = spriteSvgs(hub.levels.replace(/<details\b[^>]*>/g, (t) => t.replace(/ open(?=[ >])/, "")), "dts");
+  const counts = index.counts, firstLesson = "/turkishlesson.html?id=" + index.levels[0].units[0].lessons[0].id;
+  const inside = `<ul class="inside" aria-label="What's in the course">
+            <li><a href="#a1"><b>${counts.units}</b> units, A1 → C2</a></li>
+            <li><a href="/turkishguide.html"><b>${written}</b> grammar and culture guides</a></li>
+            <li><a href="/turkishcards.html"><b>${counts.cards.toLocaleString("en-US")}</b> flashcards</a></li>
+            <li><a href="/conversations.html"><b>${(index.dialogues || []).length}</b> conversations</a></li>
+            <li><a href="/tys-practice-test.html">TYS practice test</a></li>
+            <li><a href="/verbs/"><b>100</b> verbs conjugated</a></li>
+            <li><a href="/about.html">Why Daily Turkish?</a></li>
+          </ul>`;
+  const INSIDE_CSS = `<style>
+      /* what's in the course, under the hub's title (dailyturkish.app only, written by scripts/turkish/static.mjs, SEO-9) */
+      .hero .inside { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; }
+      .hero .inside a { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 11px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font-size: 13px; color: var(--body); text-decoration: none; white-space: nowrap; }
+      .hero .inside a:hover { border-color: rgb(40 122 158 / 40%); background: var(--blue-tint); color: var(--ink); }
+      .hero .inside b { color: var(--ink); font-weight: 650; font-variant-numeric: tabular-nums; }
+      @media (max-width: 599px) { .hero .inside { gap: 5px; } .hero .inside a { min-height: 30px; padding: 0 9px; font-size: 12.5px; } }
+    </style>`;
   for (const f of ["turkish.html", "index.html"]) {
     let s = readFileSync(join(OUT, f), "utf8");
     s = swap(s, /<nav class="lvl-nav" id="lvl-nav" aria-label="Levels"><\/nav>/, `<nav class="lvl-nav" id="lvl-nav" aria-label="Levels">${hub.lvlNav}</nav>`, "#lvl-nav");
-    s = swap(s, /<div id="levels"><\/div>/, `<div id="levels">${hub.levels}</div>`, "#levels");
+    s = swap(s, /<div id="levels"><\/div>/, `<div id="levels">${levelsHtml}</div>`, "#levels");
+    s = swap(s, /<div class="card next"><p class="eyebrow">Loading the course…<\/p><\/div>/, todayCards, "Today's loading card");
+    // the notice for gregoiremaillard.com (SEO-1) has no use here, and its hidden text came first in the page's text
+    s = swap(s, /\n\s*<p class="notice" id="dt-home" hidden>[\s\S]*?<\/p>\n\s*<script>if \(\/\(\^\|\\\.\)gregoiremaillard[^<]*<\/script>/, "", "gregoiremaillard.com notice");
+    const LEDE = /<p class="lede">[\s\S]*?<\/p>(?=\n\s*<\/header>\n\s*<aside class="today")/;
+    s = swap(s, LEDE, one(s, LEDE, "the hub's lede") + "\n          " + inside, "the hub's lede");
+    s = addLd(s, INSIDE_CSS, f);
     writeFileSync(join(OUT, f), addLd(addWordsLink(s, f), HOME_LD, f));
   }
 
@@ -432,23 +515,34 @@ try {
   const crumbsGuide = ["Grammar guides", SITE + "/turkishguide.html"];
 
   // ── conjugation pages (static-verbs.mjs) and the grammar cheat sheet (static-cheatsheet.mjs), built by the engine ──
-  const verbs = writeVerbPages({ OUT, SITE, M, deck, notes, frame, crumbs, HOME_CRUMB, text, attr, guideLink, lastmod, fileOfRank, writeFileSync, mkdirSync, join });
+  const verbs = writeVerbPages({ OUT, SITE, M, deck, notes, frame, crumbs, HOME_CRUMB, text, attr, guideLink, lastmod, fileOfRank, writeFileSync, mkdirSync, join,
+    resourceLd, cta: (c) => {   // SEO-9: the box at the end of a verb page: the unit that first teaches the verb, the first lesson, the card
+      const u = unitInfo.get(c.unit), q = "/turkishcards.html?view=browse&q=" + encodeURIComponent(c.tr);
+      return courseCta({ title: `Practice ${c.tr} in the course`, primary: [firstLesson, "Start the first lesson"], secondary: u ? ["/#" + u.id, "Go to " + u.label] : ["/", "See the course"],
+        link: [q, `Find ${c.tr} in the flashcards`],
+        text: `${u ? `<i lang="tr">${text(c.tr)}</i> is first taught in <a href="/guides/${u.id}-grammar.html">${text(u.label)}: ${text(u.title)}</a>, and it's in the flashcard deck. ` : ""}Daily Turkish is a free course from A1 to C2, with short lessons and instant feedback. No account needed.` }, text);
+    } });
   verbPages = verbs.pages; shareCards.push(...verbs.cards);
   const cs = cheatSheetBody({ M, text, guideLink, verbLinks: verbs.links });
   const csPage = {
     title: "Turkish grammar cheat sheet: suffixes, cases, tenses", h1: "Turkish grammar cheat sheet", kicker: '<a href="/turkishguide.html">Turkish · Grammar</a>',
     description: "Turkish grammar on one page: vowel harmony, consonant changes, the six cases, possessives, pronouns, personal endings, every tense, participles, voices and word order, with examples.",
-    canonical: `${SITE}/grammar-cheat-sheet.html`, css: CHEAT_CSS, ld: crumbs([HOME_CRUMB, crumbsGuide, ["Cheat sheet", `${SITE}/grammar-cheat-sheet.html`]]),
+    canonical: `${SITE}/grammar-cheat-sheet.html`, css: CHEAT_CSS, ld: crumbs([HOME_CRUMB, crumbsGuide, ["Cheat sheet", `${SITE}/grammar-cheat-sheet.html`]]) + "\n    " +
+      resourceLd({ name: "Turkish grammar cheat sheet", url: `${SITE}/grammar-cheat-sheet.html`, learningResourceType: "Reference sheet", educationalLevel: "CEFR A1 to C1", teaches: "Turkish grammar" }),
     body: `      <p class="wl-intro">The essentials of Turkish grammar on one page, from vowel harmony to word order. Every example is built by the course's own conjugation engine, and each section links to the guide that explains it.</p>
       <ol class="cs-toc">${cs.toc.map(([id, t]) => `<li><a href="#${id}">${text(t)}</a></li>`).join("")}</ol>
-${cs.html}`
+${cs.html}
+${courseCta({ title: "Practice it, one step at a time", text: "The course teaches this grammar in order, a few points per unit, each with a guide and short lessons with instant feedback. Free, from A1 to C2, no account needed.",
+  primary: [firstLesson, "Start the first lesson"], secondary: ["/turkishguide.html", "All grammar guides"] }, text)}`
   };
   writeFileSync(join(OUT, "grammar-cheat-sheet.html"), frame(csPage));
   cheatPage = { loc: csPage.canonical, lastmod: lastmod(["assets/js/turkish-morph.js", "scripts/turkish/static-cheatsheet.mjs", "scripts/turkish/static-verbs.mjs"]) };
   shareCards.push({ file: "grammar-cheat-sheet.html", name: "grammar-cheat-sheet", kicker: "Turkish · Grammar", title: "Turkish grammar cheat sheet",
     sub: "Cases, endings, tenses and suffixes on one page", subTr: false, alt: "Daily Turkish · Turkish grammar cheat sheet" });
 
-  wordPages = writeWordList(frame, deck, notes, unitInfo, fileOfRank, verbs.links);
+  wordPages = writeWordList(frame, deck, notes, unitInfo, fileOfRank, verbs.links, courseCta({ title: "Learn these words in the course",
+    text: "Every word on this list is in the Daily Turkish flashcard deck, and most of them are taught in the lessons, in sentences, a unit at a time. Free, from A1 to C2, no account needed.",
+    primary: [firstLesson, "Start the first lesson"], secondary: ["/turkishcards.html", "Open the flashcards"] }, text));
   const firstWords = (from, n) => deck.slice(from - 1, from - 1 + n).map((c) => c.tr).join(", ") + "…";
   shareCards.push({ file: "words/index.html", name: "words", kicker: "Word list", title: "The 1,000 most common Turkish words", sub: firstWords(1, 6), subTr: true,
     alt: "Daily Turkish · The 1,000 most common Turkish words" });
@@ -456,6 +550,20 @@ ${cs.html}`
     const to = Math.min(from + 99, deck.length), title = from === 1 ? "The 100 most common Turkish words" : `Turkish words ${from}–${to}`;
     shareCards.push({ file: `words/${from}-${to}.html`, name: `words-${from}-${to}`, kicker: "Word list", title, sub: firstWords(from, 5), subTr: true, alt: `Daily Turkish · ${title}` });
   }
+
+  // ── SEO-9: the TYS practice test, the conversations and About as pages, and llms.txt (static-pages.mjs) ──
+  const exam = JSON.parse(readFileSync(join(OUT, "assets/data/turkish/exams/tys-1.json"), "utf8"));
+  const dialogues = (index.dialogues || []).map((d) => JSON.parse(readFileSync(join(OUT, `assets/data/turkish/dialogues/${d.id}.json`), "utf8")));
+  const richs = await page.evaluate(([ex, ds]) => ({ examIntro: window.TRK.rich(ex),
+    dlg: Object.fromEntries(ds.map((d) => [d.id, { setting: window.TRK.rich(d.setting), goal: window.TRK.rich(d.goal) }])) }),
+    [exam.intro, dialogues.map((d) => ({ id: d.id, setting: d.setting, goal: d.goal }))]);
+  const hubSrc = readFileSync(join(OUT, "turkish.html"), "utf8");
+  const aboutHtml = one(hubSrc, /<h2>The course<\/h2>[\s\S]*?(?=\n\s*<h2>Your progress<\/h2>)/, "the hub's About text (The course, The method)")
+    .replace(/ target="_blank"/g, "").split("\n").map((l) => "        " + l.trim()).join("\n");
+  const feat = writeFeaturePages({ OUT, SITE, frame, crumbs, ld, HOME_CRUMB, text, attr, index, unitMeta, guideLink, exam, dialogues, rich: richs, lastmod,
+    writeFileSync, join, firstLesson, aboutHtml, written });
+  featurePages = feat.pages; shareCards.push(...feat.cards);
+  writeFileSync(join(OUT, "llms.txt"), llmsTxt({ SITE, index, unitMeta, dialogues, written }));
 
   // ── 404.html: GitHub Pages serves it for any address that doesn't exist ──
   writeFileSync(join(OUT, "404.html"), frame({
@@ -467,6 +575,7 @@ ${cs.html}`
         <li><a href="/turkishguide.html"><b>Grammar guides</b><span>Every guide and grammar point</span></a></li>
         <li><a href="/turkishcards.html"><b>Flashcards</b><span>The 1,000 most useful words, Anki-style</span></a></li>
         <li><a href="/words/"><b>Word list</b><span>The 1,000 most common Turkish words</span></a></li>
+        <li><a href="/about.html"><b>About</b><span>What Daily Turkish is, and questions and answers</span></a></li>
       </ul>`
   }));
 
@@ -512,8 +621,14 @@ let relinked = 0;
     const f = join(dir, name);
     if (statSync(f).isDirectory()) { if (name !== "assets") relink(f); continue; }
     if (!name.endsWith(".html")) continue;
-    const s = readFileSync(f, "utf8"), t = s.replace(/href="\/turkish\.html(?=["#])/g, 'href="/');
-    if (t !== s) { writeFileSync(f, t); relinked++; }
+    const s = readFileSync(f, "utf8");
+    let t = s.replace(/href="\/turkish\.html(?=["#])/g, 'href="/');
+    if (t !== s) relinked++;
+    // SEO-9: the redirect for gregoiremaillard.com (dt-move) does nothing here, and the notes in the <style> blocks
+    // are for whoever edits the pages, not for visitors and crawlers (Daily Turkmen's pages are left to its own script)
+    if (!f.startsWith(join(OUT, "turkmen") + "/")) t = t.replace(/\n\s*<!-- SEO-9: on gregoiremaillard\.com[^>]*-->\n\s*<script id="dt-move">[\s\S]*?<\/script>/, "")
+      .replace(/<style>([\s\S]*?)<\/style>/g, (all, css) => "<style>" + css.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\n\s*\n/g, "\n") + "</style>");
+    if (t !== s) writeFileSync(f, t);
   }
 })(OUT);
 
@@ -526,6 +641,6 @@ const head = [
   { loc: SITE + "/turkishprivacy.html", lastmod: lastmod(["turkishprivacy.html"]) }
 ];
 writeFileSync(join(OUT, "sitemap.xml"), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-  head.concat(sitemap, wordPages, verbPages, cheatPage ? [cheatPage] : []).map((x) => `  <url><loc>${text(x.loc)}</loc><lastmod>${x.lastmod}</lastmod></url>`).join("\n") + "\n</urlset>\n");
+  head.concat(featurePages, sitemap, wordPages, verbPages, cheatPage ? [cheatPage] : []).map((x) => `  <url><loc>${text(x.loc)}</loc><lastmod>${x.lastmod}</lastmod></url>`).join("\n") + "\n</urlset>\n");
 
-console.log(`turkish-static: ${written} guide pages, ${soon} coming-soon pages (noindex), ${wordPages.length} word-list pages, ${verbPages.length} verb pages, the cheat sheet, 404 page, ${shareCards.length} share images on ${tagged} pages, links to /turkish.html made "/" in ${relinked} pages, index and hub filled in, sitemap with ${head.length + sitemap.length + wordPages.length + verbPages.length + 1} URLs`);
+console.log(`turkish-static: ${written} guide pages, ${soon} coming-soon pages (noindex), ${wordPages.length} word-list pages, ${verbPages.length} verb pages, the cheat sheet, 404 page, ${shareCards.length} share images on ${tagged} pages, links to /turkish.html made "/" in ${relinked} pages, index and hub filled in, ${featurePages.length} feature pages, llms.txt, sitemap with ${head.length + featurePages.length + sitemap.length + wordPages.length + verbPages.length + 1} URLs`);
