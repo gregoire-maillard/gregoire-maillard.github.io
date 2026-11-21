@@ -97,7 +97,10 @@
     // görkezmek, getirmek, geçirmek, çykarmak (b1-u11); turuzmak, gorkuzmak, ýatyrmak, öwretmek in D. Gray, "A Short
     // Descriptive Grammar of Turkmen" (SIL, 2011), which gives -dyr, -t, -yr, -yz as the suffixes
     causative: { "gör": "görkez", gel: "getir", "geç": "geçir", "çyk": "çykar", tur: "turuz", gork: "gorkuz", "ýat": "ýatyr",
-      "öwren": "öwret", "iç": "içir", "düş": "düşür", "uç": "uçur", bit: "bitir", "gaýt": "gaýtar", "ýet": "ýetir" },
+      "öwren": "öwret", "iç": "içir", "düş": "düşür", "uç": "uçur", bit: "bitir", "gaýt": "gaýtar", "ýet": "ýetir",
+      // B1-5: duruzmak "to stop (someone, a taxi)": "Merkeze gitmek üçin taksini duruzdym" (SIL Turkmen-English
+      // dictionary, webonary.work), "duruzmak to make a stop, to stop" (Peace Corps Turkmen-English dictionary, 1999)
+      dur: "duruz" },
     // reciprocals whose stem changes: tanamak → tanyşmak (b1-u11)
     reciprocal: { tana: "tanyş" }
   };
@@ -131,7 +134,16 @@
     if (PRON[k]) lex.pron = k;
     return lex;
   }
-  function verbLex(stem) { var lex = {}; if (LEX.verbSoft[lower(stem)]) lex.alt = LEX.verbSoft[lower(stem)]; return lex; }
+  // B1-5: a verb stem of two or more syllables that ends in t voices it like the verbs of LEX.verbSoft, before a
+  // vowel and before -ýAr. Every such stem found in print does: the causatives in -t (okadylýar, gowşadýar, daraldýar,
+  // berkidýär, beýgeldýär, galgadýar, boşadýarlar, döredýän; ugradýar and öwredýär were already listed) and seret-,
+  // eşit-, äkit-. One-syllable stems keep their t unless they are listed (satýar, tutýar, ýetýär, but gidýär).
+  function verbLex(stem) {
+    var k = lower(stem), lex = {};
+    if (LEX.verbSoft[k]) lex.alt = LEX.verbSoft[k];
+    else if (syllables(k) > 1 && /t$/.test(k)) lex.alt = stem.slice(0, -1) + "d";
+    return lex;
+  }
 
   // ───────────────────────────── 3. words and suffixes ─────────────────────────────
   // A word is a list of parts (stem, buffer letters, suffixes), so it can be shown segmented: öý|üm|iz.
@@ -147,7 +159,7 @@
   function clone(w) {
     var f = {}, k;
     for (k in w.f) f[k] = w.f[k];
-    return { pre: w.pre, parts: w.parts.map(function (p) { return { t: p.t, k: p.k, id: p.id, m: p.m, soft: p.soft }; }),
+    return { pre: w.pre, parts: w.parts.map(function (p) { return { t: p.t, k: p.k, id: p.id, m: p.m, soft: p.soft, softY: p.softY }; }),
              cat: w.cat, lemma: w.lemma, lex: w.lex, proper: w.proper, f: f };
   }
   function lastPart(w) { return w.parts[w.parts.length - 1]; }
@@ -193,7 +205,7 @@
     if (p.k === "stem") {
       if (!w.lex.alt || p.t !== w.lemma || (w.cat !== "v" && !vfirst)) return;
       p.t = w.lex.alt; p.m = dots(p.t);
-    } else if (p.soft && vfirst) {
+    } else if (p.soft && (vfirst || (p.softY && w.cat === "v"))) {      // softY: the causative -t, also before -ýAr
       var r = voiced(p.t);
       if (r) p.t = r;
     }
@@ -232,7 +244,7 @@
       out += c; mask += r;
     }
     if (buf) w.parts.push({ t: buf, k: "buf", m: "." });
-    w.parts.push({ t: out, k: o.k || "suf", id: o.id || tpl, m: mask, soft: !!o.soft });
+    w.parts.push({ t: out, k: o.k || "suf", id: o.id || tpl, m: mask, soft: !!o.soft, softY: !!o.softY });
     if (o.cat) w.cat = o.cat;
     return w;
   }
@@ -421,23 +433,27 @@
   }
   function bolsa(p) { return person(attach(mkVerb("bolmak"), "sA", { id: "COND", cat: "g" }), E2, p); }   // bolsam … bolsalar
   // Voices and verbs made from nouns (b1-u10, b1-u11). Passive: -Yl after a consonant, -l after a vowel (Gray 2011:
-  // aýtmak → aýdylmak, okamak → okalmak), -Yn after l (alynmak, gelinmek, bilinmek); reflexive -(Y)n (ýuwunmak,
+  // aýtmak → aýdylmak, okamak → okalmak), -Yn after l (alynmak, gelinmek, bilinmek) and -n after l and a vowel
+  // (arassalanmak, taýýarlanmak, işlenmek, gürlenmek: B1-4, from print: arassalanan, taýýarlanan); reflexive -(Y)n (ýuwunmak,
   // geýinmek, taýýarlanmak); reciprocal -(Y)ş (görüşmek, alyşmak, gürleşmek); causative -t after a vowel (okatmak,
   // işletmek), -dYr after a consonant (ýazdyrmak, kesdirmek, güldürmek), or a stem of LEX.causative (görkezmek).
   function voice(w0, kind) {
     var L = letters(body(w0)), endsV = isV(L.slice(-1)), k = lower(w0.lemma), w;
     switch (kind) {
-      case "pass": w = endsV ? attach(w0, "l", { id: "PASS" }) : /l$/.test(L) ? attach(w0, "(Y)n", { id: "PASS" }) : attach(w0, "(Y)l", { id: "PASS" }); break;
+      case "pass": w = endsV ? attach(w0, /l.$/.test(L) ? "n" : "l", { id: "PASS" }) : /l$/.test(L) ? attach(w0, "(Y)n", { id: "PASS" }) : attach(w0, "(Y)l", { id: "PASS" }); break;
       case "refl": w = attach(w0, "(Y)n", { id: "REFL" }); break;
       case "recip":
         if (rootOnly(w0) && LEX.reciprocal[k]) { w = clone(w0); w.parts = [{ t: LEX.reciprocal[k], k: "stem", m: dots(LEX.reciprocal[k]) }]; break; }
         w = attach(w0, "(Y)ş", { id: "RECIP" }); break;
       case "caus":
         if (rootOnly(w0) && LEX.causative[k]) { var c = LEX.causative[k]; w = clone(w0); w.parts = [{ t: w0.parts[0].t.slice(0, 1) + c.slice(1), k: "stem", m: dots(c) }]; break; }
-        w = endsV ? attach(w0, "t", { id: "CAUS" }) : attach(w0, "dYr", { id: "CAUS" }); break;
+        // -t after a vowel, and (B1-5) after a stem of two or more syllables that ends in l or r: azaltmak,
+        // bejertmek, dikeltmek, beýgeltmek (SIL dictionary), köpeltmek, kiçeltmek, ulaltmak (Peace Corps dictionary,
+        // 1999), daraldýar (science.gov.tm); -dYr after any other consonant. The -t voices before a vowel and -ýAr.
+        w = endsV || (syllables(L) > 1 && /[lr]$/.test(L)) ? attach(w0, "t", { id: "CAUS", soft: true, softY: true }) : attach(w0, "dYr", { id: "CAUS" }); break;
       default: throw new Error("unknown voice " + kind);
     }
-    w.cat = "v"; w.lex = {}; w.lemma = body(w);
+    w.cat = "v"; w.lemma = body(w); w.lex = rootOnly(w) ? verbLex(w.lemma) : {};
     return w;
   }
   // the infinitive of a stem: voice("ýazmak", "pass") → ýazylmak
@@ -855,8 +871,16 @@
   [["PASS", "pass"], ["REFL", "refl"], ["RECIP", "recip"], ["CAUS", "caus"]].forEach(function (v) {
     step(v[0], "v", function (w) { var x = voice(w, v[1]); x.cat = "v"; return x; });
   });
-  [["LA", "lA"], ["LAS", "lAş"], ["LAN", "lAn"], ["AL", "Al"]].forEach(function (d) {     // arassala, gowulaş, öýlen, azal
+  [["LA", "lA"], ["LAS", "lAş"], ["LAN", "lAn"]].forEach(function (d) {     // arassala, gowulaş, öýlen
     step(d[0], "n", function (w) { var x = attach(w, d[1], { id: d[0], cat: "v" }); x.lex = {}; x.lemma = body(x); return x; });
+  });
+  // -Al: azal, köpel after a consonant; (B1-5) after a, e just -l (gysgal-: gysgalýar in print; garal-, SIL), and a final
+  // y, i drops (ulal-, kiçel-: Peace Corps dictionary, 1999; garral-, SIL)
+  step("AL", "n", function (w) {
+    var L = letters(body(w)), c = L.slice(-1), x = w;
+    if (/[yiuü]/.test(c)) { x = clone(w); var p = lastPart(x); p.t = p.t.slice(0, -1); p.m = p.m.slice(0, -1); x = attach(x, "Al", { id: "AL", cat: "v" }); }
+    else x = attach(w, isV(c) ? "l" : "Al", { id: "AL", cat: "v" });
+    x.lex = {}; x.lemma = body(x); return x;
   });
 
   function start(base, o) {

@@ -693,6 +693,14 @@ check("passive in print: ýazyldy, guruldy, okaldy, edildi, berilýär, öwrenil
   [["ýazmak", ["PASS", "PAST"]], ["gurmak", ["PASS", "PAST"]], ["okamak", ["PASS", "PAST"]], ["etmek", ["PASS", "PAST"]], ["bermek", ["PASS", "PRES"]],
    ["öwrenmek", ["PASS", "PRES"]], ["gelmek", ["PASS", "PAST"]], ["barmak", ["PASS", "PAST"]], ["çekmek", ["PASS", "NEG", "PRES"]], ["barmak", ["PASS", "PRES"]]].map(a => build(a[0], a[1])),
   ["ýazyldy", "guruldy", "okaldy", "edildi", "berilýär", "öwrenilýär", "gelindi", "baryldy", "çekilmeýär", "barylýar"]);
+// B1-4: after l and a vowel the passive is -n, like the reflexive (arassalanan, taýýarlanan, saklananlar in print;
+// arassalalmak was wrong); other vowel stems keep -l (okalmak, ýasalmak, dokalmak)
+check("passive after -la, -le: arassalanmak, taýýarlanmak, işlenmek, gürlenmek, saklanmak, gaýtalanmak; ýasalmak, ýygnalmak keep -l", () =>
+  [vo("arassalamak", "pass"), vo("taýýarlamak", "pass"), vo("işlemek", "pass"), vo("gürlemek", "pass"), vo("saklamak", "pass"), vo("gaýtalamak", "pass"), vo("ýasamak", "pass"), vo("ýygnamak", "pass")],
+  ["arassalanmak", "taýýarlanmak", "işlenmek", "gürlenmek", "saklanmak", "gaýtalanmak", "ýasalmak", "ýygnalmak"]);
+check("passive after -la, -le in sentences: arassalandy, gürlenýär, taýýarlanan", () =>
+  [build("arassalamak", ["PASS", "PAST"]), build("gürlemek", ["PASS", "PRES"]), build("taýýarlamak", ["PASS", "AN"])],
+  ["arassalandy", "gürlenýär", "taýýarlanan"]);
 check("reflexive: ýuwunmak, geýinmek, taýýarlanmak", () => [vo("ýuwmak", "refl"), vo("geýmek", "refl"), vo("taýýarlamak", "refl")], ["ýuwunmak", "geýinmek", "taýýarlanmak"]);
 check("reciprocal: görüşmek, tanyşmak, gürleşmek, alyşmak, ýetişmek, öwrenişmek", () =>
   [vo("görmek", "recip"), vo("tanamak", "recip"), vo("gürlemek", "recip"), vo("almak", "recip"), vo("ýetmek", "recip"), vo("öwrenmek", "recip")],
@@ -703,6 +711,48 @@ check("causative: okatmak, işletmek, ýatlatmak, ýazdyrmak, kesdirmek, güldü
 check("causatives from the lexicon: görkezmek, getirmek, geçirmek, çykarmak, turuzmak, gorkuzmak, ýatyrmak, öwretmek", () =>
   ["görmek", "gelmek", "geçmek", "çykmak", "turmak", "gorkmak", "ýatmak", "öwrenmek"].map(b => vo(b, "caus")),
   ["görkezmek", "getirmek", "geçirmek", "çykarmak", "turuzmak", "gorkuzmak", "ýatyrmak", "öwretmek"]);
+// B1-5: the causative of a stem of two or more syllables that ends in l or r is -t, not -dYr: azaltmak, bejertmek
+// ("Men düýn maşynymy bejertdim") in the SIL Turkmen-English dictionary; köpeltmek, kiçeltmek, ulaltmak in the Peace
+// Corps Turkmen-English dictionary (1999). duruzmak is lexical ("taksini duruzdym", SIL; Peace Corps 1999).
+check("causative -t after l, r: azaltmak, köpeltmek, kiçeltmek, ulaltmak, bejertmek; duruzmak (B1-5)", () =>
+  [vo("azalmak", "caus"), vo("köpelmek", "caus"), vo("kiçelmek", "caus"), vo("ulalmak", "caus"), vo("bejermek", "caus"), vo("durmak", "caus")],
+  ["azaltmak", "köpeltmek", "kiçeltmek", "ulaltmak", "bejertmek", "duruzmak"]);
+// B1-5: a causative in -t voices it before a vowel and before -ýAr, as ugrat- and öwret- do: okadylýar, gowşadýar,
+// daraldýar (science.gov.tm), berkidýär, beýgeldýär, galgadýar (SIL dictionary), boşadýarlar (B1-3); t stays before a consonant
+check("okatmak: okadýar, okadyp, okadar; okatdy, okatjak, okatmaly (B1-5)", () =>
+  [third("present", "okatmak"), M.converb("okatmak").text, third("aorist", "okatmak"), third("past", "okatmak"), third("future", "okatmak"), third("necessitative", "okatmak")],
+  ["okadýar", "okadyp", "okadar", "okatdy", "okatjak", "okatmaly"]);
+check("-t causatives built from the stem: oka|d|ýar, oka|d|yl|ýar, az|al|d|ýar; oka|t|dy (B1-5)", () =>
+  [M.build("okamak", ["CAUS", "PRES"]).seg, M.build("okamak", ["CAUS", "PASS", "PRES"]).seg, M.build("az", ["AL", "CAUS", "PRES"]).seg, M.build("okamak", ["CAUS", "PAST"]).seg],
+  ["oka|d|ýar", "oka|d|yl|ýar", "az|al|d|ýar", "oka|t|dy"]);
+check("other -t causatives: işledýär, ýatladýar, azaldýar, köpeldýär; aglatdy, arassalatdym, bejertdim (B1-5)", () =>
+  [third("present", "işletmek"), third("present", "ýatlatmak"), third("present", "azaltmak"), third("present", "köpeltmek"), third("past", "aglatmak"),
+   M.form("past", "arassalatmak", "men").text, M.form("past", "bejertmek", "men").text],
+  ["işledýär", "ýatladýar", "azaldýar", "köpeldýär", "aglatdy", "arassalatdym", "bejertdim"]);
+// B1-5: -dYr causatives each checked in a dictionary: kesdirmek, ýazdyrmak, tikdirmek ("Soňky tikdiren ýüpek
+// köýnegiňi geý!"), ýuwdurmak ("Ol köýnegini ýuwdurdy"), çekdirmek ("Surat çekdirmek"), aldyrmak ("Matany Merede
+// aldyrdym") on enedilim.com; güldürmek, geýdirmek, iýdirmek, garaşdyrmak, ynandyrmak, tanyşdyrmak (Peace Corps 1999);
+// galdyrmak, bildirmek, duýdurmak, etdirmek, gaharlandyrmak (SIL)
+check("-dYr causatives: kesdirdim, ýuwdurdy, tikdirdi, güldürdi, tanyşdyrdy, garaşdyrdy, ynandyrdy, iýdirýär, geýdirdi, çekdirdim, aldyrdym, galdyrdym (B1-5)", () =>
+  [M.form("past", "kesdirmek", "men").text, third("past", "ýuwdurmak"), third("past", "tikdirmek"), third("past", "güldürmek"), third("past", "tanyşdyrmak"),
+   third("past", "garaşdyrmak"), third("past", "ynandyrmak"), third("present", "iýdirmek"), third("past", "geýdirmek"), M.form("past", "çekdirmek", "men").text,
+   M.form("past", "aldyrmak", "men").text, M.form("past", "galdyrmak", "men").text],
+  ["kesdirdim", "ýuwdurdy", "tikdirdi", "güldürdi", "tanyşdyrdy", "garaşdyrdy", "ynandyrdy", "iýdirýär", "geýdirdi", "çekdirdim", "aldyrdym", "galdyrdym"]);
+check("causatives from the voice step: tanyşdyrmak, gaharlandyrmak, ynandyrmak, bildirmek, duýdurmak, etdirmek, geýdirmek, iýdirmek (B1-5)", () =>
+  ["tanyşmak", "gaharlanmak", "ynanmak", "bilmek", "duýmak", "etmek", "geýmek", "iýmek"].map(b => vo(b, "caus")),
+  ["tanyşdyrmak", "gaharlandyrmak", "ynandyrmak", "bildirmek", "duýdurmak", "etdirmek", "geýdirmek", "iýdirmek"]);
+// B1-5: -Al after a vowel: a final y, i drops (ulalmak, kiçelmek: Peace Corps 1999; garralmak: SIL), after a just -l
+// (gysgalýar in print, science.gov.tm; garalmak: SIL); after a consonant -Al (azalmak, köpelmek)
+check("-Al: azal, köpel; ulal, kiçel, garral; gysgal, garal (B1-5)", () =>
+  [["az"], ["köp"], ["uly"], ["kiçi"], ["garry"], ["gysga"], ["gara"]].map(a => M.build(a[0], ["AL"]).seg),
+  ["az|al", "köp|el", "ul|al", "kiç|el", "garr|al", "gysga|l", "gara|l"]);
+check("-lAş and -lA on nouns and adjectives: dostlaş, kynlaş, ýakynlaş, kömekleş, habarlaş; duzla, hapala (B1-5)", () =>
+  [["dost", "LAS"], ["kyn", "LAS"], ["ýakyn", "LAS"], ["kömek", "LAS"], ["habar", "LAS"], ["duz", "LA"], ["hapa", "LA"]].map(a => M.build(a[0], [a[1]]).text),
+  ["dostlaş", "kynlaş", "ýakynlaş", "kömekleş", "habarlaş", "duzla", "hapala"]);
+check("reciprocals: ýazyşmak, düşünişmek, öpüşmek, bölüşmek; görüşdik, gürleşýärler, düşünişýäris (B1-5)", () =>
+  [vo("ýazmak", "recip"), vo("düşünmek", "recip"), vo("öpmek", "recip"), vo("bölmek", "recip"), M.form("past", "görüşmek", "biz").text,
+   M.form("present", "gürleşmek", "olar").text, M.form("present", "düşünişmek", "biz").text],
+  ["ýazyşmak", "düşünişmek", "öpüşmek", "bölüşmek", "görüşdik", "gürleşýärler", "düşünişýäris"]);
 check("Saçymy kesdirdim; Çagany güldürdi", () => [build("kesmek", ["CAUS", "PAST", "E2-1"]), build("gülmek", ["CAUS", "PAST"])], ["kesdirdim", "güldürdi"]);
 check("verbs from nouns: arassala, gowulaş, öýlen, azal", () => [build("arassa", ["LA"]), build("gowy", ["LAS"]), build("öý", ["LAN"]), build("az", ["AL"])], ["arassala", "gowulaş", "öýlen", "azal"]);
 check("a voice conjugates like any verb: ýazylýar, guruldy, tanyşdyk, ýuwunýaryn", () =>

@@ -1,0 +1,216 @@
+{
+  "id": "b1-u09-l01",
+  "unit": "b1-u09",
+  "order": 1,
+  "title": "If you have time",
+  "goal": "Say what will happen if something happens, with -sA.",
+  "points": ["gp-conditional-sa"],
+  "intro": {
+    "text": "Add `-sA` and a past ending to the verb for **if**: *gelsem* (if I come), *gelseň* (if you come), *gelse* (if he comes). The **if** half comes first: *Wagtyň bolsa, gel* (come if you have time). *Eger* (if) in front is optional.",
+    "see": "gp-conditional-sa"
+  },
+  "vocab": [
+    { "tk": "eger", "en": "if (optional before -sA)", "pos": "conj", "card": "fc-0106" },
+    { "tk": "ýogsa", "en": "otherwise, or else", "pos": "conj", "card": "fc-0227" },
+    { "tk": "ýyly", "en": "warm", "pos": "adj", "card": "fc-0466" },
+    { "tk": "mümkin bolsa", "en": "if possible", "pos": "phrase" }
+  ],
+  "exercises": [
+    {
+      "id": "b1-u09-l01-e01",
+      "type": "mcq",
+      "points": ["gp-conditional-sa"],
+      "question": "How do you say **if I come**?",
+      "options": ["gelsem", "gelsin", "gelsek", "gelýärin"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*Gelsin* means **let him come**: that is `-sYn`, not `-sA`.",
+        "2": "*Gelsek* is **if we come**: *-k* is **we**.",
+        "3": "*Gelýärin* is **I'm coming**: no if."
+      },
+      "explain": "*gel-* + *-se* (if) + *-m* (I), the ending of *geldim*."
+    },
+    {
+      "id": "b1-u09-l01-e02",
+      "type": "conjugate",
+      "points": ["gp-conditional-sa"],
+      "base": "okamak",
+      "form": "conditional",
+      "label": "*okamak* + `-sA`: if I read, if you read…",
+      "cells": [
+        { "p": "men", "accept": ["okasam"] },
+        { "p": "sen", "accept": ["okasaň"] },
+        { "p": "ol", "accept": ["okasa"] },
+        { "p": "biz", "accept": ["okasak"] },
+        { "p": "siz", "accept": ["okasaňyz"] },
+        { "p": "olar", "accept": ["okasalar", "okasa"] }
+      ],
+      "explain": "Back vowel a: *-sa*, then the past endings *-m, -ň*, nothing, *-k, -ňyz, -lar*."
+    },
+    {
+      "id": "b1-u09-l01-e03",
+      "type": "cloze",
+      "points": ["gp-conditional-sa"],
+      "text": "Ertir ýagyş ýag___, öýde galarys.",
+      "en": "If it rains tomorrow, we'll stay at home.",
+      "blanks": [
+        {
+          "accept": ["sa"],
+          "reject": [
+            { "answer": "se", "why": "*ýag-* has the back vowel a: *ýagsa*." },
+            { "answer": "ýar", "why": "*Ýagýar* is **it's raining**. For **if it rains**, use `-sA`: *ýagsa*." }
+          ]
+        }
+      ],
+      "explain": "*ýag-* + *-sa*: if it rains. The main verb *galarys* says what will follow."
+    },
+    {
+      "id": "b1-u09-l01-e04",
+      "type": "translate",
+      "points": ["gp-conditional-sa"],
+      "from": "en",
+      "prompt": "If you have time, come.",
+      "accept": [
+        "Wagtyň bolsa, gel.",
+        "Eger (seniň) wagtyň (bar) bolsa, gel.",
+        "Seniň wagtyň (bar) bolsa, gel.",
+        "Wagtyň bar bolsa, gel.",
+        "(Eger) (siziň) wagtyňyz (bar) bolsa, [geliň|geliňiz]."
+      ],
+      "reject": [
+        { "answer": "Wagtyň bolsaň, gel.", "why": "The **you** is already in *wagtyň* (your time). *Bolsa* stays in the third person: *Wagtyň bolsa*." },
+        { "answer": "Wagtyň bar, gel.", "why": "That says **you have time, come**: no if. Add `-sA` to *bol-*: *Wagtyň bolsa, gel*." }
+      ],
+      "explain": "*wagtyň* (your time) + *bolsa* (if it is): if you have time. Then the order *gel*."
+    },
+    {
+      "id": "b1-u09-l01-e05",
+      "type": "translate",
+      "points": ["gp-conditional-sa"],
+      "from": "tk",
+      "prompt": "Eger ýagyş ýagmasa, seýilgähe gideris.",
+      "accept": [
+        "If it does not rain, we will go to the park.",
+        "If it does not rain, we [are going to go|are going] to the park.",
+        "We will go to the park if it does not rain.",
+        "If there is no rain, we will go to the park.",
+        "If it does not rain, we will go to a park."
+      ]
+    },
+    {
+      "id": "b1-u09-l01-e06",
+      "type": "mcq",
+      "points": ["gp-conditional-sa"],
+      "question": "*Wagtym bolsa, kitap okaýaryn.* What does it mean?",
+      "options": ["When I have time, I read.", "If I had time, I would read.", "I had time, so I read."],
+      "optionsLang": "en",
+      "answer": 0,
+      "why": {
+        "1": "**I would read** needs `-ArdY`: *okardym*. *Okaýaryn* is what usually happens.",
+        "2": "*Bolsa* is **if** or **when**, not a past."
+      },
+      "explain": "With `-ýAr` in the main clause, `-sA` means **whenever**: when I have time, I read."
+    },
+    {
+      "id": "b1-u09-l01-e07",
+      "type": "morph",
+      "points": ["gp-conditional-sa"],
+      "base": "gitmek",
+      "gloss": "if we go",
+      "parts": ["git", "se", "k"],
+      "distractors": ["gid", "sa", "ler"],
+      "result": "gitsek",
+      "explain": "*git-* keeps its t before a consonant: *git-* + *-se* + *-k* (we)."
+    },
+    {
+      "id": "b1-u09-l01-e08",
+      "type": "wordbank",
+      "points": ["gp-conditional-sa"],
+      "from": "en",
+      "prompt": "If you come to Ashgabat, call me.",
+      "text": "Aşgabada gelseň, maňa jaň et.",
+      "answer": ["Aşgabada", "gelseň", "maňa", "jaň", "et"],
+      "distractors": ["gelsin", "Aşgabatda", "meni"]
+    },
+    {
+      "id": "b1-u09-l01-e09",
+      "type": "translate",
+      "points": ["gp-conditional-sa"],
+      "from": "en",
+      "prompt": "Hurry up, or else we'll be late.",
+      "accept": [
+        "Çalt bol, ýogsa gijä galarys.",
+        "Çalt bol, ýogsa biz gijä galarys.",
+        "Howluk, ýogsa (biz) gijä galarys.",
+        "[Çalt boluň|Howlukyň], ýogsa (biz) gijä galarys.",
+        "[Çalt bol|Howluk|Çalt boluň|Howlukyň], ýogsa biz gijä galjak.",
+        "[Çalt bolmasak|Howlukmasak], (biz) gijä galarys."
+      ],
+      "reject": [
+        { "answer": "Çalt bol, ýogsa gijä galjak.", "why": "*Galjak* has no ending, so it needs its subject: *ýogsa biz gijä galjak*, or *galarys*." }
+      ],
+      "explain": "*Ýogsa* means **otherwise**: if we don't hurry. *Gijä galmak* is **to be late**."
+    },
+    {
+      "id": "b1-u09-l01-e10",
+      "type": "mcq",
+      "points": ["gp-conditional-sa"],
+      "question": "Your friend looks tired. What do you say to suggest a break?",
+      "options": ["Biraz dynç alsaň?", "Biraz dynç alsyn.", "Biraz dynç aldyň."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*Alsyn* is **let him rest**, about someone else.",
+        "2": "*Aldyň* is **you rested**: a past, not a suggestion."
+      },
+      "explain": "`-sA` on its own with a question mark is a gentle suggestion: how about a little rest?"
+    },
+    {
+      "id": "b1-u09-l01-e11",
+      "type": "translate",
+      "points": ["gp-conditional-sa"],
+      "from": "tk",
+      "prompt": "Mümkin bolsa, ertir irden geliň.",
+      "accept": [
+        "If possible, come tomorrow morning.",
+        "If it is possible, (please) come tomorrow morning.",
+        "If possible, please come tomorrow morning.",
+        "[Please come|Come] tomorrow morning if (it is) possible.",
+        "If (it is) possible, (please) come in the morning tomorrow."
+      ]
+    },
+    {
+      "id": "b1-u09-l01-e12",
+      "type": "cloze",
+      "points": ["gp-conditional-sa"],
+      "text": "Howa ýyly bol___, köle ___.",
+      "en": "If the weather is warm, we'll go to the lake.",
+      "blanks": [
+        {
+          "accept": ["sa"],
+          "reject": [
+            { "answer": "sak", "why": "The **if** half is about the weather, *howa*: third person, no ending: *bolsa*." }
+          ]
+        },
+        { "options": ["gideris", "gitsek", "gitdik"], "answer": 0 }
+      ],
+      "explain": "*Howa ýyly bolsa* (if the weather is warm), then the future *gideris* (we'll go)."
+    },
+    {
+      "id": "b1-u09-l01-e13",
+      "type": "translate",
+      "points": ["gp-conditional-sa"],
+      "from": "en",
+      "prompt": "If I see Merdan, I'll tell him.",
+      "accept": [
+        "Merdany görsem, oňa aýdaryn.",
+        "Eger (men) Merdany görsem, (men) oňa aýdaryn.",
+        "Men Merdany görsem, (men) oňa aýdaryn.",
+        "Merdany görsem, men oňa aýdaryn.",
+        "(Eger) (men) Merdany görsem, men oňa aýtjak."
+      ],
+      "explain": "*Merdany* (Merdan, as the object) + *görsem* (if I see), then *oňa aýdaryn* (I'll tell him)."
+    }
+  ]
+}
