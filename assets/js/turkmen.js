@@ -40,7 +40,7 @@
     APP_TURKISH: "gregoiremaillard.com/turkish",   // a Daily Turkish export: import refuses it with its own message
     KEYS: { course: "tkm:v1:course", cards: "tkm:v1:cards", settings: "tkm:v1:settings" },
     // The pages sit in /turkmen/ and link to each other relatively (TM-PROJECT.md 3), so the same links work on
-    // gregoiremaillard.com/turkmen/ and dailyturkish.app/turkmen/. A page one folder down (the mirror's
+    // gregoiremaillard.com/turkmen/ and at the root of dailyturkmen.app. A page one folder down (the mirror's
     // guides/<id>.html) sets window.TKM_BASE = "../" before this script runs, and every link starts with it.
     BASE: root && typeof root.TKM_BASE === "string" ? root.TKM_BASE : "",
     PAGES: { hub: "index.html", lesson: "lesson.html", guide: "guide.html", cards: "cards.html" },
@@ -132,8 +132,8 @@
 
   Object.keys(C.PAGES).forEach(function (k) { C.PAGES[k] = C.BASE + C.PAGES[k]; });
 
-  // Link to a grammar guide or interlude ("a1-u02-grammar"). The mirror on dailyturkish.app has a static page per
-  // guide at turkmen/guides/<id>.html, pre-rendered by scripts/turkmen/static.mjs (TK-PUBLISH, TM-PROJECT.md 3); its
+  // Link to a grammar guide or interlude ("a1-u02-grammar"). The mirror on dailyturkmen.app has a static page per
+  // guide at guides/<id>.html (turkmen/guides/ before the workflow moves it to the root), pre-rendered by scripts/turkmen/static.mjs (TK-PUBLISH, TM-PROJECT.md 3); its
   // pages set window.TKM_STATIC_GUIDES = true before this script runs. Otherwise links go to guide.html?id=.
   // guidePath is the static address within the course's folder, for canonical URLs.
   function staticGuides() { return !!(root && root.TKM_STATIC_GUIDES === true); }

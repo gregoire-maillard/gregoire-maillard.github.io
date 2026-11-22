@@ -1,6 +1,6 @@
 # Turkmen A1 → B1 · Curriculum
 
-What the Turkmen course (working name **Daily Turkmen**, served at `dailyturkish.app/turkmen/`) teaches, in which order, and in which conversation each part gets written. [TM-PROJECT.md](TM-PROJECT.md) says *how* content is written (schemas, style rules, workflow); this file says *what* goes where. [TM-PROMPTS.md](TM-PROMPTS.md) holds the prompt to paste into each conversation.
+What the Turkmen course (working name **Daily Turkmen**, served at `dailyturkmen.app`, before 2026-11-22 at `dailyturkish.app/turkmen/`) teaches, in which order, and in which conversation each part gets written. [TM-PROJECT.md](TM-PROJECT.md) says *how* content is written (schemas, style rules, workflow); this file says *what* goes where. [TM-PROMPTS.md](TM-PROMPTS.md) holds the prompt to paste into each conversation.
 
 This file is also the **registry** of unit IDs, grammar-point IDs and batches. `scripts/turkmen/validate.mjs` (forked from the Turkish validator in TK-BUILD-1) parses it, and unit files must match it: same unit titles, the same grammar points in the same order. To change the plan, edit this file first, then the JSON, then run the validator.
 

@@ -56,15 +56,15 @@ Besides hand-written cases it marks every accepted answer in the content correct
 
 `turkmen.js` has the members of the Turkish `TRK` minus speech, renamed for Turkmen: `tkLower`, `tkUpper`, `tkRich`, the CSS classes `tkm-nw`, `tkm-seg` and `tkm-soon`, achievements with a `tk` name, plus `joinParticle`. Its page links are relative to `/turkmen/` (`index.html`, `lesson.html`, `guide.html`, `cards.html`), prefixed with `window.TKM_BASE` on a page one folder down (the mirror's `guides/<id>.html`).
 
-## Pre-rendering for dailyturkish.app
+## Pre-rendering for dailyturkmen.app
 
-`static.mjs` runs in `.github/workflows/sync-dailyturkish.yml`, after `scripts/turkish/static.mjs`, on the mirror folder it is about to publish. It needs Playwright with Chromium (the workflow installs them), so it isn't run by hand day to day:
+`static.mjs` runs in `.github/workflows/sync-dailyturkmen.yml` on the mirror folder it is about to publish (the workflow first puts an empty `sitemap.xml` at its root, then moves `turkmen/` to the root of dailyturkmen.app). It needs Playwright with Chromium (the workflow installs them), so it isn't run by hand day to day:
 
 ```
 node scripts/turkmen/static.mjs <mirror folder>   # exit 1 if a page doesn't render: the workflow then publishes nothing
 ```
 
-It renders each guide and interlude in headless Chromium where it will be published (`turkmen/guides/<id>.html`, with `TKM_BASE = "../"`), and copies the result into the page: the 72 pages of the 36 units, `noindex` for units not written yet. It fills the guide index (`turkmen/guide.html`) and the hub's path (`turkmen/index.html`), sets `TKM_STATIC_GUIDES` on every Turkmen page so links lead to the static guides, adds a breadcrumb (schema.org JSON-LD) to the guides and the index, makes links to `/turkish.html` `/` (Daily Turkish's hub on dailyturkish.app), and writes `turkmen/sitemap.xml` (since SEO-9 of the Turkish course the site's `sitemap.xml` lists Daily Turkish only; the script stops if it finds a Turkmen URL there). It loads nothing from the Turkish course.
+It renders each guide and interlude in headless Chromium where it will be published (`turkmen/guides/<id>.html`, with `TKM_BASE = "../"`), and copies the result into the page: the 72 pages of the 36 units, `noindex` for units not written yet. It fills the guide index (`turkmen/guide.html`) and the hub's path (`turkmen/index.html`), sets `TKM_STATIC_GUIDES` on every Turkmen page so links lead to the static guides, adds a breadcrumb (schema.org JSON-LD) to the guides and the index, points the links to Daily Turkish at dailyturkish.app (`/turkish.html` becomes `https://dailyturkish.app/`), and writes `turkmen/sitemap.xml`, which ends up as `dailyturkmen.app/sitemap.xml` (the script stops if the root `sitemap.xml` it was given lists a Turkmen URL). It loads nothing from the Turkish course.
 
 It also writes three sets of plain HTML pages, built from the deck and the morphology engine (SEO-TK), with the frame of `turkmen/cards.html` (Google tag, icons, styles, header bar, footer), a breadcrumb, a share image and a sitemap entry each:
 
@@ -72,7 +72,7 @@ It also writes three sets of plain HTML pages, built from the deck and the morph
 - `static-words.mjs`: `turkmen/words/index.html` and `turkmen/words/1-100.html` … `901-1000.html`: rank, word, part of speech, meanings, example, forms, note (rendered by `TKM.rich` in the hub just drawn), level, the unit that first teaches it, and for the 100 verbs a link to their conjugation; the CC BY-SA 4.0 credit for the order (7.8) on every page.
 - `static-cheatsheet.mjs`: `turkmen/grammar-cheat-sheet.html`: harmony and rounding, sound changes, the cases, possessives, pronouns, "to be", the personal endings, every tense on three verbs, commands, converbs, participles, voices and word order, every Turkmen example built by the engine; forms the native review hasn't settled (e-final nouns with their possessives, *oba* as its own dative, the bare copula endings) are left out.
 
-Share images (1200 × 630 JPEG, in the level's colour) go to `assets/img/og/turkmen/`. In the mirror only, the footers of the hub, the guide index, the guides and the flashcards page get a line linking the three, and Browse's note on ranks links the word list. The workflow's trigger paths need `scripts/turkmen/static*.mjs` (in place of `static.mjs`) and `assets/js/turkmen-morph.js`, so that a change to a page module or to the engine republishes the pages (SEO-TK couldn't write `.github/`; its log row in TM-PROJECT.md has the change).
+Share images (1200 × 630 JPEG, in the level's colour) go to `assets/img/og/turkmen/`. In the mirror only, the footers of the hub, the guide index, the guides and the flashcards page get a line linking the three, and Browse's note on ranks links the word list. `sync-dailyturkmen.yml` triggers on `scripts/turkmen/static*.mjs` and `assets/js/turkmen*.js`, so a change to a page module or to the engine republishes the pages.
 
 ## Review export for the native speaker (TK-REVIEW)
 

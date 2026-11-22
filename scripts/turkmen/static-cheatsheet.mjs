@@ -1,5 +1,5 @@
 // © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt
-// The Turkmen grammar cheat sheet for dailyturkish.app/turkmen/ (turkmen/grammar-cheat-sheet.html, SEO-TK), written by
+// The Turkmen grammar cheat sheet for dailyturkmen.app (turkmen/grammar-cheat-sheet.html, SEO-TK), written by
 // scripts/turkmen/static.mjs (mirror only). Every Turkmen example is built by the morphology engine,
 // assets/js/turkmen-morph.js, so the tables can't drift from what the course teaches; each section links to the guide
 // section that explains it. Words the native review hasn't settled are left out (TM-PROJECT.md log: e-final nouns with

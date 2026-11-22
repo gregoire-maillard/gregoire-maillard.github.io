@@ -18,9 +18,9 @@
 //   assets/img/og/turkmen/<page>.jpg                     share images (1200×630) for those pages
 //   + schema.org JSON-LD: a BreadcrumbList on the guides, the index and the generated pages
 //   turkmen/sitemap.xml                                  the Turkmen hub, index, flashcards, every written guide and the
-//                                                        generated pages, in a sitemap of their own: since SEO-9 the site's
-//                                                        sitemap.xml lists the Turkish course only (submit this one in Search
-//                                                        Console to have the course crawled; robots.txt names only the Turkish one)
+//                                                        generated pages; the workflow moves it to dailyturkmen.app/sitemap.xml,
+//                                                        which the mirror's robots.txt names (the root sitemap.xml it is given
+//                                                        is an empty placeholder, and must stay free of Turkmen URLs)
 // Every Turkmen page of the mirror gets window.TKM_STATIC_GUIDES = true before turkmen.js, so its links lead to the static
 // guides also when it renders again in a browser (progress, quiz), and its links to the Turkish course (/turkish.html,
 // /turkishprivacy.html) point to dailyturkish.app. Canonical and og: URLs are on dailyturkmen.app in the pages themselves;
@@ -45,7 +45,7 @@ const OUT = resolve(process.argv[2] || "");
 const TM = join(OUT, "turkmen");
 if (!process.argv[2] || !existsSync(join(TM, "guide.html")) || !existsSync(join(OUT, "sitemap.xml"))) {   // sitemap.xml: the Turkish step has run
   console.error("usage: node scripts/turkmen/static.mjs <mirror folder containing turkmen/guide.html and sitemap.xml>\n" +
-    "       (run it after scripts/turkish/static.mjs, which writes sitemap.xml)");
+    "       (sync-dailyturkmen.yml puts an empty sitemap.xml at the root of that folder first)");
   process.exit(2);
 }
 
@@ -350,7 +350,7 @@ try {
       const u = c && unitInfo.get(c.unit);
       if (!c) return courseCta({ title: "Learn the verbs in the course", text: "Daily Turkmen teaches these forms a few at a time, from A1 to B1, each with a grammar guide and short lessons with instant feedback. Free, no account needed.",
         primary: [up + firstLesson, "Start the first lesson"], secondary: [up + "guide.html", "All grammar guides"] }, text);
-      return courseCta({ title: `Practise ${c.tk} in the course`, primary: [up + firstLesson, "Start the first lesson"],
+      return courseCta({ title: `Practice ${c.tk} in the course`, primary: [up + firstLesson, "Start the first lesson"],
         secondary: u ? [`${up}index.html#${u.id}`, "Go to " + u.label] : [up + "index.html", "See the course"],
         link: [`${up}cards.html?view=browse&amp;q=${encodeURIComponent(c.tk)}`, `Find ${c.tk} in the flashcards`],
         text: `${u ? `<i lang="tk">${text(c.tk)}</i> is first taught in <a href="${up}guides/${u.id}-grammar.html">${text(u.label)}: ${text(u.title)}</a>, and it's in the flashcard deck. ` : ""}Daily Turkmen is a free course from A1 to B1, with short lessons and instant feedback. No account needed.` }, text);
@@ -368,7 +368,7 @@ try {
     body: `      <p class="wl-intro">The essentials of Turkmen grammar on one page, from vowel harmony to word order. Every example is built by the course's own conjugation engine, and each section links to the guide that explains it.</p>
       <ol class="cs-toc">${cs.toc.map(([id, t]) => `<li><a href="#${id}">${text(t)}</a></li>`).join("")}</ol>
 ${cs.html}
-${courseCta({ title: "Practise it, one step at a time", text: "The course teaches this grammar in order, a few points per unit, each with a guide and short lessons with instant feedback. Free, from A1 to B1, no account needed.",
+${courseCta({ title: "Practice it, one step at a time", text: "The course teaches this grammar in order, a few points per unit, each with a guide and short lessons with instant feedback. Free, from A1 to B1, no account needed.",
   primary: [firstLesson, "Start the first lesson"], secondary: ["guide.html", "All grammar guides"] }, text)}`
   };
   writeFileSync(join(TM, "grammar-cheat-sheet.html"), frame(csPage));

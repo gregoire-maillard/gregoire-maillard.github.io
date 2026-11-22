@@ -312,10 +312,6 @@
       .next-card.soon { color: var(--muted); background: var(--panel); }
       .read-state { margin: 1rem 0 0; color: var(--muted); font-size: 0.84rem; }
       .read-state:empty { display: none; }
-      /* the beta notice (TM-PROJECT.md 2 and 3), as on the hub: one line at the top of each guide, interlude and the index */
-      .beta { display: flex; align-items: baseline; gap: 8px; margin: 0 0 1.1rem; color: #5e4210; font-size: 0.84rem; line-height: 1.45; }
-      .beta b { flex: none; display: inline-flex; align-items: center; height: 20px; padding: 0 8px; color: #7a5208; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; background: #fdf7ee; border: 1px solid #ecd6b3; border-radius: 999px; }
-      .lede + .beta { margin-top: 0.9rem; }
       .tick { display: inline-flex; vertical-align: -2px; color: var(--blue); }
 
       /* index of guides and grammar points */
@@ -481,8 +477,6 @@
       var R = function (s) { return T.rich(s, { index: st.index }); };
       var TK = function (s) { return T.tkRich(s, { index: st.index }); };
       var SEG = function (s) { return T.seg(s, { harmony: true }); };
-      // The beta notice (TM-PROJECT.md 2, 3): the same line as on the hub, until a native speaker has reviewed the level.
-      var BETA = "";   // the beta notice was removed at Grégoire's request (2026-11-22)
 
       // ── notices ──
       function renderNotices() {
@@ -669,7 +663,7 @@
         if (g) {
           h += '<p class="doc-kicker">Grammar guide<span class="dot">·</span>' + esc(unitLabel(u)) + '<span id="read-min"></span></p>';
           h += '<h1 class="doc-title" id="top">' + esc(doc.title) + "</h1>";
-          h += '<p class="doc-tk" lang="tk">' + esc(u.titleTk) + "</p>" + BETA;
+          h += '<p class="doc-tk" lang="tk">' + esc(u.titleTk) + "</p>";
           h += '<p class="lede">' + R(doc.intro) + "</p>";
           doc.sections.forEach(function (s, i) {
             toc.push({ id: s.point, label: s.title, n: pad2(i + 1) });
@@ -680,7 +674,7 @@
         } else {
           h += '<p class="doc-kicker">' + esc(doc.kicker) + '<span class="dot">·</span>' + doc.minutes + " min read</p>";
           h += '<h1 class="doc-title" id="top">' + esc(doc.title) + "</h1>";
-          h += '<p class="doc-sub">The interlude of ' + esc(unitLabel(u)) + ', <a href="' + docHref(u, "grammar") + '">' + esc(u.title) + "</a></p>" + BETA;
+          h += '<p class="doc-sub">The interlude of ' + esc(unitLabel(u)) + ', <a href="' + docHref(u, "grammar") + '">' + esc(u.title) + "</a></p>";
           toc.push({ id: "top", label: doc.title });
           h += doc.blocks.map(block).join("");
           toc.push({ id: "words", label: "Words to know" });
@@ -769,7 +763,7 @@
           tocHtml(toc, "Levels") +
           '<div class="rail-foot"><a href="' + P.hub + '">Back to the course</a></div>';
         var h = '<p class="doc-kicker">Grammar index</p><h1 class="doc-title" id="top">Grammar guides and interludes</h1>' +
-          '<p class="lede">Every grammar point of the course, unit by unit, from the alphabet to telling a story.</p>' + BETA +
+          '<p class="lede">Every grammar point of the course, unit by unit, from the alphabet to telling a story.</p>' +
           (readyUnits.length ? '<p class="read-state">' + (read ? '<span class="tick">' + ICON.tick + "</span> You've read " + read + " of the " + readyUnits.length * 2 + " guides and interludes written so far." : "You haven't opened a guide yet: start with <a href=\"" + docHref(readyUnits[0], "grammar") + '">' + esc(readyUnits[0].title) + "</a>.") + "</p>" : "") +
           '<div class="find" role="search"><label for="find">Find a grammar point</label>' +
           '<input id="find" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="plural, -lar, däl, past tense…" aria-describedby="find-n">' +

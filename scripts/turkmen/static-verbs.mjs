@@ -1,5 +1,5 @@
 // © 2026 Grégoire Maillard. All rights reserved. Not open source: see /LICENSE.txt
-// Conjugation pages for dailyturkish.app/turkmen/ (SEO-TK), written by scripts/turkmen/static.mjs (mirror only):
+// Conjugation pages for dailyturkmen.app (SEO-TK), written by scripts/turkmen/static.mjs (mirror only):
 //   turkmen/verbs/index.html     the 100 most frequent verbs of the flashcard deck, with their key forms
 //   turkmen/verbs/<verb>.html    one page per verb: key forms, notes, the card's example and note, a table for every
 //                                finite form of the coverage table in turkmen/TM-CURRICULUM.md (A1 to B1), each linked to the
@@ -283,7 +283,7 @@ ${g.sections.map((s) => section(s, v)).join("\n")}
     const body = `      <p class="wl-intro"><b lang="tk">${text(v)}</b>: ${c.en.map(text).join("; ")}. Below, every verb form the course teaches from A1 to B1, built on ${tk(v)}, with the six persons in the positive, the negative and the question.</p>
       <div class="vb-facts">${facts.map(([k, x]) => `<div><span>${k}</span><b lang="tk">${text(x)}</b></div>`).join("")}</div>
       <div class="ex vb-ex"><p class="tk" lang="tk">${text(c.ex.tk)}</p><p class="en">${text(c.ex.en)}</p></div>
-${notes ? `      <ul class="vb-notes">${notes}</ul>\n` : ""}      <p class="wl-cta">Practise ${tk(v)} with the <a href="${q}">flashcards</a>, or see every ending on one page in the <a href="${up}grammar-cheat-sheet.html">grammar cheat sheet</a>.</p>
+${notes ? `      <ul class="vb-notes">${notes}</ul>\n` : ""}      <p class="wl-cta">Practice ${tk(v)} with the <a href="${q}">flashcards</a>, or see every ending on one page in the <a href="${up}grammar-cheat-sheet.html">grammar cheat sheet</a>.</p>
       <nav class="wl-pager" aria-label="Forms on this page">${GROUPS.flatMap((g) => g.sections).map(([s, name, , , , , o = {}]) => {
         const a = (o.alt || []).find((x) => x.when(v));
         return `<a href="#${s}">${text(a && a.title ? a.title : name)}</a>`;

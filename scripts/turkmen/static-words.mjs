@@ -1,5 +1,5 @@
 // © 2026 Grégoire Maillard. All rights reserved, except the order of the words (CC BY-SA 4.0): see /LICENSE.txt
-// The word list for dailyturkish.app/turkmen/ (SEO-TK), written by scripts/turkmen/static.mjs (mirror only):
+// The word list for dailyturkmen.app (SEO-TK), written by scripts/turkmen/static.mjs (mirror only):
 //   turkmen/words/index.html                         an overview of the 1,000 words of the flashcard deck
 //   turkmen/words/1-100.html … words/901-1000.html   the deck by hundreds: rank, word, part of speech, meanings, example,
 //                                                    forms, note, level and the unit that first teaches it; each of the

@@ -163,8 +163,9 @@
     if (/same.*password|different from the old/i.test(m)) return new Error("Choose a password different from your current one.");
     return new Error(m);
   }
-  // Where emailed links land. The app's pages live at capacitor://localhost, which no email can open: its links
-  // (confirm, reset, sign-in) go to the course on dailyturkish.app, and the learner then signs in in the app (APP-9).
+  // Where emailed links land (confirm, reset, sign-in): back to this course's hub on the same site, which needs the
+  // redirect URLs of scripts/turkmen/supabase-turkmen.sql. (The Turkmen course isn't in the iPhone app, so unlike
+  // turkish-account.js there is no capacitor:// case.)
   function redirectTo() { return location.origin + CFG.page + "?signin=1"; }
   // Where this device is (MAIL-2): the iPhone app, or the website on a phone or tablet, or on a computer. Saved with a
   // new account (auth.users.raw_user_meta_data.signup_platform; Supabase keeps it only when the account is created).
