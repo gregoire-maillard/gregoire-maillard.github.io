@@ -22,8 +22,8 @@ The rules for the Turkmen course (working name **Daily Turkmen**), a sister of t
 
 | Topic | Decision |
 |---|---|
-| Name and address | Working name **Daily Turkmen**. Served from `dailyturkish.app/turkmen/` (and `gregoiremaillard.com/turkmen/`); no domain of its own for now |
-| Hosting | Static files on GitHub Pages in the `gregoire-maillard.github.io` repo, mirrored to `dailyturkish` by the sync workflow, Turkmen paths included since TK-PUBLISH; no backend |
+| Name and address | Working name **Daily Turkmen**. Served from its own domain, `dailyturkmen.app` (since 2026-11-22; also `gregoiremaillard.com/turkmen/`). The old `dailyturkish.app/turkmen/` addresses redirect there |
+| Hosting | Static files on GitHub Pages in the `gregoire-maillard.github.io` repo, mirrored to the `dailyturkmen` repo by `sync-dailyturkmen.yml` (turkmen/ moved to the root of the mirror); before 2026-11-22 it was mirrored with the Turkish course to `dailyturkish`; no backend |
 | Code | Forked from the Turkish course, not shared: Turkmen files never `import` or load Turkish ones, so the Turkish course can change without breaking this one |
 | Progress | `localStorage` under `tkm:v1:…`, with export to and import from a JSON file. No accounts in this version |
 | Interface language | English only. No Turkish anywhere in learner-facing content (section 1) |

@@ -43,14 +43,15 @@ export const PAGES_CSS = `
       .faq h3 { font-size: 16px; margin: 18px 0 4px; }
     `;
 
-// The box at the end of a reference page. o: { title, text (HTML), primary: [href, label], secondary: [href, label], link: [href, label] }
+// The box at the end of a reference page, hidden for a signed-in learner (a Supabase session in localStorage, before it's painted). o: { title, text (HTML), primary: [href, label], secondary: [href, label], link: [href, label] }
 export function courseCta(o, text) {
   const a = (x, cls) => (x ? `<a class="${cls}" href="${text(x[0])}">${text(x[1])}</a>` : "");
   return `      <aside class="dt-cta" aria-label="Learn it in the course">
         <p class="dt-cta-t">${text(o.title)}</p>
         <p class="dt-cta-p">${o.text}</p>
         <p class="dt-cta-b">${a(o.primary, "btn primary")}${a(o.secondary, "btn")}${o.link ? `<a href="${text(o.link[0])}">${text(o.link[1])}</a>` : ""}</p>
-      </aside>`;
+      </aside>
+      <script>try{for(var k in localStorage)if(/^sb-.+-auth-token$/.test(k)){document.currentScript.previousElementSibling.hidden=true;break}}catch(e){}</script>`;
 }
 
 const LEVEL_NAME = { a1: "A1", a2: "A2", b1: "B1", b2: "B2", c1: "C1", c2: "C2" };
@@ -124,7 +125,6 @@ ${S.map((s) => `          <tr><td>${SK[s.skill]}</td><td>${text(time[s.skill](s)
   {
     const byLevel = new Map();
     dialogues.forEach((d) => { if (!byLevel.has(d.level)) byLevel.set(d.level, []); byLevel.get(d.level).push(d); });
-    const pron = guideLink("gp-personal-pronouns");
     const card = (d) => {
       const u = unitMeta.get(d.after), g = u && u.ready ? `/guides/${d.after}-grammar.html` : null;
       const cast = d.cast.map((c) => `${text(c.role)} (${tr(c.register)})`).join(", ");
@@ -151,8 +151,6 @@ ${[...byLevel].map(([lv, ds]) => `        <h2 id="${lv}">${LEVEL_NAME[lv]} · ${
         <ul class="dlg-list">
 ${ds.sort((a, b) => a.order - b.order).map(card).join("\n")}
         </ul>`).join("\n")}
-        <h2>Sen or siz?</h2>
-        <p>Turkish has two words for "you". ${tr("Sen")} is for one person you know well: a friend, a child, family. ${tr("Siz")} is for strangers, older people, anyone who serves you, and for more than one person. Most scenes have both, so you switch as you would in real life, and a reply in the wrong register is pointed out with the better one.${pron ? ` The pronouns are explained in <a href="${pron.href}">${text(pron.unit)}</a>.` : ""}</p>
       </div>`
     };
     writeFileSync(join(OUT, "conversations.html"), frame(m));

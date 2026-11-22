@@ -25,7 +25,7 @@
 //   sitemap.xml                                               the hub, the index, cards, culture, privacy, every written guide,
 //                                                            the word list, the verbs, the cheat sheet, the three pages above
 // and changes every href="/turkish.html…" in the mirror to "/…" (index.html is the hub, so it keeps one address).
-// SEO-9, on the hub of the mirror: no gregoiremaillard.com notice; a line of what's inside under the title; Today's
+// SEO-9, on the hub of the mirror: no gregoiremaillard.com notice; Today's
 // first cards (the first lesson, Conversations, TYS practice) in the HTML, where "Loading the course…" was; the path's
 // repeated icons drawn once (<symbol> + <use>); levels folded in the HTML. On every page: no comments in the <style>
 // blocks and no redirect script for gregoiremaillard.com (dt-move).
@@ -467,24 +467,7 @@ try {
   // Levels: folded in the HTML (from 900 px the page opens the learner's level itself), and the icons repeated
   // hundreds of times (locks, stars, waves, the ferry) written once as <symbol>s, which the page script redraws anyway.
   const levelsHtml = spriteSvgs(hub.levels.replace(/<details\b[^>]*>/g, (t) => t.replace(/ open(?=[ >])/, "")), "dts");
-  const counts = index.counts, firstLesson = "/turkishlesson.html?id=" + index.levels[0].units[0].lessons[0].id;
-  const inside = `<ul class="inside" aria-label="What's in the course">
-            <li><a href="#a1"><b>${counts.units}</b> units, A1 → C2</a></li>
-            <li><a href="/turkishguide.html"><b>${written}</b> grammar and culture guides</a></li>
-            <li><a href="/turkishcards.html"><b>${counts.cards.toLocaleString("en-US")}</b> flashcards</a></li>
-            <li><a href="/conversations.html"><b>${(index.dialogues || []).length}</b> conversations</a></li>
-            <li><a href="/tys-practice-test.html">TYS practice test</a></li>
-            <li><a href="/verbs/"><b>100</b> verbs conjugated</a></li>
-            <li><a href="/about.html">Why Daily Turkish?</a></li>
-          </ul>`;
-  const INSIDE_CSS = `<style>
-      /* what's in the course, under the hub's title (dailyturkish.app only, written by scripts/turkish/static.mjs, SEO-9) */
-      .hero .inside { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; padding: 0; list-style: none; }
-      .hero .inside a { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 0 11px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font-size: 13px; color: var(--body); text-decoration: none; white-space: nowrap; }
-      .hero .inside a:hover { border-color: rgb(40 122 158 / 40%); background: var(--blue-tint); color: var(--ink); }
-      .hero .inside b { color: var(--ink); font-weight: 650; font-variant-numeric: tabular-nums; }
-      @media (max-width: 599px) { .hero .inside { gap: 5px; } .hero .inside a { min-height: 30px; padding: 0 9px; font-size: 12.5px; } }
-    </style>`;
+  const firstLesson = "/turkishlesson.html?id=" + index.levels[0].units[0].lessons[0].id;
   for (const f of ["turkish.html", "index.html"]) {
     let s = readFileSync(join(OUT, f), "utf8");
     s = swap(s, /<nav class="lvl-nav" id="lvl-nav" aria-label="Levels"><\/nav>/, `<nav class="lvl-nav" id="lvl-nav" aria-label="Levels">${hub.lvlNav}</nav>`, "#lvl-nav");
@@ -492,9 +475,6 @@ try {
     s = swap(s, /<div class="card next"><p class="eyebrow">Loading the course…<\/p><\/div>/, todayCards, "Today's loading card");
     // the notice for gregoiremaillard.com (SEO-1) has no use here, and its hidden text came first in the page's text
     s = swap(s, /\n\s*<p class="notice" id="dt-home" hidden>[\s\S]*?<\/p>\n\s*<script>if \(\/\(\^\|\\\.\)gregoiremaillard[^<]*<\/script>/, "", "gregoiremaillard.com notice");
-    const LEDE = /<p class="lede">[\s\S]*?<\/p>(?=\n\s*<\/header>\n\s*<aside class="today")/;
-    s = swap(s, LEDE, one(s, LEDE, "the hub's lede") + "\n          " + inside, "the hub's lede");
-    s = addLd(s, INSIDE_CSS, f);
     writeFileSync(join(OUT, f), addLd(addWordsLink(s, f), HOME_LD, f));
   }
 

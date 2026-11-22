@@ -1,8 +1,8 @@
-// Pre-renders the Turkmen course (Daily Turkmen) for dailyturkish.app/turkmen/, so search engines read it without JavaScript.
+// Pre-renders the Turkmen course (Daily Turkmen) for dailyturkmen.app, so search engines read it without JavaScript.
 //
 //   node scripts/turkmen/static.mjs <mirror folder>
 //
-// Run from the repo root by .github/workflows/sync-dailyturkish.yml, after scripts/turkish/static.mjs, on the folder it is
+// Run from the repo root by .github/workflows/sync-dailyturkmen.yml on the folder it is
 // about to publish (turkmen/*.html, assets/js/turkmen.js, assets/data/turkmen/...). Needs Playwright with Chromium.
 // A fork of scripts/turkish/static.mjs that loads nothing from it (TM-PROJECT.md 2). It serves that folder on localhost, opens
 // each page in headless Chromium (outside requests blocked), copies the rendered HTML into the page's own source, and writes:
@@ -22,9 +22,10 @@
 //                                                        sitemap.xml lists the Turkish course only (submit this one in Search
 //                                                        Console to have the course crawled; robots.txt names only the Turkish one)
 // Every Turkmen page of the mirror gets window.TKM_STATIC_GUIDES = true before turkmen.js, so its links lead to the static
-// guides also when it renders again in a browser (progress, quiz), and its links to /turkish.html become "/", the
-// Daily Turkish hub's one address on dailyturkish.app. Canonical and og: URLs are on dailyturkish.app/turkmen/ in the pages
-// themselves; a guide's canonical is checked against its static address.
+// guides also when it renders again in a browser (progress, quiz), and its links to the Turkish course (/turkish.html,
+// /turkishprivacy.html) point to dailyturkish.app. Canonical and og: URLs are on dailyturkmen.app in the pages themselves;
+// a guide's canonical is checked against its static address. The pages are rendered in turkmen/ (the paths of the main
+// site); the workflow then moves turkmen/ to the root of the mirror, so dailyturkmen.app/ is the hub.
 // Exits 1 if any page fails to render, so the workflow publishes nothing rather than a broken mirror.
 
 import { createServer } from "node:http";
@@ -38,8 +39,8 @@ import { writeWordList, courseCta, WORDS_CSS } from "./static-words.mjs";
 import { cheatSheetBody, CHEAT_CSS } from "./static-cheatsheet.mjs";
 const M = createRequire(import.meta.url)("../../assets/js/turkmen-morph.js");   // the morphology engine, for the verb pages and the cheat sheet
 
-const SITE = "https://dailyturkish.app";
-const HOME = SITE + "/turkmen/";
+const SITE = "https://dailyturkmen.app";
+const HOME = SITE + "/";
 const OUT = resolve(process.argv[2] || "");
 const TM = join(OUT, "turkmen");
 if (!process.argv[2] || !existsSync(join(TM, "guide.html")) || !existsSync(join(OUT, "sitemap.xml"))) {   // sitemap.xml: the Turkish step has run
@@ -206,7 +207,7 @@ async function drawShareCards(cards, cardsSrc) {
       .url { position: absolute; right: 110px; top: 88px; font-size: 26px; color: #8a8a86; }
     </style></head><body>
       <div class="band"></div><div class="disc"></div><div class="disc2"></div>
-      <div class="url">dailyturkish.app/turkmen</div>
+      <div class="url">dailyturkmen.app</div>
       <div class="wrap">
         <div class="brand">${logo}<span><span class="d">Daily</span><span class="t">Turkmen</span></span></div>
         <div class="kicker">${text(c.kicker)}</div>
@@ -385,14 +386,14 @@ ${courseCta({ title: "Practise it, one step at a time", text: "The course teache
 await browser.close();
 server.close();
 
-// ── the link back to Daily Turkish: "/" is its hub on dailyturkish.app (as scripts/turkish/static.mjs does for its pages) ──
+// ── the links to Daily Turkish: its hub is "/" on dailyturkish.app, its other pages keep their names there ──
 let relinked = 0;
 (function relink(dir) {
   for (const name of readdirSync(dir)) {
     const f = join(dir, name);
     if (statSync(f).isDirectory()) { relink(f); continue; }
     if (!name.endsWith(".html")) continue;
-    const s = readFileSync(f, "utf8"), t = s.replace(/href="\/turkish\.html(?=["#])/g, 'href="/');
+    const s = readFileSync(f, "utf8"), t = s.replace(/href="\/turkish\.html(?=["#])/g, 'href="https://dailyturkish.app/').replace(/href="\/turkish/g, 'href="https://dailyturkish.app/turkish');
     if (t !== s) { writeFileSync(f, t); relinked++; }
   }
 })(TM);
@@ -409,4 +410,4 @@ writeFileSync(join(TM, "sitemap.xml"), '<?xml version="1.0" encoding="UTF-8"?>\n
   urls.map((x) => `  <url><loc>${text(x.loc)}</loc><lastmod>${x.lastmod}</lastmod></url>`).join("\n") + "\n</urlset>\n");
 
 console.log(`turkmen-static: ${written} guide pages, ${soon} coming-soon pages (noindex), index and hub filled in, ${generated.length} word-list, verb and cheat-sheet pages ` +
-  `with ${images} share images, links to /turkish.html made "/" in ${relinked} pages, ${urls.length} URLs in turkmen/sitemap.xml`);
+  `with ${images} share images, links to the Turkish course pointed to dailyturkish.app in ${relinked} pages, ${urls.length} URLs in turkmen/sitemap.xml`);

@@ -1,7 +1,7 @@
-# Mirrors the Turkish section of gregoiremaillard.com to dailyturkish.app, and the
-# Turkmen course (Daily Turkmen, turkmen/) to dailyturkish.app/turkmen/.
-# Source of truth = this repo. On every push to main that touches a Turkish or
-# Turkmen file, copy those files (same paths) into a fresh folder, make
+# Mirrors the Turkish section of gregoiremaillard.com to dailyturkish.app. The Turkmen course has its own
+# domain and workflow (dailyturkmen.app, sync-dailyturkmen.yml); dailyturkish.app/turkmen/ only redirects there.
+# Source of truth = this repo. On every push to main that touches a Turkish
+# file, copy those files (same paths) into a fresh folder, make
 # turkish.html the home page, add CNAME dailyturkish.app, and force-push the
 # result to the repo gregoire-maillard/dailyturkish (served by GitHub Pages).
 # Never edit the dailyturkish repo by hand: it is overwritten on each sync.
@@ -20,11 +20,6 @@ on:
       - "assets/img/ataturk.*"
       - "stylesheets/styles.css"
       - "scripts/turkish/static*.mjs"          # static.mjs and the page modules it imports (static-verbs, static-cheatsheet)
-      - "turkmen/*.html"                       # Daily Turkmen (turkmen/TM-PROJECT.md 3), served at /turkmen/
-      - "assets/js/turkmen.js"
-      - "assets/data/turkmen/**"
-      - "assets/img/daily-turkmen-*"
-      - "scripts/turkmen/static.mjs"
       - ".github/workflows/sync-dailyturkish.yml"
       - "LICENSE.txt"
   workflow_dispatch:
@@ -65,11 +60,6 @@ jobs:
                    stylesheets/styles.css LICENSE.txt; do
             if [ -e "$p" ]; then mkdir -p "out/$(dirname "$p")"; cp -R "$p" "out/$p"; fi
           done
-          # Daily Turkmen, at the same paths (dailyturkish.app/turkmen/). Not in the iPhone app's list
-          # (app/scripts/build-www.mjs), which carries the Turkish course only.
-          for p in turkmen/*.html assets/js/turkmen.js assets/data/turkmen assets/img/daily-turkmen-*; do
-            if [ -e "$p" ]; then mkdir -p "out/$(dirname "$p")"; cp -R "$p" "out/$p"; fi
-          done
           cp turkish.html out/index.html          # dailyturkish.app/ opens the course hub
           mkdir -p out/get && cp turkishget.html out/get/index.html   # dailyturkish.app/get/: the QR code's address (GETAPP-1)
           echo "dailyturkish.app" > out/CNAME
@@ -81,12 +71,23 @@ jobs:
       - name: Pre-render the guides, the index and the hub; write sitemap.xml
         # A static page per guide (guides/<id>.html) and the content filled into turkishguide.html and the hub,
         # so search engines read it without JavaScript. Fails (and publishes nothing) if a page doesn't render.
-        # Then the same for Daily Turkmen (turkmen/guides/<id>.html, turkmen/guide.html, turkmen/index.html),
-        # which adds its pages to the sitemap.xml written by the Turkish step, so it runs second.
         run: |
           node scripts/turkish/static.mjs out
-          node scripts/turkmen/static.mjs out
           echo "Mirror contains $(find out -type f | wc -l) files"
+
+      - name: Redirect the old Daily Turkmen addresses to dailyturkmen.app
+        # Daily Turkmen moved to its own domain (sync-dailyturkmen.yml). Its main pages get a redirect page each;
+        # any other /turkmen/... address (guides, verbs, word list) reaches 404.html, which sends it on, keeping the path.
+        run: |
+          set -euo pipefail
+          mkdir -p out/turkmen
+          for n in index guide cards lesson; do
+            t="https://dailyturkmen.app/$n.html"; [ "$n" = index ] && t="https://dailyturkmen.app/"
+            printf '<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8"><title>Daily Turkmen has moved</title>\n<link rel="canonical" href="%s">\n<meta http-equiv="refresh" content="0; url=%s">\n<script>location.replace("%s" + location.search + location.hash)</script>\n</head><body><p>Daily Turkmen is now at <a href="%s">%s</a>.</p></body></html>\n' "$t" "$t" "$t" "$t" "$t" > "out/turkmen/$n.html"
+          done
+          grep -q '<head>' out/404.html
+          sed -i '0,/<head>/s##<head>\n    <script>var p = location.pathname; if (p.indexOf("/turkmen/") === 0) location.replace("https://dailyturkmen.app/" + p.slice(9) + location.search + location.hash);</script>#' out/404.html
+          grep -q 'dailyturkmen.app' out/404.html
 
       - name: Publish to gregoire-maillard/dailyturkish
         env:
@@ -98,5 +99,5 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -q -m "Mirror of gregoiremaillard.com Turkish section and Turkmen course @ ${GITHUB_SHA::7}"
+          git commit -q -m "Mirror of gregoiremaillard.com Turkish section @ ${GITHUB_SHA::7}"
           git push --force "https://x-access-token:${TOKEN}@github.com/gregoire-maillard/dailyturkish.git" main

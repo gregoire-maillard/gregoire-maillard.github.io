@@ -1,0 +1,92 @@
+# Mirrors the Turkmen course (Daily Turkmen, turkmen/ on gregoiremaillard.com) to dailyturkmen.app.
+# Source of truth = this repo. On every push to main that touches a Turkmen file, copy those files (same paths) into
+# a fresh folder, pre-render them, move turkmen/ to the root (dailyturkmen.app/ is the hub), add CNAME dailyturkmen.app,
+# and force-push the result to the repo gregoire-maillard/dailyturkmen (served by GitHub Pages).
+# Never edit the dailyturkmen repo by hand: it is overwritten on each sync.
+name: Sync Turkmen course to dailyturkmen.app
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "turkmen/*.html"
+      - "assets/js/turkmen*.js"
+      - "assets/data/turkmen/**"
+      - "assets/img/daily-turkmen-*"
+      - "assets/fonts/**"
+      - "stylesheets/styles.css"
+      - "scripts/turkmen/static*.mjs"
+      - ".github/workflows/sync-dailyturkmen.yml"
+      - "LICENSE.txt"
+  workflow_dispatch:
+
+concurrency:
+  group: sync-dailyturkmen
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0                          # full history, for each page's <lastmod>
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright (renders the pages for search engines)
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0
+          npx playwright install --with-deps chromium
+
+      - name: Build the mirror
+        run: |
+          set -euo pipefail
+          mkdir out
+          for p in turkmen/*.html assets/js/turkmen.js assets/js/turkmen-morph.js assets/data/turkmen assets/img/daily-turkmen-* \
+                   assets/fonts assets/img/favicon.png stylesheets/styles.css LICENSE.txt; do
+            if [ -e "$p" ]; then mkdir -p "out/$(dirname "$p")"; cp -R "$p" "out/$p"; fi
+          done
+          # scripts/turkmen/static.mjs expects the Turkish step's sitemap.xml; here there is none, so an empty one
+          printf '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>\n' > out/sitemap.xml
+
+      - name: Pre-render the guides, the index and the hub; write the sitemap
+        # Fails (and publishes nothing) if a page doesn't render.
+        run: node scripts/turkmen/static.mjs out
+
+      - name: Move the course to the root of dailyturkmen.app
+        # The pages link to each other relatively and to /assets/... absolutely, so they work the same at the root.
+        run: |
+          set -euo pipefail
+          cd out
+          rm sitemap.xml
+          shopt -s dotglob
+          for f in turkmen/*; do
+            n="$(basename "$f")"
+            if [ -e "$n" ]; then echo "conflict: $n exists at the root"; exit 1; fi
+            mv "$f" "$n"
+          done
+          rmdir turkmen
+          if grep -rl --include='*.html' -e 'href="/turkmen/' -e 'dailyturkish.app/turkmen' . ; then
+            echo "pages above still point to /turkmen/"; exit 1
+          fi
+          echo "dailyturkmen.app" > CNAME
+          touch .nojekyll                         # serve files exactly as they are
+          printf 'User-agent: *\nAllow: /\n\nSitemap: https://dailyturkmen.app/sitemap.xml\n' > robots.txt
+          echo "Mirror contains $(find . -type f | wc -l) files"
+
+      - name: Publish to gregoire-maillard/dailyturkmen
+        env:
+          TOKEN: ${{ secrets.DAILYTURKISH_TOKEN }}  # the same token, with access to the dailyturkmen repo added
+        run: |
+          set -euo pipefail
+          cd out
+          git init -q -b main
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Mirror of gregoiremaillard.com Turkmen course @ ${GITHUB_SHA::7}"
+          git push --force "https://x-access-token:${TOKEN}@github.com/gregoire-maillard/dailyturkmen.git" main
