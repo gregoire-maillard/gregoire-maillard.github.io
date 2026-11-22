@@ -69,7 +69,7 @@
         .at-hdr .at-tab { min-width: 44px; justify-content: center; padding: 0 10px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 10px; right: 10px; }
       }
-      /* the link back to Daily Turkish (TK-BUILD-2): its mark and name, after a hairline; the mark alone on a phone */
+      /* the link to Daily Turkish (TK-BUILD-2): its mark alone, after a hairline (its name only for screen readers) */
       .at-hdr .at-sis { gap: 7px; font-size: 13px; }
       .at-hdr .at-sis::before { content: ""; align-self: center; width: 1px; height: 20px; margin-right: 9px; background: rgb(15 23 42 / .12); }
       .at-hdr .at-sis svg { display: block; flex: none; }
@@ -82,7 +82,7 @@
         .at-hdr .at-sis::before { margin-right: 4px; }
       }
       @media (max-width: 599px) { .at-hdr .at-wrap { gap: 8px; } }
-      @media (max-width: 899px) {   /* the link back to Daily Turkish: its mark alone until there's room for its name */
+      @media all {   /* the link to Daily Turkish: its mark alone at every width; the name stays for screen readers */
         .at-hdr .at-sis { min-width: 44px; justify-content: center; }
         .at-hdr .at-sis .at-set-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       }
@@ -499,6 +499,7 @@
       .tw-t.gold::after { background: #a87812; }
     </style>
     <script defer src="/assets/js/turkmen.js"></script>
+    <script defer src="/assets/js/turkmen-account.js"></script>
   </head>
   <body>
     <div class="at-hdr" role="banner">
@@ -929,6 +930,7 @@
           var got = r.got != null ? r.got : ok ? it.weight : 0;
           S.correct += got; S.missed += it.weight - got;
           store.answered(it.ex.id, ok);
+          if (T.account && T.account.recordAttempt) T.account.recordAttempt(it.ex.id, ok);   // anonymous exercise stats (item_stats, ACCT-TK)
           if (got && S.xpPer) { S.xpGot += got * S.xpPer; drawXp(true); }
         }
         S.streak = ok ? S.streak + 1 : 0; drawStreak(ok);
@@ -1515,9 +1517,11 @@
         }
         if (o.tile && S.unit) h += '<p class="new-tile' + (o.tile === "gold" ? " gold" : "") + '" data-lvl="' + esc(S.unit.level) + '"><span class="tw-t ' + (o.tile === "gold" ? "gold" : "laid") + '" data-lvl="' + esc(S.unit.level) + '" aria-hidden="true"></span>' +
           (o.tile === "gold" ? "Your " + esc(unitLabel(S.unit)) + " tile is glazed gold" : "A new tile for your wall: " + esc(unitLabel(S.unit))) + "</p>";
-        h += (o.after || "") + '<div class="acts">' + o.acts + "</div></div>";
+        h += (o.after || "") + '<div class="acts">' + o.acts + '</div><div id="nudge" hidden></div></div>';
         screen(h, true);
         notices();
+        // ACCT-TK: signed out, after earning XP, an invitation to keep it with a free account (turkmen-account.js, A.nudge)
+        if (T.account && T.account.nudge && o.ok && !o.noXp && res && res.xp > 0) T.account.nudge($("nudge"), { xp: store.course().xp.total, streak: res.streak && res.streak.current });
         // UI-5: the XP counts up, the goal ring fills from where today stood before, confetti for a success
         countUp($("xp-n"), res && res.xp);
         var fg = stage.querySelector(".ring-stat .ring .fg");

@@ -46,7 +46,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir out
-          for p in turkmen/*.html assets/js/turkmen.js assets/js/turkmen-morph.js assets/data/turkmen assets/img/daily-turkmen-* \
+          for p in turkmen/*.html assets/js/turkmen.js assets/js/turkmen-morph.js assets/js/turkmen-account.js assets/data/turkmen assets/img/daily-turkmen-* \
                    assets/fonts assets/img/favicon.png stylesheets/styles.css LICENSE.txt; do
             if [ -e "$p" ]; then mkdir -p "out/$(dirname "$p")"; cp -R "$p" "out/$p"; fi
           done

@@ -69,7 +69,7 @@
         .at-hdr .at-tab { min-width: 44px; justify-content: center; padding: 0 10px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 10px; right: 10px; }
       }
-      /* the link back to Daily Turkish (TK-BUILD-2): its mark and name, after a hairline; the mark alone on a phone */
+      /* the link to Daily Turkish (TK-BUILD-2): its mark alone, after a hairline (its name only for screen readers) */
       .at-hdr .at-sis { gap: 7px; font-size: 13px; }
       .at-hdr .at-sis::before { content: ""; align-self: center; width: 1px; height: 20px; margin-right: 9px; background: rgb(15 23 42 / .12); }
       .at-hdr .at-sis svg { display: block; flex: none; }
@@ -82,7 +82,7 @@
         .at-hdr .at-sis::before { margin-right: 4px; }
       }
       @media (max-width: 599px) { .at-hdr .at-wrap { gap: 8px; } }
-      @media (max-width: 899px) {   /* the link back to Daily Turkish: its mark alone until there's room for its name */
+      @media all {   /* the link to Daily Turkish: its mark alone at every width; the name stays for screen readers */
         .at-hdr .at-sis { min-width: 44px; justify-content: center; }
         .at-hdr .at-sis .at-set-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       }
@@ -392,6 +392,31 @@
       @media (max-width: 599px) { .pf-nav { top: 56px; } .pf-sec, .pf-side { scroll-margin-top: 116px; } }
       .linkbtn { font: inherit; color: var(--blue); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
       .linkbtn:hover { color: var(--blue-dark); }
+      /* the account card (ACCT-TK, forked from Daily Turkish's ACCT-1): sign in, name, sync, sign out */
+      .pf-who { display: flex; align-items: center; gap: 12px; }
+      .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 650; font-size: 18px; flex: none; }
+      .avatar.pic { background: none; }
+      .pf-name { font-size: 17px; font-weight: 620; color: var(--ink); line-height: 1.3; overflow-wrap: anywhere; }
+      .pf-mail { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+      .pf-sync { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-top: 14px; }
+      .pf-sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
+      .pf-sync.saved i { background: #2f7d47; }
+      .pf-sync.syncing i { background: var(--blue); }
+      .pf-sync.offline i, .pf-sync.error i { background: var(--warm); }
+      .pf-form { display: grid; gap: 8px; margin-top: 14px; }
+      .pf-form label { font-size: 13px; font-weight: 600; color: var(--ink); }
+      .pf-form .btns { margin-top: 2px; }
+      .input { font: inherit; font-size: 16px; height: 44px; width: 100%; border: 1px solid var(--line); border-radius: var(--r); padding: 0 12px; color: var(--ink); background: #fff; }   /* 16 px, or iOS zooms in on focus */
+      .input:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 3px var(--blue-wash); }
+      .pf-msg { font-size: 13.5px; margin-top: 12px; color: var(--ink); }
+      .pf-msg.err { color: var(--danger); }
+      .pf-sent { margin-top: 14px; border: 1px solid rgb(40 122 158 / 35%); background: var(--blue-tint); border-radius: var(--r); padding: 12px 14px; font-size: 14px; color: var(--ink); overflow-wrap: anywhere; }
+      .pf-perks { margin: 10px 0 0; padding-left: 18px; font-size: 13.5px; color: var(--body); }
+      .pf-perks li { margin: 2px 0; }
+      .pf-show { display: flex; align-items: center; gap: 6px; font-size: 13px !important; font-weight: 400 !important; color: var(--muted) !important; cursor: pointer; }
+      .pf-alts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13.5px; margin-top: 12px; }
+      .pf-both { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+      .pf-both svg { flex: none; }
 
       .pf-level { display: flex; gap: 16px; align-items: center; }
       .pf-badge { width: 64px; height: 64px; border-radius: 14px; display: grid; place-items: center; font-size: 22px; font-weight: 700; background: var(--panel); color: var(--muted); border: 1px solid var(--line); flex: none; }
@@ -594,6 +619,7 @@
       .tw-t.gold::after { background: #a87812; }
     </style>
     <script defer src="/assets/js/turkmen.js"></script>
+    <script defer src="/assets/js/turkmen-account.js"></script>
     <style>
       /* Footer: one line asking for a cup of tea, on Daily Turkish's page (buymeacoffee.com/dailyturkish) */
       .dt-foot { margin: 48px auto 0; padding: 0 16px 28px; text-align: center;
@@ -628,7 +654,7 @@
         <header class="hero">
           <p class="kicker">Turkmen · A1 → B1</p>
           <h1>Learn Turkmen</h1>
-          <p class="lede">From your first <i lang="tk">salam</i> to telling a story: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of 1,000 useful words on spaced repetition. For English speakers starting from zero. No account needed: your progress stays in this browser.</p>
+          <p class="lede">From your first <i lang="tk">salam</i> to telling a story: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of 1,000 useful words on spaced repetition. For English speakers starting from zero. No account needed: your progress stays in this browser, or <a href="#signup">create a free account</a> to keep it online and use it on any device. Already on Daily Turkish? The same account works here.</p>
         </header>
         <aside class="today" id="today" aria-label="Today">
           <div class="card next"><p class="eyebrow">Loading the course…</p></div>
@@ -698,7 +724,7 @@
         <header class="hero">
           <p class="kicker">Turkmen · A1 → B1</p>
           <h2 class="h1" id="h-profile">My profile</h2>
-          <p class="lede" id="pf-lede">Your level, your XP, and how far you've come in lessons and words. Saved in this browser.</p>
+          <p class="lede" id="pf-lede">Your level, your XP, and how far you've come in lessons and words.</p>
         </header>
         <div class="pf-grid">
           <nav class="pf-nav" id="pf-nav" aria-label="Profile sections">
@@ -710,10 +736,11 @@
               <li><button type="button" data-go="pf-s-yours">Your progress</button></li>
               <li><button type="button" data-go="pf-s-levels">Levels</button></li>
               <li class="pf-nav-sep" aria-hidden="true"></li>
-              <li><button type="button" data-go="pf-side">Characters</button></li>
+              <li><button type="button" data-go="pf-side">Account &amp; character</button></li>
             </ol>
           </nav>
-          <aside class="pf-side" id="pf-side" aria-label="Characters">
+          <aside class="pf-side" id="pf-side" aria-label="Your account and character">
+            <div class="card" id="pf-acct"><p class="eyebrow">Checking whether you're signed in…</p></div>
             <div class="card" id="pf-chars"><p class="eyebrow">Loading the characters…</p></div>
           </aside>
           <div class="pf-main" id="pf-dash"><div class="card"><p class="eyebrow">Loading your progress…</p></div></div>
@@ -734,7 +761,7 @@
           <p><b>Anki and spaced repetition.</b> Anki is the free flashcard app that made spaced repetition popular. After each card you grade how well you remembered it (Again, Hard, Good or Easy), and it comes back just before you would forget it: tomorrow, then in a few days, then weeks and months later. A few minutes a day are enough to keep thousands of words. The flashcards here use Anki's own algorithm (SM-2) with its default settings, the same four grades with the next interval shown on each button, and Anki's statistics (a card is “mature” after 21 days).</p>
           <p><b>Fluent Forever.</b> In his book <cite>Fluent Forever</cite> (2014), Gabriel Wyner argues for learning pronunciation first, the most useful words before the rare ones, words in real sentences rather than lists, recalling actively instead of just recognising, and letting spaced repetition do the remembering. Daily Turkmen follows this as far as it can without audio: the course opens with the letters and their sounds; the deck is 1,000 useful words, the most useful first; every card has an example sentence; and words are practiced in both directions, English → Turkmen once you recognise the Turkmen.</p>
           <h2>Your progress</h2>
-          <p>Your progress lives in this browser's storage only, and clearing your browsing data erases it. Use Export progress in <a href="#settings">Settings</a> to keep a copy or to carry on from another device. There are no accounts in this version. What the site stores and counts is in the <a href="/turkishprivacy.html">privacy policy</a>, shared with Daily Turkish.</p>
+          <p>Without an account, your progress lives in this browser's storage only, and clearing your browsing data erases it; Export progress in <a href="#settings">Settings</a> keeps a copy. With a free account (<a href="#profile">My Profile</a>), it's also saved online and follows you to other devices. It's the same account as on Daily Turkish: one email and password for both courses, each with its own progress. What the site stores and counts is in the <a href="privacy.html">privacy policy</a>.</p>
           <h2>Support Daily Turkmen</h2>
           <p>Daily Turkmen is free to use and has no ads. If it helps you learn, you can buy me a cup of green tea, <i lang="tk">gök çaý</i>: it pays for the domain and the time spent writing new units.</p>
           <p style="margin-top:14px"><a class="btn coffee" href="https://buymeacoffee.com/dailyturkish" target="_blank" rel="noopener">🍵 Buy me a cup of tea</a></p>
@@ -750,8 +777,9 @@
       "use strict";
       var T = window.TKM;
       if (!T) { document.getElementById("notices").innerHTML = '<p class="notice err">The course script didn\'t load. Reload the page to try again.</p>'; return; }
-      // No accounts in this version (TM-PROJECT.md 2): progress lives in this browser, with export and import.
-      var store = T.store, esc = T.esc, P = T.C.PAGES, HERE = "in this browser";
+      // Progress lives in this browser, with export and import; with an account (turkmen-account.js, ACCT-TK) it is also
+      // kept online, in the same Supabase account as Daily Turkish.
+      var store = T.store, esc = T.esc, P = T.C.PAGES, HERE = "in this browser", A = T.account || null;
       var $ = function (id) { return document.getElementById(id); };
       store.course(); store.cards(); store.settings();   // read all three now, so a problem with any of them shows at once
       var st = { index: null, levels: {}, deck: null, deckLoading: false, open: {}, error: null, fresh: null, hopUntil: 0 };
@@ -846,24 +874,55 @@
         html += '<p class="totals"><b>' + course.xp.total + "</b> XP · <b>" + done + "</b> " + (done === 1 ? "lesson" : "lessons") + " completed" + (mastered ? " · <b>" + mastered + "</b> " + (mastered === 1 ? "unit" : "units") + " mastered" : "") + "</p>";
         $("today").innerHTML = html;
       }
-      // ── characters (TK-BUILD-2, TM-PROJECT.md 3): one per level, drawn in the style of the Turkish course's. The A1 foal walks
-      // with the learner from the start; certifying a level brings the next level's character. The greeting above today's card
-      // is the character picked in My Profile (kept in this browser only, outside the progress and its export), or else the
-      // character of the level being worked on. It says a short Turkmen line first, then a word of English. ──
+      // ── characters (TK-BUILD-2, nine since TK-CHARS; TM-PROJECT.md 3), drawn in the style of the Turkish course's. The
+      // Akhal-Teke foal walks with the learner from the start; certifying A1, A2 or B1 brings that level's character (`level`),
+      // and five achievements bring one each (`ach`). The greeting above today's card is the character picked in My Profile
+      // (kept in this browser only, outside the progress and its export), or else the last level character met, or the foal.
+      // It says a short Turkmen line first, then a word of English. `tk` is the animal's Turkmen name (AI-written, for the
+      // native review); `hue` is the level colour of the greeting's bubble. ──
       var CHARS = [
-        { id: "a1", cefr: "A1", name: "Akhal\u2011Teke foal", who: "an Akhal\u2011Teke foal", blurb: "A foal of Turkmenistan's golden horses, famous for their endurance and shining coats",
+        { id: "a1", tag: "Start", hue: "a1", tk: "Taý", name: "Akhal\u2011Teke foal", who: "an Akhal\u2011Teke foal", blurb: "A foal of Turkmenistan's golden horses, famous for their endurance and shining coats",
           eyes: [[25.5, 29.5], [38.5, 29.5]], lid: ["#d9a556", 3.1, 3.5],
           art: "<circle cx='32' cy='32' r='32' fill='#f5ead4'/><path d='M14 64c1-10 7-17 18-19 11 2 17 9 18 19z' fill='#cf9a4c'/><path d='M26 46c-2 6-1 12 0 18h12c1-6 2-12 0-18z' fill='#d9a556'/><path d='M21.5 23L18 5.5l10 11.5zM42.5 23L46 5.5l-10 11.5z' fill='#c98f45'/><path d='M21.6 18.5l-1.4-8.5 5.2 6.4zM42.4 18.5l1.4-8.5-5.2 6.4z' fill='#eab8a0'/><path d='M20 27c0-8 5-13.5 12-13.5S44 19 44 27c0 6-2 9-3 13.5-1 5-4 8.5-9 8.5s-8-3.5-9-8.5C22 36 20 33 20 27z' fill='#d9a556'/><path d='M24.5 18c3-2.4 6-3 9-2.4' stroke='#f3d395' stroke-width='1.6' fill='none' stroke-linecap='round'/><path d='M25.5 18.5c.2-4.6 3-8 6.8-8.4 2.8.1 4.8 2 5.4 4.8-1.8-1-3.6-1.1-5-.2.9 1.2 1.2 2.6.8 4-1.6-1.8-4.3-2.2-8-.2z' fill='#8f5f26'/><path d='M30.4 19l1.6-1 1.6 1-.7 13h-1.8z' fill='#fbf3e2'/><ellipse cx='32' cy='42.5' rx='7.5' ry='6' fill='#ecc996'/><ellipse cx='29.2' cy='42.6' rx='1.1' ry='1.6' fill='#7a4f22'/><ellipse cx='34.8' cy='42.6' rx='1.1' ry='1.6' fill='#7a4f22'/><path d='M29.6 46.4q2.4 1.4 4.8 0' stroke='#8a5a24' stroke-width='1.2' fill='none' stroke-linecap='round'/><ellipse cx='25.5' cy='29.5' rx='2.5' ry='2.9' fill='#2a1d12'/><ellipse cx='38.5' cy='29.5' rx='2.5' ry='2.9' fill='#2a1d12'/><circle cx='26.4' cy='28.4' r='.85' fill='#fff'/><circle cx='39.4' cy='28.4' r='.85' fill='#fff'/><circle cx='22.6' cy='35' r='1.9' fill='#f0a98f' opacity='.55'/><circle cx='41.4' cy='35' r='1.9' fill='#f0a98f' opacity='.55'/>" },
-        { id: "a2", cefr: "A2", name: "Alabay puppy", who: "an Alabay puppy", blurb: "A puppy of the big shepherd dogs that guard the flocks of Central Asia",
-          eyes: [[26, 28.5], [38, 28.5]], lid: ["#f6efe3", 3, 3],
-          art: "<circle cx='32' cy='32' r='32' fill='#e1e7f2'/><path d='M11 64c1-11 9-18 21-18s20 7 21 18z' fill='#efe6d6'/><path d='M22 47c3 3 6 4 10 4s7-1 10-4' stroke='#e2d5bf' stroke-width='1.4' fill='none'/><path d='M20.5 21.5c-5 1-8.5 8-6.5 15 1.5 2.4 5 1.3 7.5-3z' fill='#c9a77a'/><path d='M43.5 21.5c5 1 8.5 8 6.5 15-1.5 2.4-5 1.3-7.5-3z' fill='#c9a77a'/><ellipse cx='32' cy='30.5' rx='14.5' ry='14' fill='#f6efe3'/><path d='M35.5 22.5c4-1.5 8.2.5 9.2 4.6.9 3.9-1.6 7-5.4 7.1-3.2.1-5.2-2.6-5.4-5.6-.2-2.8-.1-5 1.6-6.1z' fill='#dcbb8b'/><ellipse cx='32' cy='38' rx='8.5' ry='6.2' fill='#fffaf2'/><path d='M28.8 34.2h6.4c0 2.1-1.6 3.4-3.2 3.4s-3.2-1.3-3.2-3.4z' fill='#3a2c26'/><path d='M32 37.6v1.6M32 39.2q-2.2 1.9-4.3.6M32 39.2q2.2 1.9 4.3.6' stroke='#6b5546' stroke-width='1.1' fill='none' stroke-linecap='round'/><path d='M30.6 40.6q1.4 2.6 2.8 0z' fill='#e98a8a'/><circle cx='26' cy='28.5' r='2.4' fill='#2a2420'/><circle cx='38' cy='28.5' r='2.4' fill='#2a2420'/><circle cx='26.8' cy='27.7' r='.8' fill='#fff'/><circle cx='38.8' cy='27.7' r='.8' fill='#fff'/><circle cx='22.8' cy='34' r='1.8' fill='#f4b6b0' opacity='.6'/><circle cx='41.2' cy='34' r='1.8' fill='#f4b6b0' opacity='.6'/><path d='M20 51.5q12 5.5 24 0' stroke='#2e4a8a' stroke-width='2.2' fill='none' stroke-linecap='round'/><circle cx='32' cy='55.2' r='2.3' fill='#e0b23c'/>" },
-        { id: "b1", cefr: "B1", name: "Camel", who: "a camel from the Garagum desert", blurb: "A one-humped camel of the Garagum desert, patient on long roads",
-          eyes: [[26.5, 28], [37.5, 28]], lid: ["#d6aa6c", 3, 3],
-          art: "<circle cx='32' cy='32' r='32' fill='#e4efe7'/><path d='M0 53c11-5 21-5 32-1s21 4 32-1v13H0z' fill='#ecd39e'/><path d='M23 64c0-8 2-14 3.5-19h11c1.5 5 3.5 11 3.5 19z' fill='#c99a5e'/><ellipse cx='18.5' cy='21.5' rx='3.6' ry='2.2' transform='rotate(-25 18.5 21.5)' fill='#c28f52'/><ellipse cx='45.5' cy='21.5' rx='3.6' ry='2.2' transform='rotate(25 45.5 21.5)' fill='#c28f52'/><path d='M20.5 25c0-7.5 5-12 11.5-12s11.5 4.5 11.5 12c0 5-1 8-2 12-1.2 6-4.2 10-9.5 10s-8.3-4-9.5-10c-1-4-2-7-2-12z' fill='#d6aa6c'/><path d='M26 15.5c1-3.6 3.4-5.2 6-5.2s5 1.6 6 5.2c-2-1.2-3.6-1.2-6-.2-2.4-1-4-1-6 .2z' fill='#a97a43'/><ellipse cx='32' cy='40' rx='8.6' ry='7' fill='#e8c895'/><path d='M28.6 37.2q1.3 1 .6 2.6M35.4 37.2q-1.3 1-.6 2.6' stroke='#6b4a25' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M32 42.2v2.4M27.8 44.3q4.2 2.6 8.4 0' stroke='#8a5f30' stroke-width='1.2' fill='none' stroke-linecap='round'/><circle cx='26.5' cy='28' r='2.4' fill='#2a1d12'/><circle cx='37.5' cy='28' r='2.4' fill='#2a1d12'/><circle cx='27.3' cy='27.4' r='.8' fill='#fff'/><circle cx='38.3' cy='27.4' r='.8' fill='#fff'/><path d='M24.3 26.3l-1.5-.9M24.9 25.4l-1-1.3M34.7 26.3l-1.5-.9M35.3 25.4l-1-1.3' stroke='#5c3d1d' stroke-width='.9' stroke-linecap='round'/><path d='M28.7 26.3l1.5-.9M28.1 25.4l1-1.3M39.7 26.3l1.5-.9M39.1 25.4l1-1.3' stroke='#5c3d1d' stroke-width='.9' stroke-linecap='round'/><circle cx='23' cy='34.5' r='1.8' fill='#f0a98f' opacity='.5'/><circle cx='41' cy='34.5' r='1.8' fill='#f0a98f' opacity='.5'/><path d='M22.5 50.5q9.5 5 19 0' stroke='#b23a2e' stroke-width='2.4' fill='none' stroke-linecap='round'/><circle cx='26' cy='53' r='1.5' fill='#1f7a55'/><circle cx='32' cy='54.4' r='1.7' fill='#e0b23c'/><circle cx='38' cy='53' r='1.5' fill='#1f7a55'/>" }
+        { id: "lamb", level: "a1", tag: "A1", hue: "a1", tk: "Guzy", name: "Karakul lamb", who: "a karakul lamb", blurb: "A lamb of the curly black fleece that Turkmen telpek hats are made of",
+          eyes: [[27.5, 32], [36.5, 32]], lid: ["#c9ab95", 3, 3.4],
+          art: "<circle cx='32' cy='32' r='32' fill='#f6e4df'/><circle cx='14' cy='60' r='7' fill='#3d322d'/><circle cx='22' cy='55' r='7' fill='#3d322d'/><circle cx='32' cy='53' r='7.5' fill='#3d322d'/><circle cx='42' cy='55' r='7' fill='#3d322d'/><circle cx='50' cy='60' r='7' fill='#3d322d'/><circle cx='32' cy='62' r='8' fill='#3d322d'/><path d='M19.5 54 q2.5-2.6 5 0' stroke='#58493f' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M29.5 51.5 q2.5-2.6 5 0' stroke='#58493f' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M39.5 54 q2.5-2.6 5 0' stroke='#58493f' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M12.5 59 q2.5-2.6 5 0' stroke='#58493f' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M46.5 59 q2.5-2.6 5 0' stroke='#58493f' stroke-width='1.2' fill='none' stroke-linecap='round'/><ellipse cx='17' cy='31' rx='7' ry='3.4' transform='rotate(22 17 31)' fill='#ad8f7a'/><ellipse cx='17.6' cy='31.2' rx='4.4' ry='1.7' transform='rotate(22 17.6 31.2)' fill='#e8bcab'/><ellipse cx='47' cy='31' rx='7' ry='3.4' transform='rotate(-22 47 31)' fill='#ad8f7a'/><ellipse cx='46.4' cy='31.2' rx='4.4' ry='1.7' transform='rotate(-22 46.4 31.2)' fill='#e8bcab'/><path d='M21.5 30c0-7 4.5-11 10.5-11s10.5 4 10.5 11c0 5-1.2 8-2.4 11.5-1.3 4-4.2 7-8.1 7s-6.8-3-8.1-7c-1.2-3.5-2.4-6.5-2.4-11.5z' fill='#c9ab95'/><circle cx='23' cy='21' r='5.2' fill='#3d322d'/><circle cx='29' cy='16.8' r='5.6' fill='#3d322d'/><circle cx='35.5' cy='16.8' r='5.6' fill='#3d322d'/><circle cx='41' cy='21' r='5.2' fill='#3d322d'/><circle cx='26' cy='24' r='4' fill='#3d322d'/><circle cx='38' cy='24' r='4' fill='#3d322d'/><circle cx='32' cy='21' r='4.5' fill='#3d322d'/><path d='M21 20 q2-2.2 4 0' stroke='#58493f' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M27 15.5 q2-2.2 4 0' stroke='#58493f' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M33.5 15.5 q2-2.2 4 0' stroke='#58493f' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M39 20 q2-2.2 4 0' stroke='#58493f' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M30 20.5 q2-2.2 4 0' stroke='#58493f' stroke-width='1.2' fill='none' stroke-linecap='round'/><ellipse cx='32' cy='41.5' rx='6.2' ry='4.8' fill='#e3cbb8'/><path d='M30 39.2h4l-2 2.2z' fill='#6b4a3a'/><path d='M32 41.4v1.4M29.8 43.6q2.2 1.4 4.4 0' stroke='#6b4a3a' stroke-width='1.1' fill='none' stroke-linecap='round'/><ellipse cx='27.5' cy='32' rx='2.5' ry='2.9' fill='#2a1d12'/><ellipse cx='36.5' cy='32' rx='2.5' ry='2.9' fill='#2a1d12'/><circle cx='28.4' cy='30.9' r='.85' fill='#fff'/><circle cx='37.4' cy='30.9' r='.85' fill='#fff'/><circle cx='24.6' cy='37.5' r='1.9' fill='#f0a98f' opacity='.55'/><circle cx='39.4' cy='37.5' r='1.9' fill='#f0a98f' opacity='.55'/>" },
+        { id: "falcon", level: "a2", tag: "A2", hue: "a2", tk: "Laçyn", name: "Saker falcon", who: "a young saker falcon", blurb: "A young saker falcon, the bird of the old Turkmen art of falconry",
+          eyes: [[26.5, 30.5], [37.5, 30.5]], lid: ["#f2c94c", 3, 3.4],
+          art: "<circle cx='32' cy='32' r='32' fill='#e1e7f2'/><path d='M10 64c1-9 4-15 9-18l5 18z' fill='#6f523c'/><path d='M54 64c-1-9-4-15-9-18l-5 18z' fill='#6f523c'/><path d='M15 64c1-11 7-18 17-18s16 7 17 18z' fill='#8d6c50'/><ellipse cx='32' cy='57' rx='9.5' ry='10' fill='#f1e4cf'/><path d='M26.8 53q1.2 1.8 2.4 0' stroke='#a5805c' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M30.8 55q1.2 1.8 2.4 0' stroke='#a5805c' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M34.8 53q1.2 1.8 2.4 0' stroke='#a5805c' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M28.3 58.5q1.2 1.8 2.4 0' stroke='#a5805c' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M33.3 58.5q1.2 1.8 2.4 0' stroke='#a5805c' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M30.8 61.5q1.2 1.8 2.4 0' stroke='#a5805c' stroke-width='1.2' fill='none' stroke-linecap='round'/><ellipse cx='32' cy='30.5' rx='13.5' ry='14' fill='#a5845f'/><path d='M18.6 29c0-8.5 6-13.6 13.4-13.6S45.4 20.5 45.4 29c-3.4-3.2-8-4.6-13.4-4.6S22 25.8 18.6 29z' fill='#7a5c42'/><path d='M22.5 30c0 6 4.2 12.5 9.5 12.5S41.5 36 41.5 30c0-2.6-4.2-4.2-9.5-4.2S22.5 27.4 22.5 30z' fill='#f1e4cf'/><path d='M23.6 32.5q-.6 4.4 1.6 7.6M40.4 32.5q.6 4.4-1.6 7.6' stroke='#7a5c42' stroke-width='1.8' fill='none' stroke-linecap='round'/><circle cx='26.5' cy='30.5' r='3.7' fill='#f2c94c'/><circle cx='37.5' cy='30.5' r='3.7' fill='#f2c94c'/><path d='M29 34.6q3-2 6 0 .2 4-3 7-3.2-3-3-7z' fill='#f2b33d'/><path d='M30.6 39.8q1.4 2.4 1.4 2.4t1.4-2.4z' fill='#4b3a2c'/><circle cx='30.8' cy='35.6' r='.6' fill='#8a5a24'/><circle cx='33.2' cy='35.6' r='.6' fill='#8a5a24'/><ellipse cx='26.5' cy='30.5' rx='2.5' ry='2.9' fill='#2a1d12'/><ellipse cx='37.5' cy='30.5' rx='2.5' ry='2.9' fill='#2a1d12'/><circle cx='27.4' cy='29.4' r='.85' fill='#fff'/><circle cx='38.4' cy='29.4' r='.85' fill='#fff'/><circle cx='22.8' cy='37' r='1.9' fill='#e99a86' opacity='.55'/><circle cx='41.2' cy='37' r='1.9' fill='#e99a86' opacity='.55'/>" },
+        { id: "leopard", level: "b1", tag: "B1", hue: "b1", tk: "Gaplaň", name: "Leopard cub", who: "a leopard cub from the Köpetdag", blurb: "A cub of the rare Persian leopards of the Köpetdag mountains",
+          eyes: [[26, 30.5], [38, 30.5]], lid: ["#e6b96c", 3, 3.4],
+          art: "<circle cx='32' cy='32' r='32' fill='#e4efe7'/><path d='M12 64c1-11 9-18 20-18s19 7 20 18z' fill='#dcaa5f'/><ellipse cx='32' cy='59' rx='8' ry='9' fill='#f6ead2'/><circle cx='18' cy='58' r='2' fill='none' stroke='#6e4a28' stroke-width='1.1' stroke-dasharray='2.2 1'/><circle cx='46' cy='58' r='2' fill='none' stroke='#6e4a28' stroke-width='1.1' stroke-dasharray='2.2 1'/><circle cx='22' cy='51' r='1.8' fill='none' stroke='#6e4a28' stroke-width='1.1' stroke-dasharray='2.2 1'/><circle cx='42' cy='51' r='1.8' fill='none' stroke='#6e4a28' stroke-width='1.1' stroke-dasharray='2.2 1'/><circle cx='19' cy='19' r='6.4' fill='#dcaa5f'/><circle cx='45' cy='19' r='6.4' fill='#dcaa5f'/><circle cx='19.4' cy='19.4' r='3.4' fill='#f2c7b0'/><circle cx='44.6' cy='19.4' r='3.4' fill='#f2c7b0'/><ellipse cx='32' cy='31.5' rx='15' ry='14' fill='#e6b96c'/><circle cx='25.5' cy='20.5' r='1.7' fill='none' stroke='#6e4a28' stroke-width='1.1' stroke-dasharray='2.2 1'/><circle cx='32' cy='18.6' r='1.7' fill='none' stroke='#6e4a28' stroke-width='1.1' stroke-dasharray='2.2 1'/><circle cx='38.5' cy='20.5' r='1.7' fill='none' stroke='#6e4a28' stroke-width='1.1' stroke-dasharray='2.2 1'/><circle cx='20.5' cy='26.5' r='1.7' fill='none' stroke='#6e4a28' stroke-width='1.1' stroke-dasharray='2.2 1'/><circle cx='43.5' cy='26.5' r='1.7' fill='none' stroke='#6e4a28' stroke-width='1.1' stroke-dasharray='2.2 1'/><circle cx='29' cy='22.6' r='0.8' fill='#6e4a28'/><circle cx='35' cy='22.6' r='0.8' fill='#6e4a28'/><circle cx='19.6' cy='33' r='0.9' fill='#6e4a28'/><circle cx='44.4' cy='33' r='0.9' fill='#6e4a28'/><ellipse cx='28.6' cy='39.4' rx='4.8' ry='3.8' fill='#f8eed9'/><ellipse cx='35.4' cy='39.4' rx='4.8' ry='3.8' fill='#f8eed9'/><ellipse cx='32' cy='43' rx='3.4' ry='2.4' fill='#f8eed9'/><path d='M29.4 35.6h5.2q0 2.4-2.6 3.4-2.6-1-2.6-3.4z' fill='#b5655a'/><path d='M32 39v1.4M29.6 41.6q2.4 1.4 4.8 0' stroke='#6e4a28' stroke-width='1.1' fill='none' stroke-linecap='round'/><circle cx='26.4' cy='39.4' r='0.5' fill='#6e4a28'/><circle cx='27.8' cy='40.8' r='0.5' fill='#6e4a28'/><circle cx='37.6' cy='39.4' r='0.5' fill='#6e4a28'/><circle cx='36.2' cy='40.8' r='0.5' fill='#6e4a28'/><ellipse cx='26' cy='30.5' rx='2.5' ry='2.9' fill='#2a1d12'/><ellipse cx='38' cy='30.5' rx='2.5' ry='2.9' fill='#2a1d12'/><circle cx='26.9' cy='29.4' r='.85' fill='#fff'/><circle cx='38.9' cy='29.4' r='.85' fill='#fff'/><circle cx='22.2' cy='36.2' r='1.9' fill='#f0a98f' opacity='.55'/><circle cx='41.8' cy='36.2' r='1.9' fill='#f0a98f' opacity='.55'/>" },
+        { id: "hedgehog", ach: "first-unit", hue: "a2", tk: "Kirpi", name: "Long\u2011eared hedgehog", who: "a long\u2011eared hedgehog", blurb: "A desert hedgehog whose big ears keep it cool in the Garagum",
+          eyes: [[27, 32.5], [37, 32.5]], lid: ["#efd8ba", 2.8, 3.2],
+          art: "<circle cx='32' cy='32' r='32' fill='#e1e7f2'/><path d='M3.9 43.2 L9.6 38.5 L3.0 35.2 L9.8 32.2 L4.4 27.2 L11.7 26.2 L7.9 19.9 L15.2 21.0 L13.3 13.8 L20.0 16.9 L20.2 9.5 L25.8 14.4 L27.9 7.3 L32.0 13.5 L36.1 7.3 L38.2 14.4 L43.8 9.5 L44.0 16.9 L50.7 13.8 L48.8 21.0 L56.1 19.9 L52.3 26.2 L59.6 27.2 L54.2 32.2 L61.0 35.2 L54.4 38.5 L60.1 43.2 L52 64 L12 64z' fill='#7a5d45' stroke='#7a5d45' stroke-linejoin='round' stroke-width='1.2'/><path d='M7.8 42.2 L13.6 38.1 L7.0 35.3 L13.8 32.9 L8.2 28.4 L15.3 28.0 L11.2 22.1 L18.2 23.7 L15.9 16.9 L22.2 20.3 L21.8 13.2 L26.9 18.2 L28.5 11.2 L32.0 17.5 L35.5 11.2 L37.1 18.2 L42.2 13.2 L41.8 20.3 L48.1 16.9 L45.8 23.7 L52.8 22.1 L48.7 28.0 L55.8 28.4 L50.2 32.9 L57.0 35.3 L50.4 38.1 L56.2 42.2 L50 64 L14 64z' fill='#9c7a5c'/><path d='M20 22l-2 -3' stroke='#c8a988' stroke-width='1.1' stroke-linecap='round'/><path d='M26 17l-1 -3.4' stroke='#c8a988' stroke-width='1.1' stroke-linecap='round'/><path d='M32 15.5l0 -3.6' stroke='#c8a988' stroke-width='1.1' stroke-linecap='round'/><path d='M38 17l1 -3.4' stroke='#c8a988' stroke-width='1.1' stroke-linecap='round'/><path d='M44 22l2 -3' stroke='#c8a988' stroke-width='1.1' stroke-linecap='round'/><path d='M16 30l-3 -2' stroke='#c8a988' stroke-width='1.1' stroke-linecap='round'/><path d='M48 30l3 -2' stroke='#c8a988' stroke-width='1.1' stroke-linecap='round'/><path d='M16 64c2-8 8-13 16-13s14 5 16 13z' fill='#e8cdaa'/><ellipse cx='17.5' cy='26' rx='5' ry='7.4' transform='rotate(-28 17.5 26)' fill='#e2bb9c'/><ellipse cx='18' cy='26.6' rx='2.8' ry='4.8' transform='rotate(-28 18 26.6)' fill='#f3cbbd'/><ellipse cx='46.5' cy='26' rx='5' ry='7.4' transform='rotate(28 46.5 26)' fill='#e2bb9c'/><ellipse cx='46' cy='26.6' rx='2.8' ry='4.8' transform='rotate(28 46 26.6)' fill='#f3cbbd'/><path d='M21 33c0-6.5 5-10.5 11-10.5S43 26.5 43 33c0 4.5-2 7.5-4.5 10.5-2 2.4-4 3.5-6.5 3.5s-4.5-1.1-6.5-3.5C23 40.5 21 37.5 21 33z' fill='#efd8ba'/><ellipse cx='32' cy='41.6' rx='5' ry='3.8' fill='#f7e8d4'/><ellipse cx='32' cy='39.6' rx='2.1' ry='1.6' fill='#2a1d12'/><path d='M30.2 43.4q1.8 1.2 3.6 0' stroke='#8a5a24' stroke-width='1.1' fill='none' stroke-linecap='round'/><ellipse cx='27' cy='32.5' rx='2.3' ry='2.7' fill='#2a1d12'/><ellipse cx='37' cy='32.5' rx='2.3' ry='2.7' fill='#2a1d12'/><circle cx='27.9' cy='31.4' r='.85' fill='#fff'/><circle cx='37.9' cy='31.4' r='.85' fill='#fff'/><circle cx='24' cy='38' r='1.9' fill='#f0a98f' opacity='.55'/><circle cx='40' cy='38' r='1.9' fill='#f0a98f' opacity='.55'/>" },
+        { id: "kulan", ach: "cards-100", hue: "a2", tk: "Gulan", name: "Kulan foal", who: "a kulan foal from Badhyz", blurb: "A foal of the wild asses of Badhyz, made for long distances across the steppe",
+          eyes: [[25.5, 29.5], [38.5, 29.5]], lid: ["#f3e8d8", 3, 3.4],
+          art: "<circle cx='32' cy='32' r='32' fill='#e1e7f2'/><path d='M14 64c1-10 7-17 18-19 11 2 17 9 18 19z' fill='#c99a66'/><path d='M26 46c-2 6-1 12 0 18h12c1-6 2-12 0-18z' fill='#d3a673'/><ellipse cx='22' cy='13' rx='3.8' ry='10.5' transform='rotate(-16 22 13)' fill='#cf9f6b'/><ellipse cx='22.2' cy='14' rx='1.9' ry='7' transform='rotate(-16 22.2 14)' fill='#f0d2bd'/><ellipse cx='42' cy='13' rx='3.8' ry='10.5' transform='rotate(16 42 13)' fill='#cf9f6b'/><ellipse cx='41.8' cy='14' rx='1.9' ry='7' transform='rotate(16 41.8 14)' fill='#f0d2bd'/><path d='M17.7 4.8q2.6-3.6 5.8-1.2-2 .3-5.8 1.2zM46.3 4.8q-2.6-3.6-5.8-1.2 2 .3 5.8 1.2z' fill='#4a3423'/><path d='M20 27c0-8 5-13.5 12-13.5S44 19 44 27c0 6-2 9-3 13.5-1 5-4 8.5-9 8.5s-8-3.5-9-8.5C22 36 20 33 20 27z' fill='#d6a874'/><path d='M27 16.5l1.4-4 1.6 3 2-4 2 4 1.6-3 1.4 4c-3-1.4-7-1.4-10 0z' fill='#5a3e28'/><circle cx='25.5' cy='29.5' r='4.2' fill='#f3e8d8'/><circle cx='38.5' cy='29.5' r='4.2' fill='#f3e8d8'/><ellipse cx='32' cy='42.4' rx='8' ry='6.6' fill='#f5eee3'/><ellipse cx='29.2' cy='42.4' rx='1.1' ry='1.6' fill='#6e5440'/><ellipse cx='34.8' cy='42.4' rx='1.1' ry='1.6' fill='#6e5440'/><path d='M29.6 46.4q2.4 1.4 4.8 0' stroke='#6e5440' stroke-width='1.2' fill='none' stroke-linecap='round'/><ellipse cx='25.5' cy='29.5' rx='2.5' ry='2.9' fill='#2a1d12'/><ellipse cx='38.5' cy='29.5' rx='2.5' ry='2.9' fill='#2a1d12'/><circle cx='26.4' cy='28.4' r='.85' fill='#fff'/><circle cx='39.4' cy='28.4' r='.85' fill='#fff'/><circle cx='22.4' cy='36' r='1.9' fill='#f0a98f' opacity='.55'/><circle cx='41.6' cy='36' r='1.9' fill='#f0a98f' opacity='.55'/>" },
+        { id: "caracal", ach: "perfect-10", hue: "a1", tk: "Garagulak", name: "Caracal", who: "a young caracal", blurb: "A young caracal, the black\u2011eared cat whose leaps rarely miss",
+          eyes: [[26, 30.5], [38, 30.5]], lid: ["#d6955a", 3, 3.4],
+          art: "<circle cx='32' cy='32' r='32' fill='#f6efd9'/><path d='M12 64c1-11 9-18 20-18s19 7 20 18z' fill='#c9864c'/><ellipse cx='32' cy='59' rx='8' ry='9' fill='#f7eee2'/><path d='M16.5 27L20.5 7.5 30 18z' fill='#c47f45'/><path d='M47.5 27L43.5 7.5 34 18z' fill='#c47f45'/><path d='M19.8 21.5l1.6-9.4 5.2 6.6zM44.2 21.5l-1.6-9.4-5.2 6.6z' fill='#f1cdb6'/><path d='M20.5 8.5L18.6 1.6l2.6 2.6.6-3.6 1.2 4.6zM43.5 8.5l1.9-6.9-2.6 2.6-.6-3.6-1.2 4.6z' fill='#2a1d12'/><path d='M20.6 8.4l-1.4 7M43.4 8.4l1.4 7' stroke='#4a3020' stroke-width='1.3' stroke-linecap='round'/><ellipse cx='32' cy='32' rx='14.6' ry='13.2' fill='#d6955a'/><ellipse cx='26' cy='26' rx='3' ry='1.6' fill='#f4dfc8'/><ellipse cx='38' cy='26' rx='3' ry='1.6' fill='#f4dfc8'/><path d='M29.6 21q2.4-1.2 4.8 0M30.6 18.6q1.4-.7 2.8 0' stroke='#9a6236' stroke-width='1.1' fill='none' stroke-linecap='round'/><ellipse cx='28.6' cy='39.6' rx='4.8' ry='3.8' fill='#f9f1e6'/><ellipse cx='35.4' cy='39.6' rx='4.8' ry='3.8' fill='#f9f1e6'/><ellipse cx='32' cy='43.2' rx='3.4' ry='2.4' fill='#f9f1e6'/><path d='M27.6 32.6q1.2 2 2.4 2.8M36.4 32.6q-1.2 2-2.4 2.8' stroke='#2a1d12' stroke-width='1.2' fill='none' stroke-linecap='round'/><path d='M29.4 35.8h5.2q0 2.4-2.6 3.4-2.6-1-2.6-3.4z' fill='#c46f66'/><path d='M32 39.2v1.4M29.6 41.8q2.4 1.4 4.8 0' stroke='#6a4028' stroke-width='1.1' fill='none' stroke-linecap='round'/><circle cx='26.6' cy='39.6' r='.9' fill='#2a1d12'/><circle cx='37.4' cy='39.6' r='.9' fill='#2a1d12'/><ellipse cx='26' cy='30.5' rx='2.5' ry='2.9' fill='#2a1d12'/><ellipse cx='38' cy='30.5' rx='2.5' ry='2.9' fill='#2a1d12'/><circle cx='26.9' cy='29.4' r='.85' fill='#fff'/><circle cx='38.9' cy='29.4' r='.85' fill='#fff'/><circle cx='21.8' cy='36.4' r='1.9' fill='#f0a98f' opacity='.55'/><circle cx='42.2' cy='36.4' r='1.9' fill='#f0a98f' opacity='.55'/>" },
+        { id: "gazelle", ach: "culture-12", hue: "b1", tk: "Jeren", name: "Goitered gazelle", who: "a young goitered gazelle", blurb: "A young jeren, the gazelle of the plains and of Turkmen poems",
+          eyes: [[26.5, 29.5], [37.5, 29.5]], lid: ["#dcab70", 3.2, 3.6],
+          art: "<circle cx='32' cy='32' r='32' fill='#e4efe7'/><path d='M15 64c1-10 7-16.5 17-18.5 10 2 16 8.5 17 18.5z' fill='#cf9a5e'/><path d='M27 47c-2 6-1 11 0 17h10c1-6 2-11 0-17z' fill='#f6ecdc'/><path d='M27.4 18C25 13 22.6 9.6 23 4.6M36.6 18C39 13 41.4 9.6 41 4.6' stroke='#4a3828' stroke-width='2.6' fill='none' stroke-linecap='round'/><path d='M24.0 14.5h3.2' stroke='#8a6f55' stroke-width='.9' stroke-linecap='round'/><path d='M22.599999999999998 11h3.2' stroke='#8a6f55' stroke-width='.9' stroke-linecap='round'/><path d='M21.7 7.8h3.2' stroke='#8a6f55' stroke-width='.9' stroke-linecap='round'/><path d='M36.8 14.5h3.2' stroke='#8a6f55' stroke-width='.9' stroke-linecap='round'/><path d='M38.199999999999996 11h3.2' stroke='#8a6f55' stroke-width='.9' stroke-linecap='round'/><path d='M39.1 7.8h3.2' stroke='#8a6f55' stroke-width='.9' stroke-linecap='round'/><ellipse cx='15.5' cy='22.5' rx='7.4' ry='3.6' transform='rotate(-28 15.5 22.5)' fill='#d6a468'/><ellipse cx='16' cy='22.8' rx='4.6' ry='1.8' transform='rotate(-28 16 22.8)' fill='#f2cdb8'/><ellipse cx='48.5' cy='22.5' rx='7.4' ry='3.6' transform='rotate(28 48.5 22.5)' fill='#d6a468'/><ellipse cx='48' cy='22.8' rx='4.6' ry='1.8' transform='rotate(28 48 22.8)' fill='#f2cdb8'/><path d='M21 27c0-7.5 4.8-12 11-12s11 4.5 11 12c0 5.5-1.6 8.6-2.8 12.6-1.2 4.4-4 7.6-8.2 7.6s-7-3.2-8.2-7.6C22.6 35.6 21 32.5 21 27z' fill='#dcab70'/><path d='M30.6 16.4c-1 4.4-.6 9.6-1.6 16.6h6c-1-7-.6-12.2-1.6-16.6-1-.6-1.8-.6-2.8 0z' fill='#f6ecdc'/><path d='M26.8 33.6q-.4 4.4 1.6 7.4M37.2 33.6q.4 4.4-1.6 7.4' stroke='#9a6a3e' stroke-width='1.4' fill='none' stroke-linecap='round'/><ellipse cx='32' cy='42.6' rx='6' ry='4.8' fill='#f6ecdc'/><path d='M30.2 40.6h3.6q0 1.8-1.8 2.6-1.8-.8-1.8-2.6z' fill='#3a2a1e'/><path d='M30 45.2q2 1.2 4 0' stroke='#7a5230' stroke-width='1.1' fill='none' stroke-linecap='round'/><ellipse cx='26.5' cy='29.5' rx='2.7' ry='3.1' fill='#2a1d12'/><ellipse cx='37.5' cy='29.5' rx='2.7' ry='3.1' fill='#2a1d12'/><circle cx='27.4' cy='28.4' r='.85' fill='#fff'/><circle cx='38.4' cy='28.4' r='.85' fill='#fff'/><circle cx='23.8' cy='36.4' r='1.9' fill='#f0a98f' opacity='.55'/><circle cx='40.2' cy='36.4' r='1.9' fill='#f0a98f' opacity='.55'/>" },
+        { id: "tortoise", ach: "streak-30", hue: "a1", tk: "Pyşdyl", name: "Steppe tortoise", who: "a steppe tortoise", blurb: "A Central Asian tortoise, slow and steady, out every single day",
+          eyes: [[27.8, 39.6], [36.2, 39.6]], lid: ["#c7b882", 2.8, 3.2],
+          art: "<circle cx='32' cy='32' r='32' fill='#f6e4df'/><path d='M0 56c11-3 21-3 32-1s21 2 32-1v10H0z' fill='#ecd9b4'/><path d='M7 48C7 30 18 18.5 32 18.5S57 30 57 48c-6 3-15 4.4-25 4.4S13 51 7 48z' fill='#8d7e40'/><path d='M25 22l7-3 7 3 0 7-7 3-7-3z' fill='#b3a35f' stroke='#6f6431' stroke-width='1.3' stroke-linejoin='round'/><path d='M14 33l7-4 4 1.6v7.4l-5 4-7-2z' fill='#b3a35f' stroke='#6f6431' stroke-width='1.3' stroke-linejoin='round'/><path d='M50 33l-7-4-4 1.6v7.4l5 4 7-2z' fill='#b3a35f' stroke='#6f6431' stroke-width='1.3' stroke-linejoin='round'/><path d='M8 47c6 2.6 15 3.8 24 3.8s18-1.2 24-3.8' stroke='#e2cf8a' stroke-width='2.4' fill='none' stroke-linecap='round'/><path d='M14 64c0-6 1.6-10 5-10s5 4 5 10zM40 64c0-6 1.6-10 5-10s5 4 5 10z' fill='#a99a62'/><path d='M16 63.6l1.2-1.6M19 63.6v-1.8M22 63.6l-1.2-1.6M42 63.6l1.2-1.6M45 63.6v-1.8M48 63.6l-1.2-1.6' stroke='#6f6431' stroke-width='1' stroke-linecap='round'/><path d='M26 64c0-6 2.4-10 6-10s6 4 6 10z' fill='#b9aa72'/><ellipse cx='32' cy='41.5' rx='10.6' ry='10' fill='#c7b882'/><ellipse cx='32' cy='46' rx='6' ry='4' fill='#d6c995'/><path d='M28.6 46.4q3.4 2.4 6.8 0' stroke='#5f5428' stroke-width='1.2' fill='none' stroke-linecap='round'/><circle cx='30.4' cy='43.4' r='.5' fill='#5f5428'/><circle cx='33.6' cy='43.4' r='.5' fill='#5f5428'/><ellipse cx='27.8' cy='39.6' rx='2.3' ry='2.7' fill='#2a1d12'/><ellipse cx='36.2' cy='39.6' rx='2.3' ry='2.7' fill='#2a1d12'/><circle cx='28.7' cy='38.5' r='.85' fill='#fff'/><circle cx='37.1' cy='38.5' r='.85' fill='#fff'/><circle cx='24.6' cy='44.4' r='1.9' fill='#f0a98f' opacity='.55'/><circle cx='39.4' cy='44.4' r='1.9' fill='#f0a98f' opacity='.55'/>" }
       ];
       var AV_KEY = "tkm:v1:avatar", avSeq = 0;
       function charOf(id) { return CHARS.filter(function (c) { return c.id === id; })[0] || null; }
-      function prevCefr(c) { var i = CHARS.indexOf(c); return i > 0 ? CHARS[i - 1].cefr : ""; }
+      // The achievements by id (worked out from the progress, as in My Profile's list), for the characters they bring.
+      function achById() {
+        var m = {};
+        try { T.progress.achievements(st.index, store.course(), store.cards(), store.settings(), Date.now()).forEach(function (a) { m[a.id] = a; }); } catch (e) {}
+        return m;
+      }
+      // How to meet a character not met yet, in plain text.
+      function howToMeet(c, ach) {
+        var a = c.ach && ach[c.ach];
+        if (c.level) return "Certify " + c.level.toUpperCase() + " to meet the " + c.name.toLowerCase() + ": finish every unit of the level";
+        return "Earn " + (a ? a.en + " (" + a.text.charAt(0).toLowerCase() + a.text.slice(1) + ")" : "an achievement") + " to meet the " + c.name.toLowerCase();
+      }
       // The character's picture as an <svg> clipped to a circle; with blink, the greeter's version with eyelids (.cr in the CSS).
       function charSvg(id, size, blink) {
         var c = charOf(id);
@@ -874,16 +933,19 @@
           '<g clip-path="url(#' + k + ')">' + c.art + lids + "</g></svg>";
       }
       function storedChar() { try { return localStorage.getItem(AV_KEY); } catch (e) { return null; } }
-      // The characters the learner has met: the A1 foal from the start, then the next level's with each level certified.
-      function charsMet(s) {
-        var met = { a1: true };
-        s.levels.forEach(function (l, i) { if (l.certified && s.levels[i + 1]) met[s.levels[i + 1].id] = true; });
+      // The characters the learner has met: the foal from the start, a level's character once the level is certified, an
+      // achievement's once it is earned. Nothing new is stored, so they follow the learner with an exported file.
+      function charsMet(s, ach) {
+        var met = { a1: true }, cert = {};
+        ach = ach || achById();
+        s.levels.forEach(function (l) { if (l.certified) cert[l.id] = true; });
+        CHARS.forEach(function (c) { if (c.level ? cert[c.level] : c.ach && ach[c.ach] && ach[c.ach].done) met[c.id] = true; });
         return met;
       }
-      function currentChar(s) {
-        var met = charsMet(s), mine = storedChar(), w = s.working || s.certified;
+      function currentChar(s, ach) {
+        var met = charsMet(s, ach), mine = storedChar(), lv = CHARS.filter(function (c) { return c.level && met[c.id]; }).pop();
         if (mine && met[mine] && charOf(mine)) return mine;
-        return w && met[w.id] && charOf(w.id) ? w.id : "a1";
+        return lv ? lv.id : "a1";
       }
       // The greeting (UI-5, TK-BUILD-2): the character says hello and leads to My Profile, where the characters are.
       // Its Turkmen lines are listed in the TM-PROJECT.md progress log for the native review.
@@ -898,7 +960,7 @@
         else if (sk.current && !sk.done) { say = "Salam!"; sub = "Hello! A lesson today keeps your " + plural(sk.current, "day") + " streak going."; }
         else { say = "Salam!"; sub = sk.done ? "Hello! Ready for another lesson?" : "Hello! Ready for today's lesson?"; }
         if (yay && !st.hopUntil) st.hopUntil = now + 2500;   // it hops when the page opens, not at every redraw
-        return '<a class="hello' + (yay && now < st.hopUntil ? " yay" : "") + '" id="hello" href="#profile" data-lvl="' + id + '" title="' + esc(c.name + ": your characters are in My Profile") + '">' +
+        return '<a class="hello' + (yay && now < st.hopUntil ? " yay" : "") + '" id="hello" href="#profile" data-lvl="' + c.hue + '" title="' + esc(c.name + ": your characters are in My Profile") + '">' +
           '<span class="hello-pic">' + charSvg(id, 60, true) + '</span><span class="hello-bub"><span class="hello-say" lang="tk">' + esc(say) + "</span>" +
           '<span class="hello-sub">' + esc(sub) + "</span></span></a>";
       }
@@ -1034,7 +1096,7 @@
           if (p[0] === v) $(p[1]).setAttribute("aria-current", "page"); else $(p[1]).removeAttribute("aria-current");
         });
         document.title = v === "about" ? "About · Daily Turkmen" : v === "settings" ? "Settings · Daily Turkmen" : v === "profile" ? "My Profile · Daily Turkmen" : TITLE;
-        if (v === "profile") { renderProfile(); settleFresh(); }
+        if (v === "profile") { if (A) A.ensure().catch(function () {}); renderProfile(); settleFresh(); }
         return v !== "course";
       }
       ["tab-settings", "tab-profile", "tab-about"].forEach(function (id) {
@@ -1051,6 +1113,13 @@
       window.addEventListener("popstate", showView);
 
       function openFromHash() {
+        if (/^#sign(?:in|up)$/.test(location.hash)) {   // #signin or #signup (the nudge, the hub's lede): My Profile's account card
+          pf.mode = location.hash.slice(1); pf.msg = null;
+          history.replaceState(null, "", location.pathname + location.search + "#profile");
+          showView(); renderAccount(); window.scrollTo(0, 0);
+          setTimeout(function () { var side = $("pf-side"); if (side && side.getBoundingClientRect().top > innerHeight * 0.6) side.scrollIntoView({ block: "start" }); if ($("pf-email")) $("pf-email").focus({ preventScroll: true }); }, 60);
+          return;
+        }
         if (showView()) { window.scrollTo(0, 0); return; }
         var id = decodeURIComponent(location.hash.slice(1));
         if (!id || !st.index) return;
@@ -1145,7 +1214,7 @@
         reader.readAsText(file);
       });
       $("p-reset").addEventListener("click", function () {
-        showConfirm("<b>Delete all your progress " + HERE + "?</b><br>Lessons, XP, streak, mistakes, flashcards and settings go back to the start. " +
+        showConfirm("<b>Delete all your progress " + HERE + (A && A.user ? " and in your online profile" : "") + "?</b><br>Lessons, XP, streak, mistakes, flashcards and settings go back to the start. " +
           '<a href="#" data-act="export-first">Export a copy first</a> if you might want it back.' +
           '<div class="btns"><button type="button" class="btn danger solid" data-act="reset">Delete everything</button><button type="button" class="btn" data-act="cancel">Cancel</button></div>');
       });
@@ -1164,15 +1233,171 @@
         if (act === "reset") { store.reset(); hideConfirm(); $("p-status").textContent = "Your progress was reset."; }
       });
 
-      // ── profile: the progress dashboard and the characters (no account card: TM-PROJECT.md 2) ──
-      var pf = { charMsg: null };
+      // ── profile: the account card (ACCT-TK), the progress dashboard and the characters ──
+      var pf = { charMsg: null, editing: false, busy: false, msg: null, err: false, confirmDel: false, mode: "signin", showPw: false, pwOpen: false };
       var num = function (n) { return Number(n).toLocaleString("en-US"); };
       var ratio = function (a, b) { return b ? Math.max(0, Math.min(1, a / b)) : 0; };
       var barHtml = function (r, cls) { return '<span class="bar' + (cls ? " " + cls : "") + '" aria-hidden="true"><i style="width:' + (r > 0 ? Math.max(2, Math.round(r * 100)) : 0) + '%"></i></span>'; };
       function renderProfile() {
         if ($("profile").hidden) return;
+        renderAccount();
         renderDash();
       }
+      // ── the account card (ACCT-TK): forked from Daily Turkish's My Profile (turkish.html, ACCT-1), with no Google or
+      // Apple buttons and no dialog. One account for both courses: the name is shared, the progress is per course. ──
+      var OPEN_RESET = "Open it in this browser.";
+      var TK_MARK = '<svg viewBox="14 14 152 152" width="18" height="18" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#e34b4f"/><circle cx="76" cy="55" r="17" fill="#fff"/><circle cx="83" cy="49" r="16" fill="#e34b4f"/><path d="m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z" fill="#fff"/><path d="M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z" fill="#fff"/></svg>';
+      function ago(t) {
+        var sec = Math.round((Date.now() - t) / 1000);
+        if (sec < 30) return "just now";
+        if (sec < 3600) return plural(Math.max(1, Math.round(sec / 60)), "minute") + " ago";
+        return "at " + new Date(t).toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit" });
+      }
+      // Re-rendering keeps what's being typed and where the cursor is (sync updates arrive while typing).
+      function renderAccount() {
+        var keep = {}, focus = document.activeElement && $("pf-acct").contains(document.activeElement) ? document.activeElement.id : null;
+        ["pf-email", "pf-pass", "pf-name"].forEach(function (id) { if ($(id)) keep[id] = $(id).value; });
+        drawAccount();
+        Object.keys(keep).forEach(function (id) { if ($(id)) $(id).value = keep[id]; });
+        if (focus && $(focus)) $(focus).focus();
+        $("pf-lede").textContent = A && A.user && A.profile && A.profile.display_name
+          ? "Salam, " + A.profile.display_name + "! Your level, your XP, and how far you've come in lessons and words."
+          : "Your level, your XP, and how far you've come in lessons and words.";
+      }
+      function drawAccount() {
+        var el = $("pf-acct"), h = "", msg = pf.msg ? '<p class="pf-msg' + (pf.err ? " err" : "") + '" role="alert">' + esc(pf.msg) + "</p>" : "";
+        var both = '<p class="pf-both">' + TK_MARK + "<span>The same account as on Daily Turkish: one email and password for both courses.</span></p>";
+        if (!A) { el.innerHTML = '<p class="eyebrow">Online profile</p><p class="sub">Online profiles couldn\'t be loaded. Reload the page to try again; your progress is still saved ' + HERE + ".</p>"; return; }
+        if (A.status === "off" || A.status === "loading") { el.innerHTML = '<p class="eyebrow">Checking whether you\'re signed in…</p>'; return; }
+        if (A.status === "unavailable") {
+          el.innerHTML = '<p class="eyebrow">Online profile</p><h3>Not reachable right now</h3><p class="sub">' + esc(A.error || "") + '</p><button type="button" class="btn block" data-act="retry">Try again</button>';
+          return;
+        }
+        if (A.status === "signed-out") {
+          var m = pf.mode, bz = pf.busy ? " disabled" : "";
+          var pwField = function (auto) {
+            return '<label for="pf-pass">Password</label>' +
+              '<input class="input" type="' + (pf.showPw ? "text" : "password") + '" id="pf-pass" autocomplete="' + auto + '" minlength="8" required' + (auto === "new-password" ? ' placeholder="At least 8 characters"' : "") + ">" +
+              '<label class="pf-show"><input type="checkbox" data-act="showpw"' + (pf.showPw ? " checked" : "") + "> Show password</label>";
+          };
+          var emailField = '<label for="pf-email">Email</label><input class="input" type="email" id="pf-email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>';
+          h += '<p class="eyebrow">Save your progress online</p><h3>' + (m === "signup" ? "Create your profile" : m === "forgot" ? "Reset your password" : m === "link" ? "Sign in with an email link" : "Sign in to your profile") + "</h3>";
+          if (m === "signin" || m === "signup") h += '<ul class="pf-perks"><li>Your XP, streak, lessons and flashcards, saved online</li><li>Carry on from your phone, laptop or any browser</li><li>Free: sign in with your email and password</li></ul>' + both;
+          if (A.error) h += '<p class="pf-msg err" role="alert">' + esc(A.error) + "</p>";
+          if (A.sentTo) {
+            var k = A.sentKind;
+            h += '<div class="pf-sent" role="status"><b>Check your inbox.</b> ' +
+              (k === "confirm" ? "We sent a link to <b>" + esc(A.sentTo) + "</b> to confirm your email. Open it once to activate your profile; after that, you just sign in with your email and password."
+                : k === "reset" ? "If a profile exists for <b>" + esc(A.sentTo) + "</b>, we sent it a link to choose a new password. " + OPEN_RESET
+                : "We sent a sign-in link to <b>" + esc(A.sentTo) + "</b>. Open it in this browser to sign in here.") +
+              " It can take a minute to arrive; look in your spam folder too.</div>" +
+              '<p class="pf-msg"><button type="button" class="linkbtn" data-act="again">Back to sign in</button></p>';
+          } else if (m === "link") {
+            h += '<form class="pf-form" id="pf-signin" novalidate>' + emailField +
+              '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Sending…" : "Email me a sign-in link") + "</button></form>" + msg +
+              '<p class="help">No password needed: the link signs you in, or creates your profile if you don\'t have one. <button type="button" class="linkbtn" data-act="mode-signin">Use my password instead</button></p>';
+          } else if (m === "forgot") {
+            h += '<form class="pf-form" id="pf-signin" novalidate>' + emailField +
+              '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Sending…" : "Email me a reset link") + "</button></form>" + msg +
+              '<p class="help"><button type="button" class="linkbtn" data-act="mode-signin">Back to sign in</button></p>';
+          } else if (m === "signup") {
+            h += '<form class="pf-form" id="pf-signin" novalidate>' + emailField + pwField("new-password") +
+              '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Creating…" : "Create my profile") + "</button></form>" + msg +
+              '<p class="help">Already have a profile, here or on Daily Turkish? <button type="button" class="linkbtn" data-act="mode-signin">Sign in</button>. The progress ' + HERE + " is added to your profile.</p>";
+          } else {
+            h += '<form class="pf-form" id="pf-signin" novalidate>' + emailField + pwField("current-password") +
+              '<button type="submit" class="btn primary"' + bz + ">" + (pf.busy ? "Signing in…" : "Sign in") + "</button></form>" + msg +
+              '<p class="pf-alts"><button type="button" class="linkbtn" data-act="mode-forgot">Forgot password?</button><button type="button" class="linkbtn" data-act="mode-link">Email me a sign-in link instead</button></p>' +
+              '<p class="help">New here? <button type="button" class="linkbtn" data-act="mode-signup">Create a profile</button>. The progress ' + HERE + " is added to your profile.</p>";
+          }
+          el.innerHTML = h;
+          return;
+        }
+        // signed in
+        var name = A.profile && A.profile.display_name, email = A.user.email || "";
+        h += '<div class="pf-who"><span class="avatar" aria-hidden="true">' + esc(T.tkUpper((name || email || "?").charAt(0))) + "</span><div>" +
+          '<p class="pf-name">' + esc(name || "Hoş geldiň!") + '</p><p class="pf-mail">' + esc(email) + "</p></div></div>";
+        if (A.profile && (!name || pf.editing)) {
+          h += '<form class="pf-form" id="pf-nameform"><label for="pf-name">' + (name ? "Your name" : "What should we call you?") + "</label>" +
+            '<input class="input" id="pf-name" maxlength="40" autocomplete="nickname" value="' + esc(name || "") + '" placeholder="Your first name">' +
+            '<div class="btns"><button type="submit" class="btn primary"' + (pf.busy ? " disabled" : "") + ">Save</button>" + (name ? '<button type="button" class="btn" data-act="cancel-name">Cancel</button>' : "") + "</div></form>";
+        } else if (name) h += '<p class="pf-msg"><button type="button" class="linkbtn" data-act="edit-name">Change name</button></p>';
+        if (A.recovering || pf.pwOpen) {
+          h += '<form class="pf-form" id="pf-pwform" novalidate><label for="pf-pass">' + (A.recovering ? "Choose a new password" : "New password") + "</label>" +
+            '<input class="input" type="' + (pf.showPw ? "text" : "password") + '" id="pf-pass" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>' +
+            '<label class="pf-show"><input type="checkbox" data-act="showpw"' + (pf.showPw ? " checked" : "") + "> Show password</label>" +
+            '<div class="btns"><button type="submit" class="btn primary"' + (pf.busy ? " disabled" : "") + ">Save password</button>" +
+            (A.recovering ? "" : '<button type="button" class="btn" data-act="cancel-pw">Cancel</button>') + "</div></form>";
+        } else h += '<p class="pf-msg"><button type="button" class="linkbtn" data-act="pw">Set or change password</button></p>';
+        var syncTxt = { idle: "Connecting…", syncing: "Saving…", saved: "Saved online " + (A.syncedAt ? ago(A.syncedAt) : ""), offline: "Offline: saved " + HERE + ", will sync when you're back online", error: "Not saved online yet" }[A.sync] || "";
+        h += '<p class="pf-sync ' + esc(A.sync) + '"><i aria-hidden="true"></i><span>' + esc(syncTxt) + "</span></p>";
+        if (A.error) h += '<p class="pf-msg err" role="alert">' + esc(A.error) + ' <button type="button" class="linkbtn" data-act="sync">Retry</button></p>';
+        h += msg + '<p class="pf-both">' + TK_MARK + '<span>This account also works on <a href="/turkish.html">Daily Turkish</a>, with its own progress there.</span></p>';
+        if (pf.confirmDel) {
+          h += '<div class="confirm err" role="alert"><b>Delete your profile?</b><br>Your sign-in, your name and your progress saved online are deleted for good, <b>in both Daily Turkmen and Daily Turkish</b>, and this browser starts again from zero.' +
+            '<div class="btns"><button type="button" class="btn danger solid" data-act="delete-yes"' + (pf.busy ? " disabled" : "") + '>Delete my profile</button><button type="button" class="btn" data-act="delete-no">Cancel</button></div></div>';
+        } else {
+          h += '<div class="btns"><button type="button" class="btn" data-act="signout"' + (pf.busy ? " disabled" : "") + '>Sign out</button><button type="button" class="btn danger" data-act="delete">Delete profile…</button></div>' +
+            '<p class="help">Signing out clears this browser; your progress stays in your profile.</p>';
+        }
+        el.innerHTML = h;
+      }
+      function flash(m, err) { pf.msg = m; pf.err = !!err; renderAccount(); }
+      $("pf-acct").addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!A || pf.busy) return;
+        if (e.target.id === "pf-signin") {
+          var email = $("pf-email").value, pw = $("pf-pass") ? $("pf-pass").value : "";
+          var go = pf.mode === "link" ? A.signIn(email) : pf.mode === "forgot" ? A.resetPassword(email)
+            : pf.mode === "signup" ? A.signUp(email, pw) : A.signInPassword(email, pw);
+          pf.busy = true; pf.msg = null; renderAccount();
+          go.then(function () { pf.busy = false; pf.msg = null; renderAccount(); })
+            .catch(function (er) {
+              pf.busy = false; renderAccount();
+              if ($("pf-email")) $("pf-email").value = email; if ($("pf-pass")) $("pf-pass").value = pw;
+              flash(er.message, true);
+              var f = /password/i.test(er.message) && $("pf-pass") ? $("pf-pass") : $("pf-email"); if (f) f.focus();
+            });
+        }
+        if (e.target.id === "pf-pwform") {
+          var npw = $("pf-pass").value;
+          pf.busy = true; pf.msg = null; renderAccount();
+          A.setPassword(npw).then(function () { pf.busy = false; pf.pwOpen = false; pf.showPw = false; flash("Password saved. Next time, sign in with your email and this password, here and on Daily Turkish."); })
+            .catch(function (er) { pf.busy = false; renderAccount(); if ($("pf-pass")) { $("pf-pass").value = npw; } flash(er.message, true); if ($("pf-pass")) $("pf-pass").focus(); });
+        }
+        if (e.target.id === "pf-nameform") {
+          pf.busy = true;
+          A.setName($("pf-name").value).then(function () { pf.busy = false; pf.editing = false; pf.msg = null; renderProfile(); })
+            .catch(function (er) { pf.busy = false; flash(er.message, true); });
+        }
+      });
+      $("pf-acct").addEventListener("click", function (e) {
+        var b = e.target.closest("[data-act]");
+        if (!b || !A) return;
+        var act = b.dataset.act;
+        pf.msg = null;
+        if (act === "retry") { A.ensure().catch(function () {}); }
+        if (act === "again") { A.sentTo = null; A.sentKind = null; pf.mode = "signin"; renderAccount(); $("pf-email").focus(); }
+        if (/^mode-/.test(act)) { pf.mode = act.slice(5); A.error = null; renderAccount(); if ($("pf-email")) $("pf-email").focus(); }
+        if (act === "showpw") { pf.showPw = b.checked; renderAccount(); if ($("pf-pass")) $("pf-pass").focus(); }
+        if (act === "pw") { pf.pwOpen = true; renderAccount(); $("pf-pass").focus(); }
+        if (act === "cancel-pw") { pf.pwOpen = false; renderAccount(); }
+        if (act === "edit-name") { pf.editing = true; renderAccount(); $("pf-name").focus(); }
+        if (act === "cancel-name") { pf.editing = false; renderAccount(); }
+        if (act === "sync") A.syncNow();
+        if (act === "delete") { pf.confirmDel = true; renderAccount(); }
+        if (act === "delete-no") { pf.confirmDel = false; renderAccount(); }
+        if (act === "signout") {
+          pf.busy = true; renderAccount();
+          A.signOut().then(function () { pf.busy = false; flash("You're signed out. Sign in again any time to get your progress back."); })
+            .catch(function (er) { pf.busy = false; flash(er.message, true); });
+        }
+        if (act === "delete-yes") {
+          pf.busy = true; renderAccount();
+          A.deleteAccount().then(function () { pf.busy = false; pf.confirmDel = false; flash("Your profile was deleted."); })
+            .catch(function (er) { pf.busy = false; flash("Your profile couldn't be deleted (" + er.message + ").", true); });
+        }
+      });
       // What My Profile shows, read from the progress: forked from the Turkish course's TRK.account.summary (turkish-account.js),
       // which this course doesn't load.
       function progressSummary(ix) {
@@ -1414,18 +1639,18 @@
         clearTimeout(calWidth);
         calWidth = setTimeout(function () { if (!$("profile").hidden && st.index) renderDash(); }, 200);
       });
-      // ── characters in My Profile: the three, met or not yet; the one picked greets you on the course page ──
+      // ── characters in My Profile: the nine, met or not yet; the one picked greets you on the course page ──
       function renderChars(s) {
-        var el = $("pf-chars"), met = charsMet(s), cur = currentChar(s), mine = storedChar(), n = Object.keys(met).length, c0 = charOf(cur);
-        var note = pf.charMsg || "<b>" + esc(c0.name) + "</b>: " + esc(c0.blurb) + ".";
+        var ach = achById(), el = $("pf-chars"), met = charsMet(s, ach), cur = currentChar(s, ach), mine = storedChar(), n = Object.keys(met).length, c0 = charOf(cur);
+        var note = pf.charMsg || "<b>" + esc(c0.name) + '</b> (<i lang="tk">' + esc(c0.tk) + "</i>): " + esc(c0.blurb) + ".";
         el.innerHTML = '<div class="pf-card-h"><h3>Your character</h3><span>' + n + " of " + CHARS.length + " met</span></div>" +
           '<div class="chars">' + CHARS.map(function (c) {
-            var ok = !!met[c.id], on = ok && c.id === cur;
+            var ok = !!met[c.id], on = ok && c.id === cur, how = ok ? "" : howToMeet(c, ach), a = c.ach && ach[c.ach];
             return '<button type="button" class="char' + (ok ? "" : " locked") + '" data-av="' + c.id + '" aria-pressed="' + on + '"' + (ok ? "" : ' aria-disabled="true"') +
-              ' title="' + esc(ok ? c.name + ": " + c.blurb : "Certify " + prevCefr(c) + " to meet the " + c.name.toLowerCase()) + '">' + charSvg(c.id, 52) +
-              '<span class="nm">' + esc(c.name) + '</span><span class="lv">' + c.cefr + "</span>" +
+              ' title="' + esc(ok ? c.name + ": " + c.blurb : how) + '">' + charSvg(c.id, 52) +
+              '<span class="nm">' + esc(c.name) + '</span><span class="lv">' + esc(c.tag || (a ? a.en : "")) + "</span>" +
               (on ? '<span class="corner">' + ICON.check + "</span>" : !ok ? '<span class="corner">' + ICON.lock + "</span>" : "") +
-              '<span class="sr">' + (ok ? (on ? ", greets you on the course page" : "") : ", not met yet: certify " + prevCefr(c) + " to meet it") + "</span></button>";
+              '<span class="sr">' + (ok ? (on ? ", greets you on the course page" : "") : ", not met yet: " + esc(how.charAt(0).toLowerCase() + how.slice(1))) + "</span></button>";
           }).join("") + "</div>" +
           '<p class="char-note" role="status">' + note + (mine && met[mine] && !pf.charMsg ? ' <button type="button" class="linkbtn" data-av="">Let my level choose</button>' : "") + "</p>";
       }
@@ -1433,11 +1658,17 @@
         var b = e.target.closest("[data-av]");
         if (!b) return;
         var id = b.dataset.av, c = charOf(id);
-        if (b.getAttribute("aria-disabled") === "true") { pf.charMsg = "Certify <b>" + prevCefr(c) + "</b> to meet the " + esc(c.name.toLowerCase()) + ": finish every unit of the level."; renderProfile(); return; }
+        if (b.getAttribute("aria-disabled") === "true") { pf.charMsg = esc(howToMeet(c, achById())) + "."; renderProfile(); return; }
         pf.charMsg = null;
         try { if (id) localStorage.setItem(AV_KEY, id); else localStorage.removeItem(AV_KEY); } catch (er) { pf.charMsg = "This browser isn't letting the page save your choice."; }
         renderProfile(); renderToday();
       });
+
+      if (A) A.onChange(function () {
+        if ($("profile").hidden && viewOf() === "profile") showView();   // back from an emailed link: the account module set #profile
+        renderProfile();
+      });
+      setInterval(function () { if (A && A.sync === "saved" && !$("profile").hidden && !document.hidden) renderAccount(); }, 30000);   // "saved 2 minutes ago"
 
       // ── boot ──
       function render() { checkUnlocks(); renderNotices(); renderToday(); renderPath(); renderProfile(); settleFresh(); }

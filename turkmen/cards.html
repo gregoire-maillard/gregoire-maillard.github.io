@@ -68,7 +68,7 @@
         .at-hdr .at-tab { min-width: 44px; justify-content: center; padding: 0 10px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 10px; right: 10px; }
       }
-      /* the link back to Daily Turkish (TK-BUILD-2): its mark and name, after a hairline; the mark alone on a phone */
+      /* the link to Daily Turkish (TK-BUILD-2): its mark alone, after a hairline (its name only for screen readers) */
       .at-hdr .at-sis { gap: 7px; font-size: 13px; }
       .at-hdr .at-sis::before { content: ""; align-self: center; width: 1px; height: 20px; margin-right: 9px; background: rgb(15 23 42 / .12); }
       .at-hdr .at-sis svg { display: block; flex: none; }
@@ -81,7 +81,7 @@
         .at-hdr .at-sis::before { margin-right: 4px; }
       }
       @media (max-width: 599px) { .at-hdr .at-wrap { gap: 8px; } }
-      @media (max-width: 899px) {   /* the link back to Daily Turkish: its mark alone until there's room for its name */
+      @media all {   /* the link to Daily Turkish: its mark alone at every width; the name stays for screen readers */
         .at-hdr .at-sis { min-width: 44px; justify-content: center; }
         .at-hdr .at-sis .at-set-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       }
@@ -470,6 +470,7 @@
       .tw-t.gold::after { background: #a87812; }
     </style>
     <script defer src="/assets/js/turkmen.js"></script>
+    <script defer src="/assets/js/turkmen-account.js"></script>
     <style>
       /* Footer: one line asking for a cup of tea, on Daily Turkish's page (buymeacoffee.com/dailyturkish) */
       .dt-foot { margin: 48px auto 0; padding: 0 16px 28px; text-align: center;
@@ -960,8 +961,10 @@
         var s = T.progress.streak(course, set, now);
         if (s.done) h += '<p class="sub">Today counts toward your ' + (s.current > 1 ? s.current + "-day " : "") + "streak.</p>";
         h += '<div class="row">' + (S.sess && S.sess.canUndo() ? '<button type="button" class="btn" data-act="undo">' + ICON.undo + "Undo the last answer</button>" : "") +
-          '<a class="btn primary" href="' + P.hub + '">Back to the course</a><a class="btn" href="?view=stats" data-view="stats">Statistics</a></div></div>';
+          '<a class="btn primary" href="' + P.hub + '">Back to the course</a><a class="btn" href="?view=stats" data-view="stats">Statistics</a></div><div id="nudge" hidden></div></div>';
         $("v-review").innerHTML = h;
+        // ACCT-TK: signed out, after a session, an invitation to keep the schedule with a free account (turkmen-account.js)
+        if (r.answered && T.account && T.account.nudge) T.account.nudge($("nudge"), { xp: course.xp.total, streak: s.current, cards: r.answered });
       }
 
       // keyboard (PROJECT.md 3): Space or Enter shows the answer, then 1–4 answer and Space or Enter is Good; Z undoes, Esc ends (no R: nothing is read aloud)

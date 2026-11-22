@@ -36,6 +36,7 @@
   var C = {
     DATA: "/assets/data/turkmen/",
     APP: "daily-turkmen",
+    LANG: "tk",            // the course's language code: its rows in Supabase (enrollments, activity_days…; ACCT-TK)
     APP_TURKISH: "gregoiremaillard.com/turkish",   // a Daily Turkish export: import refuses it with its own message
     KEYS: { course: "tkm:v1:course", cards: "tkm:v1:cards", settings: "tkm:v1:settings" },
     // The pages sit in /turkmen/ and link to each other relatively (TM-PROJECT.md 3), so the same links work on
