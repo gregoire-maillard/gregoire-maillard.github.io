@@ -155,6 +155,20 @@ function bareId(t, where) {
 
 function checkText(s, lang, where, o = {}) { if (lang === "tk") checkTk(s, where, o); else checkEnText(s, where); }
 
+// QA-TK-2, ported from the Turkish course's QA-2: markup in a plain-text field would show as typed (asterisks, backticks)
+function rawMarkup(s, where) {
+  const m = s.match(/\*+[^*]*\*+|\*|`[^`]*`?|\[[^\]\n]+\]\([^)\s]+\)/);
+  if (m) warn(where, `“${m[0].slice(0, 40)}”: markup isn't rendered in a plain-text field; write it without * \` or [ ]( )`);
+}
+// Options follow optionsLang (TM-PROJECT.md 5.0, QA-TK-2): Turkmen options are plain Tk; English options are Rich
+// without links (*Turkmen*, `code` and **bold** render; a link would sit inside a button, so it goes in explain).
+// wrong: a wrong option of an mcq, which a spelling drill may misspell on purpose (TM-PROJECT.md 8).
+function checkOption(o, lang, where, cx, { wrong = false } = {}) {
+  if (lang === "tk") { checkTk(o, where, { sentence: false, wrong }); rawMarkup(o, where); return; }
+  checkRich(o, where, cx); checkEnText(o, where);
+  if (/\]\(/.test(o)) warn(where, "a link in an option: the option is a button, so leave the link to explain");
+}
+
 // inline markup (PROJECT.md 5.1, TM-PROJECT.md 5.0): *Turkmen*, **bold**, `code`, [label](ref)
 function checkRich(s, where, cx) {
   let t = s.replace(/\\\*/g, "\u0001");
@@ -232,7 +246,7 @@ function expand(entry) {
   return { list: out.map(s => s.replace(/\s+/g, " ").replace(/\s+([.,!?;:…])/g, "$1").trim()) };
 }
 
-const CONTRACTIONS = [
+const CONTRACTION_LIST = [
   ["i'm", "i am"], ["you're", "you are"], ["we're", "we are"], ["they're", "they are"], ["he's", "he is"], ["she's", "she is"],
   ["it's", "it is"], ["that's", "that is"], ["there's", "there is"], ["here's", "here is"], ["what's", "what is"], ["where's", "where is"],
   ["who's", "who is"], ["how's", "how is"], ["isn't", "is not"], ["aren't", "are not"], ["wasn't", "was not"], ["weren't", "were not"],
@@ -241,7 +255,9 @@ const CONTRACTIONS = [
   ["shouldn't", "should not"], ["mustn't", "must not"], ["i'll", "i will"], ["you'll", "you will"], ["he'll", "he will"],
   ["she'll", "she will"], ["it'll", "it will"], ["we'll", "we will"], ["they'll", "they will"], ["i've", "i have"], ["you've", "you have"],
   ["we've", "we have"], ["they've", "they have"], ["i'd", "i would"], ["you'd", "you would"], ["he'd", "he would"], ["she'd", "she would"],
-  ["we'd", "we would"], ["they'd", "they would"], ["let's", "let us"],
+  ["we'd", "we would"], ["they'd", "they would"], ["it'd", "it would"], ["that'd", "that would"],
+  ["there'd", "there would"], ["who'd", "who would"], ["could've", "could have"], ["should've", "should have"],
+  ["would've", "would have"], ["might've", "might have"], ["must've", "must have"], ["who've", "who have"], ["let's", "let us"],
   // the same without the apostrophe, which phone keyboards leave out (inputs have autocorrect off); not its, lets, were, well, ill, id, hed, shed, wed
   ["im", "i am"], ["youre", "you are"], ["theyre", "they are"], ["hes", "he is"], ["shes", "she is"], ["thats", "that is"],
   ["theres", "there is"], ["heres", "here is"], ["whats", "what is"], ["wheres", "where is"], ["whos", "who is"], ["hows", "how is"],
@@ -249,18 +265,28 @@ const CONTRACTIONS = [
   ["didnt", "did not"], ["havent", "have not"], ["hasnt", "has not"], ["hadnt", "had not"], ["wont", "will not"], ["wouldnt", "would not"],
   ["cant", "can not"], ["couldnt", "could not"], ["shouldnt", "should not"], ["mustnt", "must not"], ["ive", "i have"], ["youve", "you have"],
   ["weve", "we have"], ["theyve", "they have"], ["youll", "you will"], ["theyll", "they will"], ["itll", "it will"], ["youd", "you would"],
-  ["theyd", "they would"],
-].map(([a, b]) => [new RegExp(`(^|\\s)${a.replace("'", "'")}(?=\\s|$)`, "g"), `$1${b}`]);
+  ["theyd", "they would"], ["couldve", "could have"], ["shouldve", "should have"], ["wouldve", "would have"],
+  ["mightve", "might have"], ["mustve", "must have"],
+];
+// a learner's 'd is tried as "would" and as "had" (6.4, ported from the Turkish course's QA-2 in QA-TK-2):
+// the same list with "had" for the 'd forms
+const compileContractions = had => CONTRACTION_LIST.map(([a, b]) =>
+  [new RegExp(`(^|\\s)${a}(?=\\s|$)`, "g"), `$1${had && /d$/.test(a) && /would$/.test(b) ? b.replace(/would$/, "had") : b}`]);
+const CONTRACTIONS = compileContractions(false), CONTRACTIONS_HAD = compileContractions(true);
+// 's before "been" is "has" (it's been, it has been), also typed without the apostrophe
+const HAS_BEEN = /(^|\s)(it|that|there|here|what|who|where|how|he|she)'?s been(?=\s|$)/g;
 
 // stage-1 normalization of TM-PROJECT.md 6.4 (apostrophes kept): plain lowercasing in both languages, since Turkmen has
 // no dotted and dotless i pair; U+0307 is still removed, the residue of an İ typed on a Turkish keyboard.
-function norm(s, lang) {
+// had: read every 'd as "had" instead of "would" (the second reading the checker tries for an English answer).
+function norm(s, lang, had) {
   s = s.normalize("NFC").replace(/[’‘ʼ´`]/g, "'").replace(/[“”„"«»]/g, " ");
   s = s.toLowerCase();
   s = s.replace(/̇/g, "").replace(/[.,!?;:()…¿¡]/g, " ").replace(/[-–—/]/g, " ");
   s = s.replace(/\s+/g, " ").trim();
   if (lang === "en") {
-    for (const [re, r] of CONTRACTIONS) s = s.replace(re, r);
+    s = s.replace(HAS_BEEN, "$1$2 has been");
+    for (const [re, r] of had ? CONTRACTIONS_HAD : CONTRACTIONS) s = s.replace(re, r);
     s = fold(s).replace(/\s+/g, " ").trim();
   }
   return s;
@@ -278,9 +304,12 @@ function checkAccept(list, lang, where, rejects, mode = "lenient") {
     if (k === 0 && /[[\]()|]/.test(entry)) err(w, "accept[0] is the canonical answer shown to learners: plain text, no [ ] ( ) |");
     const ex = expand(entry);
     if (ex.error) { err(w, `“${entry}”: ${ex.error}`); return; }
+    if (lang === "en" && /(?:^|[\s\[(|])(?:i|you|he|she|it|we|they|that|there|who)['’]d(?=[\s\])|.,!?]|$)/i.test(entry))
+      warn(w, `“${entry}”: write 'd out as “had” or “would” (TM-PROJECT.md 7.3); the checker tries both for a learner's 'd`);
     for (const s of ex.list) {
       if (!s) { err(w, "an expansion is empty"); continue; }
       checkText(s, lang, w, { sentence: k === 0 });
+      rawMarkup(s, w);
       const n = norm(s, lang);
       if (all.has(n) && all.get(n) !== k) warn(w, `“${s}” is already accepted by accept[${all.get(n)}]`);
       else if (all.has(n)) warn(w, `“${s}” appears twice in its own expansions`);
@@ -444,7 +473,9 @@ const S = {
 };
 const T = {
   tk: S.str({ text: "tk" }), en: S.str({ text: "en" }), rich: S.str({ text: "rich" }), tkRich: S.str({ text: "tkRich" }),
-  seg: S.str({ text: "seg" }), plain: S.str({ text: "plain" }), cell: S.str({ empty: true, text: "plain" }),
+  seg: S.str({ text: "seg" }), plain: S.str({ text: "plain" }), cell: S.str({ empty: true, text: "cell" }),
+  // an option follows its exercise's optionsLang (checkOption); an accept entry is checked on its expansions (checkAccept)
+  option: S.str({ text: "option" }), accept: S.str({ text: "accept" }),
   mono: S.str({ text: "mono" }), // rule lines: aligned with spaces
   // a flashcard file's credit line: it names the Turkish list the deck's order comes from (TM-PROJECT.md 7.8, CC BY-SA)
   credit: S.str({ text: "credit" }),
@@ -474,15 +505,15 @@ const BLOCK = S.union("type", {
 });
 
 const EX_BASE = { id: S.str({ re: RE.exercise }), type: S.oneOfLit(TYPES), "points?": S.arr(gpId, { min: 1, unique: true }), "hint?": T.rich, "explain?": T.rich };
-const mcqQ = S.obj({ q: T.rich, options: S.arr(T.plain, { min: 2, max: 6 }), optionsLang: lang, answer: S.int({ min: 0 }), "explain?": T.rich });
+const mcqQ = S.obj({ q: T.rich, options: S.arr(T.option, { min: 2, max: 6 }), optionsLang: lang, answer: S.int({ min: 0 }), "explain?": T.rich });
 const EXERCISE = S.union("type", {
-  mcq: S.obj({ ...EX_BASE, question: T.rich, "context?": S.arr(S.obj({ "who?": T.tk, tk: T.tk, "en?": T.en }), { min: 1 }), options: S.arr(T.plain, { min: 2, max: 6 }), optionsLang: lang, answer: S.int({ min: 0 }), "why?": S.map(/^\d+$/, T.rich) }),
-  cloze: S.obj({ ...EX_BASE, text: T.plain, en: T.en, blanks: S.arr(S.when(b => b && typeof b === "object" && "options" in b, S.obj({ options: S.arr(T.plain, { min: 2, max: 6 }), answer: S.int({ min: 0 }) }), S.obj({ accept: S.arr(T.plain, { min: 1 }), "reject?": S.arr(reject, { min: 1 }) })), { min: 1, max: 4 }), "diacritics?": dia }),
-  translate: S.obj({ ...EX_BASE, from: lang, prompt: T.plain, accept: S.arr(T.plain, { min: 1 }), "reject?": S.arr(reject, { min: 1 }), "diacritics?": dia }),
-  wordbank: S.obj({ ...EX_BASE, from: lang, prompt: T.plain, text: T.plain, answer: S.arr(T.plain, { min: 1 }), distractors: S.arr(T.plain, { max: 6 }), "accept?": S.arr(T.plain, { min: 1 }) }),
+  mcq: S.obj({ ...EX_BASE, question: T.rich, "context?": S.arr(S.obj({ "who?": T.tk, tk: T.tk, "en?": T.en }), { min: 1 }), options: S.arr(T.option, { min: 2, max: 6 }), optionsLang: lang, answer: S.int({ min: 0 }), "why?": S.map(/^\d+$/, T.rich) }),
+  cloze: S.obj({ ...EX_BASE, text: T.plain, en: T.en, blanks: S.arr(S.when(b => b && typeof b === "object" && "options" in b, S.obj({ options: S.arr(T.plain, { min: 2, max: 6 }), answer: S.int({ min: 0 }) }), S.obj({ accept: S.arr(T.accept, { min: 1 }), "reject?": S.arr(reject, { min: 1 }) })), { min: 1, max: 4 }), "diacritics?": dia }),
+  translate: S.obj({ ...EX_BASE, from: lang, prompt: T.plain, accept: S.arr(T.accept, { min: 1 }), "reject?": S.arr(reject, { min: 1 }), "diacritics?": dia }),
+  wordbank: S.obj({ ...EX_BASE, from: lang, prompt: T.plain, text: T.plain, answer: S.arr(T.plain, { min: 1 }), distractors: S.arr(T.plain, { max: 6 }), "accept?": S.arr(T.accept, { min: 1 }) }),
   match: S.obj({ ...EX_BASE, pairs: S.arr(S.tuple([T.tk, T.en]), { min: 4, max: 6 }) }),
   listen: (v, p, cx) => cx.err(p, "listen exercises are not allowed: the Turkmen course has no audio (TM-PROJECT.md 2)"),
-  conjugate: S.obj({ ...EX_BASE, base: T.tk, form: S.str({ re: RE.slug }), label: T.rich, cells: S.arr(S.obj({ p: person, accept: S.arr(T.plain, { min: 1 }) }), { min: 2, max: 6 }), "diacritics?": dia }),
+  conjugate: S.obj({ ...EX_BASE, base: T.tk, form: S.str({ re: RE.slug }), label: T.rich, cells: S.arr(S.obj({ p: person, accept: S.arr(T.accept, { min: 1 }) }), { min: 2, max: 6 }), "diacritics?": dia }),
   morph: S.obj({ ...EX_BASE, base: T.tk, gloss: T.en, parts: S.arr(T.plain, { min: 2 }), distractors: S.arr(T.plain, { min: 2, max: 6 }), result: T.tk }),
   reading: S.obj({ ...EX_BASE, "title?": T.tk, passage: T.tkRich, "glossary?": S.arr(gloss, { min: 1 }), "translation?": T.en, questions: S.arr(mcqQ, { min: 1, max: 5 }) }),
   open: S.obj({ ...EX_BASE, task: T.rich, "source?": T.plain, "sourceLang?": lang, models: S.arr(T.plain, { min: 1, max: 3 }), modelsLang: lang, checklist: S.arr(T.rich, { min: 2, max: 6 }) }),
@@ -527,10 +558,11 @@ function validate(kind, value, file, cx0 = {}) {
   SCHEMA[kind](value, "", cx);
   for (const [k, s, p] of cx.text) {
     const w = at(cx, p);
-    if (k === "plain") hygiene(s, w);
+    if (k === "plain") { hygiene(s, w); rawMarkup(s, w); }
+    else if (k === "cell" || k === "option" || k === "accept") hygiene(s, w);
     else if (k === "mono") hygiene(s, w, { spaces: true });
-    else if (k === "tk") { hygiene(s, w); checkTk(s, w); }
-    else if (k === "en") { hygiene(s, w); checkEnText(s, w); }
+    else if (k === "tk") { hygiene(s, w); checkTk(s, w); rawMarkup(s, w); }
+    else if (k === "en") { hygiene(s, w); checkEnText(s, w); rawMarkup(s, w); }
     else if (k === "credit") { hygiene(s, w); sentenceCase(s, w); bareId(s, w); }
     else if (k === "rich") { hygiene(s, w); checkRich(s, w, cx); }
     else if (k === "tkRich") { hygiene(s, w, { multiline: true }); checkTkRich(s, w, cx); }
@@ -771,7 +803,7 @@ function checkExercise(e, w, unitId, cx) {
   switch (e.type) {
     case "mcq": {
       if (e.answer >= e.options.length) err(`${w}.answer`, "points past the last option");
-      e.options.forEach((o, i) => checkText(o, e.optionsLang, `${w}.options[${i}]`, { sentence: false, wrong: i !== e.answer }));
+      e.options.forEach((o, i) => checkOption(o, e.optionsLang, `${w}.options[${i}]`, cx, { wrong: i !== e.answer }));
       dupes(e.options.map(o => norm(o, e.optionsLang)), `${w}.options`);
       for (const k of Object.keys(e.why || {})) {
         if (Number(k) >= e.options.length) err(`${w}.why.${k}`, "no such option");
@@ -862,7 +894,7 @@ function checkExercise(e, w, unitId, cx) {
     case "reading": {
       e.questions.forEach((q, i) => {
         if (q.answer >= q.options.length) err(`${w}.questions[${i}].answer`, "points past the last option");
-        q.options.forEach((o, j) => checkText(o, q.optionsLang, `${w}.questions[${i}].options[${j}]`, { sentence: false }));
+        q.options.forEach((o, j) => checkOption(o, q.optionsLang, `${w}.questions[${i}].options[${j}]`, cx));
         dupes(q.options.map(o => norm(o, q.optionsLang)), `${w}.questions[${i}].options`);
       });
       break;
@@ -910,7 +942,8 @@ function checkBlocks(blocks, where, cx) {
           if (!cell) return;
           const cw = `${w}.rows[${r}][${c}]`;
           const t = b.cols[c];
-          if (t === "tk") checkTk(cell, cw, { sentence: false });
+          if (t === "tk") { checkTk(cell, cw, { sentence: false }); rawMarkup(cell, cw); }
+          else if (t === "en") rawMarkup(cell, cw);
           else if (t === "seg") checkSeg(cell, cw);
           else if (t === "rich") checkRich(cell, cw, cx);
         });
@@ -960,7 +993,7 @@ function checkCulture(rec, cx) {
   checkBlocks(v.blocks, `${file} › blocks`, cx);
   (v.questions || []).forEach((q, i) => {
     if (q.answer >= q.options.length) err(`${file} › questions[${i}].answer`, "points past the last option");
-    q.options.forEach((o, j) => checkText(o, q.optionsLang, `${file} › questions[${i}].options[${j}]`, { sentence: false }));
+    q.options.forEach((o, j) => checkOption(o, q.optionsLang, `${file} › questions[${i}].options[${j}]`, { file }));
   });
   if (v.sources.length < 2) warn(file, "history and archaeology interludes need at least two sources");
   v.sources.forEach((s, i) => { if (!s.url) warn(`${file} › sources[${i}]`, "add a URL so the fact can be checked"); });

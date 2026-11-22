@@ -13,7 +13,7 @@
 </script>
     <meta charset="utf-8">
     <title>Turkmen flashcards: 1,000 useful words · Daily Turkmen</title>
-    <meta name="description" content="1,000 useful Turkmen words on spaced repetition, Anki-style: review in both directions, browse and search the deck, and follow your forecast and retention. Free, no account. In beta.">
+    <meta name="description" content="1,000 useful Turkmen words on spaced repetition, Anki-style: review in both directions, browse and search the deck, and follow your forecast and retention. Free, no account.">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <link rel="icon" type="image/png" sizes="64x64" href="/assets/img/daily-turkmen-favicon.png">
     <link rel="icon" type="image/svg+xml" href="/assets/img/daily-turkmen-favicon.svg">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Daily Turkmen">
     <meta property="og:title" content="Turkmen flashcards: 1,000 useful words">
-    <meta property="og:description" content="1,000 useful Turkmen words, reviewed Anki-style in both directions, with a deck browser and statistics. In beta.">
+    <meta property="og:description" content="1,000 useful Turkmen words, reviewed Anki-style in both directions, with a deck browser and statistics.">
     <meta property="og:url" content="https://dailyturkish.app/turkmen/cards.html">
     <meta property="og:image" content="https://dailyturkish.app/assets/img/daily-turkmen-share.png">
     <meta property="og:image:width" content="1200">
@@ -53,7 +53,7 @@
       .at-hdr .at-logo { width: 28px; height: 28px; flex: none; display: block; }
       .at-hdr .at-name { font-size: 18px; line-height: 1; letter-spacing: -0.02em; }
       .at-hdr .at-d { color: #167a55; font-weight: 600; }
-      .at-hdr .at-t { color: #242424; font-weight: 750; margin-left: 0.22em; }
+      .at-hdr .at-t { color: #242424; font-weight: 750; }
       .at-hdr .at-tabs { display: flex; flex: 1; align-self: stretch; gap: 8px; }
       .at-hdr .at-push { margin-left: auto; }   /* About, My Profile and Settings sit on the right */
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
@@ -103,6 +103,14 @@
         .at-hdr .at-set { min-width: 30px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 3.5px; right: 3.5px; }
       }
+      @media (max-width: 359px) {   /* 320 px (QA-TK-2, as Daily Turkish's QA-2): the seven links fit without a sideways scroll */
+        .at-hdr { --at-m: 6px; }
+        .at-hdr .at-wrap { gap: 0; }
+        .at-hdr .at-home { min-width: 34px; margin-left: -5px; }
+        .at-hdr .at-tab { padding: 0 2px; font-size: 12px; }
+        .at-hdr .at-set { min-width: 27px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 2px; right: 2px; }
+      }
     </style>
     <style>
       /* Page: the site's tokens (stylesheets/styles.css), white page, hairline borders, cards like the Mobility Lab's.
@@ -131,6 +139,8 @@
       .tkm-soon small { font-size: .85em; }
       .tkm-nw { white-space: nowrap; }
       [hidden] { display: none !important; }
+      /* links inside running text carry an underline as well as their colour (WCAG 1.4.1; QA-2 of Daily Turkish, ported in QA-TK-2) */
+      main p a:not(.btn), .note a, .help a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; text-decoration-color: rgb(40 122 158 / .55); }
       .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       .num { font-variant-numeric: tabular-nums; }
 
@@ -473,7 +483,7 @@
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="index.html" aria-label="Daily Turkmen, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#167a55"/><path d="M71 34h38l14 13v18l-14 13H71L57 65V47z" fill="#fff"/><path d="M90 34v44M57 56h66" fill="none" stroke="#a8d5c0" stroke-width="2.5"/><path d="M90 43l13 13-13 13-13-13z" fill="#b23a2e"/><path d="M90 50l6 6-6 6-6-6z" fill="#fff"/><path d="M31 89c17-7 37-5 57 7v42c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 96c20-12 40-14 57-7v42c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 96v42" fill="none" stroke="#a8d5c0" stroke-linecap="round" stroke-width="3"/></svg><span class="at-name"><span class="at-d">Daily</span><span class="at-t">Turkmen</span></span></a>
+        <a class="at-home" href="index.html" aria-label="Daily Turkmen, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#167a55"/><path d="M71 34h38l14 13v18l-14 13H71L57 65V47z" fill="#fff"/><path d="M90 34v44M57 56h66" fill="none" stroke="#a8d5c0" stroke-width="2.5"/><path d="M90 43l13 13-13 13-13-13z" fill="#b23a2e"/><path d="M90 50l6 6-6 6-6-6z" fill="#fff"/><path d="M31 89c17-7 37-5 57 7v42c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 96c20-12 40-14 57-7v42c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 96v42" fill="none" stroke="#a8d5c0" stroke-linecap="round" stroke-width="3"/></svg><span class="at-name"><span class="at-d">Daily</span> <span class="at-t">Turkmen</span></span></a>
         <nav class="at-tabs" aria-label="Turkmen course">
           <a class="at-tab" href="index.html" id="tab-course">Course</a>
           <a class="at-tab" href="guide.html">Grammar</a>
@@ -494,7 +504,6 @@
         <div>
           <p class="kicker">Turkmen · 1,000 words</p>
           <h1 id="h1">Flashcards</h1>
-          <p class="beta"><b>Beta</b><span>The Turkmen here was written with AI assistance; a native speaker is checking it, level by level.</span></p>
         </div>
         <nav class="views" id="views" aria-label="Flashcards">
           <a href="cards.html" data-view="review">Review</a>

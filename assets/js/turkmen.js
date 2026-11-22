@@ -261,7 +261,7 @@
     return { list: out.map(function (s) { return s.replace(/\s+/g, " ").replace(/\s+([.,!?;:…])/g, "$1").trim(); }) };
   }
 
-  var CONTRACTIONS = [
+  var CONTRACTION_LIST = [
     ["i'm", "i am"], ["you're", "you are"], ["we're", "we are"], ["they're", "they are"], ["he's", "he is"], ["she's", "she is"],
     ["it's", "it is"], ["that's", "that is"], ["there's", "there is"], ["here's", "here is"], ["what's", "what is"], ["where's", "where is"],
     ["who's", "who is"], ["how's", "how is"], ["isn't", "is not"], ["aren't", "are not"], ["wasn't", "was not"], ["weren't", "were not"],
@@ -270,7 +270,9 @@
     ["shouldn't", "should not"], ["mustn't", "must not"], ["i'll", "i will"], ["you'll", "you will"], ["he'll", "he will"],
     ["she'll", "she will"], ["it'll", "it will"], ["we'll", "we will"], ["they'll", "they will"], ["i've", "i have"], ["you've", "you have"],
     ["we've", "we have"], ["they've", "they have"], ["i'd", "i would"], ["you'd", "you would"], ["he'd", "he would"], ["she'd", "she would"],
-    ["we'd", "we would"], ["they'd", "they would"], ["let's", "let us"],
+    ["we'd", "we would"], ["they'd", "they would"], ["it'd", "it would"], ["that'd", "that would"],
+    ["there'd", "there would"], ["who'd", "who would"], ["could've", "could have"], ["should've", "should have"],
+    ["would've", "would have"], ["might've", "might have"], ["must've", "must have"], ["who've", "who have"], ["let's", "let us"],
     // the same without the apostrophe, which phone keyboards leave out (inputs have autocorrect off); not its, lets, were, well, ill, id, hed, shed, wed
     ["im", "i am"], ["youre", "you are"], ["theyre", "they are"], ["hes", "he is"], ["shes", "she is"], ["thats", "that is"],
     ["theres", "there is"], ["heres", "here is"], ["whats", "what is"], ["wheres", "where is"], ["whos", "who is"], ["hows", "how is"],
@@ -278,18 +280,33 @@
     ["didnt", "did not"], ["havent", "have not"], ["hasnt", "has not"], ["hadnt", "had not"], ["wont", "will not"], ["wouldnt", "would not"],
     ["cant", "can not"], ["couldnt", "could not"], ["shouldnt", "should not"], ["mustnt", "must not"], ["ive", "i have"], ["youve", "you have"],
     ["weve", "we have"], ["theyve", "they have"], ["youll", "you will"], ["theyll", "they will"], ["itll", "it will"], ["youd", "you would"],
-    ["theyd", "they would"]
-  ].map(function (p) { return [new RegExp("(^|\\s)" + p[0] + "(?=\\s|$)", "g"), "$1" + p[1]]; });
+    ["theyd", "they would"], ["couldve", "could have"], ["shouldve", "should have"], ["wouldve", "would have"],
+    ["mightve", "might have"], ["mustve", "must have"]
+  ];
+  // a learner's 'd is tried as "would" and as "had" (6.4; ported from the Turkish course's QA-2 in QA-TK-2):
+  // the same list with "had" for the 'd forms
+  function compileContractions(had) {
+    return CONTRACTION_LIST.map(function (p) {
+      var to = had && /d$/.test(p[0]) && /would$/.test(p[1]) ? p[1].replace(/would$/, "had") : p[1];
+      return [new RegExp("(^|\\s)" + p[0] + "(?=\\s|$)", "g"), "$1" + to];
+    });
+  }
+  var CONTRACTIONS = compileContractions(false), CONTRACTIONS_HAD = compileContractions(true);
+  // 's before "been" is "has" (it's been, it has been), also typed without the apostrophe
+  var HAS_BEEN = /(^|\s)(it|that|there|here|what|who|where|how|he|she)'?s been(?=\s|$)/g;
 
   // Stage-1 normalization (apostrophes kept): plain lowercasing in both languages; U+0307 is still removed, the residue
   // of an İ typed on a Turkish keyboard. English answers also fold the Turkmen letters of names (Aýna → ayna).
-  function norm(s, lang) {
+  // had: read every 'd as "had" instead of "would" (the second reading check() tries for an English answer).
+  function norm(s, lang, had) {
     s = String(s == null ? "" : s).normalize("NFC").replace(/[’‘ʼ´`]/g, "'").replace(/[“”„"«»]/g, " ");
     s = s.toLowerCase();
     s = s.replace(/̇/g, "").replace(/[.,!?;:()…¿¡]/g, " ").replace(/[-–—/]/g, " ");
     s = s.replace(/\s+/g, " ").trim();
     if (lang === "en") {
-      for (var i = 0; i < CONTRACTIONS.length; i++) s = s.replace(CONTRACTIONS[i][0], CONTRACTIONS[i][1]);
+      var list = had ? CONTRACTIONS_HAD : CONTRACTIONS;
+      s = s.replace(HAS_BEEN, "$1$2 has been");
+      for (var i = 0; i < list.length; i++) s = s.replace(list[i][0], list[i][1]);
       s = fold(s).replace(/\s+/g, " ").trim();
     }
     return s;
@@ -297,6 +314,24 @@
   // A normalized answer with the question particle typed apart joined back to its word: talyp my → talypmy,
   // talyp mydyň → talypmydyň.
   function joinParticle(s) { return s.replace(/(\S) (m[yi](?:d[yi]\S*)?)(?= |$)/g, "$1$2"); }
+
+  // The "had" readings of an English answer: each 'd after a pronoun (also youd, theyd) read "had" in turn, every
+  // combination of them (4 at most); [] when there is none. norm() reads 'd as "would" (QA-TK-2, 6.4).
+  function hadReadings(s) {
+    s = String(s == null ? "" : s).replace(/[’‘ʼ´`]/g, "'");
+    var re = /(^|[^A-Za-z'])(i|you|he|she|it|we|they|who|there|that)'d(?![A-Za-z'])|(^|[^A-Za-z'])(you|they)d(?![A-Za-z'])/gi, m, at = [], out = [];
+    while ((m = re.exec(s))) {
+      var lead = m[1] != null ? m[1] : m[3], pron = m[2] || m[4];
+      at.push({ start: m.index + lead.length + pron.length, end: m.index + m[0].length });
+    }
+    if (!at.length || at.length > 4) return out;
+    for (var mask = 1; mask < (1 << at.length); mask++) {
+      var r = s;
+      for (var k = at.length - 1; k >= 0; k--) if (mask & (1 << k)) r = r.slice(0, at[k].start) + " had" + r.slice(at[k].end);
+      out.push(r);
+    }
+    return out;
+  }
 
   // Edit distance with a swap of two neighbouring letters counted as one edit (optimal string alignment).
   function distance(a, b) {
@@ -332,14 +367,18 @@
     var canonical = accepted[0];
     var a = norm(answer, lang);
     if (!a) return { verdict: "wrong", note: "empty", canonical: canonical };
+    // English: a learner's 'd is tried as "would" and as "had" (I'd known → I had known), each 'd on its own
+    // (If I'd known, I'd have told you), so the answer can have several readings
+    var as = [a];
+    if (lang === "en") hadReadings(answer).forEach(function (t) { var n = norm(t, lang); if (as.indexOf(n) < 0) as.push(n); });
     var i, r;
     for (i = 0; i < rejected.length; i++) {                                                   // 3. a predictable mistake
       r = rejected[i];
-      if (norm(r.answer, lang) === a) return { verdict: "wrong", why: r.why, rejected: r.answer, canonical: canonical };
+      if (as.indexOf(norm(r.answer, lang)) >= 0) return { verdict: "wrong", why: r.why, rejected: r.answer, canonical: canonical };
     }
     var exps = [];
     accepted.forEach(function (entry) { expansions(entry).forEach(function (s) { exps.push({ text: s, n: norm(s, lang) }); }); });
-    for (i = 0; i < exps.length; i++) if (exps[i].n === a) return { verdict: "correct", matched: exps[i].text, canonical: canonical };   // 4.
+    for (i = 0; i < exps.length; i++) if (as.indexOf(exps[i].n) >= 0) return { verdict: "correct", matched: exps[i].text, canonical: canonical };   // 4.
     // 5–6. the same answer give or take apostrophes; in lenient Turkmen, also give or take the marks of the eight
     // Turkmen letters. Each key is looser than the one before.
     var noApos = function (s) { return s.replace(/'/g, ""); };
@@ -353,7 +392,8 @@
       }
       return null;
     };
-    var hit = near(a);
+    var hit = null;
+    for (i = 0; i < as.length && !hit; i++) hit = near(as[i]);
     if (hit) return { verdict: "almost", note: hit.note, matched: hit.matched, canonical: canonical };
     // 6a. the question particle typed apart (talyp my), in any mode: Turkmen writes it attached
     var joined = lang === "tk" ? joinParticle(a) : a;
@@ -367,10 +407,10 @@
     for (i = 0; i < rejected.length; i++) {
       r = rejected[i];
       var rr = relax(norm(r.answer, lang));
-      if (rr === relax(a) || rr === relax(joined)) return { verdict: "wrong", why: r.why, rejected: r.answer, canonical: canonical };
+      if (as.some(function (x) { return relax(x) === rr; }) || rr === relax(joined)) return { verdict: "wrong", why: r.why, rejected: r.answer, canonical: canonical };
     }
-    if (lang === "en") {                                                                      // 7. one typo in a long word
-      var aw = a.split(" ");
+    if (lang === "en") for (var v = 0; v < as.length; v++) {                                 // 7. one typo in a long word
+      var aw = as[v].split(" ");
       for (i = 0; i < exps.length; i++) {
         var ew = exps[i].n.split(" ");
         if (ew.length !== aw.length) continue;

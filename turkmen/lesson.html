@@ -23,7 +23,7 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Daily Turkmen">
     <meta property="og:title" content="Learn Turkmen, A1 to B1">
-    <meta property="og:description" content="Short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a 1,000-word flashcard deck. In beta.">
+    <meta property="og:description" content="Short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a 1,000-word flashcard deck.">
     <meta property="og:url" content="https://dailyturkish.app/turkmen/lesson.html">
     <meta property="og:image" content="https://dailyturkish.app/assets/img/daily-turkmen-share.png">
     <meta property="og:image:width" content="1200">
@@ -54,7 +54,7 @@
       .at-hdr .at-logo { width: 28px; height: 28px; flex: none; display: block; }
       .at-hdr .at-name { font-size: 18px; line-height: 1; letter-spacing: -0.02em; }
       .at-hdr .at-d { color: #167a55; font-weight: 600; }
-      .at-hdr .at-t { color: #242424; font-weight: 750; margin-left: 0.22em; }
+      .at-hdr .at-t { color: #242424; font-weight: 750; }
       .at-hdr .at-tabs { display: flex; flex: 1; align-self: stretch; gap: 8px; }
       .at-hdr .at-push { margin-left: auto; }   /* About, My Profile and Settings sit on the right */
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
@@ -104,6 +104,14 @@
         .at-hdr .at-set { min-width: 30px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 3.5px; right: 3.5px; }
       }
+      @media (max-width: 359px) {   /* 320 px (QA-TK-2, as Daily Turkish's QA-2): the seven links fit without a sideways scroll */
+        .at-hdr { --at-m: 6px; }
+        .at-hdr .at-wrap { gap: 0; }
+        .at-hdr .at-home { min-width: 34px; margin-left: -5px; }
+        .at-hdr .at-tab { padding: 0 2px; font-size: 12px; }
+        .at-hdr .at-set { min-width: 27px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 2px; right: 2px; }
+      }
     </style>
     <style>
       /* Lesson player: the hub's tokens (index.html), a single centred column, the answer dock pinned to the bottom. */
@@ -132,6 +140,8 @@
       .tkm-soon small { font-size: .85em; }
       .tkm-nw { white-space: nowrap; }
       [hidden] { display: none !important; }
+      /* links inside running text carry an underline as well as their colour (WCAG 1.4.1; QA-2 of Daily Turkish, ported in QA-TK-2) */
+      main p a:not(.btn), .note a, .help a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; text-decoration-color: rgb(40 122 158 / .55); }
       .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       button { font: inherit; }
 
@@ -299,7 +309,7 @@
       .ans.almost { border-color: var(--amber); background: var(--amber-wash); }
       .ans.wrong { border-color: var(--bad); background: var(--bad-wash); }
       .prompt { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
-      .prompt p { font-size: 21px; line-height: 1.4; color: var(--ink); font-weight: 500; padding-top: 2px; }
+      .prompt p { font-size: 21px; line-height: 1.4; color: var(--ink); font-weight: 500; padding-top: 2px; min-width: 0; overflow-wrap: anywhere; }   /* a long word wraps at 320 px */
       @media (max-width: 599px) { .prompt p { font-size: 19px; } }
 
       /* Turkmen letter bar (TM-PROJECT.md 3): eight letters and a shift key; two rows on a phone, so each key stays wide enough to tap */
@@ -314,12 +324,13 @@
       /* cloze */
       .cloze { font-size: 22px; line-height: 2.1; color: var(--ink); margin-bottom: 6px; }
       .cz-w { white-space: nowrap; }
+      .cz-w:has(.bopts) { white-space: normal; }   /* an option group too wide to sit beside the letters it joins may go to the next line */
       .blank { font: inherit; font-size: 20px; color: var(--ink); border: 0; border-bottom: 2px solid var(--blue); border-radius: 4px 4px 0 0; background: var(--blue-tint); padding: 0 4px; height: 38px; text-align: center; min-width: 3ch; max-width: 100%; vertical-align: baseline; }
       .blank:focus { outline: none; background: var(--blue-wash); }
       .blank.right { border-color: var(--ok); background: var(--ok-wash); }
       .blank.almost { border-color: var(--amber); background: var(--amber-wash); }
       .blank.wrong { border-color: var(--bad); background: var(--bad-wash); }
-      .bopts { display: inline-flex; gap: 4px; vertical-align: baseline; padding: 2px; border-radius: 8px; background: var(--panel); border: 1px dashed var(--faint); }
+      .bopts { display: inline-flex; flex-wrap: wrap; max-width: calc(100% - 1.5ch); gap: 4px; vertical-align: baseline; padding: 2px; border-radius: 8px; background: var(--panel); border: 1px dashed var(--faint); }   /* long options wrap inside the group at 320 px (QA-2 of Daily Turkish, ported in QA-TK-2) */
       .bopt { position: relative; display: inline-flex; }
       .bopt input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
       .bopt span { display: inline-grid; place-items: center; min-width: 44px; height: 40px; padding: 0 10px; border-radius: 6px; font-size: 19px; line-height: 1; cursor: pointer; color: var(--body); border: 1px solid transparent; }
@@ -347,7 +358,7 @@
       .line.right .tile { border-color: var(--ok-line); background: var(--ok-wash); }
       .line.wrong .tile { border-color: var(--bad-line); background: var(--bad-wash); }
       .tile:disabled { cursor: default; }
-      .build { margin: -6px 0 16px; font-size: 22px; font-weight: 600; color: var(--ink); min-height: 33px; letter-spacing: .01em; }
+      .build { margin: -6px 0 16px; font-size: 22px; font-weight: 600; color: var(--ink); min-height: 33px; letter-spacing: .01em; overflow-wrap: anywhere; }
       @keyframes pop { from { transform: scale(.92); opacity: .6; } to { transform: none; opacity: 1; } }
 
       /* match */
@@ -423,7 +434,7 @@
       .fb-i svg { color: #fff; }
       .fb p, .fb .fb-l { margin-top: 6px; font-size: 14.5px; color: var(--ink); line-height: 1.45; }
       .fb .lbl { display: block; font-size: 12px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 1px; }
-      .fb .big-a { display: flex; align-items: center; gap: 8px; font-size: 16.5px; font-weight: 600; }
+      .fb .big-a { display: flex; align-items: center; gap: 8px; font-size: 16.5px; font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
       .fb .note { color: var(--amber); font-weight: 600; }
       .fb ul { margin: 4px 0 0; padding-left: 18px; }
       .fb .muted-s { color: var(--muted); font-size: 13.5px; }
@@ -492,7 +503,7 @@
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="index.html" aria-label="Daily Turkmen, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#167a55"/><path d="M71 34h38l14 13v18l-14 13H71L57 65V47z" fill="#fff"/><path d="M90 34v44M57 56h66" fill="none" stroke="#a8d5c0" stroke-width="2.5"/><path d="M90 43l13 13-13 13-13-13z" fill="#b23a2e"/><path d="M90 50l6 6-6 6-6-6z" fill="#fff"/><path d="M31 89c17-7 37-5 57 7v42c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 96c20-12 40-14 57-7v42c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 96v42" fill="none" stroke="#a8d5c0" stroke-linecap="round" stroke-width="3"/></svg><span class="at-name"><span class="at-d">Daily</span><span class="at-t">Turkmen</span></span></a>
+        <a class="at-home" href="index.html" aria-label="Daily Turkmen, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#167a55"/><path d="M71 34h38l14 13v18l-14 13H71L57 65V47z" fill="#fff"/><path d="M90 34v44M57 56h66" fill="none" stroke="#a8d5c0" stroke-width="2.5"/><path d="M90 43l13 13-13 13-13-13z" fill="#b23a2e"/><path d="M90 50l6 6-6 6-6-6z" fill="#fff"/><path d="M31 89c17-7 37-5 57 7v42c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 96c20-12 40-14 57-7v42c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 96v42" fill="none" stroke="#a8d5c0" stroke-linecap="round" stroke-width="3"/></svg><span class="at-name"><span class="at-d">Daily</span> <span class="at-t">Turkmen</span></span></a>
         <nav class="at-tabs" aria-label="Turkmen course">
           <a class="at-tab" href="index.html" aria-current="page">Course</a>
           <a class="at-tab" href="guide.html">Grammar</a>
@@ -707,7 +718,7 @@
           var words = L.vocab && L.vocab.length ? '<section class="words" aria-labelledby="h-words"><h2 id="h-words">New words</h2><ul class="wlist">' + L.vocab.map(function (v) {
             var rank = v.card ? +v.card.slice(3) : 0;   // fc-0042 → 42: Browse opens the row of a rank searched on its own
             return '<li><span class="w-txt"><span class="w-tk" lang="tk">' + esc(v.tk) + '</span><span class="w-en">' + esc(v.en) + "</span></span>" +
-              (rank ? '<a class="w-card" href="' + P.cards + "?view=browse&amp;q=" + rank + '" aria-label="' + esc(v.tk) + ' in the flashcards">Card</a>' : "") + "</li>";
+              (rank ? '<a class="w-card" href="' + P.cards + "?view=browse&amp;q=" + rank + '" aria-label="Card: ' + esc(v.tk) + ' in the flashcards">Card</a>' : "") + "</li>";
           }).join("") + "</ul></section>" : "";
           var repeat = rec ? (rec.via === "test" ? "You skipped this lesson with a test. Doing it now earns full XP." : "You've done this lesson before (best " + pct(rec.best) + "). A repeat earns half the XP.") : "";
           start(head + tip + words, plural(S.items.length, "exercise") + (repeat ? " · " + repeat : ""), "Start the lesson");
@@ -957,11 +968,13 @@
       // A result: { verdict: correct | almost | wrong | partly, note?, noteHtml?, answer?: { text, lang, html?, label? }, why?: Rich[], explain?, meaning?, extra?, got? }
       var RENDER = {};
 
+      // an option as HTML: Turkmen options are plain text; English ones are Rich without links (TM-PROJECT.md 5.0, QA-TK-2)
+      function optHtml(o, lang) { return lang === "tk" ? esc(o) : rich(o); }
       // radio options, shuffled: the content usually lists the right answer first
       function options(name, opts, lang) {
         var ord = shuffle(range(opts.length));
         return { ord: ord, html: '<div class="opts" role="radiogroup">' + ord.map(function (i, k) {
-          return '<label class="opt"><input type="radio" name="' + name + '" value="' + i + '"><span class="k" aria-hidden="true">' + (k + 1) + '</span><span class="ot"' + langAttr(lang) + ">" + esc(opts[i]) + "</span></label>";
+          return '<label class="opt"><input type="radio" name="' + name + '" value="' + i + '"><span class="k" aria-hidden="true">' + (k + 1) + '</span><span class="ot"' + langAttr(lang) + ">" + optHtml(opts[i], lang) + "</span></label>";
         }).join("") + "</div>" };
       }
       function wireOptions(box, name) {
@@ -1027,7 +1040,7 @@
             var s = sel(), ok = s === ex.answer;
             markOptions(box, name, ex.answer, s);
             box.querySelectorAll(".ctx-en").forEach(function (p) { p.hidden = false; });
-            return { verdict: ok ? "correct" : "wrong", answer: ok ? null : { text: ex.options[ex.answer], lang: ex.optionsLang },
+            return { verdict: ok ? "correct" : "wrong", answer: ok ? null : { text: ex.options[ex.answer], lang: ex.optionsLang, html: optHtml(ex.options[ex.answer], ex.optionsLang) },
                      why: !ok && ex.why && ex.why[String(s)] ? [ex.why[String(s)]] : null, explain: ex.explain };
           }
         };
@@ -1310,7 +1323,7 @@
               var s = sels[i](), ok = s === q.answer, fs = box.querySelectorAll(".rq")[i], p = fs.querySelector(".rq-ex");
               markOptions(box, names[i], q.answer, s);
               if (ok) got += 1;
-              if (q.explain || !ok) { p.innerHTML = (ok ? "" : "<b>Answer:</b> <span" + langAttr(q.optionsLang) + ">" + esc(q.options[q.answer]) + "</span>. ") + (q.explain ? rich(q.explain) : ""); p.hidden = false; outLinks(p); }
+              if (q.explain || !ok) { p.innerHTML = (ok ? "" : "<b>Answer:</b> <span" + langAttr(q.optionsLang) + ">" + optHtml(q.options[q.answer], q.optionsLang) + "</span>. ") + (q.explain ? rich(q.explain) : ""); p.hidden = false; outLinks(p); }
             });
             var tr = box.querySelector("#trans");
             if (tr) tr.hidden = false;

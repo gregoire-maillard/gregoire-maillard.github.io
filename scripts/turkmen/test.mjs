@@ -249,6 +249,19 @@ test("check: English alternatives, contractions, articles and Turkmen names", ()
   assert.equal(TKM.check("Ayna is here", ["Aýna is here."], [], "en").verdict, "correct");
   assert.equal(TKM.check("We went to Turkmenbashi", ["We went to Türkmenbaşy."], [], "en").verdict, "wrong", "the English spelling of a name is an accept entry, not a fold");
 });
+test("check: a learner's 'd is read as would and as had, each on its own; 's been is has been (QA-TK-2, from QA-2)", () => {
+  assert.equal(TKM.check("I'd seen him before.", ["I had seen him before."], [], "en").verdict, "correct");
+  assert.equal(TKM.check("I called him, but he’d already left.", ["I called him, but he had already left."], [], "en").verdict, "correct");
+  assert.equal(TKM.check("If I'd got up early, I'd have caught the train.", ["If I had got up early, I would have caught the train."], [], "en").verdict, "correct");
+  assert.equal(TKM.check("I'd have caught the train if I'd got up early", ["I would have caught the train if I had got up early."], [], "en").verdict, "correct");
+  assert.equal(TKM.check("Theyd left", ["They had left."], [], "en").verdict, "correct");
+  assert.equal(TKM.check("I'd go", ["I would go."], [], "en").verdict, "correct");
+  assert.equal(TKM.check("I'd go", ["I had gone."], [], "en").verdict, "wrong");
+  assert.equal(TKM.check("I'd seen him", ["I have seen him."], [], "en").verdict, "wrong");
+  assert.equal(TKM.check("It's been raining", ["It has been raining."], [], "en").verdict, "correct");
+  assert.equal(TKM.check("You should've told me", ["You should have told me."], [], "en").verdict, "correct");
+  assert.equal(TKM.check("I'd seen him", ["I saw him."], [{ answer: "I had seen him", why: "x" }], "en").why, "x", "a reject is matched in either reading");
+});
 test("check: one typo in an English word of five letters or more → almost (typo)", () => {
   const acc = ["Merdan is at the office."];
   assert.deepEqual(verdict(TKM.check("Merdan is at the ofice", acc, [], "en")), ["almost", "typo"]);

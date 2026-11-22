@@ -13,7 +13,7 @@
 </script>
     <meta charset="utf-8">
     <title>Daily Turkmen · Free Turkmen course, A1 to B1</title>
-    <meta name="description" content="Free Turkmen course for English speakers, from A1 to B1: short lessons with instant feedback, grammar guides, culture notes and 1,000 flashcards with spaced repetition. In beta.">
+    <meta name="description" content="Free Turkmen course for English speakers, from A1 to B1: short lessons with instant feedback, grammar guides, culture notes and 1,000 flashcards with spaced repetition.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" sizes="64x64" href="/assets/img/daily-turkmen-favicon.png">
     <link rel="icon" type="image/svg+xml" href="/assets/img/daily-turkmen-favicon.svg">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Daily Turkmen">
     <meta property="og:title" content="Daily Turkmen · Free Turkmen course, A1 to B1">
-    <meta property="og:description" content="Learn Turkmen from zero: short lessons, a grammar guide and a culture interlude in every unit, and a 1,000-word flashcard deck. In beta.">
+    <meta property="og:description" content="Learn Turkmen from zero: short lessons, a grammar guide and a culture interlude in every unit, and a 1,000-word flashcard deck.">
     <meta property="og:url" content="https://dailyturkish.app/turkmen/">
     <meta property="og:image" content="https://dailyturkish.app/assets/img/daily-turkmen-share.png">
     <meta property="og:image:width" content="1200">
@@ -54,7 +54,7 @@
       .at-hdr .at-logo { width: 28px; height: 28px; flex: none; display: block; }
       .at-hdr .at-name { font-size: 18px; line-height: 1; letter-spacing: -0.02em; }
       .at-hdr .at-d { color: #167a55; font-weight: 600; }
-      .at-hdr .at-t { color: #242424; font-weight: 750; margin-left: 0.22em; }
+      .at-hdr .at-t { color: #242424; font-weight: 750; }
       .at-hdr .at-tabs { display: flex; flex: 1; align-self: stretch; gap: 8px; }
       .at-hdr .at-push { margin-left: auto; }   /* About, My Profile and Settings sit on the right */
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
@@ -104,6 +104,14 @@
         .at-hdr .at-set { min-width: 30px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 3.5px; right: 3.5px; }
       }
+      @media (max-width: 359px) {   /* 320 px (QA-TK-2, as Daily Turkish's QA-2): the seven links fit without a sideways scroll */
+        .at-hdr { --at-m: 6px; }
+        .at-hdr .at-wrap { gap: 0; }
+        .at-hdr .at-home { min-width: 34px; margin-left: -5px; }
+        .at-hdr .at-tab { padding: 0 2px; font-size: 12px; }
+        .at-hdr .at-set { min-width: 27px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 2px; right: 2px; }
+      }
     </style>
     <style>
       /* Page: the site's tokens (stylesheets/styles.css), white page, hairline borders, cards like the Mobility Lab's. */
@@ -129,6 +137,8 @@
       .tkm-soon small { font-size: .85em; }
       .tkm-nw { white-space: nowrap; }
       [hidden] { display: none !important; }
+      /* links inside running text carry an underline as well as their colour (WCAG 1.4.1; QA-2 of Daily Turkish, ported in QA-TK-2) */
+      main p a:not(.btn), .note a, .help a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; text-decoration-color: rgb(40 122 158 / .55); }
       .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
       .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 24px 64px; }
@@ -597,7 +607,7 @@
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="index.html" aria-label="Daily Turkmen, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#167a55"/><path d="M71 34h38l14 13v18l-14 13H71L57 65V47z" fill="#fff"/><path d="M90 34v44M57 56h66" fill="none" stroke="#a8d5c0" stroke-width="2.5"/><path d="M90 43l13 13-13 13-13-13z" fill="#b23a2e"/><path d="M90 50l6 6-6 6-6-6z" fill="#fff"/><path d="M31 89c17-7 37-5 57 7v42c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 96c20-12 40-14 57-7v42c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 96v42" fill="none" stroke="#a8d5c0" stroke-linecap="round" stroke-width="3"/></svg><span class="at-name"><span class="at-d">Daily</span><span class="at-t">Turkmen</span></span></a>
+        <a class="at-home" href="index.html" aria-label="Daily Turkmen, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#167a55"/><path d="M71 34h38l14 13v18l-14 13H71L57 65V47z" fill="#fff"/><path d="M90 34v44M57 56h66" fill="none" stroke="#a8d5c0" stroke-width="2.5"/><path d="M90 43l13 13-13 13-13-13z" fill="#b23a2e"/><path d="M90 50l6 6-6 6-6-6z" fill="#fff"/><path d="M31 89c17-7 37-5 57 7v42c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 96c20-12 40-14 57-7v42c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 96v42" fill="none" stroke="#a8d5c0" stroke-linecap="round" stroke-width="3"/></svg><span class="at-name"><span class="at-d">Daily</span> <span class="at-t">Turkmen</span></span></a>
         <nav class="at-tabs" aria-label="Turkmen course">
           <a class="at-tab" href="index.html" id="tab-course" aria-current="page">Course</a>
           <a class="at-tab" href="guide.html">Grammar</a>
@@ -619,7 +629,6 @@
           <p class="kicker">Turkmen · A1 → B1</p>
           <h1>Learn Turkmen</h1>
           <p class="lede">From your first <i lang="tk">salam</i> to telling a story: short lessons with instant feedback, a grammar guide and a culture interlude in every unit, and a deck of 1,000 useful words on spaced repetition. For English speakers starting from zero. No account needed: your progress stays in this browser.</p>
-          <p class="beta"><b>Beta</b><span>A native speaker is checking the Turkmen here, level by level.</span></p>
         </header>
         <aside class="today" id="today" aria-label="Today">
           <div class="card next"><p class="eyebrow">Loading the course…</p></div>
@@ -721,8 +730,6 @@
           <h2>The course</h2>
           <p>Daily Turkmen teaches standard written Turkmen, in the Latin alphabet used in Turkmenistan today, to English speakers starting from zero: you need no other language to follow it. It is built like Daily Turkish: levels, units and short lessons, a grammar guide and a culture interlude in every unit, and a flashcard deck.</p>
           <p>There is no audio. Browsers have no Turkmen voice, and a voice for another language would mispronounce it, so the guides describe each sound with comparisons from English instead.</p>
-          <h2>Beta</h2>
-          <p>The course is new. Its Turkmen is checked against dictionaries, and a native speaker reviews each level; the beta label comes off once they have. Until then, expect the odd mistake.</p>
           <h2>The method</h2>
           <p><b>Anki and spaced repetition.</b> Anki is the free flashcard app that made spaced repetition popular. After each card you grade how well you remembered it (Again, Hard, Good or Easy), and it comes back just before you would forget it: tomorrow, then in a few days, then weeks and months later. A few minutes a day are enough to keep thousands of words. The flashcards here use Anki's own algorithm (SM-2) with its default settings, the same four grades with the next interval shown on each button, and Anki's statistics (a card is “mature” after 21 days).</p>
           <p><b>Fluent Forever.</b> In his book <cite>Fluent Forever</cite> (2014), Gabriel Wyner argues for learning pronunciation first, the most useful words before the rare ones, words in real sentences rather than lists, recalling actively instead of just recognising, and letting spaced repetition do the remembering. Daily Turkmen follows this as far as it can without audio: the course opens with the letters and their sounds; the deck is 1,000 useful words, the most useful first; every card has an example sentence; and words are practiced in both directions, English → Turkmen once you recognise the Turkmen.</p>
@@ -914,7 +921,7 @@
         var note = !laid ? "Finish a unit to lay its tile. Pass the unit's review to glaze it gold."
           : laid === total ? "The wall is complete. <i lang=\"tk\">Berekella!</i>" : "Pass a unit's review to glaze its tile gold.";
         return '<div class="card wall-card"><div class="mini"><div class="row"><h3>Tile wall</h3><span class="lmeta">' + laid + " of " + total + " laid" + (gold ? " · " + gold + " gold" : "") + "</span></div></div>" +
-          '<div class="wall" role="img" aria-label="' + esc("Tile wall: " + laid + " of " + total + " tiles laid" + (gold ? ", " + gold + " glazed gold" : "") + ", one per finished unit") + '">' + rows + "</div>" +
+          '<div class="wall" role="group" aria-label="' + esc("Tile wall: " + laid + " of " + total + " tiles laid" + (gold ? ", " + gold + " glazed gold" : "") + ", one per finished unit") + '">' + rows + "</div>" +
           '<p class="wall-note">' + note + "</p></div>";
       }
       function cardsPanel(ix, course, set, now) {

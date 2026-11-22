@@ -13,7 +13,7 @@
 </script>
     <meta charset="utf-8">
     <title>Turkmen grammar guides and interludes · Daily Turkmen</title>
-    <meta name="description" content="The grammar guide and culture interlude of every unit of a free Turkmen course from A1 to B1, with an index of every grammar point. In beta.">
+    <meta name="description" content="The grammar guide and culture interlude of every unit of a free Turkmen course from A1 to B1, with an index of every grammar point.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" sizes="64x64" href="/assets/img/daily-turkmen-favicon.png">
     <link rel="icon" type="image/svg+xml" href="/assets/img/daily-turkmen-favicon.svg">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Daily Turkmen">
     <meta property="og:title" content="Turkmen grammar guides and interludes">
-    <meta property="og:description" content="A grammar guide and a culture interlude for every unit of a free Turkmen course from A1 to B1. In beta.">
+    <meta property="og:description" content="A grammar guide and a culture interlude for every unit of a free Turkmen course from A1 to B1.">
     <meta property="og:url" content="https://dailyturkish.app/turkmen/guide.html">
     <meta property="og:image" content="https://dailyturkish.app/assets/img/daily-turkmen-share.png">
     <meta property="og:image:width" content="1200">
@@ -54,7 +54,7 @@
       .at-hdr .at-logo { width: 28px; height: 28px; flex: none; display: block; }
       .at-hdr .at-name { font-size: 18px; line-height: 1; letter-spacing: -0.02em; }
       .at-hdr .at-d { color: #167a55; font-weight: 600; }
-      .at-hdr .at-t { color: #242424; font-weight: 750; margin-left: 0.22em; }
+      .at-hdr .at-t { color: #242424; font-weight: 750; }
       .at-hdr .at-tabs { display: flex; flex: 1; align-self: stretch; gap: 8px; }
       .at-hdr .at-push { margin-left: auto; }   /* About, My Profile and Settings sit on the right */
       .at-hdr .at-tab { position: relative; display: flex; align-items: center; padding: 0 8px; color: var(--at-ink-2); font-weight: 500; }
@@ -104,6 +104,14 @@
         .at-hdr .at-set { min-width: 30px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 3.5px; right: 3.5px; }
       }
+      @media (max-width: 359px) {   /* 320 px (QA-TK-2, as Daily Turkish's QA-2): the seven links fit without a sideways scroll */
+        .at-hdr { --at-m: 6px; }
+        .at-hdr .at-wrap { gap: 0; }
+        .at-hdr .at-home { min-width: 34px; margin-left: -5px; }
+        .at-hdr .at-tab { padding: 0 2px; font-size: 12px; }
+        .at-hdr .at-set { min-width: 27px; }
+        .at-hdr .at-tab[aria-current="page"]::after { left: 2px; right: 2px; }
+      }
     </style>
     <style>
       /* Reader: the reading layout of stylesheets/styles.css (left rail, reading column; harmony classes
@@ -118,6 +126,8 @@
       @media (max-width: 599px) { :root { --hdr: 56px; } }
       html { scroll-padding-top: calc(var(--hdr) + 24px); -webkit-text-size-adjust: 100%; }
       [hidden] { display: none !important; }
+      /* links inside running text carry an underline as well as their colour (WCAG 1.4.1; QA-2 of Daily Turkish, ported in QA-TK-2) */
+      main p a:not(.btn), .note a, .help a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; text-decoration-color: rgb(40 122 158 / .55); }
       .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
       i[lang="tk"] { color: var(--ink); }
       code { padding: 0.05em 0.3em; color: #333; font-family: var(--mono); font-size: 0.86em; background: #f2f2f0; border-radius: 4px; }
@@ -155,7 +165,7 @@
       .toc-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
       .toc-n { color: var(--muted); font-weight: 400; }
       .chapter-nav a.soon { color: var(--faint); }
-      .chapter-nav a .ch-n { display: inline-block; min-width: 1.4rem; }
+      .chapter-nav a .ch-n { display: inline-block; min-width: 1.4rem; color: #767672; }
       .legend {
         margin-top: 0.9rem; padding-top: 0.8rem; color: var(--muted); font-size: 0.76rem; line-height: 1.6; border-top: 1px solid var(--line);
       }
@@ -179,7 +189,7 @@
       #main h2 {
         margin: 2.8rem 0 1rem; padding-top: 1.7rem; font-size: 1.42rem; border-top: 1px solid var(--line);
       }
-      #main h2 .h-n { margin-right: 0.45rem; color: var(--faint); font-size: 0.8em; font-weight: 500; font-variant-numeric: tabular-nums; }
+      #main h2 .h-n { margin-right: 0.45rem; color: #767672; font-size: 0.8em; font-weight: 500; font-variant-numeric: tabular-nums; }
       #main h3 { margin: 1.6rem 0 0.6rem; font-size: 1.08rem; }
       .hl { animation: hl 2.2s ease-out; }
       @keyframes hl { from { background: var(--blue-wash); box-shadow: 0 0 0 0.4rem var(--blue-wash); } to { background: transparent; box-shadow: 0 0 0 0.4rem transparent; } }
@@ -200,6 +210,7 @@
       .t td.tk { color: var(--blue-dark); font-style: italic; }
       .t th code, .t td code { white-space: nowrap; }
       .rule pre { margin: 0; font: inherit; white-space: pre; }
+      .rule:focus-visible, .tbl:focus-visible { outline: 2px solid var(--blue-dark); outline-offset: 2px; }
 
       /* examples */
       .ex-block { padding: 0.75rem 1.1rem 0.35rem; }
@@ -231,6 +242,7 @@
 
       /* callouts: styles.css .callout, one colour per kind */
       .callout p { margin: 0; }
+      .callout a { color: var(--blue-dark); }
       .callout .callout-title { margin: 0 0 0.15rem; color: inherit; font-weight: 600; }
       .callout.k-pitfall { color: #4f3a12; background: var(--warm-wash); border-left-color: var(--warm-line); }
       .callout.k-pitfall .callout-label { color: var(--warm); }
@@ -414,7 +426,7 @@
   <body>
     <div class="at-hdr" role="banner">
       <div class="at-wrap">
-        <a class="at-home" href="index.html" aria-label="Daily Turkmen, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#167a55"/><path d="M71 34h38l14 13v18l-14 13H71L57 65V47z" fill="#fff"/><path d="M90 34v44M57 56h66" fill="none" stroke="#a8d5c0" stroke-width="2.5"/><path d="M90 43l13 13-13 13-13-13z" fill="#b23a2e"/><path d="M90 50l6 6-6 6-6-6z" fill="#fff"/><path d="M31 89c17-7 37-5 57 7v42c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 96c20-12 40-14 57-7v42c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 96v42" fill="none" stroke="#a8d5c0" stroke-linecap="round" stroke-width="3"/></svg><span class="at-name"><span class="at-d">Daily</span><span class="at-t">Turkmen</span></span></a>
+        <a class="at-home" href="index.html" aria-label="Daily Turkmen, back to the course"><svg class="at-logo" viewBox="14 14 152 152" width="28" height="28" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#167a55"/><path d="M71 34h38l14 13v18l-14 13H71L57 65V47z" fill="#fff"/><path d="M90 34v44M57 56h66" fill="none" stroke="#a8d5c0" stroke-width="2.5"/><path d="M90 43l13 13-13 13-13-13z" fill="#b23a2e"/><path d="M90 50l6 6-6 6-6-6z" fill="#fff"/><path d="M31 89c17-7 37-5 57 7v42c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 96c20-12 40-14 57-7v42c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 96v42" fill="none" stroke="#a8d5c0" stroke-linecap="round" stroke-width="3"/></svg><span class="at-name"><span class="at-d">Daily</span> <span class="at-t">Turkmen</span></span></a>
         <nav class="at-tabs" aria-label="Turkmen course">
           <a class="at-tab" href="index.html" id="tab-course">Course</a>
           <a class="at-tab" href="guide.html" aria-current="page">Grammar</a>
@@ -469,7 +481,7 @@
       var TK = function (s) { return T.tkRich(s, { index: st.index }); };
       var SEG = function (s) { return T.seg(s, { harmony: true }); };
       // The beta notice (TM-PROJECT.md 2, 3): the same line as on the hub, until a native speaker has reviewed the level.
-      var BETA = '<p class="beta"><b>Beta</b><span>The Turkmen here was written with AI assistance; a native speaker is checking it, level by level.</span></p>';
+      var BETA = "";   // the beta notice was removed at Grégoire's request (2026-11-22)
 
       // ── notices ──
       function renderNotices() {
@@ -646,7 +658,7 @@
         for (var j = order.length - 1; j > 0; j--) { var r = Math.floor(Math.random() * (j + 1)), t = order[j]; order[j] = order[r]; order[r] = t; }
         return '<div class="quiz" data-q="' + i + '"><div class="quiz-label">Question ' + (i + 1) + " of " + n + '</div><div class="quiz-q">' + R(q.q) + "</div>" +
           '<div class="quiz-opts" role="group" aria-label="Answers to question ' + (i + 1) + '">' + order.map(function (k) {
-            return '<button type="button" class="quiz-btn" data-k="' + k + '"' + (q.optionsLang === "tk" ? ' lang="tk"' : "") + ">" + esc(q.options[k]) + "</button>";
+            return '<button type="button" class="quiz-btn" data-k="' + k + '"' + (q.optionsLang === "tk" ? ' lang="tk"' : "") + ">" + (q.optionsLang === "tk" ? esc(q.options[k]) : R(q.options[k])) + "</button>";
           }).join("") + '</div><div class="quiz-feedback" tabindex="-1"></div><button type="button" class="quiz-reset">Try again</button></div>';
       }
       function renderDoc(u, kind, doc) {
@@ -769,7 +781,7 @@
         }).join("");
         h += '<p class="read-state" id="no-match" hidden>No grammar point matches. Try a shorter word, or a suffix such as <code>-lar</code>.</p>';
         $("main").innerHTML = h;
-        setMeta("Turkmen grammar guides and interludes · Daily Turkmen", "The grammar guide and culture interlude of every unit of a free Turkmen course from A1 to B1, with an index of every grammar point. In beta.", "guide.html");
+        setMeta("Turkmen grammar guides and interludes · Daily Turkmen", "The grammar guide and culture interlude of every unit of a free Turkmen course from A1 to B1, with an index of every grammar point.", "guide.html");
         afterRender();
         var input = $("find"), timer = null;
         input.addEventListener("input", function () { clearTimeout(timer); timer = setTimeout(filter, 80); });
@@ -837,8 +849,23 @@
           });
           spy(nav);
         }
+        scrollables();
         position();
       }
+      // A rule or table wider than the column scrolls sideways: it gets a tab stop and a name, so it can be scrolled from the
+      // keyboard too (WCAG 2.1.1; Daily Turkish's QA-2, ported in QA-TK-2).
+      function scrollables() {
+        $("main").querySelectorAll(".rule, .tbl").forEach(function (el) {
+          if (el.scrollWidth > el.clientWidth + 1) {
+            var l = el.querySelector(".rule-label, caption");
+            el.tabIndex = 0;
+            el.setAttribute("role", "region");
+            el.setAttribute("aria-label", l ? l.textContent : el.classList.contains("rule") ? "Rule" : "Table");
+          } else ["tabindex", "role", "aria-label"].forEach(function (a) { el.removeAttribute(a); });
+        });
+      }
+      var scrollWait;
+      window.addEventListener("resize", function () { clearTimeout(scrollWait); scrollWait = setTimeout(scrollables, 150); });
       // Highlights the section being read in the rail's contents (as on turkish101.html and turkishguide.html).
       function spy(nav) {
         if (!("IntersectionObserver" in window)) return;
@@ -917,7 +944,7 @@
           var k = +b.getAttribute("data-k"), ok = k === q.answer;
           box.querySelectorAll(".quiz-btn").forEach(function (x) { x.disabled = true; if (+x.getAttribute("data-k") === q.answer) x.classList.add("correct"); });
           if (!ok) b.classList.add("wrong");
-          var right = q.optionsLang === "tk" ? '<span lang="tk">' + esc(q.options[q.answer]) + "</span>" : esc(q.options[q.answer]);
+          var right = q.optionsLang === "tk" ? '<span lang="tk">' + esc(q.options[q.answer]) + "</span>" : R(q.options[q.answer]);
           var fb = box.querySelector(".quiz-feedback");
           fb.innerHTML = (ok ? "<strong>Right.</strong>" : "<strong>Not quite.</strong> The answer is " + right + ".") + (q.explain ? " " + R(q.explain) : "");
           fb.className = "quiz-feedback show " + (ok ? "ok" : "bad");
