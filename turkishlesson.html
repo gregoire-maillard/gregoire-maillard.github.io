@@ -101,6 +101,14 @@
         .at-hdr .at-set { min-width: 32px; }
         .at-hdr .at-tab[aria-current="page"]::after { left: 3px; right: 3px; }
       }
+      /* the link to Daily Turkmen, the sister course (asked 2026-11-22): its mark alone, after a hairline, on a computer only
+         (from 1024 px) and never in the iPhone app (build-www.mjs also drops it there) */
+      .at-hdr .at-sis { display: none; }
+      @media (min-width: 1024px) {
+        html:not([data-app]) .at-hdr .at-sis { display: flex; align-items: center; min-width: 44px; justify-content: center; }
+        .at-hdr .at-sis::before { content: ""; align-self: center; width: 1px; height: 20px; margin-right: 12px; background: rgb(15 23 42 / .12); }
+        .at-hdr .at-sis svg { display: block; flex: none; }
+      }
     </style>
     <style>
       /* Lesson player: the hub's tokens (turkish.html), a single centred column, the answer dock pinned to the bottom. */
@@ -772,6 +780,7 @@
           <a class="at-tab at-set at-push" href="/turkish.html#about" id="tab-about"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="7.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 9v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="6.4" r="1" fill="currentColor"/></svg><span class="at-set-l">About</span></a>
           <a class="at-tab at-set" href="/turkish.html#profile" id="tab-profile"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="10" cy="7" r="3.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3.8 16.5c.9-3 3.3-4.6 6.2-4.6s5.3 1.6 6.2 4.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span class="at-set-l">My Profile</span></a>
           <a class="at-tab at-set" href="/turkish.html#settings" id="tab-settings"><svg class="at-gear" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M10 12.6a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8.4 2.5h3.2l.4 2.1 1.4.8 2-.7 1.6 2.8-1.6 1.4v1.6l1.6 1.4-1.6 2.8-2-.7-1.4.8-.4 2.1H8.4l-.4-2.1-1.4-.8-2 .7-1.6-2.8 1.6-1.4V9.2L3 7.8l1.6-2.8 2 .7 1.4-.8.4-2.1Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="at-set-l">Settings</span></a>
+          <a class="at-tab at-set at-sis" href="https://dailyturkmen.app/" title="Daily Turkmen, the sister course" aria-label="Daily Turkmen, the sister course"><svg viewBox="14 14 152 152" width="20" height="20" aria-hidden="true"><circle cx="90" cy="90" r="76" fill="#167a55"/><path d="M71 34h38l14 13v18l-14 13H71L57 65V47z" fill="#fff"/><path d="M90 34v44M57 56h66" fill="none" stroke="#a8d5c0" stroke-width="2.5"/><path d="M90 43l13 13-13 13-13-13z" fill="#b23a2e"/><path d="M90 50l6 6-6 6-6-6z" fill="#fff"/><path d="M31 89c17-7 37-5 57 7v42c-20-12-40-14-57-7z" fill="#fff"/><path d="M89 96c20-12 40-14 57-7v42c-17-7-37-5-57 7z" fill="#fff"/><path d="M89 96v42" fill="none" stroke="#a8d5c0" stroke-linecap="round" stroke-width="3"/></svg></a>
         </nav>
       </div>
     </div>

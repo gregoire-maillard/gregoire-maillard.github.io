@@ -1315,7 +1315,9 @@
         }
         // signed in
         var name = A.profile && A.profile.display_name, email = A.user.email || "";
-        h += '<div class="pf-who"><span class="avatar" aria-hidden="true">' + esc(T.tkUpper((name || email || "?").charAt(0))) + "</span><div>" +
+        // the character picked in My Profile (or the one the level brings), as on the course page; the initial until the course loads
+        var pic = st.index ? charSvg(currentChar(progressSummary(st.index)), 44) : "";
+        h += '<div class="pf-who">' + (pic ? '<span class="avatar pic">' + pic + "</span>" : '<span class="avatar" aria-hidden="true">' + esc(T.tkUpper((name || email || "?").charAt(0))) + "</span>") + "<div>" +
           '<p class="pf-name">' + esc(name || "Hoş geldiň!") + '</p><p class="pf-mail">' + esc(email) + "</p></div></div>";
         if (A.profile && (!name || pf.editing)) {
           h += '<form class="pf-form" id="pf-nameform"><label for="pf-name">' + (name ? "Your name" : "What should we call you?") + "</label>" +

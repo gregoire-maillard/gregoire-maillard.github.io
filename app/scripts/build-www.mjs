@@ -98,6 +98,7 @@ const HEAD_END = /(\s*)<\/head>/;
 const COFFEE_FOOT = /\s*<footer class="dt-foot">[\s\S]*?buymeacoffee[\s\S]*?<\/footer>/;
 const COFFEE_ABOUT = /<h2>Support Daily Turkish<\/h2>[\s\S]*?buymeacoffee[\s\S]*?<\/p>\s*(?=<h2>)/;
 const GETAPP = /\s*<script defer src="\/assets\/js\/turkish-getapp\.js"><\/script>/;
+const SISTER = /\s*<a class="at-tab at-set at-sis" href="https:\/\/dailyturkmen\.app\/"[^>]*>[\s\S]*?<\/a>/;   // the header's link to Daily Turkmen (website only)
 const GETAPP_ABOUT = /\s*<div id="getapp-about"><\/div>(?:<!--[\s\S]*?-->)?/;
 // The first opening of the day (APP-9d): a red screen with the logo for about a second, then it fades (the look is
 // in src/turkish-app.css). Inline in the hub's <head>, so it covers the page from the first paint; turkish-app.js
@@ -131,6 +132,8 @@ for (const page of HTML) {
   html = html.replace(COFFEE_FOOT, "").replace(COFFEE_ABOUT, "");
   // No invitation to get the app inside the app (GETAPP-1).
   html = html.replace(GETAPP, "").replace(GETAPP_ABOUT, "");
+  // No link to the Turkmen course in the app (APP-7): the header's Daily Turkmen mark is for the website.
+  html = html.replace(SISTER, "");
   if (PAGES.includes(page)) {
     if (!ACCOUNT.test(html)) fail(page + ": turkish-account.js script tag not found, update ACCOUNT in build-www.mjs");
     html = html.replace(ACCOUNT, "$1\n    " + tags);
