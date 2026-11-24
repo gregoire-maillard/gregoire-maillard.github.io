@@ -893,8 +893,15 @@
           s.replaceWith(b);
         });
       }
-      // Content links open in a new tab, so a lesson in progress is never lost.
-      function outLinks(root) { root.querySelectorAll("a[href]").forEach(function (a) { if (!a.closest(".acts") && !a.dataset.keep) { a.target = "_blank"; a.rel = "noopener"; } }); }
+      // Content links open in a new tab, so a lesson in progress is never lost. Not in the iPhone app: a new window there
+      // is handed to Safari, which can't open the app's own pages, so links to the course (the grammar guide…) stay in the app.
+      function outLinks(root) {
+        root.querySelectorAll("a[href]").forEach(function (a) {
+          if (a.closest(".acts") || a.dataset.keep) return;
+          if (T.app && !/^https?:/i.test(a.getAttribute("href") || "")) { a.removeAttribute("target"); return; }
+          a.target = "_blank"; a.rel = "noopener";
+        });
+      }
       function prep(root) {
         mountSay(root); outLinks(root);
         root.querySelectorAll("input[type=text], textarea").forEach(function (el) { T.prepInput(el, el.getAttribute("lang") || "tr"); el.setAttribute("enterkeyhint", el.classList.contains("free") ? "enter" : "done"); });
