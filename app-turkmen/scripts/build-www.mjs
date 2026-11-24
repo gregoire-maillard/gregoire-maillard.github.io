@@ -7,17 +7,18 @@
 // in the copies only:
 //   - removes the Google tag snippet from every page (no analytics in the app, and it works offline);
 //   - flags every page with <html data-app="ios">: turkmen.js reads it as TKM.app, so turkmen-account.js signs in
-//     with email and password only, and the pages get the app's bottom tab bar (src/turkmen-app.js);
+//     with email and password only and says "on this iPhone", and the pages get the app's bottom tab bar
+//     (src/turkmen-app.js);
 //   - points turkmen-account.js at the sign-in library shipped in the app (vendor/, no code downloaded at run time)
 //     and its emailed links at dailyturkmen.app (an email can't open capacitor://localhost);
 //   - adds the app-only scripts after turkmen-account.js: Capacitor's runtime, the Local Notifications plugin and
-//     src/turkmen-app.js (reminder, Export/Import, haptics, keyboard, widget; the other plugins are reached through
-//     Capacitor's runtime, so they need no script of their own);
+//     src/turkmen-app.js (tab bar, reminder, Export/Import, haptics, keyboard, widget; the other plugins are reached
+//     through Capacitor's runtime, so they need no script of their own);
 //   - draws every page edge to edge: viewport-fit=cover, and src/turkmen-app.css linked at the end of the <head>;
 //   - leaves out "Buy me a cup of tea" (the footer line and the About section): App Review wants tips through
 //     in-app purchase;
-//   - leaves out the header's Daily Turkish mark (a link to the website) and sends the other links to Daily Turkish
-//     to https://dailyturkish.app/ (they open in Safari), as the mirror does;
+//   - leaves out the header's Daily Turkish mark and sends the other links to Daily Turkish to
+//     https://dailyturkish.app/ (they open in Safari), as the mirror does;
 //   - says "on this iPhone" where the pages say "in this browser";
 //   - leaves out of the course, or rewords, what would keep the App Store age rating above 4+ (content-4plus.mjs,
 //     applied by content-filter.mjs, which recounts index.json and fails the build when a rule no longer matches
@@ -66,8 +67,8 @@ function cp(from, to) {
   }
 }
 function fail(msg) { console.error("build-www: " + msg); process.exit(1); }
-// Replace text that must be there (once, or every time with all: true), so a change on the website fails the build
-// instead of shipping something unchecked.
+// Replaces text that must be there (once, or at least once with all: true), so a change on the website fails the
+// build instead of shipping something unchecked.
 function edit(file, s, find, replace, all) {
   const n = s.split(find).length - 1;
   if (n === 0 || (!all && n !== 1)) fail(file + ": expected \"" + find.slice(0, 80) + "\" " + (all ? "at least once" : "once") + ", found " + n);
@@ -99,7 +100,7 @@ for (const [to, from] of [...APP_SCRIPTS, ...APP_LIBS, APP_CSS]) {
   let s = readFileSync(f, "utf8");
   s = edit("turkmen-account.js", s, 'lib: "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"', 'lib: "/' + APP_LIBS[0][0] + '"');
   s = edit("turkmen-account.js", s, "function redirectTo() { return location.origin + CFG.page + \"?signin=1\"; }",
-    "function redirectTo() { return \"https://dailyturkmen.app/?signin=1\"; }   // the app (build-www.mjs): emailed links open the website");
+    "function redirectTo() { return \"https://dailyturkmen.app/?signin=1\"; }   // the app (app-turkmen/scripts/build-www.mjs): emailed links open the website");
   writeFileSync(f, s);
 }
 
@@ -142,7 +143,14 @@ for (const page of PAGES) {
   html = html.replace(/href="\/turkish\.html"/g, 'href="https://dailyturkish.app/"').replace(/href="\/turkish([a-z]+)\.html/g, 'href="https://dailyturkish.app/turkish$1.html');
   // Progress lives on the phone.
   if (page === "index.html") html = edit(page, html, "in this browser's storage only, and clearing your browsing data erases it", "on this iPhone only, and deleting the app erases it");
-  html = html.split("in this browser").join("on this iPhone");
+  // My Profile's menu as Daily Turkish's: signed out, "Account & character" comes first (turkmen-app.css orders it by
+  // the class Daily Turkish's page gives it).
+  if (page === "index.html") {
+    const NAV = /<li class="pf-nav-sep" aria-hidden="true"><\/li>(\s*)<li><button type="button" data-go="pf-side">/;
+    if (!NAV.test(html)) fail(page + ": the profile menu's Account & character entry not found, update NAV in build-www.mjs");
+    html = html.replace(NAV, '<li class="pf-nav-sep pf-acct-nav" aria-hidden="true"></li>$1<li class="pf-acct-nav"><button type="button" data-go="pf-side">');
+  }
+  if (COURSE_PAGES.includes(page)) html = html.split("in this browser").join("on this iPhone");   // not the privacy policy, which speaks of both
   if (COURSE_PAGES.includes(page)) {
     if (!ACCOUNT.test(html)) fail(page + ": turkmen-account.js script tag not found, update ACCOUNT in build-www.mjs");
     html = html.replace(ACCOUNT, "$1\n    " + tags);

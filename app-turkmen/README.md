@@ -1,136 +1,76 @@
-# Daily Turkish – iOS app
+# Daily Turkmen – iOS app
 
-The Turkish section of gregoiremaillard.com (`turkish*.html`, `assets/js/turkish*.js`,
-`assets/data/turkish/`) packaged as an iPhone app with [Capacitor](https://capacitorjs.com) 8.
-The website stays the only source: the app is rebuilt from it, so nothing has to be edited twice.
+The Turkmen course of gregoiremaillard.com (`turkmen/*.html`, `assets/js/turkmen*.js`, `assets/data/turkmen/`), served on its
+own at dailyturkmen.app, packaged as an iPhone app with [Capacitor](https://capacitorjs.com) 8. A fork of `app/` (Daily Turkish),
+which it loads nothing from. The website stays the only source: the app is rebuilt from it, so nothing has to be edited twice.
 
 ## What's in this folder
 
 | Path | What it is |
 |---|---|
-| `capacitor.config.json` | App id `app.dailyturkish`, name "Daily Turkish", white background, web view edge to edge (`contentInset: never`), dark status bar text, keyboard resizes the web view |
-| `scripts/build-www.mjs` | Builds `www/` from the site: the same files as the dailyturkish.app mirror, `turkish.html` as the start page, the Google tag removed from every page, `<html data-app="ios">` on every page, `viewport-fit=cover` and the app stylesheet on every page, "Buy me a Turkish coffee" and the invitations to get the app (`turkish-getapp.js`, About's `#getapp-about`, GETAPP-1) left out, the app-only scripts added; then fails if a Google tag or a coffee link is left or a page refers to a local file that isn't in `www/`. The Culture page (`turkishculture.html`, with `timeline.json` and `regions.json`) stays out of the app while it is paused, and the build fails on any link to it or to the Turkmen course (APP-7) |
-| `scripts/content-4plus.mjs`, `scripts/content-filter.mjs` | **App only.** The course for a 4+ age rating (below): the rules, each with the exact text it expects, and the step `build-www.mjs` runs to apply them to `www/` |
-| `src/turkish-app.js` | **App only.** The daily reminder, Export/Import, haptics, status bar and keyboard (below). Never copied to the website |
-| `src/turkish-app.css` | **App only.** Keeps the pages clear of the notch and the home indicator (below). Never copied to the website |
-| `ios/` | The Xcode project (Swift Package Manager, no CocoaPods) |
+| `capacitor.config.json` | App id `app.dailyturkmen`, name "Daily Turkmen", white background, edge to edge, dark status bar text, keyboard resizes the web view |
+| `scripts/build-www.mjs` | Builds `www/` from the site: the files of the dailyturkmen.app mirror (`sync-dailyturkmen.yml`), the pages of `turkmen/` moved to the root as the mirror does, the Google tag removed, `<html data-app="ios">` on every page (`TKM.app`), `viewport-fit=cover` and the app stylesheet, "Buy me a cup of tea" and the header's Daily Turkish mark left out, links to Daily Turkish sent to dailyturkish.app (Safari), "on this iPhone" for "in this browser", the sign-in library from `vendor/` and emailed links to dailyturkmen.app, the app-only scripts added; then fails if a Google tag or a tip link is left or a page refers to a file that isn't in `www/` |
+| `scripts/content-4plus.mjs`, `scripts/content-filter.mjs` | **App only.** The course for a 4+ age rating (below) |
+| `src/turkmen-app.js` | **App only.** Tab bar, daily reminder, Export/Import, haptics, status bar, keyboard, widget, rating prompt, Speed round, welcome. A fork of `app/src/turkish-app.js` |
+| `src/turkmen-app.css` | **App only.** Notch and home indicator, the tab bar and the app's look of the pages. A fork of `app/src/turkish-app.css`, in the Daily Turkmen green |
+| `icon.svg` | Source of the app icon (the favicon's book and *göl*, full bleed) |
+| `ios/` | The Xcode project (Swift Package Manager): targets App (`app.dailyturkmen`) and DailyTurkmenWidget (`app.dailyturkmen.widget`), App Group `group.app.dailyturkmen`, green launch screen |
+| `store/listing.md` | Everything to paste into App Store Connect |
+| `RELEASE.md` | From the Apple identifiers to the App Store, without a Mac |
 | `www/`, `node_modules/` | Generated, not committed |
 
-## Daily reminder (app only)
+## What the app does (as Daily Turkish's)
 
-A "Daily reminder" card in the hub's Settings: on/off and a time (off by default, 19:00).
-Turning it on asks iOS for permission. The app then schedules one local notification a day for the
-next 14 days and **skips today once the daily XP goal is met**. It re-plans whenever progress changes
-and whenever the app comes back to the foreground, so:
+Five tabs at the bottom (Course, Flashcards with today's count, Practice, Profile, Settings | About); the course opens on the unit in
+progress, one level at a time; a welcome from the foal (*Taý*) on the first launch; a green screen with the logo on the first opening
+of the day; Practice with your mistakes and a 60-second Speed round; a daily reminder (word of the day, the course's own proverbs,
+streak at risk; off until iOS allows it); haptics; Export and Import through the share sheet and Files; a home-screen widget with
+the streak and the word of the day; Apple's rating prompt at a happy moment; sign-in with email and password (the same profile as
+Daily Turkish; emailed links open dailyturkmen.app). Keys `tkm:app:…` in `localStorage`, outside the progress and its export.
 
-- if a streak is at stake today, the text says so ("Keep your 5-day streak");
-- if the goal was met today, the next one is tomorrow;
-- if the app isn't opened for 14 days, the reminders stop on their own (no nagging).
+**The look is Daily Turkish's app.** The Turkish hub draws its phone look itself (its FX-1 and FX-2: chunky buttons, the
+unit in progress in the level's colour with its tile pattern, the lessons as a trail of round buttons with the character beside
+the next one); the Turkmen hub doesn't yet, so `turkmen-app.js` draws the trail after each redraw of the path (a port of
+`turkish.html`'s `trailHtml`) and `turkmen-app.css` carries the rest, with the Turkmen level colours and a white *göl* pattern.
+The Profile tab shows your character, kept from the hub (`tkm:app:pic`), and My Profile's menu starts with Account & character
+when signed out, as in Daily Turkish.
 
-The choice is stored in `localStorage` `trk:app:reminder`, outside the course progress and its export.
-On the website and dailyturkish.app the script isn't loaded at all.
-
-## Native touches (app only)
-
-So the app isn't just the website in a frame (App Store guideline 4.2), and so everything works on a phone.
-The plugins are pinned to versions made for Capacitor 8.5.3: `@capacitor/filesystem` 8.1.5, `share` 8.0.3,
-`haptics` 8.0.2, `status-bar` 8.0.4, `keyboard` 8.0.6 (and `local-notifications` 8.3.1). `turkish-app.js` reaches
-them through Capacitor's runtime (`Capacitor.registerPlugin`), so `www/` needs no script per plugin; a plugin
-missing from a build is skipped. Nothing here runs on the website or dailyturkish.app.
-
-- **Export progress** (hub and flashcards Settings): the pages save files with a download link, which a web view
-  can't follow. The app catches it, writes the file to its Documents folder and opens the **share sheet**
-  (Save to Files, AirDrop, Mail, Messages…). Closing the sheet is fine: `UIFileSharingEnabled` and
-  `LSSupportsOpeningDocumentsInPlace` in `Info.plist` show every export in **Files › On My iPhone › Daily
-  Turkish**. "Export a copy first" (before Reset), the storage-full notice and "Download what was found" go the
-  same way. The page's own status line ("Exported 12 lessons done, …") is kept.
-- **Import progress**: the page's own file input opens the iOS document picker (Files, iCloud Drive, On My
-  iPhone). The app also accepts `.txt`, as a file sent by Mail can arrive that way; the page checks the content
-  as on the website.
-- **Haptics**: a light tap for a right answer (or "almost"), a double tap for a wrong one (retries too), a
-  success buzz at the end of a lesson, practice, passed review or passed test, and a longer pattern when the
-  **daily goal** is met, on any page (flashcards count). None while a file is imported or progress is reset.
-  Switch: Settings › Haptics, **on by default**, kept in `localStorage` `trk:app:haptics`, outside the progress
-  and its export. iOS also mutes them when Settings › Sounds & Haptics › System Haptics is off.
-- **Status bar and notch**: the web view is drawn edge to edge. `turkish-app.css` (every page, scoped to
-  `html[data-app]`) pads the sticky glass header by `env(safe-area-inset-top)`, so it sits behind the clock like
-  a native bar; moves the hub's sticky Today column and profile menu down by the same amount; lands anchors
-  below the header; and keeps the end of each page, the achievement toast and the lesson's start and end
-  screens clear of the home indicator (the lesson's answer dock already pads itself). The privacy page, which
-  has no header, starts below the status bar under a glass strip. Status bar text is dark.
-- **Keyboard**: the web view shrinks to the space above the keyboard, so the lesson's dock with **Check** rides
-  on top of it. The Keyboard plugin replaces WebKit's own scroll-to-field, so the app scrolls the focused field,
-  and the Turkish letter bar under it, clear of the header and the dock. The ‹ › Done bar above the keyboard is
-  hidden: Check or the return key closes the keyboard.
-- **Portrait only** (`Info.plist`).
-- **No tip jar**: "Buy me a Turkish coffee" (footer and About section) is left out of the app's pages, since App
-  Review wants tips through in-app purchase. The website keeps it.
-
-## Build and run
-
-Needs a Mac with Xcode, Node 20+ and, to install on a phone or publish, an Apple developer account.
-
-```sh
-cd app
-npm install          # first time only
-npm run sync         # rebuild www/ from the site and copy it into the Xcode project
-npm run open         # opens ios/App/App.xcodeproj in Xcode
-```
-
-In Xcode: select the **App** target › Signing & Capabilities › choose your Team, then pick an
-iPhone (or a simulator) and Run. After any change to the Turkish pages or data, run
-`npm run sync` again before building.
+Differences from Daily Turkish: no speech (the course has no audio), no Conversations or TYS practice, no ferry on the path; the
+character in the top bar and the welcome is copied from the hub's greeter (`#hello`), since the Turkmen characters are drawn by
+`turkmen/index.html` itself, and the Profile tab shows a person icon; the hub doesn't mark the unit in progress, so
+`turkmen-app.js` does (`.is-here`); a unit shown as one row drops the hub's node grid.
 
 ## The course for a 4+ age rating (app only)
 
-The App Store rates an app from its content. The website's course has a few things that would rate it 13+
-(alcohol and tobacco words and sentences) or 9+ (swearing, weapons and violence, the darker history passages),
-so the app ships a filtered copy: `build-www.mjs` copies the course into `www/`, then `content-filter.mjs`
-applies `content-4plus.mjs` to that copy only. Nothing in the repo's own content changes.
+`build-www.mjs` copies the course into `www/`, then `content-filter.mjs` applies `content-4plus.mjs` to that copy only:
 
-- **Left out:** 15 flashcards (*öldürmek, silah, lanet, cinayet, katil, içki, seks, ceset, uyuşturucu, bomba, bira,
-  bar, sigara, sarhoş, şarap*), and 4 translation exercises about smoking.
-- **Added (APP-9):** 15 everyday words from the A1 and A2 lessons that the 1,000-word list lacks (*ekmek, süt, elma,
-  peynir, meyve, kalem, sandalye, mutfak, istasyon, köprü, şemsiye, çorba, bisiklet, kahvaltı, yağmur*), in
-  `app/content/fc-1001-1015.json` (`ADD_CARDS`), so the app's deck still holds 1,000 words.
-- **Reworded:** the smoking examples in lessons and grammar guides (*Burada fotoğraf çekilmez*, *park etmek yasak*,
-  *Süt içmem*…; lesson a2-u04-l03 is "I never eat fish"), the double causative with *pişirtmek* instead of
-  *öldürtmek* (and its grammar point label), card notes and senses, the *okul bokul* distractor, and the history
-  interludes: no executions (Piri Reis, Pir Sultan Abdal, the Bursa legend), no killing (Sabahattin Ali, Constantine XI),
-  no political violence or 1980 coup (Yeşilçam), no 1915–1916 passage (Ottoman Empire), no alcohol or tobacco in
-  the kolonya interlude, no weapons in the Grand Bazaar.
-- **Then:** `index.json` is recounted (lesson titles and exercise counts, cards, a version of its own), the pages keep
-  "1,000" while the deck holds 1,000 (otherwise `PAGE_EDITS` puts the real number), and the build **fails** if a rule no longer finds its text or if `GUARD` finds a word of these kinds anywhere in the
-  app's data. After the website's content changes, `npm run build` says what to look at; add a rule, or a reviewed
-  exception to `GUARD_OK`.
-- Progress moves freely between the website and the app: cards and exercises the app doesn't have are simply
-  ignored there.
+- **Smoking → taking photos.** Every *çilim çekmek* (to smoke) becomes *surat çekmek* (to take photos), with the English to match
+  ("No smoking!" → "No photos!", "My father gave up smoking" → "taking photos"): A1 unit 12, A2 units 4, 5, 6 and 9, B1 units 4, 5 and
+  10 (guides, lessons, the unit summary, the index). The verb stays *çekmek*, so every form, segmentation and accepted answer keeps
+  its grammar. Lesson b1-u10-l02 is titled "No photos here".
+- **Cards:** *çilim* (cigarette) left out; *fotosurat* (photo) added as `fc-1001` (`flashcards/tm-fc-1001-1001.json`, A2 unit 6),
+  so the deck still holds 1,000 words. *Çekmek*'s note no longer mentions smoking.
+- **Interludes:** no wine in the Nisa rhytons (*olardan içendirler*); no death toll in the Mongol sack of Merv; no deaths in the
+  resistance to collectivization (B1 unit 2); Basat **defeats** Tepegöz, a one-eyed giant (no killing, no man-eating).
+- **Then:** `index.json` is recounted (lesson titles and exercise counts, cards, a version of its own), and the build **fails** if a
+  rule no longer finds its text, if a replacement occurs a different number of times, or if `GUARD` finds a word of these kinds
+  anywhere in the app's data.
 
-Checked with the course's own tools on the filtered copy: `validate.mjs` (all checks passed; the index it generates
-equals the filter's apart from the version) and `test.mjs` (72/72, every accepted and rejected answer).
+Checked with the course's own tools on the filtered copy: `validate.mjs` passes but for the added card's rank (1001) and file
+name, expected; the morphology engine accepts every reworded conjugation; `test.mjs` 87/87.
 
-## App Store readiness (done)
+**For the native review** (AI-written, not yet checked): the reworded sentences above (*Surat çekmäň!*, *Atam surat çekmez*,
+*Kakam käte surat çeker*, *Bu ýerde surat çekip bolmaýar*, *Sen bu ýerde surat çekmeli däl*, *Bu ýerde surat çekmek gadagan*,
+*Surat çekmeýän adamlar köp*, *Bu ýerde surat çekilmeýär*, *Kakam surat çekmegi taşlady*), the *fotosurat* card, and the app's own
+words: *Şu gün azajyk türkmençe?*, *Başla!* (beside the next lesson), *Ajaýyp!*, *Gowy!*, *Ýene bir gezek?*, *Gutlaýarys!* (the proverbs come from B1 unit 12).
 
-- **App icon:** `ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png`, 1024×1024, no
-  transparency, drawn from the favicon (`app/icon.svg` is the source). The launch screen shows the
-  same mark on white.
-- **No sign-in in the app:** the build flags every page with `<html data-app="ios">`. `turkish.js` reads it
-  as `TRK.app`; `turkish-account.js` then never loads the sign-in library (`TRK.account.disabled`), and the
-  pages leave out the welcome card, the sign-in dialog, the account card, the characters and their menu
-  entry (their CSS hides the same parts from the first paint) and say "on this iPhone" instead of "in this
-  browser". Progress stays on the phone, so the App Privacy answer is **Data not collected**. My Profile
-  still shows level, XP, achievements and the study calendar.
-- **Privacy policy:** `turkishprivacy.html` at the site root, live at
-  `https://gregoiremaillard.com/turkishprivacy.html` and, through the mirror, at
-  `https://dailyturkish.app/turkishprivacy.html` once pushed.
-- **Export compliance:** `ITSAppUsesNonExemptEncryption = NO` in `Info.plist`, so App Store Connect
-  doesn't ask on every upload.
-- **iPhone only:** `TARGETED_DEVICE_FAMILY = 1`, so no iPad screenshots are needed.
+## Build and look
 
-Still to check on a real phone: Export (share sheet, Files › On My iPhone › Daily Turkish) and Import,
-the haptics, the header under the Dynamic Island, and a typing exercise with the keyboard up (see
-RELEASE.md step 12). Bump `MARKETING_VERSION` /
-`CURRENT_PROJECT_VERSION` in Xcode for each upload. The `ios/` folder is published by GitHub Pages
-along with the rest of the repo; it holds nothing private.
+```sh
+cd app-turkmen
+npm install          # first time only
+npm run build        # www/ only: open www/index.html through any local web server to see the app's pages
+npm run sync         # rebuild www/ and copy it into the Xcode project (the workflow does this on GitHub's Mac)
+```
 
-To build and publish without a Mac (GitHub Actions + TestFlight), follow [RELEASE.md](RELEASE.md).
+To publish without a Mac, follow [RELEASE.md](RELEASE.md).

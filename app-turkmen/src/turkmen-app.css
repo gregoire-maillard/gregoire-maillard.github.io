@@ -1,7 +1,12 @@
-/* Daily Turkish app only (app/src/turkish-app.css): the pages under the notch and the home indicator.
+/* Daily Turkmen app only (app-turkmen/src/turkmen-app.css): the pages under the notch and the home indicator, the
+ * tab bar, and the app's look of the course page, the flashcards, the guides and My Profile.
  *
- * Not part of the website. app/scripts/build-www.mjs copies it to www/assets/css/app/ and links it at the
- * end of the <head> of every page in the app, which it also gives viewport-fit=cover (PROJECT.md APP-4).
+ * A fork of app/src/turkish-app.css (Daily Turkish; the APP-… tags refer to its log, turkish/PROJECT.md), with the
+ * Daily Turkmen colours (green #167a55, red #b23a2e) and without the parts for Conversations, the TYS practice, the
+ * ferry and speech, which the Turkmen course doesn't have.
+ *
+ * Not part of the website. app-turkmen/scripts/build-www.mjs copies it to www/assets/css/app/ and links it at the
+ * end of the <head> of every page in the app, which it also gives viewport-fit=cover.
  * capacitor.config.json draws the web view edge to edge (ios.contentInset "never"), so the page itself
  * keeps clear of the status bar and the home indicator: the header's glass reaches up behind the clock,
  * like a native navigation bar, and everything sticky below it moves down by the same amount.
@@ -11,7 +16,7 @@
 html[data-app] {
   --app-top: env(safe-area-inset-top, 0px);
   --app-bottom: env(safe-area-inset-bottom, 0px);
-  /* The header's height, as turkishguide.html names it (64px, 56px on phones), plus the status bar:
+  /* The header's height, as guide.html names it (64px, 56px on phones), plus the status bar:
      anchors and scroll-into-view land below the header on every page (80px on the website's phones). */
   --hdr: calc(64px + var(--app-top));
   scroll-padding-top: calc(var(--hdr) + 24px);
@@ -21,7 +26,7 @@ html[data-app] {
 /* The sticky glass header reaches up behind the status bar. */
 html[data-app] .at-hdr { padding-top: var(--app-top); }
 
-/* turkish.html: the sticky Today column and the profile's menu, and where its sections land. */
+/* index.html (the hub): the sticky Today column and the profile's menu, and where its sections land. */
 html[data-app] .today, html[data-app] .pf-nav, html[data-app] .pf-side { top: calc(88px + var(--app-top)); }
 html[data-app] .pf-sec, html[data-app] .pf-side { scroll-margin-top: calc(88px + var(--app-top)); }
 @media (max-width: 899px) {
@@ -48,7 +53,7 @@ html[data-app] body:not(:has(.at-hdr))::before {
 }
 
 /* ── The tab bar (APP-9) ──
-   turkish-app.js puts four tabs at the bottom of the hub, the flashcards page and the grammar guide, and marks
+   turkmen-app.js puts four tabs at the bottom of the hub, the flashcards page and the grammar guide, and marks
    <html class="app-tabbed">. Those pages (every app page with the header but without the lesson's #dock) drop the
    header from the first paint: a glass strip stays behind the clock, and sticky parts move up to it. In a lesson,
    the header keeps the logo (back to the course) but not its tabs. */
@@ -76,16 +81,16 @@ html[data-app] body:not(:has(#dock)) .pf-sec, html[data-app] body:not(:has(#dock
   display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; padding: 2px 0;
   color: #8a8a86; text-decoration: none; -webkit-tap-highlight-color: transparent;
 }
-.app-tab[aria-current="page"] { color: #c43b3f; }
+.app-tab[aria-current="page"] { color: #167a55; }
 .app-tab:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; border-radius: 10px; }
 .app-ic { position: relative; display: grid; place-items: center; width: 30px; height: 28px; }
 .app-av { display: block; width: 28px; height: 28px; border-radius: 50%; box-shadow: 0 0 0 1.5px rgb(15 23 42 / .1); }
 .app-av svg { display: block; }
 .app-tab:not([aria-current="page"]) .app-av { opacity: .85; }
-.app-tab[aria-current="page"] .app-av { box-shadow: 0 0 0 2px #c43b3f; }
+.app-tab[aria-current="page"] .app-av { box-shadow: 0 0 0 2px #167a55; }
 .app-badge {
   position: absolute; top: -3px; left: 19px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
-  background: #e34b4f; color: #fff; font: 700 11px/18px "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background: #b23a2e; color: #fff; font: 700 11px/18px "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
   text-align: center; font-variant-numeric: tabular-nums; box-shadow: 0 0 0 2px #fff;
 }
 .app-badge[hidden] { display: none; }
@@ -120,7 +125,7 @@ html[data-app], html[data-app] body { overflow-x: clip; overscroll-behavior: non
 
 /* ── The course page in the app (APP-9) ──
    One column, in this order: XP and streak, the level strip, the next lesson, the level picked in the strip
-   (APP-9c), then your mistakes, Conversations and the TYS practice. No title, intro, streak tip or tile wall;
+   (APP-9c). Your mistakes and the Speed round are on the Practice tab. No title, intro, streak tip or tile wall;
    Flashcards has its own tab. The hub's Today column
    and path section become parts of one flex column (display: contents), so the hub's own rendering is unchanged. */
 html[data-app] #v-course .layout { display: flex; flex-direction: column; align-items: stretch; gap: 14px; }
@@ -140,12 +145,8 @@ html[data-app] #v-course #lvl-nav { order: 2; margin: 0 -2px; }
 html[data-app] #v-course .today > .next { order: 3; }
 html[data-app] #v-course #levels { order: 4; }
 html[data-app] #v-course .today > .mis-mini { order: 5; margin-top: 18px; }
-html[data-app] #v-course .today > .dlg-mini { order: 6; }
-html[data-app] #v-course .today > .dlg-mini { margin-top: 18px; }
-html[data-app] #v-course .today:has(> .mis-mini) > .dlg-mini { margin-top: 0; }
-html[data-app] #v-course .today > .tys-mini { order: 7; }
 html[data-app] #v-course .today > .totals { display: none; }
-/* the level picked in the strip (turkish-app.js), drawn like the hub's "here" chip */
+/* the level picked in the strip (turkmen-app.js), drawn like the hub's "here" chip */
 html[data-app] .lvl-chip.app-sel { background: var(--lv); border-color: var(--lv); color: var(--lv-on); box-shadow: 0 3px 0 var(--lv-dark); }
 html[data-app] .lvl-chip.app-sel small { color: var(--lv-on); opacity: .85; }
 html[data-app] .lvl-chip.here:not(.app-sel) { background: var(--lv-tint); color: var(--ink); box-shadow: 0 3px 0 var(--line); }
@@ -158,24 +159,20 @@ html[data-app] main.wrap { padding-top: 12px; }
 .app-tab .app-lbl { font-size: 11px; }
 .app-tab:not([aria-current="page"]) { color: #6b6b67; }
 
-/* Games: the course view with only your mistakes, Conversations and the TYS practice (turkish-app.js sets
-   html.app-games on #games); the course view itself leaves them out. */
+/* Practice: the course view with only your mistakes and the Speed round (turkmen-app.js sets html.app-games on
+   #games); the course view itself leaves them out. */
 .app-games-h { display: none; }
 html.app-games .app-games-h { display: block; margin: 4px 0 18px; }
 html.app-games .app-games-h h1 { margin: 0 0 6px; font-size: 30px; line-height: 1.15; letter-spacing: -0.02em; color: var(--ink, #1d1d1b); }
 html.app-games .app-games-h p { margin: 0; color: var(--body, #4a4a48); font-size: 15px; }
-html[data-app]:not(.app-games) #v-course .today > .mis-mini,
-html[data-app]:not(.app-games) #v-course .today > .dlg-mini,
-html[data-app]:not(.app-games) #v-course .today > .tys-mini { display: none; }
+html[data-app]:not(.app-games) #v-course .today > .mis-mini { display: none; }
 html.app-games #v-course .layout > :not(.today),
 html.app-games #v-course .path > *,
-html.app-games #v-course .today > :not(.mis-mini):not(.dlg-mini):not(.tys-mini):not(.speed-mini) { display: none !important; }
+html.app-games #v-course .today > :not(.mis-mini):not(.speed-mini) { display: none !important; }
 html[data-app]:not(.app-games) #v-course .today > .speed-mini { display: none; }
 html.app-games #v-course .today > .mis-mini { order: 5; }
 html.app-games #v-course .today > .speed-mini { order: 6; }
-html.app-games #v-course .today > .dlg-mini { order: 7; }
-html.app-games #v-course .today > .tys-mini { order: 8; }
-html.app-games #v-course .today > .mis-mini, html.app-games #v-course .today > .dlg-mini { margin-top: 0; }
+html.app-games #v-course .today > .mis-mini { margin-top: 0; }
 
 /* Course: the top bar is XP · streak · your character with a word for the time of day. */
 html[data-app] #v-course .stats { grid-template-columns: minmax(0, 1fr) auto; }
@@ -196,21 +193,21 @@ html[data-app] #v-course .stats .stat .lbl { font-size: 11.5px; white-space: now
 /* Settings: the "Your progress" box is a small Backup box in the app (APP-9g): Export and Import, no Reset. */
 html[data-app] #settings fieldset.set.wide #p-status:not(.app-said), html[data-app] #settings #p-reset { display: none; }
 
-/* Flashcards: no Today box, and the overview stays still when it fits (html.app-still, turkish-app.js). */
+/* Flashcards: no Today box, and the overview stays still when it fits (html.app-still, turkmen-app.js). */
 html[data-app] .ov-more > .card + .card { display: none; }
 html[data-app] .ov-more { grid-template-columns: minmax(0, 1fr) !important; }
 html.app-still, html.app-still body { overflow: hidden; height: 100%; }
 
-/* The first opening of the day: a red screen with the logo, about a second (the inline script build-www.mjs puts
+/* The first opening of the day: a green screen with the logo, about a second (the inline script build-www.mjs puts
    in the hub's <head> sets html.app-splash before the first paint, then html.app-splash-out to fade it). */
 html.app-splash::after {
   content: ""; position: fixed; inset: 0; z-index: 5000; pointer-events: auto;
-  background: #e34b4f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='14 14 152 152'%3E%3Ccircle cx='76' cy='55' r='17' fill='%23fff'/%3E%3Ccircle cx='83' cy='49' r='16' fill='%23e34b4f'/%3E%3Cpath d='m105 42 3.3 6.6 7.3 1.1-5.3 5.1 1.2 7.2-6.5-3.4-6.5 3.4 1.2-7.2-5.3-5.1 7.3-1.1z' fill='%23fff'/%3E%3Cpath d='M31 83c17-7 37-5 57 7v46c-20-12-40-14-57-7z' fill='%23fff'/%3E%3Cpath d='M89 90c20-12 40-14 57-7v46c-17-7-37-5-57 7z' fill='%23fff'/%3E%3Cpath d='M89 90v46' fill='none' stroke='%23f4b7ba' stroke-linecap='round' stroke-width='3'/%3E%3Cpath d='M40 94c12-3 25-1 37 4M40 106c12-3 25-1 37 4M102 98c12-5 25-7 37-4M102 110c12-5 25-7 37-4' fill='none' stroke='%23f4b7ba' stroke-linecap='round' stroke-width='2.5'/%3E%3C/svg%3E") center / 150px no-repeat;
+  background: #167a55 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M25 8h14l6.5 6v9L39 29H25l-6.5-6v-9z' fill='%23fff'/%3E%3Cpath d='M32 11.5l6.5 7-6.5 7-6.5-7z' fill='%23b23a2e'/%3E%3Cpath d='M10 37c7-3 14-2 22 3v15c-8-5-15-6-22-3zM32 40c8-5 15-6 22-3v15c-7-3-14-2-22 3z' fill='%23fff'/%3E%3Cpath d='M32 40v15' fill='none' stroke='%23a8d5c0' stroke-linecap='round' stroke-width='2'/%3E%3C/svg%3E") center / 150px no-repeat;
   opacity: 1; transition: opacity .45s ease;
 }
 html.app-splash.app-splash-out::after { opacity: 0; }
 
-/* The reminder offer (turkish-app.js, native app only): a card above the tab bar. */
+/* The reminder offer (turkmen-app.js, native app only): a card above the tab bar. */
 .app-ask { position: fixed; z-index: 1002; left: 12px; right: 12px; bottom: calc(76px + var(--app-bottom, 0px)); display: flex; gap: 12px; align-items: flex-start;
   padding: 14px 14px 12px; border-radius: 16px; background: #fff; border: 1px solid #e6e6e2; box-shadow: 0 10px 30px rgb(15 23 42 / .16);
   font: 14px/1.4 "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; color: #4a4a48; animation: app-ask-in .35s ease both; }
@@ -220,10 +217,10 @@ html.app-splash.app-splash-out::after { opacity: 0; }
 .app-ask b { display: block; color: #1d1d1b; font-size: 15px; margin-bottom: 2px; }
 .app-ask .app-ask-btns { display: flex; gap: 8px; margin-top: 10px; }
 .app-ask button { font: inherit; font-weight: 650; min-height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid #e6e6e2; background: #fff; color: #1d1d1b; }
-.app-ask button.yes { background: #287a9e; border-color: #287a9e; color: #fff; box-shadow: 0 3px 0 #1d5b77; }
+.app-ask button.yes { background: #167a55; border-color: #167a55; color: #fff; box-shadow: 0 3px 0 #10603f; }
 
 /* ── APP-9g ── */
-/* Titles without the "Turkish · A1 → C2" line above them. */
+/* Titles without the "Turkmen · A1 → B1" line above them. */
 html[data-app] #profile .hero .kicker, html[data-app] body:has(#v-review) .head .kicker { display: none; }
 
 /* Course top bar: the flame once today counts, and the XP ring refilling after a lesson. */
@@ -249,8 +246,8 @@ html.app-speeding .app-tabs { display: none; }
 .app-speed .sp-top { display: flex; align-items: center; gap: 12px; height: 48px; }
 .app-speed .sp-x { width: 40px; height: 40px; border: 0; background: none; font-size: 20px; color: #6b6b67; }
 .app-speed .sp-time { flex: 1; height: 12px; border-radius: 6px; background: #eeeeea; overflow: hidden; }
-.app-speed .sp-time i { display: block; height: 100%; width: 100%; background: #287a9e; border-radius: 6px; transition: width .1s linear; }
-.app-speed.sp-hurry .sp-time i { background: #e34b4f; }
+.app-speed .sp-time i { display: block; height: 100%; width: 100%; background: #167a55; border-radius: 6px; transition: width .1s linear; }
+.app-speed.sp-hurry .sp-time i { background: #b23a2e; }
 .app-speed .sp-n { font-variant-numeric: tabular-nums; color: #6b6b67; font-weight: 600; min-width: 40px; text-align: right; }
 .app-speed .sp-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
 .app-speed .sp-k { margin: 0 0 6px; color: #6b6b67; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; text-align: center; }
@@ -271,15 +268,15 @@ html.app-speeding .app-tabs { display: none; }
 
 /* The first launch: the character says hello and offers lesson 1. */
 .app-welcome { position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; padding: calc(var(--app-top, 0px) + 24px) 28px calc(var(--app-bottom, 0px) + 24px);
-  background: linear-gradient(180deg, #fff6f0 0%, #fff 55%); font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; transition: opacity .3s ease; }
+  background: linear-gradient(180deg, #edf6f1 0%, #fff 55%); font-family: "Inter Fleet", InterVariable, Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; transition: opacity .3s ease; }
 .app-welcome.out { opacity: 0; }
 .app-welcome-in { width: 100%; max-width: 400px; text-align: center; }
 .app-welcome-pic { position: relative; display: inline-block; margin-bottom: 18px; }
-.app-welcome-pic svg { display: block; border-radius: 50%; box-shadow: 0 10px 30px rgb(227 75 79 / .18); }
+.app-welcome-pic svg { display: block; border-radius: 50%; box-shadow: 0 10px 30px rgb(22 122 85 / .18); }
 .app-welcome-bub { position: absolute; top: -6px; right: -54px; padding: 7px 12px; border-radius: 14px; background: #fff; border: 1px solid #e6e6e2; font-weight: 750; font-size: 17px; color: #1d1d1b; box-shadow: 0 4px 12px rgb(15 23 42 / .08); }
 .app-welcome h1 { margin: 0 0 10px; font-size: 27px; line-height: 1.2; letter-spacing: -0.02em; color: #1d1d1b; }
 .app-welcome p { margin: 0 0 26px; color: #4a4a48; font-size: 16px; line-height: 1.5; }
-.app-welcome-go { display: flex; align-items: center; justify-content: center; min-height: 56px; border-radius: 14px; background: #e34b4f; color: #fff; font-weight: 700; font-size: 17px; text-decoration: none; box-shadow: 0 4px 0 #b7353a; }
+.app-welcome-go { display: flex; align-items: center; justify-content: center; min-height: 56px; border-radius: 14px; background: #167a55; color: #fff; font-weight: 700; font-size: 17px; text-decoration: none; box-shadow: 0 4px 0 #10603f; }
 .app-welcome-skip { margin-top: 14px; border: 0; background: none; font: inherit; font-size: 15px; color: #6b6b67; padding: 10px; }
 
 /* Lesson start: three new words, the rest behind a button, no "Card" links, and Start always in reach. */
@@ -290,12 +287,6 @@ html[data-app] .wlist .app-more button { border: 0; background: none; font: inhe
 html[data-app] .start .acts { position: sticky; bottom: 0; z-index: 6; margin-left: -16px; margin-right: -16px; padding: 14px 16px calc(12px + var(--app-bottom, 0px));
   background: linear-gradient(rgb(255 255 255 / 0), #fff 16px); }
 html[data-app] .start .acts .btn.primary { flex: 1; }
-html.app-voice-told .voice-note { display: none; }
-
-/* Conversations list: the line on sen and siz, and whether a scene's unit is done. */
-html[data-app] .dl-sensiz { font-size: 14.5px; padding: 10px 12px; border-radius: 10px; background: #f6f6f3; }
-html[data-app] .dl-after.app-ready { color: #2e7d4f; }
-html[data-app] .dl-after.app-later::before { content: "🔒 "; font-size: 11px; }
 
 /* Guides: a way back, and the colour legend behind a button. */
 .app-back { display: inline-flex; align-items: center; gap: 2px; margin: 6px 0 4px -6px; padding: 6px 8px; border-radius: 8px; color: #287a9e; font-weight: 600; font-size: 15px; text-decoration: none; }
@@ -322,14 +313,13 @@ html[data-app] .card:not(.app-folded) > .app-fold-h::after { transform: rotate(-
 
 /* ── APP-9h: the path, short (asked by Grégoire after the APP-9g preview) ──
    Only the unit you're on keeps its trail, lessons, grammar links and buttons. Finished units are one row with a ✓,
-   the ones ahead one row with a lock; tapping a row opens it in full (li.app-open, turkish-app.js). The level's
+   the ones ahead one row with a lock; tapping a row opens it in full (li.app-open, turkmen-app.js). The level's
    description and "you can…" list are left out. */
 html[data-app] #levels .lvl-sum, html[data-app] #levels .cando { display: none; }
 html[data-app] #levels li.unit:not(.is-here):not(.app-open) .trail,
 html[data-app] #levels li.unit:not(.is-here):not(.app-open) .upoints,
 html[data-app] #levels li.unit:not(.is-here):not(.app-open) .uacts,
 html[data-app] #levels li.unit:not(.is-here):not(.app-open) .lessons,
-html[data-app] #levels li.unit:not(.is-here) > .ferry,
 html[data-app] #levels li.unit:not(.is-here):not(.app-open) > .node { display: none !important; }
 html[data-app] #levels li.unit:not(.is-here):not(.app-open) { margin: 0 0 8px !important; padding: 0 !important; }
 html[data-app] #levels li.unit:not(.is-here):not(.app-open) .ucard { position: relative; padding: 12px 14px 12px 56px !important; min-height: 0; border-radius: 14px;
@@ -374,8 +364,8 @@ html[data-app] .at-hdr .at-home.app-backarrow { min-width: 44px; min-height: 44p
 html[data-app] .at-hdr .at-home.app-backarrow svg { display: block; }
 
 /* ── APP-9q: the course page, straight to the unit in progress ──
-   The header is one line on one centre: the streak (its "Streak" label kept for VoiceOver only), the Daily Turkish
-   wordmark with "Daily" in red as in the logo, and the character saying the word for the time of day. */
+   The header is one line on one centre: the streak (its "Streak" label kept for VoiceOver only), the Daily Turkmen
+   wordmark with "Daily" in green as in the logo, and the character saying the word for the time of day. */
 /* Centred on the screen like an iPhone title: both sides get the same width when they fit, and only when one side is
    wider than the room left does the wordmark move over (each side at least as wide as its content). */
 html[data-app] #v-course .stats { display: grid; grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr); align-items: center;
@@ -389,9 +379,9 @@ html[data-app] #v-course .stats .stat .flame { width: 34px; height: 34px; }
 html[data-app] #v-course .stats .stat .big { font-size: 16px; line-height: 1.2; }
 .app-brand { display: flex; align-items: center; justify-content: center; padding: 6px 0; line-height: 1.1; }
 .app-brand-w { font-size: 18.5px; font-weight: 750; letter-spacing: -0.03em; color: #242424; white-space: nowrap; }
-.app-brand-d { font-weight: 600; color: #e34b4f; }
+.app-brand-d { font-weight: 600; color: #167a55; }
 /* The character's bubble on its left, the tail at its mouth (a little below the middle of the face); on a narrow phone
-   a two-word greeting goes on two lines rather than crowd the wordmark (turkish-app.js, .app-hi-wrap). */
+   a two-word greeting goes on two lines rather than crowd the wordmark (turkmen-app.js, .app-hi-wrap). */
 html[data-app] #v-course .stats .app-hi { justify-self: end; flex-direction: row; align-items: center; gap: 8px; padding: 4px 6px !important; }
 html[data-app] #v-course .stats .app-hi-av, html[data-app] #v-course .stats .app-hi-av svg { width: 36px; height: 36px; }
 html[data-app] #v-course .stats .app-hi-bub { position: relative; top: 3px; padding: 4px 8px; border-radius: 10px; background: #f3f6f9; border: 1px solid #dde5ec;
@@ -410,7 +400,74 @@ html[data-app] #levels details.level[open] { border-top: 0; }
 html[data-app] #levels details.level > .lvl-body { padding-top: 14px; }
 html[data-app] #v-course #levels { margin-top: -14px; }   /* the level's tint starts right under the strip */
 
-/* The ferry sails between the unit in progress and the units ahead (turkish-app.js puts a copy there). */
-html[data-app] #levels li.unit > .ferry { display: none !important; }
-html[data-app] #levels li.app-ferry { list-style: none; margin: 0; padding: 0; }
-html[data-app] #levels li.app-ferry > .ferry { display: block; margin: 6px -16px 12px; }
+/* ── Daily Turkmen's own hub ──
+   Its units are laid out as a grid with a column for the node (the Turkish hub's phones draw a trail instead): a unit
+   shown as one row drops the grid, so its card takes the whole width, and the line between the nodes goes. */
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) { display: block; }
+html[data-app] #levels .units::before { display: none; }
+/* Signing in is by email and password in the app: no "Email me a sign-in link instead" (emailed links open the
+   website, which can't sign the app in). */
+html[data-app] [data-act="mode-link"], html[data-app] [data-au="mode-link"] { display: none !important; }
+
+/* ── Daily Turkish's look on the course page (its FX-1 and FX-2, PROJECT.md 3), brought to the Turkmen hub in the app ──
+   The Turkish hub draws these itself; the Turkmen hub doesn't yet, so the app adds them: chunky buttons that sink when
+   pressed, the level's colour on the unit in progress (with a white göl pattern, as Daily Turkish has its İznik one),
+   and on the path the lessons as a trail of round buttons (turkmen-app.js draws it, as turkish.html's trailHtml). */
+html[data-app] .btn:not(.ghost), html[data-app] .opt, html[data-app] .tile, html[data-app] .dl-opt, html[data-app] .grade { --edge: #d6d5cf; box-shadow: 0 3px 0 var(--edge); transition: transform .08s ease-out, box-shadow .08s ease-out, background-color .15s, border-color .15s, color .15s; }
+html[data-app] .opt, html[data-app] .tile { border-bottom-width: 1px; }
+html[data-app] .btn.primary, html[data-app] .grade.good { --edge: #12506c; }
+html[data-app] .opt.sel { --edge: var(--blue); }
+html[data-app] .opt.right { --edge: #9ccaae; }
+html[data-app] .opt.wrong, html[data-app] .grade.again { --edge: #e6aba2; }
+html[data-app] .grade.easy { --edge: rgb(40 122 158 / 45%); }
+html[data-app] .dock.ok .go { --edge: #1a4d2f; }
+html[data-app] .dock.bad .go { --edge: #6b170f; }
+html[data-app] .dock.almost .go { --edge: #4f3605; }
+html[data-app] .btn:not(.ghost):not(:disabled):active, html[data-app] .opt:not(.off):active, html[data-app] .tile:not(:disabled):not(.used):active, html[data-app] .grade:not(:disabled):active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+html[data-app] .btn:disabled, html[data-app] .tile.used, html[data-app] .tile:disabled, html[data-app] .opt.off:not(.right):not(.wrong) { box-shadow: none; }
+html[data-app] .lvl-chip { box-shadow: 0 3px 0 var(--line); }
+html[data-app] .level[open] { border-top: 3px solid var(--lv); background: linear-gradient(var(--lv-tint), var(--lv-tint)); margin: 0 -16px; padding: 0 16px; border-radius: 0 0 14px 14px; }
+html[data-app] .unit .ucard { overflow: hidden; }
+html[data-app] .unit.is-here .ucard { border-color: var(--lv-line); box-shadow: 0 3px 0 var(--lv-line); }
+html[data-app] .unit.is-here .uhead, html[data-app] .unit.st-done.app-open .uhead { position: relative; isolation: isolate; margin: -12px -14px 0; padding: 12px 14px; }
+html[data-app] .unit.is-here .uhead { background: var(--lv); color: #fff; }
+html[data-app] .unit.is-here .uhead::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke-width='1.3'%3E%3Cg stroke='%23ffffff'%3E%3Cpath d='M22 19h20l10 9v8l-10 9H22l-10-9v-8z'/%3E%3Cpath d='M32 13v-4M32 51v4M6 32H2M58 32h4'/%3E%3C/g%3E%3Cg stroke='%23ffffff'%3E%3Cpath d='M32 19v26M12 32h40'/%3E%3Cpath d='M0-7l7 7-7 7-7-7zM64-7l7 7-7 7-7-7zM0 57l7 7-7 7-7-7zM64 57l7 7-7 7-7-7z'/%3E%3C/g%3E%3Cg stroke='%23ffffff'%3E%3Cpath d='M32 25l7 7-7 7-7-7z'/%3E%3Cpath d='M0-3l3 3-3 3-3-3zM64-3l3 3-3 3-3-3zM0 61l3 3-3 3-3-3zM64 61l3 3-3 3-3-3z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") 0 0 / 64px 64px; opacity: .13; }
+html[data-app] .unit.is-here .ukick, html[data-app] .unit.is-here .uprog, html[data-app] .unit.is-here .uhead h3, html[data-app] .unit.is-here .utr { color: #fff !important; }
+html[data-app] .unit.is-here .utr, html[data-app] .unit.is-here .ukick { opacity: .9; }
+html[data-app] .unit.st-done.app-open .uhead { background: var(--lv-wash); }
+html[data-app] .unit.st-done .ukick { color: var(--lv-dark); }
+html[data-app] .lgo { background: var(--lv); color: var(--lv-on, #fff); box-shadow: 0 3px 0 var(--lv-dark); }
+/* the trail replaces the list of lessons; the unit's own node goes */
+html[data-app] #levels .unit:not(.planned) { grid-template-columns: minmax(0, 1fr); }
+html[data-app] #levels .unit:not(.planned) > .node { display: none !important; }
+html[data-app] #levels .unit:has(.trail) .lessons { display: none !important; }
+html[data-app] #levels li.unit:not(.is-here):not(.app-open) .trail { display: none; }
+html[data-app] .trail { display: block; position: relative; margin: 10px 0 4px; }
+html[data-app] .trail > ol { position: relative; list-style: none; margin: 0; padding: 0; }
+html[data-app] .trail > svg { position: absolute; left: 50%; top: 0; margin-left: -160px; overflow: visible; pointer-events: none; }
+html[data-app] .tn { position: relative; height: 92px; display: flex; justify-content: center; }
+html[data-app] .tn.rv { height: 124px; }
+html[data-app] .tnode { position: relative; margin-top: 14px; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; transform: translateX(var(--dx, 0)); color: #fff; text-decoration: none; transition: transform .08s ease-out, box-shadow .08s ease-out; }
+html[data-app] .tnode svg { width: 26px; height: 26px; }
+html[data-app] .tnode.done { background: var(--lv); box-shadow: 0 6px 0 var(--lv-dark); }
+html[data-app] .tnode.next, html[data-app] .tnode.open { background: var(--lv); box-shadow: 0 6px 0 var(--lv-dark); font-size: 20px; font-weight: 750; }
+html[data-app] .tnode.open { background: #fff; color: var(--lv-dark); border: 3px solid var(--lv); box-shadow: 0 6px 0 var(--lv-line); }
+html[data-app] .tnode.next::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 4px solid var(--lv-line); animation: ping 2.2s ease-out 1s infinite; pointer-events: none; }
+html[data-app] .tnode.locked { background: #e9e8e3; color: #a9a8a2; box-shadow: 0 6px 0 #d4d3cd; }
+html[data-app] .tnode.locked svg { width: 20px; height: 20px; }
+html[data-app] a.tnode:active { transform: translateX(var(--dx, 0)) translateY(4px); box-shadow: 0 2px 0 var(--lv-dark); }
+html[data-app] .tnode.rev { width: 56px; height: 56px; margin-top: 20px; border-radius: 14px; transform: translateX(var(--dx, 0)) rotate(45deg); background: #efe9d8; color: #b8a777; box-shadow: 0 6px 0 #d9cfb2; }
+html[data-app] .tnode.rev > * { transform: rotate(-45deg); }
+html[data-app] .tnode.rev.ready { background: #fff; color: var(--gold); border: 3px solid var(--gold); box-shadow: 0 6px 0 var(--gold-wash); }
+html[data-app] .tnode.rev.gold { background: var(--gold-shine); color: #fff; box-shadow: 0 6px 0 var(--gold-dark); }
+html[data-app] a.tnode.rev:active { transform: translateX(var(--dx, 0)) translateY(4px) rotate(45deg); }
+html[data-app] .tlab { position: absolute; left: 50%; top: 100px; width: 140px; margin-left: -70px; transform: translateX(var(--dx, 0)); text-align: center; font-size: 12px; font-weight: 650; color: var(--muted); }
+html[data-app] .tcall { position: relative; z-index: 1; height: 132px; display: flex; justify-content: center; }
+html[data-app] .tbub { position: relative; box-sizing: border-box; width: min(280px, 100%); height: 116px; margin-top: 4px; padding: 10px 14px 12px; border-radius: 14px; background: #fff; border: 1px solid var(--lv-line); box-shadow: 0 8px 24px rgb(0 0 0 / .08); display: flex; flex-direction: column; }
+html[data-app] .tbub::before { content: ""; position: absolute; left: calc(50% + var(--dx, 0px) - 7px); top: -8px; width: 13px; height: 13px; background: #fff; border-left: 1px solid var(--lv-line); border-top: 1px solid var(--lv-line); transform: rotate(45deg); }
+html[data-app] .tbub .k { font-size: 11.5px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--lv-dark); }
+html[data-app] .tbub b { font-size: 16px; font-weight: 650; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html[data-app] .tbub .btn { margin-top: auto; min-height: 42px; background: var(--lv); border-color: var(--lv); color: var(--lv-on, #fff); --edge: var(--lv-dark); display: flex; align-items: center; justify-content: center; }
+html[data-app] .tpal { position: absolute; top: 4px; display: flex; flex-direction: column; align-items: center; gap: 3px; pointer-events: none; }
+html[data-app] .tpal .say { padding: 3px 9px; border-radius: 9px; background: #fff; border: 1px solid var(--line); box-shadow: 0 3px 10px rgb(0 0 0 / .06); font-family: var(--serif, "Lora"), Georgia, serif; font-weight: 600; font-size: 14px; color: var(--ink); white-space: nowrap; }
+html[data-app] .tpal svg { display: block; border-radius: 50%; }

@@ -173,7 +173,8 @@ const banned = [];
     const s = readFileSync(p, "utf8"), rel = p.slice(OUT.length + 1);
     if (/turkishculture/.test(s.replace(/culture: "\/turkishculture\.html"/, ""))) banned.push(rel + ": turkishculture");
     if (/PAGES\.culture|PAGES\[["']culture["']\]/.test(s)) banned.push(rel + ": PAGES.culture");
-    if (/(?:href|src)\s*=\s*["'][^"']*turkmen|\]\([^)]*turkmen|["'(]\/?turkmen\/|dailyturkmen/i.test(s)) banned.push(rel + ": a Turkmen course link");
+    // The privacy policy may name Daily Turkmen (the shared profile; it opens in Safari): only the course stays clear of it.
+    if (rel !== "turkishprivacy.html" && /(?:href|src)\s*=\s*["'][^"']*turkmen|\]\([^)]*turkmen|["'(]\/?turkmen\/|dailyturkmen/i.test(s)) banned.push(rel + ": a Turkmen course link");
   }
 })(OUT);
 if (banned.length) fail("links the app must not have (APP-7):\n  " + banned.join("\n  "));
