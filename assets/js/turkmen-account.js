@@ -5,8 +5,9 @@
    ONE ACCOUNT FOR BOTH COURSES. It signs in to the same Supabase project as Daily Turkish, so the same email and
    password work on dailyturkish.app and on dailyturkmen.app. The person (name, time zone) is the shared row of
    public.profiles; the progress is this course's own row of public.enrollments (lang "tk"), next to the Turkish one
-   (lang "tr"). Each site keeps its own sign-in (browsers keep storage per address), so a learner signs in once on each;
-   on gregoiremaillard.com the two courses share an address, and signing in to one signs in to the other.
+   (lang "tr"). Each site keeps its own sign-in (browsers keep storage per address); the header's link to the other
+   course carries the sign-in across (HANDOFF-1, below). On gregoiremaillard.com the two courses share an address, and
+   signing in to one signs in to the other.
 
    Without an account nothing changes: progress lives in this browser (turkmen.js, store). With one, the three
    progress parts (course, cards, settings) are also kept online and follow the learner to other devices.
@@ -84,6 +85,18 @@
     history.replaceState(null, "", CFG.page + "#profile");
   })();
 
+  // A hand-off from the sister course (HANDOFF-1): #handoff=<token_hash>, made by the course-handoff Edge Function
+  // when a signed-in learner follows the header's link to the other course's site. Read and removed from the address
+  // at once, before the page's own scripts (which wait for DOMContentLoaded) read the hash.
+  var handoff = null, handoffPending = false;
+  (function readHandoff() {
+    var m = /(?:^#|&)handoff=([^&]+)/.exec(location.hash);
+    if (!m) return;
+    try { handoff = decodeURIComponent(m[1]); } catch (e) { handoff = null; }
+    handoffPending = !!handoff;
+    history.replaceState(null, "", location.pathname + location.search);
+  })();
+
   // ── loading the library and the client ──
   function loadLib() {
     if (window.supabase && window.supabase.createClient) return Promise.resolve();
@@ -128,6 +141,7 @@
       if (before !== A.user.id) { A.error = null; A.sentTo = null; emit(); A.syncNow(); }
       else emit();
     } else {
+      if (handoffPending) return;   // a hand-off is being used (useHandoff): stay "loading" until it settles
       A.user = null; A.profile = null; A.status = "signed-out"; A.sync = "idle";
       emit();
     }
@@ -594,7 +608,52 @@
   };
   var nudgeOff = null;
 
+  // ── the hand-off to the sister course (HANDOFF-1) ──
+  // dailyturkish.app and dailyturkmen.app use the same accounts, but a browser keeps each site's sign-in apart. When a
+  // signed-in learner clicks the header's link to the other course (a.at-sis, or any link marked data-handoff), this
+  // asks the course-handoff Edge Function (scripts/turkish/supabase-course-handoff.ts) for a single-use sign-in token
+  // and opens the other site with #handoff=<token>; that site signs in with it: a session of its own, so the two sites
+  // never share a refresh token. Signed out, in the app, with a modifier key (new tab) or if anything fails, the link
+  // just opens as it is. The token is in the hash, so it never reaches a server log or Google Analytics.
+  var SISTER_HOSTS = ["dailyturkish.app", "dailyturkmen.app", "gregoiremaillard.com", "www.gregoiremaillard.com"];
+  var HANDOFF_FN = "course-handoff", HANDOFF_WAIT = 4000;
+  function sisterLink(a) {
+    return !!a && SISTER_HOSTS.indexOf(a.hostname) >= 0 && a.hostname !== location.hostname && /^https:$/.test(a.protocol);
+  }
+  if (!T.app) document.addEventListener("click", function (e) {
+    if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target && e.target.closest ? e.target.closest("a.at-sis[href], a[data-handoff][href]") : null;
+    if (!sisterLink(a) || a.target === "_blank" || !client || !A.user) return;
+    e.preventDefault();
+    var base = a.href.split("#")[0], hash = a.hash, gone = false;
+    function go(token) {
+      if (gone) return; gone = true;
+      location.href = base + (token ? "#handoff=" + encodeURIComponent(token) : hash);
+    }
+    setTimeout(function () { go(null); }, HANDOFF_WAIT);   // never keep the learner waiting on a slow answer
+    client.functions.invoke(HANDOFF_FN, { body: {} }).then(function (r) {
+      go(r && !r.error && r.data && typeof r.data.token_hash === "string" ? r.data.token_hash : null);
+    }, function () { go(null); });
+  });
+  function useHandoff(c) {
+    var t = handoff; handoff = null;
+    if (!t) return;
+    function settle() {
+      if (!handoffPending) return;
+      handoffPending = false;
+      if (!A.user) onSession("SIGNED_OUT", null);
+    }
+    c.auth.getSession().then(function (r) {
+      if (r && r.data && r.data.session) return null;   // already signed in on this site: keep that account
+      return c.auth.verifyOtp({ token_hash: t, type: "magiclink" });
+    }).then(function (r) {
+      // success: Supabase reports SIGNED_IN to onSession; give it a moment before settling
+      setTimeout(settle, r && !r.error ? 1500 : 0);
+    }, settle);
+  }
+
   T.account = A;
   // Only download the library when it's needed: someone is signed in, or arriving from a sign-in link.
-  if (!A.disabled && (hasToken() || urlHasAuth())) A.ensure().catch(function () {});
+  if (!A.disabled && (hasToken() || urlHasAuth() || handoff)) A.ensure().then(useHandoff, function () { handoffPending = false; });
+  else { handoff = null; handoffPending = false; }
 })();
