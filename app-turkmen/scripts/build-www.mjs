@@ -20,6 +20,8 @@
 //   - leaves out the header's Daily Turkish mark and sends the other links to Daily Turkish to
 //     https://dailyturkish.app/ (they open in Safari), as the mirror does;
 //   - says "on this iPhone" where the pages say "in this browser";
+//   - leaves out the French edition's data (assets/data/turkmen/fr/) and the interface strings (i18n/), which the pages
+//     already carry inline: the app is in English (turkmen/TM-FR.md 4.5), and the French tree isn't filtered for 4+;
 //   - leaves out of the course, or rewords, what would keep the App Store age rating above 4+ (content-4plus.mjs,
 //     applied by content-filter.mjs, which recounts index.json and fails the build when a rule no longer matches
 //     or a new such word appears);
@@ -57,7 +59,10 @@ const APP_SCRIPTS = [
 const APP_LIBS = [["assets/js/app/supabase.js", "vendor/supabase-2.117.3.umd.js"]];
 const APP_CSS = ["assets/css/app/turkmen-app.css", "src/turkmen-app.css"];
 
+// Not copied: the French edition's data and the interface strings (TM-FR.md 4.5).
+const SKIP = new Set(["assets/data/turkmen/fr", "assets/data/turkmen/i18n"].map((p) => join(SITE, p)));
 function cp(from, to) {
+  if (SKIP.has(from)) return;
   if (statSync(from).isDirectory()) {
     mkdirSync(to, { recursive: true });
     for (const name of readdirSync(from)) if (name !== ".DS_Store") cp(join(from, name), join(to, name));

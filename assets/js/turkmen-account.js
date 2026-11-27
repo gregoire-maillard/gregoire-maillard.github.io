@@ -46,6 +46,8 @@
   var TOKEN_KEY = "sb-" + CFG.url.replace(/^https:\/\//, "").split(".")[0] + "-auth-token";
   var SYNC_KEY = "tkm:v1:sync";
   var store = T.store;
+  // where the progress lives without an account, in the messages below
+  function here() { return T.t(T.app ? "account.hereApp" : "account.here"); }
 
 
   var A = {
@@ -77,8 +79,8 @@
     if (!/(?:^#|&)error_description=/.test(location.hash)) return;
     var p = new URLSearchParams(location.hash.slice(1));
     var code = p.get("error_code") || "";
-    A.error = code === "otp_expired" ? "That sign-in link has expired or was already used. Ask for a new one below."
-      : "Signing in didn't work (" + (p.get("error_description") || "unknown error").replace(/\+/g, " ") + "). Ask for a new link below.";
+    A.error = code === "otp_expired" ? T.t("account.linkExpired")
+      : T.t("account.linkFailed", { error: (p.get("error_description") || T.t("account.unknownError")).replace(/\+/g, " ") });
     history.replaceState(null, "", CFG.page + "#profile");
   })();
 
@@ -90,7 +92,7 @@
       var s = document.createElement("script");
       s.src = CFG.lib; s.async = true;
       s.onload = function () { window.supabase && window.supabase.createClient ? resolve() : reject(new Error("library missing")); };
-      s.onerror = function () { reject(new Error("couldn't download the sign-in library")); };
+      s.onerror = function () { reject(new Error(T.t("account.libFailed"))); };
       document.head.appendChild(s);
     });
     libPromise.catch(function () { libPromise = null; });
@@ -110,7 +112,7 @@
       });
       return client;
     }).catch(function (e) {
-      A.status = "unavailable"; A.error = "Online profiles can't be reached right now (" + e.message + "). Your progress is still saved " + (T.app ? "on this iPhone" : "in this browser") + ".";
+      A.status = "unavailable"; A.error = T.t("account.unreachable", { error: e.message, where: here() });
       emit();
       throw e;
     });
@@ -134,11 +136,11 @@
   // ── signing in and out ──
   A.signIn = function (email) {
     email = String(email || "").trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return Promise.reject(new Error("That doesn't look like an email address."));
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return Promise.reject(new Error(T.t("account.badEmail")));
     return A.ensure().then(function (c) {
       return c.auth.signInWithOtp({ email: email, options: { emailRedirectTo: redirectTo(), shouldCreateUser: true, data: { signup_platform: platform() } } });
     }).then(function (r) {
-      if (r.error) throw new Error(/rate limit/i.test(r.error.message) ? "Too many sign-in emails were sent in the last hour. Please try again a bit later." : r.error.message);
+      if (r.error) throw new Error(/rate limit/i.test(r.error.message) ? T.t("account.tooManyLinks") : r.error.message);
       A.sentTo = email; A.sentKind = "link"; A.error = null; emit();
     });
   };
@@ -147,20 +149,20 @@
   var MIN_PW = 8;
   function checkEmail(email) {
     email = String(email || "").trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("That doesn't look like an email address.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error(T.t("account.badEmail"));
     return email;
   }
   function checkPw(pw) {
     pw = String(pw || "");
-    if (pw.length < MIN_PW) throw new Error("Your password needs at least " + MIN_PW + " characters.");
+    if (pw.length < MIN_PW) throw new Error(T.t("account.pwShort", { n: MIN_PW }));
     return pw;
   }
   function authError(e) {
-    var m = (e && e.message) || "unknown error";
-    if (/invalid login credentials/i.test(m)) return new Error("Wrong email or password. If you've only signed in with emailed links so far, use \u201cForgot password?\u201d to set one.");
-    if (/email not confirmed/i.test(m)) return new Error("Confirm your email first: open the link we sent when you created your profile. Use \u201cForgot password?\u201d if you can't find it.");
-    if (/rate limit/i.test(m)) return new Error("Too many emails were sent in the last hour. Please try again a bit later.");
-    if (/same.*password|different from the old/i.test(m)) return new Error("Choose a password different from your current one.");
+    var m = (e && e.message) || T.t("account.unknownError");
+    if (/invalid login credentials/i.test(m)) return new Error(T.t("account.wrongPw"));
+    if (/email not confirmed/i.test(m)) return new Error(T.t("account.unconfirmed"));
+    if (/rate limit/i.test(m)) return new Error(T.t("account.tooManyEmails"));
+    if (/same.*password|different from the old/i.test(m)) return new Error(T.t("account.samePw"));
     return new Error(m);
   }
   // Where emailed links land (confirm, reset, sign-in): back to this course's hub on the same site, which needs the
@@ -178,7 +180,7 @@
 
   // Signs in straight away: no email, no link.
   A.signInPassword = function (email, pw) {
-    try { email = checkEmail(email); if (!pw) throw new Error("Type your password."); } catch (e) { return Promise.reject(e); }
+    try { email = checkEmail(email); if (!pw) throw new Error(T.t("account.typePw")); } catch (e) { return Promise.reject(e); }
     return A.ensure().then(function (c) { return c.auth.signInWithPassword({ email: email, password: pw }); })
       .then(function (r) { if (r.error) throw authError(r.error); A.sentTo = null; A.error = null; });
   };
@@ -190,12 +192,12 @@
       return c.auth.signUp({ email: email, password: pw, options: { emailRedirectTo: redirectTo(), data: { signup_platform: platform() } } });
     }).then(function (r) {
       if (r.error) {
-        if (/already registered|already exists/i.test(r.error.message)) throw new Error("There's already a profile with this email. Sign in instead, or use \u201cForgot password?\u201d.");
+        if (/already registered|already exists/i.test(r.error.message)) throw new Error(T.t("account.exists"));
         throw authError(r.error);
       }
       if (r.data && r.data.session) return;                       // email confirmation is off: already signed in
       var ids = r.data && r.data.user && r.data.user.identities;
-      if (ids && !ids.length) throw new Error("There's already a profile with this email. Sign in instead, or use \u201cForgot password?\u201d.");
+      if (ids && !ids.length) throw new Error(T.t("account.exists"));
       A.sentTo = email; A.sentKind = "confirm"; A.error = null; emit();
     });
   };
@@ -207,7 +209,7 @@
   // Sets or changes the password of the signed-in learner (also after a reset link).
   A.setPassword = function (pw) {
     try { pw = checkPw(pw); } catch (e) { return Promise.reject(e); }
-    if (!A.user) return Promise.reject(new Error("You're not signed in."));
+    if (!A.user) return Promise.reject(new Error(T.t("account.notSignedIn")));
     return client.auth.updateUser({ password: pw }).then(function (r) {
       if (r.error) throw authError(r.error);
       A.recovering = false; emit();
@@ -226,11 +228,11 @@
   };
   A.setName = function (name) {
     name = String(name || "").replace(/\s+/g, " ").trim().slice(0, 40);
-    if (!name) return Promise.reject(new Error("Type a name first."));
-    if (!A.user) return Promise.reject(new Error("You're not signed in."));
+    if (!name) return Promise.reject(new Error(T.t("account.typeName")));
+    if (!A.user) return Promise.reject(new Error(T.t("account.notSignedIn")));
     return client.from(CFG.table).update({ display_name: name }).eq("user_id", A.user.id).select("display_name").then(function (r) {
       if (r.error) throw new Error(r.error.message);
-      if (!r.data || !r.data.length) throw new Error("Your profile wasn't found. " + (T.app ? "Close and reopen the app, then try again." : "Reload the page and try again."));
+      if (!r.data || !r.data.length) throw new Error(T.t("account.noProfile") + " " + T.t(T.app ? "account.noProfileApp" : "account.noProfileReload"));
       A.profile = A.profile || {}; A.profile.display_name = name; emit();
     });
   };
@@ -369,7 +371,7 @@
   }
   function fail(e) {
     A.sync = navigator.onLine === false || /fetch|network/i.test(String(e && e.message)) ? "offline" : "error";
-    A.error = A.sync === "error" ? "Your progress couldn't be saved online (" + (e && e.message || "unknown error") + "). It's safe " + (T.app ? "on this iPhone" : "in this browser") + "; we'll try again." : null;
+    A.error = A.sync === "error" ? T.t("account.saveFailed", { error: e && e.message || T.t("account.unknownError"), where: here() }) : null;
     emit();
   }
 
@@ -420,7 +422,7 @@
         else if (k === "cards") result[k] = emptyCards(local.cards) ? remote.cards : emptyCards(remote.cards) ? local.cards : mergeCards(local.cards, remote.cards, now);
         else result[k] = m ? local.settings : remote.settings;   // first sync on a device: the profile's settings
       });
-      if (!apply(result)) throw new Error("the online copy couldn't be read");
+      if (!apply(result)) throw new Error(T.t("account.unreadable"));
       result = snapshot();   // what the store actually holds (repaired and pruned)
       var same = JSON.stringify(result) === JSON.stringify(remote);
       if (same) { setMarker(markFor(row.rev, result)); return; }
@@ -429,7 +431,7 @@
         var upd = Object.assign({ course: result.course, cards: result.cards, settings: result.settings, rev: row.rev + 1, updated_at: stamp, last_active_at: stamp }, cols);
         return client.from(CFG.progress).update(upd).eq("user_id", uid).eq("lang", CFG.lang).eq("rev", row.rev).select("rev").then(function (w) {
           if (w.error) throw new Error(w.error.message);
-          if (!w.data || !w.data.length) { if (!attempt) return fullSync(1); throw new Error("another device kept changing the progress"); }
+          if (!w.data || !w.data.length) { if (!attempt) return fullSync(1); throw new Error(T.t("account.conflict")); }
           setMarker(markFor(row.rev + 1, result));
         });
       });
@@ -488,9 +490,9 @@
   // feedback: "report a mistake". kind: typo · wrong-answer · audio · other. Needs a profile.
   A.report = function (o) {
     o = o || {};
-    if (!A.user || !client) return Promise.reject(new Error("Sign in to send a report."));
+    if (!A.user || !client) return Promise.reject(new Error(T.t("account.reportSignIn")));
     var msg = String(o.message || "").trim().slice(0, 2000);
-    if (!msg) return Promise.reject(new Error("Write a few words first."));
+    if (!msg) return Promise.reject(new Error(T.t("account.reportEmpty")));
     var kind = ["typo", "wrong-answer", "audio", "other"].indexOf(o.kind) >= 0 ? o.kind : "other";
     return client.from("feedback").insert({ user_id: A.user.id, lang: CFG.lang, item_id: o.itemId ? String(o.itemId).slice(0, 80) : null, kind: kind, message: msg, page: (location.pathname + location.search).slice(0, 200) }).then(function (r) {
       if (r.error) throw new Error(r.error.message);
@@ -545,7 +547,7 @@
   // address as the emailed links, so it is already among Supabase's redirect URLs). A new account made this way has
   // no signup_platform (Supabase takes user data only from signUp and signInWithOtp).
   A.signInWith = function (provider) {
-    if (A.providers.indexOf(provider) < 0) return Promise.reject(new Error("This way of signing in isn't available."));
+    if (A.providers.indexOf(provider) < 0) return Promise.reject(new Error(T.t("account.noProvider")));
     return A.ensure().then(function (c) { return c.auth.signInWithOAuth({ provider: provider, options: { redirectTo: redirectTo() } }); })
       .then(function (r) { if (r && r.error) throw authError(r.error); });
   };
@@ -571,19 +573,16 @@
         ".tkm-nudge-x:hover{color:var(--ink,#242424)}";
       document.head.appendChild(st);
     }
-    var bits = [];
-    if (o.xp > 0) bits.push("<b>" + o.xp + " XP</b>");
-    if (o.streak > 1) bits.push("your <b>" + o.streak + "-day streak</b>");
-    if (o.cards > 0 && !bits.length) bits.push("your flashcard schedule");
-    var what = bits.length ? bits.join(" and ") : "your progress";
+    // what is saved: the XP, the XP and the streak, the streak, the flashcard schedule, or the progress (whole sentences, TM-FR.md 4.4)
+    var xp = o.xp > 0, streak = o.streak > 1;
+    var what = xp && streak ? "xpStreak" : xp ? "xp" : streak ? "streak" : o.cards > 0 ? "cards" : "none";
     el.className = "tkm-nudge";
     el.setAttribute("role", "region");
-    el.setAttribute("aria-label", "Save your progress");
-    el.innerHTML = '<p class="tkm-nudge-t">Keep what you\'ve learned</p>' +
-      '<p class="tkm-nudge-p">' + what.charAt(0).toUpperCase() + what.slice(1) + " " + (bits.length > 1 ? "are" : "is") + " saved in this browser only. " +
-      "A free account keeps " + (bits.length > 1 ? "them" : "it") + " online, so you can carry on from any device. The same account works on Daily Turkish. No ads.</p>" +
-      '<div class="tkm-nudge-b"><a class="btn primary" href="' + T.C.BASE + T.C.PAGES.hub + '#signup">Create a free account</a>' +
-      '<button type="button" class="tkm-nudge-x">Not now</button></div>';
+    el.setAttribute("aria-label", T.t("account.nudge.label"));
+    el.innerHTML = '<p class="tkm-nudge-t">' + T.esc(T.t("account.nudge.title")) + "</p>" +
+      '<p class="tkm-nudge-p">' + T.t("account.nudge." + what + ".html", { xp: o.xp, n: o.streak }) + "</p>" +
+      '<div class="tkm-nudge-b"><a class="btn primary" href="' + T.C.BASE + T.C.PAGES.hub + '#signup">' + T.esc(T.t("account.nudge.create")) + "</a>" +
+      '<button type="button" class="tkm-nudge-x">' + T.esc(T.t("account.nudge.notNow")) + "</button></div>";
     var paint = function () { el.hidden = !!A.user || !(A.status === "off" || A.status === "signed-out") || hidden(); };
     el.querySelector(".tkm-nudge-x").addEventListener("click", function () {
       ls(function (s) { s.setItem(NUDGE_KEY, String(Date.now())); });

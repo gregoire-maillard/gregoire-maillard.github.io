@@ -334,22 +334,46 @@ if (LEVEL === "a1") {
   const ach = TKM.progress.achievements(index, TKM.progress.defaults("course"), TKM.progress.defaults("cards"), TKM.progress.defaults("settings"), Date.now());
   for (const a of ach)
     add(/^streak-/.test(a.id) ? "Streak rank" : "Achievement", a.tk, a.en + " (" + a.text + ")", "A badge name in My Profile; the English name is shown beside it.", L(js, "achievements(), id “" + a.id + "”"));
+  // The pages read their English from assets/data/turkmen/i18n/en.json (TM-FR.md 4.4, FR-BUILD-1): a T.t("key", …) call
+  // reads as the string it gives, its {placeholders} as what the page fills in (a count's forms: the words they share).
+  const EN_JSON = path.join(DATA, "i18n/en.json"), EN = fs.existsSync(EN_JSON) ? readJson(EN_JSON) : {};
+  const shared = v => {
+    if (typeof v === "string") return v;
+    const a = v.one.split(" "), b = v.other.split(" ");
+    if (a.length !== b.length) return v.other;
+    return a.map((w, i) => (w === b[i] ? w : "{n}")).join(" ");
+  };
+  const asExpr = v => shared(v).split(/(?:\{\w+\}(?: \{\w+\})*)/).map(x => JSON.stringify(x)).join(" + x + ").replace(/^"" \+ | \+ ""$/g, "");
+  const resolveT = expr => expr.replace(/T\.t\("([\w.-]+)"(?:, \{[^}]*\})?\)/g, (m, k) => (k in EN ? asExpr(EN[k]) : m));
+  const tkSpan = /<(?:i|span|b|p)\b[^>]*\blang=\\?"tk\\?"[^>]*>([^<]+)<\//g;
   for (const page of fs.readdirSync(path.join(ROOT, "turkmen")).filter(f => f.endsWith(".html")).sort()) {
     const file = path.join(ROOT, "turkmen", page), lines = fs.readFileSync(file, "utf8").split("\n");
     lines.forEach((line, n) => {
+      if (/window\.TKM_STRINGS = /.test(line)) return;   // the page's copy of en.json: read below, from en.json
       const g = line.match(/\bsay = "([^"]+)"; sub = (.+?);\s*(?:yay = true;\s*)?\}?$/);
       if (g) {   // the English under it: string literals, "…" for what the page fills in, " / " between two choices
-        const expr = g[2], lits = [...expr.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map(m => m[1]);
+        const expr = resolveT(g[2]), lits = [...expr.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map(m => m[1]);
         const en = /\?\s*"/.test(expr) && /"\s*:\s*"/.test(expr) ? lits.join(" / ")
           : expr.split(" + ").map(x => (x.trim().match(/^"((?:[^"\\]|\\.)*)"$/) || [, "…"])[1]).join("").replace(/\s*…\s*/g, " … ").replace(/ … ([,.])/g, " …$1");
         add("Greeting", g[1], en, "Said by the character on the front page.", L(file, "line " + (n + 1)));
       }
-      for (const m of line.matchAll(/<(?:i|span|b|p)\b[^>]*\blang=\\?"tk\\?"[^>]*>([^<]+)<\//g)) {
+      for (const m of line.matchAll(tkSpan)) {
         const t = clean(decode(m[1]));
         if (/esc\(|[+'"\\]/.test(t) || t.split(/[\s,]+/).every(w => w.length <= 1)) continue;
         add("Page text", t, context(line, m[1]), "Turkmen in the English text of " + page + ".", L(file, "line " + (n + 1)));
       }
     });
+    // the strings this page's script reads (its markup's are in the page above)
+    const src = lines.filter(l => !/window\.TKM_STRINGS = /.test(l)).join("\n");
+    for (const k of Object.keys(EN)) {
+      if (!src.includes('"' + k + '"')) continue;
+      if (new RegExp('data-i18n(?:-html)?="' + k.replace(/\./g, "\\.") + '"').test(src)) continue;
+      for (const v of typeof EN[k] === "string" ? [EN[k]] : [EN[k].one, EN[k].other]) for (const m of v.matchAll(tkSpan)) {
+        const t = clean(decode(m[1]));
+        if (/\{\w+\}/.test(t) || t.split(/[\s,]+/).every(w => w.length <= 1)) continue;
+        add("Page text", t, context(v, m[1]), "Turkmen in the English text of " + page + ".", L(EN_JSON, k));
+      }
+    }
   }
   for (const lv of index.levels) {
     const f = path.join(DATA, "levels", lv.id + ".json"), l = readJson(f), s = spans(l.summary).filter(wordy);

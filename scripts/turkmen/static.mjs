@@ -73,11 +73,12 @@ function swap(src, re, by, what) {
   return src.replace(re, () => by);
 }
 function setHead(src, m) {
-  src = swap(src, /<title>[^<]*<\/title>/, `<title>${text(m.title)}</title>`, "<title>");
-  src = swap(src, /<meta name="description" content="[^"]*">/, `<meta name="description" content="${attr(m.description)}">` +
+  // the pages' head tags carry data-i18n attributes (FR-BUILD-1, TM-FR.md 4.4); the generated pages drop them
+  src = swap(src, /<title\b[^>]*>[^<]*<\/title>/, `<title>${text(m.title)}</title>`, "<title>");
+  src = swap(src, /<meta name="description" content="[^"]*"[^>]*>/, `<meta name="description" content="${attr(m.description)}">` +
     (m.noindex ? `\n    <meta name="robots" content="noindex">` : ""), "meta description");
-  src = swap(src, /<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${attr(m.ogTitle)}">`, "og:title");
-  src = swap(src, /<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${attr(m.ogDescription)}">`, "og:description");
+  src = swap(src, /<meta property="og:title" content="[^"]*"[^>]*>/, `<meta property="og:title" content="${attr(m.ogTitle)}">`, "og:title");
+  src = swap(src, /<meta property="og:description" content="[^"]*"[^>]*>/, `<meta property="og:description" content="${attr(m.ogDescription)}">`, "og:description");
   src = swap(src, /<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${attr(m.canonical)}">`, "canonical");
   src = swap(src, /<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${attr(m.canonical)}">`, "og:url");
   return src;
@@ -265,8 +266,8 @@ index.levels.forEach((lv) => lv.units.forEach((u, i) => unitMeta.set(u.id, { lab
 function guidePage(src, r, id, noindex) {
   let s = setHead(src, { ...r, noindex });
   s = swap(s, /<header id="rail"><\/header>/, `<header id="rail">${r.rail}</header>`, "#rail");
-  s = swap(s, /<div id="main"><p class="loading">[^<]*<\/p><\/div>/, `<div id="main">${r.main}</div>`, "#main");
-  s = swap(s, /\n\s*<noscript><p class="notice">The grammar guides need JavaScript to show\.<\/p><\/noscript>/, "", "noscript");
+  s = swap(s, /<div id="main"><p class="loading"[^>]*>[^<]*<\/p><\/div>/, `<div id="main">${r.main}</div>`, "#main");
+  s = swap(s, /\n\s*<noscript><p class="notice"[^>]*>The grammar guides need JavaScript to show\.<\/p><\/noscript>/, "", "noscript");
   const trail = [HOME_CRUMB, GUIDES_CRUMB];
   if (id) {
     const m = /^(.+)-(grammar|culture)$/.exec(id), u = unitMeta.get(m[1]);
@@ -286,7 +287,7 @@ try {
   for (const f of ["index.html", "guide.html", "cards.html", "lesson.html"]) {
     let src = withFlags(readFileSync(join(TM, f), "utf8"), "", "turkmen/" + f);
     if (f !== "lesson.html") src = addFooterLinks(src, "", "turkmen/" + f);
-    if (f === "cards.html") src = swap(src, /<span>Rank = the deck's order, roughly how common the word is<\/span>/,
+    if (f === "cards.html") src = swap(src, /<span[^>]*>Rank = the deck's order, roughly how common the word is<\/span>/,
       '<span>Rank = the deck\'s order, roughly how common the word is · <a href="words/">the whole list as a page</a></span>', "Browse note on ranks");
     writeFileSync(join(TM, f), src);
   }
@@ -318,7 +319,7 @@ try {
     `document.querySelectorAll("#levels .lvl-sum").length === ${sums}`);
   let s = readFileSync(join(TM, "index.html"), "utf8");
   s = swap(s, /<span id="path-meta"><\/span>/, `<span id="path-meta">${hub.pathMeta}</span>`, "#path-meta");
-  s = swap(s, /<nav class="lvl-nav" id="lvl-nav" aria-label="Levels"><\/nav>/, `<nav class="lvl-nav" id="lvl-nav" aria-label="Levels">${hub.lvlNav}</nav>`, "#lvl-nav");
+  s = swap(s, /<nav class="lvl-nav" id="lvl-nav" aria-label="Levels"[^>]*><\/nav>/, `<nav class="lvl-nav" id="lvl-nav" aria-label="Levels">${hub.lvlNav}</nav>`, "#lvl-nav");
   s = swap(s, /<div id="levels"><\/div>/, `<div id="levels">${hub.levels}</div>`, "#levels");
   writeFileSync(join(TM, "index.html"), s);
 

@@ -19,6 +19,38 @@ The plan for a French edition of Daily Turkmen (*Daily Turkmen en français*), s
 
 **Count:** 22 conversations plus 2 spare. That's 1 spec, 2 build, 1 publish, 13 unit batches (the first one is the pilot), 2 flashcard batches, 2 QA passes and 1 SEO pass. French A1 is live after prompt 8. At one or two prompts a day, it takes about three to four weeks.
 
+
+## Progress
+
+Tick a box once that conversation's changes are reviewed and pushed. The effort level is the suggested Opus setting.
+
+- [ ] 1 · FR-SPEC · Extra
+- [ ] 2 · FR-BUILD-1 · Extra
+- [ ] 3 · FR-A1-1 (pilot) · Extra
+- [ ] 4 · FR-BUILD-2 · Extra
+- [ ] 5 · FR-PUBLISH · Medium
+- [ ] 6 · FR-A1-2 · Medium
+- [ ] 7 · FR-A1-3 · Medium
+- [ ] 8 · FR-A1-4 · Medium
+- [ ] 9 · FR-FC-1 · Medium
+- [ ] 10 · FR-FC-2 · Medium
+- [ ] 11 · FR-A2-1 · Medium
+- [ ] 12 · FR-A2-2 · Medium
+- [ ] 13 · FR-A2-3 · Medium
+- [ ] 14 · FR-A2-4 · Medium
+- [ ] 15 · FR-QA-1 · Extra
+- [ ] 16 · FR-B1-1 · Extra
+- [ ] 17 · FR-B1-2 · Extra
+- [ ] 18 · FR-B1-3 · Extra
+- [ ] 19 · FR-B1-4 · Extra
+- [ ] 20 · FR-B1-5 · Extra
+- [ ] 21 · FR-QA-2 · Extra
+- [ ] 22 · FR-SEO · Medium
+- [ ] 23 · Spare · —
+- [ ] 24 · Spare · —
+
+After prompt 6, read its log row and a lesson or two. If it reads like a word-for-word translation, switch the remaining medium content batches to extra.
+
 ---
 
 ## 1 · FR-SPEC · Decisions and spec

@@ -12,7 +12,9 @@
 //   - every Rich text in the real content (flashcard notes included) renders without stray markup, and every link resolves;
 //   - a progress file exported by the store passes `validate.mjs --progress`, and a Daily Turkish file is refused;
 //   - learning days and due dates hold in time zones with daylight saving time (the date tests run again
-//     in child processes under America/Toronto and Australia/Lord_Howe).
+//     in child processes under America/Toronto and Australia/Lord_Howe);
+//   - the French edition (turkmen/TM-FR.md): the French checker (7.2) and its copy in the validator, a French page's
+//     strings, data folder, directions and item IDs, the two pairs of flashcard directions and their export, and pages.mjs.
 // While units are still unwritten, the path tests run on FIX: index.json with a1-u01 to a1-u03 marked ready.
 import fs from "fs";
 import os from "os";
@@ -22,6 +24,7 @@ import assert from "assert/strict";
 import { spawnSync } from "child_process";
 import { createRequire } from "module";
 import { fileURLToPath } from "url";
+import * as PAGES_MJS from "./pages.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const DATA = path.join(ROOT, "assets/data/turkmen");
@@ -70,7 +73,7 @@ function validatorText() {
   const code = [
     pick(/^const fold = .*$/m),
     pick(/^function expand\(entry\) \{[\s\S]*?^\/\/ \(end of the normalization/m).replace(/\/\/ \(end of the normalization$/, ""),
-    "({ fold, expand, norm, joinParticle })",
+    "({ fold, expand, norm, joinParticle, frSame, frAccents, frNoNe })",
   ].join("\n");
   return vm.runInNewContext(code, {});
 }
@@ -1060,11 +1063,199 @@ test("track: only the two allowed events, only their allowed fields", () => {
   } finally { delete globalThis.gtag; }
 });
 
+// ─────────────────────────── the French edition (TM-FR.md 4, 7.2, 8, 10.4) ───────────────────────────
+// turkmen.js as a French page loads it: <html lang="fr"> and the strings pages.mjs inlines (fr.json over en.json).
+const EN_STRINGS = readJson(path.join(DATA, "i18n/en.json")), FR_STRINGS = readJson(path.join(DATA, "i18n/fr.json"));
+function frenchTKM(extra = {}) {
+  const strings = { ...EN_STRINGS };
+  for (const [k, v] of Object.entries(FR_STRINGS)) if (!k.startsWith("_")) strings[k] = v;
+  const box = { module: { exports: {} }, document: { documentElement: { getAttribute: k => (k === "lang" ? "fr" : null) } }, TKM_STRINGS: strings, ...extra };
+  vm.runInNewContext(fs.readFileSync(path.join(ROOT, "assets/js/turkmen.js"), "utf8"), box);
+  return box.module.exports;
+}
+const FRT = frenchTKM();
+// values made in the French module's own realm have its own Array and Object: compare them as JSON
+const eqJ = (a, b, m) => assert.deepEqual(JSON.parse(JSON.stringify(a)), JSON.parse(JSON.stringify(b)), m);
+const FR_LESSONS = listJson("fr/lessons");
+const frCheck = (answer, accept, reject = []) => TKM.check(answer, accept, reject, "fr");
+
+test("French checker: the cases of TM-FR.md 7.2", () => {
+  const cases = [
+    ["Tu es étudiant?", "Tu es étudiant ?", "correct"], ["Tu es étudiant ?", "Tu es étudiant ?", "correct"],
+    ["L'école", "L’école", "correct"], ["j ai", "j’ai", "correct"], ["jai", "j’ai", "wrong"],
+    ["coeur", "cœur", "correct"], ["aout", "août", "correct"], ["Ayna", "Aýna", "correct"],
+    ["Je suis étudiant", "Je suis un étudiant", "correct"], ["Le livre est sur table", "Le livre est sur la table", "correct"],
+    ["Je vais à marché", "Je vais au marché", "correct"],
+    ["J’achète un pain", "J’achète le pain", "wrong"], ["Je vois", "Je le vois", "wrong"],
+    ["Es-tu étudiante ?", "Tu es étudiante ?", "correct"], ["Est-ce que tu es étudiante", "Tu es étudiante ?", "correct"],
+    ["ecole", "école", "almost", "accents"], ["Ayna est a Achgabat", "Aýna est à Achgabat", "almost", "accents"],
+    ["je sais pas", "je ne sais pas", "almost", "negation"], ["Merdan est fatiqué", "Merdan est fatigué", "almost", "typo"],
+  ];
+  for (const [typed, acc, verdict, note] of cases) {
+    const r = frCheck(typed, [acc]);
+    assert.equal(r.verdict, verdict, `“${typed}” for “${acc}”`);
+    if (note) assert.equal(r.note, note, `“${typed}” for “${acc}”: note`);
+  }
+});
+test("French checker: articles count as one (le, la, l’; un, une), pronouns aren't articles, and diacritics don't touch French", () => {
+  assert.equal(frCheck("Je vois la livre", ["Je vois le livre"]).verdict, "correct", "le and la are one article");
+  assert.equal(frCheck("Elle a une chat", ["Elle a un chat"]).verdict, "correct", "un and une are one article");
+  assert.equal(frCheck("J’achète du pain", ["J’achète le pain"]).verdict, "wrong", "du for le is another article");
+  assert.equal(frCheck("Je ne vois pas", ["Je ne la vois pas"]).verdict, "wrong", "la after ne is a pronoun");
+  assert.equal(frCheck("Prends", ["Prends-le"]).verdict, "wrong", "le as the last word is a pronoun");
+  assert.equal(frCheck("Il donne le livre à la fille", ["Il donne livre à fille"]).verdict, "correct", "articles added");
+  assert.equal(frCheck("Je bois bière", ["Je bois de la bière"]).verdict, "correct", "de la is one article (partitive)");
+  assert.equal(frCheck("Je bois du lait", ["Je bois lait"]).verdict, "correct", "du added");
+  assert.equal(TKM.check("ecole", ["école"], [], "fr", "strict").verdict, "almost", "French accents are almost in every mode");
+  assert.equal(frCheck("Vingt et un", ["vingt-et-un"]).verdict, "correct", "hyphens are spaces");
+  assert.equal(frCheck("Allez-vous bien ?", ["Vous allez bien ?"]).verdict, "correct", "inversion");
+  assert.equal(frCheck("A-t-il un livre", ["Il a un livre."]).verdict, "correct", "inversion with -t-");
+  assert.equal(frCheck("S'il vient", ["Si il vient"]).verdict, "correct", "s'il is si il");
+  assert.equal(frCheck("l école", ["L’école"]).verdict, "correct", "elision typed with a space");
+});
+test("French checker: a rejected answer is wrong with its feedback, also without its accents or its ne (steps 3 and 6)", () => {
+  const rej = [{ answer: "Je suis étudiante.", why: "Ici, *ol* : il ou elle." }, { answer: "Il ne mange pas.", why: "Le présent, pas la négation." }];
+  eqJ([frCheck("je suis étudiante", ["Il est étudiant."], rej).verdict, frCheck("je suis étudiante", ["Il est étudiant."], rej).why], ["wrong", rej[0].why]);
+  assert.equal(frCheck("je suis etudiante", ["Il est étudiant."], rej).why, rej[0].why, "without its accents");
+  assert.equal(frCheck("il mange pas", ["Il mange."], rej).why, rej[1].why, "without its ne");
+  assert.equal(frCheck("Il bot", ["Il boit."], rej).verdict, "wrong", "a typo in a word under five letters");
+  assert.equal(frCheck("Il mang", ["Il mange."], rej).note, "typo", "a typo in a word of five");
+});
+test("answerSpec: the learner's language is the edition's (en, or fr on a French page), Turkmen answers are Turkmen", () => {
+  const ex = { id: "a1-u01-l01-e01", type: "translate", from: "tk", prompt: "Salam!", accept: ["Bonjour !"] };
+  assert.equal(TKM.answerSpec(ex).lang, "en");
+  assert.equal(FRT.answerSpec(ex).lang, "fr");
+  assert.equal(TKM.answerSpec(ex, 0, "fr").lang, "fr");
+  assert.equal(FRT.answerSpec({ ...ex, from: "fr", accept: ["Salam!"] }).lang, "tk");
+  assert.equal(FRT.checkExercise(ex, "bonjour").verdict, "correct");
+});
+test("parity with validate.mjs: the French normalization, folds and article rule", () => {
+  const V = validatorText();
+  const strings = new Set(["Est-ce qu’il est là ?", "A-t-il un livre ?", "L'école, l école, jusqu’à", "cœur, sœur, Œil", "Aýna, Ňurly, çay",
+    "au marché, aux enfants", "S’il vient, s'ils viennent", "Prends-le !", "Je ne la vois pas", "« Bonjour » — dit‑il…", "Vingt-et-un"]);
+  const walk = v => { if (typeof v === "string") strings.add(v); else if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v === "object") Object.values(v).forEach(walk); };
+  [LESSONS.slice(0, 20), FR_LESSONS, Object.values(FR_STRINGS)].forEach(walk);
+  const norms = [];
+  for (const s of strings) {
+    const n = TKM.norm(s, "fr");
+    assert.equal(n, V.norm(s, "fr"), `fr: ${s}`);
+    assert.equal(TKM.fr.accents(n), V.frAccents(n), `accents: ${s}`);
+    assert.equal(TKM.fr.noNe(n), V.frNoNe(n), `noNe: ${s}`);
+    norms.push(n);
+  }
+  for (let i = 0; i < norms.length; i++) for (const j of [i, (i + 1) % norms.length]) for (const typo of [false, true])
+    assert.equal(TKM.fr.same(norms[i], norms[j], typo), V.frSame(norms[i], norms[j], typo), `same: ${norms[i]} / ${norms[j]}`);
+});
+test("French content: every accepted answer is correct, every rejected answer wrong with its feedback", () => {
+  for (const l of FR_LESSONS) for (const e of l.exercises) {
+    const specs = e.type === "translate" ? [[0, FRT.answerSpec(e)]] : e.type === "cloze" ? e.blanks.map((b, i) => [i, b.accept ? FRT.answerSpec(e, i) : null]) : e.type === "conjugate" ? e.cells.map((c, i) => [i, FRT.answerSpec(e, i)]) : [];
+    for (const [i, s] of specs) {
+      if (!s) continue;
+      for (const entry of s.accept) for (const x of FRT.expand(entry).list) assert.equal(FRT.checkExercise(e, x, i).verdict, "correct", `${e.id}: “${x}”`);
+      for (const rej of s.reject) { const r = FRT.checkExercise(e, rej.answer, i); eqJ([r.verdict, r.why], ["wrong", rej.why], `${e.id}: rejected “${rej.answer}”`); }
+    }
+  }
+});
+
+test("edition: a French page reads fr.json, the French tree, its own directions and its own item IDs (TM-FR.md 4.3, 5.4)", () => {
+  eqJ([FRT.EDITION, FRT.C.LOCALE, FRT.C.DIRS, TKM.EDITION, TKM.C.LOCALE, TKM.C.DIRS], ["fr", "fr-FR", ["tk-fr", "fr-tk"], "en", "en-CA", ["tk-en", "en-tk"]]);
+  assert.ok(/\/assets\/data\/turkmen\/fr\/$/.test(FRT.C.DATA) && FRT.C.DATA_EN === TKM.C.DATA, FRT.C.DATA);
+  eqJ(FRT.C.ALL_DIRS, ["tk-en", "en-tk", "tk-fr", "fr-tk"]);
+  assert.equal(FRT.t("common.hdr.cards"), "Cartes");
+  assert.equal(TKM.t("common.hdr.cards"), "Flashcards");
+  eqJ([FRT.t("common.lessons", { n: 0 }), FRT.t("common.lessons", { n: 1 }), FRT.t("common.lessons", { n: 2 })], ["0 leçon", "1 leçon", "2 leçons"], "French reads 0 and 1 as one");
+  eqJ([TKM.t("common.lessons", { n: 0 }), TKM.t("common.lessons", { n: 1 })], ["0 lessons", "1 lesson"]);
+  assert.equal(FRT.t("no.such.key"), "no.such.key");
+  assert.equal(FRT.t("common.unitLabel", { cefr: "A1", num: 3 }), "A1 · Unité 3");
+  eqJ([FRT.num(1000), FRT.num(2.5), TKM.num(1000)], ["1\u202f000", "2,5", "1,000"]);
+  eqJ([FRT.srs.format({ days: 3 }), TKM.srs.format({ days: 3 }), FRT.srs.format({ days: 45 })], ["3\u00a0jours", "3 days", "1,5\u00a0mois"]);
+  eqJ([FRT.statId("a1-u01-l01-e01"), TKM.statId("a1-u01-l01-e01")], ["a1-u01-l01-e01-fr", "a1-u01-l01-e01"]);
+  assert.ok(/^[a-z0-9-]{1,80}$/.test(FRT.statId("b1-u12-l04-e16")), "fits record_attempts");
+  eqJ([FRT.englishHref("cards.html"), FRT.englishHref("/turkish.html"), FRT.englishHref("https://x.org/"), TKM.englishHref("cards.html")], ["../cards.html", "/turkish.html", "https://x.org/", "cards.html"]);
+  const names = FRT.progress.achievements(INDEX, FRT.progress.defaults("course", NOW), FRT.progress.defaults("cards", NOW), SETTINGS(), NOW);
+  assert.equal(names.find(a => a.id === "first-lesson").en, FR_STRINGS["ach.first-lesson.name"], "achievement names from fr.json");
+});
+test("edition: the French loader refuses what isn't in French yet, without a request (TM-FR.md 5.3)", () => {
+  const ix = JSON.parse(JSON.stringify(INDEX));
+  for (const lv of ix.levels) { lv.ready = false; for (const u of lv.units) { u.status = "planned"; delete u.lessons; } }
+  ix.levels[0].units[0].status = "ready"; ix.levels[0].units[0].lessons = [{ id: "a1-u01-l01", title: "Bonjour", exercises: 12 }];
+  ix.flashcards = { files: ["flashcards/tm-fc-0001-0200.json"], count: 200 };
+  eqJ([FRT.data.ready(ix, "a1-u01"), FRT.data.ready(ix, "a1-u01-l01"), FRT.data.ready(ix, "a1-u01-l02"), FRT.data.ready(ix, "a1-u02"), FRT.data.ready(ix, "a1")], [true, true, false, false, false]);
+  eqJ([FRT.data.cardReady(ix, "fc-0042"), FRT.data.cardReady(ix, "fc-0500"), TKM.data.cardReady(ix, "fc-0500")], [true, false, true]);
+  assert.equal(TKM.data.ready(ix, "a1-u02"), true, "English: everything is in English");
+});
+test("edition: data.get in French rejects an untranslated ID with code “untranslated” and fetches only the French index", () => {
+  const asked = [];
+  const ix = { version: "x", levels: [{ id: "a1", ready: false, units: [{ id: "a1-u01", status: "planned", points: [] }] }], points: {}, flashcards: { files: [], count: 0 } };
+  const T = frenchTKM({ fetch: url => { asked.push(url); return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(ix) }); } });
+  return T.data.get("a1-u01-l01").then(() => assert.fail("should reject"), e => {
+    assert.equal(e.code, "untranslated");
+    assert.equal(e.message, FR_STRINGS["core.untranslated"]);
+    eqJ(asked.map(u => u.replace(/^.*\/assets\/data\/turkmen\//, "")), ["fr/index.json"]);
+  });
+});
+test("flashcards: the French pair is scheduled apart; fr-tk waits for tk-fr; settings keep the other edition's pair (TM-FR.md 8)", () => {
+  const deck = deckOf(3), cards = FRT.progress.defaults("cards", NOW), S0 = SETTINGS();
+  cards.cards["fc-0001:tk-en"] = reviewState(40, at(2026, 11, 20, 4), { last: at(2026, 10, 10) });   // mature in English
+  cards.cards["fc-0002:tk-fr"] = reviewState(4, at(2026, 10, 20, 4), { last: at(2026, 10, 10) });    // graduated in French
+  const q = FRT.srs.queue({ deck, cards, settings: S0 }, NOW);
+  eqJ(q.news, ["fc-0001:tk-fr", "fc-0002:fr-tk", "fc-0003:tk-fr"], "the English card doesn't count; fr-tk once tk-fr has graduated");
+  eqJ(TKM.srs.queue({ deck, cards, settings: S0 }, NOW).news, ["fc-0001:en-tk", "fc-0002:tk-en", "fc-0003:tk-en"]);
+  eqJ([FRT.srs.sibling("fc-0042:tk-fr"), FRT.srs.sibling("fc-0042:fr-tk"), TKM.srs.sibling("fc-0042:tk-en")], ["fc-0042:fr-tk", "fc-0042:tk-fr", "fc-0042:en-tk"]);
+  eqJ([FRT.srs.directions({ directions: ["tk-en", "en-tk"] }), FRT.srs.directions({ directions: ["en-tk", "tk-fr"] }), TKM.srs.directions({ directions: ["tk-fr"] })], [["tk-fr", "fr-tk"], ["tk-fr"], ["tk-en", "en-tk"]]);
+  eqJ(FRT.srs.withDirections(["en-tk", "tk-en"], ["fr-tk"]), ["tk-en", "en-tk", "fr-tk"]);
+  eqJ(TKM.srs.withDirections(["tk-fr", "fr-tk", "en-tk"], ["tk-en"]), ["tk-en", "tk-fr", "fr-tk"]);
+  const only = FRT.srs.queue({ deck, cards: FRT.progress.defaults("cards", NOW), settings: { ...S0, directions: ["tk-en", "fr-tk"] } }, NOW);
+  eqJ(only.news, ["fc-0001:fr-tk", "fc-0002:fr-tk", "fc-0003:fr-tk"], "the French pair as the list says, the English entry ignored");
+});
+test("flashcards: a French answer today buries its French sibling only", () => {
+  const deck = deckOf(1), cards = FRT.progress.defaults("cards", NOW);
+  cards.cards["fc-0001:tk-fr"] = reviewState(9, at(2026, 10, 23, 4), { last: NOW - MIN });
+  cards.cards["fc-0001:fr-tk"] = reviewState(4, at(2026, 10, 12, 4));
+  cards.cards["fc-0001:en-tk"] = reviewState(4, at(2026, 10, 12, 4));
+  eqJ(FRT.srs.queue({ deck, cards, settings: SETTINGS() }, NOW).reviews, []);
+  eqJ(TKM.srs.queue({ deck, cards, settings: { ...SETTINGS(), directions: ["en-tk"] } }, NOW).reviews, ["fc-0001:en-tk"], "the English pair isn't buried by a French answer");
+});
+test("export and import across editions: one file with both pairs passes validate.mjs --progress", () => {
+  const fr = FRT.createStore(fakeStorage());
+  fr.setSettings({ directions: FRT.srs.withDirections(fr.settings().directions, ["tk-fr", "fr-tk"]) });
+  const deck = deckOf(20), sess = fr.cardSession(deck, { now: NOW, rng: rngMid });
+  for (let i = 0; i < 6; i++) { const it = sess.next(NOW + i * 1000); if (it.done) break; sess.answer(it.key, "good", NOW + i * 1000); }
+  const file = fr.exportData(NOW + 60000);
+  assert.ok(Object.keys(file.cards.cards).every(k => /:tk-fr$/.test(k)) && Object.keys(file.cards.cards).length === 6, Object.keys(file.cards.cards).join(" "));
+  eqJ(file.settings.directions, ["tk-en", "en-tk", "tk-fr", "fr-tk"]);
+  eqJ(TKM.progress.validate(file), [], "the English page takes the file");
+  const en = TKM.createStore(fakeStorage());
+  assert.equal(en.importData(JSON.parse(JSON.stringify(file))).ok, true);
+  eqJ([Object.keys(en.cards().cards).length, TKM.srs.directions(en.settings())], [6, ["tk-en", "en-tk"]]);
+  const tmp = path.join(os.tmpdir(), `tkm-progress-fr-${process.pid}.json`);
+  fs.writeFileSync(tmp, JSON.stringify(file, null, 2));
+  const run = spawnSync(process.execPath, [path.join(ROOT, "scripts/turkmen/validate.mjs"), "--lang", "fr", "--progress", tmp], { encoding: "utf8" });
+  fs.unlinkSync(tmp);
+  assert.equal(run.status, 0, run.stdout + run.stderr);
+  assert.match(run.stdout, /French: \d+ of 36 units translated/);
+  const bad = JSON.parse(JSON.stringify(file)); bad.cards.cards["fc-0001:tk-de"] = bad.cards.cards[Object.keys(bad.cards.cards)[0]];
+  assert.ok(TKM.progress.validate(bad).length > 0, "an unknown direction is refused");
+});
+test("pages.mjs --check: every page matches en.json; the French render fills every marked text from fr.json", () => {
+  const run = spawnSync(process.execPath, [path.join(ROOT, "scripts/turkmen/pages.mjs"), "--check"], { encoding: "utf8" });
+  assert.equal(run.status, 0, run.stdout + run.stderr);
+  for (const page of Object.keys(PAGES_MJS.PAGES)) {
+    const src = fs.readFileSync(path.join(ROOT, "turkmen", page), "utf8"), out = PAGES_MJS.render(page, src, "fr");
+    assert.match(out, /<html lang="fr">/, page);
+    for (const k of PAGES_MJS.markupKeys(src, page).keys()) {
+      const v = FR_STRINGS[k];
+      if (typeof v === "string" && !k.endsWith(".html") && !/[<&"]/.test(v)) assert.ok(out.includes(v), `${page}: ${k} is not in French`);
+    }
+    if (PAGES_MJS.PAGES[page]) assert.ok(out.includes(JSON.stringify(FR_STRINGS["common.tryAgain"])) || !out.includes("common.tryAgain"), `${page}: the inlined strings are French`);
+  }
+});
+
 // ─────────────────────────── run ───────────────────────────
 const run = tests.filter(t => !CHILD || t.tz);
 let failed = 0;
 for (const t of run) {
-  try { t.fn(); if (VERBOSE) console.log(`ok     ${t.name}`); }
+  try { await t.fn(); if (VERBOSE) console.log(`ok     ${t.name}`); }
   catch (e) { failed++; console.log(`FAIL   ${t.name}\n       ${String(e.message).split("\n").join("\n       ")}`); }
 }
 if (CHILD) {

@@ -11,8 +11,14 @@
    tkRich for trLower, trUpper and trRich; card directions tk-en and en-tk; an achievement's Turkmen name in `tk`;
    the CSS classes tkm-nw, tkm-seg and tkm-soon. It adds joinParticle(), the checker's joining of a particle typed apart.
 
+   Two editions (turkmen/TM-FR.md, FR-BUILD-1): the same course for English speakers and for French speakers. The
+   edition is the page's <html lang> ("fr": French, anything else English); it sets C.EDITION, the data folder (the
+   French tree assets/data/turkmen/fr/), the card directions (tk-fr and fr-tk) and the checker's learner language.
+   Interface strings come from assets/data/turkmen/i18n/en.json and fr.json, which scripts/turkmen/pages.mjs inlines
+   into each page as window.TKM_STRINGS; TKM.t(key, vars) reads them (in Node, the files themselves).
+
      1. Constants (PROJECT.md 6, TM-PROJECT.md 6)
-     2. Helpers: escaping, learning days, Turkmen case and folds
+     2. Helpers: escaping, learning days, Turkmen case and folds; the edition and its strings (TM-FR.md 4.3, 4.4)
      3. Inline markup renderer (5.1, TM-PROJECT.md 5.0)
      4. Answer checker (TM-PROJECT.md 6.4)
      5. Data loading through index.json and its ?v= version (3, 5.10)
@@ -33,8 +39,18 @@
   "use strict";
 
   // ───────────────────────────── 1. constants ─────────────────────────────
+  // The edition (TM-FR.md 4.3): the learner's language, from <html lang>. A French page (turkmen/fr/*.html, written by
+  // scripts/turkmen/pages.mjs) says lang="fr"; every other page, and Node, is the English edition.
+  var EDITION = (function () {
+    try { var el = root && root.document && root.document.documentElement; return el && /^fr(?:-|$)/i.test(el.getAttribute("lang") || "") ? "fr" : "en"; }
+    catch (e) { return "en"; }
+  })();
+  var FR = EDITION === "fr";
   var C = {
-    DATA: "/assets/data/turkmen/",
+    EDITION: EDITION,      // "en" or "fr": the learner's language
+    LOCALE: FR ? "fr-FR" : "en-CA",   // numbers and dates (TM-FR.md 11.1); en-CA is what the English pages always used
+    DATA: "/assets/data/turkmen/" + (FR ? "fr/" : ""),   // the edition's tree (TM-FR.md 5.1)
+    DATA_EN: "/assets/data/turkmen/",                     // the English tree, the source of truth
     APP: "daily-turkmen",
     LANG: "tk",            // the course's language code: its rows in Supabase (enrollments, activity_days…; ACCT-TK)
     APP_TURKISH: "gregoiremaillard.com/turkish",   // a Daily Turkish export: import refuses it with its own message
@@ -47,7 +63,10 @@
     GUIDES: "guides/",   // static page of each guide, e.g. guides/a1-u02-grammar.html (mirror only, TK-PUBLISH; see guideHref)
     LEVELS: ["a1", "a2", "b1"],
     PERSONS: ["men", "sen", "ol", "biz", "siz", "olar"],
-    DIRS: ["tk-en", "en-tk"],
+    // Card directions (TM-FR.md 8): the edition's pair, recognition first. Each direction has its own schedule on the
+    // shared card IDs; settings.directions may hold both editions' (one to four), and each edition reads only its pair.
+    DIRS: FR ? ["tk-fr", "fr-tk"] : ["tk-en", "en-tk"],
+    ALL_DIRS: ["tk-en", "en-tk", "tk-fr", "fr-tk"],
     // 6.1 path: pass mark and session sizes
     PASS: 0.8, TEST_SIZE: 20, REVIEW_SIZE: 15, PRACTICE_SIZE: 15,
     // 6.2 lesson flow: a wrong exercise comes back at most this many times
@@ -112,6 +131,41 @@
   // The checker's fold for "almost" (6.4): the eight Turkmen letters to their base.
   function fold(s) { return s.replace(/ä/g, "a").replace(/ç/g, "c").replace(/ž/g, "z").replace(/ň/g, "n").replace(/ö/g, "o").replace(/ş/g, "s").replace(/ü/g, "u").replace(/ý/g, "y"); }
 
+  // Interface strings (TM-FR.md 4.4): one flat object of keys. A page gets the keys its scripts read inlined as
+  // window.TKM_STRINGS (pages.mjs; a French page has the English string wherever fr.json lacks a key). In Node the
+  // files themselves are read, the French over the English for a French edition.
+  var STR = (function () {
+    if (root && root.TKM_STRINGS && typeof root.TKM_STRINGS === "object") return root.TKM_STRINGS;
+    if (typeof require === "function" && typeof module === "object") {
+      try {
+        var en = require("../data/turkmen/i18n/en.json"), out = {};
+        Object.keys(en).forEach(function (k) { out[k] = en[k]; });
+        if (FR) { var fr = require("../data/turkmen/i18n/fr.json"); Object.keys(fr).forEach(function (k) { if (k.charAt(0) !== "_") out[k] = fr[k]; }); }
+        return out;
+      } catch (e) { /* no string files: keys are shown */ }
+    }
+    return {};
+  })();
+  var PLURALS = typeof Intl === "object" && typeof Intl.PluralRules === "function" ? new Intl.PluralRules(EDITION) : null;
+  // t("common.lessons", { n: 3 }) → "3 lessons". A count is an object { one, other }, chosen with the edition's plural rules
+  // from vars.count, or vars.n when it's a number (in French 0 and 1 are "one"). {name} placeholders are filled as given:
+  // the caller escapes them for HTML, except in a key ending in .html, whose value is markup.
+  function t(key, vars) {
+    var v = has(STR, key) ? STR[key] : null;
+    if (isObj(v)) {
+      var n = vars ? (typeof vars.count === "number" ? vars.count : Number(vars.n)) : NaN;
+      var form = !isFinite(n) ? "other" : PLURALS ? PLURALS.select(n) : n === 1 ? "one" : "other";
+      v = has(v, form) ? v[form] : v.other;
+    }
+    if (typeof v !== "string") return key;
+    return vars ? v.replace(/\{(\w+)\}/g, function (m, k) { return has(vars, k) ? String(vars[k]) : m; }) : v;
+  }
+  // Numbers and dates in the edition's language (TM-FR.md 4.3): 1,000 and 2.5 in English, 1 000 and 2,5 in French.
+  function num(n, opts) { return Number(n).toLocaleString(C.LOCALE, opts); }
+  function asDate(d) { return d instanceof Date ? d : new Date(d); }
+  function date(d, opts) { return asDate(d).toLocaleDateString(C.LOCALE, opts); }
+  function time(d, opts) { return asDate(d).toLocaleTimeString(C.LOCALE, opts); }
+
   // ───────────────────────────── 3. inline markup (PROJECT.md 5.1) ─────────────────────────────
   // Rich:   *Turkmen*  **bold**  `code`  [label](ref)  \* for a literal asterisk. Everything else is escaped.
   // TkRich: **bold** and [label](ref) only, paragraphs separated by a blank line.
@@ -124,7 +178,7 @@
     level: /^(?:a1|a2|b1)$/,
     gp: /^gp-[a-z0-9]+(?:-[a-z0-9]+)*$/,
     card: /^fc-\d{4}$/,
-    cardKey: /^fc-\d{4}:(?:tk-en|en-tk)$/,
+    cardKey: /^fc-\d{4}:(?:tk-en|en-tk|tk-fr|fr-tk)$/,   // the four directions of both editions (TM-FR.md 8.2)
     day: /^\d{4}-\d{2}-\d{2}$/,
     iso: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/,
     url: /^https:\/\/\S+$/
@@ -183,11 +237,11 @@
   function nw(inner) { return /^\S*-\S*$/.test(inner) ? ' class="tkm-nw"' : ""; }
   function link(label, ref, opts) {
     var inner = emphasis(esc(label), opts);
-    var t = href(ref, opts.index);
-    if (!t) return inner;
-    if (!t.ready) return '<span class="tkm-soon">' + inner + ' <small>(coming soon)</small></span>';
-    if (t.external) return '<a href="' + esc(t.href) + '" target="_blank" rel="noopener">' + inner + "</a>";
-    return '<a href="' + esc(t.href) + '">' + inner + "</a>";
+    var to = href(ref, opts.index);
+    if (!to) return inner;
+    if (!to.ready) return '<span class="tkm-soon">' + inner + " <small>" + esc(t("core.soon")) + "</small></span>";
+    if (to.external) return '<a href="' + esc(to.href) + '" target="_blank" rel="noopener">' + inner + "</a>";
+    return '<a href="' + esc(to.href) + '">' + inner + "</a>";
   }
   // Rich text → HTML (inline). opts.index resolves links and marks unwritten targets "coming soon".
   function rich(s, opts) { return richInline(s, opts); }
@@ -296,12 +350,14 @@
   // 's before "been" is "has" (it's been, it has been), also typed without the apostrophe
   var HAS_BEEN = /(^|\s)(it|that|there|here|what|who|where|how|he|she)'?s been(?=\s|$)/g;
 
-  // Stage-1 normalization (apostrophes kept): plain lowercasing in both languages; U+0307 is still removed, the residue
+  // Stage-1 normalization (apostrophes kept): plain lowercasing in every language; U+0307 is still removed, the residue
   // of an İ typed on a Turkish keyboard. English answers also fold the Turkmen letters of names (Aýna → ayna).
   // had: read every 'd as "had" instead of "would" (the second reading check() tries for an English answer).
+  // French (TM-FR.md 7.2, step 2): the question forms first, then œ, î, û, the Turkmen letters but ç, elision and au, aux.
   function norm(s, lang, had) {
     s = String(s == null ? "" : s).normalize("NFC").replace(/[’‘ʼ´`]/g, "'").replace(/[“”„"«»]/g, " ");
     s = s.toLowerCase();
+    if (lang === "fr") s = frQuestion(s);
     s = s.replace(/̇/g, "").replace(/[.,!?;:()…¿¡]/g, " ").replace(/[-–—/]/g, " ");
     s = s.replace(/\s+/g, " ").trim();
     if (lang === "en") {
@@ -310,7 +366,76 @@
       for (var i = 0; i < list.length; i++) s = s.replace(list[i][0], list[i][1]);
       s = fold(s).replace(/\s+/g, " ").trim();
     }
+    if (lang === "fr") s = frWords(s);
     return s;
+  }
+
+  // ── French answers (TM-FR.md 7.2) ──
+  // Question forms, read before hyphens become spaces: a leading est-ce que is dropped, and a subject inverted with a
+  // hyphen is put back (es-tu → tu es, a-t-il → il a, allez-vous → vous allez), so the three ways of asking are one answer.
+  var FR_SUBJECTS = "je|tu|il|elle|on|nous|vous|ils|elles";
+  var FR_INVERTED = new RegExp("(^|[\\s(¿¡])([a-zà-öø-ÿœæ']+)-(?:t-)?(" + FR_SUBJECTS + ")(?=$|[\\s.,;:!?…)])", "g");
+  function frQuestion(s) {
+    s = s.replace(/^[\s(¿¡]*est[- ]ce qu(?:e(?=\s)|')\s*/, "");
+    return s.replace(FR_INVERTED, "$1$3 $2");
+  }
+  // Ligatures, î and û (the 1990 spellings: connaitre, aout), the Turkmen letters French doesn't write (Aýna = Ayna; ç
+  // stays), elision undone, typed with or without the apostrophe (l'école, l école → le école; s'il → si il), and the
+  // articles inside au and aux (au marché → à le marché).
+  var FR_ELIDED = { l: "le", d: "de", j: "je", m: "me", n: "ne", s: "se", t: "te", c: "ce", qu: "que", jusqu: "jusque", lorsqu: "lorsque", puisqu: "puisque" };
+  function frWords(s) {
+    s = s.replace(/œ/g, "oe").replace(/æ/g, "ae").replace(/î/g, "i").replace(/û/g, "u");
+    s = s.replace(/ä/g, "a").replace(/ž/g, "z").replace(/ň/g, "n").replace(/ö/g, "o").replace(/ş/g, "s").replace(/ü/g, "u").replace(/ý/g, "y");
+    s = s.replace(/(^|\s)(jusqu|lorsqu|puisqu|qu|[ldjmnstc])'\s*/g, function (m, a, w) { return a + FR_ELIDED[w] + " "; });
+    s = s.replace(/(^|\s)(qu|[ldjmnstc])(?=\s|$)/g, function (m, a, w) { return a + FR_ELIDED[w]; });
+    s = s.replace(/(^|\s)se (ils?)(?=\s|$)/g, "$1si $2");
+    s = s.replace(/(^|\s)au(?=\s|$)/g, "$1à le").replace(/(^|\s)aux(?=\s|$)/g, "$1à les");
+    return s.replace(/\s+/g, " ").trim();
+  }
+  // The "almost" folds (step 5): accents and the cedilla; then also the ne of a negation (je sais pas).
+  function frAccents(s) { return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").normalize("NFC"); }
+  function frNoNe(s) { return frAccents(s).replace(/(^|\s)ne(?=\s|$)/g, "$1").replace(/\s+/g, " ").trim(); }
+  // Articles (step 4b): le, la, les, un, une, des, du, de la, de l' (and the le, les of au, aux); le and la count as one
+  // article, un and une as one. le, la, les are pronouns, not articles, after a subject pronoun, ne or another object
+  // pronoun, before y, en, moi, toi, lui, leur, and as the last word (je le vois, je ne la vois pas, prends-le).
+  var FR_ARTICLE = { le: "le", la: "le", les: "les", un: "un", une: "un", des: "des", du: "du" };
+  var FR_BEFORE_PRONOUN = { je: 1, tu: 1, il: 1, elle: 1, on: 1, nous: 1, vous: 1, ils: 1, elles: 1, ne: 1, me: 1, te: 1, se: 1, le: 1, la: 1, les: 1, lui: 1, leur: 1 };
+  var FR_AFTER_PRONOUN = { y: 1, en: 1, moi: 1, toi: 1, lui: 1, leur: 1 };
+  function frArticleAt(w, i) {
+    var x = w[i];
+    if (!has(FR_ARTICLE, x)) return null;
+    if (x === "le" || x === "la" || x === "les") {
+      if (i === w.length - 1 || (i > 0 && has(FR_BEFORE_PRONOUN, w[i - 1])) || has(FR_AFTER_PRONOUN, w[i + 1] || "")) return null;
+    }
+    return FR_ARTICLE[x];
+  }
+  // A normalized answer as its words, each with the articles in front of it ("de le" for de la and de l').
+  function frParse(s) {
+    var w = s ? s.split(" ") : [], art = [], words = [], groups = [], cur = [], i;
+    for (i = 0; i < w.length; i++) art[i] = frArticleAt(w, i);
+    for (i = 0; i < w.length - 1; i++) if (w[i] === "de" && art[i + 1] === "le") art[i] = "de";
+    for (i = 0; i < w.length; i++) {
+      if (art[i]) { cur.push(art[i]); continue; }
+      words.push(w[i]); groups.push(cur.join(" ")); cur = [];
+    }
+    if (cur.length) { words.push(""); groups.push(cur.join(" ")); }
+    return { words: words, groups: groups };
+  }
+  // Two normalized answers the same give or take articles left out or added in front of a word, never one article changed
+  // for another (J'achète un pain is not J'achète le pain); with typo, also one typo in one word of five letters or more.
+  function frSame(a, b, typo) {
+    if (a === b) return true;
+    var p = frParse(a), q = frParse(b), typos = 0;
+    if (p.words.length !== q.words.length) return false;
+    for (var i = 0; i < p.words.length; i++) {
+      var x = p.words[i], y = q.words[i];
+      if (x !== y) {
+        if (!typo || typos || y.replace(/'/g, "").length < C.TYPO_MIN || distance(x, y) !== 1) return false;
+        typos += 1;
+      }
+      if (p.groups[i] && q.groups[i] && p.groups[i] !== q.groups[i]) return false;
+    }
+    return true;
   }
   // A normalized answer with the question particle typed apart joined back to its word: talyp my → talypmy,
   // talyp mydyň → talypmydyň.
@@ -356,13 +481,15 @@
   }
 
   // check(answer, accepted[], rejected[], lang, mode) → { verdict: "correct" | "almost" | "wrong", note?, matched?, why?, canonical }
-  //   lang: the language of the answer ("tk" or "en"); mode: "strict" or "lenient" (Turkmen only).
+  //   lang: the language of the answer ("tk", "en" or "fr"); mode: "strict" or "lenient" (Turkmen only).
   //   matched: the accepted expansion that matched (or nearly); canonical: accepted[0], shown after a mistake.
   //   note, with "almost": "apostrophe" (Turkmen writes none), "Turkmen letters" (marks left out: cay for çaý, yok for
   //   ýok), "particle" (the question particle typed apart); with "wrong": "empty". English answers can also be
   //   "almost" with "typo". No other letter is folded: e and ä stay apart, and so do ç and j.
+  //   French answers (TM-FR.md 7.2) are right give or take an article left out or added; "almost" with "accents", then
+  //   "negation" (the ne left out), then "typo"; the exercise's mode is about Turkmen letters and doesn't apply.
   function check(answer, accepted, rejected, lang, mode) {
-    lang = lang === "en" ? "en" : "tk";
+    lang = lang === "en" || lang === "fr" ? lang : "tk";
     mode = mode === "strict" ? "strict" : "lenient";
     accepted = accepted || []; rejected = rejected || [];
     var canonical = accepted[0];
@@ -380,6 +507,7 @@
     var exps = [];
     accepted.forEach(function (entry) { expansions(entry).forEach(function (s) { exps.push({ text: s, n: norm(s, lang) }); }); });
     for (i = 0; i < exps.length; i++) if (as.indexOf(exps[i].n) >= 0) return { verdict: "correct", matched: exps[i].text, canonical: canonical };   // 4.
+    if (lang === "fr") return checkFr(a, exps, rejected, canonical);
     // 5–6. the same answer give or take apostrophes; in lenient Turkmen, also give or take the marks of the eight
     // Turkmen letters. Each key is looser than the one before.
     var noApos = function (s) { return s.replace(/'/g, ""); };
@@ -425,11 +553,32 @@
     return { verdict: "wrong", canonical: canonical };                                        // 8.
   }
 
+  // Steps 4b to 7 for a French answer (TM-FR.md 7.2): articles → correct; accents, then the ne of a negation → almost;
+  // a rejected answer give or take the same → wrong with its feedback; one typo → almost; otherwise wrong. As in English,
+  // a known mistake is recognized before a typo is forgiven.
+  function checkFr(a, exps, rejected, canonical) {
+    var i, r, steps = [[null, function (x) { return x; }], ["accents", frAccents], ["negation", frNoNe]];
+    for (var k = 0; k < steps.length; k++) {
+      var key = steps[k][1], ka = key(a);
+      for (i = 0; i < exps.length; i++) if (frSame(ka, key(exps[i].n))) {
+        return steps[k][0] ? { verdict: "almost", note: steps[k][0], matched: exps[i].text, canonical: canonical } : { verdict: "correct", matched: exps[i].text, canonical: canonical };
+      }
+    }
+    var na = frNoNe(a);
+    for (i = 0; i < rejected.length; i++) {
+      r = rejected[i];
+      if (frSame(na, frNoNe(norm(r.answer, "fr")))) return { verdict: "wrong", why: r.why, rejected: r.answer, canonical: canonical };
+    }
+    for (i = 0; i < exps.length; i++) if (frSame(na, frNoNe(exps[i].n), true)) return { verdict: "almost", note: "typo", matched: exps[i].text, canonical: canonical };
+    return { verdict: "wrong", canonical: canonical };
+  }
+
   // What a typed answer is checked against, for the exercise types that take text (6.4 defaults; no listen).
+  // learner: the language of answers that aren't Turkmen ("en" or "fr"), the edition's unless given.
   // index: the blank (cloze) or cell (conjugate). Returns null for types that compare tiles or option indexes.
-  function answerSpec(ex, index) {
+  function answerSpec(ex, index, learner) {
     switch (ex.type) {
-      case "translate": return { accept: ex.accept, reject: ex.reject || [], lang: ex.from === "tk" ? "en" : "tk", mode: ex.diacritics || "lenient" };
+      case "translate": return { accept: ex.accept, reject: ex.reject || [], lang: ex.from === "tk" ? learner || EDITION : "tk", mode: ex.diacritics || "lenient" };
       case "cloze": {
         var b = ex.blanks[index || 0];
         return b && b.accept ? { accept: b.accept, reject: b.reject || [], lang: "tk", mode: ex.diacritics || "strict" } : null;
@@ -441,8 +590,8 @@
     }
     return null;
   }
-  function checkExercise(ex, answer, index) {
-    var s = answerSpec(ex, index);
+  function checkExercise(ex, answer, index, learner) {
+    var s = answerSpec(ex, index, learner);
     if (!s) throw new Error(ex.type + " exercises are not checked as text");
     var r = check(answer, s.accept, s.reject, s.lang, s.mode);
     // conjugate: the cell's own pronoun typed in front of the form (men gelýärin in the men row) is the same answer
@@ -483,10 +632,41 @@
     if (RE.culture.test(id)) return "culture/" + id.slice(0, 6) + ".json";
     throw new Error("Unknown content id " + id);
   }
+  // The French edition reads the French tree (TM-FR.md 5.3): its index.json lists what is in French, and an ID it doesn't
+  // list as ready is refused without a request (error.code "untranslated"), so each page can say « Bientôt disponible »
+  // and link the same ID in the English edition (english(id)): no English content on a French page.
+  function translated(ix, id) {
+    if (/^flashcards\//.test(id)) return ((ix.flashcards && ix.flashcards.files) || []).indexOf(id) >= 0;
+    if (RE.level.test(id)) return (ix.levels || []).some(function (lv) { return lv.id === id && !!lv.ready; });
+    var u = flatten(ix).unit[id.slice(0, 6)];
+    if (!u || u.status !== "ready") return false;
+    return RE.lesson.test(id) ? !!flatten(ix).lesson[id] : true;
+  }
+  function untranslated(id) {
+    var e = new Error(t("core.untranslated"));
+    e.code = "untranslated"; e.id = id;
+    return e;
+  }
   var data = {
     index: function () { return fetchJson(C.DATA + "index.json", { cache: "no-cache" }); },
     url: function (id, version) { return C.DATA + dataPath(id) + (version ? "?v=" + encodeURIComponent(version) : ""); },
-    get: function (id) { return data.index().then(function (ix) { return fetchJson(data.url(id, ix.version)); }); },
+    get: function (id) {
+      return data.index().then(function (ix) {
+        if (FR && !translated(ix, id)) throw untranslated(id);
+        return fetchJson(data.url(id, ix.version));
+      });
+    },
+    // Is this ID in the edition's language yet? (always, in English)
+    ready: function (ix, id) { return !FR || translated(ix, id); },
+    // Is this card ("fc-0042") in the edition's deck? In French, only the cards of the French files listed (5.3).
+    cardReady: function (ix, cardId) {
+      if (!FR) return true;
+      var rank = +String(cardId).slice(3);
+      return ((ix.flashcards && ix.flashcards.files) || []).some(function (f) {
+        var m = /fc-(\d{4})-(\d{4})\.json$/.exec(f);
+        return !!m && rank >= +m[1] && rank <= +m[2];
+      });
+    },
     // every flashcard, sorted by rank ([] while the deck has no files yet)
     deck: function () {
       return data.index().then(function (ix) {
@@ -612,7 +792,7 @@
   });
   SPEC.settings = S.obj({
     schema: S.lit(1), dailyGoal: S.one(C.GOALS), newPerDay: S.int(0, 100), reviewsPerDay: S.int(10, 9999),
-    directions: S.arr(S.one(C.DIRS), 1, 2), dayStartHour: S.int(0, 23),
+    directions: S.arr(S.one(C.ALL_DIRS), 1, 4), dayStartHour: S.int(0, 23),   // both editions' pairs (TM-FR.md 8.3)
     keyboardBar: S.bool, unlockAll: S.bool, onlyTaughtWords: S.bool
   });
   SPEC.progress = S.obj({ app: S.lit(C.APP), schema: S.lit(1), exported: T_ISO, course: SPEC.course, cards: SPEC.cards, settings: SPEC.settings });
@@ -681,7 +861,7 @@
   // Errors in an exported progress file, as messages (empty when it can be imported). A Daily Turkish file gets
   // one clear message instead of a list of differences (TM-PROJECT.md 5.9).
   function validateProgress(obj) {
-    if (isObj(obj) && obj.app === C.APP_TURKISH) return ["This is a Daily Turkish progress file. Import it in the Turkish course; the Turkmen course only takes Daily Turkmen files."];
+    if (isObj(obj) && obj.app === C.APP_TURKISH) return [t("core.turkishFile")];
     var e = []; vcheck(SPEC.progress, obj, "", e); return e;
   }
 
@@ -825,46 +1005,47 @@
     var repeats = lessonIds.filter(function (id) { return course.lessons[id].runs > 1; }).length;
     var list = [
       // lessons and units
-      ["first-lesson", "Ilkinji ädim", "First step", "Finish your first lesson", lessonIds.length, 1, "1", "a1"],
-      ["lessons-10", "On sapak", "Ten lessons", "Finish 10 lessons", lessonIds.length, 10, "10", "a1"],
-      ["lessons-50", "Elli sapak", "Fifty lessons", "Finish 50 lessons", lessonIds.length, 50, "50", "a1"],
-      ["perfect", "Ýalňyşsyz", "Flawless", "Finish a lesson without a mistake", perfect, 1, "✓", "gold"],
-      ["perfect-10", "Kämil", "Perfectionist", "Finish 10 lessons without a mistake", perfect, 10, "✓✓", "gold"],
-      ["repeat-5", "Gaýtadan", "Once more", "Redo 5 lessons to sharpen them", repeats, 5, "↻", "a2"],
-      ["first-unit", "Ilkinji bölüm", "First unit", "Finish every lesson of a unit and lay your first tile", unitsDone, 1, "◆", "a2"],
-      ["units-5", "Bäş bölüm", "Five tiles", "Finish 5 units", unitsDone, 5, "5◆", "a2"],
-      ["golden-tile", "Altyn bölüm", "Golden tile", "Pass a unit review to glaze a tile gold", count("reviewed"), 1, "★", "gold"],
-      ["golden-5", "Altyn diwar", "Golden wall", "Glaze 5 tiles gold", count("reviewed"), 5, "5★", "gold"],
-      ["mistakes-10", "Düzediş", "Making amends", "Clear 10 mistakes in practice", cleared, 10, "✗→✓", "b1"],
+      ["first-lesson", "Ilkinji ädim", lessonIds.length, 1, "1", "a1"],
+      ["lessons-10", "On sapak", lessonIds.length, 10, "10", "a1"],
+      ["lessons-50", "Elli sapak", lessonIds.length, 50, "50", "a1"],
+      ["perfect", "Ýalňyşsyz", perfect, 1, "✓", "gold"],
+      ["perfect-10", "Kämil", perfect, 10, "✓✓", "gold"],
+      ["repeat-5", "Gaýtadan", repeats, 5, "↻", "a2"],
+      ["first-unit", "Ilkinji bölüm", unitsDone, 1, "◆", "a2"],
+      ["units-5", "Bäş bölüm", unitsDone, 5, "5◆", "a2"],
+      ["golden-tile", "Altyn bölüm", count("reviewed"), 1, "★", "gold"],
+      ["golden-5", "Altyn diwar", count("reviewed"), 5, "5★", "gold"],
+      ["mistakes-10", "Düzediş", cleared, 10, "✗→✓", "b1"],
       // levels
-      ["a1", "A1 tamam", "A1 complete", "Finish all " + a1[1] + " units of A1", a1[0], a1[1], "A1", "a1"],
-      ["a2", "A2 tamam", "A2 complete", "Finish all " + a2[1] + " units of A2", a2[0], a2[1], "A2", "a2"],
-      ["b1", "B1 tamam", "B1 complete", "Finish all " + b1[1] + " units of B1", b1[0], b1[1], "B1", "b1"],
+      ["a1", "A1 tamam", a1[0], a1[1], "A1", "a1"],
+      ["a2", "A2 tamam", a2[0], a2[1], "A2", "a2"],
+      ["b1", "B1 tamam", b1[0], b1[1], "B1", "b1"],
       // regularity
-      ["streak-3", "Şägirt", "Apprentice", "Keep a 3-day streak", best, 3, "3", "a1"],
-      ["streak-7", "Ussa", "Journeyman", "Keep a 7-day streak", best, 7, "7", "a1"],
-      ["streak-30", "Halypa", "Master", "Keep a 30-day streak", best, 30, "30", "a1"],
-      ["streak-100", "Uly halypa", "Grand master", "Keep a 100-day streak", best, 100, "100", "gold"],
-      ["goal-7", "Maksat", "On target", "Meet your daily goal on 7 days", goalDays, 7, "◎", "b1"],
-      ["goal-30", "Erjellik", "Determination", "Meet your daily goal on 30 days", goalDays, 30, "◎◎", "b1"],
-      ["days-50", "Wepaly", "Faithful", "Study on 50 different days", Object.keys(active).length, 50, "50d", "b1"],
-      ["big-day", "Zähmetsöýer", "Hard worker", "Earn 100 XP in a single day", bigDay, 100, "⚡", "a1"],
+      ["streak-3", "Şägirt", best, 3, "3", "a1"],
+      ["streak-7", "Ussa", best, 7, "7", "a1"],
+      ["streak-30", "Halypa", best, 30, "30", "a1"],
+      ["streak-100", "Uly halypa", best, 100, "100", "gold"],
+      ["goal-7", "Maksat", goalDays, 7, "◎", "b1"],
+      ["goal-30", "Erjellik", goalDays, 30, "◎◎", "b1"],
+      ["days-50", "Wepaly", Object.keys(active).length, 50, "50d", "b1"],
+      ["big-day", "Zähmetsöýer", bigDay, 100, "⚡", "a1"],
       // words
-      ["words-100", "Ýüz söz", "A hundred words", "Learn 100 words in the flashcards", nWords, 100, "100", "a2"],
-      ["words-500", "Bäş ýüz söz", "Five hundred words", "Learn 500 words in the flashcards", nWords, 500, "500", "a2"],
-      ["words-1000", "Müň söz", "The whole deck", "Learn all 1,000 words in the flashcards", nWords, 1000, "1000", "a2"],
-      ["known-100", "Güýçli ýat", "Solid memory", "Know 100 words well (reviewed at 3+ week intervals)", nKnown, 100, "∞", "a2"],
-      ["cards-100", "Uzak ýol", "Marathon", "Study 100 flashcards in a single day", cardDay, 100, "🂠", "a2"],
+      ["words-100", "Ýüz söz", nWords, 100, "100", "a2"],
+      ["words-500", "Bäş ýüz söz", nWords, 500, "500", "a2"],
+      ["words-1000", "Müň söz", nWords, 1000, "1000", "a2"],
+      ["known-100", "Güýçli ýat", nKnown, 100, "∞", "a2"],
+      ["cards-100", "Uzak ýol", cardDay, 100, "🂠", "a2"],
       // reading
-      ["guides-12", "Kitapsöýer", "Bookworm", "Read 12 grammar guides", count("guide"), 12, "§", "b1"],
-      ["culture-12", "Syýahatçy", "Traveller", "Read 12 culture interludes", count("culture"), 12, "✦", "b1"],
+      ["guides-12", "Kitapsöýer", count("guide"), 12, "§", "b1"],
+      ["culture-12", "Syýahatçy", count("culture"), 12, "✦", "b1"],
       // XP
-      ["xp-1000", "Müň XP", "A thousand XP", "Earn 1,000 XP", course.xp.total, 1000, "1K", "gold"],
-      ["xp-5000", "Bäş müň XP", "Five thousand XP", "Earn 5,000 XP", course.xp.total, 5000, "5K", "gold"],
-      ["xp-10000", "On müň XP", "Ten thousand XP", "Earn 10,000 XP", course.xp.total, 10000, "10K", "gold"]
+      ["xp-1000", "Müň XP", course.xp.total, 1000, "1K", "gold"],
+      ["xp-5000", "Bäş müň XP", course.xp.total, 5000, "5K", "gold"],
+      ["xp-10000", "On müň XP", course.xp.total, 10000, "10K", "gold"]
     ];
+    // Each: [id, Turkmen name, have, need, glyph, hue]; the name and text in the learner's language are ach.<id>.name and .text.
     return list.map(function (a) {
-      return { id: a[0], tk: a[1], en: a[2], text: a[3], have: Math.min(a[4], a[5]), need: a[5], done: a[4] >= a[5], glyph: a[6], hue: a[7] };
+      return { id: a[0], tk: a[1], en: t("ach." + a[0] + ".name"), text: t("ach." + a[0] + ".text", { n: a[3] }), have: Math.min(a[2], a[3]), need: a[3], done: a[2] >= a[3], glyph: a[4], hue: a[5] };
     });
   }
 
@@ -1065,16 +1246,17 @@
     });
   }
   function formatInterval(p) {
+    var f = function (key, x) { return t("core.ivl." + key, { n: x, num: num(x) }); };   // 1.5 h in English, 1,5 h in French
     if (p.ms != null) {
       var m = p.ms / 60000;
-      if (m < 60) return (Math.round(m * 10) / 10) + " min";
+      if (m < 60) return f("min", Math.round(m * 10) / 10);
       var h = m / 60;
-      return h < 24 ? (Math.round(h * 10) / 10) + " h" : Math.round(h / 24) + " d";
+      return h < 24 ? f("h", Math.round(h * 10) / 10) : f("d", Math.round(h / 24));
     }
     var d = p.days;
-    if (d < 30) return d + (d === 1 ? " day" : " days");
-    if (d < 365) return (Math.round(d / 30 * 10) / 10) + " mo";
-    return (Math.round(d / 365 * 10) / 10) + " yr";
+    if (d < 30) return f("days", d);
+    if (d < 365) return f("mo", Math.round(d / 30 * 10) / 10);
+    return f("yr", Math.round(d / 365 * 10) / 10);
   }
   function isDue(state, now, settings) {
     if (!state || state.s === "suspended") return false;
@@ -1082,7 +1264,10 @@
     if (state.s === "review") return dayOf(state.due, hourOf(settings)) <= dayOf(now, hourOf(settings));
     return state.due <= now;
   }
-  function siblingKey(key) { return key.slice(0, 7) + ":" + (key.slice(8) === "tk-en" ? "en-tk" : "tk-en"); }
+  // The other direction of the same pair (TM-FR.md 8.1): tk-en and en-tk, tk-fr and fr-tk. A card answered in one
+  // direction today buries its sibling in the same pair only.
+  var SIBLING = { "tk-en": "en-tk", "en-tk": "tk-en", "tk-fr": "fr-tk", "fr-tk": "tk-fr" };
+  function siblingKey(key) { return key.slice(0, 7) + ":" + (SIBLING[key.slice(8)] || "en-tk"); }
 
   // Suspending (deck browser): the card leaves every session but keeps its schedule; `was` remembers the state
   // to go back to. A card never studied is stored as suspended with reps 0 and no `was`, and unsuspend() → null
@@ -1104,8 +1289,18 @@
     return s;
   }
 
+  // The directions of this edition that are on (TM-FR.md 8.3): settings.directions holds both editions' (one to four);
+  // when it holds neither direction of this edition, both are on.
+  function dirsOf(settings) {
+    var list = (settings && settings.directions) || C.DIRS, on = C.DIRS.filter(function (d) { return list.indexOf(d) >= 0; });
+    return on.length ? on : C.DIRS.slice();
+  }
+  // settings.directions with this edition's pair set to `mine`, the other edition's entries kept as they are (8.3).
+  function withDirections(list, mine) {
+    var keep = (list || []).filter(function (d) { return C.DIRS.indexOf(d) < 0; });
+    return C.ALL_DIRS.filter(function (d) { return keep.indexOf(d) >= 0 || (mine || []).indexOf(d) >= 0; });
+  }
   // Statistics for the flashcards page. o: { deck, cards: CardsProgress, settings }; only the directions turned on count.
-  function dirsOf(settings) { return C.DIRS.filter(function (d) { return ((settings && settings.directions) || C.DIRS).indexOf(d) >= 0; }); }
   // How many cards are new (never studied), learning, relearning, young, mature or suspended; leeches counted apart.
   function cardCounts(o) {
     var c = { "new": 0, learning: 0, relearning: 0, young: 0, mature: 0, suspended: 0, leech: 0, total: 0 };
@@ -1164,7 +1359,7 @@
     now = ms(now);
     var st = o.settings, hour = hourOf(st), today = dayOf(now, hour);
     var prog = o.cards, cards = prog.cards, rec = prog.days[today] || { "new": 0, reviews: 0, again: 0 };
-    var dirs = C.DIRS.filter(function (d) { return st.directions.indexOf(d) >= 0; });
+    var dirs = dirsOf(st);
     var both = dirs.length === 2, words = {};
     var learnNow = [], learnToday = [], due = [], news = [];
     var buried = function (key) { var b = cards[siblingKey(key)]; return !!(b && b.last && dayOf(b.last, hour) === today); };
@@ -1193,7 +1388,7 @@
       for (var j = 0; j < dirs.length && news.length < newLeft; j++) {
         var key = card.id + ":" + dirs[j];
         if (cards[key] || words[card.id] || buried(key)) continue;
-        if (dirs[j] === "en-tk" && both) { var tk = cards[card.id + ":tk-en"]; if (!tk || !(tk.ivl > 0)) continue; }   // after tk-en graduates
+        if (dirs[j] === C.DIRS[1] && both) { var tk = cards[card.id + ":" + C.DIRS[0]]; if (!tk || !(tk.ivl > 0)) continue; }   // production after recognition graduates
         if (st.onlyTaughtWords && !taught(card.unit)) continue;
         words[card.id] = true; news.push(key);
       }
@@ -1221,7 +1416,7 @@
     var main = queue(o, o.now).main.slice();
     var stats = { answered: 0, again: 0, "new": 0, reviews: 0 };
     var last = null, redo = null;   // what undo() restores; the key it put back
-    var dirsOn = function (key) { return st.directions.indexOf(key.slice(8)) >= 0 && byId[key.slice(0, 7)]; };
+    var dirsOn = function (key) { return dirsOf(st).indexOf(key.slice(8)) >= 0 && byId[key.slice(0, 7)]; };
     var learning = function (until) {
       return Object.keys(prog.cards).filter(function (k) {
         var s = prog.cards[k];
@@ -1329,6 +1524,12 @@
 
   var TKM = {
     C: C, RE: RE, app: APP,
+    // the edition and its strings (TM-FR.md 4.3, 4.4)
+    EDITION: EDITION, t: t, num: num, date: date, time: time,
+    // the same page or content in the English edition: what a French page links while a file isn't in French (5.3)
+    englishHref: function (href) { return FR && !/^(?:[a-z][a-z0-9+.-]*:|\/|#)/i.test(href) ? "../" + href : href; },
+    // the exercise ID sent to item_stats (5.4): a translation into French is another task than one into English
+    statId: function (id) { return FR ? id + "-fr" : id; },
     // helpers
     esc: esc, iso: iso, dayOf: dayOf, today: function (settings, now) { return dayOf(now, hourOf(settings)); },
     dayStart: dayStart, addDays: addDays, daysBetween: daysBetween, tkLower: tkLower, tkUpper: tkUpper, fold: fold,
@@ -1336,6 +1537,7 @@
     rich: rich, tkRich: tkRich, seg: seg, plain: plain, href: href, guideHref: guideHref, guidePath: guidePath,
     // 6.4 checker
     expand: expand, norm: norm, joinParticle: joinParticle, check: check, answerSpec: answerSpec, checkExercise: checkExercise, distance: distance,
+    fr: { accents: frAccents, noNe: frNoNe, parse: frParse, same: frSame },   // the French folds (TM-FR.md 7.2)
     // data
     data: data,
     // 6.1 path
@@ -1349,7 +1551,8 @@
     createStore: createStore,
     // 6.6 scheduler
     srs: { answer: answer, preview: preview, format: formatInterval, isDue: isDue, queue: queue, session: session, sibling: siblingKey, GRADES: GRADES,
-           suspend: suspend, unsuspend: unsuspend, cardCounts: cardCounts, forecast: forecast, retention: retention },
+           suspend: suspend, unsuspend: unsuspend, cardCounts: cardCounts, forecast: forecast, retention: retention,
+           directions: dirsOf, withDirections: withDirections },
     // 6.5 typing (no speech)
     prepInput: prepInput, insertText: insertText,
     track: track
