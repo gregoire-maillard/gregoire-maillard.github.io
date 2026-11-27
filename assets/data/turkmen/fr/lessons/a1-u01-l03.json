@@ -1,0 +1,225 @@
+{
+  "id": "a1-u01-l03",
+  "unit": "a1-u01",
+  "order": 3,
+  "title": "Comment tu t’appelles ?",
+  "goal": "Dire ton nom, demander celui de quelqu’un et répondre « enchanté ».",
+  "points": ["gp-vowel-length", "gp-sentence-basics"],
+  "intro": {
+    "text": "Pour dire ton nom, dis *Meniň adym…* (je m’appelle…, mot à mot « mon nom… ») ou simplement *Men…* (je suis…). Pour demander, *Adyň näme?* (comment tu t’appelles ?). *at* veut dire **nom** ; son a est long, donc devant une voyelle son t devient d : *adym*, mon nom. Puis dis *Tanyşanyma şat* (enchanté).",
+    "see": "gp-vowel-length"
+  },
+  "vocab": [
+    {
+      "tk": "Meniň adym…",
+      "fr": "Je m’appelle… (mot à mot : mon nom…)",
+      "pos": "phrase"
+    },
+    {
+      "tk": "at",
+      "fr": "nom",
+      "pos": "noun",
+      "card": "fc-0138"
+    },
+    {
+      "tk": "näme",
+      "fr": "quoi, que",
+      "pos": "pron",
+      "card": "fc-0008"
+    },
+    {
+      "tk": "Adyň näme?",
+      "fr": "Comment tu t’appelles ?",
+      "pos": "phrase"
+    },
+    {
+      "tk": "Adyňyz näme?",
+      "fr": "Comment vous appelez-vous ?",
+      "pos": "phrase"
+    },
+    {
+      "tk": "men",
+      "fr": "je, moi",
+      "pos": "pron",
+      "card": "fc-0005"
+    },
+    {
+      "tk": "tanyşanyma şat",
+      "fr": "enchanté(e)",
+      "pos": "phrase",
+      "card": "fc-0783"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u01-l03-e01",
+      "type": "match",
+      "pairs": [
+        ["at", "nom"],
+        ["näme", "quoi"],
+        ["men", "je, moi"],
+        ["tanyşanyma şat", "enchanté"],
+        ["Adyň näme?", "Comment tu t’appelles ?"]
+      ]
+    },
+    {
+      "id": "a1-u01-l03-e02",
+      "type": "mcq",
+      "points": ["gp-vowel-length"],
+      "question": "*at* (nom) a un a long. Que devient son t devant une terminaison qui commence par une voyelle ?",
+      "options": ["Il devient d : adym", "Il reste t : atym", "Il disparaît : aym"],
+      "optionsLang": "fr",
+      "answer": 0,
+      "why": {
+        "1": "*atym* veut dire **mon cheval** : *at* (cheval) a un a bref et garde son t.",
+        "2": "Aucune lettre ne disparaît ici."
+      },
+      "explain": "Le a est long, donc le t s’adoucit en d : *at* → *adym* (mon nom), *adyň* (ton nom)."
+    },
+    {
+      "id": "a1-u01-l03-e03",
+      "type": "translate",
+      "points": ["gp-vowel-length"],
+      "from": "fr",
+      "prompt": "Je m’appelle Aýna.",
+      "accept": ["Meniň adym Aýna.", "Adym Aýna."],
+      "reject": [
+        {
+          "answer": "Meniň atym Aýna.",
+          "why": "*atym* veut dire **mon cheval**. **Nom** a un a long, donc son t devient d : *adym*."
+        }
+      ],
+      "explain": "*Meniň adym…*, mot à mot « mon nom… », est la façon habituelle de dire son nom ; on peut laisser tomber *meniň* (mon)."
+    },
+    {
+      "id": "a1-u01-l03-e04",
+      "type": "translate",
+      "from": "tk",
+      "prompt": "Adyň näme?",
+      "accept": ["Comment tu t’appelles ?", "Tu t’appelles comment ?", "Quel est ton nom ?", "C’est quoi, ton nom ?"],
+      "reject": [
+        {
+          "answer": "Comment vous appelez-vous ?",
+          "why": "*Adyň* (ton nom) tutoie. Pour vouvoyer, on dit *Adyňyz näme?*"
+        }
+      ],
+      "explain": "*Adyň näme?*, mot à mot « ton nom, quoi ? » : *at* (nom) + *-yň* (ton), avec le t devenu d."
+    },
+    {
+      "id": "a1-u01-l03-e05",
+      "type": "cloze",
+      "points": ["gp-vowel-length"],
+      "text": "Meniň ___ Merdan.",
+      "fr": "Je m’appelle Merdan.",
+      "blanks": [
+        {
+          "accept": ["adym"],
+          "reject": [
+            {
+              "answer": "atym",
+              "why": "*atym* veut dire **mon cheval**. *at* au sens de **nom** a un a long, donc son t devient d : *adym*."
+            }
+          ]
+        }
+      ],
+      "explain": "*at* (nom) + *-ym* (mon) = *adym* : le a long change t en d."
+    },
+    {
+      "id": "a1-u01-l03-e06",
+      "type": "mcq",
+      "points": ["gp-sentence-basics"],
+      "question": "Quelle phrase veut dire **Je suis Myrat** ?",
+      "options": ["Men Myrat.", "Meniň Myrat."],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*meniň* veut dire **mon** : il lui faut un nom après, comme dans *Meniň adym Myrat*."
+      },
+      "explain": "*men* (je, moi) et le prénom côte à côte : le turkmène n’a pas besoin du verbe **être** ici."
+    },
+    {
+      "id": "a1-u01-l03-e07",
+      "type": "wordbank",
+      "from": "fr",
+      "prompt": "Je m’appelle Selbi. Enchantée.",
+      "text": "Meniň adym Selbi. Tanyşanyma şat.",
+      "answer": ["Meniň", "adym", "Selbi", "Tanyşanyma", "şat"],
+      "distractors": ["atym", "näme", "men"],
+      "accept": ["Adym Selbi. Tanyşanyma şat."]
+    },
+    {
+      "id": "a1-u01-l03-e08",
+      "type": "mcq",
+      "points": ["gp-vowel-length"],
+      "question": "Quelle est la bonne orthographe de **quoi** ?",
+      "options": ["näme", "neme", "nama"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "La première voyelle est le *ä* ouvert, presque un a.",
+        "2": "Seule la première voyelle est *ä* ; la dernière est *e*."
+      },
+      "explain": "*näme* : d’abord *ä*, puis *e*. Ce sont deux voyelles différentes : retiens laquelle a chaque mot."
+    },
+    {
+      "id": "a1-u01-l03-e09",
+      "type": "translate",
+      "from": "tk",
+      "prompt": "Tanyşanyma şat, Merjen.",
+      "accept": [
+        "Enchanté, Merjen.",
+        "Enchantée, Merjen.",
+        "Ravi(e) de [te|vous] connaître, Merjen.",
+        "[Content|Contente|Heureux|Heureuse] de [te|vous] connaître, Merjen.",
+        "Ravi(e) de faire [ta|votre] connaissance, Merjen.",
+        "Je suis [ravi|ravie|content|contente|heureux|heureuse] de [te|vous] connaître, Merjen."
+      ],
+      "explain": "*Tanyşanyma şat*, mot à mot « content de faire connaissance » : c’est notre **enchanté**."
+    },
+    {
+      "id": "a1-u01-l03-e10",
+      "type": "mcq",
+      "points": ["gp-vowel-length"],
+      "question": "*at* veut dire **nom** et **cheval**. Comment les distingue-t-on à l’oral ?",
+      "options": ["Le a de at « nom » est long", "Le a de at « cheval » est long", "Ils se prononcent exactement pareil"],
+      "optionsLang": "fr",
+      "answer": 0,
+      "why": {
+        "1": "C’est l’inverse : c’est le cheval qui a le a bref.",
+        "2": "Ils s’écrivent pareil, mais l’un a un a long."
+      },
+      "explain": "*at* (nom) a un a long : tiens-le, comme dans un « aaah » étonné. *at* (cheval) a un a bref."
+    },
+    {
+      "id": "a1-u01-l03-e11",
+      "type": "translate",
+      "from": "fr",
+      "prompt": "Comment vous appelez-vous ?",
+      "accept": ["Adyňyz näme?", "Siziň adyňyz näme?"],
+      "explain": "*Adyňyz*, c’est **votre nom** : à une personne plus âgée, à un inconnu, ou à plusieurs personnes."
+    },
+    {
+      "id": "a1-u01-l03-e12",
+      "type": "translate",
+      "points": ["gp-sentence-basics"],
+      "from": "tk",
+      "prompt": "Men Batyr.",
+      "accept": ["Je suis Batyr.", "Je m’appelle Batyr.", "Moi, c’est Batyr.", "Mon nom est Batyr."],
+      "explain": "*men* (moi) et le prénom côte à côte : pas de mot pour **suis**."
+    },
+    {
+      "id": "a1-u01-l03-e13",
+      "type": "cloze",
+      "points": ["gp-pronunciation"],
+      "text": "Men Aýna. Tanyşanyma ___at.",
+      "fr": "Je suis Aýna. Enchantée.",
+      "blanks": [
+        {
+          "options": ["ş", "s"],
+          "answer": 0
+        }
+      ],
+      "explain": "*şat* (content) commence par *ş*, le ch de « chat »."
+    }
+  ]
+}

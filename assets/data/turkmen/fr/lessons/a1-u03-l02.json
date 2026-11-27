@@ -1,0 +1,245 @@
+{
+  "id": "a1-u03-l02",
+  "unit": "a1-u03",
+  "order": 2,
+  "title": "Comment te sens-tu ?",
+  "goal": "Dire comment toi et les autres vous sentez, et reconnaître être avec -dYr.",
+  "points": ["gp-copula-present", "gp-harmony-rounding", "gp-personal-pronouns"],
+  "intro": {
+    "text": "Les états se disent comme les métiers : *Men ýadaw* (je suis fatigué), *Ol aç* (il a faim). Dans un registre soigné, la 3e personne ajoute `-dYr` : *-dyr* après une voyelle postérieure, *-dir* après une voyelle antérieure, comme dans *Ol keseldir* (elle est malade). L’écrit soutenu emploie *-dYr* avec une terminaison à toutes les personnes : *Men ýadawdyryn*.",
+    "see": "gp-copula-present"
+  },
+  "vocab": [
+    {
+      "tk": "ýadaw",
+      "fr": "fatigué",
+      "pos": "adj",
+      "card": "fc-0433"
+    },
+    {
+      "tk": "bagtly",
+      "fr": "heureux",
+      "pos": "adj",
+      "card": "fc-0293"
+    },
+    {
+      "tk": "aç",
+      "fr": "affamé (avoir faim)",
+      "pos": "adj",
+      "card": "fc-0406"
+    },
+    {
+      "tk": "kesel",
+      "fr": "malade",
+      "pos": "adj",
+      "card": "fc-0381"
+    },
+    {
+      "tk": "gamgyn",
+      "fr": "triste",
+      "pos": "adj",
+      "card": "fc-0157"
+    },
+    {
+      "tk": "şat",
+      "fr": "content",
+      "pos": "adj",
+      "card": "fc-0556"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u03-l02-e01",
+      "type": "match",
+      "pairs": [
+        ["ýadaw", "fatigué"],
+        ["bagtly", "heureux"],
+        ["aç", "qui a faim"],
+        ["kesel", "malade"],
+        ["gamgyn", "triste"]
+      ]
+    },
+    {
+      "id": "a1-u03-l02-e02",
+      "type": "translate",
+      "points": ["gp-copula-present"],
+      "from": "fr",
+      "prompt": "Je suis fatigué.",
+      "accept": ["Men ýadaw.", "(Men) ýadawdyryn."],
+      "reject": [
+        {
+          "answer": "Ýadaw.",
+          "why": "*Ýadaw* tout seul veut juste dire **fatigué**. Avec la forme courte de **être**, garde le sujet : *Men ýadaw*."
+        }
+      ],
+      "explain": "*Men ýadaw* : le pronom et l’adjectif côte à côte."
+    },
+    {
+      "id": "a1-u03-l02-e03",
+      "type": "morph",
+      "points": ["gp-copula-present", "gp-harmony-rounding"],
+      "base": "kesel",
+      "gloss": "(elle) est malade, en registre soigné",
+      "parts": ["kesel", "dir"],
+      "distractors": ["dyr", "dur", "der"],
+      "result": "keseldir",
+      "explain": "La dernière voyelle de *kesel* est *e*, une voyelle antérieure : `-dYr` devient *-dir*. Jamais *-der* : **Y** est une voyelle haute."
+    },
+    {
+      "id": "a1-u03-l02-e04",
+      "type": "translate",
+      "from": "tk",
+      "prompt": "Biz örän bagtly.",
+      "accept": ["Nous sommes très heureux.", "Nous sommes très [heureuses|contents|contentes].", "On est très [heureux|heureuses|contents|contentes]."],
+      "explain": "*örän* (très) devant *bagtly* (heureux), et pas de verbe **être**."
+    },
+    {
+      "id": "a1-u03-l02-e05",
+      "type": "cloze",
+      "points": ["gp-copula-present", "gp-harmony-rounding"],
+      "text": "Ol mugallym___.",
+      "fr": "Il est professeur. (registre soigné)",
+      "blanks": [
+        {
+          "accept": ["dyr"],
+          "reject": [
+            {
+              "answer": "dir",
+              "why": "La dernière voyelle de *mugallym* est *y*, une voyelle postérieure : *-dyr*."
+            }
+          ]
+        }
+      ],
+      "explain": "*mugallym* finit par *y*, une voyelle postérieure, donc *-dyr* : *mugallymdyr*."
+    },
+    {
+      "id": "a1-u03-l02-e06",
+      "type": "mcq",
+      "question": "Comment s’écrit le mot qui veut dire **affamé**, celui qu’on emploie pour **avoir faim** ?",
+      "options": ["aç", "aj", "ac"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "*j* est le dj de « djinn ». Ce mot finit par le tch de « tchèque » : *ç*.",
+        "2": "Il n’y a pas de c en turkmène."
+      },
+      "explain": "*aç*, avec *ç*, le tch de « tchèque » : jamais le ç de « ça »."
+    },
+    {
+      "id": "a1-u03-l02-e07",
+      "type": "translate",
+      "points": ["gp-copula-present", "gp-personal-pronouns"],
+      "from": "fr",
+      "prompt": "Tu es fatigué.",
+      "accept": ["Sen ýadaw.", "(Sen) ýadawdyrsyň."],
+      "reject": [
+        {
+          "answer": "Ýadaw.",
+          "why": "*Ýadaw* tout seul veut juste dire **fatigué**. Avec la forme courte de **être**, garde le sujet : *Sen ýadaw*."
+        }
+      ],
+      "explain": "**Tu** se dit *sen* : *Sen ýadaw*."
+    },
+    {
+      "id": "a1-u03-l02-e08",
+      "type": "wordbank",
+      "from": "tk",
+      "prompt": "Olar bagtly.",
+      "text": "Ils sont heureux.",
+      "answer": ["Ils", "sont", "heureux"],
+      "distractors": ["Il", "est", "triste"]
+    },
+    {
+      "id": "a1-u03-l02-e09",
+      "type": "cloze",
+      "points": ["gp-copula-present", "gp-harmony-rounding"],
+      "text": "Ol bagtly___.",
+      "fr": "Elle est heureuse. (registre soigné)",
+      "blanks": [
+        {
+          "accept": ["dyr"],
+          "reject": [
+            {
+              "answer": "dir",
+              "why": "La dernière voyelle de *bagtly* est *y*, une voyelle postérieure : *-dyr*."
+            }
+          ]
+        }
+      ],
+      "explain": "*bagtly* finit par *y*, une voyelle postérieure ; la terminaison est dans la troisième syllabe, donc pas d’arrondi : *bagtlydyr*."
+    },
+    {
+      "id": "a1-u03-l02-e10",
+      "type": "translate",
+      "points": ["gp-copula-present"],
+      "from": "fr",
+      "prompt": "Nous avons faim.",
+      "accept": ["Biz aç.", "(Biz) açdyrys."],
+      "explain": "Pas de verbe **avoir** : *Biz aç*, mot à mot « nous affamés »."
+    },
+    {
+      "id": "a1-u03-l02-e11",
+      "type": "mcq",
+      "points": ["gp-harmony-rounding"],
+      "question": "*gözüm* (mon œil), *gözi* (son œil), *gözler* (des yeux) : dans quel mot la voyelle de la terminaison est-elle arrondie ?",
+      "options": ["gözüm", "gözi", "gözler"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "Une voyelle tout au bout du mot ne s’arrondit pas : *gözi*.",
+        "2": "*-ler* a la voyelle **A**, qui ne s’arrondit jamais."
+      },
+      "explain": "Dans *gözüm*, la voyelle de la terminaison est en deuxième syllabe, après *ö*, et pas en fin de mot : *ü*."
+    },
+    {
+      "id": "a1-u03-l02-e12",
+      "type": "conjugate",
+      "points": ["gp-copula-present", "gp-harmony-rounding"],
+      "base": "ýadaw",
+      "form": "copula-dyr",
+      "label": "*ýadaw* + **être**, la forme écrite soutenue : je suis fatigué, tu es fatigué…",
+      "cells": [
+        {
+          "p": "men",
+          "accept": ["ýadawdyryn"]
+        },
+        {
+          "p": "sen",
+          "accept": ["ýadawdyrsyň"]
+        },
+        {
+          "p": "ol",
+          "accept": ["ýadawdyr"]
+        },
+        {
+          "p": "biz",
+          "accept": ["ýadawdyrys"]
+        },
+        {
+          "p": "siz",
+          "accept": ["ýadawdyrsyňyz"]
+        },
+        {
+          "p": "olar",
+          "accept": ["ýadawdyrlar", "ýadawdyr"]
+        }
+      ],
+      "explain": "*-dyr* (*a*, voyelle postérieure), puis les terminaisons personnelles : *-yn, -syň, -ys, -syňyz, -lar*."
+    },
+    {
+      "id": "a1-u03-l02-e13",
+      "type": "translate",
+      "points": ["gp-copula-present"],
+      "from": "fr",
+      "prompt": "Il est malade.",
+      "accept": ["Ol kesel.", "Ol keseldir."],
+      "reject": [
+        {
+          "answer": "Kesel.",
+          "why": "*Kesel* tout seul veut juste dire **malade**. Avec la forme courte de **être**, garde le sujet : *Ol kesel*."
+        }
+      ],
+      "explain": "*Ol kesel*, ou, en registre soigné, *Ol keseldir*."
+    }
+  ]
+}

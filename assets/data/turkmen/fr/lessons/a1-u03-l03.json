@@ -1,0 +1,238 @@
+{
+  "id": "a1-u03-l03",
+  "unit": "a1-u03",
+  "order": 3,
+  "title": "D’où viens-tu ?",
+  "goal": "Dire ta nationalité et ta ville, et demander à quelqu’un d’où il vient.",
+  "points": ["gp-nationality-words", "gp-harmony-rounding", "gp-copula-present"],
+  "intro": {
+    "text": "Les nationalités sont des noms écrits en minuscule : *Men türkmen* (je suis turkmène), *Ol iňlis* (elle est anglaise). Pour demander d’où vient quelqu’un, dis *Siz nireli?* Réponds avec ta ville et `-lY` : *-ly* après une voyelle postérieure, *-li* après une voyelle antérieure. *Men aşgabatly*, *Ol tejenli* : avec une minuscule, car le mot n’est plus un nom propre.",
+    "see": "gp-nationality-words"
+  },
+  "vocab": [
+    {
+      "tk": "türkmen",
+      "fr": "turkmène ; un Turkmène",
+      "pos": "noun",
+      "card": "fc-0043"
+    },
+    {
+      "tk": "rus",
+      "fr": "russe (personne)",
+      "pos": "noun",
+      "card": "fc-0822"
+    },
+    {
+      "tk": "iňlis",
+      "fr": "anglais (personne)",
+      "pos": "noun",
+      "card": "fc-0823"
+    },
+    {
+      "tk": "nemes",
+      "fr": "allemand (personne)",
+      "pos": "noun"
+    },
+    {
+      "tk": "fransuz",
+      "fr": "français (personne)",
+      "pos": "noun"
+    },
+    {
+      "tk": "Türkmenistan",
+      "fr": "le Turkménistan",
+      "pos": "noun"
+    },
+    {
+      "tk": "nireli",
+      "fr": "d’où",
+      "pos": "adv"
+    },
+    {
+      "tk": "Siz nireli?",
+      "fr": "D’où êtes-vous ?",
+      "pos": "phrase"
+    },
+    {
+      "tk": "aşgabatly",
+      "fr": "d’Achgabat",
+      "pos": "adj"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "a1-u03-l03-e01",
+      "type": "match",
+      "pairs": [
+        ["türkmen", "turkmène"],
+        ["rus", "russe"],
+        ["iňlis", "anglais"],
+        ["nemes", "allemand"],
+        ["fransuz", "français"]
+      ]
+    },
+    {
+      "id": "a1-u03-l03-e02",
+      "type": "translate",
+      "points": ["gp-nationality-words", "gp-copula-present"],
+      "from": "fr",
+      "prompt": "Je suis turkmène.",
+      "accept": ["Men türkmen.", "(Men) türkmendirin."],
+      "reject": [
+        {
+          "answer": "Türkmen.",
+          "why": "*Türkmen* tout seul veut juste dire **turkmène**. Avec la forme courte de **être**, garde le sujet : *Men türkmen*."
+        }
+      ],
+      "explain": "*Men türkmen* : le pronom et la nationalité côte à côte, en minuscule."
+    },
+    {
+      "id": "a1-u03-l03-e03",
+      "type": "mcq",
+      "points": ["gp-nationality-words"],
+      "question": "Dans une phrase turkmène, le mot pour un Turkmène prend-il une majuscule ?",
+      "options": ["Non : türkmen", "Oui : Türkmen"],
+      "optionsLang": "fr",
+      "answer": 0,
+      "why": {
+        "1": "Les nationalités ne prennent pas de majuscule, même comme noms ; seuls les noms de pays et de villes en prennent une : *Türkmenistan*."
+      },
+      "explain": "*Men türkmen*, en minuscule, comme *iňlis*, *rus* et *nemes*. Attention : le français, lui, écrit « un Turkmène » avec une majuscule."
+    },
+    {
+      "id": "a1-u03-l03-e04",
+      "type": "translate",
+      "points": ["gp-nationality-words"],
+      "from": "tk",
+      "prompt": "Siz nireli?",
+      "accept": ["D’où êtes-vous ?", "Vous êtes d’où ?", "D’où venez-vous ?", "Vous venez d’où ?"],
+      "reject": [
+        {
+          "answer": "D’où es-tu ?",
+          "why": "*Siz* vouvoie, ou s’adresse à plusieurs personnes : **d’où êtes-vous ?** Pour tutoyer, on dit *Sen nireli?*"
+        }
+      ],
+      "explain": "*nireli*, mot à mot « de quel endroit », avec *siz* : vous."
+    },
+    {
+      "id": "a1-u03-l03-e05",
+      "type": "cloze",
+      "points": ["gp-nationality-words", "gp-harmony-rounding"],
+      "text": "Men aşgabat___.",
+      "fr": "Je suis d’Achgabat.",
+      "blanks": [
+        {
+          "accept": ["ly"],
+          "reject": [
+            {
+              "answer": "li",
+              "why": "La dernière voyelle d’*Aşgabat* est *a*, une voyelle postérieure : *aşgabatly*."
+            }
+          ]
+        }
+      ],
+      "explain": "`-lY` après la voyelle postérieure *a* : *aşgabatly*. La terminaison s’écrit collée, sans apostrophe ni trait d’union, et le mot prend une minuscule."
+    },
+    {
+      "id": "a1-u03-l03-e06",
+      "type": "morph",
+      "points": ["gp-nationality-words", "gp-harmony-rounding"],
+      "base": "Tejen",
+      "gloss": "de Tejen",
+      "parts": ["Tejen", "li"],
+      "distractors": ["ly", "le", "lü"],
+      "result": "Tejenli",
+      "explain": "La dernière voyelle de *Tejen* est *e*, une voyelle antérieure : *-li*. Pas d’arrondi, car *e* n’est pas arrondie."
+    },
+    {
+      "id": "a1-u03-l03-e07",
+      "type": "mcq",
+      "points": ["gp-nationality-words"],
+      "question": "Que veut dire *Ol iňlis* ?",
+      "options": ["Elle est anglaise.", "Elle parle anglais.", "Elle est en Angleterre."],
+      "optionsLang": "fr",
+      "answer": 0,
+      "why": {
+        "1": "Parler une langue demande un verbe ; les verbes commencent dans [l’unité 6](a1-u06).",
+        "2": "**En Angleterre** demande une terminaison de lieu, qui vient dans [l’unité 5](a1-u05)."
+      },
+      "explain": "*iňlis* désigne une personne anglaise ; avec la forme courte de **être**, *Ol iňlis*, c’est il est anglais ou elle est anglaise."
+    },
+    {
+      "id": "a1-u03-l03-e08",
+      "type": "translate",
+      "points": ["gp-nationality-words"],
+      "from": "fr",
+      "prompt": "Nous sommes de Mary.",
+      "accept": ["Biz maryly."],
+      "explain": "*Mary* finit par la voyelle postérieure *y* : *maryly*."
+    },
+    {
+      "id": "a1-u03-l03-e09",
+      "type": "wordbank",
+      "points": ["gp-nationality-words"],
+      "from": "fr",
+      "prompt": "D’où êtes-vous ? – Je suis de Daşoguz.",
+      "text": "Siz nireli? Men daşoguzly.",
+      "answer": ["Siz", "nireli", "Men", "daşoguzly"],
+      "distractors": ["Daşoguz", "näme", "sen"],
+      "accept": ["Sen nireli? Men daşoguzly."]
+    },
+    {
+      "id": "a1-u03-l03-e10",
+      "type": "mcq",
+      "question": "Laquelle est bien écrite ?",
+      "options": ["iňlis", "inlis", "iňglis"],
+      "optionsLang": "tk",
+      "answer": 0,
+      "why": {
+        "1": "Le son est *ň*, le ng de « parking ».",
+        "2": "Aucun g ne s’écrit ni ne s’entend après *ň*."
+      },
+      "explain": "*iňlis* : *ň* est le ng de « parking », sans g après."
+    },
+    {
+      "id": "a1-u03-l03-e11",
+      "type": "translate",
+      "points": ["gp-nationality-words", "gp-personal-pronouns"],
+      "from": "tk",
+      "prompt": "Olar rus, biz türkmen.",
+      "accept": [
+        "Ils sont russes, nous sommes turkmènes.",
+        "Elles sont russes, nous sommes turkmènes.",
+        "[Ils|Elles] sont russes et nous sommes turkmènes.",
+        "Ce sont des Russes, nous sommes turkmènes."
+      ],
+      "explain": "*olar* (ils, elles) et *biz* (nous), chacun suivi de sa nationalité, sans verbe **être**."
+    },
+    {
+      "id": "a1-u03-l03-e12",
+      "type": "translate",
+      "points": ["gp-nationality-words", "gp-copula-present"],
+      "from": "fr",
+      "prompt": "Elle est allemande.",
+      "accept": ["Ol nemes.", "Ol nemesdir."],
+      "reject": [
+        {
+          "answer": "Nemes.",
+          "why": "*Nemes* tout seul veut juste dire **allemand**. Avec la forme courte de **être**, garde le sujet : *Ol nemes*."
+        }
+      ],
+      "explain": "*Ol nemes*, en minuscule : pas de genre, et pas de majuscule pour la nationalité."
+    },
+    {
+      "id": "a1-u03-l03-e13",
+      "type": "mcq",
+      "points": ["gp-harmony-rounding"],
+      "question": "Dans la notation des guides, que représente `-lY` ?",
+      "options": ["-ly, -li, -lu ou -lü", "-la ou -le", "seulement -ly"],
+      "optionsLang": "fr",
+      "answer": 0,
+      "why": {
+        "1": "Ça, c’est `-lA` : **A** est la voyelle basse a ou e.",
+        "2": "**Y** change avec l’harmonie : *aşgabatly*, mais *tejenli*."
+      },
+      "explain": "**Y** est la voyelle haute : *y* ou *i*, et *u* ou *ü* là où l’arrondi joue."
+    }
+  ]
+}
